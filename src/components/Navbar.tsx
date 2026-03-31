@@ -9,7 +9,7 @@ const Navbar = () => {
         <input type="text" placeholder="Search..." className="w-[200px] p-2 bg-transparent outline-none"/>
       </div>
       {/* ICONS & USER */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-6 justify-end w-full">
         <div className="bg-white rounded-full w-7 h-7 flex items-center cursor-pointer">
           <Image src="/message.png" alt="" width={20} height={20} />
         </div>
