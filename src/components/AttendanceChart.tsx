@@ -31,10 +31,25 @@ const AttendanceChart = () => {
       <div className="w-full h-96">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={barData} barSize={20}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ddd"/>
-            <XAxis dataKey="name" axisLine={false} tick={{fill: "#d1d5db"}} tickLine={false}/>
-            <YAxis  axisLine={false} tick={{fill: "#d1d5db"}} tickLine={false}/>
-            <Tooltip contentStyle={{borderRadius:"10px", borderColor:"lightgray"}}/>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="#ddd"
+            />
+            <XAxis
+              dataKey="name"
+              axisLine={false}
+              tick={{ fill: "#d1d5db" }}
+              tickLine={false}
+            />
+            <YAxis
+              axisLine={false}
+              tick={{ fill: "#d1d5db" }}
+              tickLine={false}
+            />
+            <Tooltip
+              contentStyle={{ borderRadius: "10px", borderColor: "lightgray" }}
+            />
             <Legend
               align="left"
               verticalAlign="top"
