@@ -10,19 +10,22 @@ export default function DashboardLayout({
 }>) {
   return (
     <div className="h-screen flex">
-      {/* LEFT */}
-      <div className="w-[14%] md:w-[8%] lg:w-[16%] xl:w-[14%]  p-4">
+      {/* SIDEBAR — fixed icon-only width on mobile so icons never disappear */}
+      <div className="w-[56px] md:w-[64px] lg:w-[16%] xl:w-[14%] p-3 lg:p-4 border-r border-gray-100 bg-white flex flex-col gap-6 shrink-0">
         <Link
           href="/"
           className="flex items-center justify-center lg:justify-start gap-2"
         >
-          <Image src="/logo.png" alt="logo" width={32} height={32} priority />
-          <span className="hidden lg:block font-bold">SchoolJay</span>
+          <Image src="/school.svg" alt="logo" width={32} height={32} priority />
+          <span className="hidden lg:block font-nunito font-extrabold text-lg tracking-tight text-gray-800">
+            SchoolJay
+          </span>
         </Link>
         <Menu />
       </div>
-      {/* RIGHT */}
-      <div className="w-[86%] md:w-[92%] lg:w-[84%] xl:w-[86%] bg-[#F7F8FA] overflow-scroll">
+
+      {/* MAIN */}
+      <div className="flex-1 min-w-0 bg-[#F7F8FA] overflow-scroll">
         <Navbar />
         {children}
       </div>

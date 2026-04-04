@@ -1,60 +1,174 @@
 "use client";
+
 import Image from "next/image";
-import { title } from "process";
 import { useState } from "react";
-import Calendar from "react-calendar";
-import 'react-calendar/dist/Calendar.css';
+import { motion, AnimatePresence } from "framer-motion";
 
-type ValuePiece = Date | null;
+const events = [
+  {
+    id: 1,
+    title: "Science Fair",
+    time: "10:00 AM - 12:00 PM",
+    description: "Annual science fair for all grade 5 and 6 students.",
+    color: "bg-jaySkyLight border-l-4 border-jaySky",
+    dot: "bg-jaySky",
+  },
+  {
+    id: 2,
+    title: "PTA Meeting",
+    time: "2:00 PM - 4:00 PM",
+    description: "Quarterly meeting with parents and teachers.",
+    color: "bg-jayPurpleLight border-l-4 border-jayPurple",
+    dot: "bg-jayPurple",
+  },
+  {
+    id: 3,
+    title: "Sports Day",
+    time: "8:00 AM - 3:00 PM",
+    description: "Inter-house sports competition for all students.",
+    color: "bg-jayYellowLight border-l-4 border-jayYellow",
+    dot: "bg-jayYellow",
+  },
+];
 
-type Value = ValuePiece | [ValuePiece, ValuePiece];
-
-//TEMPORARY
-const events =[
-    {
-        id: 1,
-        title: "Lorem ipsum dolor",
-        time: "12:00 PM -2:00 PM",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    },
-     {
-        id: 2,
-        title: "Lorem ipsum dolor",
-        time: "12:00 PM -2:00 PM",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    },
-     {
-        id: 3,
-        title: "Lorem ipsum dolor",
-        time: "12:00 PM -2:00 PM",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    }
-]
+const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
 
 const EventCalendar = () => {
-  const [value, onChange] = useState<Value>(new Date());
+  const today = new Date();
+  const [current, setCurrent] = useState({
+    month: today.getMonth(),
+    year: today.getFullYear(),
+  });
+  const [selected, setSelected] = useState(today.getDate());
+
+  const firstDay = new Date(current.year, current.month, 1).getDay();
+  const daysInMonth = new Date(current.year, current.month + 1, 0).getDate();
+
+  const prevMonth = () => {
+    setCurrent((c) =>
+      c.month === 0 ? { month: 11, year: c.year - 1 } : { month: c.month - 1, year: c.year }
+    );
+  };
+
+  const nextMonth = () => {
+    setCurrent((c) =>
+      c.month === 11 ? { month: 0, year: c.year + 1 } : { month: c.month + 1, year: c.year }
+    );
+  };
+
+  const cells = [...Array(firstDay).fill(null), ...Array(daysInMonth).keys()].map(
+    (v) => (v === null ? null : v + 1)
+  );
 
   return (
-    <div className="bg-white p-4 rounded-md">
-      <Calendar onChange={onChange} value={value} />
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold my-4">Events</h1>
-        <Image src="/moreDark.png" alt="" width={20} height={20} />
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="bg-white p-5 rounded-2xl shadow-sm"
+    >
+      {/* CALENDAR HEADER */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-nunito font-extrabold text-base text-gray-800">
+          {MONTHS[current.month]} {current.year}
+        </h2>
+        <div className="flex gap-2">
+          <button
+            onClick={prevMonth}
+            className="w-7 h-7 flex items-center justify-center rounded-full bg-gray-100 hover:bg-jayPurpleLight text-gray-500 hover:text-jayPurple transition-colors text-sm"
+          >
+            ‹
+          </button>
+          <button
+            onClick={nextMonth}
+            className="w-7 h-7 flex items-center justify-center rounded-full bg-gray-100 hover:bg-jayPurpleLight text-gray-500 hover:text-jayPurple transition-colors text-sm"
+          >
+            ›
+          </button>
+        </div>
       </div>
-      <div className="flex flex-col gap-4">
-        {
-            events.map((event) => (
-                <div className="p-5 rounded-md border-2 border-gray-100 border-t-4 odd:border-t-jaySky even:border-t-jayPurple" key={event.id}>
-                    <div className="flex items-center justify-between">
-                        <h1 className="font-semibold text-gray-600">{event.title}</h1>
-                        <span className="text-gray-300 text-xs">{event.time}</span>
-                    </div>
-                    <p className="mt-2 text-gray-400">{event.description}</p>
-                </div>
-            ))
-        }
+
+      {/* DAY HEADERS */}
+      <div className="grid grid-cols-7 mb-2">
+        {DAYS.map((d) => (
+          <div key={d} className="text-center text-[10px] font-bold text-gray-400 uppercase">
+            {d}
+          </div>
+        ))}
       </div>
-    </div>
+
+      {/* DATE CELLS */}
+      <div className="grid grid-cols-7 gap-y-1">
+        {cells.map((day, i) => {
+          const isToday =
+            day === today.getDate() &&
+            current.month === today.getMonth() &&
+            current.year === today.getFullYear();
+          const isSelected = day === selected;
+
+          return (
+            <div key={i} className="flex items-center justify-center">
+              {day ? (
+                <button
+                  onClick={() => setSelected(day)}
+                  className={`w-8 h-8 rounded-full text-xs font-medium transition-all
+                    ${isSelected ? "bg-jayPurple text-gray-700 font-bold" : ""}
+                    ${isToday && !isSelected ? "ring-2 ring-jayPurple text-jayPurple font-bold" : ""}
+                    ${!isToday && !isSelected ? "text-gray-600 hover:bg-gray-100" : ""}
+                  `}
+                >
+                  {day}
+                </button>
+              ) : (
+                <div className="w-8 h-8" />
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* EVENTS HEADER */}
+      <div className="flex items-center justify-between mt-6 mb-3">
+        <h1 className="font-nunito font-extrabold text-lg text-gray-800">
+          Upcoming Events
+        </h1>
+        <span className="text-xs text-jayPurple font-semibold cursor-pointer hover:underline">
+          View All
+        </span>
+      </div>
+
+      {/* EVENTS LIST */}
+      <div className="flex flex-col gap-3">
+        {events.map((event, i) => (
+          <motion.div
+            key={event.id}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.1 }}
+            className={`p-3 rounded-xl ${event.color}`}
+          >
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${event.dot}`} />
+                <h2 className="font-semibold text-sm text-gray-700">
+                  {event.title}
+                </h2>
+              </div>
+              <span className="text-[10px] text-gray-400 font-medium">
+                {event.time}
+              </span>
+            </div>
+            <p className="text-xs text-gray-400 leading-relaxed pl-4">
+              {event.description}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+    </motion.div>
   );
 };
 

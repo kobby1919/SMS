@@ -2,14 +2,16 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    // With src/ folder
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    // Without src/ folder (root level)
   ],
   theme: {
     extend: {
+      fontFamily: {
+        inter: ["var(--font-inter)", "sans-serif"],
+        nunito: ["var(--font-nunito)", "sans-serif"],
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -21,7 +23,7 @@ const config: Config = {
         jayPurple: "#CFCEFF",
         jayPurpleLight: "#F1F0FF",
         jayYellow: "#FAE27C",
-        jayYellowLight: "#FEFCE8", 
+        jayYellowLight: "#FEFCE8",
       },
     },
   },

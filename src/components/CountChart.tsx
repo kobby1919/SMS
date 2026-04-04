@@ -1,65 +1,73 @@
 "use client";
 
 import Image from "next/image";
-import {
-  RadialBarChart,
-  RadialBar,
-  ResponsiveContainer,
-  Tooltip,
-  Legend,
-} from "recharts";
+import { motion } from "framer-motion";
 
-type DataType = {
-  name: string;
-  count: number;
-  fill: string;
-};
-
-const data: DataType[] = [
-  { name: "Total", count: 106, fill: "white" },
-  { name: "Girls", count: 50, fill: "#FAE27C" },
-  { name: "Boys", count: 60, fill: "#C3EBFA" },
-];
+const TOTAL = 2468;
+const BOYS = 1357;
+const GIRLS = 1111;
+const BOYS_PCT = Math.round((BOYS / TOTAL) * 100);
+const GIRLS_PCT = 100 - BOYS_PCT;
 
 const CountChart = () => {
   return (
-    <div className="bg-white rounded-xl w-full h-full p-4">
-      {/* TITLE */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-lg font-semibold">Students</h1>
-        <Image src="/moreDark.png" alt="" width={20} height={20} />
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="bg-white rounded-2xl w-full h-full p-5 shadow-sm flex flex-col"
+    >
+      {/* Header */}
+      <div className="flex justify-between items-center mb-5">
+        <h1 className="font-nunito font-extrabold text-[15px] text-gray-800">
+          Students
+        </h1>
+        <Image src="/moreDark.png" alt="" width={18} height={18} />
       </div>
-      {/* CHART */}
-      <div className="relative w-full h-[75%]">
-        <ResponsiveContainer>
-          <RadialBarChart
-            barSize={32}
-            cx="50%"
-            cy="50%"
-            data={data}
-            innerRadius="40%"
-            outerRadius="100%"
-          >
-            <RadialBar background dataKey="count" />
-          </RadialBarChart>
-        </ResponsiveContainer>
-        <Image src="/maleFemale.png" alt="" width={50} height={50} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-      </div>
-      {/* BOTTOM */}
-      <div className="flex justify-center gap-16">
-        <div className="flex flex-col items-center gap-1">
-          <div className="w-5 h-5 bg-jaySky rounded-full"></div>
-          <h1 className="font-bold">1,234</h1>
-          <h2 className="text-xs text-gray-300">Boys (55%)</h2>
-        </div>
 
-        <div className="flex flex-col items-center gap-1">
-          <div className="w-5 h-5 bg-jayYellow rounded-full"></div>
-          <h1 className="font-bold">1,234</h1>
-          <h2 className="text-xs text-gray-300">Girls (45%)</h2>
+      {/* Total */}
+      <div className="text-center mb-5">
+        <p className="font-nunito font-extrabold text-4xl text-gray-800 leading-none">
+          {TOTAL.toLocaleString()}
+        </p>
+        <p className="text-[11px] text-gray-400 uppercase tracking-widest mt-1">
+          Enrolled
+        </p>
+      </div>
+
+      {/* Split bar */}
+      <div className="h-2.5 rounded-full bg-gray-100 overflow-hidden flex mb-4">
+        <div
+          className="bg-jaySky rounded-full"
+          style={{ width: `${BOYS_PCT}%` }}
+        />
+        <div className="bg-jayYellow rounded-full flex-1" />
+      </div>
+
+      {/* Stat boxes */}
+      <div className="grid grid-cols-2 gap-2 mt-auto">
+        <div className="bg-[#F7F8FA] rounded-xl p-3">
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <div className="w-2 h-2 rounded-full bg-jaySky" />
+            <span className="text-[11px] text-gray-400">Boys</span>
+          </div>
+          <p className="font-nunito font-extrabold text-xl text-gray-800 leading-tight">
+            {BOYS.toLocaleString()}
+          </p>
+          <p className="text-[11px] text-gray-400">{BOYS_PCT}% of total</p>
+        </div>
+        <div className="bg-[#F7F8FA] rounded-xl p-3">
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <div className="w-2 h-2 rounded-full bg-jayYellow" />
+            <span className="text-[11px] text-gray-400">Girls</span>
+          </div>
+          <p className="font-nunito font-extrabold text-xl text-gray-800 leading-tight">
+            {GIRLS.toLocaleString()}
+          </p>
+          <p className="text-[11px] text-gray-400">{GIRLS_PCT}% of total</p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

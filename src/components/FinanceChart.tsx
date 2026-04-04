@@ -11,6 +11,8 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
+import { motion } from "framer-motion";
+
 const lineData = [
   { name: "Jan", income: 4000, expense: 2500 },
   { name: "Feb", income: 3500, expense: 3000 },
@@ -28,48 +30,51 @@ const lineData = [
 
 const FinanceChart = () => {
   return (
-    <div className="bg-white rounded-xl w-full h-full p-4">
-      <div className="flex justify-between items-center">
-        <h1 className="text-lg font-semibold">Finance</h1>
-        <Image src="/moreDark.png" alt="" width={20} height={20} />
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="bg-white rounded-2xl w-full h-full p-5 shadow-sm"
+    >
+      <div className="flex justify-between items-center mb-2">
+        <h1 className="font-nunito font-extrabold text-lg text-gray-800">
+          Finance Overview
+        </h1>
+        <Image src="/moreDark.png" alt="" width={18} height={18} />
       </div>
       <ResponsiveContainer width="100%" height="90%">
-        <LineChart
-          width={500}
-          height={300}
-          data={lineData}
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" stroke="#ddd" />
+        <LineChart data={lineData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
           <XAxis
             dataKey="name"
             axisLine={false}
-            tick={{ fill: "#d1d5db" }}
+            tick={{ fill: "#9ca3af", fontSize: 12 }}
             tickLine={false}
             tickMargin={10}
           />
           <YAxis
             axisLine={false}
-            tick={{ fill: "#d1d5db" }}
+            tick={{ fill: "#9ca3af", fontSize: 12 }}
             tickLine={false}
-            tickMargin={20}
+            tickMargin={10}
           />
-          <Tooltip />
+          <Tooltip
+            contentStyle={{
+              borderRadius: "12px",
+              borderColor: "#e5e7eb",
+              fontSize: "12px",
+            }}
+          />
           <Legend
             align="center"
             verticalAlign="top"
-            wrapperStyle={{ paddingTop: "10px", paddingBottom: "30px" }}
+            wrapperStyle={{ paddingBottom: "20px", fontSize: "12px" }}
           />
-          <Line
-            type="monotone"
-            dataKey="income"
-            stroke="#C3EBFA"
-            strokeWidth={5}
-          />
-          <Line type="monotone" dataKey="expense" stroke="#CFCEFF" strokeWidth={5}/>
+          <Line type="monotone" dataKey="income" stroke="#C3EBFA" strokeWidth={4} dot={false} />
+          <Line type="monotone" dataKey="expense" stroke="#CFCEFF" strokeWidth={4} dot={false} />
         </LineChart>
       </ResponsiveContainer>
-    </div>
+    </motion.div>
   );
 };
 
