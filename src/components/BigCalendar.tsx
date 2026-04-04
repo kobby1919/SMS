@@ -1,164 +1,184 @@
 "use client";
 
 import { calendarEvents } from "../lib/data";
-import { useState } from "react";
+import { useState, useEffect, Fragment } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const hours = [8, 9, 10, 11, 12, 13, 14, 15, 16];
 
-const colors = [
-  "bg-[#e2f8ff] text-[#0ea5e9]",
-  "bg-[#fefce8] text-[#ca8a04]",
-  "bg-[#fdf2fb] text-[#d946ef]",
-  "bg-[#f2f1ff] text-[#7c3aed]",
-  "bg-[#dcfce7] text-[#16a34a]",
-  "bg-[#fff7ed] text-[#ea580c]",
-];
-
-const subjectList = ["Math", "English", "Biology", "Physics", "Chemistry", "History"];
-
-const getColor = (title: string) => {
-  const index = subjectList.indexOf(title);
-  return index !== -1 ? colors[index] : colors[0];
+const subjectColors: Record<string, { bg: string; text: string; border: string; dot: string }> = {
+  Math:      { bg: "bg-blue-50",   text: "text-blue-700",   border: "border-blue-200",   dot: "bg-blue-400" },
+  English:   { bg: "bg-amber-50",  text: "text-amber-700",  border: "border-amber-200",  dot: "bg-amber-400" },
+  Biology:   { bg: "bg-emerald-50",text: "text-emerald-700",border: "border-emerald-200",dot: "bg-emerald-400" },
+  Physics:   { bg: "bg-violet-50", text: "text-violet-700", border: "border-violet-200", dot: "bg-violet-400" },
+  Chemistry: { bg: "bg-rose-50",   text: "text-rose-700",   border: "border-rose-200",   dot: "bg-rose-400" },
+  History:   { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-200", dot: "bg-orange-400" },
 };
 
-const getEvent = (day: string, hour: number) => {
-  return calendarEvents.find((event) => {
-    const eventDay = new Date(event.start).toLocaleDateString("en-US", {
-      weekday: "long",
-    });
-    const eventHour = new Date(event.start).getHours();
-    return eventDay === day && eventHour === hour;
+const getEvent = (dayName: string, hour: number) =>
+  calendarEvents.find((event) => {
+    const d = new Date(event.start);
+    const eventDayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][d.getDay()];
+    return eventDayName === dayName && d.getHours() === hour;
   });
-};
+
+const formatTime = (date: Date) => `${date.getHours()}:${String(date.getMinutes()).padStart(2, "0")}`;
 
 const BigCalendar = () => {
-  const [selectedDay, setSelectedDay] = useState<string>(() => {
-  if (typeof window !== "undefined" && window.innerWidth < 768) {
-    return "Monday";
-  }
-  return "all";
-});
+  const [selectedDay, setSelectedDay] = useState<string>("all");
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Sync mobile/desktop view on mount and resize
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      // On mobile, we force a day if "all" is selected
+      if (mobile && selectedDay === "all") {
+        setSelectedDay("Monday");
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [selectedDay]);
+
+  const allTabs = ["all", ...days];
 
   return (
-    <div className="w-full">
-      {/* DAY TOGGLE BUTTONS */}
-      <div className="flex gap-2 mb-6 flex-wrap">
-        <button
-          onClick={() => setSelectedDay("all")}
-          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-            selectedDay === "all"
-              ? "bg-[#dbdafe] text-[#4338ca]"
-              : "bg-[#f1f0ff] text-gray-500 hover:bg-[#dbdafe] hover:text-[#4338ca]"
-          }`}
-        >
-          Week
-        </button>
-        {days.map((day) => (
-          <button
-            key={day}
-            onClick={() => setSelectedDay(day)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-              selectedDay === day
-                ? "bg-[#dbdafe] text-[#4338ca]"
-                : "bg-[#f1f0ff] text-gray-500 hover:bg-[#dbdafe] hover:text-[#4338ca]"
-            }`}
-          >
-            {day.slice(0, 3)}
-          </button>
-        ))}
+    <div className="w-full max-w-7xl mx-auto px-4 py-6">
+      
+      {/* ── UNIFIED SELECTOR (Works for both Mobile & Desktop) ── */}
+      <div className={`flex gap-2 mb-8 items-center bg-gray-100 p-1.5 rounded-2xl w-fit max-w-full overflow-x-auto no-scrollbar`}>
+        {allTabs.map((d) => {
+          // Hide "Whole Week" button on mobile to save space
+          if (isMobile && d === "all") return null;
+
+          const isActive = selectedDay === d;
+          return (
+            <button
+              key={d}
+              onClick={() => setSelectedDay(d)}
+              className={`relative px-6 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wider transition-all duration-300 z-10 whitespace-nowrap
+                ${isActive ? "text-white" : "text-gray-500 hover:text-indigo-600"}`}
+            >
+              {isActive && (
+                <motion.div
+                  layoutId="activeTabHighlight"
+                  className="absolute inset-0 bg-indigo-600 shadow-md rounded-xl -z-10"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              {d === "all" ? "Whole Week" : d.slice(0, 3)}
+            </button>
+          );
+        })}
       </div>
 
-      {/* TIMETABLE - day view on mobile, week view on larger screens */}
-      {selectedDay === "all" ? (
-        // WEEK VIEW - scrollable on mobile
-        <div className="w-full overflow-x-auto rounded-xl">
-          <table className="border-collapse" style={{ minWidth: "600px", width: "100%" }}>
-            <thead>
-              <tr>
-                <th className="w-12 p-2"></th>
-                {days.map((day) => (
-                  <th
-                    key={day}
-                    className="text-xs text-gray-500 font-semibold p-2 text-center uppercase tracking-wide"
-                  >
-                    {day.slice(0, 3)}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {hours.map((hour) => (
-                <tr key={hour} className="border-t border-gray-100">
-                  <td className="text-xs text-gray-400 p-2 text-right align-middle w-12 whitespace-nowrap">
+      <AnimatePresence mode="wait">
+        {selectedDay === "all" ? (
+          /* ── DESKTOP GRID VIEW ── */
+          <motion.div
+            key="grid"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="hidden lg:block bg-white border border-gray-100 rounded-3xl p-6 shadow-sm"
+          >
+            <div className="grid grid-cols-[80px_repeat(5,1fr)] gap-2">
+              <div /> {/* Corner spacer */}
+              {days.map(day => (
+                <div key={day} className="text-center pb-4 text-xs font-black uppercase tracking-widest text-gray-400">
+                  {day}
+                </div>
+              ))}
+              
+              {hours.map(hour => (
+                <Fragment key={`row-${hour}`}>
+                  <div className="pr-4 text-right text-xs font-bold text-gray-300 py-6">
                     {hour}:00
-                  </td>
-                  {days.map((day) => {
+                  </div>
+                  {days.map(day => {
                     const event = getEvent(day, hour);
+                    const c = event ? subjectColors[event.title] : null;
                     return (
-                      <td key={day} className="p-1 align-middle h-16">
-                        {event ? (
-                          <div className={`w-full h-full rounded-xl p-2 flex flex-col justify-center gap-0.5 ${getColor(event.title)}`}>
-                            <span className="font-bold text-xs leading-tight">{event.title}</span>
-                            <span className="text-xs opacity-60">
-                              {new Date(event.start).getHours()}:
-                              {String(new Date(event.start).getMinutes()).padStart(2, "0")}
-                              {" - "}
-                              {new Date(event.end).getHours()}:
-                              {String(new Date(event.end).getMinutes()).padStart(2, "0")}
-                            </span>
-                          </div>
-                        ) : (
-                          <div className="w-full h-full rounded-xl bg-gray-50" />
+                      <div key={`${day}-${hour}`} className="relative border-t border-gray-50 min-h-[100px] p-1">
+                        {event && (
+                          <motion.div
+                            whileHover={{ scale: 1.03, zIndex: 10 }}
+                            className={`h-full w-full rounded-xl border-2 p-3 flex flex-col justify-center cursor-pointer shadow-sm ${c?.bg} ${c?.text} ${c?.border}`}
+                          >
+                            <span className="font-black text-sm leading-tight mb-1">{event.title}</span>
+                            <span className="text-[11px] font-bold opacity-70">{formatTime(event.start)} - {formatTime(event.end)}</span>
+                          </motion.div>
                         )}
-                      </td>
+                      </div>
                     );
                   })}
-                </tr>
+                </Fragment>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </motion.div>
+        ) : (
+          /* ── SINGLE DAY LIST VIEW (Mobile & Desktop Tab) ── */
+          /* ── MOBILE/SINGLE DAY LIST VIEW ── */
+<motion.div
+  key={`list-${selectedDay}`}
+  initial={{ opacity: 0, x: 20 }}
+  animate={{ opacity: 1, x: 0 }}
+  exit={{ opacity: 0, x: -20 }}
+  className="flex flex-col gap-4 max-w-4xl mx-auto"
+>
+  <h2 className="text-xl font-black text-gray-800 lg:hidden px-2 mb-2">{selectedDay}</h2>
+  
+  {hours.map((hour) => {
+    const event = getEvent(selectedDay, hour);
+    const c = event ? subjectColors[event.title] : null;
+    
+    return (
+      <div key={`list-row-${hour}`} className="flex gap-3 sm:gap-6 group">
+        {/* Time Label - Shrunk slightly for mobile */}
+        <div className="w-10 sm:w-14 pt-3 text-right text-[10px] sm:text-sm font-bold text-gray-300">
+          {hour}:00
         </div>
-      ) : (
-        // DAY VIEW - full width, large cells, perfect for mobile
-        <div className="w-full rounded-xl">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-            {selectedDay}
-          </h2>
-          <div className="flex flex-col gap-2">
-            {hours.map((hour) => {
-              const event = getEvent(selectedDay, hour);
-              return (
-                <div key={hour} className="flex items-stretch gap-3">
-                  {/* TIME */}
-                  <div className="w-12 text-xs text-gray-400 text-right pt-4 shrink-0">
-                    {hour}:00
-                  </div>
-                  {/* EVENT */}
-                  <div className="flex-1 min-h-[72px]">
-                    {event ? (
-                      <div className={`w-full h-full rounded-xl p-4 flex flex-col justify-center gap-1 ${getColor(event.title)}`}>
-                        <span className="font-bold text-base leading-tight">
-                          {event.title}
-                        </span>
-                        <span className="text-sm opacity-60 font-medium">
-                          {new Date(event.start).getHours()}:
-                          {String(new Date(event.start).getMinutes()).padStart(2, "0")}
-                          {" - "}
-                          {new Date(event.end).getHours()}:
-                          {String(new Date(event.end).getMinutes()).padStart(2, "0")}
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="w-full h-full rounded-xl bg-gray-50 min-h-[72px]" />
-                    )}
-                  </div>
+
+        <div className="flex-1 min-w-0"> {/* min-w-0 is crucial for text-truncate/wrap inside flex */}
+          {event ? (
+            <motion.div 
+              layout
+              className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-2 shadow-sm h-auto ${c?.bg} ${c?.text} ${c?.border}`}
+            >
+              {/* Stacked on mobile, side-by-side on tablet+ */}
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-4">
+                
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${c?.dot}`} />
+                  <span className="font-black text-lg sm:text-2xl leading-tight break-words">
+                    {event.title}
+                  </span>
                 </div>
-              );
-            })}
-          </div>
+
+                <div className="flex items-center">
+                  <span className="text-[11px] sm:text-base font-bold bg-white/60 px-3 py-1 rounded-full whitespace-nowrap shadow-sm border border-black/5">
+                    {formatTime(event.start)} — {formatTime(event.end)}
+                  </span>
+                </div>
+
+              </div>
+            </motion.div>
+          ) : (
+            /* Empty slot height reduced for mobile to keep scroll length manageable */
+            <div className="h-12 sm:h-16 border-b border-gray-100 border-dashed" />
+          )}
         </div>
-      )}
+      </div>
+    );
+  })}
+</motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

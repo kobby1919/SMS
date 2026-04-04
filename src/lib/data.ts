@@ -916,7 +916,13 @@ export const announcementsData = [
 ];
 
 // YOU SHOULD CHANGE THE DATES OF THE EVENTS TO THE CURRENT DATE TO SEE THE EVENTS ON THE CALENDAR
-export const calendarEvents = [
+export interface CalendarEvent {
+  title: string;
+  allDay: boolean;
+  start: Date;
+  end: Date;
+}
+export const calendarEvents: CalendarEvent[] = [
   {
     title: "Math",
     allDay: false,
