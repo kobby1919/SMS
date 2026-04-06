@@ -94,16 +94,16 @@ const TeacherListPage = () => {
 
         {/* Table — scrollable on mobile */}
         <div className="w-full overflow-x-auto">
-          <table className="w-full min-w-[640px]">
+          <table className="w-full min-w-[360px]">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/60">
-                <th className="text-left px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Teacher</th>
-                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">ID</th>
-                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">Subjects</th>
-                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">Classes</th>
-                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">Phone</th>
-                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">Address</th>
-                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Actions</th>
+                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Teacher</th>
+                <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">ID</th>
+                <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">Subjects</th>
+                <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">Classes</th>
+                <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden xl:table-cell">Phone</th>
+                <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden xl:table-cell">Address</th>
+                <th className="text-right px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 sticky right-0 bg-gray-50/60 backdrop-blur-sm">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -113,7 +113,7 @@ const TeacherListPage = () => {
                   className="hover:bg-indigo-50/30 transition-colors duration-150 group"
                 >
                   {/* Teacher info */}
-                  <td className="px-5 py-4">
+                  <td className="px-4 py-3.5">
                     <div className="flex items-center gap-3">
                       <div className="relative shrink-0">
                         <Image
@@ -134,14 +134,14 @@ const TeacherListPage = () => {
                   </td>
 
                   {/* Teacher ID */}
-                  <td className="px-4 py-4 hidden md:table-cell">
+                  <td className="px-3 py-3.5 hidden md:table-cell">
                     <span className="text-xs font-mono font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">
                       {item.teacherId}
                     </span>
                   </td>
 
                   {/* Subjects */}
-                  <td className="px-4 py-4 hidden md:table-cell">
+                  <td className="px-3 py-3.5 hidden md:table-cell">
                     <div className="flex flex-wrap gap-1">
                       {item.subjects.slice(0, 2).map((s) => (
                         <span key={s} className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${getSubjectColor(s)}`}>
@@ -157,7 +157,7 @@ const TeacherListPage = () => {
                   </td>
 
                   {/* Classes */}
-                  <td className="px-4 py-4 hidden md:table-cell">
+                  <td className="px-3 py-3.5 hidden lg:table-cell">
                     <div className="flex flex-wrap gap-1">
                       {item.classes.slice(0, 3).map((c) => (
                         <span key={c} className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600">
@@ -173,17 +173,17 @@ const TeacherListPage = () => {
                   </td>
 
                   {/* Phone */}
-                  <td className="px-4 py-4 hidden lg:table-cell">
+                  <td className="px-3 py-3.5 hidden xl:table-cell">
                     <span className="text-sm text-gray-600 font-medium">{item.phone}</span>
                   </td>
 
                   {/* Address */}
-                  <td className="px-4 py-4 hidden lg:table-cell">
-                    <span className="text-sm text-gray-500 truncate max-w-[180px] block">{item.address}</span>
+                  <td className="px-3 py-3.5 hidden xl:table-cell">
+                    <span className="text-sm text-gray-500 truncate max-w-[160px] block">{item.address}</span>
                   </td>
 
-                  {/* Actions */}
-                  <td className="px-5 py-4">
+                  {/* Actions — sticky right */}
+                  <td className="px-4 py-3.5 sticky right-0 bg-white group-hover:bg-indigo-50/30 transition-colors">
                     <div className="flex items-center justify-end gap-2">
                       <Link href={`/list/teachers/${item.id}`}>
                         <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors">
