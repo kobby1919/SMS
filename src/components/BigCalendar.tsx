@@ -1,183 +1,239 @@
 "use client";
 
 import { calendarEvents } from "../lib/data";
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const hours = [8, 9, 10, 11, 12, 13, 14, 15, 16];
 
 const subjectColors: Record<string, { bg: string; text: string; border: string; dot: string }> = {
-  Math:      { bg: "bg-blue-50",   text: "text-blue-700",   border: "border-blue-200",   dot: "bg-blue-400" },
-  English:   { bg: "bg-amber-50",  text: "text-amber-700",  border: "border-amber-200",  dot: "bg-amber-400" },
-  Biology:   { bg: "bg-emerald-50",text: "text-emerald-700",border: "border-emerald-200",dot: "bg-emerald-400" },
-  Physics:   { bg: "bg-violet-50", text: "text-violet-700", border: "border-violet-200", dot: "bg-violet-400" },
-  Chemistry: { bg: "bg-rose-50",   text: "text-rose-700",   border: "border-rose-200",   dot: "bg-rose-400" },
-  History:   { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-200", dot: "bg-orange-400" },
+  Math:      { bg: "bg-blue-50",    text: "text-blue-700",    border: "border-l-blue-400",    dot: "bg-blue-400" },
+  English:   { bg: "bg-amber-50",   text: "text-amber-700",   border: "border-l-amber-400",   dot: "bg-amber-400" },
+  Biology:   { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-l-emerald-400", dot: "bg-emerald-400" },
+  Physics:   { bg: "bg-violet-50",  text: "text-violet-700",  border: "border-l-violet-400",  dot: "bg-violet-400" },
+  Chemistry: { bg: "bg-rose-50",    text: "text-rose-700",    border: "border-l-rose-400",    dot: "bg-rose-400" },
+  History:   { bg: "bg-orange-50",  text: "text-orange-700",  border: "border-l-orange-400",  dot: "bg-orange-400" },
 };
 
-const getEvent = (dayName: string, hour: number) =>
-  calendarEvents.find((event) => {
-    const d = new Date(event.start);
-    const eventDayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][d.getDay()];
-    return eventDayName === dayName && d.getHours() === hour;
-  });
+const defaultColor = { bg: "bg-sky-50", text: "text-sky-700", border: "border-l-sky-400", dot: "bg-sky-400" };
+const getColor = (title: string) => subjectColors[title] ?? defaultColor;
 
-const formatTime = (date: Date) => `${date.getHours()}:${String(date.getMinutes()).padStart(2, "0")}`;
+const getDayIndex = (dayName: string) => days.indexOf(dayName);
+
+const getEventsForDay = (dayName: string) => {
+  const dayIndex = getDayIndex(dayName);
+  return calendarEvents.filter((e) => new Date(e.start).getDay() === dayIndex + 1);
+};
+
+const getEvent = (dayName: string, hour: number) => {
+  const dayIndex = getDayIndex(dayName);
+  return calendarEvents.find(
+    (e) => new Date(e.start).getDay() === dayIndex + 1 && new Date(e.start).getHours() === hour
+  );
+};
+
+const formatTime = (date: Date) =>
+  `${date.getHours()}:${String(date.getMinutes()).padStart(2, "0")}`;
 
 const BigCalendar = () => {
-  const [selectedDay, setSelectedDay] = useState<string>("all");
-  const [isMobile, setIsMobile] = useState(false);
+  const [selectedDay, setSelectedDay] = useState<string>("Monday");
+  const [viewMode, setViewMode] = useState<"week" | "day">("day");
+  const [isDesktop, setIsDesktop] = useState(false);
 
-  // Sync mobile/desktop view on mount and resize
   useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth < 1024;
-      setIsMobile(mobile);
-      // On mobile, we force a day if "all" is selected
-      if (mobile && selectedDay === "all") {
-        setSelectedDay("Monday");
-      }
+    const check = () => {
+      const desktop = window.innerWidth >= 1024;
+      setIsDesktop(desktop);
+      if (desktop) setViewMode("week");
+      else setViewMode("day");
     };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [selectedDay]);
-
-  const allTabs = ["all", ...days];
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-6">
-      
-      {/* ── UNIFIED SELECTOR (Works for both Mobile & Desktop) ── */}
-      <div className={`flex gap-2 mb-8 items-center bg-gray-100 p-1.5 rounded-2xl w-fit max-w-full overflow-x-auto no-scrollbar`}>
-        {allTabs.map((d) => {
-          // Hide "Whole Week" button on mobile to save space
-          if (isMobile && d === "all") return null;
+    <div className="w-full">
 
-          const isActive = selectedDay === d;
-          return (
+      {/* ── Day / Week switcher ── */}
+      {/* Scrollable row — never wraps, never overflows the screen */}
+      <div className="w-full overflow-x-auto pb-1 mb-5">
+        <div className="flex gap-1.5 bg-gray-100 p-1 rounded-xl w-max">
+          {isDesktop && (
+            <button
+              onClick={() => setViewMode("week")}
+              className={`px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide transition-all whitespace-nowrap
+                ${viewMode === "week" ? "bg-white text-indigo-600 shadow-sm" : "text-gray-400 hover:text-indigo-500"}`}
+            >
+              Week
+            </button>
+          )}
+          {days.map((d) => (
             <button
               key={d}
-              onClick={() => setSelectedDay(d)}
-              className={`relative px-6 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wider transition-all duration-300 z-10 whitespace-nowrap
-                ${isActive ? "text-white" : "text-gray-500 hover:text-indigo-600"}`}
+              onClick={() => { setSelectedDay(d); setViewMode("day"); }}
+              className={`px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide transition-all whitespace-nowrap
+                ${viewMode === "day" && selectedDay === d
+                  ? "bg-white text-indigo-600 shadow-sm"
+                  : "text-gray-400 hover:text-indigo-500"
+                }`}
             >
-              {isActive && (
-                <motion.div
-                  layoutId="activeTabHighlight"
-                  className="absolute inset-0 bg-indigo-600 shadow-md rounded-xl -z-10"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                />
-              )}
-              {d === "all" ? "Whole Week" : d.slice(0, 3)}
+              {/* Full name on desktop, 3-letter on mobile */}
+              <span className="hidden sm:inline">{d}</span>
+              <span className="sm:hidden">{d.slice(0, 3)}</span>
             </button>
-          );
-        })}
+          ))}
+        </div>
+      </div>
+
+      {/* ── Subject legend — wraps naturally ── */}
+      <div className="flex flex-wrap gap-2 mb-5">
+        {Object.entries(subjectColors).map(([subject, c]) => (
+          <div key={subject} className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${c.bg} ${c.text}`}>
+            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${c.dot}`} />
+            {subject}
+          </div>
+        ))}
       </div>
 
       <AnimatePresence mode="wait">
-        {selectedDay === "all" ? (
-          /* ── DESKTOP GRID VIEW ── */
+
+        {/* ══ WEEK VIEW (desktop only) ══ */}
+        {viewMode === "week" && (
           <motion.div
-            key="grid"
-            initial={{ opacity: 0, y: 10 }}
+            key="week"
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="hidden lg:block bg-white border border-gray-100 rounded-3xl p-6 shadow-sm"
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+            className="w-full overflow-x-auto"
           >
-            <div className="grid grid-cols-[80px_repeat(5,1fr)] gap-2">
-              <div /> {/* Corner spacer */}
-              {days.map(day => (
-                <div key={day} className="text-center pb-4 text-xs font-black uppercase tracking-widest text-gray-400">
-                  {day}
-                </div>
-              ))}
-              
-              {hours.map(hour => (
-                <Fragment key={`row-${hour}`}>
-                  <div className="pr-4 text-right text-xs font-bold text-gray-300 py-6">
-                    {hour}:00
+            <div className="min-w-[640px] bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+              {/* Header */}
+              <div className="grid border-b border-gray-100" style={{ gridTemplateColumns: "56px repeat(5, 1fr)" }}>
+                <div />
+                {days.map((day) => (
+                  <div key={day} className="p-3 text-center border-l border-gray-100">
+                    <p className="text-[11px] font-black uppercase tracking-widest text-gray-400">{day.slice(0, 3)}</p>
+                    <p className="text-[10px] text-gray-300 mt-0.5">{getEventsForDay(day).length} cls</p>
                   </div>
-                  {days.map(day => {
+                ))}
+              </div>
+
+              {/* Rows */}
+              {hours.map((hour, hi) => (
+                <div
+                  key={hour}
+                  className="grid border-b border-gray-50 last:border-b-0"
+                  style={{ gridTemplateColumns: "56px repeat(5, 1fr)" }}
+                >
+                  <div className="flex items-start justify-end pr-2 pt-2.5">
+                    <span className="text-[10px] font-bold text-gray-300">{hour}:00</span>
+                  </div>
+                  {days.map((day) => {
                     const event = getEvent(day, hour);
-                    const c = event ? subjectColors[event.title] : null;
+                    const c = event ? getColor(event.title) : null;
                     return (
-                      <div key={`${day}-${hour}`} className="relative border-t border-gray-50 min-h-[100px] p-1">
-                        {event && (
+                      <div key={day} className={`border-l border-gray-50 min-h-[68px] p-1 ${hi % 2 !== 0 ? "bg-gray-50/40" : ""}`}>
+                        {event && c && (
                           <motion.div
-                            whileHover={{ scale: 1.03, zIndex: 10 }}
-                            className={`h-full w-full rounded-xl border-2 p-3 flex flex-col justify-center cursor-pointer shadow-sm ${c?.bg} ${c?.text} ${c?.border}`}
+                            whileHover={{ scale: 1.02 }}
+                            className={`h-full min-h-[56px] rounded-xl border-l-4 px-2 py-2 flex flex-col justify-center gap-1 cursor-default ${c.bg} ${c.border}`}
                           >
-                            <span className="font-black text-sm leading-tight mb-1">{event.title}</span>
-                            <span className="text-[11px] font-bold opacity-70">{formatTime(event.start)} - {formatTime(event.end)}</span>
+                            <span className={`font-bold text-xs leading-snug ${c.text}`}>{event.title}</span>
+                            <span className={`text-[10px] font-medium opacity-60 ${c.text}`}>
+                              {formatTime(new Date(event.start))} – {formatTime(new Date(event.end))}
+                            </span>
                           </motion.div>
                         )}
                       </div>
                     );
                   })}
-                </Fragment>
+                </div>
               ))}
             </div>
           </motion.div>
-        ) : (
-          /* ── SINGLE DAY LIST VIEW (Mobile & Desktop Tab) ── */
-          /* ── MOBILE/SINGLE DAY LIST VIEW ── */
-<motion.div
-  key={`list-${selectedDay}`}
-  initial={{ opacity: 0, x: 20 }}
-  animate={{ opacity: 1, x: 0 }}
-  exit={{ opacity: 0, x: -20 }}
-  className="flex flex-col gap-4 max-w-4xl mx-auto"
->
-  <h2 className="text-xl font-black text-gray-800 lg:hidden px-2 mb-2">{selectedDay}</h2>
-  
-  {hours.map((hour) => {
-    const event = getEvent(selectedDay, hour);
-    const c = event ? subjectColors[event.title] : null;
-    
-    return (
-      <div key={`list-row-${hour}`} className="flex gap-3 sm:gap-6 group">
-        {/* Time Label - Shrunk slightly for mobile */}
-        <div className="w-10 sm:w-14 pt-3 text-right text-[10px] sm:text-sm font-bold text-gray-300">
-          {hour}:00
-        </div>
-
-        <div className="flex-1 min-w-0"> {/* min-w-0 is crucial for text-truncate/wrap inside flex */}
-          {event ? (
-            <motion.div 
-              layout
-              className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-2 shadow-sm h-auto ${c?.bg} ${c?.text} ${c?.border}`}
-            >
-              {/* Stacked on mobile, side-by-side on tablet+ */}
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-4">
-                
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${c?.dot}`} />
-                  <span className="font-black text-lg sm:text-2xl leading-tight break-words">
-                    {event.title}
-                  </span>
-                </div>
-
-                <div className="flex items-center">
-                  <span className="text-[11px] sm:text-base font-bold bg-white/60 px-3 py-1 rounded-full whitespace-nowrap shadow-sm border border-black/5">
-                    {formatTime(event.start)} — {formatTime(event.end)}
-                  </span>
-                </div>
-
-              </div>
-            </motion.div>
-          ) : (
-            /* Empty slot height reduced for mobile to keep scroll length manageable */
-            <div className="h-12 sm:h-16 border-b border-gray-100 border-dashed" />
-          )}
-        </div>
-      </div>
-    );
-  })}
-</motion.div>
         )}
+
+        {/* ══ DAY VIEW ══ */}
+        {viewMode === "day" && (
+          <motion.div
+            key={`day-${selectedDay}`}
+            initial={{ opacity: 0, x: 12 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -12 }}
+            transition={{ duration: 0.22 }}
+            className="w-full"
+          >
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+
+              {/* Card header */}
+              <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                <div>
+                  <h3 className="font-black text-gray-800 text-sm">{selectedDay}</h3>
+                  <p className="text-[11px] text-gray-400 mt-0.5">
+                    {getEventsForDay(selectedDay).length} classes today
+                  </p>
+                </div>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => { const i = days.indexOf(selectedDay); if (i > 0) setSelectedDay(days[i - 1]); }}
+                    disabled={days.indexOf(selectedDay) === 0}
+                    className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 disabled:opacity-30 transition-all text-lg leading-none"
+                  >‹</button>
+                  <button
+                    onClick={() => { const i = days.indexOf(selectedDay); if (i < days.length - 1) setSelectedDay(days[i + 1]); }}
+                    disabled={days.indexOf(selectedDay) === days.length - 1}
+                    className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 disabled:opacity-30 transition-all text-lg leading-none"
+                  >›</button>
+                </div>
+              </div>
+
+              {/* Slots */}
+              <div className="divide-y divide-gray-50">
+                {hours.map((hour) => {
+                  const event = getEvent(selectedDay, hour);
+                  const c = event ? getColor(event.title) : null;
+                  return (
+                    <div key={hour} className="flex items-stretch min-h-[60px]">
+
+                      {/* Hour label */}
+                      <div className="w-14 shrink-0 flex items-center justify-end pr-3">
+                        <span className="text-[10px] font-bold text-gray-300">{hour}:00</span>
+                      </div>
+
+                      <div className="w-px bg-gray-100 shrink-0" />
+
+                      {/* Event or empty */}
+                      <div className="flex-1 px-3 py-2 flex items-center min-w-0">
+                        {event && c ? (
+                          <div className={`w-full rounded-xl border-l-4 px-3 py-2.5 ${c.bg} ${c.border}`}>
+                            {/* Stack vertically on very small screens */}
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-3">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <span className={`w-2 h-2 rounded-full shrink-0 ${c.dot}`} />
+                                <span className={`font-bold text-sm leading-tight ${c.text}`}>
+                                  {event.title}
+                                </span>
+                              </div>
+                              <span className={`text-[11px] font-semibold ml-4 sm:ml-0 shrink-0 ${c.text} opacity-70`}>
+                                {formatTime(new Date(event.start))} – {formatTime(new Date(event.end))}
+                              </span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="w-full h-8 rounded-lg bg-gray-50" />
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
       </AnimatePresence>
     </div>
   );
