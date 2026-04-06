@@ -12,7 +12,7 @@ const TableSearch = () => {
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder="Search teachers..."
+        placeholder="Search through List..."
         className="bg-transparent outline-none text-sm text-gray-700 placeholder:text-gray-400 w-full font-medium"
       />
       {value && (
