@@ -264,7 +264,14 @@ const SingleStudentPage = () => {
         </motion.div>
 
         {/* Reusing common components */}
-        <Performance />
+        <Performance
+          title="Academic Standing"
+          currentSemesterValue={8.5}
+          previousSemesterValue={7.9}
+          trendLabel="7.5%"
+          rankingLabel="Top 10% of Class"
+          chartColor="#10b981" // Emerald/Green to match Student UI
+        />
         <Announcements />
       </motion.div>
     </motion.div>

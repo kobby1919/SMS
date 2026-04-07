@@ -253,7 +253,13 @@ const SingleTeacherPage = () => {
           </div>
         </motion.div>
 
-        <Performance />
+        <Performance
+          currentSemesterValue={9.2}
+          previousSemesterValue={8.8}
+          trendLabel="4%"
+          rankingLabel="Top 15% of Staff"
+          chartColor="#6366f1" // Indigo
+        />
         <Announcements />
       </motion.div>
     </motion.div>
