@@ -17,7 +17,7 @@ import {
   Award,
 } from "lucide-react";
 
-const SingleTeacherPage = () => {
+const SingleStudentPage = () => {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -45,7 +45,8 @@ const SingleTeacherPage = () => {
           variants={itemVariants}
           className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
         >
-          <div className="h-24 bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-600 relative">
+          {/* Top banner */}
+          <div className="h-24 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 relative">
             <div
               className="absolute inset-0 opacity-20"
               style={{
@@ -57,12 +58,13 @@ const SingleTeacherPage = () => {
           </div>
 
           <div className="px-5 pb-5">
+            {/* Avatar + name row */}
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 -mt-10 sm:-mt-12 mb-4">
               <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4">
                 <div className="relative shrink-0">
                   <Image
-                    src="https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=1200"
-                    alt="Mr Jay"
+                    src="https://images.pexels.com/photos/5414817/pexels-photo-5414817.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                    alt="Vicky"
                     width={96}
                     height={96}
                     className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover ring-4 ring-white shadow-md bg-white"
@@ -71,38 +73,45 @@ const SingleTeacherPage = () => {
                 </div>
                 <div className="mb-1 text-center sm:text-left">
                   <h1 className="text-xl font-black text-gray-800 tracking-tight">
-                    Mr. Jay
+                    Miss Vicky
                   </h1>
-                  <p className="text-sm text-indigo-600 font-semibold">
-                    Senior Mathematics Teacher
+                  <p className="text-sm text-emerald-600 font-semibold">
+                    Grade 11-B Student
                   </p>
                 </div>
               </div>
+
+              {/* Action buttons */}
               <div className="flex justify-center sm:justify-start gap-2 shrink-0">
-                <button className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-all active:scale-95 shadow-sm">
-                  Edit Profile
+                <button className="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-all active:scale-95 shadow-sm">
+                  Download Report
                 </button>
                 <button className="px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-xs font-bold hover:bg-gray-200 transition-all active:scale-95">
-                  Message
+                  Message Parents
                 </button>
               </div>
             </div>
+
+            {/* Student Bio */}
             <p className="text-sm text-gray-500 leading-relaxed mb-5 max-w-xl text-center sm:text-left mx-auto sm:mx-0">
-              Dedicated mathematics educator with over 8 years of experience
-              inspiring students through innovative teaching methods.
+              An enthusiastic and dedicated student with a strong interest in
+              science and technology. Currently maintaining a high GPA while
+              participating in the school's robotics club.
             </p>
+
+            {/* Info pills */}
             <div className="flex flex-wrap justify-center sm:justify-start gap-2.5">
               {[
-                { icon: <Droplets size={13} />, label: "A+" },
-                { icon: <Calendar size={13} />, label: "Joined Jan 2026" },
-                { icon: <Mail size={13} />, label: "user@gmail.com" },
-                { icon: <Phone size={13} />, label: "+1 234 567" },
+                { icon: <Droplets size={13} />, label: "O+" },
+                { icon: <Calendar size={13} />, label: "Enrollment: 2024" },
+                { icon: <Mail size={13} />, label: "chris.jay@school.com" },
+                { icon: <Phone size={13} />, label: "+1 987 654" },
               ].map(({ icon, label }) => (
                 <div
                   key={label}
                   className="flex items-center gap-1.5 bg-gray-100 rounded-full px-3 py-1.5 text-xs font-medium text-gray-600"
                 >
-                  <span className="text-indigo-500">{icon}</span>
+                  <span className="text-emerald-500">{icon}</span>
                   {label}
                 </div>
               ))}
@@ -118,27 +127,27 @@ const SingleTeacherPage = () => {
           {[
             {
               icon: <Clock size={16} />,
-              value: "90%",
+              value: "96%",
               label: "Attendance",
-              color: "bg-indigo-50 text-indigo-600",
-            },
-            {
-              icon: <BookOpen size={16} />,
-              value: "6",
-              label: "Lessons",
-              color: "bg-amber-50 text-amber-600",
-            },
-            {
-              icon: <Users size={16} />,
-              value: "2",
-              label: "Branches",
               color: "bg-emerald-50 text-emerald-600",
             },
             {
+              icon: <BookOpen size={16} />,
+              value: "12",
+              label: "Courses",
+              color: "bg-blue-50 text-blue-600",
+            },
+            {
+              icon: <Users size={16} />,
+              value: "6th",
+              label: "Class Rank",
+              color: "bg-purple-50 text-purple-600",
+            },
+            {
               icon: <Award size={16} />,
-              value: "4",
-              label: "Classes",
-              color: "bg-violet-50 text-violet-600",
+              value: "4.8",
+              label: "GPA",
+              color: "bg-amber-50 text-amber-600",
             },
           ].map((stat) => (
             <motion.div
@@ -171,14 +180,14 @@ const SingleTeacherPage = () => {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
             <div>
               <h2 className="text-base font-black text-gray-800">
-                Teaching Schedule
+                Student Timetable
               </h2>
               <p className="text-xs text-gray-400 mt-0.5">
-                Weekly timetable overview
+                Current class schedule
               </p>
             </div>
-            <span className="text-xs font-semibold bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full">
-              This Week
+            <span className="text-xs font-semibold bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-full">
+              Term 2
             </span>
           </div>
           <div className="h-[calc(100%-60px)]">
@@ -192,6 +201,7 @@ const SingleTeacherPage = () => {
         variants={containerVariants}
         className="w-full xl:w-1/3 flex flex-col gap-4"
       >
+        {/* Shortcuts */}
         <motion.div
           variants={itemVariants}
           className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5"
@@ -204,24 +214,6 @@ const SingleTeacherPage = () => {
           </div>
           <div className="grid grid-cols-2 gap-2.5">
             {[
-              {
-                label: "Classes",
-                href: "/",
-                color: "bg-indigo-50 text-indigo-600 hover:bg-indigo-100",
-                icon: "🏫",
-              },
-              {
-                label: "Students",
-                href: "/",
-                color: "bg-violet-50 text-violet-600 hover:bg-violet-100",
-                icon: "👨‍🎓",
-              },
-              {
-                label: "Lessons",
-                href: "/",
-                color: "bg-amber-50 text-amber-600 hover:bg-amber-100",
-                icon: "📚",
-              },
               {
                 label: "Exams",
                 href: "/",
@@ -240,6 +232,24 @@ const SingleTeacherPage = () => {
                 color: "bg-sky-50 text-sky-600 hover:bg-sky-100",
                 icon: "📊",
               },
+              {
+                label: "Lessons",
+                href: "/",
+                color: "bg-amber-50 text-amber-600 hover:bg-amber-100",
+                icon: "📚",
+              },
+              {
+                label: "Teachers",
+                href: "/",
+                color: "bg-indigo-50 text-indigo-600 hover:bg-indigo-100",
+                icon: "👨‍🏫",
+              },
+              {
+                label: "Resources",
+                href: "/",
+                color: "bg-violet-50 text-violet-600 hover:bg-violet-100",
+                icon: "📂",
+              },
             ].map(({ label, href, color, icon }) => (
               <Link
                 key={label}
@@ -253,6 +263,7 @@ const SingleTeacherPage = () => {
           </div>
         </motion.div>
 
+        {/* Reusing common components */}
         <Performance />
         <Announcements />
       </motion.div>
@@ -260,4 +271,4 @@ const SingleTeacherPage = () => {
   );
 };
 
-export default SingleTeacherPage;
+export default SingleStudentPage;
