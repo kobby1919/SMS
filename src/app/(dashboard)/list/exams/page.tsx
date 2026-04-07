@@ -2,10 +2,7 @@
 
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
-import {
-  examsData,
-  role,
-} from "@/src/lib/data";
+import { examsData, role } from "@/src/lib/data";
 import Link from "next/link";
 import {
   Eye,
@@ -15,6 +12,7 @@ import {
   Plus,
   Calendar, // Changed icon for Exams
 } from "lucide-react";
+import FormModal from "@/src/components/FormModal";
 
 type Exam = {
   id: number;
@@ -51,10 +49,11 @@ const ExamListPage = () => {
                 <span className="hidden sm:inline">Sort</span>
               </button>
               {role === "admin" && (
-                <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200">
-                  <Plus size={14} />
-                  <span>Add</span>
-                </button>
+                // <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200">
+                //   <Plus size={14} />
+                //   <span>Add</span>
+                // </button>
+                <FormModal table="exam" type="create" />
               )}
             </div>
           </div>
@@ -75,7 +74,9 @@ const ExamListPage = () => {
             key={stat.label}
             className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3"
           >
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
+            <div
+              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}
+            >
               {stat.icon}
             </div>
             <div>
@@ -126,9 +127,7 @@ const ExamListPage = () => {
                   </td>
 
                   <td className="px-4 py-4 hidden md:table-cell">
-                    <span className="text-sm text-gray-500">
-                      {item.class}
-                    </span>
+                    <span className="text-sm text-gray-500">{item.class}</span>
                   </td>
 
                   <td className="px-3 py-3.5 hidden md:table-cell">
@@ -139,22 +138,20 @@ const ExamListPage = () => {
 
                   {/* FIXED: Rendering item.date instead of item.class */}
                   <td className="px-4 py-4 hidden md:table-cell">
-                    <span className="text-sm text-gray-500">
-                      {item.date}
-                    </span>
+                    <span className="text-sm text-gray-500">{item.date}</span>
                   </td>
 
+                  {/* Sticky actions */}
                   <td className="px-5 py-4 w-[100px]">
                     <div className="flex items-center justify-end gap-2">
-                      <Link href={`/list/exams/${item.id}`}>
-                        <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors">
-                          <Eye size={14} />
-                        </button>
-                      </Link>
+                      {/* 1. UPDATE MODAL (Replaces the Link/Eye icon) */}
                       {role === "admin" && (
-                        <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-100 transition-colors">
-                          <Trash2 size={14} />
-                        </button>
+                        <FormModal table="exam" type="update" data={item} />
+                      )}
+
+                      {/* 2. DELETE MODAL */}
+                      {role === "admin" && (
+                        <FormModal table="exam" type="delete" id={item.id} />
                       )}
                     </div>
                   </td>

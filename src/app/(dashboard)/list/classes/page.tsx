@@ -1,23 +1,11 @@
+"use client";
+
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
-import {
-  classesData,
-  parentsData,
-  role,
-  studentsData,
-  subjectsData,
-} from "@/src/lib/data";
+import { classesData, role } from "@/src/lib/data";
 import Image from "next/image";
-import Link from "next/link";
-import {
-  Eye,
-  Trash2,
-  Filter,
-  ArrowUpDown,
-  Plus,
-  BookOpen,
-  Users,
-} from "lucide-react";
+import { Users } from "lucide-react";
+import FormModal from "@/src/components/FormModal";
 
 type Class = {
   id: number;
@@ -26,19 +14,6 @@ type Class = {
   grade: number;
   supervisor: string;
 };
-
-const subjectColors: Record<string, string> = {
-  Math: "bg-blue-100 text-blue-700",
-  English: "bg-amber-100 text-amber-700",
-  Biology: "bg-emerald-100 text-emerald-700",
-  Physics: "bg-violet-100 text-violet-700",
-  Chemistry: "bg-rose-100 text-rose-700",
-  History: "bg-orange-100 text-orange-700",
-  Science: "bg-teal-100 text-teal-700",
-};
-
-const getSubjectColor = (subject: string) =>
-  subjectColors[subject] ?? "bg-gray-100 text-gray-600";
 
 const ClassListPage = () => {
   return (
@@ -52,7 +27,7 @@ const ClassListPage = () => {
               Classes
             </h1>
             <p className="text-sm text-gray-400 mt-0.5 font-medium">
-              {classesData.length} classes avalable
+              {classesData.length} classes available
             </p>
           </div>
 
@@ -61,18 +36,17 @@ const ClassListPage = () => {
             <TableSearch />
             <div className="flex items-center gap-2">
               <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                <Filter size={14} />
+                <Image src="/filter.png" alt="" width={16} height={16} />
                 <span className="hidden sm:inline">Filter</span>
               </button>
               <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                <ArrowUpDown size={14} />
+                <Image src="/sort.png" alt="" width={16} height={16} />
                 <span className="hidden sm:inline">Sort</span>
               </button>
+              
+              {/* ✅ FIXED: FormModal is called directly, no outer <button> */}
               {role === "admin" && (
-                <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200">
-                  <Plus size={14} />
-                  <span>Add</span>
-                </button>
+                <FormModal table="class" type="create" />
               )}
             </div>
           </div>
@@ -80,41 +54,26 @@ const ClassListPage = () => {
       </div>
 
       {/* ── Stats row ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {[
-          {
-            label: "Total Classes",
-            value: classesData.length,
-            icon: <Users size={16} />,
-            color: "bg-indigo-50 text-indigo-600",
-          },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3"
-          >
-            <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}
-            >
-              {stat.icon}
-            </div>
-            <div>
-              <p className="text-xl font-black text-gray-800 leading-none">
-                {stat.value}
-              </p>
-              <p className="text-xs text-gray-400 font-medium mt-0.5">
-                {stat.label}
-              </p>
-            </div>
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-indigo-50 text-indigo-600">
+            <Users size={16} />
           </div>
-        ))}
+          <div>
+            <p className="text-xl font-black text-gray-800 leading-none">
+              {classesData.length}
+            </p>
+            <p className="text-xs text-gray-400 font-medium mt-0.5">
+              Total Classes
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* ── Table card ── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-1">
-        {/* Table — scrollable on mobile */}
         <div className="w-full overflow-x-auto">
-          <table className="w-full min-w-full">
+          <table className="w-full min-w-full border-collapse">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/60">
                 <th className="text-left px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">
@@ -129,7 +88,8 @@ const ClassListPage = () => {
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">
                   Supervisor
                 </th>
-                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
+                {/* Fixed column setup for Actions */}
+                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 sticky right-0 bg-gray-50/60 z-10">
                   Actions
                 </th>
               </tr>
@@ -140,50 +100,32 @@ const ClassListPage = () => {
                   key={item.id}
                   className="hover:bg-indigo-50/30 transition-colors duration-150 group"
                 >
-                  {/* Classes info */}
                   <td className="px-5 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="min-w-0">
-                        <p className="font-bold text-sm text-gray-800 truncate">
-                          {item.name}
-                        </p>
-                      </div>
-                    </div>
+                    <p className="font-bold text-sm text-gray-800">{item.name}</p>
                   </td>
-
-                  {/* Capacity */}
                   <td className="px-4 py-4 hidden md:table-cell">
-                    <span className="text-sm text-gray-500  max-w-[180px] block break-words">
-                      {item.capacity}
-                    </span>
+                    <span className="text-sm text-gray-500">{item.capacity}</span>
                   </td>
-
-                  {/* Grade */}
-                  <td className="px-3 py-3.5 hidden md:table-cell">
+                  <td className="px-4 py-4 hidden md:table-cell">
                     <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-600">
                       Grade {item.grade}
                     </span>
                   </td>
-
-                  {/* SUPERVISOR */}
                   <td className="px-4 py-4 hidden md:table-cell">
-                    <span className="text-sm text-gray-500 block break-words">
-                      {item.supervisor}
-                    </span>
+                    <span className="text-sm text-gray-500">{item.supervisor}</span>
                   </td>
-
-                  {/* Actions */}
+                  
+                  {/* ✅ FIXED: Actions cell handles z-index and spacing */}
                   <td className="px-5 py-4 w-[100px]">
                     <div className="flex items-center justify-end gap-2">
-                      <Link href={`/list/students/${item.id}`}>
-                        <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors">
-                          <Eye size={14} />
-                        </button>
-                      </Link>
+                      {/* 1. UPDATE MODAL (Replaces the Link/Eye icon) */}
                       {role === "admin" && (
-                        <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-100 transition-colors">
-                          <Trash2 size={14} />
-                        </button>
+                        <FormModal table="class" type="update" data={item} />
+                      )}
+
+                      {/* 2. DELETE MODAL */}
+                      {role === "admin" && (
+                        <FormModal table="class" type="delete" id={item.id} />
                       )}
                     </div>
                   </td>

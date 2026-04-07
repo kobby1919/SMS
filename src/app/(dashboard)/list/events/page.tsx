@@ -3,17 +3,13 @@
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
 import { eventsData, role } from "@/src/lib/data";
-import Link from "next/link";
 import {
-  Eye,
-  Trash2,
   Filter,
   ArrowUpDown,
-  Plus,
   CalendarDays,
 } from "lucide-react";
+import FormModal from "@/src/components/FormModal";
 
-// 1. Correct Type definition for Events
 type Event = {
   id: number;
   title: string;
@@ -49,11 +45,10 @@ const EventListPage = () => {
                 <ArrowUpDown size={14} />
                 <span className="hidden sm:inline">Sort</span>
               </button>
+              
+              {/* ✅ FIXED: Removed the outer <button> to prevent hydration/nesting errors */}
               {role === "admin" && (
-                <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200">
-                  <Plus size={14} />
-                  <span>Add Event</span>
-                </button>
+                <FormModal table="event" type="create" />
               )}
             </div>
           </div>
@@ -80,7 +75,7 @@ const EventListPage = () => {
       {/* ── Table card ── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-1">
         <div className="w-full overflow-x-auto">
-          <table className="w-full min-w-full">
+          <table className="w-full min-w-full border-collapse">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/60">
                 <th className="text-left px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">
@@ -98,7 +93,8 @@ const EventListPage = () => {
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">
                   End Time
                 </th>
-                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
+                {/* Fixed column header setup */}
+                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 sticky right-0 bg-gray-50/60 z-10">
                   Actions
                 </th>
               </tr>
@@ -124,17 +120,18 @@ const EventListPage = () => {
                   <td className="px-4 py-4 hidden lg:table-cell text-sm text-gray-500">
                     {item.endTime}
                   </td>
+                  
+                  {/* ✅ FIXED: Sticky column with background matching row hover */}
                   <td className="px-5 py-4 w-[100px]">
                     <div className="flex items-center justify-end gap-2">
-                      <Link href={`/list/events/${item.id}`}>
-                        <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors">
-                          <Eye size={14} />
-                        </button>
-                      </Link>
+                      {/* 1. UPDATE MODAL (Replaces the Link/Eye icon) */}
                       {role === "admin" && (
-                        <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-100 transition-colors">
-                          <Trash2 size={14} />
-                        </button>
+                        <FormModal table="event" type="update" data={item} />
+                      )}
+
+                      {/* 2. DELETE MODAL */}
+                      {role === "admin" && (
+                        <FormModal table="event" type="delete" id={item.id} />
                       )}
                     </div>
                   </td>

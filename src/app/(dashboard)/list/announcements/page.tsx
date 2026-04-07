@@ -12,6 +12,7 @@ import {
   Plus,
   Megaphone,
 } from "lucide-react";
+import FormModal from "@/src/components/FormModal";
 
 // 1. Correct Type definition for Announcements
 type Announcement = {
@@ -48,10 +49,11 @@ const AnnouncementListPage = () => {
                 <span className="hidden sm:inline">Sort</span>
               </button>
               {role === "admin" && (
-                <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200">
-                  <Plus size={14} />
-                  <span>Add Announcement</span>
-                </button>
+                // <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200">
+                //   <Plus size={14} />
+                //   <span>Add Announcement</span>
+                // </button>
+                <FormModal table="announcement" type="create" />
               )}
             </div>
           </div>
@@ -68,7 +70,9 @@ const AnnouncementListPage = () => {
             <p className="text-xl font-black text-gray-800 leading-none">
               {announcementsData.length}
             </p>
-            <p className="text-xs text-gray-400 font-medium mt-0.5">Total Posts</p>
+            <p className="text-xs text-gray-400 font-medium mt-0.5">
+              Total Posts
+            </p>
           </div>
         </div>
       </div>
@@ -79,29 +83,54 @@ const AnnouncementListPage = () => {
           <table className="w-full min-w-full">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/60">
-                <th className="text-left px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Title</th>
-                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Class</th>
-                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">Date</th>
-                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">Actions</th>
+                <th className="text-left px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">
+                  Title
+                </th>
+                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">
+                  Class
+                </th>
+                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">
+                  Date
+                </th>
+                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {announcementsData.map((item: Announcement) => (
-                <tr key={item.id} className="hover:bg-indigo-50/30 transition-colors duration-150 group">
-                  <td className="px-5 py-4 font-bold text-sm text-gray-800">{item.title}</td>
-                  <td className="px-4 py-4 text-sm text-gray-500">{item.class}</td>
-                  <td className="px-4 py-4 hidden md:table-cell text-sm text-gray-500">{item.date}</td>
+                <tr
+                  key={item.id}
+                  className="hover:bg-indigo-50/30 transition-colors duration-150 group"
+                >
+                  <td className="px-5 py-4 font-bold text-sm text-gray-800">
+                    {item.title}
+                  </td>
+                  <td className="px-4 py-4 text-sm text-gray-500">
+                    {item.class}
+                  </td>
+                  <td className="px-4 py-4 hidden md:table-cell text-sm text-gray-500">
+                    {item.date}
+                  </td>
+                  {/* Sticky actions */}
                   <td className="px-5 py-4 w-[100px]">
                     <div className="flex items-center justify-end gap-2">
-                      <Link href={`/list/announcements/${item.id}`}>
-                        <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors">
-                          <Eye size={14} />
-                        </button>
-                      </Link>
+                      {/* 1. UPDATE MODAL (Replaces the Link/Eye icon) */}
                       {role === "admin" && (
-                        <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-100 transition-colors">
-                          <Trash2 size={14} />
-                        </button>
+                        <FormModal
+                          table="announcement"
+                          type="update"
+                          data={item}
+                        />
+                      )}
+
+                      {/* 2. DELETE MODAL */}
+                      {role === "admin" && (
+                        <FormModal
+                          table="announcement"
+                          type="delete"
+                          id={item.id}
+                        />
                       )}
                     </div>
                   </td>

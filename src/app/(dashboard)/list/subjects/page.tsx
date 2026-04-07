@@ -12,6 +12,7 @@ import {
   BookOpen,
   Users,
 } from "lucide-react";
+import FormModal from "@/src/components/FormModal";
 
 type Subject = {
   id: number;
@@ -53,18 +54,22 @@ const SubjectListPage = () => {
             <TableSearch />
             <div className="flex items-center gap-2">
               <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                <Filter size={14} />
+                {/* <Filter size={14} /> */}
+                <Image src="/filter.png" alt="" width={16} height={16} />
                 <span className="hidden sm:inline">Filter</span>
               </button>
               <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                <ArrowUpDown size={14} />
+                {/* <ArrowUpDown size={14} /> */}
+                <Image src="/sort.png" alt="" width={16} height={16} />
                 <span className="hidden sm:inline">Sort</span>
               </button>
               {role === "admin" && (
-                <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200">
-                  <Plus size={14} />
-                  <span>Add</span>
-                </button>
+                // <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200">
+                //   {/* <Plus size={14} /> */}
+                //   <Image src="/plus.png" alt="" width={16} height={16} />
+                //   <span className="hidden sm:inline">Add</span>
+                // </button>
+                <FormModal table="subject" type="create" />
               )}
             </div>
           </div>
@@ -147,15 +152,14 @@ const SubjectListPage = () => {
                   {/* Actions */}
                   <td className="px-5 py-4 w-[100px]">
                     <div className="flex items-center justify-end gap-2">
-                      <Link href={`/list/students/${item.id}`}>
-                        <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors">
-                          <Eye size={14} />
-                        </button>
-                      </Link>
+                      {/* 1. UPDATE MODAL (Replaces the Link/Eye icon) */}
                       {role === "admin" && (
-                        <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-100 transition-colors">
-                          <Trash2 size={14} />
-                        </button>
+                        <FormModal table="subject" type="update" data={item} />
+                      )}
+
+                      {/* 2. DELETE MODAL */}
+                      {role === "admin" && (
+                        <FormModal table="subject" type="delete" id={item.id} />
                       )}
                     </div>
                   </td>

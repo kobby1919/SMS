@@ -12,6 +12,7 @@ import {
   Plus,
   ScrollText,
 } from "lucide-react";
+import FormModal from "@/src/components/FormModal";
 
 // 1. Updated type to match your data.ts perfectly
 type Result = {
@@ -51,12 +52,7 @@ const ResultListPage = () => {
                 <ArrowUpDown size={14} />
                 <span className="hidden sm:inline">Sort</span>
               </button>
-              {role === "admin" && (
-                <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200">
-                  <Plus size={14} />
-                  <span>Add</span>
-                </button>
-              )}
+              {role === "admin" && <FormModal table="result" type="create" />}
             </div>
           </div>
         </div>
@@ -72,7 +68,9 @@ const ResultListPage = () => {
             <p className="text-xl font-black text-gray-800 leading-none">
               {resultsData.length}
             </p>
-            <p className="text-xs text-gray-400 font-medium mt-0.5">Total Results</p>
+            <p className="text-xs text-gray-400 font-medium mt-0.5">
+              Total Results
+            </p>
           </div>
         </div>
       </div>
@@ -83,42 +81,73 @@ const ResultListPage = () => {
           <table className="w-full min-w-full">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/60">
-                <th className="text-left px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Subject</th>
-                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Student</th>
-                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">Score</th>
-                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">Teacher</th>
-                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">Class</th>
-                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">Date</th>
-                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">Actions</th>
+                <th className="text-left px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">
+                  Subject
+                </th>
+                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">
+                  Student
+                </th>
+                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">
+                  Score
+                </th>
+                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">
+                  Teacher
+                </th>
+                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">
+                  Class
+                </th>
+                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">
+                  Date
+                </th>
+                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {/* Casting resultsData to Result[] to resolve TS errors */}
               {(resultsData as Result[]).map((item) => (
-                <tr key={item.id} className="hover:bg-indigo-50/30 transition-colors duration-150 group">
-                  <td className="px-5 py-4 font-bold text-sm text-gray-800">{item.subject}</td>
-                  <td className="px-4 py-4 text-sm text-gray-500">{item.student}</td>
+                <tr
+                  key={item.id}
+                  className="hover:bg-indigo-50/30 transition-colors duration-150 group"
+                >
+                  <td className="px-5 py-4 font-bold text-sm text-gray-800">
+                    {item.subject}
+                  </td>
+                  <td className="px-4 py-4 text-sm text-gray-500">
+                    {item.student}
+                  </td>
                   <td className="px-4 py-4 hidden md:table-cell">
-                    <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${
-                      item.score >= 70 ? 'bg-emerald-50 text-emerald-600' : 'bg-indigo-50 text-indigo-600'
-                    }`}>
+                    <span
+                      className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${
+                        item.score >= 70
+                          ? "bg-emerald-50 text-emerald-600"
+                          : "bg-indigo-50 text-indigo-600"
+                      }`}
+                    >
                       {item.score}
                     </span>
                   </td>
-                  <td className="px-4 py-4 hidden lg:table-cell text-sm text-gray-500">{item.teacher}</td>
-                  <td className="px-4 py-4 hidden lg:table-cell text-sm text-gray-500">{item.class}</td>
-                  <td className="px-4 py-4 hidden md:table-cell text-sm text-gray-500">{item.date}</td>
+                  <td className="px-4 py-4 hidden lg:table-cell text-sm text-gray-500">
+                    {item.teacher}
+                  </td>
+                  <td className="px-4 py-4 hidden lg:table-cell text-sm text-gray-500">
+                    {item.class}
+                  </td>
+                  <td className="px-4 py-4 hidden md:table-cell text-sm text-gray-500">
+                    {item.date}
+                  </td>
+                  {/* Sticky actions */}
                   <td className="px-5 py-4 w-[100px]">
                     <div className="flex items-center justify-end gap-2">
-                      <Link href={`/list/results/${item.id}`}>
-                        <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors">
-                          <Eye size={14} />
-                        </button>
-                      </Link>
+                      {/* 1. UPDATE MODAL (Replaces the Link/Eye icon) */}
                       {role === "admin" && (
-                        <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-100 transition-colors">
-                          <Trash2 size={14} />
-                        </button>
+                        <FormModal table="result" type="update" data={item} />
+                      )}
+
+                      {/* 2. DELETE MODAL */}
+                      {role === "admin" && (
+                        <FormModal table="result" type="delete" id={item.id} />
                       )}
                     </div>
                   </td>
