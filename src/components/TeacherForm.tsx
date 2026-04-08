@@ -3,7 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import InputField from "./InputField"; // Adjust path as needed
+import InputField from "./InputField";
+import { Upload } from "lucide-react"; // Import a nice upload icon
 
 const schema = z.object({
   username: z.string().min(3, "Too short!").max(20, "Too long!"),
@@ -13,8 +14,10 @@ const schema = z.object({
   lastName: z.string().min(1, "Required!"),
   phone: z.string().min(1, "Required!"),
   address: z.string().min(1, "Required!"),
+  bloodType: z.string().min(1, "Required!"),
   birthday: z.string().min(1, "Required!"),
   sex: z.enum(["male", "female"]),
+  img: z.any().refine((files) => files?.length == 1, "Image is required!"), // Zod check for file
 });
 
 type Inputs = z.infer<typeof schema>;
@@ -44,6 +47,7 @@ const TeacherForm = ({
         {type === "create" ? "Create a New Teacher" : "Update Teacher"}
       </h1>
 
+      {/* --- Authentication Info --- */}
       <div className="flex flex-wrap justify-between gap-4">
         <span className="w-full text-xs text-gray-400 font-bold uppercase tracking-widest">
           Authentication Info
@@ -70,6 +74,7 @@ const TeacherForm = ({
         />
       </div>
 
+      {/* --- Personal Info --- */}
       <div className="flex flex-wrap justify-between gap-4">
         <span className="w-full text-xs text-gray-400 font-bold uppercase tracking-widest">
           Personal Info
@@ -99,6 +104,12 @@ const TeacherForm = ({
           error={errors.address}
         />
         <InputField
+          label="Blood Type"
+          name="bloodType"
+          register={register}
+          error={errors.bloodType}
+        />
+        <InputField
           label="Birthday"
           name="birthday"
           type="date"
@@ -106,16 +117,40 @@ const TeacherForm = ({
           error={errors.birthday}
         />
 
-        {/* Special case for Select fields (you could make a SelectField component too) */}
+        {/* Sex Selection */}
         <div className="flex flex-col gap-1 w-full md:w-[31%]">
           <label className="text-xs text-gray-500 font-semibold">Sex</label>
           <select
             {...register("sex")}
-            className="ring-[1.5px] ring-gray-200 p-2.5 rounded-xl text-sm focus:ring-indigo-600 outline-none"
+            className="ring-[1.5px] ring-gray-200 p-2.5 rounded-xl text-sm focus:ring-indigo-600 outline-none bg-white h-[42px]"
           >
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
+          {errors.sex?.message && (
+            <p className="text-[10px] text-red-500 font-medium">
+              {errors.sex.message.toString()}
+            </p>
+          )}
+        </div>
+
+        {/* --- Image Upload Field --- */}
+        <div className="flex flex-col gap-2 w-full md:w-[31%] justify-center">
+          <label
+            className="text-xs text-gray-500 font-semibold flex items-center gap-2 cursor-pointer border-2 border-dashed border-gray-200 p-2 rounded-xl hover:bg-gray-50 transition-colors h-[42px]"
+            htmlFor="img"
+          >
+            <Upload size={16} className="text-gray-400" />
+            <span className="text-gray-400 truncate">
+              {type === "create" ? "Upload a photo" : "Change photo"}
+            </span>
+          </label>
+          <input type="file" id="img" {...register("img")} className="hidden" />
+          {errors.img?.message && (
+            <p className="text-[10px] text-red-500 font-medium">
+              {errors.img.message.toString()}
+            </p>
+          )}
         </div>
       </div>
 
