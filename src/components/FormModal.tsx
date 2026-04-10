@@ -10,12 +10,12 @@ const TeacherForm = dynamic(() => import("./TeacherForm"), {
 });
 
 // Add other forms as you create them
-// const StudentForm = dynamic(() => import("./StudentForm"));
+const StudentForm = dynamic(() => import("./StudentForm"));
 
 // 2. Updated map to use the dynamic components
 const forms: Record<string, (type: "create" | "update", data?: any) => React.ReactNode> = {
   teacher: (type, data) => <TeacherForm type={type} data={data} />,
-  // student: (type, data) => <StudentForm type={type} data={data} />,
+  student: (type, data) => <StudentForm type={type} data={data} />,
 };
 
 const FormModal = ({
