@@ -1,30 +1,13 @@
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
-import { role, teachersData } from "@/src/lib/data";
+import { role } from "@/src/lib/data";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  Eye,
-  Trash2,
-  Filter,
-  ArrowUpDown,
-  Plus,
-  BookOpen,
-  Users,
-} from "lucide-react";
+import { Eye, Plus, BookOpen, Users } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
-
-type Teacher = {
-  id: number;
-  teacherId: string;
-  name: string;
-  email?: string;
-  photo: string;
-  phone: string;
-  subjects: string[];
-  classes: string[];
-  address: string;
-};
+import prisma from "@/src/lib/prisma";
+import { Subject, Class } from "@/src/generated/prisma";
+import { ITEM_PER_PAGE } from "@/src/lib/settings";
 
 const subjectColors: Record<string, string> = {
   Math: "bg-blue-100 text-blue-700",
@@ -39,7 +22,32 @@ const subjectColors: Record<string, string> = {
 const getSubjectColor = (subject: string) =>
   subjectColors[subject] ?? "bg-gray-100 text-gray-600";
 
-const TeacherListPage = () => {
+const TeacherListPage = async ({
+  searchParams,
+} : {
+  searchParams: Promise<{ [key: string]: string  | undefined }>;
+}) => {
+  const {page, ...queryParams} = await searchParams;
+  const p = page ? parseInt(page) : 1;
+  
+const [teachers, count] = await prisma.$transaction([
+  prisma.teacher.findMany({
+    include: {
+      subjects: true,
+      classes: true,
+    },
+    orderBy: {
+      name: "asc",
+    },
+    take: ITEM_PER_PAGE,
+    skip: ITEM_PER_PAGE * (p - 1),
+  }),
+  prisma.teacher.count(), // Added a comma above and closed the parenthesis
+]);
+  
+  
+
+
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
       {/* ── Page header ── */}
@@ -51,7 +59,7 @@ const TeacherListPage = () => {
               Teachers
             </h1>
             <p className="text-sm text-gray-400 mt-0.5 font-medium">
-              {teachersData.length} members registered
+              {count} members registered
             </p>
           </div>
 
@@ -67,13 +75,7 @@ const TeacherListPage = () => {
                 <Image src="/sort.png" alt="" width={16} height={16} />
                 <span className="hidden sm:inline">Sort</span>
               </button>
-              {role === "admin" && (
-                // <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200">
-                //   <Image src="/plus.png" alt="" width={16} height={16} />
-                //   <span className="hidden sm:inline">Add</span>
-                // </button> 
-                <FormModal table="teacher" type="create" />
-              )}
+              {role === "admin" && <FormModal table="teacher" type="create" />}
             </div>
           </div>
         </div>
@@ -84,7 +86,7 @@ const TeacherListPage = () => {
         {[
           {
             label: "Total Teachers",
-            value: teachersData.length,
+            value: count,
             icon: <Users size={16} />,
             color: "bg-indigo-50 text-indigo-600",
           },
@@ -159,7 +161,7 @@ const TeacherListPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {teachersData.map((item: Teacher) => (
+              {teachers.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-indigo-50/30 transition-colors duration-150 group"
@@ -169,7 +171,7 @@ const TeacherListPage = () => {
                     <div className="flex items-center gap-3">
                       <div className="relative shrink-0">
                         <Image
-                          src={item.photo}
+                          src={item.img || "/noAvatar.png"}
                           alt={item.name}
                           width={40}
                           height={40}
@@ -192,19 +194,19 @@ const TeacherListPage = () => {
                   {/* Teacher ID */}
                   <td className="px-3 py-3.5 hidden md:table-cell">
                     <span className="text-xs font-mono font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">
-                      {item.teacherId}
+                      {item.id}
                     </span>
                   </td>
 
                   {/* Subjects */}
                   <td className="px-3 py-3.5 hidden md:table-cell">
                     <div className="flex flex-wrap gap-1">
-                      {item.subjects.slice(0, 2).map((s) => (
+                      {item.subjects.slice(0, 2).map((s: Subject) => (
                         <span
-                          key={s}
-                          className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${getSubjectColor(s)}`}
+                          key={s.id}
+                          className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${getSubjectColor(s.name)}`}
                         >
-                          {s}
+                          {s.name}
                         </span>
                       ))}
                       {item.subjects.length > 2 && (
@@ -218,12 +220,12 @@ const TeacherListPage = () => {
                   {/* Classes */}
                   <td className="px-3 py-3.5 hidden lg:table-cell">
                     <div className="flex flex-wrap gap-1">
-                      {item.classes.slice(0, 3).map((c) => (
+                      {item.classes.slice(0, 3).map((c: Class) => (
                         <span
-                          key={c}
+                          key={c.id}
                           className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600"
                         >
-                          {c}
+                          {c.name}
                         </span>
                       ))}
                       {item.classes.length > 3 && (
@@ -257,9 +259,6 @@ const TeacherListPage = () => {
                         </button>
                       </Link>
                       {role === "admin" && (
-                        // <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-100 transition-colors">
-                        //   <Trash2 size={14} />
-                        // </button>
                         <FormModal table="teacher" type="delete" id={item.id} />
                       )}
                     </div>
@@ -272,7 +271,7 @@ const TeacherListPage = () => {
 
         {/* Pagination */}
         <div className="border-t border-gray-100">
-          <Pagination />
+          <Pagination page={p} count={count} />
         </div>
       </div>
     </div>

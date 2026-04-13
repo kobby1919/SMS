@@ -30,7 +30,7 @@ const FormModal = ({
     | "attendance" | "event" | "announcement";
   type: "create" | "update" | "delete";
   data?: any;
-  id?: number;
+  id?: number | string;
 }) => {
   const [open, setOpen] = useState(false);
 
