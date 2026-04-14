@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Eye, Plus, BookOpen, Users } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
 import prisma from "@/src/lib/prisma";
-import { Subject, Class } from "@/src/generated/prisma";
+import { Subject, Class, Prisma } from "@/src/generated/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 
 const subjectColors: Record<string, string> = {
@@ -24,29 +24,47 @@ const getSubjectColor = (subject: string) =>
 
 const TeacherListPage = async ({
   searchParams,
-} : {
-  searchParams: Promise<{ [key: string]: string  | undefined }>;
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const {page, ...queryParams} = await searchParams;
+  const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
-  
-const [teachers, count] = await prisma.$transaction([
-  prisma.teacher.findMany({
-    include: {
-      subjects: true,
-      classes: true,
-    },
-    orderBy: {
-      name: "asc",
-    },
-    take: ITEM_PER_PAGE,
-    skip: ITEM_PER_PAGE * (p - 1),
-  }),
-  prisma.teacher.count(), // Added a comma above and closed the parenthesis
-]);
-  
-  
 
+  const query: Prisma.TeacherWhereInput = {};
+
+  if (queryParams) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined) {
+        switch (key) {
+          case "classId": {
+            query.lessons = {
+              some: {
+                classId: parseInt(value),
+              },
+            };
+          }
+        }
+      }
+    }
+  }
+
+  const [teachers, count] = await prisma.$transaction([
+    prisma.teacher.findMany({
+      where: query,
+      include: {
+        subjects: true,
+        classes: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
+    }),
+    prisma.teacher.count({
+      where: query,
+    }),
+  ]);
 
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
