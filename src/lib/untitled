@@ -42,3 +42,4 @@ export const calendarEvents = [
   { title: "Chemistry", allDay: false, start: getEventDate(4, 13, 0), end: getEventDate(4, 13, 45) },
   { title: "History", allDay: false, start: getEventDate(4, 14, 0), end: getEventDate(4, 14, 45) },
 ];
+

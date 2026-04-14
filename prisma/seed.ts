@@ -1,6 +1,10 @@
-// prisma/seed.ts
-import { Day, PrismaClient, UserSex } from "../src/generated/prisma"; // Updated to your custom path
-const prisma = new PrismaClient();
+import "dotenv/config";
+import { Day, UserSex } from "../src/generated/prisma";
+import { PrismaClient } from "../src/generated/prisma";
+import { PrismaPg } from "@prisma/adapter-pg";
+
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // --- ADMIN ---
@@ -12,13 +16,8 @@ async function main() {
   });
 
   // --- GRADE ---
-  // Fix: Your schema says 'level' is a String, but you were passing a number.
   for (let i = 1; i <= 6; i++) {
-    await prisma.grade.create({
-      data: {
-        level: i.toString(), 
-      },
-    });
+    await prisma.grade.create({ data: { level: i.toString() } });
   }
 
   // --- CLASS ---
@@ -35,7 +34,7 @@ async function main() {
   // --- SUBJECT ---
   const subjects = [
     "Mathematics", "Science", "English", "History", "Geography",
-    "Physics", "Chemistry", "Biology", "Computer Science", "Art"
+    "Physics", "Chemistry", "Biology", "Computer Science", "Art",
   ];
   for (const name of subjects) {
     await prisma.subject.create({ data: { name } });
@@ -56,7 +55,6 @@ async function main() {
         sex: i % 2 === 0 ? UserSex.MALE : UserSex.FEMALE,
         subjects: { connect: [{ id: (i % 10) + 1 }] },
         classes: { connect: [{ id: (i % 6) + 1 }] },
-        // Fix: Removed 'birthday' because it's not in your schema
       },
     });
   }
@@ -66,7 +64,9 @@ async function main() {
     await prisma.lesson.create({
       data: {
         name: `Lesson${i}`,
-        day: Object.values(Day)[Math.floor(Math.random() * Object.values(Day).length)],
+        day: Object.values(Day)[
+          Math.floor(Math.random() * Object.values(Day).length)
+        ],
         startTime: new Date(new Date().setHours(10, 0, 0, 0)),
         endTime: new Date(new Date().setHours(12, 0, 0, 0)),
         subjectId: (i % 10) + 1,
@@ -107,12 +107,11 @@ async function main() {
         parentId: `parentId${Math.ceil(i / 2) % 25 || 25}`,
         gradeId: (i % 6) + 1,
         classId: (i % 6) + 1,
-        // Fix: Removed 'birthday' (not in schema)
       },
     });
   }
 
-  // --- EXAM & ASSIGNMENT & RESULT ---
+  // --- EXAM, ASSIGNMENT & RESULT ---
   for (let i = 1; i <= 10; i++) {
     const exam = await prisma.exam.create({
       data: {
@@ -123,7 +122,7 @@ async function main() {
       },
     });
 
-    const assignment = await prisma.assignment.create({
+    await prisma.assignment.create({
       data: {
         title: `Assignment ${i}`,
         startDate: new Date(),
@@ -138,30 +137,6 @@ async function main() {
         studentId: `student${i}`,
         examId: exam.id,
       },
-    });
-  }
-
-  // --- ATTENDANCE, EVENT, ANNOUNCEMENT ---
-  for (let i = 1; i <= 5; i++) {
-    await prisma.attendance.create({
-      data: { date: new Date(), present: true, studentId: `student${i}`, lessonId: i }
-    });
-    await prisma.event.create({
-      data: { 
-        title: `Event ${i}`, 
-        description: `Description ${i}`, 
-        startTime: new Date(), 
-        endTime: new Date(), 
-        classId: i 
-      }
-    });
-    await prisma.announcement.create({
-      data: { 
-        title: `Announcement ${i}`, 
-        description: `Description ${i}`, 
-        date: new Date(), 
-        classId: i 
-      }
     });
   }
 

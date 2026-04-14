@@ -1,13 +1,15 @@
+import "dotenv/config"; // must be the FIRST import
 import { PrismaClient } from "../generated/prisma";
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+const prismaClientSingleton = () => new PrismaClient();
 
-// We try to initialize without the 'datasourceUrl' inside the constructor
-// to see if the type error disappears.
-export const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    log: ["query"],
-  });
+interface CustomGlobal extends Global {
+  prismaGlobal?: ReturnType<typeof prismaClientSingleton>;
+}
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+const customGlobal = global as unknown as CustomGlobal;
+const prisma = customGlobal.prismaGlobal ?? prismaClientSingleton();
+
+export default prisma;
+
+if (process.env.NODE_ENV !== "production") customGlobal.prismaGlobal = prisma;
