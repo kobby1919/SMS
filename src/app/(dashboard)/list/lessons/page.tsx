@@ -1,27 +1,56 @@
-"use client";
-
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
 import { lessonsData, role } from "@/src/lib/data";
 import Link from "next/link";
-import {
-  Eye,
-  Trash2,
-  Filter,
-  ArrowUpDown,
-  Plus,
-  BookOpen,
-} from "lucide-react";
+import { Eye, Trash2, Filter, ArrowUpDown, Plus, BookOpen } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
+import { Prisma } from "@/src/generated/prisma";
+import prisma from "@/src/lib/prisma";
+import { ITEM_PER_PAGE } from "@/src/lib/settings";
 
-type Lesson = {
-  id: number;
-  subject: string;
-  class: string;
-  teacher: string;
-};
+const LessonListPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+}) => {
+  const { page, ...queryParams } = await searchParams;
+  const p = page ? parseInt(page) : 1;
 
-const LessonListPage = () => {
+  const query: Prisma.LessonWhereInput = {};
+
+  if (queryParams) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined) {
+        switch (key) {
+          case "teacherId":
+            query.teacherId = value;
+            break;
+          case "search":
+            query.name = { contains: value, mode: "insensitive" };
+            break;
+        }
+      }
+    }
+  }
+
+  const [lessons, count] = await Promise.all([
+    prisma.lesson.findMany({
+      where: query,
+      include: {
+        subject: { select: { name: true } },
+        class: { select: { name: true } },
+        teacher: { select: { name: true, surname: true } },
+      },
+      orderBy: {
+        name: "asc",
+      },
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
+    }),
+    prisma.lesson.count({
+      where: query,
+    }),
+  ]);
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
       {/* ── Page header ── */}
@@ -32,7 +61,7 @@ const LessonListPage = () => {
               Lessons
             </h1>
             <p className="text-sm text-gray-400 mt-0.5 font-medium">
-              {lessonsData.length} lessons available
+              {count} lessons available
             </p>
           </div>
 
@@ -52,7 +81,7 @@ const LessonListPage = () => {
                 //   <Plus size={14} />
                 //   <span>Add</span>
                 // </button>
-                <FormModal table="lesson" type="create"  />
+                <FormModal table="lesson" type="create" />
               )}
             </div>
           </div>
@@ -64,7 +93,7 @@ const LessonListPage = () => {
         {[
           {
             label: "Total Lessons",
-            value: lessonsData.length,
+            value: count,
             icon: <BookOpen size={16} />,
             color: "bg-indigo-50 text-indigo-600",
           },
@@ -73,7 +102,9 @@ const LessonListPage = () => {
             key={stat.label}
             className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3"
           >
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
+            <div
+              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}
+            >
               {stat.icon}
             </div>
             <div>
@@ -95,10 +126,7 @@ const LessonListPage = () => {
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/60">
                 <th className="text-left px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">
-                  Subject Name
-                </th>
-                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">
-                  Subject
+                  Lesson Name
                 </th>
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">
                   Class
@@ -112,27 +140,28 @@ const LessonListPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {lessonsData.map((item: Lesson) => (
+              {lessons.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-indigo-50/30 transition-colors duration-150 group"
                 >
                   <td className="px-5 py-4">
                     <p className="font-bold text-sm text-gray-800 truncate">
-                      {item.subject}
+                      {item.name}
                     </p>
                   </td>
                   {/* Fixed: Added missing Subject cell to match header */}
                   <td className="px-4 py-4 hidden md:table-cell">
-                    <span className="text-sm text-gray-500">{item.subject}</span>
+                    <span className="text-sm text-gray-500">
+                      {item.class.name}
+                    </span>
                   </td>
                   <td className="px-4 py-4 hidden md:table-cell">
-                    <span className="text-sm text-gray-500">{item.class}</span>
+                    <span className="text-sm text-gray-500">
+                      {item.teacher.name + " " + item.teacher.surname}
+                    </span>
                   </td>
-                  <td className="px-4 py-4 hidden md:table-cell">
-                    <span className="text-sm text-gray-500">{item.teacher}</span>
-                  </td>
-                 <td className="px-5 py-4 w-[100px]">
+                  <td className="px-5 py-4 w-[100px]">
                     <div className="flex items-center justify-end gap-2">
                       {/* 1. UPDATE MODAL (Replaces the Link/Eye icon) */}
                       {role === "admin" && (
@@ -151,7 +180,7 @@ const LessonListPage = () => {
           </table>
         </div>
         <div className="border-t border-gray-100">
-          <Pagination />
+          <Pagination page={p} count={count} />
         </div>
       </div>
     </div>

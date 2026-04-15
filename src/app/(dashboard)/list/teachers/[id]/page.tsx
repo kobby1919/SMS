@@ -206,7 +206,7 @@ const SingleTeacherPage = () => {
             {[
               {
                 label: "Classes",
-                href: "/",
+                href: `/list/classes?supervisorId=${"teacher2"}`,
                 color: "bg-indigo-50 text-indigo-600 hover:bg-indigo-100",
                 icon: "🏫",
               },
@@ -218,7 +218,7 @@ const SingleTeacherPage = () => {
               },
               {
                 label: "Lessons",
-                href: "/",
+                href: `/list/lessons?teacherId=${"teacher2"}`,
                 color: "bg-amber-50 text-amber-600 hover:bg-amber-100",
                 icon: "📚",
               },

@@ -1,21 +1,55 @@
-"use client";
-
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
 import { classesData, role } from "@/src/lib/data";
 import Image from "next/image";
 import { Users } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
+import { Prisma } from "@/src/generated/prisma";
+import prisma from "@/src/lib/prisma";
+import { ITEM_PER_PAGE } from "@/src/lib/settings";
 
-type Class = {
-  id: number;
-  name: string;
-  capacity: number;
-  grade: number;
-  supervisor: string;
-};
+const ClassListPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+}) => {
+  const { page, ...queryParams } = await searchParams;
+  const p = page ? parseInt(page) : 1;
 
-const ClassListPage = () => {
+  const query: Prisma.ClassWhereInput = {};
+
+  if (queryParams) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined) {
+        switch (key) {
+          case "supervisorId":
+            query.supervisorId = value;
+            break;
+          case "search":
+            query.name = { contains: value, mode: "insensitive" };
+            break;
+        }
+      }
+    }
+  }
+
+  const [classes, count] = await Promise.all([
+    prisma.class.findMany({
+      where: query,
+      include: {
+        supervisor: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
+    }),
+    prisma.class.count({
+      where: query,
+    }),
+  ]);
+
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
       {/* ── Page header ── */}
@@ -27,7 +61,7 @@ const ClassListPage = () => {
               Classes
             </h1>
             <p className="text-sm text-gray-400 mt-0.5 font-medium">
-              {classesData.length} classes available
+              {count} classes available
             </p>
           </div>
 
@@ -43,11 +77,9 @@ const ClassListPage = () => {
                 <Image src="/sort.png" alt="" width={16} height={16} />
                 <span className="hidden sm:inline">Sort</span>
               </button>
-              
+
               {/* ✅ FIXED: FormModal is called directly, no outer <button> */}
-              {role === "admin" && (
-                <FormModal table="class" type="create" />
-              )}
+              {role === "admin" && <FormModal table="class" type="create" />}
             </div>
           </div>
         </div>
@@ -61,7 +93,7 @@ const ClassListPage = () => {
           </div>
           <div>
             <p className="text-xl font-black text-gray-800 leading-none">
-              {classesData.length}
+              {count}
             </p>
             <p className="text-xs text-gray-400 font-medium mt-0.5">
               Total Classes
@@ -95,26 +127,32 @@ const ClassListPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {classesData.map((item: Class) => (
+              {classes.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-indigo-50/30 transition-colors duration-150 group"
                 >
                   <td className="px-5 py-4">
-                    <p className="font-bold text-sm text-gray-800">{item.name}</p>
+                    <p className="font-bold text-sm text-gray-800">
+                      {item.name}
+                    </p>
                   </td>
                   <td className="px-4 py-4 hidden md:table-cell">
-                    <span className="text-sm text-gray-500">{item.capacity}</span>
-                  </td>
-                  <td className="px-4 py-4 hidden md:table-cell">
-                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-600">
-                      Grade {item.grade}
+                    <span className="text-sm text-gray-500">
+                      {item.capacity}
                     </span>
                   </td>
                   <td className="px-4 py-4 hidden md:table-cell">
-                    <span className="text-sm text-gray-500">{item.supervisor}</span>
+                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-600">
+                      Grade {item.name[0]}
+                    </span>
                   </td>
-                  
+                  <td className="px-4 py-4 hidden md:table-cell">
+                    <span className="text-sm text-gray-500">
+                      {item.supervisor?.name + " " + item.supervisor?.surname}
+                    </span>
+                  </td>
+
                   {/* ✅ FIXED: Actions cell handles z-index and spacing */}
                   <td className="px-5 py-4 w-[100px]">
                     <div className="flex items-center justify-end gap-2">
@@ -137,7 +175,7 @@ const ClassListPage = () => {
 
         {/* Pagination */}
         <div className="border-t border-gray-100">
-          <Pagination />
+          <Pagination page={p} count={count} />
         </div>
       </div>
     </div>
