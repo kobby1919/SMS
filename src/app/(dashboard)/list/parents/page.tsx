@@ -8,6 +8,7 @@ import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { promise } from "zod";
 
 
 
@@ -30,7 +31,7 @@ const ParentListPage = async ( {searchParams} : { searchParams: Promise<{[key: s
   }
 }
 
-const [parents, count] = await prisma.$transaction([
+const [parents, count] = await Promise.all([
     prisma.parent.findMany({
       where: query,
       include: {

@@ -28,48 +28,41 @@ const TeacherListPage = async ({
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
   const { page, ...queryParams } = await searchParams;
-  
+
   const p = page ? parseInt(page) : 1;
 
   const query: Prisma.TeacherWhereInput = {};
 
- if (queryParams) {
-  for (const [key, value] of Object.entries(queryParams)) {
-    if (value !== undefined) {
-      switch (key) {
-        case "classId": { 
-          query.lessons = {
-            some: {
-              classId: parseInt(value),
-            },
-          };
-          break;
-        } // End block
+  if (queryParams) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined) {
+        switch (key) {
+          case "classId": {
+            query.lessons = {
+              some: {
+                classId: parseInt(value),
+              },
+            };
+            break;
+          } // End block
 
-        case "search": 
-          query.name = { contains: value, mode: "insensitive" };
-          break;
+          case "search":
+            query.name = { contains: value, mode: "insensitive" };
+            break;
+        }
       }
     }
   }
-}
 
-  const [teachers, count] = await prisma.$transaction([
+  const [teachers, count] = await Promise.all([
     prisma.teacher.findMany({
       where: query,
-      include: {
-        subjects: true,
-        classes: true,
-      },
-      orderBy: {
-        name: "asc",
-      },
+      include: { subjects: true, classes: true },
+      orderBy: { name: "asc" },
       take: ITEM_PER_PAGE,
       skip: ITEM_PER_PAGE * (p - 1),
     }),
-    prisma.teacher.count({
-      where: query,
-    }),
+    prisma.teacher.count({ where: query }),
   ]);
 
   return (

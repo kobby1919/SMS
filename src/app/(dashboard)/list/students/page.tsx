@@ -44,7 +44,7 @@ const StudentListPage = async ({searchParams}: {
 }
 
 
-  const [students, count] = await prisma.$transaction([
+  const [students, count] = await Promise.all([
     prisma.student.findMany({
       where: query,
       include: {

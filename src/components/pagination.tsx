@@ -2,10 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { ITEM_PER_PAGE } from "../lib/settings";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const Pagination = ({ page, count }: { page: number; count: number }) => {
   const router = useRouter();
 
+  const totalPages  = Math.ceil(count / ITEM_PER_PAGE);
   const hasPrev = ITEM_PER_PAGE * (page - 1) > 0;
   const hasNext = ITEM_PER_PAGE * (page - 1) + ITEM_PER_PAGE < count;
 
@@ -15,25 +17,28 @@ const Pagination = ({ page, count }: { page: number; count: number }) => {
     router.push(`${window.location.pathname}?${params}`);
   };
   return (
-    <div className="p-4 flex items-center justify-between text-gray-500">
+    <div className="p-4 flex items-center justify-between border-t border-gray-100 bg-white">
+      {/* PREVIOUS BUTTON */}
       <button
         disabled={!hasPrev}
-        className="py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+        className=" flex items-center gap-1 py-2 px-4 rounded-xl bg-gray-50 text-gray-500 text-xs font-bold transition-all hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-50 border border-gray-200"
         onClick={() => {
           changePage(page - 1);
         }}
       >
-        Prev
+        <ChevronLeft size={14} />
+        <span>Prev</span>
       </button>
-      <div className="flex items-center gap-2 text-sm">
+      <div className="flex items-center gap-1.5">
         {Array.from(
-          { length: Math.ceil(count / ITEM_PER_PAGE) },
+          { length: totalPages },
           (_, index) => {
             const pageIndex = index + 1;
+            const isActive = page === pageIndex;
             return (
               <button
                 key={pageIndex}
-                className={`px-2 rounded-sm ${page === pageIndex ? "bg-jaySky" : ""}`}
+                className={`min-w-[32px] h-8 flex items-center justify-center rounded-lg text-xs font-bold transition-all duration-200 ${isActive ? "bg-indigo-600 text-white shadow-md shadow-indigo-200 scale-110" : "text-gray-400 hover:bg-indigo-50 hover:text-indigo-600"}`}
                 onClick={() => {
                   changePage(pageIndex);
                 }}
@@ -46,12 +51,13 @@ const Pagination = ({ page, count }: { page: number; count: number }) => {
       </div>
       <button
         disabled={!hasNext}
-        className="py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+        className=" flex items-center gap-1 py-2 px-4 rounded-xl bg-gray-50 text-gray-500 text-xs font-bold transition-all hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-50 border border-gray-200"
         onClick={() => {
           changePage(page + 1);
         }}
       >
-        Next
+        <span>Next</span>
+        <ChevronRight size={14} />
       </button>
     </div>
   );
