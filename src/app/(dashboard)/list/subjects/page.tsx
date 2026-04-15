@@ -13,12 +13,11 @@ import {
   Users,
 } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
+import { Prisma } from "@/src/generated/prisma";
+import prisma from "@/src/lib/prisma";
+import { ITEM_PER_PAGE } from "@/src/lib/settings";
 
-type Subject = {
-  id: number;
-  name: string;
-  teachers: string[];
-};
+
 
 const subjectColors: Record<string, string> = {
   Math: "bg-blue-100 text-blue-700",
@@ -33,7 +32,45 @@ const subjectColors: Record<string, string> = {
 const getSubjectColor = (subject: string) =>
   subjectColors[subject] ?? "bg-gray-100 text-gray-600";
 
-const SubjectListPage = () => {
+const SubjectListPage = async ({searchParams}: {
+  searchParams: Promise<{[key: string]: string | undefined }>
+}) => {
+  const { page, ...queryParams } = await searchParams;
+  const p = page ? parseInt(page) : 1;
+
+  const query: Prisma.SubjectWhereInput = {};
+
+  
+ if (queryParams) {
+  for (const [key, value] of Object.entries(queryParams)) {
+    if (value !== undefined) {
+      switch (key) {
+        case "search": 
+          query.name = { contains: value, mode: "insensitive" };
+          break;
+      }
+    }
+  }
+}
+
+
+  const [subjects, count] = await Promise.all([
+    prisma.subject.findMany({
+      where: query,
+      include: {
+        teachers: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
+    }),
+    prisma.subject.count({
+      where: query,
+    }),
+  ]);
+
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
       {/* ── Page header ── */}
@@ -45,7 +82,7 @@ const SubjectListPage = () => {
               Subjects
             </h1>
             <p className="text-sm text-gray-400 mt-0.5 font-medium">
-              {parentsData.length} being Taught
+              {count} being Taught
             </p>
           </div>
 
@@ -81,7 +118,7 @@ const SubjectListPage = () => {
         {[
           {
             label: "Total Subjects",
-            value: parentsData.length,
+            value: count,
             icon: <Users size={16} />,
             color: "bg-indigo-50 text-indigo-600",
           },
@@ -126,12 +163,12 @@ const SubjectListPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {subjectsData.map((item: Subject) => (
+              {subjects.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-indigo-50/30 transition-colors duration-150 group"
                 >
-                  {/* Parent info */}
+                 
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">
                       <div className="min-w-0">
@@ -145,7 +182,7 @@ const SubjectListPage = () => {
                   {/* Assigned teachers to SUBJECTS */}
                   <td className="px-4 py-4 hidden md:table-cell">
                     <span className="text-sm text-gray-500  max-w-[180px] block break-words">
-                      {item.teachers.join(", ")}
+                      {item.teachers.map(teacher=>teacher.name).join(",")}
                     </span>
                   </td>
 
@@ -171,7 +208,7 @@ const SubjectListPage = () => {
 
         {/* Pagination */}
         <div className="border-t border-gray-100">
-          <Pagination />
+          <Pagination page={p} count={count} />
         </div>
       </div>
     </div>
