@@ -240,7 +240,7 @@ const SingleStudentPage = () => {
               },
               {
                 label: "Teachers",
-                href: "/",
+                href: `/list/teachers?classId=${2}`,
                 color: "bg-indigo-50 text-indigo-600 hover:bg-indigo-100",
                 icon: "👨‍🏫",
               },

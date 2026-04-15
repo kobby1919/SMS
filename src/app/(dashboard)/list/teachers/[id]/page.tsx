@@ -212,7 +212,7 @@ const SingleTeacherPage = () => {
               },
               {
                 label: "Students",
-                href: "/",
+                href: `/list/students?teacherId=${"teacher2"}`,
                 color: "bg-violet-50 text-violet-600 hover:bg-violet-100",
                 icon: "👨‍🎓",
               },

@@ -1,32 +1,67 @@
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
-import { role, studentsData } from "@/src/lib/data";
+import { role } from "@/src/lib/data";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  Eye,
-  Trash2,
-  Filter,
-  ArrowUpDown,
-  Plus,
-  BookOpen,
-  Users,
-} from "lucide-react";
+import { Eye, Plus, BookOpen, Users } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
+import prisma from "@/src/lib/prisma";
+import { Subject, Class, Prisma } from "@/src/generated/prisma";
+import { ITEM_PER_PAGE } from "@/src/lib/settings";
 
-type Student = {
-  id: number;
-  studentId: string;
-  name: string;
-  email?: string;
-  photo: string;
-  phone?: string;
-  grade: number;
-  class: string;
-  address: string;
-};
 
-const StudentListPage = () => {
+
+const StudentListPage = async ({searchParams}: {
+  searchParams: Promise<{[key: string]: string | undefined }>
+}) => {
+  const { page, ...queryParams } = await searchParams;
+  const p = page ? parseInt(page) : 1;
+
+  const query: Prisma.StudentWhereInput = {};
+
+  
+ if (queryParams) {
+  for (const [key, value] of Object.entries(queryParams)) {
+    if (value !== undefined) {
+      switch (key) {
+        case "teacherId": { 
+          query.class = {
+            lessons: {
+              some: {
+                teacherId: value,
+              }
+            },
+          };
+          break;
+        } // End block
+
+        case "search": 
+          query.name = { contains: value, mode: "insensitive" };
+          break;
+      }
+    }
+  }
+}
+
+
+  const [students, count] = await prisma.$transaction([
+    prisma.student.findMany({
+      where: query,
+      include: {
+        class: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
+    }),
+    prisma.student.count({
+      where: query,
+    }),
+  ]);
+
+
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
       {/* ── Page header ── */}
@@ -37,7 +72,7 @@ const StudentListPage = () => {
               Students
             </h1>
             <p className="text-sm text-gray-400 mt-0.5 font-medium">
-              {studentsData.length} members registered
+              {count} members registered
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
@@ -70,7 +105,7 @@ const StudentListPage = () => {
         {[
           {
             label: "Total Students",
-            value: studentsData.length,
+            value: count,
             icon: <Users size={16} />,
             color: "bg-indigo-50 text-indigo-600",
           },
@@ -141,7 +176,7 @@ const StudentListPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {studentsData.map((item: Student) => (
+              {students.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-indigo-50/30 transition-colors duration-150 group"
@@ -150,7 +185,7 @@ const StudentListPage = () => {
                     <div className="flex items-center gap-3">
                       <div className="relative shrink-0">
                         <Image
-                          src={item.photo}
+                          src={item.img || "/noAvatar.png"}
                           alt={item.name}
                           width={38}
                           height={38}
@@ -163,7 +198,7 @@ const StudentListPage = () => {
                           {item.name}
                         </p>
                         <p className="text-xs text-gray-400 truncate">
-                          {item.class}
+                          {item.class.name}
                         </p>
                       </div>
                     </div>
@@ -171,13 +206,13 @@ const StudentListPage = () => {
 
                   <td className="px-3 py-3.5 hidden md:table-cell">
                     <span className="text-xs font-mono font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">
-                      {item.studentId}
+                      {item.username}
                     </span>
                   </td>
 
                   <td className="px-3 py-3.5 hidden md:table-cell">
                     <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-600">
-                      Grade {item.grade}
+                      Grade {item.class.name}
                     </span>
                   </td>
 
@@ -215,7 +250,7 @@ const StudentListPage = () => {
           </table>
         </div>
         <div className="border-t border-gray-100">
-          <Pagination />
+          <Pagination page={p} count={count} />
         </div>
       </div>
     </div>

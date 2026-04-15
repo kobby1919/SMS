@@ -5,17 +5,49 @@ import Link from "next/link";
 import { Eye, Trash2, Filter, ArrowUpDown, Plus, Users } from "lucide-react";
 import Image from "next/image";
 import FormModal from "@/src/components/FormModal";
+import { Prisma } from "@/src/generated/prisma";
+import prisma from "@/src/lib/prisma";
+import { ITEM_PER_PAGE } from "@/src/lib/settings";
 
-type Parent = {
-  id: number;
-  students: string[];
-  name: string;
-  email?: string;
-  phone?: string;
-  address: string;
-};
 
-const ParentListPage = () => {
+
+const ParentListPage = async ( {searchParams} : { searchParams: Promise<{[key: string]: string | undefined}>} ) => {
+
+  const {page, ...queryParams} = await searchParams;
+  const p = page ? parseInt(page) : 1;
+  const query: Prisma.ParentWhereInput = {};
+
+  
+ if (queryParams) {
+  for (const [key, value] of Object.entries(queryParams)) {
+    if (value !== undefined) {
+      switch (key) {
+        case "search": 
+          query.name = { contains: value, mode: "insensitive" };
+          break;
+      }
+    }
+  }
+}
+
+const [parents, count] = await prisma.$transaction([
+    prisma.parent.findMany({
+      where: query,
+      include: {
+        students: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
+    }),
+    prisma.parent.count({
+      where: query,
+    }),
+  ]);
+
+
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
       {/* ── Page header ── */}
@@ -26,7 +58,7 @@ const ParentListPage = () => {
               Parents
             </h1>
             <p className="text-sm text-gray-400 mt-0.5 font-medium">
-              {parentsData.length} members registered
+              {count} members registered
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
@@ -57,7 +89,7 @@ const ParentListPage = () => {
         {[
           {
             label: "Total Parents",
-            value: parentsData.length,
+            value: count,
             icon: <Users size={16} />,
             color: "bg-indigo-50 text-indigo-600",
           },
@@ -113,7 +145,7 @@ const ParentListPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {parentsData.map((item: Parent) => (
+              {parents.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-indigo-50/30 transition-colors duration-150 group"
@@ -131,7 +163,7 @@ const ParentListPage = () => {
 
                   <td className="px-3 py-3.5 hidden md:table-cell">
                     <span className="text-sm text-gray-500">
-                      {item.students}
+                      {item.students.map(student=>student.name).join(",")}
                     </span>
                   </td>
 
@@ -167,7 +199,7 @@ const ParentListPage = () => {
           </table>
         </div>
         <div className="border-t border-gray-100">
-          <Pagination />
+          <Pagination page={p} count={count}/>
         </div>
       </div>
     </div>

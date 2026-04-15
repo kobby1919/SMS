@@ -28,25 +28,31 @@ const TeacherListPage = async ({
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
   const { page, ...queryParams } = await searchParams;
+  
   const p = page ? parseInt(page) : 1;
 
   const query: Prisma.TeacherWhereInput = {};
 
-  if (queryParams) {
-    for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined) {
-        switch (key) {
-          case "classId": {
-            query.lessons = {
-              some: {
-                classId: parseInt(value),
-              },
-            };
-          }
-        }
+ if (queryParams) {
+  for (const [key, value] of Object.entries(queryParams)) {
+    if (value !== undefined) {
+      switch (key) {
+        case "classId": { 
+          query.lessons = {
+            some: {
+              classId: parseInt(value),
+            },
+          };
+          break;
+        } // End block
+
+        case "search": 
+          query.name = { contains: value, mode: "insensitive" };
+          break;
       }
     }
   }
+}
 
   const [teachers, count] = await prisma.$transaction([
     prisma.teacher.findMany({
