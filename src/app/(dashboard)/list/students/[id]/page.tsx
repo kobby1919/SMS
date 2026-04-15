@@ -216,25 +216,25 @@ const SingleStudentPage = () => {
             {[
               {
                 label: "Exams",
-                href: "/",
+                href: `/list/exams?classId=${2}`,
                 color: "bg-rose-50 text-rose-600 hover:bg-rose-100",
                 icon: "📝",
               },
               {
                 label: "Assignments",
-                href: "/",
+                href: `/list/assignments?classId=${2}`,
                 color: "bg-emerald-50 text-emerald-600 hover:bg-emerald-100",
                 icon: "✏️",
               },
               {
                 label: "Results",
-                href: "/",
+                href: `/list/results?classId=${2}`,
                 color: "bg-sky-50 text-sky-600 hover:bg-sky-100",
                 icon: "📊",
               },
               {
                 label: "Lessons",
-                href: "/",
+                href: `/list/lessons?classId=${2}`,
                 color: "bg-amber-50 text-amber-600 hover:bg-amber-100",
                 icon: "📚",
               },
@@ -243,12 +243,6 @@ const SingleStudentPage = () => {
                 href: `/list/teachers?classId=${2}`,
                 color: "bg-indigo-50 text-indigo-600 hover:bg-indigo-100",
                 icon: "👨‍🏫",
-              },
-              {
-                label: "Resources",
-                href: "/",
-                color: "bg-violet-50 text-violet-600 hover:bg-violet-100",
-                icon: "📂",
               },
             ].map(({ label, href, color, icon }) => (
               <Link
