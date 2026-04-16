@@ -228,7 +228,7 @@ const SingleStudentPage = () => {
               },
               {
                 label: "Results",
-                href: `/list/results?classId=${2}`,
+                href: `/list/results?studentId=${"student2"}`,
                 color: "bg-sky-50 text-sky-600 hover:bg-sky-100",
                 icon: "📊",
               },

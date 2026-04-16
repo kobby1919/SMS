@@ -16,7 +16,6 @@ import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 
-
 const AssignmentListPage = async ({
   searchParams,
 }: {
@@ -178,12 +177,16 @@ const AssignmentListPage = async ({
                   </td>
 
                   <td className="px-4 py-4 hidden md:table-cell">
-                    <span className="text-sm text-gray-500">{item.lesson.class.name}</span>
+                    <span className="text-sm text-gray-500">
+                      {item.lesson.class.name}
+                    </span>
                   </td>
 
                   <td className="px-3 py-3.5 hidden md:table-cell">
                     <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-600">
-                      {item.lesson.teacher.name + " " + item.lesson.teacher.surname}
+                      {item.lesson.teacher.name +
+                        " " +
+                        item.lesson.teacher.surname}
                     </span>
                   </td>
 

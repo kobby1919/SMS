@@ -1,5 +1,3 @@
-"use client";
-
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
 import { resultsData, role } from "@/src/lib/data";
@@ -13,20 +11,92 @@ import {
   ScrollText,
 } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
+import { Prisma } from "@/src/generated/prisma";
+import prisma from "@/src/lib/prisma";
+import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { title } from "process";
 
-// 1. Updated type to match your data.ts perfectly
-type Result = {
-  id: number;
-  subject: string;
-  class: string;
-  teacher: string;
-  student: string;
-  date: string;
-  type: string; // "exam" | "assignment"
-  score: number;
-};
+const ResultListPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+}) => {
+  const { page, ...queryParams } = await searchParams;
+  const p = page ? parseInt(page) : 1;
 
-const ResultListPage = () => {
+  const query: Prisma.ResultWhereInput = {};
+
+  if (queryParams) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined) {
+        switch (key) {
+          case "studentId": {
+            query.studentId = value;
+            break;
+          } // End block
+          case "search":
+            query.OR = [
+              { exam: { title: { contains: value, mode: "insensitive" } } },
+              { student: { name: { contains: value, mode: "insensitive" } } },
+            ];
+            break;
+        }
+      }
+    }
+  }
+
+  const [dataRes, count] = await Promise.all([
+    prisma.result.findMany({
+      where: query,
+      include: {
+        student: { select: { name: true, surname: true } },
+        exam: {
+          include: {
+            lesson: {
+              select: {
+                class: { select: { name: true } },
+                teacher: { select: { name: true, surname: true } },
+              },
+            },
+          },
+        },
+        assignment: {
+          include: {
+            lesson: {
+              select: {
+                class: { select: { name: true } },
+                teacher: { select: { name: true, surname: true } },
+              },
+            },
+          },
+        },
+      },
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
+    }),
+    prisma.result.count({
+      where: query,
+    }),
+  ]);
+
+  const results = dataRes
+    .map((item) => {
+      const assessment = item.exam || item.assignment;
+      if (!assessment) return null;
+      const isExam = "startTime" in assessment;
+      return {
+        id: item.id,
+        title: assessment.title,
+        studentName: item.student?.name,
+        studentSurname: item.student?.surname,
+        teacherName: assessment.lesson.teacher.name,
+        teacherSurname: assessment.lesson.teacher.surname,
+        score: item.score,
+        className: assessment.lesson.class.name,
+        startTime: isExam ? assessment.startTime : assessment.startDate,
+      };
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null);
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
       {/* ── Page header ── */}
@@ -37,7 +107,7 @@ const ResultListPage = () => {
               Results
             </h1>
             <p className="text-sm text-gray-400 mt-0.5 font-medium">
-              {resultsData.length} records found
+              {count} records found
             </p>
           </div>
 
@@ -66,7 +136,7 @@ const ResultListPage = () => {
           </div>
           <div>
             <p className="text-xl font-black text-gray-800 leading-none">
-              {resultsData.length}
+              {count}
             </p>
             <p className="text-xs text-gray-400 font-medium mt-0.5">
               Total Results
@@ -106,16 +176,16 @@ const ResultListPage = () => {
             </thead>
             <tbody className="divide-y divide-gray-50">
               {/* Casting resultsData to Result[] to resolve TS errors */}
-              {(resultsData as Result[]).map((item) => (
+              {results.map((item) => (
                 <tr
-                  key={item.id}
+                  key={item?.id}
                   className="hover:bg-indigo-50/30 transition-colors duration-150 group"
                 >
                   <td className="px-5 py-4 font-bold text-sm text-gray-800">
-                    {item.subject}
+                    {item?.title}
                   </td>
                   <td className="px-4 py-4 text-sm text-gray-500">
-                    {item.student}
+                    {item?.studentName + " " + item?.studentSurname}
                   </td>
                   <td className="px-4 py-4 hidden md:table-cell">
                     <span
@@ -125,17 +195,17 @@ const ResultListPage = () => {
                           : "bg-indigo-50 text-indigo-600"
                       }`}
                     >
-                      {item.score}
+                      {item?.score}
                     </span>
                   </td>
                   <td className="px-4 py-4 hidden lg:table-cell text-sm text-gray-500">
-                    {item.teacher}
+                    {item?.teacherName + " " + item?.teacherSurname}
                   </td>
                   <td className="px-4 py-4 hidden lg:table-cell text-sm text-gray-500">
-                    {item.class}
+                    {item?.className}
                   </td>
                   <td className="px-4 py-4 hidden md:table-cell text-sm text-gray-500">
-                    {item.date}
+                    {new Intl.DateTimeFormat("en-US").format(item?.startTime)}
                   </td>
                   {/* Sticky actions */}
                   <td className="px-5 py-4 w-[100px]">
@@ -147,7 +217,7 @@ const ResultListPage = () => {
 
                       {/* 2. DELETE MODAL */}
                       {role === "admin" && (
-                        <FormModal table="result" type="delete" id={item.id} />
+                        <FormModal table="result" type="delete" id={item?.id} />
                       )}
                     </div>
                   </td>
@@ -157,7 +227,7 @@ const ResultListPage = () => {
           </table>
         </div>
         <div className="border-t border-gray-100">
-          <Pagination />
+          <Pagination page={p} count={count} />
         </div>
       </div>
     </div>
