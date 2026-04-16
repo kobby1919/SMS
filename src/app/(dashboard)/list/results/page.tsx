@@ -14,18 +14,18 @@ import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
-import { title } from "process";
 
 const ResultListPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
+  // Await searchParams first, then pull out `page` and everything else
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
   const query: Prisma.ResultWhereInput = {};
-
+  // Loop through any remaining query params (classId, teacherId, search, etc.)
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {
@@ -33,7 +33,8 @@ const ResultListPage = async ({
           case "studentId": {
             query.studentId = value;
             break;
-          } // End block
+          }
+
           case "search":
             query.OR = [
               { exam: { title: { contains: value, mode: "insensitive" } } },
@@ -49,7 +50,9 @@ const ResultListPage = async ({
     prisma.result.findMany({
       where: query,
       include: {
+        // We only need name + surname from the student
         student: { select: { name: true, surname: true } },
+        // Exams have a startTime — we need the lesson → class + teacher
         exam: {
           include: {
             lesson: {
@@ -60,6 +63,7 @@ const ResultListPage = async ({
             },
           },
         },
+        // Assignments have a startDate instead — same lesson shape
         assignment: {
           include: {
             lesson: {
