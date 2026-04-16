@@ -1,5 +1,3 @@
-"use client";
-
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
 import { announcementsData, role } from "@/src/lib/data";
@@ -13,16 +11,47 @@ import {
   Megaphone,
 } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
+import { Prisma } from "@/src/generated/prisma";
+import prisma from "@/src/lib/prisma";
+import { ITEM_PER_PAGE } from "@/src/lib/settings";
 
-// 1. Correct Type definition for Announcements
-type Announcement = {
-  id: number;
-  title: string;
-  class: string;
-  date: string;
-};
 
-const AnnouncementListPage = () => {
+
+const AnnouncementListPage =  async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+}) => {
+  const { page, ...queryParams } = await searchParams;
+  const p = page ? parseInt(page) : 1;
+
+  const query: Prisma.AnnouncementWhereInput = {};
+
+  if (queryParams) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined) {
+        switch (key) {
+          case "search":
+            query.title = { contains: value, mode: "insensitive" };
+            break;
+        }
+      }
+    }
+  }
+
+  const [announcements, count] = await Promise.all([
+    prisma.announcement.findMany({
+      where: query,
+      include: {
+        class: true,
+      },
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
+    }),
+    prisma.announcement.count({
+      where: query,
+    }),
+  ]);
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
       {/* ── Page header ── */}
@@ -33,7 +62,7 @@ const AnnouncementListPage = () => {
               Announcements
             </h1>
             <p className="text-sm text-gray-400 mt-0.5 font-medium">
-              {announcementsData.length} announcements published
+              {count} announcements published
             </p>
           </div>
 
@@ -68,7 +97,7 @@ const AnnouncementListPage = () => {
           </div>
           <div>
             <p className="text-xl font-black text-gray-800 leading-none">
-              {announcementsData.length}
+              {count}
             </p>
             <p className="text-xs text-gray-400 font-medium mt-0.5">
               Total Posts
@@ -98,7 +127,7 @@ const AnnouncementListPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {announcementsData.map((item: Announcement) => (
+              {announcements.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-indigo-50/30 transition-colors duration-150 group"
@@ -107,10 +136,10 @@ const AnnouncementListPage = () => {
                     {item.title}
                   </td>
                   <td className="px-4 py-4 text-sm text-gray-500">
-                    {item.class}
+                    {item.class?.name}
                   </td>
                   <td className="px-4 py-4 hidden md:table-cell text-sm text-gray-500">
-                    {item.date}
+                     {new Intl.DateTimeFormat("en-US").format(item?.date)}
                   </td>
                   {/* Sticky actions */}
                   <td className="px-5 py-4 w-[100px]">
@@ -140,7 +169,7 @@ const AnnouncementListPage = () => {
           </table>
         </div>
         <div className="border-t border-gray-100">
-          <Pagination />
+          <Pagination page={p} count={count} />
         </div>
       </div>
     </div>
