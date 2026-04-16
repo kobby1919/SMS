@@ -1,5 +1,3 @@
-"use client";
-
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
 import { assignmentsData, examsData, role } from "@/src/lib/data";
@@ -14,16 +12,68 @@ import {
   Briefcase, // Changed icon for Exams
 } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
+import { Prisma } from "@/src/generated/prisma";
+import prisma from "@/src/lib/prisma";
+import { ITEM_PER_PAGE } from "@/src/lib/settings";
 
-type Assignment = {
-  id: number;
-  subject: string;
-  class: string;
-  teacher: string;
-  dueDate: string;
-};
 
-const AssignmentListPage = () => {
+const AssignmentListPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+}) => {
+  const { page, ...queryParams } = await searchParams;
+  const p = page ? parseInt(page) : 1;
+
+  const query: Prisma.AssignmentWhereInput = {};
+
+  if (queryParams) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined) {
+        switch (key) {
+          case "classId": {
+            query.lesson = {
+              classId: parseInt(value),
+            };
+            break;
+          } // End block
+          case "teacherId":
+            query.lesson = {
+              teacherId: value,
+            };
+            break;
+
+          case "search":
+            query.lesson = {
+              subject: {
+                name: { contains: value, mode: "insensitive" },
+              },
+            };
+            break;
+        }
+      }
+    }
+  }
+
+  const [assignments, count] = await Promise.all([
+    prisma.assignment.findMany({
+      where: query,
+      include: {
+        lesson: {
+          select: {
+            subject: { select: { name: true } },
+            teacher: { select: { name: true, surname: true } },
+            class: { select: { name: true } },
+          },
+        },
+      },
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
+    }),
+    prisma.assignment.count({
+      where: query,
+    }),
+  ]);
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
       {/* ── Page header ── */}
@@ -34,7 +84,7 @@ const AssignmentListPage = () => {
               Assignments
             </h1>
             <p className="text-sm text-gray-400 mt-0.5 font-medium">
-              {examsData.length} assignments available
+              {count} assignments available
             </p>
           </div>
 
@@ -66,7 +116,7 @@ const AssignmentListPage = () => {
         {[
           {
             label: "Total Assignments",
-            value: assignmentsData.length,
+            value: count,
             icon: <Briefcase size={16} />,
             color: "bg-indigo-50 text-indigo-600",
           },
@@ -116,31 +166,31 @@ const AssignmentListPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {assignmentsData.map((item: Assignment) => (
+              {assignments.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-indigo-50/30 transition-colors duration-150 group"
                 >
                   <td className="px-5 py-4">
                     <p className="font-bold text-sm text-gray-800 truncate">
-                      {item.subject}
+                      {item.lesson.subject?.name}
                     </p>
                   </td>
 
                   <td className="px-4 py-4 hidden md:table-cell">
-                    <span className="text-sm text-gray-500">{item.class}</span>
+                    <span className="text-sm text-gray-500">{item.lesson.class.name}</span>
                   </td>
 
                   <td className="px-3 py-3.5 hidden md:table-cell">
                     <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-600">
-                      {item.teacher}
+                      {item.lesson.teacher.name + " " + item.lesson.teacher.surname}
                     </span>
                   </td>
 
                   {/* FIXED: Rendering item.date instead of item.class */}
                   <td className="px-4 py-4 hidden md:table-cell">
                     <span className="text-sm text-gray-500">
-                      {item.dueDate}
+                      {new Intl.DateTimeFormat("en-US").format(item.dueDate)}
                     </span>
                   </td>
 
@@ -173,7 +223,7 @@ const AssignmentListPage = () => {
         </div>
 
         <div className="border-t border-gray-100">
-          <Pagination />
+          <Pagination page={p} count={count} />
         </div>
       </div>
     </div>

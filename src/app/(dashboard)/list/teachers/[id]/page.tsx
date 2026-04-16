@@ -224,21 +224,15 @@ const SingleTeacherPage = () => {
               },
               {
                 label: "Exams",
-                href: "/",
+                href: `/list/exams?teacherId=${"teacher2"}`,
                 color: "bg-rose-50 text-rose-600 hover:bg-rose-100",
                 icon: "📝",
               },
               {
                 label: "Assignments",
-                href: "/",
+                href: `/list/assignments?teacherId=${"teacher2"}`,
                 color: "bg-emerald-50 text-emerald-600 hover:bg-emerald-100",
                 icon: "✏️",
-              },
-              {
-                label: "Results",
-                href: "/",
-                color: "bg-sky-50 text-sky-600 hover:bg-sky-100",
-                icon: "📊",
               },
             ].map(({ label, href, color, icon }) => (
               <Link
