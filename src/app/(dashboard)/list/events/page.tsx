@@ -1,25 +1,47 @@
-"use client";
-
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
 import { eventsData, role } from "@/src/lib/data";
-import {
-  Filter,
-  ArrowUpDown,
-  CalendarDays,
-} from "lucide-react";
+import { Filter, ArrowUpDown, CalendarDays } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
+import { Prisma } from "@/src/generated/prisma";
+import prisma from "@/src/lib/prisma";
+import { ITEM_PER_PAGE } from "@/src/lib/settings";
 
-type Event = {
-  id: number;
-  title: string;
-  class: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-};
+const EventListPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+}) => {
+  const { page, ...queryParams } = await searchParams;
+  const p = page ? parseInt(page) : 1;
 
-const EventListPage = () => {
+  const query: Prisma.EventWhereInput = {};
+
+  if (queryParams) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined) {
+        switch (key) {
+          case "search":
+            query.title = { contains: value, mode: "insensitive" };
+            break;
+        }
+      }
+    }
+  }
+
+  const [events, count] = await Promise.all([
+    prisma.event.findMany({
+      where: query,
+      include: {
+        class: true,
+      },
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
+    }),
+    prisma.event.count({
+      where: query,
+    }),
+  ]);
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
       {/* ── Page header ── */}
@@ -30,7 +52,7 @@ const EventListPage = () => {
               Events
             </h1>
             <p className="text-sm text-gray-400 mt-0.5 font-medium">
-              {eventsData.length} events scheduled
+              {count} events scheduled
             </p>
           </div>
 
@@ -45,11 +67,9 @@ const EventListPage = () => {
                 <ArrowUpDown size={14} />
                 <span className="hidden sm:inline">Sort</span>
               </button>
-              
+
               {/* ✅ FIXED: Removed the outer <button> to prevent hydration/nesting errors */}
-              {role === "admin" && (
-                <FormModal table="event" type="create" />
-              )}
+              {role === "admin" && <FormModal table="event" type="create" />}
             </div>
           </div>
         </div>
@@ -63,7 +83,7 @@ const EventListPage = () => {
           </div>
           <div>
             <p className="text-xl font-black text-gray-800 leading-none">
-              {eventsData.length}
+              {count}
             </p>
             <p className="text-xs text-gray-400 font-medium mt-0.5">
               Upcoming Events
@@ -100,7 +120,7 @@ const EventListPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {eventsData.map((item: Event) => (
+              {events.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-indigo-50/30 transition-colors duration-150 group"
@@ -109,18 +129,26 @@ const EventListPage = () => {
                     {item.title}
                   </td>
                   <td className="px-4 py-4 text-sm text-gray-500">
-                    {item.class}
+                    {item.class?.name}
                   </td>
                   <td className="px-4 py-4 hidden md:table-cell text-sm text-gray-500">
-                    {item.date}
+                    {new Intl.DateTimeFormat("en-US").format(item?.startTime)}
                   </td>
                   <td className="px-4 py-4 hidden lg:table-cell text-sm text-gray-500">
-                    {item.startTime}
+                    {item.startTime.toLocaleDateString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    })}
                   </td>
                   <td className="px-4 py-4 hidden lg:table-cell text-sm text-gray-500">
-                    {item.endTime}
+                    {item.endTime.toLocaleDateString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    })}
                   </td>
-                  
+
                   {/* ✅ FIXED: Sticky column with background matching row hover */}
                   <td className="px-5 py-4 w-[100px]">
                     <div className="flex items-center justify-end gap-2">
@@ -141,7 +169,7 @@ const EventListPage = () => {
           </table>
         </div>
         <div className="border-t border-gray-100">
-          <Pagination />
+          <Pagination page={p} count={count} />
         </div>
       </div>
     </div>
