@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { UserButton } from "@clerk/nextjs";
 
 const Navbar = () => {
   return (
@@ -48,13 +49,14 @@ const Navbar = () => {
         </div>
 
         {/* Avatar */}
-        <Image
+        {/* <Image
           src="/avatar.png"
           alt=""
           width={36}
           height={36}
           className="rounded-full ring-2 ring-jayPurple cursor-pointer"
-        />
+        /> */}
+        <UserButton />
       </div>
     </motion.div>
   );
