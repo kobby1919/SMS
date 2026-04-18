@@ -15,12 +15,17 @@ import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { auth } from "@clerk/nextjs/server";
 
 const AssignmentListPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
+  // Fetch Auth and Role
+  const { sessionClaims } = await auth();
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
@@ -159,9 +164,12 @@ const AssignmentListPage = async ({
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">
                   Due Date
                 </th>
-                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
-                  Actions
-                </th>
+               {/* ACTIONS HEADER STILL VISIBLE FOR BOTH */}
+                {(role === "admin" || role === "teacher") && (
+                  <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -198,27 +206,15 @@ const AssignmentListPage = async ({
                   </td>
 
                   {/* Sticky actions */}
-                  <td className="px-5 py-4 w-[100px]">
-                    <div className="flex items-center justify-end gap-2">
-                      {/* 1. UPDATE MODAL (Replaces the Link/Eye icon) */}
-                      {role === "admin" && (
-                        <FormModal
-                          table="assignment"
-                          type="update"
-                          data={item}
-                        />
-                      )}
-
-                      {/* 2. DELETE MODAL */}
-                      {role === "admin" && (
-                        <FormModal
-                          table="assignment"
-                          type="delete"
-                          id={item.id}
-                        />
-                      )}
-                    </div>
-                  </td>
+                 {/* UPDATE/DELETE STILL ACCESSIBLE FOR BOTH */}
+                  {(role === "admin" || role === "teacher") && (
+                    <td className="px-5 py-4 w-[100px]">
+                      <div className="flex items-center justify-end gap-2">
+                        <FormModal table="assignment" type="update" data={item} />
+                        <FormModal table="assignment" type="delete" id={item.id} />
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
