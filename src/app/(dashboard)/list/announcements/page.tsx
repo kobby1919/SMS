@@ -1,27 +1,23 @@
+// ... (imports remain the same)
+
+import FormModal from "@/src/components/FormModal";
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
-import { announcementsData, role } from "@/src/lib/data";
-import Link from "next/link";
-import {
-  Eye,
-  Trash2,
-  Filter,
-  ArrowUpDown,
-  Plus,
-  Megaphone,
-} from "lucide-react";
-import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { auth } from "@clerk/nextjs/server";
+import { ArrowUpDown, Filter, Megaphone } from "lucide-react";
 
-
-
-const AnnouncementListPage =  async ({
+const AnnouncementListPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
+  // Fetch Auth and Role
+  const { sessionClaims } = await auth();
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
+
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
@@ -52,6 +48,7 @@ const AnnouncementListPage =  async ({
       where: query,
     }),
   ]);
+
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
       {/* ── Page header ── */}
@@ -78,10 +75,6 @@ const AnnouncementListPage =  async ({
                 <span className="hidden sm:inline">Sort</span>
               </button>
               {role === "admin" && (
-                // <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200">
-                //   <Plus size={14} />
-                //   <span>Add Announcement</span>
-                // </button>
                 <FormModal table="announcement" type="create" />
               )}
             </div>
@@ -121,9 +114,12 @@ const AnnouncementListPage =  async ({
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">
                   Date
                 </th>
-                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
-                  Actions
-                </th>
+                {/* ── CONDITIONALLY RENDER ACTIONS HEADER ── */}
+                {role === "admin" && (
+                  <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -136,33 +132,29 @@ const AnnouncementListPage =  async ({
                     {item.title}
                   </td>
                   <td className="px-4 py-4 text-sm text-gray-500">
-                    {item.class?.name}
+                    {item.class?.name || "-"}
                   </td>
                   <td className="px-4 py-4 hidden md:table-cell text-sm text-gray-500">
-                     {new Intl.DateTimeFormat("en-US").format(item?.date)}
+                    {new Intl.DateTimeFormat("en-US").format(item?.date)}
                   </td>
-                  {/* Sticky actions */}
-                  <td className="px-5 py-4 w-[100px]">
-                    <div className="flex items-center justify-end gap-2">
-                      {/* 1. UPDATE MODAL (Replaces the Link/Eye icon) */}
-                      {role === "admin" && (
+                  
+                  {/* ── CONDITIONALLY RENDER ACTIONS DATA CELL ── */}
+                  {role === "admin" && (
+                    <td className="px-5 py-4 w-[100px]">
+                      <div className="flex items-center justify-end gap-2">
                         <FormModal
                           table="announcement"
                           type="update"
                           data={item}
                         />
-                      )}
-
-                      {/* 2. DELETE MODAL */}
-                      {role === "admin" && (
                         <FormModal
                           table="announcement"
                           type="delete"
                           id={item.id}
                         />
-                      )}
-                    </div>
-                  </td>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
