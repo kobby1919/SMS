@@ -1,6 +1,6 @@
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
-import { assignmentsData, examsData, role } from "@/src/lib/data";
+import { role } from "@/src/lib/data";
 import Link from "next/link";
 import {
   Eye,
@@ -22,36 +22,31 @@ const AssignmentListPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  // Fetch Auth and Role
-  const { sessionClaims } = await auth();
+  // 1. Fetch Auth and Role
+  const { userId, sessionClaims } = await auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
-  
+  const currentUserId = userId;
+
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
-  const query: Prisma.AssignmentWhereInput = {};
+  // 2. Build the Query Object
+  // We initialize the lesson filter separately to make it easier to build
+  const lessonQuery: any = {};
 
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {
         switch (key) {
-          case "classId": {
-            query.lesson = {
-              classId: parseInt(value),
-            };
+          case "classId":
+            lessonQuery.classId = parseInt(value);
             break;
-          } // End block
           case "teacherId":
-            query.lesson = {
-              teacherId: value,
-            };
+            lessonQuery.teacherId = value;
             break;
-
           case "search":
-            query.lesson = {
-              subject: {
-                name: { contains: value, mode: "insensitive" },
-              },
+            lessonQuery.subject = {
+              name: { contains: value, mode: "insensitive" },
             };
             break;
         }
@@ -59,9 +54,42 @@ const AssignmentListPage = async ({
     }
   }
 
+  // 3. ROLE CONDITIONS
+  // This ensures teachers only see their own assignments, overriding any teacherId param
+  switch (role) {
+    case "admin":
+      break;
+    case "teacher":
+      lessonQuery.teacherId = currentUserId!;
+      break;
+    case "student":
+      lessonQuery.class = {
+        students: {
+          some: {
+            id: currentUserId!,
+          },
+        },
+      };
+      break;
+    case "parent":
+      lessonQuery.class = {
+        students: {
+          some: {
+            parentId: currentUserId!,
+          },
+        },
+      };
+      break;
+    default:
+      break;
+  }
+
+  // 4. Execute Prisma Query
   const [assignments, count] = await Promise.all([
     prisma.assignment.findMany({
-      where: query,
+      where: {
+        lesson: lessonQuery,
+      },
       include: {
         lesson: {
           select: {
@@ -75,7 +103,9 @@ const AssignmentListPage = async ({
       skip: ITEM_PER_PAGE * (p - 1),
     }),
     prisma.assignment.count({
-      where: query,
+      where: {
+        lesson: lessonQuery,
+      },
     }),
   ]);
   return (
@@ -103,11 +133,8 @@ const AssignmentListPage = async ({
                 <ArrowUpDown size={14} />
                 <span className="hidden sm:inline">Sort</span>
               </button>
-              {role === "admin" && (
-                // <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200">
-                //   <Plus size={14} />
-                //   <span>Add</span>
-                // </button>
+             {/* ALLOW ADMIN OR TEACHER TO CREATE */}
+              {(role === "admin" || role === "teacher") && (
                 <FormModal table="assignment" type="create" />
               )}
             </div>
