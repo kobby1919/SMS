@@ -1,19 +1,11 @@
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
-import { resultsData, role } from "@/src/lib/data";
-import Link from "next/link";
-import {
-  Eye,
-  Trash2,
-  Filter,
-  ArrowUpDown,
-  Plus,
-  ScrollText,
-} from "lucide-react";
+import { Filter, ArrowUpDown, ScrollText } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { auth } from "@clerk/nextjs/server";
 
 const ResultListPage = async ({
   searchParams,
@@ -21,6 +13,9 @@ const ResultListPage = async ({
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
   // Await searchParams first, then pull out `page` and everything else
+  const { userId, sessionClaims } = await auth();
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const currentUserId = userId;
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
@@ -44,6 +39,30 @@ const ResultListPage = async ({
         }
       }
     }
+  }
+
+  //ROLE CONDITIONS
+
+  switch (role) {
+    case "admin":     
+      break;
+      case "teacher":  
+      query.OR = [
+        {exam: {lesson: {teacherId: currentUserId!}}},
+        {assignment: {lesson: {teacherId: currentUserId!}}}
+      ]   
+      break;
+      case "student":     
+      query.studentId = currentUserId!;
+      break;
+      case "parent":   
+      query.student = {
+        parentId: currentUserId!,
+      }
+      break;
+  
+    default:
+      break;
   }
 
   const [dataRes, count] = await Promise.all([
@@ -173,9 +192,12 @@ const ResultListPage = async ({
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">
                   Date
                 </th>
-                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
-                  Actions
-                </th>
+                {/* ACTIONS HEADER STILL VISIBLE FOR BOTH */}
+                {(role === "admin" || role === "teacher") && (
+                  <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -215,12 +237,12 @@ const ResultListPage = async ({
                   <td className="px-5 py-4 w-[100px]">
                     <div className="flex items-center justify-end gap-2">
                       {/* 1. UPDATE MODAL (Replaces the Link/Eye icon) */}
-                      {role === "admin" && (
+                      {(role === "admin" || role === "teacher") && (
                         <FormModal table="result" type="update" data={item} />
                       )}
 
                       {/* 2. DELETE MODAL */}
-                      {role === "admin" && (
+                      {(role === "admin" || role === "teacher") && (
                         <FormModal table="result" type="delete" id={item?.id} />
                       )}
                     </div>
