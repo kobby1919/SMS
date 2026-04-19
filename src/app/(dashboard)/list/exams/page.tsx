@@ -14,43 +14,71 @@ import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { auth } from "@clerk/nextjs/server";
 
 const ExamListPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
+  // 1. Fetch Auth and Role
+  const { userId, sessionClaims } = await auth();
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const currentUserId = userId;
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
   const query: Prisma.ExamWhereInput = {};
-
+  query.lesson = {};
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {
         switch (key) {
-          case "classId": {
-            query.lesson = {
-              classId: parseInt(value),
-            };
+          case "classId":
+            query.lesson.classId = parseInt(value);
             break;
-          } // End block
           case "teacherId":
-            query.lesson = {
-              teacherId: value,
-            };
+            query.lesson.teacherId = value;
             break;
 
           case "search":
-            query.lesson = {
-              subject: {
-                name: { contains: value, mode: "insensitive" },
-              },
+            query.lesson.subject = {
+              name: { contains: value, mode: "insensitive" },
             };
             break;
         }
       }
     }
+  }
+
+  // ROLE CONDITIONS
+  switch (role) {
+    case "admin":
+      break;
+    case "teacher":
+      query.lesson.teacherId = currentUserId!;
+      break;
+    case "student":
+      query.lesson.class = {
+        students: {
+          some: {
+            id: currentUserId!,
+          },
+        },
+      };
+      break;
+    case "parent":
+      query.lesson.class = {
+        students: {
+          some: {
+            parentId: currentUserId!,
+          },
+        },
+      };
+      break;
+
+    default:
+      break;
   }
 
   const [exams, count] = await Promise.all([
@@ -159,9 +187,12 @@ const ExamListPage = async ({
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">
                   Date
                 </th>
-                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
-                  Actions
-                </th>
+                {/* ACTIONS HEADER STILL VISIBLE FOR BOTH */}
+                {(role === "admin" || role === "teacher") && (
+                  <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -200,13 +231,13 @@ const ExamListPage = async ({
                   {/* Sticky actions */}
                   <td className="px-5 py-4 w-[100px]">
                     <div className="flex items-center justify-end gap-2">
-                      {/* 1. UPDATE MODAL (Replaces the Link/Eye icon) */}
-                      {role === "admin" && (
+                      {/* 1. UPDATE MODAL - Visible to Admin and Teacher */}
+                      {(role === "admin" || role === "teacher") && (
                         <FormModal table="exam" type="update" data={item} />
                       )}
 
-                      {/* 2. DELETE MODAL */}
-                      {role === "admin" && (
+                      {/* 2. DELETE MODAL - Visible to Admin and Teacher */}
+                      {(role === "admin" || role === "teacher") && (
                         <FormModal table="exam" type="delete" id={item.id} />
                       )}
                     </div>
