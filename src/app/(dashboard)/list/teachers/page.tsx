@@ -1,6 +1,5 @@
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
-import { role } from "@/src/lib/data";
 import Image from "next/image";
 import Link from "next/link";
 import { Eye, Plus, BookOpen, Users } from "lucide-react";
@@ -8,6 +7,7 @@ import FormModal from "@/src/components/FormModal";
 import prisma from "@/src/lib/prisma";
 import { Subject, Class, Prisma } from "@/src/generated/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { auth } from "@clerk/nextjs/server";
 
 const subjectColors: Record<string, string> = {
   Math: "bg-blue-100 text-blue-700",
@@ -27,6 +27,11 @@ const TeacherListPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
+
+   // 1. Fetch Auth and Role
+      const { userId, sessionClaims } = await auth();
+      const role = (sessionClaims?.metadata as { role?: string })?.role;
+      const currentUserId = userId;
   const { page, ...queryParams } = await searchParams;
 
   const p = page ? parseInt(page) : 1;
@@ -172,9 +177,12 @@ const TeacherListPage = async ({
                 <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden xl:table-cell">
                   Address
                 </th>
-                <th className="text-right px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 sticky right-0 bg-gray-50/60 backdrop-blur-sm">
-                  Actions
-                </th>
+               {/* ── CONDITIONALLY RENDER ACTIONS HEADER ── */}
+                {role === "admin" && (
+                  <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">

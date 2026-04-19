@@ -1,48 +1,50 @@
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
-import { role } from "@/src/lib/data";
 import Image from "next/image";
 import Link from "next/link";
 import { Eye, Plus, BookOpen, Users } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
 import prisma from "@/src/lib/prisma";
-import { Subject, Class, Prisma } from "@/src/generated/prisma";
+import { Prisma } from "@/src/generated/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { auth } from "@clerk/nextjs/server";
 
-
-
-const StudentListPage = async ({searchParams}: {
-  searchParams: Promise<{[key: string]: string | undefined }>
+const StudentListPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
+  // 1. Fetch Auth and Role
+  const { userId, sessionClaims } = await auth();
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const currentUserId = userId;
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
   const query: Prisma.StudentWhereInput = {};
 
-  
- if (queryParams) {
-  for (const [key, value] of Object.entries(queryParams)) {
-    if (value !== undefined) {
-      switch (key) {
-        case "teacherId": { 
-          query.class = {
-            lessons: {
-              some: {
-                teacherId: value,
-              }
-            },
-          };
-          break;
-        } // End block
+  if (queryParams) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined) {
+        switch (key) {
+          case "teacherId": {
+            query.class = {
+              lessons: {
+                some: {
+                  teacherId: value,
+                },
+              },
+            };
+            break;
+          } // End block
 
-        case "search": 
-          query.name = { contains: value, mode: "insensitive" };
-          break;
+          case "search":
+            query.name = { contains: value, mode: "insensitive" };
+            break;
+        }
       }
     }
   }
-}
-
 
   const [students, count] = await Promise.all([
     prisma.student.findMany({
@@ -60,7 +62,6 @@ const StudentListPage = async ({searchParams}: {
       where: query,
     }),
   ]);
-
 
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
@@ -88,13 +89,7 @@ const StudentListPage = async ({searchParams}: {
                 <Image src="/sort.png" alt="" width={16} height={16} />
                 <span className="hidden sm:inline">Sort</span>
               </button>
-              {role === "admin" && (
-                // <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200">
-                //   <Image src="/plus.png" alt="" width={16} height={16} />
-                //   <span>Add</span>
-                // </button>
-                <FormModal table="student" type="create" />
-              )}
+              {role === "admin" && <FormModal table="student" type="create" />}
             </div>
           </div>
         </div>
@@ -170,9 +165,12 @@ const StudentListPage = async ({searchParams}: {
                 <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden xl:table-cell">
                   Address
                 </th>
-                <th className="text-right px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 sticky right-0 bg-gray-50/60 backdrop-blur-sm">
-                  Actions
-                </th>
+                {/* ── CONDITIONALLY RENDER ACTIONS HEADER ── */}
+                {role === "admin" && (
+                  <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -237,9 +235,6 @@ const StudentListPage = async ({searchParams}: {
                         </button>
                       </Link>
                       {role === "admin" && (
-                        // <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-100 transition-colors">
-                        //   <Trash2 size={14} />
-                        // </button>
                         <FormModal table="student" type="delete" id={item.id} />
                       )}
                     </div>
