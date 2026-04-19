@@ -13,10 +13,9 @@ const ClassListPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-   // Fetch Auth and Role
-    const { sessionClaims } = await auth();
-    const role = (sessionClaims?.metadata as { role?: string })?.role;
-
+  // Fetch Auth and Role
+  const { sessionClaims } = await auth();
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
 
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
@@ -125,10 +124,12 @@ const ClassListPage = async ({
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">
                   Supervisor
                 </th>
-                {/* Fixed column setup for Actions */}
-                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 sticky right-0 bg-gray-50/60 z-10">
-                  Actions
-                </th>
+                {/* ── CONDITIONALLY RENDER ACTIONS HEADER ── */}
+                {role === "admin" && (
+                  <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">

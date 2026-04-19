@@ -6,13 +6,18 @@ import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { auth } from "@clerk/nextjs/server";
 
 const EventListPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
+  // Fetch Auth and Role
+  const { userId, sessionClaims } = await auth();
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
   const { page, ...queryParams } = await searchParams;
+  const currentUserId = userId;
   const p = page ? parseInt(page) : 1;
 
   const query: Prisma.EventWhereInput = {};
@@ -28,6 +33,17 @@ const EventListPage = async ({
       }
     }
   }
+  // ROLE CONDITIONS
+
+  const roleConditions = {
+    teacher: { lessons: { some: { teacherId: currentUserId! } } },
+    student: { students: { some: { id: currentUserId! } } },
+    parent: { students: { some: { parentId: currentUserId! } } },
+  };
+  query.OR = [
+    { classId: null },
+    { class: roleConditions[role as keyof typeof roleConditions] || {} },
+  ];
 
   const [events, count] = await Promise.all([
     prisma.event.findMany({
@@ -113,10 +129,12 @@ const EventListPage = async ({
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">
                   End Time
                 </th>
-                {/* Fixed column header setup */}
-                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 sticky right-0 bg-gray-50/60 z-10">
-                  Actions
-                </th>
+                {/* ── CONDITIONALLY RENDER ACTIONS HEADER ── */}
+                {role === "admin" && (
+                  <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -129,7 +147,7 @@ const EventListPage = async ({
                     {item.title}
                   </td>
                   <td className="px-4 py-4 text-sm text-gray-500">
-                    {item.class?.name}
+                    {item.class?.name || "-"}
                   </td>
                   <td className="px-4 py-4 hidden md:table-cell text-sm text-gray-500">
                     {new Intl.DateTimeFormat("en-US").format(item?.startTime)}

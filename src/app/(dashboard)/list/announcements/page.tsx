@@ -15,8 +15,9 @@ const AnnouncementListPage = async ({
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
   // Fetch Auth and Role
-  const { sessionClaims } = await auth();
+  const {userId, sessionClaims } = await auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const currentUserId = userId;
 
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
@@ -34,6 +35,19 @@ const AnnouncementListPage = async ({
       }
     }
   }
+
+   // ROLE CONDITIONS
+
+  const roleConditions = {
+    teacher: { lessons: { some: { teacherId: currentUserId! } } },
+    student: { students: { some: { id: currentUserId! } } },
+    parent: { students: { some: { parentId: currentUserId! } } },
+  };
+  query.OR = [
+    { classId: null },
+    { class: roleConditions[role as keyof typeof roleConditions] || {} },
+  ];
+
 
   const [announcements, count] = await Promise.all([
     prisma.announcement.findMany({
