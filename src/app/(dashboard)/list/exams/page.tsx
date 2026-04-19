@@ -127,10 +127,6 @@ const ExamListPage = async ({
                 <span className="hidden sm:inline">Sort</span>
               </button>
               {role === "admin" && (
-                // <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200">
-                //   <Plus size={14} />
-                //   <span>Add</span>
-                // </button>
                 <FormModal table="exam" type="create" />
               )}
             </div>
