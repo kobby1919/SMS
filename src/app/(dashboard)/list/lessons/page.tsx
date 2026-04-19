@@ -1,18 +1,21 @@
 import Pagination from "@/src/components/pagination";
 import TableSearch from "@/src/components/TableSearch";
-import { lessonsData, role } from "@/src/lib/data";
-import Link from "next/link";
-import { Eye, Trash2, Filter, ArrowUpDown, Plus, BookOpen } from "lucide-react";
+import { Filter, ArrowUpDown, Plus, BookOpen } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { auth } from "@clerk/nextjs/server";
 
 const LessonListPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
+  // 1. Fetch Auth and Role
+  const { userId, sessionClaims } = await auth();
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const currentUserId = userId;
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
@@ -82,13 +85,7 @@ const LessonListPage = async ({
                 <ArrowUpDown size={14} />
                 <span className="hidden sm:inline">Sort</span>
               </button>
-              {role === "admin" && (
-                // <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200">
-                //   <Plus size={14} />
-                //   <span>Add</span>
-                // </button>
-                <FormModal table="lesson" type="create" />
-              )}
+              {role === "admin" && <FormModal table="lesson" type="create" />}
             </div>
           </div>
         </div>
@@ -140,9 +137,12 @@ const LessonListPage = async ({
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">
                   Teacher
                 </th>
-                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
-                  Actions
-                </th>
+                {/* ACTIONS HEADER STILL VISIBLE FOR BOTH */}
+                {(role === "admin" || role === "teacher") && (
+                  <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
