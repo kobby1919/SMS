@@ -1,10 +1,16 @@
 import prisma from "@/src/lib/prisma";
 import AdminDashboard from "@/src/components/AdminDashboard";
+import EventList from "@/src/components/EventList";
+import Announcements from "@/src/components/Announcements";
 
-const AdminPage = async () => {
+
+const AdminPage = async ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | undefined };
+}) => {
   const currentYear = new Date().getFullYear();
 
-  // ── Weekday labels for last 5 days ──
   const weekDays: { label: string; date: Date }[] = [];
   let d = new Date();
   while (weekDays.length < 5) {
@@ -18,19 +24,16 @@ const AdminPage = async () => {
   const months = Array.from({ length: 12 }, (_, i) => i);
   const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-  const [
-    adminCount, teacherCount, studentCount, parentCount,
-    boyCount, girlCount,
-  ] = await Promise.all([
-    prisma.admin.count(),
-    prisma.teacher.count(),
-    prisma.student.count(),
-    prisma.parent.count(),
-    prisma.student.count({ where: { sex: "MALE" } }),
-    prisma.student.count({ where: { sex: "FEMALE" } }),
-  ]);
+  const [adminCount, teacherCount, studentCount, parentCount, boyCount, girlCount] =
+    await Promise.all([
+      prisma.admin.count(),
+      prisma.teacher.count(),
+      prisma.student.count(),
+      prisma.parent.count(),
+      prisma.student.count({ where: { sex: "MALE" } }),
+      prisma.student.count({ where: { sex: "FEMALE" } }),
+    ]);
 
-  // ── Attendance: last 5 weekdays ──
   const attendanceData = await Promise.all(
     weekDays.map(async ({ label, date }) => {
       const start = new Date(date); start.setHours(0, 0, 0, 0);
@@ -43,7 +46,6 @@ const AdminPage = async () => {
     })
   );
 
-  // ── Finance: avg scores per month as proxy ──
   const financeData = await Promise.all(
     months.map(async (i) => {
       const start = new Date(currentYear, i, 1);
@@ -72,6 +74,9 @@ const AdminPage = async () => {
       girls={girlCount}
       attendanceData={attendanceData}
       financeData={financeData}
+      // Pass the EventList (server component) as a prop/slot
+      eventList={<EventList dateParam={searchParams.date} />}
+      announcements={<Announcements />}
     />
   );
 };

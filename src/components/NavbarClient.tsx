@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { UserButton } from "@clerk/nextjs";
+import UserButtonWrapper from "./UserButtonWrapper";
 
 interface NavbarClientProps {
   user: {
@@ -54,7 +54,7 @@ const NavbarClient = ({ user }: NavbarClientProps) => {
           <span className="text-[10px] text-gray-400 capitalize">{user.role}</span>
         </div>
 
-        <UserButton />
+        <UserButtonWrapper />
       </div>
     </motion.div>
   );

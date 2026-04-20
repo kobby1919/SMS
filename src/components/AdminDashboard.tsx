@@ -20,9 +20,10 @@ type Props = {
   attendanceData: DayData[];
   financeData: MonthData[];
   eventList: React.ReactNode;  // ← server component passed as a slot
+  announcements: React.ReactNode;
 };
 
-const AdminDashboard = ({ counts, boys, girls, attendanceData, financeData, eventList }: Props) => {
+const AdminDashboard = ({ counts, boys, girls, attendanceData, financeData, eventList, announcements }: Props) => {
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
   });
@@ -85,8 +86,8 @@ const AdminDashboard = ({ counts, boys, girls, attendanceData, financeData, even
             {eventList}
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
-            <Announcements />
+           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
+            {announcements}
           </motion.div>
         </div>
       </div>

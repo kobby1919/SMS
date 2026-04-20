@@ -1,13 +1,8 @@
-"use client"
-
 import Announcements from "@/src/components/Announcements";
+import BigCalendar from "@/src/components/BigCalendar";
 import EventCalendar from "@/src/components/EventCalendar";
 import dynamic from "next/dynamic";
 
-const BigCalendar = dynamic(
-  () => import("@/src/components/BigCalendar"),
-  { ssr: false } // 🔥 VERY IMPORTANT
-);
 const TeacherPage = () => {
   return (
     <div className="p-4 flex gap-4 flex-col xl:flex-row">
