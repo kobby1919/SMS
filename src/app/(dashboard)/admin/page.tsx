@@ -1,25 +1,30 @@
+import prisma from "@/src/lib/prisma";
 import AdminDashboard from "@/src/components/AdminDashboard";
-import UserCard from "@/src/components/UserCard";
 
-const cardTypes = ["admin", "teacher", "student", "parent"] as const;
-
-// Server component — fetches UserCard data, passes counts to client
+// ONE server component that fetches ALL data
 const AdminPage = async () => {
-  const counts = await Promise.all(
-    cardTypes.map(async (type) => {
-      const { default: prisma } = await import("@/src/lib/prisma");
-      const modelMap: Record<string, any> = {
-        admin:   prisma.admin,
-        teacher: prisma.teacher,
-        student: prisma.student,
-        parent:  prisma.parent,
-      };
-      const count = await modelMap[type].count();
-      return { type, count };
-    })
-  );
+  const [adminCount, teacherCount, studentCount, parentCount, boyCount, girlCount] =
+    await Promise.all([
+      prisma.admin.count(),
+      prisma.teacher.count(),
+      prisma.student.count(),
+      prisma.parent.count(),
+      prisma.student.count({ where: { sex: "MALE" } }),
+      prisma.student.count({ where: { sex: "FEMALE" } }),
+    ]);
 
-  return <AdminDashboard counts={counts} />;
+  return (
+    <AdminDashboard
+      counts={[
+        { type: "admin",   count: adminCount   },
+        { type: "teacher", count: teacherCount },
+        { type: "student", count: studentCount },
+        { type: "parent",  count: parentCount  },
+      ]}
+      boys={boyCount}
+      girls={girlCount}
+    />
+  );
 };
 
 export default AdminPage;

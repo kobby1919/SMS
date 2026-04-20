@@ -8,9 +8,18 @@ import FinanceChart from "@/src/components/FinanceChart";
 import { motion } from "framer-motion";
 import UserCardClient from "./UserCardClient ";
 
-type CountEntry = { type: "admin" | "teacher" | "student" | "parent"; count: number };
+type CountEntry = {
+  type: "admin" | "teacher" | "student" | "parent";
+  count: number;
+};
 
-const AdminDashboard = ({ counts }: { counts: CountEntry[] }) => {
+type Props = {
+  counts: CountEntry[];
+  boys: number;
+  girls: number;
+};
+
+const AdminDashboard = ({ counts, boys, girls }: Props) => {
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -69,10 +78,17 @@ const AdminDashboard = ({ counts }: { counts: CountEntry[] }) => {
         {/* LEFT */}
         <div className="xl:col-span-2 flex flex-col gap-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-1 h-[380px]"><CountChart /></div>
-            <div className="md:col-span-2 h-[380px]"><AttendanceChart /></div>
+            {/* CountChart receives boys/girls as props — no Prisma inside */}
+            <div className="md:col-span-1 h-[380px]">
+              <CountChart boys={boys} girls={girls} />
+            </div>
+            <div className="md:col-span-2 h-[380px]">
+              <AttendanceChart />
+            </div>
           </div>
-          <div className="h-[420px]"><FinanceChart /></div>
+          <div className="h-[420px]">
+            <FinanceChart />
+          </div>
         </div>
 
         {/* RIGHT */}

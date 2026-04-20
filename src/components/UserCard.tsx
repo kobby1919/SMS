@@ -1,4 +1,7 @@
-// REMOVE "use client"
+"use client";
+
+import { motion } from "framer-motion";
+// Import the icons from lucide-react
 import { 
   GraduationCap, 
   Presentation, 
@@ -9,39 +12,53 @@ import {
 } from "lucide-react";
 import prisma from "../lib/prisma";
 
+// Updated iconMap to use Lucide components
 const iconMap: Record<string, React.ElementType> = {
-  admin: Briefcase, // Changed from 'staff' to match your type
-  teacher: Presentation,
   student: GraduationCap,
+  teacher: Presentation,
   parent: Users,
+  staff: Briefcase,
 };
 
 const colorMap: Record<string, { bg: string; accent: string }> = {
-  admin: { bg: "bg-white", accent: "text-gray-500" },
-  teacher: { bg: "bg-jayYellowLight", accent: "text-yellow-500" },
   student: { bg: "bg-jaySkyLight", accent: "text-sky-500" },
+  teacher: { bg: "bg-jayYellowLight", accent: "text-yellow-500" },
   parent: { bg: "bg-jayPurpleLight", accent: "text-purple-500" },
+  staff: { bg: "bg-white", accent: "text-gray-500" },
 };
 
 const UserCard = async ({ type }: { type: "admin" | "teacher" | "student" | "parent" }) => {
-  const colors = colorMap[type];
-  const Icon = iconMap[type];
+  const colors = colorMap[type] ?? colorMap.staff;
+  const Icon = iconMap[type] ?? iconMap.staff;
 
-  // Fetch data on the server
-  const data = await (prisma[type] as any).count();
+  const modelMap: Record<typeof type, any> = {
+    admin: prisma.admin,
+    teacher: prisma.teacher,
+    student: prisma.student,
+    parent: prisma.parent,
+  }
+
+  const data = await modelMap[type].count();
+
 
   return (
-    <div className={`${colors.bg} rounded-2xl p-5 w-full shadow-sm border border-gray-100 flex flex-col gap-3 hover:scale-[1.02] transition-transform duration-300`}>
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 300 }}
+      className={`${colors.bg} rounded-2xl p-5 w-full shadow-sm border border-gray-100 flex flex-col gap-3`}
+    >
       {/* TOP ROW */}
       <div className="flex justify-between items-center">
         <span className="text-[10px] bg-white px-3 py-1 rounded-full text-green-600 font-bold shadow-sm">
           2025/26
         </span>
+        {/* Replaced Image with MoreHorizontal */}
         <MoreHorizontal className="text-gray-400" size={16} />
       </div>
 
       {/* ICON + COUNT */}
       <div className="flex items-center gap-3">
+        {/* Rendered the Lucide Icon with your accent color */}
         <Icon className={`${colors.accent}`} size={32} strokeWidth={2.5} />
         <h1 className="font-nunito font-extrabold text-3xl text-gray-800">
           {data}
@@ -58,7 +75,7 @@ const UserCard = async ({ type }: { type: "admin" | "teacher" | "student" | "par
            <span className="text-[10px] text-gray-400">12% this term</span>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
