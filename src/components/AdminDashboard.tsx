@@ -5,6 +5,7 @@ import AttendanceChart from "@/src/components/AttendanceChart";
 import FinanceChart from "@/src/components/FinanceChart";
 import CountChart from "@/src/components/CountChart";
 import EventCalendar from "@/src/components/EventCalendar";
+
 import { motion } from "framer-motion";
 import UserCardClient from "./UserCardClient ";
 
@@ -18,9 +19,10 @@ type Props = {
   girls: number;
   attendanceData: DayData[];
   financeData: MonthData[];
+  eventList: React.ReactNode;  // ← server component passed as a slot
 };
 
-const AdminDashboard = ({ counts, boys, girls, attendanceData, financeData }: Props) => {
+const AdminDashboard = ({ counts, boys, girls, attendanceData, financeData, eventList }: Props) => {
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
   });
@@ -70,11 +72,20 @@ const AdminDashboard = ({ counts, boys, girls, attendanceData, financeData }: Pr
             <FinanceChart data={financeData} />
           </div>
         </div>
-        <div className="flex flex-col gap-6 xl:sticky xl:top-[80px] xl:self-start">
+
+        {/* RIGHT COLUMN */}
+        <div className="flex flex-col gap-4 xl:sticky xl:top-[80px] xl:self-start">
+          {/* Calendar — client, updates URL on date click */}
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
             <EventCalendar />
           </motion.div>
+
+          {/* EventList — server component passed as slot, re-fetches on URL change */}
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
+            {eventList}
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
             <Announcements />
           </motion.div>
         </div>
