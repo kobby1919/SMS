@@ -13,22 +13,9 @@ import {
 } from "recharts";
 import { motion } from "framer-motion";
 
-const lineData = [
-  { name: "Jan", income: 4000, expense: 2500 },
-  { name: "Feb", income: 3500, expense: 3000 },
-  { name: "Mar", income: 9000, expense: 2000 },
-  { name: "Apr", income: 6000, expense: 4000 },
-  { name: "May", income: 5000, expense: 3500 },
-  { name: "Jun", income: 5677, expense: 3200 },
-  { name: "Jul", income: 3800, expense: 3000 },
-  { name: "Aug", income: 3211, expense: 2800 },
-  { name: "Sep", income: 3444, expense: 3100 },
-  { name: "Oct", income: 1111, expense: 2500 },
-  { name: "Nov", income: 3456, expense: 3300 },
-  { name: "Dec", income: 9000, expense: 4000 },
-];
+type MonthData = { name: string; income: number; expense: number };
 
-const FinanceChart = () => {
+const FinanceChart = ({ data }: { data: MonthData[] }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -37,40 +24,17 @@ const FinanceChart = () => {
       className="bg-white rounded-2xl w-full h-full p-5 shadow-sm"
     >
       <div className="flex justify-between items-center mb-2">
-        <h1 className="font-nunito font-extrabold text-lg text-gray-800">
-          Finance Overview
-        </h1>
+        <h1 className="font-nunito font-extrabold text-lg text-gray-800">Finance Overview</h1>
         <Image src="/moreDark.png" alt="" width={18} height={18} />
       </div>
       <ResponsiveContainer width="100%" height="90%">
-        <LineChart data={lineData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+        <LineChart data={data} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-          <XAxis
-            dataKey="name"
-            axisLine={false}
-            tick={{ fill: "#9ca3af", fontSize: 12 }}
-            tickLine={false}
-            tickMargin={10}
-          />
-          <YAxis
-            axisLine={false}
-            tick={{ fill: "#9ca3af", fontSize: 12 }}
-            tickLine={false}
-            tickMargin={10}
-          />
-          <Tooltip
-            contentStyle={{
-              borderRadius: "12px",
-              borderColor: "#e5e7eb",
-              fontSize: "12px",
-            }}
-          />
-          <Legend
-            align="center"
-            verticalAlign="top"
-            wrapperStyle={{ paddingBottom: "20px", fontSize: "12px" }}
-          />
-          <Line type="monotone" dataKey="income" stroke="#C3EBFA" strokeWidth={4} dot={false} />
+          <XAxis dataKey="name" axisLine={false} tick={{ fill: "#9ca3af", fontSize: 12 }} tickLine={false} tickMargin={10} />
+          <YAxis axisLine={false} tick={{ fill: "#9ca3af", fontSize: 12 }} tickLine={false} tickMargin={10} />
+          <Tooltip contentStyle={{ borderRadius: "12px", borderColor: "#e5e7eb", fontSize: "12px" }} />
+          <Legend align="center" verticalAlign="top" wrapperStyle={{ paddingBottom: "20px", fontSize: "12px" }} />
+          <Line type="monotone" dataKey="income"  stroke="#C3EBFA" strokeWidth={4} dot={false} />
           <Line type="monotone" dataKey="expense" stroke="#CFCEFF" strokeWidth={4} dot={false} />
         </LineChart>
       </ResponsiveContainer>
