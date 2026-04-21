@@ -49,7 +49,7 @@ const StudentPage = async ({
               Class {student?.class?.name ?? ""} — weekly timetable
             </p>
           </div>
-          <BigCalendar lessons={calendarLessons} />
+          <BigCalendar lessons={calendarLessons} viewAs="student"/>
         </div>
       </div>
       {/* RIGHT */}
