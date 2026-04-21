@@ -68,6 +68,7 @@ model Teacher {
   bloodType String
   sex       UserSex
   createdAt DateTime @default(now())
+  maxClasses Int @default(5)   // configurable per teacher if needed
 
   // Relationships
   subjects Subject[]
@@ -89,28 +90,27 @@ model Parent {
 }
 
 model Grade {
-  id    Int    @id @default(autoincrement())
-  level String @unique
+  id       Int    @id @default(autoincrement())
+  level    String @unique   // e.g. "Nursery", "KG1", "KG2", "Class 1", "JHS 3"
+  order    Int    @unique   // 1,2,3... for sorting (Nursery=1, KG1=2, ... JHS3=11)
 
-  // Relationships
   students Student[]
   classes  Class[]
 }
 
 model Class {
-  id       Int    @id @default(autoincrement())
-  name     String @unique
+  id       Int     @id @default(autoincrement())
+  name     String  @unique   // e.g. "Class 3A", "JHS 2B", "KG1"
   capacity Int
+  section  String? // "A" | "B" | null  (null = unsplit class)
 
-  // Relationships
   supervisorId String?
   supervisor   Teacher? @relation("ClassTeacher", fields: [supervisorId], references: [id])
 
-  lessons  Lesson[]
-  students Student[] // FIXED: pluralized for naming consistency
-  gradeId  Int
-  grade    Grade     @relation(fields: [gradeId], references: [id])
-
+  lessons       Lesson[]
+  students      Student[]
+  gradeId       Int
+  grade         Grade     @relation(fields: [gradeId], references: [id])
   events        Event[]
   announcements Announcement[]
 }
@@ -131,8 +131,8 @@ model Lesson {
   endTime   DateTime
 
   // Relationships
-  subjectId Int?
-  subject   Subject? @relation(fields: [subjectId], references: [id])
+  subjectId Int
+  subject   Subject @relation(fields: [subjectId], references: [id])
 
   classId Int
   class   Class @relation(fields: [classId], references: [id])

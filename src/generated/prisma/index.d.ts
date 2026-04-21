@@ -4708,8 +4708,18 @@ export namespace Prisma {
 
   export type AggregateTeacher = {
     _count: TeacherCountAggregateOutputType | null
+    _avg: TeacherAvgAggregateOutputType | null
+    _sum: TeacherSumAggregateOutputType | null
     _min: TeacherMinAggregateOutputType | null
     _max: TeacherMaxAggregateOutputType | null
+  }
+
+  export type TeacherAvgAggregateOutputType = {
+    maxClasses: number | null
+  }
+
+  export type TeacherSumAggregateOutputType = {
+    maxClasses: number | null
   }
 
   export type TeacherMinAggregateOutputType = {
@@ -4724,6 +4734,7 @@ export namespace Prisma {
     bloodType: string | null
     sex: $Enums.UserSex | null
     createdAt: Date | null
+    maxClasses: number | null
   }
 
   export type TeacherMaxAggregateOutputType = {
@@ -4738,6 +4749,7 @@ export namespace Prisma {
     bloodType: string | null
     sex: $Enums.UserSex | null
     createdAt: Date | null
+    maxClasses: number | null
   }
 
   export type TeacherCountAggregateOutputType = {
@@ -4752,9 +4764,18 @@ export namespace Prisma {
     bloodType: number
     sex: number
     createdAt: number
+    maxClasses: number
     _all: number
   }
 
+
+  export type TeacherAvgAggregateInputType = {
+    maxClasses?: true
+  }
+
+  export type TeacherSumAggregateInputType = {
+    maxClasses?: true
+  }
 
   export type TeacherMinAggregateInputType = {
     id?: true
@@ -4768,6 +4789,7 @@ export namespace Prisma {
     bloodType?: true
     sex?: true
     createdAt?: true
+    maxClasses?: true
   }
 
   export type TeacherMaxAggregateInputType = {
@@ -4782,6 +4804,7 @@ export namespace Prisma {
     bloodType?: true
     sex?: true
     createdAt?: true
+    maxClasses?: true
   }
 
   export type TeacherCountAggregateInputType = {
@@ -4796,6 +4819,7 @@ export namespace Prisma {
     bloodType?: true
     sex?: true
     createdAt?: true
+    maxClasses?: true
     _all?: true
   }
 
@@ -4837,6 +4861,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: TeacherAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TeacherSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: TeacherMinAggregateInputType
@@ -4867,6 +4903,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: TeacherCountAggregateInputType | true
+    _avg?: TeacherAvgAggregateInputType
+    _sum?: TeacherSumAggregateInputType
     _min?: TeacherMinAggregateInputType
     _max?: TeacherMaxAggregateInputType
   }
@@ -4883,7 +4921,10 @@ export namespace Prisma {
     bloodType: string
     sex: $Enums.UserSex
     createdAt: Date
+    maxClasses: number
     _count: TeacherCountAggregateOutputType | null
+    _avg: TeacherAvgAggregateOutputType | null
+    _sum: TeacherSumAggregateOutputType | null
     _min: TeacherMinAggregateOutputType | null
     _max: TeacherMaxAggregateOutputType | null
   }
@@ -4914,6 +4955,7 @@ export namespace Prisma {
     bloodType?: boolean
     sex?: boolean
     createdAt?: boolean
+    maxClasses?: boolean
     subjects?: boolean | Teacher$subjectsArgs<ExtArgs>
     lessons?: boolean | Teacher$lessonsArgs<ExtArgs>
     classes?: boolean | Teacher$classesArgs<ExtArgs>
@@ -4932,6 +4974,7 @@ export namespace Prisma {
     bloodType?: boolean
     sex?: boolean
     createdAt?: boolean
+    maxClasses?: boolean
   }, ExtArgs["result"]["teacher"]>
 
   export type TeacherSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4946,6 +4989,7 @@ export namespace Prisma {
     bloodType?: boolean
     sex?: boolean
     createdAt?: boolean
+    maxClasses?: boolean
   }, ExtArgs["result"]["teacher"]>
 
   export type TeacherSelectScalar = {
@@ -4960,9 +5004,10 @@ export namespace Prisma {
     bloodType?: boolean
     sex?: boolean
     createdAt?: boolean
+    maxClasses?: boolean
   }
 
-  export type TeacherOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "name" | "surname" | "email" | "phone" | "address" | "img" | "bloodType" | "sex" | "createdAt", ExtArgs["result"]["teacher"]>
+  export type TeacherOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "name" | "surname" | "email" | "phone" | "address" | "img" | "bloodType" | "sex" | "createdAt" | "maxClasses", ExtArgs["result"]["teacher"]>
   export type TeacherInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     subjects?: boolean | Teacher$subjectsArgs<ExtArgs>
     lessons?: boolean | Teacher$lessonsArgs<ExtArgs>
@@ -4991,6 +5036,7 @@ export namespace Prisma {
       bloodType: string
       sex: $Enums.UserSex
       createdAt: Date
+      maxClasses: number
     }, ExtArgs["result"]["teacher"]>
     composites: {}
   }
@@ -5428,6 +5474,7 @@ export namespace Prisma {
     readonly bloodType: FieldRef<"Teacher", 'String'>
     readonly sex: FieldRef<"Teacher", 'UserSex'>
     readonly createdAt: FieldRef<"Teacher", 'DateTime'>
+    readonly maxClasses: FieldRef<"Teacher", 'Int'>
   }
     
 
@@ -7039,50 +7086,60 @@ export namespace Prisma {
 
   export type GradeAvgAggregateOutputType = {
     id: number | null
+    order: number | null
   }
 
   export type GradeSumAggregateOutputType = {
     id: number | null
+    order: number | null
   }
 
   export type GradeMinAggregateOutputType = {
     id: number | null
     level: string | null
+    order: number | null
   }
 
   export type GradeMaxAggregateOutputType = {
     id: number | null
     level: string | null
+    order: number | null
   }
 
   export type GradeCountAggregateOutputType = {
     id: number
     level: number
+    order: number
     _all: number
   }
 
 
   export type GradeAvgAggregateInputType = {
     id?: true
+    order?: true
   }
 
   export type GradeSumAggregateInputType = {
     id?: true
+    order?: true
   }
 
   export type GradeMinAggregateInputType = {
     id?: true
     level?: true
+    order?: true
   }
 
   export type GradeMaxAggregateInputType = {
     id?: true
     level?: true
+    order?: true
   }
 
   export type GradeCountAggregateInputType = {
     id?: true
     level?: true
+    order?: true
     _all?: true
   }
 
@@ -7175,6 +7232,7 @@ export namespace Prisma {
   export type GradeGroupByOutputType = {
     id: number
     level: string
+    order: number
     _count: GradeCountAggregateOutputType | null
     _avg: GradeAvgAggregateOutputType | null
     _sum: GradeSumAggregateOutputType | null
@@ -7199,6 +7257,7 @@ export namespace Prisma {
   export type GradeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     level?: boolean
+    order?: boolean
     students?: boolean | Grade$studentsArgs<ExtArgs>
     classes?: boolean | Grade$classesArgs<ExtArgs>
     _count?: boolean | GradeCountOutputTypeDefaultArgs<ExtArgs>
@@ -7207,19 +7266,22 @@ export namespace Prisma {
   export type GradeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     level?: boolean
+    order?: boolean
   }, ExtArgs["result"]["grade"]>
 
   export type GradeSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     level?: boolean
+    order?: boolean
   }, ExtArgs["result"]["grade"]>
 
   export type GradeSelectScalar = {
     id?: boolean
     level?: boolean
+    order?: boolean
   }
 
-  export type GradeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "level", ExtArgs["result"]["grade"]>
+  export type GradeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "level" | "order", ExtArgs["result"]["grade"]>
   export type GradeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     students?: boolean | Grade$studentsArgs<ExtArgs>
     classes?: boolean | Grade$classesArgs<ExtArgs>
@@ -7237,6 +7299,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       level: string
+      order: number
     }, ExtArgs["result"]["grade"]>
     composites: {}
   }
@@ -7664,6 +7727,7 @@ export namespace Prisma {
   interface GradeFieldRefs {
     readonly id: FieldRef<"Grade", 'Int'>
     readonly level: FieldRef<"Grade", 'String'>
+    readonly order: FieldRef<"Grade", 'Int'>
   }
     
 
@@ -8151,6 +8215,7 @@ export namespace Prisma {
     id: number | null
     name: string | null
     capacity: number | null
+    section: string | null
     supervisorId: string | null
     gradeId: number | null
   }
@@ -8159,6 +8224,7 @@ export namespace Prisma {
     id: number | null
     name: string | null
     capacity: number | null
+    section: string | null
     supervisorId: string | null
     gradeId: number | null
   }
@@ -8167,6 +8233,7 @@ export namespace Prisma {
     id: number
     name: number
     capacity: number
+    section: number
     supervisorId: number
     gradeId: number
     _all: number
@@ -8189,6 +8256,7 @@ export namespace Prisma {
     id?: true
     name?: true
     capacity?: true
+    section?: true
     supervisorId?: true
     gradeId?: true
   }
@@ -8197,6 +8265,7 @@ export namespace Prisma {
     id?: true
     name?: true
     capacity?: true
+    section?: true
     supervisorId?: true
     gradeId?: true
   }
@@ -8205,6 +8274,7 @@ export namespace Prisma {
     id?: true
     name?: true
     capacity?: true
+    section?: true
     supervisorId?: true
     gradeId?: true
     _all?: true
@@ -8300,6 +8370,7 @@ export namespace Prisma {
     id: number
     name: string
     capacity: number
+    section: string | null
     supervisorId: string | null
     gradeId: number
     _count: ClassCountAggregateOutputType | null
@@ -8327,6 +8398,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     capacity?: boolean
+    section?: boolean
     supervisorId?: boolean
     gradeId?: boolean
     supervisor?: boolean | Class$supervisorArgs<ExtArgs>
@@ -8342,6 +8414,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     capacity?: boolean
+    section?: boolean
     supervisorId?: boolean
     gradeId?: boolean
     supervisor?: boolean | Class$supervisorArgs<ExtArgs>
@@ -8352,6 +8425,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     capacity?: boolean
+    section?: boolean
     supervisorId?: boolean
     gradeId?: boolean
     supervisor?: boolean | Class$supervisorArgs<ExtArgs>
@@ -8362,11 +8436,12 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     capacity?: boolean
+    section?: boolean
     supervisorId?: boolean
     gradeId?: boolean
   }
 
-  export type ClassOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "capacity" | "supervisorId" | "gradeId", ExtArgs["result"]["class"]>
+  export type ClassOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "capacity" | "section" | "supervisorId" | "gradeId", ExtArgs["result"]["class"]>
   export type ClassInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     supervisor?: boolean | Class$supervisorArgs<ExtArgs>
     lessons?: boolean | Class$lessonsArgs<ExtArgs>
@@ -8399,6 +8474,7 @@ export namespace Prisma {
       id: number
       name: string
       capacity: number
+      section: string | null
       supervisorId: string | null
       gradeId: number
     }, ExtArgs["result"]["class"]>
@@ -8833,6 +8909,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Class", 'Int'>
     readonly name: FieldRef<"Class", 'String'>
     readonly capacity: FieldRef<"Class", 'Int'>
+    readonly section: FieldRef<"Class", 'String'>
     readonly supervisorId: FieldRef<"Class", 'String'>
     readonly gradeId: FieldRef<"Class", 'Int'>
   }
@@ -10664,7 +10741,7 @@ export namespace Prisma {
     day: $Enums.Day
     startTime: Date
     endTime: Date
-    subjectId: number | null
+    subjectId: number
     classId: number
     teacherId: string
     _count: LessonCountAggregateOutputType | null
@@ -10697,7 +10774,7 @@ export namespace Prisma {
     subjectId?: boolean
     classId?: boolean
     teacherId?: boolean
-    subject?: boolean | Lesson$subjectArgs<ExtArgs>
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
     class?: boolean | ClassDefaultArgs<ExtArgs>
     teacher?: boolean | TeacherDefaultArgs<ExtArgs>
     exams?: boolean | Lesson$examsArgs<ExtArgs>
@@ -10715,7 +10792,7 @@ export namespace Prisma {
     subjectId?: boolean
     classId?: boolean
     teacherId?: boolean
-    subject?: boolean | Lesson$subjectArgs<ExtArgs>
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
     class?: boolean | ClassDefaultArgs<ExtArgs>
     teacher?: boolean | TeacherDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["lesson"]>
@@ -10729,7 +10806,7 @@ export namespace Prisma {
     subjectId?: boolean
     classId?: boolean
     teacherId?: boolean
-    subject?: boolean | Lesson$subjectArgs<ExtArgs>
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
     class?: boolean | ClassDefaultArgs<ExtArgs>
     teacher?: boolean | TeacherDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["lesson"]>
@@ -10747,7 +10824,7 @@ export namespace Prisma {
 
   export type LessonOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "day" | "startTime" | "endTime" | "subjectId" | "classId" | "teacherId", ExtArgs["result"]["lesson"]>
   export type LessonInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    subject?: boolean | Lesson$subjectArgs<ExtArgs>
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
     class?: boolean | ClassDefaultArgs<ExtArgs>
     teacher?: boolean | TeacherDefaultArgs<ExtArgs>
     exams?: boolean | Lesson$examsArgs<ExtArgs>
@@ -10756,12 +10833,12 @@ export namespace Prisma {
     _count?: boolean | LessonCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type LessonIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    subject?: boolean | Lesson$subjectArgs<ExtArgs>
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
     class?: boolean | ClassDefaultArgs<ExtArgs>
     teacher?: boolean | TeacherDefaultArgs<ExtArgs>
   }
   export type LessonIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    subject?: boolean | Lesson$subjectArgs<ExtArgs>
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
     class?: boolean | ClassDefaultArgs<ExtArgs>
     teacher?: boolean | TeacherDefaultArgs<ExtArgs>
   }
@@ -10769,7 +10846,7 @@ export namespace Prisma {
   export type $LessonPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Lesson"
     objects: {
-      subject: Prisma.$SubjectPayload<ExtArgs> | null
+      subject: Prisma.$SubjectPayload<ExtArgs>
       class: Prisma.$ClassPayload<ExtArgs>
       teacher: Prisma.$TeacherPayload<ExtArgs>
       exams: Prisma.$ExamPayload<ExtArgs>[]
@@ -10782,7 +10859,7 @@ export namespace Prisma {
       day: $Enums.Day
       startTime: Date
       endTime: Date
-      subjectId: number | null
+      subjectId: number
       classId: number
       teacherId: string
     }, ExtArgs["result"]["lesson"]>
@@ -11179,7 +11256,7 @@ export namespace Prisma {
    */
   export interface Prisma__LessonClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    subject<T extends Lesson$subjectArgs<ExtArgs> = {}>(args?: Subset<T, Lesson$subjectArgs<ExtArgs>>): Prisma__SubjectClient<$Result.GetResult<Prisma.$SubjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    subject<T extends SubjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SubjectDefaultArgs<ExtArgs>>): Prisma__SubjectClient<$Result.GetResult<Prisma.$SubjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     class<T extends ClassDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClassDefaultArgs<ExtArgs>>): Prisma__ClassClient<$Result.GetResult<Prisma.$ClassPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     teacher<T extends TeacherDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TeacherDefaultArgs<ExtArgs>>): Prisma__TeacherClient<$Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     exams<T extends Lesson$examsArgs<ExtArgs> = {}>(args?: Subset<T, Lesson$examsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -11620,25 +11697,6 @@ export namespace Prisma {
      * Limit how many Lessons to delete.
      */
     limit?: number
-  }
-
-  /**
-   * Lesson.subject
-   */
-  export type Lesson$subjectArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Subject
-     */
-    select?: SubjectSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Subject
-     */
-    omit?: SubjectOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SubjectInclude<ExtArgs> | null
-    where?: SubjectWhereInput
   }
 
   /**
@@ -18591,7 +18649,8 @@ export namespace Prisma {
     img: 'img',
     bloodType: 'bloodType',
     sex: 'sex',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    maxClasses: 'maxClasses'
   };
 
   export type TeacherScalarFieldEnum = (typeof TeacherScalarFieldEnum)[keyof typeof TeacherScalarFieldEnum]
@@ -18613,7 +18672,8 @@ export namespace Prisma {
 
   export const GradeScalarFieldEnum: {
     id: 'id',
-    level: 'level'
+    level: 'level',
+    order: 'order'
   };
 
   export type GradeScalarFieldEnum = (typeof GradeScalarFieldEnum)[keyof typeof GradeScalarFieldEnum]
@@ -18623,6 +18683,7 @@ export namespace Prisma {
     id: 'id',
     name: 'name',
     capacity: 'capacity',
+    section: 'section',
     supervisorId: 'supervisorId',
     gradeId: 'gradeId'
   };
@@ -19008,6 +19069,7 @@ export namespace Prisma {
     bloodType?: StringFilter<"Teacher"> | string
     sex?: EnumUserSexFilter<"Teacher"> | $Enums.UserSex
     createdAt?: DateTimeFilter<"Teacher"> | Date | string
+    maxClasses?: IntFilter<"Teacher"> | number
     subjects?: SubjectListRelationFilter
     lessons?: LessonListRelationFilter
     classes?: ClassListRelationFilter
@@ -19025,6 +19087,7 @@ export namespace Prisma {
     bloodType?: SortOrder
     sex?: SortOrder
     createdAt?: SortOrder
+    maxClasses?: SortOrder
     subjects?: SubjectOrderByRelationAggregateInput
     lessons?: LessonOrderByRelationAggregateInput
     classes?: ClassOrderByRelationAggregateInput
@@ -19045,6 +19108,7 @@ export namespace Prisma {
     bloodType?: StringFilter<"Teacher"> | string
     sex?: EnumUserSexFilter<"Teacher"> | $Enums.UserSex
     createdAt?: DateTimeFilter<"Teacher"> | Date | string
+    maxClasses?: IntFilter<"Teacher"> | number
     subjects?: SubjectListRelationFilter
     lessons?: LessonListRelationFilter
     classes?: ClassListRelationFilter
@@ -19062,9 +19126,12 @@ export namespace Prisma {
     bloodType?: SortOrder
     sex?: SortOrder
     createdAt?: SortOrder
+    maxClasses?: SortOrder
     _count?: TeacherCountOrderByAggregateInput
+    _avg?: TeacherAvgOrderByAggregateInput
     _max?: TeacherMaxOrderByAggregateInput
     _min?: TeacherMinOrderByAggregateInput
+    _sum?: TeacherSumOrderByAggregateInput
   }
 
   export type TeacherScalarWhereWithAggregatesInput = {
@@ -19082,6 +19149,7 @@ export namespace Prisma {
     bloodType?: StringWithAggregatesFilter<"Teacher"> | string
     sex?: EnumUserSexWithAggregatesFilter<"Teacher"> | $Enums.UserSex
     createdAt?: DateTimeWithAggregatesFilter<"Teacher"> | Date | string
+    maxClasses?: IntWithAggregatesFilter<"Teacher"> | number
   }
 
   export type ParentWhereInput = {
@@ -19160,6 +19228,7 @@ export namespace Prisma {
     NOT?: GradeWhereInput | GradeWhereInput[]
     id?: IntFilter<"Grade"> | number
     level?: StringFilter<"Grade"> | string
+    order?: IntFilter<"Grade"> | number
     students?: StudentListRelationFilter
     classes?: ClassListRelationFilter
   }
@@ -19167,6 +19236,7 @@ export namespace Prisma {
   export type GradeOrderByWithRelationInput = {
     id?: SortOrder
     level?: SortOrder
+    order?: SortOrder
     students?: StudentOrderByRelationAggregateInput
     classes?: ClassOrderByRelationAggregateInput
   }
@@ -19174,16 +19244,18 @@ export namespace Prisma {
   export type GradeWhereUniqueInput = Prisma.AtLeast<{
     id?: number
     level?: string
+    order?: number
     AND?: GradeWhereInput | GradeWhereInput[]
     OR?: GradeWhereInput[]
     NOT?: GradeWhereInput | GradeWhereInput[]
     students?: StudentListRelationFilter
     classes?: ClassListRelationFilter
-  }, "id" | "level">
+  }, "id" | "level" | "order">
 
   export type GradeOrderByWithAggregationInput = {
     id?: SortOrder
     level?: SortOrder
+    order?: SortOrder
     _count?: GradeCountOrderByAggregateInput
     _avg?: GradeAvgOrderByAggregateInput
     _max?: GradeMaxOrderByAggregateInput
@@ -19197,6 +19269,7 @@ export namespace Prisma {
     NOT?: GradeScalarWhereWithAggregatesInput | GradeScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Grade"> | number
     level?: StringWithAggregatesFilter<"Grade"> | string
+    order?: IntWithAggregatesFilter<"Grade"> | number
   }
 
   export type ClassWhereInput = {
@@ -19206,6 +19279,7 @@ export namespace Prisma {
     id?: IntFilter<"Class"> | number
     name?: StringFilter<"Class"> | string
     capacity?: IntFilter<"Class"> | number
+    section?: StringNullableFilter<"Class"> | string | null
     supervisorId?: StringNullableFilter<"Class"> | string | null
     gradeId?: IntFilter<"Class"> | number
     supervisor?: XOR<TeacherNullableScalarRelationFilter, TeacherWhereInput> | null
@@ -19220,6 +19294,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     capacity?: SortOrder
+    section?: SortOrderInput | SortOrder
     supervisorId?: SortOrderInput | SortOrder
     gradeId?: SortOrder
     supervisor?: TeacherOrderByWithRelationInput
@@ -19237,6 +19312,7 @@ export namespace Prisma {
     OR?: ClassWhereInput[]
     NOT?: ClassWhereInput | ClassWhereInput[]
     capacity?: IntFilter<"Class"> | number
+    section?: StringNullableFilter<"Class"> | string | null
     supervisorId?: StringNullableFilter<"Class"> | string | null
     gradeId?: IntFilter<"Class"> | number
     supervisor?: XOR<TeacherNullableScalarRelationFilter, TeacherWhereInput> | null
@@ -19251,6 +19327,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     capacity?: SortOrder
+    section?: SortOrderInput | SortOrder
     supervisorId?: SortOrderInput | SortOrder
     gradeId?: SortOrder
     _count?: ClassCountOrderByAggregateInput
@@ -19267,6 +19344,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"Class"> | number
     name?: StringWithAggregatesFilter<"Class"> | string
     capacity?: IntWithAggregatesFilter<"Class"> | number
+    section?: StringNullableWithAggregatesFilter<"Class"> | string | null
     supervisorId?: StringNullableWithAggregatesFilter<"Class"> | string | null
     gradeId?: IntWithAggregatesFilter<"Class"> | number
   }
@@ -19325,10 +19403,10 @@ export namespace Prisma {
     day?: EnumDayFilter<"Lesson"> | $Enums.Day
     startTime?: DateTimeFilter<"Lesson"> | Date | string
     endTime?: DateTimeFilter<"Lesson"> | Date | string
-    subjectId?: IntNullableFilter<"Lesson"> | number | null
+    subjectId?: IntFilter<"Lesson"> | number
     classId?: IntFilter<"Lesson"> | number
     teacherId?: StringFilter<"Lesson"> | string
-    subject?: XOR<SubjectNullableScalarRelationFilter, SubjectWhereInput> | null
+    subject?: XOR<SubjectScalarRelationFilter, SubjectWhereInput>
     class?: XOR<ClassScalarRelationFilter, ClassWhereInput>
     teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
     exams?: ExamListRelationFilter
@@ -19342,7 +19420,7 @@ export namespace Prisma {
     day?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
-    subjectId?: SortOrderInput | SortOrder
+    subjectId?: SortOrder
     classId?: SortOrder
     teacherId?: SortOrder
     subject?: SubjectOrderByWithRelationInput
@@ -19362,10 +19440,10 @@ export namespace Prisma {
     day?: EnumDayFilter<"Lesson"> | $Enums.Day
     startTime?: DateTimeFilter<"Lesson"> | Date | string
     endTime?: DateTimeFilter<"Lesson"> | Date | string
-    subjectId?: IntNullableFilter<"Lesson"> | number | null
+    subjectId?: IntFilter<"Lesson"> | number
     classId?: IntFilter<"Lesson"> | number
     teacherId?: StringFilter<"Lesson"> | string
-    subject?: XOR<SubjectNullableScalarRelationFilter, SubjectWhereInput> | null
+    subject?: XOR<SubjectScalarRelationFilter, SubjectWhereInput>
     class?: XOR<ClassScalarRelationFilter, ClassWhereInput>
     teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
     exams?: ExamListRelationFilter
@@ -19379,7 +19457,7 @@ export namespace Prisma {
     day?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
-    subjectId?: SortOrderInput | SortOrder
+    subjectId?: SortOrder
     classId?: SortOrder
     teacherId?: SortOrder
     _count?: LessonCountOrderByAggregateInput
@@ -19398,7 +19476,7 @@ export namespace Prisma {
     day?: EnumDayWithAggregatesFilter<"Lesson"> | $Enums.Day
     startTime?: DateTimeWithAggregatesFilter<"Lesson"> | Date | string
     endTime?: DateTimeWithAggregatesFilter<"Lesson"> | Date | string
-    subjectId?: IntNullableWithAggregatesFilter<"Lesson"> | number | null
+    subjectId?: IntWithAggregatesFilter<"Lesson"> | number
     classId?: IntWithAggregatesFilter<"Lesson"> | number
     teacherId?: StringWithAggregatesFilter<"Lesson"> | string
   }
@@ -19936,6 +20014,7 @@ export namespace Prisma {
     bloodType: string
     sex: $Enums.UserSex
     createdAt?: Date | string
+    maxClasses?: number
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
     lessons?: LessonCreateNestedManyWithoutTeacherInput
     classes?: ClassCreateNestedManyWithoutSupervisorInput
@@ -19953,6 +20032,7 @@ export namespace Prisma {
     bloodType: string
     sex: $Enums.UserSex
     createdAt?: Date | string
+    maxClasses?: number
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
     lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
     classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
@@ -19970,6 +20050,7 @@ export namespace Prisma {
     bloodType?: StringFieldUpdateOperationsInput | string
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
     lessons?: LessonUpdateManyWithoutTeacherNestedInput
     classes?: ClassUpdateManyWithoutSupervisorNestedInput
@@ -19987,6 +20068,7 @@ export namespace Prisma {
     bloodType?: StringFieldUpdateOperationsInput | string
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
     classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
@@ -20004,6 +20086,7 @@ export namespace Prisma {
     bloodType: string
     sex: $Enums.UserSex
     createdAt?: Date | string
+    maxClasses?: number
   }
 
   export type TeacherUpdateManyMutationInput = {
@@ -20018,6 +20101,7 @@ export namespace Prisma {
     bloodType?: StringFieldUpdateOperationsInput | string
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
   }
 
   export type TeacherUncheckedUpdateManyInput = {
@@ -20032,6 +20116,7 @@ export namespace Prisma {
     bloodType?: StringFieldUpdateOperationsInput | string
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
   }
 
   export type ParentCreateInput = {
@@ -20117,6 +20202,7 @@ export namespace Prisma {
 
   export type GradeCreateInput = {
     level: string
+    order: number
     students?: StudentCreateNestedManyWithoutGradeInput
     classes?: ClassCreateNestedManyWithoutGradeInput
   }
@@ -20124,12 +20210,14 @@ export namespace Prisma {
   export type GradeUncheckedCreateInput = {
     id?: number
     level: string
+    order: number
     students?: StudentUncheckedCreateNestedManyWithoutGradeInput
     classes?: ClassUncheckedCreateNestedManyWithoutGradeInput
   }
 
   export type GradeUpdateInput = {
     level?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
     students?: StudentUpdateManyWithoutGradeNestedInput
     classes?: ClassUpdateManyWithoutGradeNestedInput
   }
@@ -20137,6 +20225,7 @@ export namespace Prisma {
   export type GradeUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     level?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
     students?: StudentUncheckedUpdateManyWithoutGradeNestedInput
     classes?: ClassUncheckedUpdateManyWithoutGradeNestedInput
   }
@@ -20144,20 +20233,24 @@ export namespace Prisma {
   export type GradeCreateManyInput = {
     id?: number
     level: string
+    order: number
   }
 
   export type GradeUpdateManyMutationInput = {
     level?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
   }
 
   export type GradeUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     level?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
   }
 
   export type ClassCreateInput = {
     name: string
     capacity: number
+    section?: string | null
     supervisor?: TeacherCreateNestedOneWithoutClassesInput
     lessons?: LessonCreateNestedManyWithoutClassInput
     students?: StudentCreateNestedManyWithoutClassInput
@@ -20170,6 +20263,7 @@ export namespace Prisma {
     id?: number
     name: string
     capacity: number
+    section?: string | null
     supervisorId?: string | null
     gradeId: number
     lessons?: LessonUncheckedCreateNestedManyWithoutClassInput
@@ -20181,6 +20275,7 @@ export namespace Prisma {
   export type ClassUpdateInput = {
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     supervisor?: TeacherUpdateOneWithoutClassesNestedInput
     lessons?: LessonUpdateManyWithoutClassNestedInput
     students?: StudentUpdateManyWithoutClassNestedInput
@@ -20193,6 +20288,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
     gradeId?: IntFieldUpdateOperationsInput | number
     lessons?: LessonUncheckedUpdateManyWithoutClassNestedInput
@@ -20205,6 +20301,7 @@ export namespace Prisma {
     id?: number
     name: string
     capacity: number
+    section?: string | null
     supervisorId?: string | null
     gradeId: number
   }
@@ -20212,12 +20309,14 @@ export namespace Prisma {
   export type ClassUpdateManyMutationInput = {
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ClassUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
     gradeId?: IntFieldUpdateOperationsInput | number
   }
@@ -20267,7 +20366,7 @@ export namespace Prisma {
     day: $Enums.Day
     startTime: Date | string
     endTime: Date | string
-    subject?: SubjectCreateNestedOneWithoutLessonsInput
+    subject: SubjectCreateNestedOneWithoutLessonsInput
     class: ClassCreateNestedOneWithoutLessonsInput
     teacher: TeacherCreateNestedOneWithoutLessonsInput
     exams?: ExamCreateNestedManyWithoutLessonInput
@@ -20281,7 +20380,7 @@ export namespace Prisma {
     day: $Enums.Day
     startTime: Date | string
     endTime: Date | string
-    subjectId?: number | null
+    subjectId: number
     classId: number
     teacherId: string
     exams?: ExamUncheckedCreateNestedManyWithoutLessonInput
@@ -20294,7 +20393,7 @@ export namespace Prisma {
     day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    subject?: SubjectUpdateOneWithoutLessonsNestedInput
+    subject?: SubjectUpdateOneRequiredWithoutLessonsNestedInput
     class?: ClassUpdateOneRequiredWithoutLessonsNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutLessonsNestedInput
     exams?: ExamUpdateManyWithoutLessonNestedInput
@@ -20308,7 +20407,7 @@ export namespace Prisma {
     day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    subjectId?: NullableIntFieldUpdateOperationsInput | number | null
+    subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
     exams?: ExamUncheckedUpdateManyWithoutLessonNestedInput
@@ -20322,7 +20421,7 @@ export namespace Prisma {
     day: $Enums.Day
     startTime: Date | string
     endTime: Date | string
-    subjectId?: number | null
+    subjectId: number
     classId: number
     teacherId: string
   }
@@ -20340,7 +20439,7 @@ export namespace Prisma {
     day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    subjectId?: NullableIntFieldUpdateOperationsInput | number | null
+    subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
   }
@@ -20962,6 +21061,11 @@ export namespace Prisma {
     bloodType?: SortOrder
     sex?: SortOrder
     createdAt?: SortOrder
+    maxClasses?: SortOrder
+  }
+
+  export type TeacherAvgOrderByAggregateInput = {
+    maxClasses?: SortOrder
   }
 
   export type TeacherMaxOrderByAggregateInput = {
@@ -20976,6 +21080,7 @@ export namespace Prisma {
     bloodType?: SortOrder
     sex?: SortOrder
     createdAt?: SortOrder
+    maxClasses?: SortOrder
   }
 
   export type TeacherMinOrderByAggregateInput = {
@@ -20990,6 +21095,11 @@ export namespace Prisma {
     bloodType?: SortOrder
     sex?: SortOrder
     createdAt?: SortOrder
+    maxClasses?: SortOrder
+  }
+
+  export type TeacherSumOrderByAggregateInput = {
+    maxClasses?: SortOrder
   }
 
   export type StudentListRelationFilter = {
@@ -21038,24 +21148,29 @@ export namespace Prisma {
   export type GradeCountOrderByAggregateInput = {
     id?: SortOrder
     level?: SortOrder
+    order?: SortOrder
   }
 
   export type GradeAvgOrderByAggregateInput = {
     id?: SortOrder
+    order?: SortOrder
   }
 
   export type GradeMaxOrderByAggregateInput = {
     id?: SortOrder
     level?: SortOrder
+    order?: SortOrder
   }
 
   export type GradeMinOrderByAggregateInput = {
     id?: SortOrder
     level?: SortOrder
+    order?: SortOrder
   }
 
   export type GradeSumOrderByAggregateInput = {
     id?: SortOrder
+    order?: SortOrder
   }
 
   export type TeacherNullableScalarRelationFilter = {
@@ -21087,6 +21202,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     capacity?: SortOrder
+    section?: SortOrder
     supervisorId?: SortOrder
     gradeId?: SortOrder
   }
@@ -21101,6 +21217,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     capacity?: SortOrder
+    section?: SortOrder
     supervisorId?: SortOrder
     gradeId?: SortOrder
   }
@@ -21109,6 +21226,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     capacity?: SortOrder
+    section?: SortOrder
     supervisorId?: SortOrder
     gradeId?: SortOrder
   }
@@ -21159,20 +21277,9 @@ export namespace Prisma {
     not?: NestedEnumDayFilter<$PrismaModel> | $Enums.Day
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type SubjectNullableScalarRelationFilter = {
-    is?: SubjectWhereInput | null
-    isNot?: SubjectWhereInput | null
+  export type SubjectScalarRelationFilter = {
+    is?: SubjectWhereInput
+    isNot?: SubjectWhereInput
   }
 
   export type TeacherScalarRelationFilter = {
@@ -21255,22 +21362,6 @@ export namespace Prisma {
     _max?: NestedEnumDayFilter<$PrismaModel>
   }
 
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
   export type LessonScalarRelationFilter = {
     is?: LessonWhereInput
     isNot?: LessonWhereInput
@@ -21344,6 +21435,17 @@ export namespace Prisma {
     lessonId?: SortOrder
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type ExamNullableScalarRelationFilter = {
     is?: ExamWhereInput | null
     isNot?: ExamWhereInput | null
@@ -21395,6 +21497,22 @@ export namespace Prisma {
     score?: SortOrder
     examId?: SortOrder
     assignmentId?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type BoolFilter<$PrismaModel = never> = {
@@ -22265,12 +22383,10 @@ export namespace Prisma {
     set?: $Enums.Day
   }
 
-  export type SubjectUpdateOneWithoutLessonsNestedInput = {
+  export type SubjectUpdateOneRequiredWithoutLessonsNestedInput = {
     create?: XOR<SubjectCreateWithoutLessonsInput, SubjectUncheckedCreateWithoutLessonsInput>
     connectOrCreate?: SubjectCreateOrConnectWithoutLessonsInput
     upsert?: SubjectUpsertWithoutLessonsInput
-    disconnect?: SubjectWhereInput | boolean
-    delete?: SubjectWhereInput | boolean
     connect?: SubjectWhereUniqueInput
     update?: XOR<XOR<SubjectUpdateToOneWithWhereWithoutLessonsInput, SubjectUpdateWithoutLessonsInput>, SubjectUncheckedUpdateWithoutLessonsInput>
   }
@@ -22331,14 +22447,6 @@ export namespace Prisma {
     update?: AttendanceUpdateWithWhereUniqueWithoutLessonInput | AttendanceUpdateWithWhereUniqueWithoutLessonInput[]
     updateMany?: AttendanceUpdateManyWithWhereWithoutLessonInput | AttendanceUpdateManyWithWhereWithoutLessonInput[]
     deleteMany?: AttendanceScalarWhereInput | AttendanceScalarWhereInput[]
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type ExamUncheckedUpdateManyWithoutLessonNestedInput = {
@@ -22541,6 +22649,14 @@ export namespace Prisma {
     delete?: StudentWhereInput | boolean
     connect?: StudentWhereUniqueInput
     update?: XOR<XOR<StudentUpdateToOneWithWhereWithoutResultsInput, StudentUpdateWithoutResultsInput>, StudentUncheckedUpdateWithoutResultsInput>
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type StudentCreateNestedOneWithoutAttendancesInput = {
@@ -22847,6 +22963,7 @@ export namespace Prisma {
   export type ClassCreateWithoutStudentsInput = {
     name: string
     capacity: number
+    section?: string | null
     supervisor?: TeacherCreateNestedOneWithoutClassesInput
     lessons?: LessonCreateNestedManyWithoutClassInput
     grade: GradeCreateNestedOneWithoutClassesInput
@@ -22858,6 +22975,7 @@ export namespace Prisma {
     id?: number
     name: string
     capacity: number
+    section?: string | null
     supervisorId?: string | null
     gradeId: number
     lessons?: LessonUncheckedCreateNestedManyWithoutClassInput
@@ -22872,12 +22990,14 @@ export namespace Prisma {
 
   export type GradeCreateWithoutStudentsInput = {
     level: string
+    order: number
     classes?: ClassCreateNestedManyWithoutGradeInput
   }
 
   export type GradeUncheckedCreateWithoutStudentsInput = {
     id?: number
     level: string
+    order: number
     classes?: ClassUncheckedCreateNestedManyWithoutGradeInput
   }
 
@@ -22979,6 +23099,7 @@ export namespace Prisma {
   export type ClassUpdateWithoutStudentsInput = {
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     supervisor?: TeacherUpdateOneWithoutClassesNestedInput
     lessons?: LessonUpdateManyWithoutClassNestedInput
     grade?: GradeUpdateOneRequiredWithoutClassesNestedInput
@@ -22990,6 +23111,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
     gradeId?: IntFieldUpdateOperationsInput | number
     lessons?: LessonUncheckedUpdateManyWithoutClassNestedInput
@@ -23010,12 +23132,14 @@ export namespace Prisma {
 
   export type GradeUpdateWithoutStudentsInput = {
     level?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
     classes?: ClassUpdateManyWithoutGradeNestedInput
   }
 
   export type GradeUncheckedUpdateWithoutStudentsInput = {
     id?: IntFieldUpdateOperationsInput | number
     level?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
     classes?: ClassUncheckedUpdateManyWithoutGradeNestedInput
   }
 
@@ -23094,7 +23218,7 @@ export namespace Prisma {
     day: $Enums.Day
     startTime: Date | string
     endTime: Date | string
-    subject?: SubjectCreateNestedOneWithoutLessonsInput
+    subject: SubjectCreateNestedOneWithoutLessonsInput
     class: ClassCreateNestedOneWithoutLessonsInput
     exams?: ExamCreateNestedManyWithoutLessonInput
     assignments?: AssignmentCreateNestedManyWithoutLessonInput
@@ -23107,7 +23231,7 @@ export namespace Prisma {
     day: $Enums.Day
     startTime: Date | string
     endTime: Date | string
-    subjectId?: number | null
+    subjectId: number
     classId: number
     exams?: ExamUncheckedCreateNestedManyWithoutLessonInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutLessonInput
@@ -23127,6 +23251,7 @@ export namespace Prisma {
   export type ClassCreateWithoutSupervisorInput = {
     name: string
     capacity: number
+    section?: string | null
     lessons?: LessonCreateNestedManyWithoutClassInput
     students?: StudentCreateNestedManyWithoutClassInput
     grade: GradeCreateNestedOneWithoutClassesInput
@@ -23138,6 +23263,7 @@ export namespace Prisma {
     id?: number
     name: string
     capacity: number
+    section?: string | null
     gradeId: number
     lessons?: LessonUncheckedCreateNestedManyWithoutClassInput
     students?: StudentUncheckedCreateNestedManyWithoutClassInput
@@ -23204,7 +23330,7 @@ export namespace Prisma {
     day?: EnumDayFilter<"Lesson"> | $Enums.Day
     startTime?: DateTimeFilter<"Lesson"> | Date | string
     endTime?: DateTimeFilter<"Lesson"> | Date | string
-    subjectId?: IntNullableFilter<"Lesson"> | number | null
+    subjectId?: IntFilter<"Lesson"> | number
     classId?: IntFilter<"Lesson"> | number
     teacherId?: StringFilter<"Lesson"> | string
   }
@@ -23232,6 +23358,7 @@ export namespace Prisma {
     id?: IntFilter<"Class"> | number
     name?: StringFilter<"Class"> | string
     capacity?: IntFilter<"Class"> | number
+    section?: StringNullableFilter<"Class"> | string | null
     supervisorId?: StringNullableFilter<"Class"> | string | null
     gradeId?: IntFilter<"Class"> | number
   }
@@ -23367,6 +23494,7 @@ export namespace Prisma {
   export type ClassCreateWithoutGradeInput = {
     name: string
     capacity: number
+    section?: string | null
     supervisor?: TeacherCreateNestedOneWithoutClassesInput
     lessons?: LessonCreateNestedManyWithoutClassInput
     students?: StudentCreateNestedManyWithoutClassInput
@@ -23378,6 +23506,7 @@ export namespace Prisma {
     id?: number
     name: string
     capacity: number
+    section?: string | null
     supervisorId?: string | null
     lessons?: LessonUncheckedCreateNestedManyWithoutClassInput
     students?: StudentUncheckedCreateNestedManyWithoutClassInput
@@ -23439,6 +23568,7 @@ export namespace Prisma {
     bloodType: string
     sex: $Enums.UserSex
     createdAt?: Date | string
+    maxClasses?: number
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
     lessons?: LessonCreateNestedManyWithoutTeacherInput
   }
@@ -23455,6 +23585,7 @@ export namespace Prisma {
     bloodType: string
     sex: $Enums.UserSex
     createdAt?: Date | string
+    maxClasses?: number
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
     lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
   }
@@ -23469,7 +23600,7 @@ export namespace Prisma {
     day: $Enums.Day
     startTime: Date | string
     endTime: Date | string
-    subject?: SubjectCreateNestedOneWithoutLessonsInput
+    subject: SubjectCreateNestedOneWithoutLessonsInput
     teacher: TeacherCreateNestedOneWithoutLessonsInput
     exams?: ExamCreateNestedManyWithoutLessonInput
     assignments?: AssignmentCreateNestedManyWithoutLessonInput
@@ -23482,7 +23613,7 @@ export namespace Prisma {
     day: $Enums.Day
     startTime: Date | string
     endTime: Date | string
-    subjectId?: number | null
+    subjectId: number
     teacherId: string
     exams?: ExamUncheckedCreateNestedManyWithoutLessonInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutLessonInput
@@ -23547,12 +23678,14 @@ export namespace Prisma {
 
   export type GradeCreateWithoutClassesInput = {
     level: string
+    order: number
     students?: StudentCreateNestedManyWithoutGradeInput
   }
 
   export type GradeUncheckedCreateWithoutClassesInput = {
     id?: number
     level: string
+    order: number
     students?: StudentUncheckedCreateNestedManyWithoutGradeInput
   }
 
@@ -23632,6 +23765,7 @@ export namespace Prisma {
     bloodType?: StringFieldUpdateOperationsInput | string
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
     lessons?: LessonUpdateManyWithoutTeacherNestedInput
   }
@@ -23648,6 +23782,7 @@ export namespace Prisma {
     bloodType?: StringFieldUpdateOperationsInput | string
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
   }
@@ -23697,12 +23832,14 @@ export namespace Prisma {
 
   export type GradeUpdateWithoutClassesInput = {
     level?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
     students?: StudentUpdateManyWithoutGradeNestedInput
   }
 
   export type GradeUncheckedUpdateWithoutClassesInput = {
     id?: IntFieldUpdateOperationsInput | number
     level?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
     students?: StudentUncheckedUpdateManyWithoutGradeNestedInput
   }
 
@@ -23773,6 +23910,7 @@ export namespace Prisma {
     bloodType: string
     sex: $Enums.UserSex
     createdAt?: Date | string
+    maxClasses?: number
     lessons?: LessonCreateNestedManyWithoutTeacherInput
     classes?: ClassCreateNestedManyWithoutSupervisorInput
   }
@@ -23789,6 +23927,7 @@ export namespace Prisma {
     bloodType: string
     sex: $Enums.UserSex
     createdAt?: Date | string
+    maxClasses?: number
     lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
     classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
   }
@@ -23864,6 +24003,7 @@ export namespace Prisma {
     bloodType?: StringFilter<"Teacher"> | string
     sex?: EnumUserSexFilter<"Teacher"> | $Enums.UserSex
     createdAt?: DateTimeFilter<"Teacher"> | Date | string
+    maxClasses?: IntFilter<"Teacher"> | number
   }
 
   export type LessonUpsertWithWhereUniqueWithoutSubjectInput = {
@@ -23901,6 +24041,7 @@ export namespace Prisma {
   export type ClassCreateWithoutLessonsInput = {
     name: string
     capacity: number
+    section?: string | null
     supervisor?: TeacherCreateNestedOneWithoutClassesInput
     students?: StudentCreateNestedManyWithoutClassInput
     grade: GradeCreateNestedOneWithoutClassesInput
@@ -23912,6 +24053,7 @@ export namespace Prisma {
     id?: number
     name: string
     capacity: number
+    section?: string | null
     supervisorId?: string | null
     gradeId: number
     students?: StudentUncheckedCreateNestedManyWithoutClassInput
@@ -23936,6 +24078,7 @@ export namespace Prisma {
     bloodType: string
     sex: $Enums.UserSex
     createdAt?: Date | string
+    maxClasses?: number
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
     classes?: ClassCreateNestedManyWithoutSupervisorInput
   }
@@ -23952,6 +24095,7 @@ export namespace Prisma {
     bloodType: string
     sex: $Enums.UserSex
     createdAt?: Date | string
+    maxClasses?: number
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
     classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
   }
@@ -24070,6 +24214,7 @@ export namespace Prisma {
   export type ClassUpdateWithoutLessonsInput = {
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     supervisor?: TeacherUpdateOneWithoutClassesNestedInput
     students?: StudentUpdateManyWithoutClassNestedInput
     grade?: GradeUpdateOneRequiredWithoutClassesNestedInput
@@ -24081,6 +24226,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
     gradeId?: IntFieldUpdateOperationsInput | number
     students?: StudentUncheckedUpdateManyWithoutClassNestedInput
@@ -24111,6 +24257,7 @@ export namespace Prisma {
     bloodType?: StringFieldUpdateOperationsInput | string
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
     classes?: ClassUpdateManyWithoutSupervisorNestedInput
   }
@@ -24127,6 +24274,7 @@ export namespace Prisma {
     bloodType?: StringFieldUpdateOperationsInput | string
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
     classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
   }
@@ -24206,7 +24354,7 @@ export namespace Prisma {
     day: $Enums.Day
     startTime: Date | string
     endTime: Date | string
-    subject?: SubjectCreateNestedOneWithoutLessonsInput
+    subject: SubjectCreateNestedOneWithoutLessonsInput
     class: ClassCreateNestedOneWithoutLessonsInput
     teacher: TeacherCreateNestedOneWithoutLessonsInput
     assignments?: AssignmentCreateNestedManyWithoutLessonInput
@@ -24219,7 +24367,7 @@ export namespace Prisma {
     day: $Enums.Day
     startTime: Date | string
     endTime: Date | string
-    subjectId?: number | null
+    subjectId: number
     classId: number
     teacherId: string
     assignments?: AssignmentUncheckedCreateNestedManyWithoutLessonInput
@@ -24270,7 +24418,7 @@ export namespace Prisma {
     day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    subject?: SubjectUpdateOneWithoutLessonsNestedInput
+    subject?: SubjectUpdateOneRequiredWithoutLessonsNestedInput
     class?: ClassUpdateOneRequiredWithoutLessonsNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutLessonsNestedInput
     assignments?: AssignmentUpdateManyWithoutLessonNestedInput
@@ -24283,7 +24431,7 @@ export namespace Prisma {
     day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    subjectId?: NullableIntFieldUpdateOperationsInput | number | null
+    subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
     assignments?: AssignmentUncheckedUpdateManyWithoutLessonNestedInput
@@ -24311,7 +24459,7 @@ export namespace Prisma {
     day: $Enums.Day
     startTime: Date | string
     endTime: Date | string
-    subject?: SubjectCreateNestedOneWithoutLessonsInput
+    subject: SubjectCreateNestedOneWithoutLessonsInput
     class: ClassCreateNestedOneWithoutLessonsInput
     teacher: TeacherCreateNestedOneWithoutLessonsInput
     exams?: ExamCreateNestedManyWithoutLessonInput
@@ -24324,7 +24472,7 @@ export namespace Prisma {
     day: $Enums.Day
     startTime: Date | string
     endTime: Date | string
-    subjectId?: number | null
+    subjectId: number
     classId: number
     teacherId: string
     exams?: ExamUncheckedCreateNestedManyWithoutLessonInput
@@ -24375,7 +24523,7 @@ export namespace Prisma {
     day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    subject?: SubjectUpdateOneWithoutLessonsNestedInput
+    subject?: SubjectUpdateOneRequiredWithoutLessonsNestedInput
     class?: ClassUpdateOneRequiredWithoutLessonsNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutLessonsNestedInput
     exams?: ExamUpdateManyWithoutLessonNestedInput
@@ -24388,7 +24536,7 @@ export namespace Prisma {
     day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    subjectId?: NullableIntFieldUpdateOperationsInput | number | null
+    subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
     exams?: ExamUncheckedUpdateManyWithoutLessonNestedInput
@@ -24637,7 +24785,7 @@ export namespace Prisma {
     day: $Enums.Day
     startTime: Date | string
     endTime: Date | string
-    subject?: SubjectCreateNestedOneWithoutLessonsInput
+    subject: SubjectCreateNestedOneWithoutLessonsInput
     class: ClassCreateNestedOneWithoutLessonsInput
     teacher: TeacherCreateNestedOneWithoutLessonsInput
     exams?: ExamCreateNestedManyWithoutLessonInput
@@ -24650,7 +24798,7 @@ export namespace Prisma {
     day: $Enums.Day
     startTime: Date | string
     endTime: Date | string
-    subjectId?: number | null
+    subjectId: number
     classId: number
     teacherId: string
     exams?: ExamUncheckedCreateNestedManyWithoutLessonInput
@@ -24725,7 +24873,7 @@ export namespace Prisma {
     day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    subject?: SubjectUpdateOneWithoutLessonsNestedInput
+    subject?: SubjectUpdateOneRequiredWithoutLessonsNestedInput
     class?: ClassUpdateOneRequiredWithoutLessonsNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutLessonsNestedInput
     exams?: ExamUpdateManyWithoutLessonNestedInput
@@ -24738,7 +24886,7 @@ export namespace Prisma {
     day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    subjectId?: NullableIntFieldUpdateOperationsInput | number | null
+    subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
     exams?: ExamUncheckedUpdateManyWithoutLessonNestedInput
@@ -24748,6 +24896,7 @@ export namespace Prisma {
   export type ClassCreateWithoutEventsInput = {
     name: string
     capacity: number
+    section?: string | null
     supervisor?: TeacherCreateNestedOneWithoutClassesInput
     lessons?: LessonCreateNestedManyWithoutClassInput
     students?: StudentCreateNestedManyWithoutClassInput
@@ -24759,6 +24908,7 @@ export namespace Prisma {
     id?: number
     name: string
     capacity: number
+    section?: string | null
     supervisorId?: string | null
     gradeId: number
     lessons?: LessonUncheckedCreateNestedManyWithoutClassInput
@@ -24785,6 +24935,7 @@ export namespace Prisma {
   export type ClassUpdateWithoutEventsInput = {
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     supervisor?: TeacherUpdateOneWithoutClassesNestedInput
     lessons?: LessonUpdateManyWithoutClassNestedInput
     students?: StudentUpdateManyWithoutClassNestedInput
@@ -24796,6 +24947,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
     gradeId?: IntFieldUpdateOperationsInput | number
     lessons?: LessonUncheckedUpdateManyWithoutClassNestedInput
@@ -24806,6 +24958,7 @@ export namespace Prisma {
   export type ClassCreateWithoutAnnouncementsInput = {
     name: string
     capacity: number
+    section?: string | null
     supervisor?: TeacherCreateNestedOneWithoutClassesInput
     lessons?: LessonCreateNestedManyWithoutClassInput
     students?: StudentCreateNestedManyWithoutClassInput
@@ -24817,6 +24970,7 @@ export namespace Prisma {
     id?: number
     name: string
     capacity: number
+    section?: string | null
     supervisorId?: string | null
     gradeId: number
     lessons?: LessonUncheckedCreateNestedManyWithoutClassInput
@@ -24843,6 +24997,7 @@ export namespace Prisma {
   export type ClassUpdateWithoutAnnouncementsInput = {
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     supervisor?: TeacherUpdateOneWithoutClassesNestedInput
     lessons?: LessonUpdateManyWithoutClassNestedInput
     students?: StudentUpdateManyWithoutClassNestedInput
@@ -24854,6 +25009,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
     gradeId?: IntFieldUpdateOperationsInput | number
     lessons?: LessonUncheckedUpdateManyWithoutClassNestedInput
@@ -24921,7 +25077,7 @@ export namespace Prisma {
     day: $Enums.Day
     startTime: Date | string
     endTime: Date | string
-    subjectId?: number | null
+    subjectId: number
     classId: number
   }
 
@@ -24929,6 +25085,7 @@ export namespace Prisma {
     id?: number
     name: string
     capacity: number
+    section?: string | null
     gradeId: number
   }
 
@@ -24953,7 +25110,7 @@ export namespace Prisma {
     day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    subject?: SubjectUpdateOneWithoutLessonsNestedInput
+    subject?: SubjectUpdateOneRequiredWithoutLessonsNestedInput
     class?: ClassUpdateOneRequiredWithoutLessonsNestedInput
     exams?: ExamUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUpdateManyWithoutLessonNestedInput
@@ -24966,7 +25123,7 @@ export namespace Prisma {
     day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    subjectId?: NullableIntFieldUpdateOperationsInput | number | null
+    subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
     exams?: ExamUncheckedUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutLessonNestedInput
@@ -24979,13 +25136,14 @@ export namespace Prisma {
     day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    subjectId?: NullableIntFieldUpdateOperationsInput | number | null
+    subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
   }
 
   export type ClassUpdateWithoutSupervisorInput = {
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     lessons?: LessonUpdateManyWithoutClassNestedInput
     students?: StudentUpdateManyWithoutClassNestedInput
     grade?: GradeUpdateOneRequiredWithoutClassesNestedInput
@@ -24997,6 +25155,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     gradeId?: IntFieldUpdateOperationsInput | number
     lessons?: LessonUncheckedUpdateManyWithoutClassNestedInput
     students?: StudentUncheckedUpdateManyWithoutClassNestedInput
@@ -25008,6 +25167,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     gradeId?: IntFieldUpdateOperationsInput | number
   }
 
@@ -25099,6 +25259,7 @@ export namespace Prisma {
     id?: number
     name: string
     capacity: number
+    section?: string | null
     supervisorId?: string | null
   }
 
@@ -25157,6 +25318,7 @@ export namespace Prisma {
   export type ClassUpdateWithoutGradeInput = {
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     supervisor?: TeacherUpdateOneWithoutClassesNestedInput
     lessons?: LessonUpdateManyWithoutClassNestedInput
     students?: StudentUpdateManyWithoutClassNestedInput
@@ -25168,6 +25330,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
     lessons?: LessonUncheckedUpdateManyWithoutClassNestedInput
     students?: StudentUncheckedUpdateManyWithoutClassNestedInput
@@ -25179,6 +25342,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -25188,7 +25352,7 @@ export namespace Prisma {
     day: $Enums.Day
     startTime: Date | string
     endTime: Date | string
-    subjectId?: number | null
+    subjectId: number
     teacherId: string
   }
 
@@ -25228,7 +25392,7 @@ export namespace Prisma {
     day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    subject?: SubjectUpdateOneWithoutLessonsNestedInput
+    subject?: SubjectUpdateOneRequiredWithoutLessonsNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutLessonsNestedInput
     exams?: ExamUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUpdateManyWithoutLessonNestedInput
@@ -25241,7 +25405,7 @@ export namespace Prisma {
     day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    subjectId?: NullableIntFieldUpdateOperationsInput | number | null
+    subjectId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
     exams?: ExamUncheckedUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutLessonNestedInput
@@ -25254,7 +25418,7 @@ export namespace Prisma {
     day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    subjectId?: NullableIntFieldUpdateOperationsInput | number | null
+    subjectId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -25375,6 +25539,7 @@ export namespace Prisma {
     bloodType?: StringFieldUpdateOperationsInput | string
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
     lessons?: LessonUpdateManyWithoutTeacherNestedInput
     classes?: ClassUpdateManyWithoutSupervisorNestedInput
   }
@@ -25391,6 +25556,7 @@ export namespace Prisma {
     bloodType?: StringFieldUpdateOperationsInput | string
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
     lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
     classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
   }
@@ -25407,6 +25573,7 @@ export namespace Prisma {
     bloodType?: StringFieldUpdateOperationsInput | string
     sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
   }
 
   export type LessonUpdateWithoutSubjectInput = {

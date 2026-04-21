@@ -153,7 +153,8 @@ exports.Prisma.TeacherScalarFieldEnum = {
   img: 'img',
   bloodType: 'bloodType',
   sex: 'sex',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  maxClasses: 'maxClasses'
 };
 
 exports.Prisma.ParentScalarFieldEnum = {
@@ -169,13 +170,15 @@ exports.Prisma.ParentScalarFieldEnum = {
 
 exports.Prisma.GradeScalarFieldEnum = {
   id: 'id',
-  level: 'level'
+  level: 'level',
+  order: 'order'
 };
 
 exports.Prisma.ClassScalarFieldEnum = {
   id: 'id',
   name: 'name',
   capacity: 'capacity',
+  section: 'section',
   supervisorId: 'supervisorId',
   gradeId: 'gradeId'
 };
