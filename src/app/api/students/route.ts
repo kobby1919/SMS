@@ -67,3 +67,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: e?.message ?? "Failed to create student." }, { status: 500 });
   }
 }
+
+
+export async function GET() {
+  const students = await prisma.student.findMany({
+    select: { id: true, name: true, surname: true },
+    orderBy: [{ name: "asc" }, { surname: "asc" }],
+  });
+  return NextResponse.json(students);
+}
