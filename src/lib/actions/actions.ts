@@ -53,19 +53,9 @@ export async function updateClass(id: number, data: {
 
 export async function deleteClass(id: number) {
   await requireAdmin();
-
-  const lessonCount = await prisma.lesson.count({
-    where: { classId: id },
-  });
-
-  if (lessonCount > 0) {
-    throw new Error(
-      `This class has ${lessonCount} lesson${lessonCount > 1 ? "s" : ""} in the timetable. Please remove those lessons first via the Timetable Builder.`
-    );
-  }
-
   await prisma.class.delete({ where: { id } });
   revalidatePath("/list/classes");
+  revalidatePath("/admin/timetable");
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -100,20 +90,11 @@ export async function updateSubject(id: number, data: { name?: string; teacherId
 
 export async function deleteSubject(id: number) {
   await requireAdmin();
-
-  const lessonCount = await prisma.lesson.count({
-    where: { subjectId: id },
-  });
-
-  if (lessonCount > 0) {
-    throw new Error(
-      `This subject has ${lessonCount} lesson${lessonCount > 1 ? "s" : ""} in the timetable. Please remove those lessons first.`
-    );
-  }
-
   await prisma.subject.delete({ where: { id } });
   revalidatePath("/list/subjects");
+  revalidatePath("/admin/timetable");
 }
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // PARENT
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -128,20 +109,9 @@ export async function deleteParent(id: string) {
 // ═══════════════════════════════════════════════════════════════════════════════
 export async function deleteTeacher(id: string) {
   await requireAdmin();
-
-  // Check if teacher has lessons assigned
-  const lessonCount = await prisma.lesson.count({
-    where: { teacherId: id },
-  });
-
-  if (lessonCount > 0) {
-    throw new Error(
-      `This teacher has ${lessonCount} lesson${lessonCount > 1 ? "s" : ""} assigned. Please reassign or delete those lessons first via the Timetable Builder before deleting this teacher.`
-    );
-  }
-
   await prisma.teacher.delete({ where: { id } });
   revalidatePath("/list/teachers");
+  revalidatePath("/admin/timetable");
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
