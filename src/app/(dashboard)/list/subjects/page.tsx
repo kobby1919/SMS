@@ -50,7 +50,7 @@ const SubjectListPage = async ({
     }
   }
 
-  const [subjects, count] = await Promise.all([
+  const [subjects, count, totalLessons] = await Promise.all([
     prisma.subject.findMany({
       where: query,
       include: {
@@ -62,6 +62,7 @@ const SubjectListPage = async ({
       skip: ITEM_PER_PAGE * (p - 1),
     }),
     prisma.subject.count({ where: query }),
+    prisma.lesson.count(),
   ]);
 
   return (
@@ -95,7 +96,7 @@ const SubjectListPage = async ({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: "Total Subjects", value: count,                                                         color: "bg-indigo-50 text-indigo-600"  },
-          { label: "Total Lessons",  value: subjects.reduce((s, sub) => s + sub._count.lessons, 0),        color: "bg-emerald-50 text-emerald-600" },
+          { label: "Total Lessons",  value: totalLessons,        color: "bg-emerald-50 text-emerald-600" },
           { label: "Total Teachers", value: new Set(subjects.flatMap((s) => s.teachers.map((t) => t.id))).size, color: "bg-violet-50 text-violet-600"  },
         ].map((s) => (
           <div key={s.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">

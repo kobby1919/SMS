@@ -30,9 +30,9 @@ const ClassForm = dynamic(() => import("./ClassForm"), {
 const SubjectForm = dynamic(() => import("./SubjectForm"), {
   loading: () => <div className="py-10 text-center text-gray-400 animate-pulse font-medium">Loading form…</div>,
 });
-// const ParentForm = dynamic(() => import("./ParentForm"), {
-//   loading: () => <div className="py-10 text-center text-gray-400 animate-pulse font-medium">Loading form…</div>,
-// });
+const ParentForm = dynamic(() => import("./ParentForm"), {
+  loading: () => <div className="py-10 text-center text-gray-400 animate-pulse font-medium">Loading form…</div>,
+});
 
 // ─── Form registry ────────────────────────────────────────────────────────────
 const forms: Record<
@@ -44,6 +44,7 @@ const forms: Record<
   lesson:  (type, data, onSuccess) => <LessonForm  type={type} data={data} onSuccess={onSuccess} />,
   class:   (type, data, onSuccess) => <ClassForm   type={type} data={data} onSuccess={onSuccess} />,
   subject: (type, data, onSuccess) => <SubjectForm type={type} data={data} onSuccess={onSuccess} />,
+  parent:  (type, data, onSuccess) => <ParentForm  type={type} data={data} onSuccess={onSuccess} />,
 };
 
 // ─── Delete action registry ───────────────────────────────────────────────────
