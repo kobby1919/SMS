@@ -36,3 +36,11 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json(parent, { status: 201 });
 }
+
+export async function GET() {
+  const parents = await prisma.parent.findMany({
+    select: { id: true, name: true, surname: true },
+    orderBy: [{ name: "asc" }, { surname: "asc" }],
+  });
+  return NextResponse.json(parents);
+}
