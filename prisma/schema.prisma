@@ -132,13 +132,13 @@ model Lesson {
 
   // Relationships
   subjectId Int
-  subject   Subject @relation(fields: [subjectId], references: [id])
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
 
   classId Int
-  class   Class @relation(fields: [classId], references: [id])
+  class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   teacherId String
-  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 
   exams       Exam[]
   assignments Assignment[]
