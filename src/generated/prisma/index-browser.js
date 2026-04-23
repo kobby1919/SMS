@@ -227,6 +227,8 @@ exports.Prisma.AttendanceScalarFieldEnum = {
   id: 'id',
   date: 'date',
   present: 'present',
+  status: 'status',
+  note: 'note',
   studentId: 'studentId',
   lessonId: 'lessonId'
 };
@@ -273,6 +275,13 @@ exports.Day = exports.$Enums.Day = {
   WEDNESDAY: 'WEDNESDAY',
   THURSDAY: 'THURSDAY',
   FRIDAY: 'FRIDAY'
+};
+
+exports.AttendanceStatus = exports.$Enums.AttendanceStatus = {
+  PRESENT: 'PRESENT',
+  ABSENT: 'ABSENT',
+  LATE: 'LATE',
+  EXCUSED: 'EXCUSED'
 };
 
 exports.Prisma.ModelName = {

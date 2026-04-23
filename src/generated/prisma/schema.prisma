@@ -24,6 +24,13 @@ enum Day {
   FRIDAY
 }
 
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
 // --- MODELS ---
 
 model Admin {
@@ -132,13 +139,13 @@ model Lesson {
 
   // Relationships
   subjectId Int
-  subject   Subject @relation(fields: [subjectId], references: [id])
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
 
   classId Int
-  class   Class @relation(fields: [classId], references: [id])
+  class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   teacherId String
-  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 
   exams       Exam[]
   assignments Assignment[]
@@ -185,16 +192,19 @@ model Result {
 }
 
 model Attendance {
-  id      Int      @id @default(autoincrement())
-  date    DateTime
-  present Boolean
+  id      Int              @id @default(autoincrement())
+  date    DateTime         @default(now())
+  present Boolean // kept for backwards compatibility
+  status  AttendanceStatus @default(PRESENT)
+  note    String? // reason for absence, late arrival note etc
 
-  // Relationships
   studentId String
-  student   Student @relation(fields: [studentId], references: [id])
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   lessonId Int
-  lesson   Lesson @relation(fields: [lessonId], references: [id])
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, lessonId, date]) // one record per student per lesson per day
 }
 
 model Event {
