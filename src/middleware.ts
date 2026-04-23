@@ -7,18 +7,27 @@ const matchers = Object.keys(routeAccessMap).map((route) => ({
   allowedRoles: routeAccessMap[route],
 }));
 
+
+// src/middleware.ts
 export default clerkMiddleware(async (auth, req) => {
-  //   if (isProtectedRoute(req)) {
-  //     await auth.protect();
-  //   }
   const { sessionClaims } = await auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
+  
 
-  for (const { matcher, allowedRoles } of matchers) {
-   if (matcher(req) && !allowedRoles.includes(role!)) {
-    return NextResponse.redirect(new URL(`/${role}`, req.url))
-   }
+  // Find ALL matching routes for the current path
+  const matchingRoute = matchers.find(({ matcher }) => matcher(req));
+
+  if (matchingRoute) {
+    const { allowedRoles } = matchingRoute;
+    
+    // If user role is NOT in the allowed list for this specific match
+    if (!role || !allowedRoles.includes(role)) {
+      const redirectUrl = new URL(`/${role || "sign-in"}`, req.url);
+      return NextResponse.redirect(redirectUrl);
+    }
   }
+  
+  return NextResponse.next();
 });
 
 export const config = {

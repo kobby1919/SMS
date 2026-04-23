@@ -34,6 +34,10 @@ const TeacherPage = async ({
     ],
   });
 
+  console.log("lessons count:", lessons.length);
+console.log("sample:", lessons[0]);
+  
+
   // Unique classes this teacher teaches (from lessons, not just supervised)
   const taughtClasses = Array.from(
     new Map(lessons.map((l) => [l.class.name, l.class.name])).values()

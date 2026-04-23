@@ -39,8 +39,8 @@ const forms: Record<
   string,
   (type: "create" | "update", data: any, onSuccess: () => void) => React.ReactNode
 > = {
-  teacher: (type, data, onSuccess) => <TeacherForm type={type} data={data} />,
-  student: (type, data, onSuccess) => <StudentForm type={type} data={data} />,
+  teacher: (type, data, onSuccess) => <TeacherForm type={type} data={data} onSuccess={onSuccess}/>,
+  student: (type, data, onSuccess) => <StudentForm type={type} data={data} onSuccess={onSuccess}/>,
   lesson:  (type, data, onSuccess) => <LessonForm  type={type} data={data} onSuccess={onSuccess} />,
   class:   (type, data, onSuccess) => <ClassForm   type={type} data={data} onSuccess={onSuccess} />,
   subject: (type, data, onSuccess) => <SubjectForm type={type} data={data} onSuccess={onSuccess} />,
