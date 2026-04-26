@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { AlertCircle, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
+import { AlertCircle, AlertTriangle, CheckCircle2, Clock, Info } from "lucide-react";
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
 const schema = z.object({
@@ -21,7 +21,6 @@ const schema = z.object({
 
 type Inputs = z.infer<typeof schema>;
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 type Subject = { id: number; name: string };
 type Class   = { id: number; name: string; grade: { level: string } };
 type Teacher = { id: string; name: string; surname: string; maxClasses: number };
@@ -75,18 +74,16 @@ const LessonForm = ({
   data?: any;
   onSuccess?: () => void;
 }) => {
-  const [subjects,  setSubjects]  = useState<Subject[]>([]);
-  const [classes,   setClasses]   = useState<Class[]>([]);
-  const [teachers,  setTeachers]  = useState<Teacher[]>([]);
-  const [loading,   setLoading]   = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [apiError,  setApiError]  = useState<string | null>(null);
-  const [success,   setSuccess]   = useState(false);
-
-  // Teacher class-count warning
+  const [allSubjects,      setAllSubjects]      = useState<Subject[]>([]);
+  const [teacherSubjects,  setTeacherSubjects]  = useState<Subject[]>([]);
+  const [subjectsLoading,  setSubjectsLoading]  = useState(false);
+  const [classes,          setClasses]          = useState<Class[]>([]);
+  const [teachers,         setTeachers]         = useState<Teacher[]>([]);
+  const [loading,          setLoading]          = useState(true);
+  const [submitting,       setSubmitting]        = useState(false);
+  const [apiError,         setApiError]         = useState<string | null>(null);
+  const [success,          setSuccess]          = useState(false);
   const [teacherClassCount, setTeacherClassCount] = useState<number>(0);
-  const [watchedTeacherId,  setWatchedTeacherId]  = useState<string>("");
-  const [watchedClassId,    setWatchedClassId]    = useState<string>("");
 
   const {
     register,
@@ -100,8 +97,12 @@ const LessonForm = ({
       ? {
           name:      data.name      ?? "",
           day:       data.day       ?? "MONDAY",
-          startTime: data.startTime ? `${new Date(data.startTime).getHours().toString().padStart(2,"0")}:${new Date(data.startTime).getMinutes().toString().padStart(2,"0")}` : "07:30",
-          endTime:   data.endTime   ? `${new Date(data.endTime).getHours().toString().padStart(2,"0")}:${new Date(data.endTime).getMinutes().toString().padStart(2,"0")}` : "08:10",
+          startTime: data.startTime
+            ? `${new Date(data.startTime).getHours().toString().padStart(2,"0")}:${new Date(data.startTime).getMinutes().toString().padStart(2,"0")}`
+            : "07:30",
+          endTime: data.endTime
+            ? `${new Date(data.endTime).getHours().toString().padStart(2,"0")}:${new Date(data.endTime).getMinutes().toString().padStart(2,"0")}`
+            : "08:10",
           subjectId: data.subjectId?.toString() ?? "",
           classId:   data.classId?.toString()   ?? "",
           teacherId: data.teacherId             ?? "",
@@ -109,26 +110,29 @@ const LessonForm = ({
       : { day: "MONDAY", startTime: "07:30", endTime: "08:10" },
   });
 
-  const startTime  = watch("startTime");
-  const endTime    = watch("endTime");
-  const teacherId  = watch("teacherId");
-  const classId    = watch("classId");
+  const startTime = watch("startTime");
+  const endTime   = watch("endTime");
+  const teacherId = watch("teacherId");
+  const classId   = watch("classId");
 
-  // ── Load dropdown data ─────────────────────────────────────────────────────
+  // ── Load classes + teachers on mount ──────────────────────────────────────
   useEffect(() => {
     const load = async () => {
       try {
-        const [subRes, clsRes, tchRes] = await Promise.all([
-          fetch("/api/form-data/subjects"),
+        const [clsRes, tchRes] = await Promise.all([
           fetch("/api/form-data/classes"),
           fetch("/api/form-data/teachers"),
         ]);
-        const [subs, clss, tchs] = await Promise.all([
-          subRes.json(), clsRes.json(), tchRes.json(),
-        ]);
-        setSubjects(subs);
+        const [clss, tchs] = await Promise.all([clsRes.json(), tchRes.json()]);
         setClasses(clss);
         setTeachers(tchs);
+
+        // On update, pre-load the existing teacher's subjects
+        if (data?.teacherId) {
+          const subRes = await fetch(`/api/form-data/subjects?teacherId=${data.teacherId}`);
+          const subs   = await subRes.json();
+          setTeacherSubjects(subs);
+        }
       } catch {
         setApiError("Failed to load form data. Please refresh.");
       } finally {
@@ -138,28 +142,44 @@ const LessonForm = ({
     load();
   }, []);
 
+  // ── When teacher changes: reload their subjects + reset subject field ──────
+  useEffect(() => {
+    if (!teacherId) {
+      setTeacherSubjects([]);
+      return;
+    }
+
+    // Don't reset on initial load for update (teacher already set)
+    const isInitialLoad = type === "update" && teacherId === data?.teacherId;
+
+    setSubjectsLoading(true);
+    fetch(`/api/form-data/subjects?teacherId=${teacherId}`)
+      .then((r) => r.json())
+      .then((subs: Subject[]) => {
+        setTeacherSubjects(subs);
+        // Reset subject selection unless this is the initial edit load
+        if (!isInitialLoad) {
+          setValue("subjectId", "");
+        }
+      })
+      .catch(() => {})
+      .finally(() => setSubjectsLoading(false));
+  }, [teacherId]);
+
   // ── Check teacher class count when teacher or class changes ───────────────
   useEffect(() => {
     if (!teacherId) { setTeacherClassCount(0); return; }
-    const check = async () => {
-      try {
-        const res  = await fetch(`/api/form-data/teacher-class-count?teacherId=${teacherId}&excludeClassId=${classId || ""}&excludeLessonId=${data?.id || ""}`);
-        const json = await res.json();
-        setTeacherClassCount(json.count ?? 0);
-      } catch { /* silent */ }
-    };
-    check();
-    setWatchedTeacherId(teacherId);
-    setWatchedClassId(classId);
+    fetch(`/api/form-data/teacher-class-count?teacherId=${teacherId}&excludeClassId=${classId || ""}&excludeLessonId=${data?.id || ""}`)
+      .then((r) => r.json())
+      .then((json) => setTeacherClassCount(json.count ?? 0))
+      .catch(() => {});
   }, [teacherId, classId]);
 
-  // ── Apply period preset ────────────────────────────────────────────────────
   const applyPreset = (start: string, end: string) => {
     setValue("startTime", start);
     setValue("endTime",   end);
   };
 
-  // ── Submit ─────────────────────────────────────────────────────────────────
   const onSubmit = async (formData: Inputs) => {
     setApiError(null);
     setSubmitting(true);
@@ -182,16 +202,10 @@ const LessonForm = ({
       });
 
       const result = await res.json();
-      if (!res.ok) {
-        setApiError(result.error ?? "Something went wrong.");
-        return;
-      }
+      if (!res.ok) { setApiError(result.error ?? "Something went wrong."); return; }
 
       setSuccess(true);
-      setTimeout(() => {
-        setSuccess(false);
-        onSuccess?.();
-      }, 1200);
+      setTimeout(() => { setSuccess(false); onSuccess?.(); }, 1200);
     } catch {
       setApiError("Network error. Please try again.");
     } finally {
@@ -199,14 +213,10 @@ const LessonForm = ({
     }
   };
 
-  // ── Teacher warning level ──────────────────────────────────────────────────
   const selectedTeacher = teachers.find((t) => t.id === teacherId);
-  const isNewClass      = classId && teacherId &&
-    !subjects.find(() => false); // computed below via API
-  const atLimit         = teacherClassCount >= 5;
-  const nearLimit       = teacherClassCount === 4;
-
-  const duration = getDuration(startTime, endTime);
+  const atLimit   = teacherClassCount >= 5;
+  const nearLimit = teacherClassCount === 4;
+  const duration  = getDuration(startTime, endTime);
 
   if (loading) {
     return (
@@ -220,20 +230,16 @@ const LessonForm = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
 
-      {/* Title */}
       <h1 className="text-2xl font-black text-gray-800 tracking-tight">
         {type === "create" ? "Add Lesson Slot" : "Update Lesson Slot"}
       </h1>
 
-      {/* API error */}
       {apiError && (
         <div className="flex items-start gap-2.5 p-3.5 bg-rose-50 border border-rose-200 rounded-xl">
           <AlertCircle size={15} className="text-rose-500 shrink-0 mt-0.5" />
           <p className="text-xs font-semibold text-rose-700 leading-relaxed">{apiError}</p>
         </div>
       )}
-
-      {/* Success */}
       {success && (
         <div className="flex items-center gap-2.5 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl">
           <CheckCircle2 size={15} className="text-emerald-500" />
@@ -297,7 +303,6 @@ const LessonForm = ({
             />
             {errors.startTime && <p className="text-[10px] text-red-500 font-medium">{errors.startTime.message}</p>}
           </div>
-
           <div className="flex flex-col gap-1 w-full md:w-[31%]">
             <label className="text-xs text-gray-500 font-semibold">End Time</label>
             <input
@@ -307,8 +312,6 @@ const LessonForm = ({
             />
             {errors.endTime && <p className="text-[10px] text-red-500 font-medium">{errors.endTime.message}</p>}
           </div>
-
-          {/* Duration badge */}
           {duration && (
             <div className="flex flex-col gap-1 w-full md:w-[31%] justify-end">
               <label className="text-xs text-gray-500 font-semibold">Duration</label>
@@ -326,23 +329,71 @@ const LessonForm = ({
         <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">Assignment</span>
 
         <div className="flex flex-wrap gap-4">
-          {/* Subject */}
-          <div className="flex flex-col gap-1 w-full md:w-[31%]">
-            <label className="text-xs text-gray-500 font-semibold">Subject</label>
+
+          {/* ── Teacher (pick FIRST — drives subject list) ── */}
+          <div className="flex flex-col gap-1 w-full md:w-[48%]">
+            <label className="text-xs text-gray-500 font-semibold">
+              Teacher <span className="text-gray-300 font-normal">(select first)</span>
+            </label>
             <select
-              {...register("subjectId")}
+              {...register("teacherId")}
               className="ring-[1.5px] ring-gray-200 p-2.5 rounded-xl text-sm focus:ring-indigo-600 outline-none bg-white h-[42px]"
             >
-              <option value="">Select subject…</option>
-              {subjects.map((s) => (
-                <option key={s.id} value={s.id}>{s.name}</option>
+              <option value="">Select teacher…</option>
+              {teachers.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name} {t.surname}
+                </option>
               ))}
             </select>
-            {errors.subjectId && <p className="text-[10px] text-red-500 font-medium">{errors.subjectId.message}</p>}
+            {errors.teacherId && <p className="text-[10px] text-red-500 font-medium">{errors.teacherId.message}</p>}
           </div>
 
-          {/* Class */}
-          <div className="flex flex-col gap-1 w-full md:w-[31%]">
+          {/* ── Subject (filtered by selected teacher) ── */}
+          <div className="flex flex-col gap-1 w-full md:w-[48%]">
+            <label className="text-xs text-gray-500 font-semibold">
+              Subject{" "}
+              {teacherId && (
+                <span className="text-indigo-400 font-normal">
+                  — {teacherSubjects.length} available
+                </span>
+              )}
+            </label>
+            <select
+              {...register("subjectId")}
+              disabled={!teacherId || subjectsLoading}
+              className="ring-[1.5px] ring-gray-200 p-2.5 rounded-xl text-sm focus:ring-indigo-600 outline-none bg-white h-[42px] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {!teacherId ? (
+                <option value="">Select a teacher first…</option>
+              ) : subjectsLoading ? (
+                <option value="">Loading subjects…</option>
+              ) : teacherSubjects.length === 0 ? (
+                <option value="">No subjects assigned to this teacher</option>
+              ) : (
+                <>
+                  <option value="">Select subject…</option>
+                  {teacherSubjects.map((s) => (
+                    <option key={s.id} value={s.id}>{s.name}</option>
+                  ))}
+                </>
+              )}
+            </select>
+            {errors.subjectId && <p className="text-[10px] text-red-500 font-medium">{errors.subjectId.message}</p>}
+
+            {/* Hint if teacher has no subjects assigned */}
+            {teacherId && !subjectsLoading && teacherSubjects.length === 0 && (
+              <div className="flex items-center gap-1.5 mt-1">
+                <Info size={11} className="text-amber-500 shrink-0" />
+                <p className="text-[10px] text-amber-600 font-semibold">
+                  Assign subjects to this teacher in the Subjects list first.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* ── Class ── */}
+          <div className="flex flex-col gap-1 w-full">
             <label className="text-xs text-gray-500 font-semibold">Class</label>
             <select
               {...register("classId")}
@@ -357,23 +408,6 @@ const LessonForm = ({
             </select>
             {errors.classId && <p className="text-[10px] text-red-500 font-medium">{errors.classId.message}</p>}
           </div>
-
-          {/* Teacher */}
-          <div className="flex flex-col gap-1 w-full md:w-[31%]">
-            <label className="text-xs text-gray-500 font-semibold">Teacher</label>
-            <select
-              {...register("teacherId")}
-              className="ring-[1.5px] ring-gray-200 p-2.5 rounded-xl text-sm focus:ring-indigo-600 outline-none bg-white h-[42px]"
-            >
-              <option value="">Select teacher…</option>
-              {teachers.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name} {t.surname}
-                </option>
-              ))}
-            </select>
-            {errors.teacherId && <p className="text-[10px] text-red-500 font-medium">{errors.teacherId.message}</p>}
-          </div>
         </div>
 
         {/* Teacher class-count guard */}
@@ -386,26 +420,34 @@ const LessonForm = ({
               : "bg-emerald-50 border-emerald-200 text-emerald-700"}`}
           >
             {atLimit
-              ? <AlertCircle size={14} className="shrink-0 mt-0.5 text-rose-500" />
+              ? <AlertCircle   size={14} className="shrink-0 mt-0.5 text-rose-500"    />
               : nearLimit
-              ? <AlertTriangle size={14} className="shrink-0 mt-0.5 text-amber-500" />
-              : <CheckCircle2 size={14} className="shrink-0 mt-0.5 text-emerald-500" />}
+              ? <AlertTriangle size={14} className="shrink-0 mt-0.5 text-amber-500"   />
+              : <CheckCircle2  size={14} className="shrink-0 mt-0.5 text-emerald-500" />}
             <span>
-              {selectedTeacher?.name} {selectedTeacher?.surname} is assigned to{" "}
+              {selectedTeacher?.name} {selectedTeacher?.surname} teaches{" "}
               <strong>{teacherClassCount}</strong> / 5 classes
-              {atLimit && " — cannot assign to more classes."}
-              {nearLimit && " — one slot remaining."}
+              {atLimit   && " — at the class limit. Cannot assign to a new class."}
+              {nearLimit && " — one class slot remaining."}
               {!atLimit && !nearLimit && " — available for assignment."}
             </span>
           </div>
         )}
+
+        {/* Note: same teacher can visit same class multiple times/day (different subjects) */}
+        {teacherId && classId && (
+          <div className="flex items-start gap-2 p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
+            <Info size={13} className="text-indigo-400 shrink-0 mt-0.5" />
+            <p className="text-[11px] text-indigo-600 font-medium">
+              A teacher can teach the same class multiple times per day using different subjects and time slots.
+            </p>
+          </div>
+        )}
       </div>
 
-      {/* ── SECTION: Optional ── */}
+      {/* ── SECTION: Optional name ── */}
       <div className="flex flex-col gap-4">
-        <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">
-          Optional
-        </span>
+        <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">Optional</span>
         <div className="flex flex-col gap-1 w-full">
           <label className="text-xs text-gray-500 font-semibold">
             Custom Lesson Name <span className="text-gray-300 font-normal">(auto-generated if blank)</span>
@@ -419,7 +461,6 @@ const LessonForm = ({
         </div>
       </div>
 
-      {/* Submit */}
       <button
         type="submit"
         disabled={submitting || atLimit}
