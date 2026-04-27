@@ -122,3 +122,94 @@ export async function deleteStudent(id: string) {
   await prisma.student.delete({ where: { id } });
   revalidatePath("/list/students");
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EXAM ACTIONS
+// ─────────────────────────────────────────────────────────────────────────────
+ 
+export type ExamFormData = {
+  id?:       number;
+  title:     string;
+  lessonId:  number;
+  startTime: string; // ISO string
+  endTime:   string; // ISO string
+};
+ 
+export async function createExam(data: ExamFormData): Promise<void> {
+  await prisma.exam.create({
+    data: {
+      title:     data.title,
+      lessonId:  data.lessonId,
+      startTime: new Date(data.startTime),
+      endTime:   new Date(data.endTime),
+    },
+  });
+  revalidatePath("/list/exams");
+}
+ 
+export async function updateExam(data: ExamFormData): Promise<void> {
+  if (!data.id) throw new Error("Exam ID required for update.");
+  await prisma.exam.update({
+    where: { id: data.id },
+    data: {
+      title:     data.title,
+      lessonId:  data.lessonId,
+      startTime: new Date(data.startTime),
+      endTime:   new Date(data.endTime),
+    },
+  });
+  revalidatePath("/list/exams");
+}
+ 
+export async function deleteExam(id: number): Promise<void> {
+  await prisma.exam.delete({ where: { id } });
+  revalidatePath("/list/exams");
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RESULT ACTIONS
+// ─────────────────────────────────────────────────────────────────────────────
+ 
+export type ResultFormData = {
+  id?:          number;
+  score:        number;
+  studentId:    string;
+  examId?:      number | null;
+  assignmentId?: number | null;
+};
+ 
+export async function createResult(data: ResultFormData): Promise<void> {
+  if (!data.examId && !data.assignmentId) {
+    throw new Error("Either an exam or assignment must be selected.");
+  }
+  await prisma.result.create({
+    data: {
+      score:        data.score,
+      studentId:    data.studentId,
+      examId:       data.examId       ?? null,
+      assignmentId: data.assignmentId ?? null,
+    },
+  });
+  revalidatePath("/list/results");
+}
+ 
+export async function updateResult(data: ResultFormData): Promise<void> {
+  if (!data.id) throw new Error("Result ID required for update.");
+  await prisma.result.update({
+    where: { id: data.id },
+    data: {
+      score:        data.score,
+      studentId:    data.studentId,
+      examId:       data.examId       ?? null,
+      assignmentId: data.assignmentId ?? null,
+    },
+  });
+  revalidatePath("/list/results");
+}
+ 
+export async function deleteResult(id: number): Promise<void> {
+  await prisma.result.delete({ where: { id } });
+  revalidatePath("/list/results");
+}
+ 
+ 
