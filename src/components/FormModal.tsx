@@ -12,39 +12,55 @@ import {
   deleteParent,
   deleteTeacher,
   deleteStudent,
+  deleteExam,
+  deleteResult,
 } from "@/src/lib/actions/actions";
 
 // ─── Dynamically imported forms ───────────────────────────────────────────────
 const TeacherForm = dynamic(() => import("./TeacherForm"), {
-  loading: () => <div className="py-10 text-center text-gray-400 animate-pulse font-medium">Loading form…</div>,
+  loading: () => <Skeleton />,
 });
 const StudentForm = dynamic(() => import("./StudentForm"), {
-  loading: () => <div className="py-10 text-center text-gray-400 animate-pulse font-medium">Loading form…</div>,
+  loading: () => <Skeleton />,
 });
 const LessonForm = dynamic(() => import("./LessonForm"), {
-  loading: () => <div className="py-10 text-center text-gray-400 animate-pulse font-medium">Loading form…</div>,
+  loading: () => <Skeleton />,
 });
 const ClassForm = dynamic(() => import("./ClassForm"), {
-  loading: () => <div className="py-10 text-center text-gray-400 animate-pulse font-medium">Loading form…</div>,
+  loading: () => <Skeleton />,
 });
 const SubjectForm = dynamic(() => import("./SubjectForm"), {
-  loading: () => <div className="py-10 text-center text-gray-400 animate-pulse font-medium">Loading form…</div>,
+  loading: () => <Skeleton />,
 });
 const ParentForm = dynamic(() => import("./ParentForm"), {
-  loading: () => <div className="py-10 text-center text-gray-400 animate-pulse font-medium">Loading form…</div>,
+  loading: () => <Skeleton />,
 });
+const ExamForm = dynamic(() => import("./ExamForm"), {
+  loading: () => <Skeleton />,
+});
+const ResultForm = dynamic(() => import("./ResultForm"), {
+  loading: () => <Skeleton />,
+});
+
+const Skeleton = () => (
+  <div className="py-10 text-center text-gray-400 animate-pulse font-medium">
+    Loading form…
+  </div>
+);
 
 // ─── Form registry ────────────────────────────────────────────────────────────
 const forms: Record<
   string,
   (type: "create" | "update", data: any, onSuccess: () => void) => React.ReactNode
 > = {
-  teacher: (type, data, onSuccess) => <TeacherForm type={type} data={data} onSuccess={onSuccess}/>,
-  student: (type, data, onSuccess) => <StudentForm type={type} data={data} onSuccess={onSuccess}/>,
+  teacher: (type, data, onSuccess) => <TeacherForm type={type} data={data} onSuccess={onSuccess} />,
+  student: (type, data, onSuccess) => <StudentForm type={type} data={data} onSuccess={onSuccess} />,
   lesson:  (type, data, onSuccess) => <LessonForm  type={type} data={data} onSuccess={onSuccess} />,
   class:   (type, data, onSuccess) => <ClassForm   type={type} data={data} onSuccess={onSuccess} />,
   subject: (type, data, onSuccess) => <SubjectForm type={type} data={data} onSuccess={onSuccess} />,
   parent:  (type, data, onSuccess) => <ParentForm  type={type} data={data} onSuccess={onSuccess} />,
+  exam:    (type, data, onSuccess) => <ExamForm    type={type} data={data} onSuccess={onSuccess} />,
+  result:  (type, data, onSuccess) => <ResultForm  type={type} data={data} onSuccess={onSuccess} />,
 };
 
 // ─── Delete action registry ───────────────────────────────────────────────────
@@ -55,6 +71,15 @@ const deleteActions: Partial<Record<string, (id: any) => Promise<void>>> = {
   parent:  (id) => deleteParent(String(id)),
   teacher: (id) => deleteTeacher(String(id)),
   student: (id) => deleteStudent(String(id)),
+  exam:    (id) => deleteExam(Number(id)),
+  result:  (id) => deleteResult(Number(id)),
+};
+
+// ─── Modal width per table ────────────────────────────────────────────────────
+const modalWidths: Partial<Record<string, string>> = {
+  lesson: "max-w-[95%] md:max-w-[680px]",
+  exam:   "max-w-[95%] md:max-w-[640px]",
+  result: "max-w-[95%] md:max-w-[660px]",
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -87,7 +112,10 @@ const FormModal = ({ table, type, data, id }: Props) => {
   const handleDelete = () => {
     if (!id) return;
     const action = deleteActions[table];
-    if (!action) { setDeleteError(`Delete not yet implemented for ${table}.`); return; }
+    if (!action) {
+      setDeleteError(`Delete not yet implemented for ${table}.`);
+      return;
+    }
     setDeleteError(null);
     startTransition(async () => {
       try {
@@ -98,6 +126,11 @@ const FormModal = ({ table, type, data, id }: Props) => {
       }
     });
   };
+
+  const modalWidth =
+    type === "delete"
+      ? "max-w-md"
+      : (modalWidths[table] ?? "max-w-[90%] md:max-w-[70%] lg:max-w-[60%] xl:max-w-[50%]");
 
   const Form = () => {
     if (type === "delete" && id) {
@@ -120,11 +153,17 @@ const FormModal = ({ table, type, data, id }: Props) => {
           )}
           <div className="flex items-center gap-3 mt-8 w-full">
             <button
-              type="button" onClick={close} disabled={isPending}
+              type="button"
+              onClick={close}
+              disabled={isPending}
               className="flex-1 py-2.5 bg-gray-100 text-gray-600 font-semibold rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50"
-            >Cancel</button>
+            >
+              Cancel
+            </button>
             <button
-              type="button" onClick={handleDelete} disabled={isPending}
+              type="button"
+              onClick={handleDelete}
+              disabled={isPending}
               className="flex-1 py-2.5 bg-rose-600 text-white font-semibold rounded-xl shadow-lg shadow-rose-100 hover:bg-rose-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {isPending && <Loader2 size={14} className="animate-spin" />}
@@ -145,13 +184,9 @@ const FormModal = ({ table, type, data, id }: Props) => {
         </div>
       );
     }
+
     return null;
   };
-
-  const modalWidth =
-    type === "delete" ? "max-w-md"
-    : table === "lesson" ? "max-w-[95%] md:max-w-[680px]"
-    : "max-w-[90%] md:max-w-[70%] lg:max-w-[60%] xl:max-w-[50%]";
 
   return (
     <>
@@ -162,7 +197,9 @@ const FormModal = ({ table, type, data, id }: Props) => {
         {type === "create" && (
           <>
             <Plus size={18} strokeWidth={3} />
-            <span className="hidden sm:inline font-bold text-sm tracking-tight uppercase">Add {table}</span>
+            <span className="hidden sm:inline font-bold text-sm tracking-tight uppercase">
+              Add {table}
+            </span>
           </>
         )}
         {type === "update" && <Edit   size={16} />}
@@ -171,7 +208,9 @@ const FormModal = ({ table, type, data, id }: Props) => {
 
       {open && (
         <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
-          <div className={`bg-white rounded-3xl relative w-full ${modalWidth} shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300`}>
+          <div
+            className={`bg-white rounded-3xl relative w-full ${modalWidth} shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300`}
+          >
             <button
               className="absolute top-5 right-5 text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-100 rounded-lg z-10 transition-colors"
               onClick={close}
