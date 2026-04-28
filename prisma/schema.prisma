@@ -31,6 +31,12 @@ enum AttendanceStatus {
   EXCUSED
 }
 
+enum Term {
+  TERM_1
+  TERM_2
+  TERM_3
+}
+
 // --- MODELS ---
 
 model Admin {
@@ -61,6 +67,8 @@ model Student {
 
   attendances Attendance[]
   results     Result[]
+
+  continuousAssessments ContinuousAssessment[]
 }
 
 model Teacher {
@@ -81,6 +89,8 @@ model Teacher {
   subjects Subject[]
   lessons  Lesson[]
   classes  Class[]   @relation("ClassTeacher")
+
+  continuousAssessments ContinuousAssessment[]
 }
 
 model Parent {
@@ -120,6 +130,8 @@ model Class {
   grade         Grade     @relation(fields: [gradeId], references: [id])
   events        Event[]
   announcements Announcement[]
+
+  continuousAssessments ContinuousAssessment[]
 }
 
 model Subject {
@@ -128,6 +140,7 @@ model Subject {
 
   teachers Teacher[]
   lessons  Lesson[]
+  continuousAssessments ContinuousAssessment[]
 }
 
 model Lesson {
@@ -229,4 +242,53 @@ model Announcement {
   // Relationships
   classId Int?
   class   Class? @relation(fields: [classId], references: [id])
+}
+
+
+// --- NEW MODELS ---
+// --- UPDATED NEW MODELS ---
+
+model CAConfig {
+  id               Int      @id @default(autoincrement())
+  academicYear     String   @unique // Matches the 'where' clause in your upsert
+  classworkWeight  Float    @default(30.0) // Matches 'data.classworkWeight'
+  examWeight       Float    @default(70.0) // Matches 'data.examWeight'
+  createdAt        DateTime @default(now())
+}
+
+model ContinuousAssessment {
+  id               Int      @id @default(autoincrement())
+  academicYear     String   // e.g., "2025/2026"
+  term             Term
+  
+  // Relations
+  studentId        String
+  student          Student  @relation(fields: [studentId], references: [id])
+  teacherId        String
+  teacher          Teacher  @relation(fields: [teacherId], references: [id])
+  subjectId        Int
+  subject          Subject  @relation(fields: [subjectId], references: [id])
+  classId          Int
+  class            Class    @relation(fields: [classId], references: [id])
+
+  // RAW DATA (Matches your CAInput type)
+  classworkScore   Float    @default(0) 
+  examScore        Float    @default(0)
+
+  // COMPUTED DATA (Matches your computeCA function output)
+  totalScore       Float    @default(0) // Matches 'totalScore' in your action
+  
+  // GHANA BECE / SBA STANDARDS
+  grade            String?  // e.g., "A1", "B2"
+  gradePoint       Int?     // e.g., 1, 2, 3
+  remarks          String?  
+  
+  // Link to the configuration used
+  configId         Int?
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Match the unique constraint used in your bulkUpsertCA 'where' clause
+  @@unique([studentId, subjectId, classId, term, academicYear])
 }

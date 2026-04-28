@@ -250,6 +250,33 @@ exports.Prisma.AnnouncementScalarFieldEnum = {
   classId: 'classId'
 };
 
+exports.Prisma.CAConfigScalarFieldEnum = {
+  id: 'id',
+  academicYear: 'academicYear',
+  classworkWeight: 'classworkWeight',
+  examWeight: 'examWeight',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ContinuousAssessmentScalarFieldEnum = {
+  id: 'id',
+  academicYear: 'academicYear',
+  term: 'term',
+  studentId: 'studentId',
+  teacherId: 'teacherId',
+  subjectId: 'subjectId',
+  classId: 'classId',
+  classworkScore: 'classworkScore',
+  examScore: 'examScore',
+  totalScore: 'totalScore',
+  grade: 'grade',
+  gradePoint: 'gradePoint',
+  remarks: 'remarks',
+  configId: 'configId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -284,6 +311,12 @@ exports.AttendanceStatus = exports.$Enums.AttendanceStatus = {
   EXCUSED: 'EXCUSED'
 };
 
+exports.Term = exports.$Enums.Term = {
+  TERM_1: 'TERM_1',
+  TERM_2: 'TERM_2',
+  TERM_3: 'TERM_3'
+};
+
 exports.Prisma.ModelName = {
   Admin: 'Admin',
   Student: 'Student',
@@ -298,7 +331,9 @@ exports.Prisma.ModelName = {
   Result: 'Result',
   Attendance: 'Attendance',
   Event: 'Event',
-  Announcement: 'Announcement'
+  Announcement: 'Announcement',
+  CAConfig: 'CAConfig',
+  ContinuousAssessment: 'ContinuousAssessment'
 };
 
 /**

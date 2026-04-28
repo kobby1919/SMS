@@ -83,6 +83,16 @@ export type Event = $Result.DefaultSelection<Prisma.$EventPayload>
  * 
  */
 export type Announcement = $Result.DefaultSelection<Prisma.$AnnouncementPayload>
+/**
+ * Model CAConfig
+ * 
+ */
+export type CAConfig = $Result.DefaultSelection<Prisma.$CAConfigPayload>
+/**
+ * Model ContinuousAssessment
+ * 
+ */
+export type ContinuousAssessment = $Result.DefaultSelection<Prisma.$ContinuousAssessmentPayload>
 
 /**
  * Enums
@@ -116,6 +126,15 @@ export const AttendanceStatus: {
 
 export type AttendanceStatus = (typeof AttendanceStatus)[keyof typeof AttendanceStatus]
 
+
+export const Term: {
+  TERM_1: 'TERM_1',
+  TERM_2: 'TERM_2',
+  TERM_3: 'TERM_3'
+};
+
+export type Term = (typeof Term)[keyof typeof Term]
+
 }
 
 export type UserSex = $Enums.UserSex
@@ -129,6 +148,10 @@ export const Day: typeof $Enums.Day
 export type AttendanceStatus = $Enums.AttendanceStatus
 
 export const AttendanceStatus: typeof $Enums.AttendanceStatus
+
+export type Term = $Enums.Term
+
+export const Term: typeof $Enums.Term
 
 /**
  * ##  Prisma Client ʲˢ
@@ -390,6 +413,26 @@ export class PrismaClient<
     * ```
     */
   get announcement(): Prisma.AnnouncementDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.cAConfig`: Exposes CRUD operations for the **CAConfig** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CAConfigs
+    * const cAConfigs = await prisma.cAConfig.findMany()
+    * ```
+    */
+  get cAConfig(): Prisma.CAConfigDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.continuousAssessment`: Exposes CRUD operations for the **ContinuousAssessment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ContinuousAssessments
+    * const continuousAssessments = await prisma.continuousAssessment.findMany()
+    * ```
+    */
+  get continuousAssessment(): Prisma.ContinuousAssessmentDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -837,7 +880,9 @@ export namespace Prisma {
     Result: 'Result',
     Attendance: 'Attendance',
     Event: 'Event',
-    Announcement: 'Announcement'
+    Announcement: 'Announcement',
+    CAConfig: 'CAConfig',
+    ContinuousAssessment: 'ContinuousAssessment'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -853,7 +898,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "admin" | "student" | "teacher" | "parent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "result" | "attendance" | "event" | "announcement"
+      modelProps: "admin" | "student" | "teacher" | "parent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "result" | "attendance" | "event" | "announcement" | "cAConfig" | "continuousAssessment"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1893,6 +1938,154 @@ export namespace Prisma {
           }
         }
       }
+      CAConfig: {
+        payload: Prisma.$CAConfigPayload<ExtArgs>
+        fields: Prisma.CAConfigFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CAConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CAConfigPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CAConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CAConfigPayload>
+          }
+          findFirst: {
+            args: Prisma.CAConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CAConfigPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CAConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CAConfigPayload>
+          }
+          findMany: {
+            args: Prisma.CAConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CAConfigPayload>[]
+          }
+          create: {
+            args: Prisma.CAConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CAConfigPayload>
+          }
+          createMany: {
+            args: Prisma.CAConfigCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CAConfigCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CAConfigPayload>[]
+          }
+          delete: {
+            args: Prisma.CAConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CAConfigPayload>
+          }
+          update: {
+            args: Prisma.CAConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CAConfigPayload>
+          }
+          deleteMany: {
+            args: Prisma.CAConfigDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CAConfigUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CAConfigUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CAConfigPayload>[]
+          }
+          upsert: {
+            args: Prisma.CAConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CAConfigPayload>
+          }
+          aggregate: {
+            args: Prisma.CAConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCAConfig>
+          }
+          groupBy: {
+            args: Prisma.CAConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CAConfigGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CAConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<CAConfigCountAggregateOutputType> | number
+          }
+        }
+      }
+      ContinuousAssessment: {
+        payload: Prisma.$ContinuousAssessmentPayload<ExtArgs>
+        fields: Prisma.ContinuousAssessmentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ContinuousAssessmentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContinuousAssessmentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ContinuousAssessmentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContinuousAssessmentPayload>
+          }
+          findFirst: {
+            args: Prisma.ContinuousAssessmentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContinuousAssessmentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ContinuousAssessmentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContinuousAssessmentPayload>
+          }
+          findMany: {
+            args: Prisma.ContinuousAssessmentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContinuousAssessmentPayload>[]
+          }
+          create: {
+            args: Prisma.ContinuousAssessmentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContinuousAssessmentPayload>
+          }
+          createMany: {
+            args: Prisma.ContinuousAssessmentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ContinuousAssessmentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContinuousAssessmentPayload>[]
+          }
+          delete: {
+            args: Prisma.ContinuousAssessmentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContinuousAssessmentPayload>
+          }
+          update: {
+            args: Prisma.ContinuousAssessmentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContinuousAssessmentPayload>
+          }
+          deleteMany: {
+            args: Prisma.ContinuousAssessmentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ContinuousAssessmentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ContinuousAssessmentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContinuousAssessmentPayload>[]
+          }
+          upsert: {
+            args: Prisma.ContinuousAssessmentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContinuousAssessmentPayload>
+          }
+          aggregate: {
+            args: Prisma.ContinuousAssessmentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateContinuousAssessment>
+          }
+          groupBy: {
+            args: Prisma.ContinuousAssessmentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ContinuousAssessmentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ContinuousAssessmentCountArgs<ExtArgs>
+            result: $Utils.Optional<ContinuousAssessmentCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2015,6 +2208,8 @@ export namespace Prisma {
     attendance?: AttendanceOmit
     event?: EventOmit
     announcement?: AnnouncementOmit
+    cAConfig?: CAConfigOmit
+    continuousAssessment?: ContinuousAssessmentOmit
   }
 
   /* Types for Logging */
@@ -2097,11 +2292,13 @@ export namespace Prisma {
   export type StudentCountOutputType = {
     attendances: number
     results: number
+    continuousAssessments: number
   }
 
   export type StudentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     attendances?: boolean | StudentCountOutputTypeCountAttendancesArgs
     results?: boolean | StudentCountOutputTypeCountResultsArgs
+    continuousAssessments?: boolean | StudentCountOutputTypeCountContinuousAssessmentsArgs
   }
 
   // Custom InputTypes
@@ -2129,6 +2326,13 @@ export namespace Prisma {
     where?: ResultWhereInput
   }
 
+  /**
+   * StudentCountOutputType without action
+   */
+  export type StudentCountOutputTypeCountContinuousAssessmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContinuousAssessmentWhereInput
+  }
+
 
   /**
    * Count Type TeacherCountOutputType
@@ -2138,12 +2342,14 @@ export namespace Prisma {
     subjects: number
     lessons: number
     classes: number
+    continuousAssessments: number
   }
 
   export type TeacherCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     subjects?: boolean | TeacherCountOutputTypeCountSubjectsArgs
     lessons?: boolean | TeacherCountOutputTypeCountLessonsArgs
     classes?: boolean | TeacherCountOutputTypeCountClassesArgs
+    continuousAssessments?: boolean | TeacherCountOutputTypeCountContinuousAssessmentsArgs
   }
 
   // Custom InputTypes
@@ -2176,6 +2382,13 @@ export namespace Prisma {
    */
   export type TeacherCountOutputTypeCountClassesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ClassWhereInput
+  }
+
+  /**
+   * TeacherCountOutputType without action
+   */
+  export type TeacherCountOutputTypeCountContinuousAssessmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContinuousAssessmentWhereInput
   }
 
 
@@ -2259,6 +2472,7 @@ export namespace Prisma {
     students: number
     events: number
     announcements: number
+    continuousAssessments: number
   }
 
   export type ClassCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2266,6 +2480,7 @@ export namespace Prisma {
     students?: boolean | ClassCountOutputTypeCountStudentsArgs
     events?: boolean | ClassCountOutputTypeCountEventsArgs
     announcements?: boolean | ClassCountOutputTypeCountAnnouncementsArgs
+    continuousAssessments?: boolean | ClassCountOutputTypeCountContinuousAssessmentsArgs
   }
 
   // Custom InputTypes
@@ -2307,6 +2522,13 @@ export namespace Prisma {
     where?: AnnouncementWhereInput
   }
 
+  /**
+   * ClassCountOutputType without action
+   */
+  export type ClassCountOutputTypeCountContinuousAssessmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContinuousAssessmentWhereInput
+  }
+
 
   /**
    * Count Type SubjectCountOutputType
@@ -2315,11 +2537,13 @@ export namespace Prisma {
   export type SubjectCountOutputType = {
     teachers: number
     lessons: number
+    continuousAssessments: number
   }
 
   export type SubjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     teachers?: boolean | SubjectCountOutputTypeCountTeachersArgs
     lessons?: boolean | SubjectCountOutputTypeCountLessonsArgs
+    continuousAssessments?: boolean | SubjectCountOutputTypeCountContinuousAssessmentsArgs
   }
 
   // Custom InputTypes
@@ -2345,6 +2569,13 @@ export namespace Prisma {
    */
   export type SubjectCountOutputTypeCountLessonsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: LessonWhereInput
+  }
+
+  /**
+   * SubjectCountOutputType without action
+   */
+  export type SubjectCountOutputTypeCountContinuousAssessmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContinuousAssessmentWhereInput
   }
 
 
@@ -3703,6 +3934,7 @@ export namespace Prisma {
     grade?: boolean | GradeDefaultArgs<ExtArgs>
     attendances?: boolean | Student$attendancesArgs<ExtArgs>
     results?: boolean | Student$resultsArgs<ExtArgs>
+    continuousAssessments?: boolean | Student$continuousAssessmentsArgs<ExtArgs>
     _count?: boolean | StudentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["student"]>
 
@@ -3770,6 +4002,7 @@ export namespace Prisma {
     grade?: boolean | GradeDefaultArgs<ExtArgs>
     attendances?: boolean | Student$attendancesArgs<ExtArgs>
     results?: boolean | Student$resultsArgs<ExtArgs>
+    continuousAssessments?: boolean | Student$continuousAssessmentsArgs<ExtArgs>
     _count?: boolean | StudentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type StudentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3791,6 +4024,7 @@ export namespace Prisma {
       grade: Prisma.$GradePayload<ExtArgs>
       attendances: Prisma.$AttendancePayload<ExtArgs>[]
       results: Prisma.$ResultPayload<ExtArgs>[]
+      continuousAssessments: Prisma.$ContinuousAssessmentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4206,6 +4440,7 @@ export namespace Prisma {
     grade<T extends GradeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GradeDefaultArgs<ExtArgs>>): Prisma__GradeClient<$Result.GetResult<Prisma.$GradePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     attendances<T extends Student$attendancesArgs<ExtArgs> = {}>(args?: Subset<T, Student$attendancesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     results<T extends Student$resultsArgs<ExtArgs> = {}>(args?: Subset<T, Student$resultsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResultPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    continuousAssessments<T extends Student$continuousAssessmentsArgs<ExtArgs> = {}>(args?: Subset<T, Student$continuousAssessmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4698,6 +4933,30 @@ export namespace Prisma {
   }
 
   /**
+   * Student.continuousAssessments
+   */
+  export type Student$continuousAssessmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContinuousAssessment
+     */
+    select?: ContinuousAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContinuousAssessment
+     */
+    omit?: ContinuousAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContinuousAssessmentInclude<ExtArgs> | null
+    where?: ContinuousAssessmentWhereInput
+    orderBy?: ContinuousAssessmentOrderByWithRelationInput | ContinuousAssessmentOrderByWithRelationInput[]
+    cursor?: ContinuousAssessmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ContinuousAssessmentScalarFieldEnum | ContinuousAssessmentScalarFieldEnum[]
+  }
+
+  /**
    * Student without action
    */
   export type StudentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4973,6 +5232,7 @@ export namespace Prisma {
     subjects?: boolean | Teacher$subjectsArgs<ExtArgs>
     lessons?: boolean | Teacher$lessonsArgs<ExtArgs>
     classes?: boolean | Teacher$classesArgs<ExtArgs>
+    continuousAssessments?: boolean | Teacher$continuousAssessmentsArgs<ExtArgs>
     _count?: boolean | TeacherCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["teacher"]>
 
@@ -5026,6 +5286,7 @@ export namespace Prisma {
     subjects?: boolean | Teacher$subjectsArgs<ExtArgs>
     lessons?: boolean | Teacher$lessonsArgs<ExtArgs>
     classes?: boolean | Teacher$classesArgs<ExtArgs>
+    continuousAssessments?: boolean | Teacher$continuousAssessmentsArgs<ExtArgs>
     _count?: boolean | TeacherCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TeacherIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -5037,6 +5298,7 @@ export namespace Prisma {
       subjects: Prisma.$SubjectPayload<ExtArgs>[]
       lessons: Prisma.$LessonPayload<ExtArgs>[]
       classes: Prisma.$ClassPayload<ExtArgs>[]
+      continuousAssessments: Prisma.$ContinuousAssessmentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5448,6 +5710,7 @@ export namespace Prisma {
     subjects<T extends Teacher$subjectsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$subjectsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SubjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     lessons<T extends Teacher$lessonsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$lessonsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     classes<T extends Teacher$classesArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$classesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClassPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    continuousAssessments<T extends Teacher$continuousAssessmentsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$continuousAssessmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5951,6 +6214,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ClassScalarFieldEnum | ClassScalarFieldEnum[]
+  }
+
+  /**
+   * Teacher.continuousAssessments
+   */
+  export type Teacher$continuousAssessmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContinuousAssessment
+     */
+    select?: ContinuousAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContinuousAssessment
+     */
+    omit?: ContinuousAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContinuousAssessmentInclude<ExtArgs> | null
+    where?: ContinuousAssessmentWhereInput
+    orderBy?: ContinuousAssessmentOrderByWithRelationInput | ContinuousAssessmentOrderByWithRelationInput[]
+    cursor?: ContinuousAssessmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ContinuousAssessmentScalarFieldEnum | ContinuousAssessmentScalarFieldEnum[]
   }
 
   /**
@@ -8421,6 +8708,7 @@ export namespace Prisma {
     grade?: boolean | GradeDefaultArgs<ExtArgs>
     events?: boolean | Class$eventsArgs<ExtArgs>
     announcements?: boolean | Class$announcementsArgs<ExtArgs>
+    continuousAssessments?: boolean | Class$continuousAssessmentsArgs<ExtArgs>
     _count?: boolean | ClassCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["class"]>
 
@@ -8463,6 +8751,7 @@ export namespace Prisma {
     grade?: boolean | GradeDefaultArgs<ExtArgs>
     events?: boolean | Class$eventsArgs<ExtArgs>
     announcements?: boolean | Class$announcementsArgs<ExtArgs>
+    continuousAssessments?: boolean | Class$continuousAssessmentsArgs<ExtArgs>
     _count?: boolean | ClassCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ClassIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8483,6 +8772,7 @@ export namespace Prisma {
       grade: Prisma.$GradePayload<ExtArgs>
       events: Prisma.$EventPayload<ExtArgs>[]
       announcements: Prisma.$AnnouncementPayload<ExtArgs>[]
+      continuousAssessments: Prisma.$ContinuousAssessmentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -8891,6 +9181,7 @@ export namespace Prisma {
     grade<T extends GradeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GradeDefaultArgs<ExtArgs>>): Prisma__GradeClient<$Result.GetResult<Prisma.$GradePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     events<T extends Class$eventsArgs<ExtArgs> = {}>(args?: Subset<T, Class$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     announcements<T extends Class$announcementsArgs<ExtArgs> = {}>(args?: Subset<T, Class$announcementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AnnouncementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    continuousAssessments<T extends Class$continuousAssessmentsArgs<ExtArgs> = {}>(args?: Subset<T, Class$continuousAssessmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9442,6 +9733,30 @@ export namespace Prisma {
   }
 
   /**
+   * Class.continuousAssessments
+   */
+  export type Class$continuousAssessmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContinuousAssessment
+     */
+    select?: ContinuousAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContinuousAssessment
+     */
+    omit?: ContinuousAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContinuousAssessmentInclude<ExtArgs> | null
+    where?: ContinuousAssessmentWhereInput
+    orderBy?: ContinuousAssessmentOrderByWithRelationInput | ContinuousAssessmentOrderByWithRelationInput[]
+    cursor?: ContinuousAssessmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ContinuousAssessmentScalarFieldEnum | ContinuousAssessmentScalarFieldEnum[]
+  }
+
+  /**
    * Class without action
    */
   export type ClassDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9636,6 +9951,7 @@ export namespace Prisma {
     name?: boolean
     teachers?: boolean | Subject$teachersArgs<ExtArgs>
     lessons?: boolean | Subject$lessonsArgs<ExtArgs>
+    continuousAssessments?: boolean | Subject$continuousAssessmentsArgs<ExtArgs>
     _count?: boolean | SubjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["subject"]>
 
@@ -9658,6 +9974,7 @@ export namespace Prisma {
   export type SubjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     teachers?: boolean | Subject$teachersArgs<ExtArgs>
     lessons?: boolean | Subject$lessonsArgs<ExtArgs>
+    continuousAssessments?: boolean | Subject$continuousAssessmentsArgs<ExtArgs>
     _count?: boolean | SubjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type SubjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -9668,6 +9985,7 @@ export namespace Prisma {
     objects: {
       teachers: Prisma.$TeacherPayload<ExtArgs>[]
       lessons: Prisma.$LessonPayload<ExtArgs>[]
+      continuousAssessments: Prisma.$ContinuousAssessmentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -10068,6 +10386,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     teachers<T extends Subject$teachersArgs<ExtArgs> = {}>(args?: Subset<T, Subject$teachersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     lessons<T extends Subject$lessonsArgs<ExtArgs> = {}>(args?: Subset<T, Subject$lessonsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    continuousAssessments<T extends Subject$continuousAssessmentsArgs<ExtArgs> = {}>(args?: Subset<T, Subject$continuousAssessmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10537,6 +10856,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: LessonScalarFieldEnum | LessonScalarFieldEnum[]
+  }
+
+  /**
+   * Subject.continuousAssessments
+   */
+  export type Subject$continuousAssessmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContinuousAssessment
+     */
+    select?: ContinuousAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContinuousAssessment
+     */
+    omit?: ContinuousAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContinuousAssessmentInclude<ExtArgs> | null
+    where?: ContinuousAssessmentWhereInput
+    orderBy?: ContinuousAssessmentOrderByWithRelationInput | ContinuousAssessmentOrderByWithRelationInput[]
+    cursor?: ContinuousAssessmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ContinuousAssessmentScalarFieldEnum | ContinuousAssessmentScalarFieldEnum[]
   }
 
   /**
@@ -18637,6 +18980,2340 @@ export namespace Prisma {
 
 
   /**
+   * Model CAConfig
+   */
+
+  export type AggregateCAConfig = {
+    _count: CAConfigCountAggregateOutputType | null
+    _avg: CAConfigAvgAggregateOutputType | null
+    _sum: CAConfigSumAggregateOutputType | null
+    _min: CAConfigMinAggregateOutputType | null
+    _max: CAConfigMaxAggregateOutputType | null
+  }
+
+  export type CAConfigAvgAggregateOutputType = {
+    id: number | null
+    classworkWeight: number | null
+    examWeight: number | null
+  }
+
+  export type CAConfigSumAggregateOutputType = {
+    id: number | null
+    classworkWeight: number | null
+    examWeight: number | null
+  }
+
+  export type CAConfigMinAggregateOutputType = {
+    id: number | null
+    academicYear: string | null
+    classworkWeight: number | null
+    examWeight: number | null
+    createdAt: Date | null
+  }
+
+  export type CAConfigMaxAggregateOutputType = {
+    id: number | null
+    academicYear: string | null
+    classworkWeight: number | null
+    examWeight: number | null
+    createdAt: Date | null
+  }
+
+  export type CAConfigCountAggregateOutputType = {
+    id: number
+    academicYear: number
+    classworkWeight: number
+    examWeight: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type CAConfigAvgAggregateInputType = {
+    id?: true
+    classworkWeight?: true
+    examWeight?: true
+  }
+
+  export type CAConfigSumAggregateInputType = {
+    id?: true
+    classworkWeight?: true
+    examWeight?: true
+  }
+
+  export type CAConfigMinAggregateInputType = {
+    id?: true
+    academicYear?: true
+    classworkWeight?: true
+    examWeight?: true
+    createdAt?: true
+  }
+
+  export type CAConfigMaxAggregateInputType = {
+    id?: true
+    academicYear?: true
+    classworkWeight?: true
+    examWeight?: true
+    createdAt?: true
+  }
+
+  export type CAConfigCountAggregateInputType = {
+    id?: true
+    academicYear?: true
+    classworkWeight?: true
+    examWeight?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type CAConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CAConfig to aggregate.
+     */
+    where?: CAConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CAConfigs to fetch.
+     */
+    orderBy?: CAConfigOrderByWithRelationInput | CAConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CAConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CAConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CAConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CAConfigs
+    **/
+    _count?: true | CAConfigCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CAConfigAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CAConfigSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CAConfigMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CAConfigMaxAggregateInputType
+  }
+
+  export type GetCAConfigAggregateType<T extends CAConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregateCAConfig]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCAConfig[P]>
+      : GetScalarType<T[P], AggregateCAConfig[P]>
+  }
+
+
+
+
+  export type CAConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CAConfigWhereInput
+    orderBy?: CAConfigOrderByWithAggregationInput | CAConfigOrderByWithAggregationInput[]
+    by: CAConfigScalarFieldEnum[] | CAConfigScalarFieldEnum
+    having?: CAConfigScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CAConfigCountAggregateInputType | true
+    _avg?: CAConfigAvgAggregateInputType
+    _sum?: CAConfigSumAggregateInputType
+    _min?: CAConfigMinAggregateInputType
+    _max?: CAConfigMaxAggregateInputType
+  }
+
+  export type CAConfigGroupByOutputType = {
+    id: number
+    academicYear: string
+    classworkWeight: number
+    examWeight: number
+    createdAt: Date
+    _count: CAConfigCountAggregateOutputType | null
+    _avg: CAConfigAvgAggregateOutputType | null
+    _sum: CAConfigSumAggregateOutputType | null
+    _min: CAConfigMinAggregateOutputType | null
+    _max: CAConfigMaxAggregateOutputType | null
+  }
+
+  type GetCAConfigGroupByPayload<T extends CAConfigGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CAConfigGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CAConfigGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CAConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], CAConfigGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CAConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    academicYear?: boolean
+    classworkWeight?: boolean
+    examWeight?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["cAConfig"]>
+
+  export type CAConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    academicYear?: boolean
+    classworkWeight?: boolean
+    examWeight?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["cAConfig"]>
+
+  export type CAConfigSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    academicYear?: boolean
+    classworkWeight?: boolean
+    examWeight?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["cAConfig"]>
+
+  export type CAConfigSelectScalar = {
+    id?: boolean
+    academicYear?: boolean
+    classworkWeight?: boolean
+    examWeight?: boolean
+    createdAt?: boolean
+  }
+
+  export type CAConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "academicYear" | "classworkWeight" | "examWeight" | "createdAt", ExtArgs["result"]["cAConfig"]>
+
+  export type $CAConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CAConfig"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      academicYear: string
+      classworkWeight: number
+      examWeight: number
+      createdAt: Date
+    }, ExtArgs["result"]["cAConfig"]>
+    composites: {}
+  }
+
+  type CAConfigGetPayload<S extends boolean | null | undefined | CAConfigDefaultArgs> = $Result.GetResult<Prisma.$CAConfigPayload, S>
+
+  type CAConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CAConfigFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CAConfigCountAggregateInputType | true
+    }
+
+  export interface CAConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CAConfig'], meta: { name: 'CAConfig' } }
+    /**
+     * Find zero or one CAConfig that matches the filter.
+     * @param {CAConfigFindUniqueArgs} args - Arguments to find a CAConfig
+     * @example
+     * // Get one CAConfig
+     * const cAConfig = await prisma.cAConfig.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CAConfigFindUniqueArgs>(args: SelectSubset<T, CAConfigFindUniqueArgs<ExtArgs>>): Prisma__CAConfigClient<$Result.GetResult<Prisma.$CAConfigPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CAConfig that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CAConfigFindUniqueOrThrowArgs} args - Arguments to find a CAConfig
+     * @example
+     * // Get one CAConfig
+     * const cAConfig = await prisma.cAConfig.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CAConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, CAConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CAConfigClient<$Result.GetResult<Prisma.$CAConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CAConfig that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CAConfigFindFirstArgs} args - Arguments to find a CAConfig
+     * @example
+     * // Get one CAConfig
+     * const cAConfig = await prisma.cAConfig.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CAConfigFindFirstArgs>(args?: SelectSubset<T, CAConfigFindFirstArgs<ExtArgs>>): Prisma__CAConfigClient<$Result.GetResult<Prisma.$CAConfigPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CAConfig that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CAConfigFindFirstOrThrowArgs} args - Arguments to find a CAConfig
+     * @example
+     * // Get one CAConfig
+     * const cAConfig = await prisma.cAConfig.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CAConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, CAConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__CAConfigClient<$Result.GetResult<Prisma.$CAConfigPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CAConfigs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CAConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CAConfigs
+     * const cAConfigs = await prisma.cAConfig.findMany()
+     * 
+     * // Get first 10 CAConfigs
+     * const cAConfigs = await prisma.cAConfig.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const cAConfigWithIdOnly = await prisma.cAConfig.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CAConfigFindManyArgs>(args?: SelectSubset<T, CAConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CAConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CAConfig.
+     * @param {CAConfigCreateArgs} args - Arguments to create a CAConfig.
+     * @example
+     * // Create one CAConfig
+     * const CAConfig = await prisma.cAConfig.create({
+     *   data: {
+     *     // ... data to create a CAConfig
+     *   }
+     * })
+     * 
+     */
+    create<T extends CAConfigCreateArgs>(args: SelectSubset<T, CAConfigCreateArgs<ExtArgs>>): Prisma__CAConfigClient<$Result.GetResult<Prisma.$CAConfigPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CAConfigs.
+     * @param {CAConfigCreateManyArgs} args - Arguments to create many CAConfigs.
+     * @example
+     * // Create many CAConfigs
+     * const cAConfig = await prisma.cAConfig.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CAConfigCreateManyArgs>(args?: SelectSubset<T, CAConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CAConfigs and returns the data saved in the database.
+     * @param {CAConfigCreateManyAndReturnArgs} args - Arguments to create many CAConfigs.
+     * @example
+     * // Create many CAConfigs
+     * const cAConfig = await prisma.cAConfig.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CAConfigs and only return the `id`
+     * const cAConfigWithIdOnly = await prisma.cAConfig.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CAConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, CAConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CAConfigPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CAConfig.
+     * @param {CAConfigDeleteArgs} args - Arguments to delete one CAConfig.
+     * @example
+     * // Delete one CAConfig
+     * const CAConfig = await prisma.cAConfig.delete({
+     *   where: {
+     *     // ... filter to delete one CAConfig
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CAConfigDeleteArgs>(args: SelectSubset<T, CAConfigDeleteArgs<ExtArgs>>): Prisma__CAConfigClient<$Result.GetResult<Prisma.$CAConfigPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CAConfig.
+     * @param {CAConfigUpdateArgs} args - Arguments to update one CAConfig.
+     * @example
+     * // Update one CAConfig
+     * const cAConfig = await prisma.cAConfig.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CAConfigUpdateArgs>(args: SelectSubset<T, CAConfigUpdateArgs<ExtArgs>>): Prisma__CAConfigClient<$Result.GetResult<Prisma.$CAConfigPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CAConfigs.
+     * @param {CAConfigDeleteManyArgs} args - Arguments to filter CAConfigs to delete.
+     * @example
+     * // Delete a few CAConfigs
+     * const { count } = await prisma.cAConfig.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CAConfigDeleteManyArgs>(args?: SelectSubset<T, CAConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CAConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CAConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CAConfigs
+     * const cAConfig = await prisma.cAConfig.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CAConfigUpdateManyArgs>(args: SelectSubset<T, CAConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CAConfigs and returns the data updated in the database.
+     * @param {CAConfigUpdateManyAndReturnArgs} args - Arguments to update many CAConfigs.
+     * @example
+     * // Update many CAConfigs
+     * const cAConfig = await prisma.cAConfig.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CAConfigs and only return the `id`
+     * const cAConfigWithIdOnly = await prisma.cAConfig.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CAConfigUpdateManyAndReturnArgs>(args: SelectSubset<T, CAConfigUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CAConfigPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CAConfig.
+     * @param {CAConfigUpsertArgs} args - Arguments to update or create a CAConfig.
+     * @example
+     * // Update or create a CAConfig
+     * const cAConfig = await prisma.cAConfig.upsert({
+     *   create: {
+     *     // ... data to create a CAConfig
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CAConfig we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CAConfigUpsertArgs>(args: SelectSubset<T, CAConfigUpsertArgs<ExtArgs>>): Prisma__CAConfigClient<$Result.GetResult<Prisma.$CAConfigPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CAConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CAConfigCountArgs} args - Arguments to filter CAConfigs to count.
+     * @example
+     * // Count the number of CAConfigs
+     * const count = await prisma.cAConfig.count({
+     *   where: {
+     *     // ... the filter for the CAConfigs we want to count
+     *   }
+     * })
+    **/
+    count<T extends CAConfigCountArgs>(
+      args?: Subset<T, CAConfigCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CAConfigCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CAConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CAConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CAConfigAggregateArgs>(args: Subset<T, CAConfigAggregateArgs>): Prisma.PrismaPromise<GetCAConfigAggregateType<T>>
+
+    /**
+     * Group by CAConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CAConfigGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CAConfigGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CAConfigGroupByArgs['orderBy'] }
+        : { orderBy?: CAConfigGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CAConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCAConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CAConfig model
+   */
+  readonly fields: CAConfigFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CAConfig.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CAConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CAConfig model
+   */
+  interface CAConfigFieldRefs {
+    readonly id: FieldRef<"CAConfig", 'Int'>
+    readonly academicYear: FieldRef<"CAConfig", 'String'>
+    readonly classworkWeight: FieldRef<"CAConfig", 'Float'>
+    readonly examWeight: FieldRef<"CAConfig", 'Float'>
+    readonly createdAt: FieldRef<"CAConfig", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CAConfig findUnique
+   */
+  export type CAConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CAConfig
+     */
+    select?: CAConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CAConfig
+     */
+    omit?: CAConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which CAConfig to fetch.
+     */
+    where: CAConfigWhereUniqueInput
+  }
+
+  /**
+   * CAConfig findUniqueOrThrow
+   */
+  export type CAConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CAConfig
+     */
+    select?: CAConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CAConfig
+     */
+    omit?: CAConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which CAConfig to fetch.
+     */
+    where: CAConfigWhereUniqueInput
+  }
+
+  /**
+   * CAConfig findFirst
+   */
+  export type CAConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CAConfig
+     */
+    select?: CAConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CAConfig
+     */
+    omit?: CAConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which CAConfig to fetch.
+     */
+    where?: CAConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CAConfigs to fetch.
+     */
+    orderBy?: CAConfigOrderByWithRelationInput | CAConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CAConfigs.
+     */
+    cursor?: CAConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CAConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CAConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CAConfigs.
+     */
+    distinct?: CAConfigScalarFieldEnum | CAConfigScalarFieldEnum[]
+  }
+
+  /**
+   * CAConfig findFirstOrThrow
+   */
+  export type CAConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CAConfig
+     */
+    select?: CAConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CAConfig
+     */
+    omit?: CAConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which CAConfig to fetch.
+     */
+    where?: CAConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CAConfigs to fetch.
+     */
+    orderBy?: CAConfigOrderByWithRelationInput | CAConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CAConfigs.
+     */
+    cursor?: CAConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CAConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CAConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CAConfigs.
+     */
+    distinct?: CAConfigScalarFieldEnum | CAConfigScalarFieldEnum[]
+  }
+
+  /**
+   * CAConfig findMany
+   */
+  export type CAConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CAConfig
+     */
+    select?: CAConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CAConfig
+     */
+    omit?: CAConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which CAConfigs to fetch.
+     */
+    where?: CAConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CAConfigs to fetch.
+     */
+    orderBy?: CAConfigOrderByWithRelationInput | CAConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CAConfigs.
+     */
+    cursor?: CAConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CAConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CAConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CAConfigs.
+     */
+    distinct?: CAConfigScalarFieldEnum | CAConfigScalarFieldEnum[]
+  }
+
+  /**
+   * CAConfig create
+   */
+  export type CAConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CAConfig
+     */
+    select?: CAConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CAConfig
+     */
+    omit?: CAConfigOmit<ExtArgs> | null
+    /**
+     * The data needed to create a CAConfig.
+     */
+    data: XOR<CAConfigCreateInput, CAConfigUncheckedCreateInput>
+  }
+
+  /**
+   * CAConfig createMany
+   */
+  export type CAConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CAConfigs.
+     */
+    data: CAConfigCreateManyInput | CAConfigCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CAConfig createManyAndReturn
+   */
+  export type CAConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CAConfig
+     */
+    select?: CAConfigSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CAConfig
+     */
+    omit?: CAConfigOmit<ExtArgs> | null
+    /**
+     * The data used to create many CAConfigs.
+     */
+    data: CAConfigCreateManyInput | CAConfigCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CAConfig update
+   */
+  export type CAConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CAConfig
+     */
+    select?: CAConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CAConfig
+     */
+    omit?: CAConfigOmit<ExtArgs> | null
+    /**
+     * The data needed to update a CAConfig.
+     */
+    data: XOR<CAConfigUpdateInput, CAConfigUncheckedUpdateInput>
+    /**
+     * Choose, which CAConfig to update.
+     */
+    where: CAConfigWhereUniqueInput
+  }
+
+  /**
+   * CAConfig updateMany
+   */
+  export type CAConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CAConfigs.
+     */
+    data: XOR<CAConfigUpdateManyMutationInput, CAConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which CAConfigs to update
+     */
+    where?: CAConfigWhereInput
+    /**
+     * Limit how many CAConfigs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CAConfig updateManyAndReturn
+   */
+  export type CAConfigUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CAConfig
+     */
+    select?: CAConfigSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CAConfig
+     */
+    omit?: CAConfigOmit<ExtArgs> | null
+    /**
+     * The data used to update CAConfigs.
+     */
+    data: XOR<CAConfigUpdateManyMutationInput, CAConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which CAConfigs to update
+     */
+    where?: CAConfigWhereInput
+    /**
+     * Limit how many CAConfigs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CAConfig upsert
+   */
+  export type CAConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CAConfig
+     */
+    select?: CAConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CAConfig
+     */
+    omit?: CAConfigOmit<ExtArgs> | null
+    /**
+     * The filter to search for the CAConfig to update in case it exists.
+     */
+    where: CAConfigWhereUniqueInput
+    /**
+     * In case the CAConfig found by the `where` argument doesn't exist, create a new CAConfig with this data.
+     */
+    create: XOR<CAConfigCreateInput, CAConfigUncheckedCreateInput>
+    /**
+     * In case the CAConfig was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CAConfigUpdateInput, CAConfigUncheckedUpdateInput>
+  }
+
+  /**
+   * CAConfig delete
+   */
+  export type CAConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CAConfig
+     */
+    select?: CAConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CAConfig
+     */
+    omit?: CAConfigOmit<ExtArgs> | null
+    /**
+     * Filter which CAConfig to delete.
+     */
+    where: CAConfigWhereUniqueInput
+  }
+
+  /**
+   * CAConfig deleteMany
+   */
+  export type CAConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CAConfigs to delete
+     */
+    where?: CAConfigWhereInput
+    /**
+     * Limit how many CAConfigs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CAConfig without action
+   */
+  export type CAConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CAConfig
+     */
+    select?: CAConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CAConfig
+     */
+    omit?: CAConfigOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ContinuousAssessment
+   */
+
+  export type AggregateContinuousAssessment = {
+    _count: ContinuousAssessmentCountAggregateOutputType | null
+    _avg: ContinuousAssessmentAvgAggregateOutputType | null
+    _sum: ContinuousAssessmentSumAggregateOutputType | null
+    _min: ContinuousAssessmentMinAggregateOutputType | null
+    _max: ContinuousAssessmentMaxAggregateOutputType | null
+  }
+
+  export type ContinuousAssessmentAvgAggregateOutputType = {
+    id: number | null
+    subjectId: number | null
+    classId: number | null
+    classworkScore: number | null
+    examScore: number | null
+    totalScore: number | null
+    gradePoint: number | null
+    configId: number | null
+  }
+
+  export type ContinuousAssessmentSumAggregateOutputType = {
+    id: number | null
+    subjectId: number | null
+    classId: number | null
+    classworkScore: number | null
+    examScore: number | null
+    totalScore: number | null
+    gradePoint: number | null
+    configId: number | null
+  }
+
+  export type ContinuousAssessmentMinAggregateOutputType = {
+    id: number | null
+    academicYear: string | null
+    term: $Enums.Term | null
+    studentId: string | null
+    teacherId: string | null
+    subjectId: number | null
+    classId: number | null
+    classworkScore: number | null
+    examScore: number | null
+    totalScore: number | null
+    grade: string | null
+    gradePoint: number | null
+    remarks: string | null
+    configId: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ContinuousAssessmentMaxAggregateOutputType = {
+    id: number | null
+    academicYear: string | null
+    term: $Enums.Term | null
+    studentId: string | null
+    teacherId: string | null
+    subjectId: number | null
+    classId: number | null
+    classworkScore: number | null
+    examScore: number | null
+    totalScore: number | null
+    grade: string | null
+    gradePoint: number | null
+    remarks: string | null
+    configId: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ContinuousAssessmentCountAggregateOutputType = {
+    id: number
+    academicYear: number
+    term: number
+    studentId: number
+    teacherId: number
+    subjectId: number
+    classId: number
+    classworkScore: number
+    examScore: number
+    totalScore: number
+    grade: number
+    gradePoint: number
+    remarks: number
+    configId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ContinuousAssessmentAvgAggregateInputType = {
+    id?: true
+    subjectId?: true
+    classId?: true
+    classworkScore?: true
+    examScore?: true
+    totalScore?: true
+    gradePoint?: true
+    configId?: true
+  }
+
+  export type ContinuousAssessmentSumAggregateInputType = {
+    id?: true
+    subjectId?: true
+    classId?: true
+    classworkScore?: true
+    examScore?: true
+    totalScore?: true
+    gradePoint?: true
+    configId?: true
+  }
+
+  export type ContinuousAssessmentMinAggregateInputType = {
+    id?: true
+    academicYear?: true
+    term?: true
+    studentId?: true
+    teacherId?: true
+    subjectId?: true
+    classId?: true
+    classworkScore?: true
+    examScore?: true
+    totalScore?: true
+    grade?: true
+    gradePoint?: true
+    remarks?: true
+    configId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ContinuousAssessmentMaxAggregateInputType = {
+    id?: true
+    academicYear?: true
+    term?: true
+    studentId?: true
+    teacherId?: true
+    subjectId?: true
+    classId?: true
+    classworkScore?: true
+    examScore?: true
+    totalScore?: true
+    grade?: true
+    gradePoint?: true
+    remarks?: true
+    configId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ContinuousAssessmentCountAggregateInputType = {
+    id?: true
+    academicYear?: true
+    term?: true
+    studentId?: true
+    teacherId?: true
+    subjectId?: true
+    classId?: true
+    classworkScore?: true
+    examScore?: true
+    totalScore?: true
+    grade?: true
+    gradePoint?: true
+    remarks?: true
+    configId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ContinuousAssessmentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ContinuousAssessment to aggregate.
+     */
+    where?: ContinuousAssessmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContinuousAssessments to fetch.
+     */
+    orderBy?: ContinuousAssessmentOrderByWithRelationInput | ContinuousAssessmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ContinuousAssessmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContinuousAssessments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContinuousAssessments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ContinuousAssessments
+    **/
+    _count?: true | ContinuousAssessmentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ContinuousAssessmentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ContinuousAssessmentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ContinuousAssessmentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ContinuousAssessmentMaxAggregateInputType
+  }
+
+  export type GetContinuousAssessmentAggregateType<T extends ContinuousAssessmentAggregateArgs> = {
+        [P in keyof T & keyof AggregateContinuousAssessment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateContinuousAssessment[P]>
+      : GetScalarType<T[P], AggregateContinuousAssessment[P]>
+  }
+
+
+
+
+  export type ContinuousAssessmentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContinuousAssessmentWhereInput
+    orderBy?: ContinuousAssessmentOrderByWithAggregationInput | ContinuousAssessmentOrderByWithAggregationInput[]
+    by: ContinuousAssessmentScalarFieldEnum[] | ContinuousAssessmentScalarFieldEnum
+    having?: ContinuousAssessmentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ContinuousAssessmentCountAggregateInputType | true
+    _avg?: ContinuousAssessmentAvgAggregateInputType
+    _sum?: ContinuousAssessmentSumAggregateInputType
+    _min?: ContinuousAssessmentMinAggregateInputType
+    _max?: ContinuousAssessmentMaxAggregateInputType
+  }
+
+  export type ContinuousAssessmentGroupByOutputType = {
+    id: number
+    academicYear: string
+    term: $Enums.Term
+    studentId: string
+    teacherId: string
+    subjectId: number
+    classId: number
+    classworkScore: number
+    examScore: number
+    totalScore: number
+    grade: string | null
+    gradePoint: number | null
+    remarks: string | null
+    configId: number | null
+    createdAt: Date
+    updatedAt: Date
+    _count: ContinuousAssessmentCountAggregateOutputType | null
+    _avg: ContinuousAssessmentAvgAggregateOutputType | null
+    _sum: ContinuousAssessmentSumAggregateOutputType | null
+    _min: ContinuousAssessmentMinAggregateOutputType | null
+    _max: ContinuousAssessmentMaxAggregateOutputType | null
+  }
+
+  type GetContinuousAssessmentGroupByPayload<T extends ContinuousAssessmentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ContinuousAssessmentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ContinuousAssessmentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ContinuousAssessmentGroupByOutputType[P]>
+            : GetScalarType<T[P], ContinuousAssessmentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ContinuousAssessmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    academicYear?: boolean
+    term?: boolean
+    studentId?: boolean
+    teacherId?: boolean
+    subjectId?: boolean
+    classId?: boolean
+    classworkScore?: boolean
+    examScore?: boolean
+    totalScore?: boolean
+    grade?: boolean
+    gradePoint?: boolean
+    remarks?: boolean
+    configId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["continuousAssessment"]>
+
+  export type ContinuousAssessmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    academicYear?: boolean
+    term?: boolean
+    studentId?: boolean
+    teacherId?: boolean
+    subjectId?: boolean
+    classId?: boolean
+    classworkScore?: boolean
+    examScore?: boolean
+    totalScore?: boolean
+    grade?: boolean
+    gradePoint?: boolean
+    remarks?: boolean
+    configId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["continuousAssessment"]>
+
+  export type ContinuousAssessmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    academicYear?: boolean
+    term?: boolean
+    studentId?: boolean
+    teacherId?: boolean
+    subjectId?: boolean
+    classId?: boolean
+    classworkScore?: boolean
+    examScore?: boolean
+    totalScore?: boolean
+    grade?: boolean
+    gradePoint?: boolean
+    remarks?: boolean
+    configId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["continuousAssessment"]>
+
+  export type ContinuousAssessmentSelectScalar = {
+    id?: boolean
+    academicYear?: boolean
+    term?: boolean
+    studentId?: boolean
+    teacherId?: boolean
+    subjectId?: boolean
+    classId?: boolean
+    classworkScore?: boolean
+    examScore?: boolean
+    totalScore?: boolean
+    grade?: boolean
+    gradePoint?: boolean
+    remarks?: boolean
+    configId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ContinuousAssessmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "academicYear" | "term" | "studentId" | "teacherId" | "subjectId" | "classId" | "classworkScore" | "examScore" | "totalScore" | "grade" | "gradePoint" | "remarks" | "configId" | "createdAt" | "updatedAt", ExtArgs["result"]["continuousAssessment"]>
+  export type ContinuousAssessmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }
+  export type ContinuousAssessmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }
+  export type ContinuousAssessmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }
+
+  export type $ContinuousAssessmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ContinuousAssessment"
+    objects: {
+      student: Prisma.$StudentPayload<ExtArgs>
+      teacher: Prisma.$TeacherPayload<ExtArgs>
+      subject: Prisma.$SubjectPayload<ExtArgs>
+      class: Prisma.$ClassPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      academicYear: string
+      term: $Enums.Term
+      studentId: string
+      teacherId: string
+      subjectId: number
+      classId: number
+      classworkScore: number
+      examScore: number
+      totalScore: number
+      grade: string | null
+      gradePoint: number | null
+      remarks: string | null
+      configId: number | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["continuousAssessment"]>
+    composites: {}
+  }
+
+  type ContinuousAssessmentGetPayload<S extends boolean | null | undefined | ContinuousAssessmentDefaultArgs> = $Result.GetResult<Prisma.$ContinuousAssessmentPayload, S>
+
+  type ContinuousAssessmentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ContinuousAssessmentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ContinuousAssessmentCountAggregateInputType | true
+    }
+
+  export interface ContinuousAssessmentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ContinuousAssessment'], meta: { name: 'ContinuousAssessment' } }
+    /**
+     * Find zero or one ContinuousAssessment that matches the filter.
+     * @param {ContinuousAssessmentFindUniqueArgs} args - Arguments to find a ContinuousAssessment
+     * @example
+     * // Get one ContinuousAssessment
+     * const continuousAssessment = await prisma.continuousAssessment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ContinuousAssessmentFindUniqueArgs>(args: SelectSubset<T, ContinuousAssessmentFindUniqueArgs<ExtArgs>>): Prisma__ContinuousAssessmentClient<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ContinuousAssessment that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ContinuousAssessmentFindUniqueOrThrowArgs} args - Arguments to find a ContinuousAssessment
+     * @example
+     * // Get one ContinuousAssessment
+     * const continuousAssessment = await prisma.continuousAssessment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ContinuousAssessmentFindUniqueOrThrowArgs>(args: SelectSubset<T, ContinuousAssessmentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ContinuousAssessmentClient<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ContinuousAssessment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContinuousAssessmentFindFirstArgs} args - Arguments to find a ContinuousAssessment
+     * @example
+     * // Get one ContinuousAssessment
+     * const continuousAssessment = await prisma.continuousAssessment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ContinuousAssessmentFindFirstArgs>(args?: SelectSubset<T, ContinuousAssessmentFindFirstArgs<ExtArgs>>): Prisma__ContinuousAssessmentClient<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ContinuousAssessment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContinuousAssessmentFindFirstOrThrowArgs} args - Arguments to find a ContinuousAssessment
+     * @example
+     * // Get one ContinuousAssessment
+     * const continuousAssessment = await prisma.continuousAssessment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ContinuousAssessmentFindFirstOrThrowArgs>(args?: SelectSubset<T, ContinuousAssessmentFindFirstOrThrowArgs<ExtArgs>>): Prisma__ContinuousAssessmentClient<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ContinuousAssessments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContinuousAssessmentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ContinuousAssessments
+     * const continuousAssessments = await prisma.continuousAssessment.findMany()
+     * 
+     * // Get first 10 ContinuousAssessments
+     * const continuousAssessments = await prisma.continuousAssessment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const continuousAssessmentWithIdOnly = await prisma.continuousAssessment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ContinuousAssessmentFindManyArgs>(args?: SelectSubset<T, ContinuousAssessmentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ContinuousAssessment.
+     * @param {ContinuousAssessmentCreateArgs} args - Arguments to create a ContinuousAssessment.
+     * @example
+     * // Create one ContinuousAssessment
+     * const ContinuousAssessment = await prisma.continuousAssessment.create({
+     *   data: {
+     *     // ... data to create a ContinuousAssessment
+     *   }
+     * })
+     * 
+     */
+    create<T extends ContinuousAssessmentCreateArgs>(args: SelectSubset<T, ContinuousAssessmentCreateArgs<ExtArgs>>): Prisma__ContinuousAssessmentClient<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ContinuousAssessments.
+     * @param {ContinuousAssessmentCreateManyArgs} args - Arguments to create many ContinuousAssessments.
+     * @example
+     * // Create many ContinuousAssessments
+     * const continuousAssessment = await prisma.continuousAssessment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ContinuousAssessmentCreateManyArgs>(args?: SelectSubset<T, ContinuousAssessmentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ContinuousAssessments and returns the data saved in the database.
+     * @param {ContinuousAssessmentCreateManyAndReturnArgs} args - Arguments to create many ContinuousAssessments.
+     * @example
+     * // Create many ContinuousAssessments
+     * const continuousAssessment = await prisma.continuousAssessment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ContinuousAssessments and only return the `id`
+     * const continuousAssessmentWithIdOnly = await prisma.continuousAssessment.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ContinuousAssessmentCreateManyAndReturnArgs>(args?: SelectSubset<T, ContinuousAssessmentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ContinuousAssessment.
+     * @param {ContinuousAssessmentDeleteArgs} args - Arguments to delete one ContinuousAssessment.
+     * @example
+     * // Delete one ContinuousAssessment
+     * const ContinuousAssessment = await prisma.continuousAssessment.delete({
+     *   where: {
+     *     // ... filter to delete one ContinuousAssessment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ContinuousAssessmentDeleteArgs>(args: SelectSubset<T, ContinuousAssessmentDeleteArgs<ExtArgs>>): Prisma__ContinuousAssessmentClient<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ContinuousAssessment.
+     * @param {ContinuousAssessmentUpdateArgs} args - Arguments to update one ContinuousAssessment.
+     * @example
+     * // Update one ContinuousAssessment
+     * const continuousAssessment = await prisma.continuousAssessment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ContinuousAssessmentUpdateArgs>(args: SelectSubset<T, ContinuousAssessmentUpdateArgs<ExtArgs>>): Prisma__ContinuousAssessmentClient<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ContinuousAssessments.
+     * @param {ContinuousAssessmentDeleteManyArgs} args - Arguments to filter ContinuousAssessments to delete.
+     * @example
+     * // Delete a few ContinuousAssessments
+     * const { count } = await prisma.continuousAssessment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ContinuousAssessmentDeleteManyArgs>(args?: SelectSubset<T, ContinuousAssessmentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ContinuousAssessments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContinuousAssessmentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ContinuousAssessments
+     * const continuousAssessment = await prisma.continuousAssessment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ContinuousAssessmentUpdateManyArgs>(args: SelectSubset<T, ContinuousAssessmentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ContinuousAssessments and returns the data updated in the database.
+     * @param {ContinuousAssessmentUpdateManyAndReturnArgs} args - Arguments to update many ContinuousAssessments.
+     * @example
+     * // Update many ContinuousAssessments
+     * const continuousAssessment = await prisma.continuousAssessment.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ContinuousAssessments and only return the `id`
+     * const continuousAssessmentWithIdOnly = await prisma.continuousAssessment.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ContinuousAssessmentUpdateManyAndReturnArgs>(args: SelectSubset<T, ContinuousAssessmentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ContinuousAssessment.
+     * @param {ContinuousAssessmentUpsertArgs} args - Arguments to update or create a ContinuousAssessment.
+     * @example
+     * // Update or create a ContinuousAssessment
+     * const continuousAssessment = await prisma.continuousAssessment.upsert({
+     *   create: {
+     *     // ... data to create a ContinuousAssessment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ContinuousAssessment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ContinuousAssessmentUpsertArgs>(args: SelectSubset<T, ContinuousAssessmentUpsertArgs<ExtArgs>>): Prisma__ContinuousAssessmentClient<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ContinuousAssessments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContinuousAssessmentCountArgs} args - Arguments to filter ContinuousAssessments to count.
+     * @example
+     * // Count the number of ContinuousAssessments
+     * const count = await prisma.continuousAssessment.count({
+     *   where: {
+     *     // ... the filter for the ContinuousAssessments we want to count
+     *   }
+     * })
+    **/
+    count<T extends ContinuousAssessmentCountArgs>(
+      args?: Subset<T, ContinuousAssessmentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ContinuousAssessmentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ContinuousAssessment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContinuousAssessmentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ContinuousAssessmentAggregateArgs>(args: Subset<T, ContinuousAssessmentAggregateArgs>): Prisma.PrismaPromise<GetContinuousAssessmentAggregateType<T>>
+
+    /**
+     * Group by ContinuousAssessment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContinuousAssessmentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ContinuousAssessmentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ContinuousAssessmentGroupByArgs['orderBy'] }
+        : { orderBy?: ContinuousAssessmentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ContinuousAssessmentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetContinuousAssessmentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ContinuousAssessment model
+   */
+  readonly fields: ContinuousAssessmentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ContinuousAssessment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ContinuousAssessmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    student<T extends StudentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StudentDefaultArgs<ExtArgs>>): Prisma__StudentClient<$Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    teacher<T extends TeacherDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TeacherDefaultArgs<ExtArgs>>): Prisma__TeacherClient<$Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    subject<T extends SubjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SubjectDefaultArgs<ExtArgs>>): Prisma__SubjectClient<$Result.GetResult<Prisma.$SubjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    class<T extends ClassDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClassDefaultArgs<ExtArgs>>): Prisma__ClassClient<$Result.GetResult<Prisma.$ClassPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ContinuousAssessment model
+   */
+  interface ContinuousAssessmentFieldRefs {
+    readonly id: FieldRef<"ContinuousAssessment", 'Int'>
+    readonly academicYear: FieldRef<"ContinuousAssessment", 'String'>
+    readonly term: FieldRef<"ContinuousAssessment", 'Term'>
+    readonly studentId: FieldRef<"ContinuousAssessment", 'String'>
+    readonly teacherId: FieldRef<"ContinuousAssessment", 'String'>
+    readonly subjectId: FieldRef<"ContinuousAssessment", 'Int'>
+    readonly classId: FieldRef<"ContinuousAssessment", 'Int'>
+    readonly classworkScore: FieldRef<"ContinuousAssessment", 'Float'>
+    readonly examScore: FieldRef<"ContinuousAssessment", 'Float'>
+    readonly totalScore: FieldRef<"ContinuousAssessment", 'Float'>
+    readonly grade: FieldRef<"ContinuousAssessment", 'String'>
+    readonly gradePoint: FieldRef<"ContinuousAssessment", 'Int'>
+    readonly remarks: FieldRef<"ContinuousAssessment", 'String'>
+    readonly configId: FieldRef<"ContinuousAssessment", 'Int'>
+    readonly createdAt: FieldRef<"ContinuousAssessment", 'DateTime'>
+    readonly updatedAt: FieldRef<"ContinuousAssessment", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ContinuousAssessment findUnique
+   */
+  export type ContinuousAssessmentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContinuousAssessment
+     */
+    select?: ContinuousAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContinuousAssessment
+     */
+    omit?: ContinuousAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContinuousAssessmentInclude<ExtArgs> | null
+    /**
+     * Filter, which ContinuousAssessment to fetch.
+     */
+    where: ContinuousAssessmentWhereUniqueInput
+  }
+
+  /**
+   * ContinuousAssessment findUniqueOrThrow
+   */
+  export type ContinuousAssessmentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContinuousAssessment
+     */
+    select?: ContinuousAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContinuousAssessment
+     */
+    omit?: ContinuousAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContinuousAssessmentInclude<ExtArgs> | null
+    /**
+     * Filter, which ContinuousAssessment to fetch.
+     */
+    where: ContinuousAssessmentWhereUniqueInput
+  }
+
+  /**
+   * ContinuousAssessment findFirst
+   */
+  export type ContinuousAssessmentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContinuousAssessment
+     */
+    select?: ContinuousAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContinuousAssessment
+     */
+    omit?: ContinuousAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContinuousAssessmentInclude<ExtArgs> | null
+    /**
+     * Filter, which ContinuousAssessment to fetch.
+     */
+    where?: ContinuousAssessmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContinuousAssessments to fetch.
+     */
+    orderBy?: ContinuousAssessmentOrderByWithRelationInput | ContinuousAssessmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ContinuousAssessments.
+     */
+    cursor?: ContinuousAssessmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContinuousAssessments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContinuousAssessments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ContinuousAssessments.
+     */
+    distinct?: ContinuousAssessmentScalarFieldEnum | ContinuousAssessmentScalarFieldEnum[]
+  }
+
+  /**
+   * ContinuousAssessment findFirstOrThrow
+   */
+  export type ContinuousAssessmentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContinuousAssessment
+     */
+    select?: ContinuousAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContinuousAssessment
+     */
+    omit?: ContinuousAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContinuousAssessmentInclude<ExtArgs> | null
+    /**
+     * Filter, which ContinuousAssessment to fetch.
+     */
+    where?: ContinuousAssessmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContinuousAssessments to fetch.
+     */
+    orderBy?: ContinuousAssessmentOrderByWithRelationInput | ContinuousAssessmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ContinuousAssessments.
+     */
+    cursor?: ContinuousAssessmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContinuousAssessments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContinuousAssessments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ContinuousAssessments.
+     */
+    distinct?: ContinuousAssessmentScalarFieldEnum | ContinuousAssessmentScalarFieldEnum[]
+  }
+
+  /**
+   * ContinuousAssessment findMany
+   */
+  export type ContinuousAssessmentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContinuousAssessment
+     */
+    select?: ContinuousAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContinuousAssessment
+     */
+    omit?: ContinuousAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContinuousAssessmentInclude<ExtArgs> | null
+    /**
+     * Filter, which ContinuousAssessments to fetch.
+     */
+    where?: ContinuousAssessmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContinuousAssessments to fetch.
+     */
+    orderBy?: ContinuousAssessmentOrderByWithRelationInput | ContinuousAssessmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ContinuousAssessments.
+     */
+    cursor?: ContinuousAssessmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContinuousAssessments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContinuousAssessments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ContinuousAssessments.
+     */
+    distinct?: ContinuousAssessmentScalarFieldEnum | ContinuousAssessmentScalarFieldEnum[]
+  }
+
+  /**
+   * ContinuousAssessment create
+   */
+  export type ContinuousAssessmentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContinuousAssessment
+     */
+    select?: ContinuousAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContinuousAssessment
+     */
+    omit?: ContinuousAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContinuousAssessmentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ContinuousAssessment.
+     */
+    data: XOR<ContinuousAssessmentCreateInput, ContinuousAssessmentUncheckedCreateInput>
+  }
+
+  /**
+   * ContinuousAssessment createMany
+   */
+  export type ContinuousAssessmentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ContinuousAssessments.
+     */
+    data: ContinuousAssessmentCreateManyInput | ContinuousAssessmentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ContinuousAssessment createManyAndReturn
+   */
+  export type ContinuousAssessmentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContinuousAssessment
+     */
+    select?: ContinuousAssessmentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContinuousAssessment
+     */
+    omit?: ContinuousAssessmentOmit<ExtArgs> | null
+    /**
+     * The data used to create many ContinuousAssessments.
+     */
+    data: ContinuousAssessmentCreateManyInput | ContinuousAssessmentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContinuousAssessmentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ContinuousAssessment update
+   */
+  export type ContinuousAssessmentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContinuousAssessment
+     */
+    select?: ContinuousAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContinuousAssessment
+     */
+    omit?: ContinuousAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContinuousAssessmentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ContinuousAssessment.
+     */
+    data: XOR<ContinuousAssessmentUpdateInput, ContinuousAssessmentUncheckedUpdateInput>
+    /**
+     * Choose, which ContinuousAssessment to update.
+     */
+    where: ContinuousAssessmentWhereUniqueInput
+  }
+
+  /**
+   * ContinuousAssessment updateMany
+   */
+  export type ContinuousAssessmentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ContinuousAssessments.
+     */
+    data: XOR<ContinuousAssessmentUpdateManyMutationInput, ContinuousAssessmentUncheckedUpdateManyInput>
+    /**
+     * Filter which ContinuousAssessments to update
+     */
+    where?: ContinuousAssessmentWhereInput
+    /**
+     * Limit how many ContinuousAssessments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ContinuousAssessment updateManyAndReturn
+   */
+  export type ContinuousAssessmentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContinuousAssessment
+     */
+    select?: ContinuousAssessmentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContinuousAssessment
+     */
+    omit?: ContinuousAssessmentOmit<ExtArgs> | null
+    /**
+     * The data used to update ContinuousAssessments.
+     */
+    data: XOR<ContinuousAssessmentUpdateManyMutationInput, ContinuousAssessmentUncheckedUpdateManyInput>
+    /**
+     * Filter which ContinuousAssessments to update
+     */
+    where?: ContinuousAssessmentWhereInput
+    /**
+     * Limit how many ContinuousAssessments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContinuousAssessmentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ContinuousAssessment upsert
+   */
+  export type ContinuousAssessmentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContinuousAssessment
+     */
+    select?: ContinuousAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContinuousAssessment
+     */
+    omit?: ContinuousAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContinuousAssessmentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ContinuousAssessment to update in case it exists.
+     */
+    where: ContinuousAssessmentWhereUniqueInput
+    /**
+     * In case the ContinuousAssessment found by the `where` argument doesn't exist, create a new ContinuousAssessment with this data.
+     */
+    create: XOR<ContinuousAssessmentCreateInput, ContinuousAssessmentUncheckedCreateInput>
+    /**
+     * In case the ContinuousAssessment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ContinuousAssessmentUpdateInput, ContinuousAssessmentUncheckedUpdateInput>
+  }
+
+  /**
+   * ContinuousAssessment delete
+   */
+  export type ContinuousAssessmentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContinuousAssessment
+     */
+    select?: ContinuousAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContinuousAssessment
+     */
+    omit?: ContinuousAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContinuousAssessmentInclude<ExtArgs> | null
+    /**
+     * Filter which ContinuousAssessment to delete.
+     */
+    where: ContinuousAssessmentWhereUniqueInput
+  }
+
+  /**
+   * ContinuousAssessment deleteMany
+   */
+  export type ContinuousAssessmentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ContinuousAssessments to delete
+     */
+    where?: ContinuousAssessmentWhereInput
+    /**
+     * Limit how many ContinuousAssessments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ContinuousAssessment without action
+   */
+  export type ContinuousAssessmentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContinuousAssessment
+     */
+    select?: ContinuousAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContinuousAssessment
+     */
+    omit?: ContinuousAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContinuousAssessmentInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -18822,6 +21499,39 @@ export namespace Prisma {
   export type AnnouncementScalarFieldEnum = (typeof AnnouncementScalarFieldEnum)[keyof typeof AnnouncementScalarFieldEnum]
 
 
+  export const CAConfigScalarFieldEnum: {
+    id: 'id',
+    academicYear: 'academicYear',
+    classworkWeight: 'classworkWeight',
+    examWeight: 'examWeight',
+    createdAt: 'createdAt'
+  };
+
+  export type CAConfigScalarFieldEnum = (typeof CAConfigScalarFieldEnum)[keyof typeof CAConfigScalarFieldEnum]
+
+
+  export const ContinuousAssessmentScalarFieldEnum: {
+    id: 'id',
+    academicYear: 'academicYear',
+    term: 'term',
+    studentId: 'studentId',
+    teacherId: 'teacherId',
+    subjectId: 'subjectId',
+    classId: 'classId',
+    classworkScore: 'classworkScore',
+    examScore: 'examScore',
+    totalScore: 'totalScore',
+    grade: 'grade',
+    gradePoint: 'gradePoint',
+    remarks: 'remarks',
+    configId: 'configId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ContinuousAssessmentScalarFieldEnum = (typeof ContinuousAssessmentScalarFieldEnum)[keyof typeof ContinuousAssessmentScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -18954,6 +21664,20 @@ export namespace Prisma {
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
+
+
+  /**
+   * Reference to a field of type 'Term'
+   */
+  export type EnumTermFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Term'>
+    
+
+
+  /**
+   * Reference to a field of type 'Term[]'
+   */
+  export type ListEnumTermFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Term[]'>
+    
   /**
    * Deep Input Types
    */
@@ -19019,6 +21743,7 @@ export namespace Prisma {
     grade?: XOR<GradeScalarRelationFilter, GradeWhereInput>
     attendances?: AttendanceListRelationFilter
     results?: ResultListRelationFilter
+    continuousAssessments?: ContinuousAssessmentListRelationFilter
   }
 
   export type StudentOrderByWithRelationInput = {
@@ -19041,6 +21766,7 @@ export namespace Prisma {
     grade?: GradeOrderByWithRelationInput
     attendances?: AttendanceOrderByRelationAggregateInput
     results?: ResultOrderByRelationAggregateInput
+    continuousAssessments?: ContinuousAssessmentOrderByRelationAggregateInput
   }
 
   export type StudentWhereUniqueInput = Prisma.AtLeast<{
@@ -19066,6 +21792,7 @@ export namespace Prisma {
     grade?: XOR<GradeScalarRelationFilter, GradeWhereInput>
     attendances?: AttendanceListRelationFilter
     results?: ResultListRelationFilter
+    continuousAssessments?: ContinuousAssessmentListRelationFilter
   }, "id" | "username">
 
   export type StudentOrderByWithAggregationInput = {
@@ -19129,6 +21856,7 @@ export namespace Prisma {
     subjects?: SubjectListRelationFilter
     lessons?: LessonListRelationFilter
     classes?: ClassListRelationFilter
+    continuousAssessments?: ContinuousAssessmentListRelationFilter
   }
 
   export type TeacherOrderByWithRelationInput = {
@@ -19147,6 +21875,7 @@ export namespace Prisma {
     subjects?: SubjectOrderByRelationAggregateInput
     lessons?: LessonOrderByRelationAggregateInput
     classes?: ClassOrderByRelationAggregateInput
+    continuousAssessments?: ContinuousAssessmentOrderByRelationAggregateInput
   }
 
   export type TeacherWhereUniqueInput = Prisma.AtLeast<{
@@ -19168,6 +21897,7 @@ export namespace Prisma {
     subjects?: SubjectListRelationFilter
     lessons?: LessonListRelationFilter
     classes?: ClassListRelationFilter
+    continuousAssessments?: ContinuousAssessmentListRelationFilter
   }, "id" | "username">
 
   export type TeacherOrderByWithAggregationInput = {
@@ -19344,6 +22074,7 @@ export namespace Prisma {
     grade?: XOR<GradeScalarRelationFilter, GradeWhereInput>
     events?: EventListRelationFilter
     announcements?: AnnouncementListRelationFilter
+    continuousAssessments?: ContinuousAssessmentListRelationFilter
   }
 
   export type ClassOrderByWithRelationInput = {
@@ -19359,6 +22090,7 @@ export namespace Prisma {
     grade?: GradeOrderByWithRelationInput
     events?: EventOrderByRelationAggregateInput
     announcements?: AnnouncementOrderByRelationAggregateInput
+    continuousAssessments?: ContinuousAssessmentOrderByRelationAggregateInput
   }
 
   export type ClassWhereUniqueInput = Prisma.AtLeast<{
@@ -19377,6 +22109,7 @@ export namespace Prisma {
     grade?: XOR<GradeScalarRelationFilter, GradeWhereInput>
     events?: EventListRelationFilter
     announcements?: AnnouncementListRelationFilter
+    continuousAssessments?: ContinuousAssessmentListRelationFilter
   }, "id" | "name">
 
   export type ClassOrderByWithAggregationInput = {
@@ -19413,6 +22146,7 @@ export namespace Prisma {
     name?: StringFilter<"Subject"> | string
     teachers?: TeacherListRelationFilter
     lessons?: LessonListRelationFilter
+    continuousAssessments?: ContinuousAssessmentListRelationFilter
   }
 
   export type SubjectOrderByWithRelationInput = {
@@ -19420,6 +22154,7 @@ export namespace Prisma {
     name?: SortOrder
     teachers?: TeacherOrderByRelationAggregateInput
     lessons?: LessonOrderByRelationAggregateInput
+    continuousAssessments?: ContinuousAssessmentOrderByRelationAggregateInput
   }
 
   export type SubjectWhereUniqueInput = Prisma.AtLeast<{
@@ -19430,6 +22165,7 @@ export namespace Prisma {
     NOT?: SubjectWhereInput | SubjectWhereInput[]
     teachers?: TeacherListRelationFilter
     lessons?: LessonListRelationFilter
+    continuousAssessments?: ContinuousAssessmentListRelationFilter
   }, "id" | "name">
 
   export type SubjectOrderByWithAggregationInput = {
@@ -19910,6 +22646,182 @@ export namespace Prisma {
     classId?: IntNullableWithAggregatesFilter<"Announcement"> | number | null
   }
 
+  export type CAConfigWhereInput = {
+    AND?: CAConfigWhereInput | CAConfigWhereInput[]
+    OR?: CAConfigWhereInput[]
+    NOT?: CAConfigWhereInput | CAConfigWhereInput[]
+    id?: IntFilter<"CAConfig"> | number
+    academicYear?: StringFilter<"CAConfig"> | string
+    classworkWeight?: FloatFilter<"CAConfig"> | number
+    examWeight?: FloatFilter<"CAConfig"> | number
+    createdAt?: DateTimeFilter<"CAConfig"> | Date | string
+  }
+
+  export type CAConfigOrderByWithRelationInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    classworkWeight?: SortOrder
+    examWeight?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type CAConfigWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    academicYear?: string
+    AND?: CAConfigWhereInput | CAConfigWhereInput[]
+    OR?: CAConfigWhereInput[]
+    NOT?: CAConfigWhereInput | CAConfigWhereInput[]
+    classworkWeight?: FloatFilter<"CAConfig"> | number
+    examWeight?: FloatFilter<"CAConfig"> | number
+    createdAt?: DateTimeFilter<"CAConfig"> | Date | string
+  }, "id" | "academicYear">
+
+  export type CAConfigOrderByWithAggregationInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    classworkWeight?: SortOrder
+    examWeight?: SortOrder
+    createdAt?: SortOrder
+    _count?: CAConfigCountOrderByAggregateInput
+    _avg?: CAConfigAvgOrderByAggregateInput
+    _max?: CAConfigMaxOrderByAggregateInput
+    _min?: CAConfigMinOrderByAggregateInput
+    _sum?: CAConfigSumOrderByAggregateInput
+  }
+
+  export type CAConfigScalarWhereWithAggregatesInput = {
+    AND?: CAConfigScalarWhereWithAggregatesInput | CAConfigScalarWhereWithAggregatesInput[]
+    OR?: CAConfigScalarWhereWithAggregatesInput[]
+    NOT?: CAConfigScalarWhereWithAggregatesInput | CAConfigScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"CAConfig"> | number
+    academicYear?: StringWithAggregatesFilter<"CAConfig"> | string
+    classworkWeight?: FloatWithAggregatesFilter<"CAConfig"> | number
+    examWeight?: FloatWithAggregatesFilter<"CAConfig"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"CAConfig"> | Date | string
+  }
+
+  export type ContinuousAssessmentWhereInput = {
+    AND?: ContinuousAssessmentWhereInput | ContinuousAssessmentWhereInput[]
+    OR?: ContinuousAssessmentWhereInput[]
+    NOT?: ContinuousAssessmentWhereInput | ContinuousAssessmentWhereInput[]
+    id?: IntFilter<"ContinuousAssessment"> | number
+    academicYear?: StringFilter<"ContinuousAssessment"> | string
+    term?: EnumTermFilter<"ContinuousAssessment"> | $Enums.Term
+    studentId?: StringFilter<"ContinuousAssessment"> | string
+    teacherId?: StringFilter<"ContinuousAssessment"> | string
+    subjectId?: IntFilter<"ContinuousAssessment"> | number
+    classId?: IntFilter<"ContinuousAssessment"> | number
+    classworkScore?: FloatFilter<"ContinuousAssessment"> | number
+    examScore?: FloatFilter<"ContinuousAssessment"> | number
+    totalScore?: FloatFilter<"ContinuousAssessment"> | number
+    grade?: StringNullableFilter<"ContinuousAssessment"> | string | null
+    gradePoint?: IntNullableFilter<"ContinuousAssessment"> | number | null
+    remarks?: StringNullableFilter<"ContinuousAssessment"> | string | null
+    configId?: IntNullableFilter<"ContinuousAssessment"> | number | null
+    createdAt?: DateTimeFilter<"ContinuousAssessment"> | Date | string
+    updatedAt?: DateTimeFilter<"ContinuousAssessment"> | Date | string
+    student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
+    teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
+    subject?: XOR<SubjectScalarRelationFilter, SubjectWhereInput>
+    class?: XOR<ClassScalarRelationFilter, ClassWhereInput>
+  }
+
+  export type ContinuousAssessmentOrderByWithRelationInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    term?: SortOrder
+    studentId?: SortOrder
+    teacherId?: SortOrder
+    subjectId?: SortOrder
+    classId?: SortOrder
+    classworkScore?: SortOrder
+    examScore?: SortOrder
+    totalScore?: SortOrder
+    grade?: SortOrderInput | SortOrder
+    gradePoint?: SortOrderInput | SortOrder
+    remarks?: SortOrderInput | SortOrder
+    configId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    student?: StudentOrderByWithRelationInput
+    teacher?: TeacherOrderByWithRelationInput
+    subject?: SubjectOrderByWithRelationInput
+    class?: ClassOrderByWithRelationInput
+  }
+
+  export type ContinuousAssessmentWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    studentId_subjectId_classId_term_academicYear?: ContinuousAssessmentStudentIdSubjectIdClassIdTermAcademicYearCompoundUniqueInput
+    AND?: ContinuousAssessmentWhereInput | ContinuousAssessmentWhereInput[]
+    OR?: ContinuousAssessmentWhereInput[]
+    NOT?: ContinuousAssessmentWhereInput | ContinuousAssessmentWhereInput[]
+    academicYear?: StringFilter<"ContinuousAssessment"> | string
+    term?: EnumTermFilter<"ContinuousAssessment"> | $Enums.Term
+    studentId?: StringFilter<"ContinuousAssessment"> | string
+    teacherId?: StringFilter<"ContinuousAssessment"> | string
+    subjectId?: IntFilter<"ContinuousAssessment"> | number
+    classId?: IntFilter<"ContinuousAssessment"> | number
+    classworkScore?: FloatFilter<"ContinuousAssessment"> | number
+    examScore?: FloatFilter<"ContinuousAssessment"> | number
+    totalScore?: FloatFilter<"ContinuousAssessment"> | number
+    grade?: StringNullableFilter<"ContinuousAssessment"> | string | null
+    gradePoint?: IntNullableFilter<"ContinuousAssessment"> | number | null
+    remarks?: StringNullableFilter<"ContinuousAssessment"> | string | null
+    configId?: IntNullableFilter<"ContinuousAssessment"> | number | null
+    createdAt?: DateTimeFilter<"ContinuousAssessment"> | Date | string
+    updatedAt?: DateTimeFilter<"ContinuousAssessment"> | Date | string
+    student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
+    teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
+    subject?: XOR<SubjectScalarRelationFilter, SubjectWhereInput>
+    class?: XOR<ClassScalarRelationFilter, ClassWhereInput>
+  }, "id" | "studentId_subjectId_classId_term_academicYear">
+
+  export type ContinuousAssessmentOrderByWithAggregationInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    term?: SortOrder
+    studentId?: SortOrder
+    teacherId?: SortOrder
+    subjectId?: SortOrder
+    classId?: SortOrder
+    classworkScore?: SortOrder
+    examScore?: SortOrder
+    totalScore?: SortOrder
+    grade?: SortOrderInput | SortOrder
+    gradePoint?: SortOrderInput | SortOrder
+    remarks?: SortOrderInput | SortOrder
+    configId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ContinuousAssessmentCountOrderByAggregateInput
+    _avg?: ContinuousAssessmentAvgOrderByAggregateInput
+    _max?: ContinuousAssessmentMaxOrderByAggregateInput
+    _min?: ContinuousAssessmentMinOrderByAggregateInput
+    _sum?: ContinuousAssessmentSumOrderByAggregateInput
+  }
+
+  export type ContinuousAssessmentScalarWhereWithAggregatesInput = {
+    AND?: ContinuousAssessmentScalarWhereWithAggregatesInput | ContinuousAssessmentScalarWhereWithAggregatesInput[]
+    OR?: ContinuousAssessmentScalarWhereWithAggregatesInput[]
+    NOT?: ContinuousAssessmentScalarWhereWithAggregatesInput | ContinuousAssessmentScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"ContinuousAssessment"> | number
+    academicYear?: StringWithAggregatesFilter<"ContinuousAssessment"> | string
+    term?: EnumTermWithAggregatesFilter<"ContinuousAssessment"> | $Enums.Term
+    studentId?: StringWithAggregatesFilter<"ContinuousAssessment"> | string
+    teacherId?: StringWithAggregatesFilter<"ContinuousAssessment"> | string
+    subjectId?: IntWithAggregatesFilter<"ContinuousAssessment"> | number
+    classId?: IntWithAggregatesFilter<"ContinuousAssessment"> | number
+    classworkScore?: FloatWithAggregatesFilter<"ContinuousAssessment"> | number
+    examScore?: FloatWithAggregatesFilter<"ContinuousAssessment"> | number
+    totalScore?: FloatWithAggregatesFilter<"ContinuousAssessment"> | number
+    grade?: StringNullableWithAggregatesFilter<"ContinuousAssessment"> | string | null
+    gradePoint?: IntNullableWithAggregatesFilter<"ContinuousAssessment"> | number | null
+    remarks?: StringNullableWithAggregatesFilter<"ContinuousAssessment"> | string | null
+    configId?: IntNullableWithAggregatesFilter<"ContinuousAssessment"> | number | null
+    createdAt?: DateTimeWithAggregatesFilter<"ContinuousAssessment"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ContinuousAssessment"> | Date | string
+  }
+
   export type AdminCreateInput = {
     id: string
     username: string
@@ -19962,6 +22874,7 @@ export namespace Prisma {
     grade: GradeCreateNestedOneWithoutStudentsInput
     attendances?: AttendanceCreateNestedManyWithoutStudentInput
     results?: ResultCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateInput = {
@@ -19981,6 +22894,7 @@ export namespace Prisma {
     gradeId: number
     attendances?: AttendanceUncheckedCreateNestedManyWithoutStudentInput
     results?: ResultUncheckedCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUpdateInput = {
@@ -20000,6 +22914,7 @@ export namespace Prisma {
     grade?: GradeUpdateOneRequiredWithoutStudentsNestedInput
     attendances?: AttendanceUpdateManyWithoutStudentNestedInput
     results?: ResultUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateInput = {
@@ -20019,6 +22934,7 @@ export namespace Prisma {
     gradeId?: IntFieldUpdateOperationsInput | number
     attendances?: AttendanceUncheckedUpdateManyWithoutStudentNestedInput
     results?: ResultUncheckedUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentCreateManyInput = {
@@ -20085,6 +23001,7 @@ export namespace Prisma {
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
     lessons?: LessonCreateNestedManyWithoutTeacherInput
     classes?: ClassCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateInput = {
@@ -20103,6 +23020,7 @@ export namespace Prisma {
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
     lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
     classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUpdateInput = {
@@ -20121,6 +23039,7 @@ export namespace Prisma {
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
     lessons?: LessonUpdateManyWithoutTeacherNestedInput
     classes?: ClassUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateInput = {
@@ -20139,6 +23058,7 @@ export namespace Prisma {
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
     classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherCreateManyInput = {
@@ -20324,6 +23244,7 @@ export namespace Prisma {
     grade: GradeCreateNestedOneWithoutClassesInput
     events?: EventCreateNestedManyWithoutClassInput
     announcements?: AnnouncementCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
   }
 
   export type ClassUncheckedCreateInput = {
@@ -20337,6 +23258,7 @@ export namespace Prisma {
     students?: StudentUncheckedCreateNestedManyWithoutClassInput
     events?: EventUncheckedCreateNestedManyWithoutClassInput
     announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
   }
 
   export type ClassUpdateInput = {
@@ -20349,6 +23271,7 @@ export namespace Prisma {
     grade?: GradeUpdateOneRequiredWithoutClassesNestedInput
     events?: EventUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateInput = {
@@ -20362,6 +23285,7 @@ export namespace Prisma {
     students?: StudentUncheckedUpdateManyWithoutClassNestedInput
     events?: EventUncheckedUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
   }
 
   export type ClassCreateManyInput = {
@@ -20392,6 +23316,7 @@ export namespace Prisma {
     name: string
     teachers?: TeacherCreateNestedManyWithoutSubjectsInput
     lessons?: LessonCreateNestedManyWithoutSubjectInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSubjectInput
   }
 
   export type SubjectUncheckedCreateInput = {
@@ -20399,12 +23324,14 @@ export namespace Prisma {
     name: string
     teachers?: TeacherUncheckedCreateNestedManyWithoutSubjectsInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSubjectInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSubjectInput
   }
 
   export type SubjectUpdateInput = {
     name?: StringFieldUpdateOperationsInput | string
     teachers?: TeacherUpdateManyWithoutSubjectsNestedInput
     lessons?: LessonUpdateManyWithoutSubjectNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSubjectNestedInput
   }
 
   export type SubjectUncheckedUpdateInput = {
@@ -20412,6 +23339,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     teachers?: TeacherUncheckedUpdateManyWithoutSubjectsNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSubjectNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSubjectNestedInput
   }
 
   export type SubjectCreateManyInput = {
@@ -20849,6 +23777,185 @@ export namespace Prisma {
     classId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
+  export type CAConfigCreateInput = {
+    academicYear: string
+    classworkWeight?: number
+    examWeight?: number
+    createdAt?: Date | string
+  }
+
+  export type CAConfigUncheckedCreateInput = {
+    id?: number
+    academicYear: string
+    classworkWeight?: number
+    examWeight?: number
+    createdAt?: Date | string
+  }
+
+  export type CAConfigUpdateInput = {
+    academicYear?: StringFieldUpdateOperationsInput | string
+    classworkWeight?: FloatFieldUpdateOperationsInput | number
+    examWeight?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CAConfigUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    classworkWeight?: FloatFieldUpdateOperationsInput | number
+    examWeight?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CAConfigCreateManyInput = {
+    id?: number
+    academicYear: string
+    classworkWeight?: number
+    examWeight?: number
+    createdAt?: Date | string
+  }
+
+  export type CAConfigUpdateManyMutationInput = {
+    academicYear?: StringFieldUpdateOperationsInput | string
+    classworkWeight?: FloatFieldUpdateOperationsInput | number
+    examWeight?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CAConfigUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    classworkWeight?: FloatFieldUpdateOperationsInput | number
+    examWeight?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContinuousAssessmentCreateInput = {
+    academicYear: string
+    term: $Enums.Term
+    classworkScore?: number
+    examScore?: number
+    totalScore?: number
+    grade?: string | null
+    gradePoint?: number | null
+    remarks?: string | null
+    configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    student: StudentCreateNestedOneWithoutContinuousAssessmentsInput
+    teacher: TeacherCreateNestedOneWithoutContinuousAssessmentsInput
+    subject: SubjectCreateNestedOneWithoutContinuousAssessmentsInput
+    class: ClassCreateNestedOneWithoutContinuousAssessmentsInput
+  }
+
+  export type ContinuousAssessmentUncheckedCreateInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    studentId: string
+    teacherId: string
+    subjectId: number
+    classId: number
+    classworkScore?: number
+    examScore?: number
+    totalScore?: number
+    grade?: string | null
+    gradePoint?: number | null
+    remarks?: string | null
+    configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ContinuousAssessmentUpdateInput = {
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    classworkScore?: FloatFieldUpdateOperationsInput | number
+    examScore?: FloatFieldUpdateOperationsInput | number
+    totalScore?: FloatFieldUpdateOperationsInput | number
+    grade?: NullableStringFieldUpdateOperationsInput | string | null
+    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    student?: StudentUpdateOneRequiredWithoutContinuousAssessmentsNestedInput
+    teacher?: TeacherUpdateOneRequiredWithoutContinuousAssessmentsNestedInput
+    subject?: SubjectUpdateOneRequiredWithoutContinuousAssessmentsNestedInput
+    class?: ClassUpdateOneRequiredWithoutContinuousAssessmentsNestedInput
+  }
+
+  export type ContinuousAssessmentUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    studentId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    subjectId?: IntFieldUpdateOperationsInput | number
+    classId?: IntFieldUpdateOperationsInput | number
+    classworkScore?: FloatFieldUpdateOperationsInput | number
+    examScore?: FloatFieldUpdateOperationsInput | number
+    totalScore?: FloatFieldUpdateOperationsInput | number
+    grade?: NullableStringFieldUpdateOperationsInput | string | null
+    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContinuousAssessmentCreateManyInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    studentId: string
+    teacherId: string
+    subjectId: number
+    classId: number
+    classworkScore?: number
+    examScore?: number
+    totalScore?: number
+    grade?: string | null
+    gradePoint?: number | null
+    remarks?: string | null
+    configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ContinuousAssessmentUpdateManyMutationInput = {
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    classworkScore?: FloatFieldUpdateOperationsInput | number
+    examScore?: FloatFieldUpdateOperationsInput | number
+    totalScore?: FloatFieldUpdateOperationsInput | number
+    grade?: NullableStringFieldUpdateOperationsInput | string | null
+    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContinuousAssessmentUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    studentId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    subjectId?: IntFieldUpdateOperationsInput | number
+    classId?: IntFieldUpdateOperationsInput | number
+    classworkScore?: FloatFieldUpdateOperationsInput | number
+    examScore?: FloatFieldUpdateOperationsInput | number
+    totalScore?: FloatFieldUpdateOperationsInput | number
+    grade?: NullableStringFieldUpdateOperationsInput | string | null
+    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -20968,6 +24075,12 @@ export namespace Prisma {
     none?: ResultWhereInput
   }
 
+  export type ContinuousAssessmentListRelationFilter = {
+    every?: ContinuousAssessmentWhereInput
+    some?: ContinuousAssessmentWhereInput
+    none?: ContinuousAssessmentWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -20978,6 +24091,10 @@ export namespace Prisma {
   }
 
   export type ResultOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ContinuousAssessmentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -21753,6 +24870,173 @@ export namespace Prisma {
     classId?: SortOrder
   }
 
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type CAConfigCountOrderByAggregateInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    classworkWeight?: SortOrder
+    examWeight?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type CAConfigAvgOrderByAggregateInput = {
+    id?: SortOrder
+    classworkWeight?: SortOrder
+    examWeight?: SortOrder
+  }
+
+  export type CAConfigMaxOrderByAggregateInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    classworkWeight?: SortOrder
+    examWeight?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type CAConfigMinOrderByAggregateInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    classworkWeight?: SortOrder
+    examWeight?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type CAConfigSumOrderByAggregateInput = {
+    id?: SortOrder
+    classworkWeight?: SortOrder
+    examWeight?: SortOrder
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type EnumTermFilter<$PrismaModel = never> = {
+    equals?: $Enums.Term | EnumTermFieldRefInput<$PrismaModel>
+    in?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
+    not?: NestedEnumTermFilter<$PrismaModel> | $Enums.Term
+  }
+
+  export type ContinuousAssessmentStudentIdSubjectIdClassIdTermAcademicYearCompoundUniqueInput = {
+    studentId: string
+    subjectId: number
+    classId: number
+    term: $Enums.Term
+    academicYear: string
+  }
+
+  export type ContinuousAssessmentCountOrderByAggregateInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    term?: SortOrder
+    studentId?: SortOrder
+    teacherId?: SortOrder
+    subjectId?: SortOrder
+    classId?: SortOrder
+    classworkScore?: SortOrder
+    examScore?: SortOrder
+    totalScore?: SortOrder
+    grade?: SortOrder
+    gradePoint?: SortOrder
+    remarks?: SortOrder
+    configId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ContinuousAssessmentAvgOrderByAggregateInput = {
+    id?: SortOrder
+    subjectId?: SortOrder
+    classId?: SortOrder
+    classworkScore?: SortOrder
+    examScore?: SortOrder
+    totalScore?: SortOrder
+    gradePoint?: SortOrder
+    configId?: SortOrder
+  }
+
+  export type ContinuousAssessmentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    term?: SortOrder
+    studentId?: SortOrder
+    teacherId?: SortOrder
+    subjectId?: SortOrder
+    classId?: SortOrder
+    classworkScore?: SortOrder
+    examScore?: SortOrder
+    totalScore?: SortOrder
+    grade?: SortOrder
+    gradePoint?: SortOrder
+    remarks?: SortOrder
+    configId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ContinuousAssessmentMinOrderByAggregateInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    term?: SortOrder
+    studentId?: SortOrder
+    teacherId?: SortOrder
+    subjectId?: SortOrder
+    classId?: SortOrder
+    classworkScore?: SortOrder
+    examScore?: SortOrder
+    totalScore?: SortOrder
+    grade?: SortOrder
+    gradePoint?: SortOrder
+    remarks?: SortOrder
+    configId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ContinuousAssessmentSumOrderByAggregateInput = {
+    id?: SortOrder
+    subjectId?: SortOrder
+    classId?: SortOrder
+    classworkScore?: SortOrder
+    examScore?: SortOrder
+    totalScore?: SortOrder
+    gradePoint?: SortOrder
+    configId?: SortOrder
+  }
+
+  export type EnumTermWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Term | EnumTermFieldRefInput<$PrismaModel>
+    in?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
+    not?: NestedEnumTermWithAggregatesFilter<$PrismaModel> | $Enums.Term
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTermFilter<$PrismaModel>
+    _max?: NestedEnumTermFilter<$PrismaModel>
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -21789,6 +25073,13 @@ export namespace Prisma {
     connect?: ResultWhereUniqueInput | ResultWhereUniqueInput[]
   }
 
+  export type ContinuousAssessmentCreateNestedManyWithoutStudentInput = {
+    create?: XOR<ContinuousAssessmentCreateWithoutStudentInput, ContinuousAssessmentUncheckedCreateWithoutStudentInput> | ContinuousAssessmentCreateWithoutStudentInput[] | ContinuousAssessmentUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutStudentInput | ContinuousAssessmentCreateOrConnectWithoutStudentInput[]
+    createMany?: ContinuousAssessmentCreateManyStudentInputEnvelope
+    connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+  }
+
   export type AttendanceUncheckedCreateNestedManyWithoutStudentInput = {
     create?: XOR<AttendanceCreateWithoutStudentInput, AttendanceUncheckedCreateWithoutStudentInput> | AttendanceCreateWithoutStudentInput[] | AttendanceUncheckedCreateWithoutStudentInput[]
     connectOrCreate?: AttendanceCreateOrConnectWithoutStudentInput | AttendanceCreateOrConnectWithoutStudentInput[]
@@ -21801,6 +25092,13 @@ export namespace Prisma {
     connectOrCreate?: ResultCreateOrConnectWithoutStudentInput | ResultCreateOrConnectWithoutStudentInput[]
     createMany?: ResultCreateManyStudentInputEnvelope
     connect?: ResultWhereUniqueInput | ResultWhereUniqueInput[]
+  }
+
+  export type ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput = {
+    create?: XOR<ContinuousAssessmentCreateWithoutStudentInput, ContinuousAssessmentUncheckedCreateWithoutStudentInput> | ContinuousAssessmentCreateWithoutStudentInput[] | ContinuousAssessmentUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutStudentInput | ContinuousAssessmentCreateOrConnectWithoutStudentInput[]
+    createMany?: ContinuousAssessmentCreateManyStudentInputEnvelope
+    connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
@@ -21867,6 +25165,20 @@ export namespace Prisma {
     deleteMany?: ResultScalarWhereInput | ResultScalarWhereInput[]
   }
 
+  export type ContinuousAssessmentUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<ContinuousAssessmentCreateWithoutStudentInput, ContinuousAssessmentUncheckedCreateWithoutStudentInput> | ContinuousAssessmentCreateWithoutStudentInput[] | ContinuousAssessmentUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutStudentInput | ContinuousAssessmentCreateOrConnectWithoutStudentInput[]
+    upsert?: ContinuousAssessmentUpsertWithWhereUniqueWithoutStudentInput | ContinuousAssessmentUpsertWithWhereUniqueWithoutStudentInput[]
+    createMany?: ContinuousAssessmentCreateManyStudentInputEnvelope
+    set?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    disconnect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    delete?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    update?: ContinuousAssessmentUpdateWithWhereUniqueWithoutStudentInput | ContinuousAssessmentUpdateWithWhereUniqueWithoutStudentInput[]
+    updateMany?: ContinuousAssessmentUpdateManyWithWhereWithoutStudentInput | ContinuousAssessmentUpdateManyWithWhereWithoutStudentInput[]
+    deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -21903,6 +25215,20 @@ export namespace Prisma {
     deleteMany?: ResultScalarWhereInput | ResultScalarWhereInput[]
   }
 
+  export type ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<ContinuousAssessmentCreateWithoutStudentInput, ContinuousAssessmentUncheckedCreateWithoutStudentInput> | ContinuousAssessmentCreateWithoutStudentInput[] | ContinuousAssessmentUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutStudentInput | ContinuousAssessmentCreateOrConnectWithoutStudentInput[]
+    upsert?: ContinuousAssessmentUpsertWithWhereUniqueWithoutStudentInput | ContinuousAssessmentUpsertWithWhereUniqueWithoutStudentInput[]
+    createMany?: ContinuousAssessmentCreateManyStudentInputEnvelope
+    set?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    disconnect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    delete?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    update?: ContinuousAssessmentUpdateWithWhereUniqueWithoutStudentInput | ContinuousAssessmentUpdateWithWhereUniqueWithoutStudentInput[]
+    updateMany?: ContinuousAssessmentUpdateManyWithWhereWithoutStudentInput | ContinuousAssessmentUpdateManyWithWhereWithoutStudentInput[]
+    deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
+  }
+
   export type SubjectCreateNestedManyWithoutTeachersInput = {
     create?: XOR<SubjectCreateWithoutTeachersInput, SubjectUncheckedCreateWithoutTeachersInput> | SubjectCreateWithoutTeachersInput[] | SubjectUncheckedCreateWithoutTeachersInput[]
     connectOrCreate?: SubjectCreateOrConnectWithoutTeachersInput | SubjectCreateOrConnectWithoutTeachersInput[]
@@ -21923,6 +25249,13 @@ export namespace Prisma {
     connect?: ClassWhereUniqueInput | ClassWhereUniqueInput[]
   }
 
+  export type ContinuousAssessmentCreateNestedManyWithoutTeacherInput = {
+    create?: XOR<ContinuousAssessmentCreateWithoutTeacherInput, ContinuousAssessmentUncheckedCreateWithoutTeacherInput> | ContinuousAssessmentCreateWithoutTeacherInput[] | ContinuousAssessmentUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutTeacherInput | ContinuousAssessmentCreateOrConnectWithoutTeacherInput[]
+    createMany?: ContinuousAssessmentCreateManyTeacherInputEnvelope
+    connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+  }
+
   export type SubjectUncheckedCreateNestedManyWithoutTeachersInput = {
     create?: XOR<SubjectCreateWithoutTeachersInput, SubjectUncheckedCreateWithoutTeachersInput> | SubjectCreateWithoutTeachersInput[] | SubjectUncheckedCreateWithoutTeachersInput[]
     connectOrCreate?: SubjectCreateOrConnectWithoutTeachersInput | SubjectCreateOrConnectWithoutTeachersInput[]
@@ -21941,6 +25274,13 @@ export namespace Prisma {
     connectOrCreate?: ClassCreateOrConnectWithoutSupervisorInput | ClassCreateOrConnectWithoutSupervisorInput[]
     createMany?: ClassCreateManySupervisorInputEnvelope
     connect?: ClassWhereUniqueInput | ClassWhereUniqueInput[]
+  }
+
+  export type ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput = {
+    create?: XOR<ContinuousAssessmentCreateWithoutTeacherInput, ContinuousAssessmentUncheckedCreateWithoutTeacherInput> | ContinuousAssessmentCreateWithoutTeacherInput[] | ContinuousAssessmentUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutTeacherInput | ContinuousAssessmentCreateOrConnectWithoutTeacherInput[]
+    createMany?: ContinuousAssessmentCreateManyTeacherInputEnvelope
+    connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
   }
 
   export type SubjectUpdateManyWithoutTeachersNestedInput = {
@@ -21984,6 +25324,20 @@ export namespace Prisma {
     deleteMany?: ClassScalarWhereInput | ClassScalarWhereInput[]
   }
 
+  export type ContinuousAssessmentUpdateManyWithoutTeacherNestedInput = {
+    create?: XOR<ContinuousAssessmentCreateWithoutTeacherInput, ContinuousAssessmentUncheckedCreateWithoutTeacherInput> | ContinuousAssessmentCreateWithoutTeacherInput[] | ContinuousAssessmentUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutTeacherInput | ContinuousAssessmentCreateOrConnectWithoutTeacherInput[]
+    upsert?: ContinuousAssessmentUpsertWithWhereUniqueWithoutTeacherInput | ContinuousAssessmentUpsertWithWhereUniqueWithoutTeacherInput[]
+    createMany?: ContinuousAssessmentCreateManyTeacherInputEnvelope
+    set?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    disconnect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    delete?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    update?: ContinuousAssessmentUpdateWithWhereUniqueWithoutTeacherInput | ContinuousAssessmentUpdateWithWhereUniqueWithoutTeacherInput[]
+    updateMany?: ContinuousAssessmentUpdateManyWithWhereWithoutTeacherInput | ContinuousAssessmentUpdateManyWithWhereWithoutTeacherInput[]
+    deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
+  }
+
   export type SubjectUncheckedUpdateManyWithoutTeachersNestedInput = {
     create?: XOR<SubjectCreateWithoutTeachersInput, SubjectUncheckedCreateWithoutTeachersInput> | SubjectCreateWithoutTeachersInput[] | SubjectUncheckedCreateWithoutTeachersInput[]
     connectOrCreate?: SubjectCreateOrConnectWithoutTeachersInput | SubjectCreateOrConnectWithoutTeachersInput[]
@@ -22023,6 +25377,20 @@ export namespace Prisma {
     update?: ClassUpdateWithWhereUniqueWithoutSupervisorInput | ClassUpdateWithWhereUniqueWithoutSupervisorInput[]
     updateMany?: ClassUpdateManyWithWhereWithoutSupervisorInput | ClassUpdateManyWithWhereWithoutSupervisorInput[]
     deleteMany?: ClassScalarWhereInput | ClassScalarWhereInput[]
+  }
+
+  export type ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput = {
+    create?: XOR<ContinuousAssessmentCreateWithoutTeacherInput, ContinuousAssessmentUncheckedCreateWithoutTeacherInput> | ContinuousAssessmentCreateWithoutTeacherInput[] | ContinuousAssessmentUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutTeacherInput | ContinuousAssessmentCreateOrConnectWithoutTeacherInput[]
+    upsert?: ContinuousAssessmentUpsertWithWhereUniqueWithoutTeacherInput | ContinuousAssessmentUpsertWithWhereUniqueWithoutTeacherInput[]
+    createMany?: ContinuousAssessmentCreateManyTeacherInputEnvelope
+    set?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    disconnect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    delete?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    update?: ContinuousAssessmentUpdateWithWhereUniqueWithoutTeacherInput | ContinuousAssessmentUpdateWithWhereUniqueWithoutTeacherInput[]
+    updateMany?: ContinuousAssessmentUpdateManyWithWhereWithoutTeacherInput | ContinuousAssessmentUpdateManyWithWhereWithoutTeacherInput[]
+    deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
   }
 
   export type StudentCreateNestedManyWithoutParentInput = {
@@ -22191,6 +25559,13 @@ export namespace Prisma {
     connect?: AnnouncementWhereUniqueInput | AnnouncementWhereUniqueInput[]
   }
 
+  export type ContinuousAssessmentCreateNestedManyWithoutClassInput = {
+    create?: XOR<ContinuousAssessmentCreateWithoutClassInput, ContinuousAssessmentUncheckedCreateWithoutClassInput> | ContinuousAssessmentCreateWithoutClassInput[] | ContinuousAssessmentUncheckedCreateWithoutClassInput[]
+    connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutClassInput | ContinuousAssessmentCreateOrConnectWithoutClassInput[]
+    createMany?: ContinuousAssessmentCreateManyClassInputEnvelope
+    connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+  }
+
   export type LessonUncheckedCreateNestedManyWithoutClassInput = {
     create?: XOR<LessonCreateWithoutClassInput, LessonUncheckedCreateWithoutClassInput> | LessonCreateWithoutClassInput[] | LessonUncheckedCreateWithoutClassInput[]
     connectOrCreate?: LessonCreateOrConnectWithoutClassInput | LessonCreateOrConnectWithoutClassInput[]
@@ -22217,6 +25592,13 @@ export namespace Prisma {
     connectOrCreate?: AnnouncementCreateOrConnectWithoutClassInput | AnnouncementCreateOrConnectWithoutClassInput[]
     createMany?: AnnouncementCreateManyClassInputEnvelope
     connect?: AnnouncementWhereUniqueInput | AnnouncementWhereUniqueInput[]
+  }
+
+  export type ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput = {
+    create?: XOR<ContinuousAssessmentCreateWithoutClassInput, ContinuousAssessmentUncheckedCreateWithoutClassInput> | ContinuousAssessmentCreateWithoutClassInput[] | ContinuousAssessmentUncheckedCreateWithoutClassInput[]
+    connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutClassInput | ContinuousAssessmentCreateOrConnectWithoutClassInput[]
+    createMany?: ContinuousAssessmentCreateManyClassInputEnvelope
+    connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
   }
 
   export type TeacherUpdateOneWithoutClassesNestedInput = {
@@ -22293,6 +25675,20 @@ export namespace Prisma {
     deleteMany?: AnnouncementScalarWhereInput | AnnouncementScalarWhereInput[]
   }
 
+  export type ContinuousAssessmentUpdateManyWithoutClassNestedInput = {
+    create?: XOR<ContinuousAssessmentCreateWithoutClassInput, ContinuousAssessmentUncheckedCreateWithoutClassInput> | ContinuousAssessmentCreateWithoutClassInput[] | ContinuousAssessmentUncheckedCreateWithoutClassInput[]
+    connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutClassInput | ContinuousAssessmentCreateOrConnectWithoutClassInput[]
+    upsert?: ContinuousAssessmentUpsertWithWhereUniqueWithoutClassInput | ContinuousAssessmentUpsertWithWhereUniqueWithoutClassInput[]
+    createMany?: ContinuousAssessmentCreateManyClassInputEnvelope
+    set?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    disconnect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    delete?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    update?: ContinuousAssessmentUpdateWithWhereUniqueWithoutClassInput | ContinuousAssessmentUpdateWithWhereUniqueWithoutClassInput[]
+    updateMany?: ContinuousAssessmentUpdateManyWithWhereWithoutClassInput | ContinuousAssessmentUpdateManyWithWhereWithoutClassInput[]
+    deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
+  }
+
   export type LessonUncheckedUpdateManyWithoutClassNestedInput = {
     create?: XOR<LessonCreateWithoutClassInput, LessonUncheckedCreateWithoutClassInput> | LessonCreateWithoutClassInput[] | LessonUncheckedCreateWithoutClassInput[]
     connectOrCreate?: LessonCreateOrConnectWithoutClassInput | LessonCreateOrConnectWithoutClassInput[]
@@ -22349,6 +25745,20 @@ export namespace Prisma {
     deleteMany?: AnnouncementScalarWhereInput | AnnouncementScalarWhereInput[]
   }
 
+  export type ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput = {
+    create?: XOR<ContinuousAssessmentCreateWithoutClassInput, ContinuousAssessmentUncheckedCreateWithoutClassInput> | ContinuousAssessmentCreateWithoutClassInput[] | ContinuousAssessmentUncheckedCreateWithoutClassInput[]
+    connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutClassInput | ContinuousAssessmentCreateOrConnectWithoutClassInput[]
+    upsert?: ContinuousAssessmentUpsertWithWhereUniqueWithoutClassInput | ContinuousAssessmentUpsertWithWhereUniqueWithoutClassInput[]
+    createMany?: ContinuousAssessmentCreateManyClassInputEnvelope
+    set?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    disconnect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    delete?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    update?: ContinuousAssessmentUpdateWithWhereUniqueWithoutClassInput | ContinuousAssessmentUpdateWithWhereUniqueWithoutClassInput[]
+    updateMany?: ContinuousAssessmentUpdateManyWithWhereWithoutClassInput | ContinuousAssessmentUpdateManyWithWhereWithoutClassInput[]
+    deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
+  }
+
   export type TeacherCreateNestedManyWithoutSubjectsInput = {
     create?: XOR<TeacherCreateWithoutSubjectsInput, TeacherUncheckedCreateWithoutSubjectsInput> | TeacherCreateWithoutSubjectsInput[] | TeacherUncheckedCreateWithoutSubjectsInput[]
     connectOrCreate?: TeacherCreateOrConnectWithoutSubjectsInput | TeacherCreateOrConnectWithoutSubjectsInput[]
@@ -22362,6 +25772,13 @@ export namespace Prisma {
     connect?: LessonWhereUniqueInput | LessonWhereUniqueInput[]
   }
 
+  export type ContinuousAssessmentCreateNestedManyWithoutSubjectInput = {
+    create?: XOR<ContinuousAssessmentCreateWithoutSubjectInput, ContinuousAssessmentUncheckedCreateWithoutSubjectInput> | ContinuousAssessmentCreateWithoutSubjectInput[] | ContinuousAssessmentUncheckedCreateWithoutSubjectInput[]
+    connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutSubjectInput | ContinuousAssessmentCreateOrConnectWithoutSubjectInput[]
+    createMany?: ContinuousAssessmentCreateManySubjectInputEnvelope
+    connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+  }
+
   export type TeacherUncheckedCreateNestedManyWithoutSubjectsInput = {
     create?: XOR<TeacherCreateWithoutSubjectsInput, TeacherUncheckedCreateWithoutSubjectsInput> | TeacherCreateWithoutSubjectsInput[] | TeacherUncheckedCreateWithoutSubjectsInput[]
     connectOrCreate?: TeacherCreateOrConnectWithoutSubjectsInput | TeacherCreateOrConnectWithoutSubjectsInput[]
@@ -22373,6 +25790,13 @@ export namespace Prisma {
     connectOrCreate?: LessonCreateOrConnectWithoutSubjectInput | LessonCreateOrConnectWithoutSubjectInput[]
     createMany?: LessonCreateManySubjectInputEnvelope
     connect?: LessonWhereUniqueInput | LessonWhereUniqueInput[]
+  }
+
+  export type ContinuousAssessmentUncheckedCreateNestedManyWithoutSubjectInput = {
+    create?: XOR<ContinuousAssessmentCreateWithoutSubjectInput, ContinuousAssessmentUncheckedCreateWithoutSubjectInput> | ContinuousAssessmentCreateWithoutSubjectInput[] | ContinuousAssessmentUncheckedCreateWithoutSubjectInput[]
+    connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutSubjectInput | ContinuousAssessmentCreateOrConnectWithoutSubjectInput[]
+    createMany?: ContinuousAssessmentCreateManySubjectInputEnvelope
+    connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
   }
 
   export type TeacherUpdateManyWithoutSubjectsNestedInput = {
@@ -22402,6 +25826,20 @@ export namespace Prisma {
     deleteMany?: LessonScalarWhereInput | LessonScalarWhereInput[]
   }
 
+  export type ContinuousAssessmentUpdateManyWithoutSubjectNestedInput = {
+    create?: XOR<ContinuousAssessmentCreateWithoutSubjectInput, ContinuousAssessmentUncheckedCreateWithoutSubjectInput> | ContinuousAssessmentCreateWithoutSubjectInput[] | ContinuousAssessmentUncheckedCreateWithoutSubjectInput[]
+    connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutSubjectInput | ContinuousAssessmentCreateOrConnectWithoutSubjectInput[]
+    upsert?: ContinuousAssessmentUpsertWithWhereUniqueWithoutSubjectInput | ContinuousAssessmentUpsertWithWhereUniqueWithoutSubjectInput[]
+    createMany?: ContinuousAssessmentCreateManySubjectInputEnvelope
+    set?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    disconnect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    delete?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    update?: ContinuousAssessmentUpdateWithWhereUniqueWithoutSubjectInput | ContinuousAssessmentUpdateWithWhereUniqueWithoutSubjectInput[]
+    updateMany?: ContinuousAssessmentUpdateManyWithWhereWithoutSubjectInput | ContinuousAssessmentUpdateManyWithWhereWithoutSubjectInput[]
+    deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
+  }
+
   export type TeacherUncheckedUpdateManyWithoutSubjectsNestedInput = {
     create?: XOR<TeacherCreateWithoutSubjectsInput, TeacherUncheckedCreateWithoutSubjectsInput> | TeacherCreateWithoutSubjectsInput[] | TeacherUncheckedCreateWithoutSubjectsInput[]
     connectOrCreate?: TeacherCreateOrConnectWithoutSubjectsInput | TeacherCreateOrConnectWithoutSubjectsInput[]
@@ -22427,6 +25865,20 @@ export namespace Prisma {
     update?: LessonUpdateWithWhereUniqueWithoutSubjectInput | LessonUpdateWithWhereUniqueWithoutSubjectInput[]
     updateMany?: LessonUpdateManyWithWhereWithoutSubjectInput | LessonUpdateManyWithWhereWithoutSubjectInput[]
     deleteMany?: LessonScalarWhereInput | LessonScalarWhereInput[]
+  }
+
+  export type ContinuousAssessmentUncheckedUpdateManyWithoutSubjectNestedInput = {
+    create?: XOR<ContinuousAssessmentCreateWithoutSubjectInput, ContinuousAssessmentUncheckedCreateWithoutSubjectInput> | ContinuousAssessmentCreateWithoutSubjectInput[] | ContinuousAssessmentUncheckedCreateWithoutSubjectInput[]
+    connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutSubjectInput | ContinuousAssessmentCreateOrConnectWithoutSubjectInput[]
+    upsert?: ContinuousAssessmentUpsertWithWhereUniqueWithoutSubjectInput | ContinuousAssessmentUpsertWithWhereUniqueWithoutSubjectInput[]
+    createMany?: ContinuousAssessmentCreateManySubjectInputEnvelope
+    set?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    disconnect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    delete?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+    update?: ContinuousAssessmentUpdateWithWhereUniqueWithoutSubjectInput | ContinuousAssessmentUpdateWithWhereUniqueWithoutSubjectInput[]
+    updateMany?: ContinuousAssessmentUpdateManyWithWhereWithoutSubjectInput | ContinuousAssessmentUpdateManyWithWhereWithoutSubjectInput[]
+    deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
   }
 
   export type SubjectCreateNestedOneWithoutLessonsInput = {
@@ -22837,6 +26289,74 @@ export namespace Prisma {
     update?: XOR<XOR<ClassUpdateToOneWithWhereWithoutAnnouncementsInput, ClassUpdateWithoutAnnouncementsInput>, ClassUncheckedUpdateWithoutAnnouncementsInput>
   }
 
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type StudentCreateNestedOneWithoutContinuousAssessmentsInput = {
+    create?: XOR<StudentCreateWithoutContinuousAssessmentsInput, StudentUncheckedCreateWithoutContinuousAssessmentsInput>
+    connectOrCreate?: StudentCreateOrConnectWithoutContinuousAssessmentsInput
+    connect?: StudentWhereUniqueInput
+  }
+
+  export type TeacherCreateNestedOneWithoutContinuousAssessmentsInput = {
+    create?: XOR<TeacherCreateWithoutContinuousAssessmentsInput, TeacherUncheckedCreateWithoutContinuousAssessmentsInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutContinuousAssessmentsInput
+    connect?: TeacherWhereUniqueInput
+  }
+
+  export type SubjectCreateNestedOneWithoutContinuousAssessmentsInput = {
+    create?: XOR<SubjectCreateWithoutContinuousAssessmentsInput, SubjectUncheckedCreateWithoutContinuousAssessmentsInput>
+    connectOrCreate?: SubjectCreateOrConnectWithoutContinuousAssessmentsInput
+    connect?: SubjectWhereUniqueInput
+  }
+
+  export type ClassCreateNestedOneWithoutContinuousAssessmentsInput = {
+    create?: XOR<ClassCreateWithoutContinuousAssessmentsInput, ClassUncheckedCreateWithoutContinuousAssessmentsInput>
+    connectOrCreate?: ClassCreateOrConnectWithoutContinuousAssessmentsInput
+    connect?: ClassWhereUniqueInput
+  }
+
+  export type EnumTermFieldUpdateOperationsInput = {
+    set?: $Enums.Term
+  }
+
+  export type StudentUpdateOneRequiredWithoutContinuousAssessmentsNestedInput = {
+    create?: XOR<StudentCreateWithoutContinuousAssessmentsInput, StudentUncheckedCreateWithoutContinuousAssessmentsInput>
+    connectOrCreate?: StudentCreateOrConnectWithoutContinuousAssessmentsInput
+    upsert?: StudentUpsertWithoutContinuousAssessmentsInput
+    connect?: StudentWhereUniqueInput
+    update?: XOR<XOR<StudentUpdateToOneWithWhereWithoutContinuousAssessmentsInput, StudentUpdateWithoutContinuousAssessmentsInput>, StudentUncheckedUpdateWithoutContinuousAssessmentsInput>
+  }
+
+  export type TeacherUpdateOneRequiredWithoutContinuousAssessmentsNestedInput = {
+    create?: XOR<TeacherCreateWithoutContinuousAssessmentsInput, TeacherUncheckedCreateWithoutContinuousAssessmentsInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutContinuousAssessmentsInput
+    upsert?: TeacherUpsertWithoutContinuousAssessmentsInput
+    connect?: TeacherWhereUniqueInput
+    update?: XOR<XOR<TeacherUpdateToOneWithWhereWithoutContinuousAssessmentsInput, TeacherUpdateWithoutContinuousAssessmentsInput>, TeacherUncheckedUpdateWithoutContinuousAssessmentsInput>
+  }
+
+  export type SubjectUpdateOneRequiredWithoutContinuousAssessmentsNestedInput = {
+    create?: XOR<SubjectCreateWithoutContinuousAssessmentsInput, SubjectUncheckedCreateWithoutContinuousAssessmentsInput>
+    connectOrCreate?: SubjectCreateOrConnectWithoutContinuousAssessmentsInput
+    upsert?: SubjectUpsertWithoutContinuousAssessmentsInput
+    connect?: SubjectWhereUniqueInput
+    update?: XOR<XOR<SubjectUpdateToOneWithWhereWithoutContinuousAssessmentsInput, SubjectUpdateWithoutContinuousAssessmentsInput>, SubjectUncheckedUpdateWithoutContinuousAssessmentsInput>
+  }
+
+  export type ClassUpdateOneRequiredWithoutContinuousAssessmentsNestedInput = {
+    create?: XOR<ClassCreateWithoutContinuousAssessmentsInput, ClassUncheckedCreateWithoutContinuousAssessmentsInput>
+    connectOrCreate?: ClassCreateOrConnectWithoutContinuousAssessmentsInput
+    upsert?: ClassUpsertWithoutContinuousAssessmentsInput
+    connect?: ClassWhereUniqueInput
+    update?: XOR<XOR<ClassUpdateToOneWithWhereWithoutContinuousAssessmentsInput, ClassUpdateWithoutContinuousAssessmentsInput>, ClassUncheckedUpdateWithoutContinuousAssessmentsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -23064,6 +26584,39 @@ export namespace Prisma {
     _max?: NestedEnumAttendanceStatusFilter<$PrismaModel>
   }
 
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type NestedEnumTermFilter<$PrismaModel = never> = {
+    equals?: $Enums.Term | EnumTermFieldRefInput<$PrismaModel>
+    in?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
+    not?: NestedEnumTermFilter<$PrismaModel> | $Enums.Term
+  }
+
+  export type NestedEnumTermWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Term | EnumTermFieldRefInput<$PrismaModel>
+    in?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
+    not?: NestedEnumTermWithAggregatesFilter<$PrismaModel> | $Enums.Term
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTermFilter<$PrismaModel>
+    _max?: NestedEnumTermFilter<$PrismaModel>
+  }
+
   export type ParentCreateWithoutStudentsInput = {
     id: string
     username: string
@@ -23100,6 +26653,7 @@ export namespace Prisma {
     grade: GradeCreateNestedOneWithoutClassesInput
     events?: EventCreateNestedManyWithoutClassInput
     announcements?: AnnouncementCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
   }
 
   export type ClassUncheckedCreateWithoutStudentsInput = {
@@ -23112,6 +26666,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutClassInput
     events?: EventUncheckedCreateNestedManyWithoutClassInput
     announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
   }
 
   export type ClassCreateOrConnectWithoutStudentsInput = {
@@ -23187,6 +26742,51 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ContinuousAssessmentCreateWithoutStudentInput = {
+    academicYear: string
+    term: $Enums.Term
+    classworkScore?: number
+    examScore?: number
+    totalScore?: number
+    grade?: string | null
+    gradePoint?: number | null
+    remarks?: string | null
+    configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teacher: TeacherCreateNestedOneWithoutContinuousAssessmentsInput
+    subject: SubjectCreateNestedOneWithoutContinuousAssessmentsInput
+    class: ClassCreateNestedOneWithoutContinuousAssessmentsInput
+  }
+
+  export type ContinuousAssessmentUncheckedCreateWithoutStudentInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    teacherId: string
+    subjectId: number
+    classId: number
+    classworkScore?: number
+    examScore?: number
+    totalScore?: number
+    grade?: string | null
+    gradePoint?: number | null
+    remarks?: string | null
+    configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ContinuousAssessmentCreateOrConnectWithoutStudentInput = {
+    where: ContinuousAssessmentWhereUniqueInput
+    create: XOR<ContinuousAssessmentCreateWithoutStudentInput, ContinuousAssessmentUncheckedCreateWithoutStudentInput>
+  }
+
+  export type ContinuousAssessmentCreateManyStudentInputEnvelope = {
+    data: ContinuousAssessmentCreateManyStudentInput | ContinuousAssessmentCreateManyStudentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ParentUpsertWithoutStudentsInput = {
     update: XOR<ParentUpdateWithoutStudentsInput, ParentUncheckedUpdateWithoutStudentsInput>
     create: XOR<ParentCreateWithoutStudentsInput, ParentUncheckedCreateWithoutStudentsInput>
@@ -23240,6 +26840,7 @@ export namespace Prisma {
     grade?: GradeUpdateOneRequiredWithoutClassesNestedInput
     events?: EventUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateWithoutStudentsInput = {
@@ -23252,6 +26853,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutClassNestedInput
     events?: EventUncheckedUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
   }
 
   export type GradeUpsertWithoutStudentsInput = {
@@ -23334,15 +26936,55 @@ export namespace Prisma {
     studentId?: StringNullableFilter<"Result"> | string | null
   }
 
+  export type ContinuousAssessmentUpsertWithWhereUniqueWithoutStudentInput = {
+    where: ContinuousAssessmentWhereUniqueInput
+    update: XOR<ContinuousAssessmentUpdateWithoutStudentInput, ContinuousAssessmentUncheckedUpdateWithoutStudentInput>
+    create: XOR<ContinuousAssessmentCreateWithoutStudentInput, ContinuousAssessmentUncheckedCreateWithoutStudentInput>
+  }
+
+  export type ContinuousAssessmentUpdateWithWhereUniqueWithoutStudentInput = {
+    where: ContinuousAssessmentWhereUniqueInput
+    data: XOR<ContinuousAssessmentUpdateWithoutStudentInput, ContinuousAssessmentUncheckedUpdateWithoutStudentInput>
+  }
+
+  export type ContinuousAssessmentUpdateManyWithWhereWithoutStudentInput = {
+    where: ContinuousAssessmentScalarWhereInput
+    data: XOR<ContinuousAssessmentUpdateManyMutationInput, ContinuousAssessmentUncheckedUpdateManyWithoutStudentInput>
+  }
+
+  export type ContinuousAssessmentScalarWhereInput = {
+    AND?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
+    OR?: ContinuousAssessmentScalarWhereInput[]
+    NOT?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
+    id?: IntFilter<"ContinuousAssessment"> | number
+    academicYear?: StringFilter<"ContinuousAssessment"> | string
+    term?: EnumTermFilter<"ContinuousAssessment"> | $Enums.Term
+    studentId?: StringFilter<"ContinuousAssessment"> | string
+    teacherId?: StringFilter<"ContinuousAssessment"> | string
+    subjectId?: IntFilter<"ContinuousAssessment"> | number
+    classId?: IntFilter<"ContinuousAssessment"> | number
+    classworkScore?: FloatFilter<"ContinuousAssessment"> | number
+    examScore?: FloatFilter<"ContinuousAssessment"> | number
+    totalScore?: FloatFilter<"ContinuousAssessment"> | number
+    grade?: StringNullableFilter<"ContinuousAssessment"> | string | null
+    gradePoint?: IntNullableFilter<"ContinuousAssessment"> | number | null
+    remarks?: StringNullableFilter<"ContinuousAssessment"> | string | null
+    configId?: IntNullableFilter<"ContinuousAssessment"> | number | null
+    createdAt?: DateTimeFilter<"ContinuousAssessment"> | Date | string
+    updatedAt?: DateTimeFilter<"ContinuousAssessment"> | Date | string
+  }
+
   export type SubjectCreateWithoutTeachersInput = {
     name: string
     lessons?: LessonCreateNestedManyWithoutSubjectInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSubjectInput
   }
 
   export type SubjectUncheckedCreateWithoutTeachersInput = {
     id?: number
     name: string
     lessons?: LessonUncheckedCreateNestedManyWithoutSubjectInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSubjectInput
   }
 
   export type SubjectCreateOrConnectWithoutTeachersInput = {
@@ -23394,6 +27036,7 @@ export namespace Prisma {
     grade: GradeCreateNestedOneWithoutClassesInput
     events?: EventCreateNestedManyWithoutClassInput
     announcements?: AnnouncementCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
   }
 
   export type ClassUncheckedCreateWithoutSupervisorInput = {
@@ -23406,6 +27049,7 @@ export namespace Prisma {
     students?: StudentUncheckedCreateNestedManyWithoutClassInput
     events?: EventUncheckedCreateNestedManyWithoutClassInput
     announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
   }
 
   export type ClassCreateOrConnectWithoutSupervisorInput = {
@@ -23415,6 +27059,51 @@ export namespace Prisma {
 
   export type ClassCreateManySupervisorInputEnvelope = {
     data: ClassCreateManySupervisorInput | ClassCreateManySupervisorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ContinuousAssessmentCreateWithoutTeacherInput = {
+    academicYear: string
+    term: $Enums.Term
+    classworkScore?: number
+    examScore?: number
+    totalScore?: number
+    grade?: string | null
+    gradePoint?: number | null
+    remarks?: string | null
+    configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    student: StudentCreateNestedOneWithoutContinuousAssessmentsInput
+    subject: SubjectCreateNestedOneWithoutContinuousAssessmentsInput
+    class: ClassCreateNestedOneWithoutContinuousAssessmentsInput
+  }
+
+  export type ContinuousAssessmentUncheckedCreateWithoutTeacherInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    studentId: string
+    subjectId: number
+    classId: number
+    classworkScore?: number
+    examScore?: number
+    totalScore?: number
+    grade?: string | null
+    gradePoint?: number | null
+    remarks?: string | null
+    configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ContinuousAssessmentCreateOrConnectWithoutTeacherInput = {
+    where: ContinuousAssessmentWhereUniqueInput
+    create: XOR<ContinuousAssessmentCreateWithoutTeacherInput, ContinuousAssessmentUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type ContinuousAssessmentCreateManyTeacherInputEnvelope = {
+    data: ContinuousAssessmentCreateManyTeacherInput | ContinuousAssessmentCreateManyTeacherInput[]
     skipDuplicates?: boolean
   }
 
@@ -23500,6 +27189,22 @@ export namespace Prisma {
     gradeId?: IntFilter<"Class"> | number
   }
 
+  export type ContinuousAssessmentUpsertWithWhereUniqueWithoutTeacherInput = {
+    where: ContinuousAssessmentWhereUniqueInput
+    update: XOR<ContinuousAssessmentUpdateWithoutTeacherInput, ContinuousAssessmentUncheckedUpdateWithoutTeacherInput>
+    create: XOR<ContinuousAssessmentCreateWithoutTeacherInput, ContinuousAssessmentUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type ContinuousAssessmentUpdateWithWhereUniqueWithoutTeacherInput = {
+    where: ContinuousAssessmentWhereUniqueInput
+    data: XOR<ContinuousAssessmentUpdateWithoutTeacherInput, ContinuousAssessmentUncheckedUpdateWithoutTeacherInput>
+  }
+
+  export type ContinuousAssessmentUpdateManyWithWhereWithoutTeacherInput = {
+    where: ContinuousAssessmentScalarWhereInput
+    data: XOR<ContinuousAssessmentUpdateManyMutationInput, ContinuousAssessmentUncheckedUpdateManyWithoutTeacherInput>
+  }
+
   export type StudentCreateWithoutParentInput = {
     id: string
     username: string
@@ -23516,6 +27221,7 @@ export namespace Prisma {
     grade: GradeCreateNestedOneWithoutStudentsInput
     attendances?: AttendanceCreateNestedManyWithoutStudentInput
     results?: ResultCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutParentInput = {
@@ -23534,6 +27240,7 @@ export namespace Prisma {
     gradeId: number
     attendances?: AttendanceUncheckedCreateNestedManyWithoutStudentInput
     results?: ResultUncheckedCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutParentInput = {
@@ -23598,6 +27305,7 @@ export namespace Prisma {
     class: ClassCreateNestedOneWithoutStudentsInput
     attendances?: AttendanceCreateNestedManyWithoutStudentInput
     results?: ResultCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutGradeInput = {
@@ -23616,6 +27324,7 @@ export namespace Prisma {
     classId: number
     attendances?: AttendanceUncheckedCreateNestedManyWithoutStudentInput
     results?: ResultUncheckedCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutGradeInput = {
@@ -23637,6 +27346,7 @@ export namespace Prisma {
     students?: StudentCreateNestedManyWithoutClassInput
     events?: EventCreateNestedManyWithoutClassInput
     announcements?: AnnouncementCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
   }
 
   export type ClassUncheckedCreateWithoutGradeInput = {
@@ -23649,6 +27359,7 @@ export namespace Prisma {
     students?: StudentUncheckedCreateNestedManyWithoutClassInput
     events?: EventUncheckedCreateNestedManyWithoutClassInput
     announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
   }
 
   export type ClassCreateOrConnectWithoutGradeInput = {
@@ -23708,6 +27419,7 @@ export namespace Prisma {
     maxClasses?: number
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
     lessons?: LessonCreateNestedManyWithoutTeacherInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutClassesInput = {
@@ -23725,6 +27437,7 @@ export namespace Prisma {
     maxClasses?: number
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
     lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutClassesInput = {
@@ -23783,6 +27496,7 @@ export namespace Prisma {
     grade: GradeCreateNestedOneWithoutStudentsInput
     attendances?: AttendanceCreateNestedManyWithoutStudentInput
     results?: ResultCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutClassInput = {
@@ -23801,6 +27515,7 @@ export namespace Prisma {
     gradeId: number
     attendances?: AttendanceUncheckedCreateNestedManyWithoutStudentInput
     results?: ResultUncheckedCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutClassInput = {
@@ -23879,6 +27594,51 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ContinuousAssessmentCreateWithoutClassInput = {
+    academicYear: string
+    term: $Enums.Term
+    classworkScore?: number
+    examScore?: number
+    totalScore?: number
+    grade?: string | null
+    gradePoint?: number | null
+    remarks?: string | null
+    configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    student: StudentCreateNestedOneWithoutContinuousAssessmentsInput
+    teacher: TeacherCreateNestedOneWithoutContinuousAssessmentsInput
+    subject: SubjectCreateNestedOneWithoutContinuousAssessmentsInput
+  }
+
+  export type ContinuousAssessmentUncheckedCreateWithoutClassInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    studentId: string
+    teacherId: string
+    subjectId: number
+    classworkScore?: number
+    examScore?: number
+    totalScore?: number
+    grade?: string | null
+    gradePoint?: number | null
+    remarks?: string | null
+    configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ContinuousAssessmentCreateOrConnectWithoutClassInput = {
+    where: ContinuousAssessmentWhereUniqueInput
+    create: XOR<ContinuousAssessmentCreateWithoutClassInput, ContinuousAssessmentUncheckedCreateWithoutClassInput>
+  }
+
+  export type ContinuousAssessmentCreateManyClassInputEnvelope = {
+    data: ContinuousAssessmentCreateManyClassInput | ContinuousAssessmentCreateManyClassInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TeacherUpsertWithoutClassesInput = {
     update: XOR<TeacherUpdateWithoutClassesInput, TeacherUncheckedUpdateWithoutClassesInput>
     create: XOR<TeacherCreateWithoutClassesInput, TeacherUncheckedCreateWithoutClassesInput>
@@ -23905,6 +27665,7 @@ export namespace Prisma {
     maxClasses?: IntFieldUpdateOperationsInput | number
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
     lessons?: LessonUpdateManyWithoutTeacherNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutClassesInput = {
@@ -23922,6 +27683,7 @@ export namespace Prisma {
     maxClasses?: IntFieldUpdateOperationsInput | number
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type LessonUpsertWithWhereUniqueWithoutClassInput = {
@@ -24035,6 +27797,22 @@ export namespace Prisma {
     classId?: IntNullableFilter<"Announcement"> | number | null
   }
 
+  export type ContinuousAssessmentUpsertWithWhereUniqueWithoutClassInput = {
+    where: ContinuousAssessmentWhereUniqueInput
+    update: XOR<ContinuousAssessmentUpdateWithoutClassInput, ContinuousAssessmentUncheckedUpdateWithoutClassInput>
+    create: XOR<ContinuousAssessmentCreateWithoutClassInput, ContinuousAssessmentUncheckedCreateWithoutClassInput>
+  }
+
+  export type ContinuousAssessmentUpdateWithWhereUniqueWithoutClassInput = {
+    where: ContinuousAssessmentWhereUniqueInput
+    data: XOR<ContinuousAssessmentUpdateWithoutClassInput, ContinuousAssessmentUncheckedUpdateWithoutClassInput>
+  }
+
+  export type ContinuousAssessmentUpdateManyWithWhereWithoutClassInput = {
+    where: ContinuousAssessmentScalarWhereInput
+    data: XOR<ContinuousAssessmentUpdateManyMutationInput, ContinuousAssessmentUncheckedUpdateManyWithoutClassInput>
+  }
+
   export type TeacherCreateWithoutSubjectsInput = {
     id: string
     username: string
@@ -24050,6 +27828,7 @@ export namespace Prisma {
     maxClasses?: number
     lessons?: LessonCreateNestedManyWithoutTeacherInput
     classes?: ClassCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutSubjectsInput = {
@@ -24067,6 +27846,7 @@ export namespace Prisma {
     maxClasses?: number
     lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
     classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutSubjectsInput = {
@@ -24106,6 +27886,51 @@ export namespace Prisma {
 
   export type LessonCreateManySubjectInputEnvelope = {
     data: LessonCreateManySubjectInput | LessonCreateManySubjectInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ContinuousAssessmentCreateWithoutSubjectInput = {
+    academicYear: string
+    term: $Enums.Term
+    classworkScore?: number
+    examScore?: number
+    totalScore?: number
+    grade?: string | null
+    gradePoint?: number | null
+    remarks?: string | null
+    configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    student: StudentCreateNestedOneWithoutContinuousAssessmentsInput
+    teacher: TeacherCreateNestedOneWithoutContinuousAssessmentsInput
+    class: ClassCreateNestedOneWithoutContinuousAssessmentsInput
+  }
+
+  export type ContinuousAssessmentUncheckedCreateWithoutSubjectInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    studentId: string
+    teacherId: string
+    classId: number
+    classworkScore?: number
+    examScore?: number
+    totalScore?: number
+    grade?: string | null
+    gradePoint?: number | null
+    remarks?: string | null
+    configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ContinuousAssessmentCreateOrConnectWithoutSubjectInput = {
+    where: ContinuousAssessmentWhereUniqueInput
+    create: XOR<ContinuousAssessmentCreateWithoutSubjectInput, ContinuousAssessmentUncheckedCreateWithoutSubjectInput>
+  }
+
+  export type ContinuousAssessmentCreateManySubjectInputEnvelope = {
+    data: ContinuousAssessmentCreateManySubjectInput | ContinuousAssessmentCreateManySubjectInput[]
     skipDuplicates?: boolean
   }
 
@@ -24159,15 +27984,33 @@ export namespace Prisma {
     data: XOR<LessonUpdateManyMutationInput, LessonUncheckedUpdateManyWithoutSubjectInput>
   }
 
+  export type ContinuousAssessmentUpsertWithWhereUniqueWithoutSubjectInput = {
+    where: ContinuousAssessmentWhereUniqueInput
+    update: XOR<ContinuousAssessmentUpdateWithoutSubjectInput, ContinuousAssessmentUncheckedUpdateWithoutSubjectInput>
+    create: XOR<ContinuousAssessmentCreateWithoutSubjectInput, ContinuousAssessmentUncheckedCreateWithoutSubjectInput>
+  }
+
+  export type ContinuousAssessmentUpdateWithWhereUniqueWithoutSubjectInput = {
+    where: ContinuousAssessmentWhereUniqueInput
+    data: XOR<ContinuousAssessmentUpdateWithoutSubjectInput, ContinuousAssessmentUncheckedUpdateWithoutSubjectInput>
+  }
+
+  export type ContinuousAssessmentUpdateManyWithWhereWithoutSubjectInput = {
+    where: ContinuousAssessmentScalarWhereInput
+    data: XOR<ContinuousAssessmentUpdateManyMutationInput, ContinuousAssessmentUncheckedUpdateManyWithoutSubjectInput>
+  }
+
   export type SubjectCreateWithoutLessonsInput = {
     name: string
     teachers?: TeacherCreateNestedManyWithoutSubjectsInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSubjectInput
   }
 
   export type SubjectUncheckedCreateWithoutLessonsInput = {
     id?: number
     name: string
     teachers?: TeacherUncheckedCreateNestedManyWithoutSubjectsInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSubjectInput
   }
 
   export type SubjectCreateOrConnectWithoutLessonsInput = {
@@ -24184,6 +28027,7 @@ export namespace Prisma {
     grade: GradeCreateNestedOneWithoutClassesInput
     events?: EventCreateNestedManyWithoutClassInput
     announcements?: AnnouncementCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
   }
 
   export type ClassUncheckedCreateWithoutLessonsInput = {
@@ -24196,6 +28040,7 @@ export namespace Prisma {
     students?: StudentUncheckedCreateNestedManyWithoutClassInput
     events?: EventUncheckedCreateNestedManyWithoutClassInput
     announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
   }
 
   export type ClassCreateOrConnectWithoutLessonsInput = {
@@ -24218,6 +28063,7 @@ export namespace Prisma {
     maxClasses?: number
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
     classes?: ClassCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutLessonsInput = {
@@ -24235,6 +28081,7 @@ export namespace Prisma {
     maxClasses?: number
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
     classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutLessonsInput = {
@@ -24333,12 +28180,14 @@ export namespace Prisma {
   export type SubjectUpdateWithoutLessonsInput = {
     name?: StringFieldUpdateOperationsInput | string
     teachers?: TeacherUpdateManyWithoutSubjectsNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSubjectNestedInput
   }
 
   export type SubjectUncheckedUpdateWithoutLessonsInput = {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     teachers?: TeacherUncheckedUpdateManyWithoutSubjectsNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSubjectNestedInput
   }
 
   export type ClassUpsertWithoutLessonsInput = {
@@ -24361,6 +28210,7 @@ export namespace Prisma {
     grade?: GradeUpdateOneRequiredWithoutClassesNestedInput
     events?: EventUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateWithoutLessonsInput = {
@@ -24373,6 +28223,7 @@ export namespace Prisma {
     students?: StudentUncheckedUpdateManyWithoutClassNestedInput
     events?: EventUncheckedUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
   }
 
   export type TeacherUpsertWithoutLessonsInput = {
@@ -24401,6 +28252,7 @@ export namespace Prisma {
     maxClasses?: IntFieldUpdateOperationsInput | number
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
     classes?: ClassUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutLessonsInput = {
@@ -24418,6 +28270,7 @@ export namespace Prisma {
     maxClasses?: IntFieldUpdateOperationsInput | number
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
     classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type ExamUpsertWithWhereUniqueWithoutLessonInput = {
@@ -24756,6 +28609,7 @@ export namespace Prisma {
     class: ClassCreateNestedOneWithoutStudentsInput
     grade: GradeCreateNestedOneWithoutStudentsInput
     attendances?: AttendanceCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutResultsInput = {
@@ -24774,6 +28628,7 @@ export namespace Prisma {
     classId: number
     gradeId: number
     attendances?: AttendanceUncheckedCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutResultsInput = {
@@ -24860,6 +28715,7 @@ export namespace Prisma {
     class?: ClassUpdateOneRequiredWithoutStudentsNestedInput
     grade?: GradeUpdateOneRequiredWithoutStudentsNestedInput
     attendances?: AttendanceUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutResultsInput = {
@@ -24878,6 +28734,7 @@ export namespace Prisma {
     classId?: IntFieldUpdateOperationsInput | number
     gradeId?: IntFieldUpdateOperationsInput | number
     attendances?: AttendanceUncheckedUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentCreateWithoutAttendancesInput = {
@@ -24896,6 +28753,7 @@ export namespace Prisma {
     class: ClassCreateNestedOneWithoutStudentsInput
     grade: GradeCreateNestedOneWithoutStudentsInput
     results?: ResultCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutAttendancesInput = {
@@ -24914,6 +28772,7 @@ export namespace Prisma {
     classId: number
     gradeId: number
     results?: ResultUncheckedCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutAttendancesInput = {
@@ -24978,6 +28837,7 @@ export namespace Prisma {
     class?: ClassUpdateOneRequiredWithoutStudentsNestedInput
     grade?: GradeUpdateOneRequiredWithoutStudentsNestedInput
     results?: ResultUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutAttendancesInput = {
@@ -24996,6 +28856,7 @@ export namespace Prisma {
     classId?: IntFieldUpdateOperationsInput | number
     gradeId?: IntFieldUpdateOperationsInput | number
     results?: ResultUncheckedUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type LessonUpsertWithoutAttendancesInput = {
@@ -25043,6 +28904,7 @@ export namespace Prisma {
     students?: StudentCreateNestedManyWithoutClassInput
     grade: GradeCreateNestedOneWithoutClassesInput
     announcements?: AnnouncementCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
   }
 
   export type ClassUncheckedCreateWithoutEventsInput = {
@@ -25055,6 +28917,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutClassInput
     students?: StudentUncheckedCreateNestedManyWithoutClassInput
     announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
   }
 
   export type ClassCreateOrConnectWithoutEventsInput = {
@@ -25082,6 +28945,7 @@ export namespace Prisma {
     students?: StudentUpdateManyWithoutClassNestedInput
     grade?: GradeUpdateOneRequiredWithoutClassesNestedInput
     announcements?: AnnouncementUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateWithoutEventsInput = {
@@ -25094,6 +28958,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutClassNestedInput
     students?: StudentUncheckedUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
   }
 
   export type ClassCreateWithoutAnnouncementsInput = {
@@ -25105,6 +28970,7 @@ export namespace Prisma {
     students?: StudentCreateNestedManyWithoutClassInput
     grade: GradeCreateNestedOneWithoutClassesInput
     events?: EventCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
   }
 
   export type ClassUncheckedCreateWithoutAnnouncementsInput = {
@@ -25117,6 +28983,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutClassInput
     students?: StudentUncheckedCreateNestedManyWithoutClassInput
     events?: EventUncheckedCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
   }
 
   export type ClassCreateOrConnectWithoutAnnouncementsInput = {
@@ -25144,6 +29011,7 @@ export namespace Prisma {
     students?: StudentUpdateManyWithoutClassNestedInput
     grade?: GradeUpdateOneRequiredWithoutClassesNestedInput
     events?: EventUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateWithoutAnnouncementsInput = {
@@ -25156,6 +29024,295 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutClassNestedInput
     students?: StudentUncheckedUpdateManyWithoutClassNestedInput
     events?: EventUncheckedUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+  }
+
+  export type StudentCreateWithoutContinuousAssessmentsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    parent: ParentCreateNestedOneWithoutStudentsInput
+    class: ClassCreateNestedOneWithoutStudentsInput
+    grade: GradeCreateNestedOneWithoutStudentsInput
+    attendances?: AttendanceCreateNestedManyWithoutStudentInput
+    results?: ResultCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentUncheckedCreateWithoutContinuousAssessmentsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    parentId: string
+    classId: number
+    gradeId: number
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutStudentInput
+    results?: ResultUncheckedCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentCreateOrConnectWithoutContinuousAssessmentsInput = {
+    where: StudentWhereUniqueInput
+    create: XOR<StudentCreateWithoutContinuousAssessmentsInput, StudentUncheckedCreateWithoutContinuousAssessmentsInput>
+  }
+
+  export type TeacherCreateWithoutContinuousAssessmentsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    subjects?: SubjectCreateNestedManyWithoutTeachersInput
+    lessons?: LessonCreateNestedManyWithoutTeacherInput
+    classes?: ClassCreateNestedManyWithoutSupervisorInput
+  }
+
+  export type TeacherUncheckedCreateWithoutContinuousAssessmentsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
+  }
+
+  export type TeacherCreateOrConnectWithoutContinuousAssessmentsInput = {
+    where: TeacherWhereUniqueInput
+    create: XOR<TeacherCreateWithoutContinuousAssessmentsInput, TeacherUncheckedCreateWithoutContinuousAssessmentsInput>
+  }
+
+  export type SubjectCreateWithoutContinuousAssessmentsInput = {
+    name: string
+    teachers?: TeacherCreateNestedManyWithoutSubjectsInput
+    lessons?: LessonCreateNestedManyWithoutSubjectInput
+  }
+
+  export type SubjectUncheckedCreateWithoutContinuousAssessmentsInput = {
+    id?: number
+    name: string
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSubjectsInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSubjectInput
+  }
+
+  export type SubjectCreateOrConnectWithoutContinuousAssessmentsInput = {
+    where: SubjectWhereUniqueInput
+    create: XOR<SubjectCreateWithoutContinuousAssessmentsInput, SubjectUncheckedCreateWithoutContinuousAssessmentsInput>
+  }
+
+  export type ClassCreateWithoutContinuousAssessmentsInput = {
+    name: string
+    capacity: number
+    section?: string | null
+    supervisor?: TeacherCreateNestedOneWithoutClassesInput
+    lessons?: LessonCreateNestedManyWithoutClassInput
+    students?: StudentCreateNestedManyWithoutClassInput
+    grade: GradeCreateNestedOneWithoutClassesInput
+    events?: EventCreateNestedManyWithoutClassInput
+    announcements?: AnnouncementCreateNestedManyWithoutClassInput
+  }
+
+  export type ClassUncheckedCreateWithoutContinuousAssessmentsInput = {
+    id?: number
+    name: string
+    capacity: number
+    section?: string | null
+    supervisorId?: string | null
+    gradeId: number
+    lessons?: LessonUncheckedCreateNestedManyWithoutClassInput
+    students?: StudentUncheckedCreateNestedManyWithoutClassInput
+    events?: EventUncheckedCreateNestedManyWithoutClassInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
+  }
+
+  export type ClassCreateOrConnectWithoutContinuousAssessmentsInput = {
+    where: ClassWhereUniqueInput
+    create: XOR<ClassCreateWithoutContinuousAssessmentsInput, ClassUncheckedCreateWithoutContinuousAssessmentsInput>
+  }
+
+  export type StudentUpsertWithoutContinuousAssessmentsInput = {
+    update: XOR<StudentUpdateWithoutContinuousAssessmentsInput, StudentUncheckedUpdateWithoutContinuousAssessmentsInput>
+    create: XOR<StudentCreateWithoutContinuousAssessmentsInput, StudentUncheckedCreateWithoutContinuousAssessmentsInput>
+    where?: StudentWhereInput
+  }
+
+  export type StudentUpdateToOneWithWhereWithoutContinuousAssessmentsInput = {
+    where?: StudentWhereInput
+    data: XOR<StudentUpdateWithoutContinuousAssessmentsInput, StudentUncheckedUpdateWithoutContinuousAssessmentsInput>
+  }
+
+  export type StudentUpdateWithoutContinuousAssessmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
+    class?: ClassUpdateOneRequiredWithoutStudentsNestedInput
+    grade?: GradeUpdateOneRequiredWithoutStudentsNestedInput
+    attendances?: AttendanceUpdateManyWithoutStudentNestedInput
+    results?: ResultUpdateManyWithoutStudentNestedInput
+  }
+
+  export type StudentUncheckedUpdateWithoutContinuousAssessmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    classId?: IntFieldUpdateOperationsInput | number
+    gradeId?: IntFieldUpdateOperationsInput | number
+    attendances?: AttendanceUncheckedUpdateManyWithoutStudentNestedInput
+    results?: ResultUncheckedUpdateManyWithoutStudentNestedInput
+  }
+
+  export type TeacherUpsertWithoutContinuousAssessmentsInput = {
+    update: XOR<TeacherUpdateWithoutContinuousAssessmentsInput, TeacherUncheckedUpdateWithoutContinuousAssessmentsInput>
+    create: XOR<TeacherCreateWithoutContinuousAssessmentsInput, TeacherUncheckedCreateWithoutContinuousAssessmentsInput>
+    where?: TeacherWhereInput
+  }
+
+  export type TeacherUpdateToOneWithWhereWithoutContinuousAssessmentsInput = {
+    where?: TeacherWhereInput
+    data: XOR<TeacherUpdateWithoutContinuousAssessmentsInput, TeacherUncheckedUpdateWithoutContinuousAssessmentsInput>
+  }
+
+  export type TeacherUpdateWithoutContinuousAssessmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    subjects?: SubjectUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUpdateManyWithoutSupervisorNestedInput
+  }
+
+  export type TeacherUncheckedUpdateWithoutContinuousAssessmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
+  }
+
+  export type SubjectUpsertWithoutContinuousAssessmentsInput = {
+    update: XOR<SubjectUpdateWithoutContinuousAssessmentsInput, SubjectUncheckedUpdateWithoutContinuousAssessmentsInput>
+    create: XOR<SubjectCreateWithoutContinuousAssessmentsInput, SubjectUncheckedCreateWithoutContinuousAssessmentsInput>
+    where?: SubjectWhereInput
+  }
+
+  export type SubjectUpdateToOneWithWhereWithoutContinuousAssessmentsInput = {
+    where?: SubjectWhereInput
+    data: XOR<SubjectUpdateWithoutContinuousAssessmentsInput, SubjectUncheckedUpdateWithoutContinuousAssessmentsInput>
+  }
+
+  export type SubjectUpdateWithoutContinuousAssessmentsInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    teachers?: TeacherUpdateManyWithoutSubjectsNestedInput
+    lessons?: LessonUpdateManyWithoutSubjectNestedInput
+  }
+
+  export type SubjectUncheckedUpdateWithoutContinuousAssessmentsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    teachers?: TeacherUncheckedUpdateManyWithoutSubjectsNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSubjectNestedInput
+  }
+
+  export type ClassUpsertWithoutContinuousAssessmentsInput = {
+    update: XOR<ClassUpdateWithoutContinuousAssessmentsInput, ClassUncheckedUpdateWithoutContinuousAssessmentsInput>
+    create: XOR<ClassCreateWithoutContinuousAssessmentsInput, ClassUncheckedCreateWithoutContinuousAssessmentsInput>
+    where?: ClassWhereInput
+  }
+
+  export type ClassUpdateToOneWithWhereWithoutContinuousAssessmentsInput = {
+    where?: ClassWhereInput
+    data: XOR<ClassUpdateWithoutContinuousAssessmentsInput, ClassUncheckedUpdateWithoutContinuousAssessmentsInput>
+  }
+
+  export type ClassUpdateWithoutContinuousAssessmentsInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisor?: TeacherUpdateOneWithoutClassesNestedInput
+    lessons?: LessonUpdateManyWithoutClassNestedInput
+    students?: StudentUpdateManyWithoutClassNestedInput
+    grade?: GradeUpdateOneRequiredWithoutClassesNestedInput
+    events?: EventUpdateManyWithoutClassNestedInput
+    announcements?: AnnouncementUpdateManyWithoutClassNestedInput
+  }
+
+  export type ClassUncheckedUpdateWithoutContinuousAssessmentsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+    gradeId?: IntFieldUpdateOperationsInput | number
+    lessons?: LessonUncheckedUpdateManyWithoutClassNestedInput
+    students?: StudentUncheckedUpdateManyWithoutClassNestedInput
+    events?: EventUncheckedUpdateManyWithoutClassNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
   }
 
   export type AttendanceCreateManyStudentInput = {
@@ -25172,6 +29329,24 @@ export namespace Prisma {
     score: number
     examId?: number | null
     assignmentId?: number | null
+  }
+
+  export type ContinuousAssessmentCreateManyStudentInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    teacherId: string
+    subjectId: number
+    classId: number
+    classworkScore?: number
+    examScore?: number
+    totalScore?: number
+    grade?: string | null
+    gradePoint?: number | null
+    remarks?: string | null
+    configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type AttendanceUpdateWithoutStudentInput = {
@@ -25220,6 +29395,59 @@ export namespace Prisma {
     assignmentId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
+  export type ContinuousAssessmentUpdateWithoutStudentInput = {
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    classworkScore?: FloatFieldUpdateOperationsInput | number
+    examScore?: FloatFieldUpdateOperationsInput | number
+    totalScore?: FloatFieldUpdateOperationsInput | number
+    grade?: NullableStringFieldUpdateOperationsInput | string | null
+    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacher?: TeacherUpdateOneRequiredWithoutContinuousAssessmentsNestedInput
+    subject?: SubjectUpdateOneRequiredWithoutContinuousAssessmentsNestedInput
+    class?: ClassUpdateOneRequiredWithoutContinuousAssessmentsNestedInput
+  }
+
+  export type ContinuousAssessmentUncheckedUpdateWithoutStudentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    teacherId?: StringFieldUpdateOperationsInput | string
+    subjectId?: IntFieldUpdateOperationsInput | number
+    classId?: IntFieldUpdateOperationsInput | number
+    classworkScore?: FloatFieldUpdateOperationsInput | number
+    examScore?: FloatFieldUpdateOperationsInput | number
+    totalScore?: FloatFieldUpdateOperationsInput | number
+    grade?: NullableStringFieldUpdateOperationsInput | string | null
+    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContinuousAssessmentUncheckedUpdateManyWithoutStudentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    teacherId?: StringFieldUpdateOperationsInput | string
+    subjectId?: IntFieldUpdateOperationsInput | number
+    classId?: IntFieldUpdateOperationsInput | number
+    classworkScore?: FloatFieldUpdateOperationsInput | number
+    examScore?: FloatFieldUpdateOperationsInput | number
+    totalScore?: FloatFieldUpdateOperationsInput | number
+    grade?: NullableStringFieldUpdateOperationsInput | string | null
+    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type LessonCreateManyTeacherInput = {
     id?: number
     name: string
@@ -25238,15 +29466,35 @@ export namespace Prisma {
     gradeId: number
   }
 
+  export type ContinuousAssessmentCreateManyTeacherInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    studentId: string
+    subjectId: number
+    classId: number
+    classworkScore?: number
+    examScore?: number
+    totalScore?: number
+    grade?: string | null
+    gradePoint?: number | null
+    remarks?: string | null
+    configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type SubjectUpdateWithoutTeachersInput = {
     name?: StringFieldUpdateOperationsInput | string
     lessons?: LessonUpdateManyWithoutSubjectNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSubjectNestedInput
   }
 
   export type SubjectUncheckedUpdateWithoutTeachersInput = {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     lessons?: LessonUncheckedUpdateManyWithoutSubjectNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSubjectNestedInput
   }
 
   export type SubjectUncheckedUpdateManyWithoutTeachersInput = {
@@ -25298,6 +29546,7 @@ export namespace Prisma {
     grade?: GradeUpdateOneRequiredWithoutClassesNestedInput
     events?: EventUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateWithoutSupervisorInput = {
@@ -25310,6 +29559,7 @@ export namespace Prisma {
     students?: StudentUncheckedUpdateManyWithoutClassNestedInput
     events?: EventUncheckedUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateManyWithoutSupervisorInput = {
@@ -25318,6 +29568,59 @@ export namespace Prisma {
     capacity?: IntFieldUpdateOperationsInput | number
     section?: NullableStringFieldUpdateOperationsInput | string | null
     gradeId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type ContinuousAssessmentUpdateWithoutTeacherInput = {
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    classworkScore?: FloatFieldUpdateOperationsInput | number
+    examScore?: FloatFieldUpdateOperationsInput | number
+    totalScore?: FloatFieldUpdateOperationsInput | number
+    grade?: NullableStringFieldUpdateOperationsInput | string | null
+    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    student?: StudentUpdateOneRequiredWithoutContinuousAssessmentsNestedInput
+    subject?: SubjectUpdateOneRequiredWithoutContinuousAssessmentsNestedInput
+    class?: ClassUpdateOneRequiredWithoutContinuousAssessmentsNestedInput
+  }
+
+  export type ContinuousAssessmentUncheckedUpdateWithoutTeacherInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    studentId?: StringFieldUpdateOperationsInput | string
+    subjectId?: IntFieldUpdateOperationsInput | number
+    classId?: IntFieldUpdateOperationsInput | number
+    classworkScore?: FloatFieldUpdateOperationsInput | number
+    examScore?: FloatFieldUpdateOperationsInput | number
+    totalScore?: FloatFieldUpdateOperationsInput | number
+    grade?: NullableStringFieldUpdateOperationsInput | string | null
+    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContinuousAssessmentUncheckedUpdateManyWithoutTeacherInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    studentId?: StringFieldUpdateOperationsInput | string
+    subjectId?: IntFieldUpdateOperationsInput | number
+    classId?: IntFieldUpdateOperationsInput | number
+    classworkScore?: FloatFieldUpdateOperationsInput | number
+    examScore?: FloatFieldUpdateOperationsInput | number
+    totalScore?: FloatFieldUpdateOperationsInput | number
+    grade?: NullableStringFieldUpdateOperationsInput | string | null
+    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StudentCreateManyParentInput = {
@@ -25352,6 +29655,7 @@ export namespace Prisma {
     grade?: GradeUpdateOneRequiredWithoutStudentsNestedInput
     attendances?: AttendanceUpdateManyWithoutStudentNestedInput
     results?: ResultUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutParentInput = {
@@ -25370,6 +29674,7 @@ export namespace Prisma {
     gradeId?: IntFieldUpdateOperationsInput | number
     attendances?: AttendanceUncheckedUpdateManyWithoutStudentNestedInput
     results?: ResultUncheckedUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateManyWithoutParentInput = {
@@ -25428,6 +29733,7 @@ export namespace Prisma {
     class?: ClassUpdateOneRequiredWithoutStudentsNestedInput
     attendances?: AttendanceUpdateManyWithoutStudentNestedInput
     results?: ResultUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutGradeInput = {
@@ -25446,6 +29752,7 @@ export namespace Prisma {
     classId?: IntFieldUpdateOperationsInput | number
     attendances?: AttendanceUncheckedUpdateManyWithoutStudentNestedInput
     results?: ResultUncheckedUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateManyWithoutGradeInput = {
@@ -25473,6 +29780,7 @@ export namespace Prisma {
     students?: StudentUpdateManyWithoutClassNestedInput
     events?: EventUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateWithoutGradeInput = {
@@ -25485,6 +29793,7 @@ export namespace Prisma {
     students?: StudentUncheckedUpdateManyWithoutClassNestedInput
     events?: EventUncheckedUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateManyWithoutGradeInput = {
@@ -25534,6 +29843,24 @@ export namespace Prisma {
     title: string
     description: string
     date: Date | string
+  }
+
+  export type ContinuousAssessmentCreateManyClassInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    studentId: string
+    teacherId: string
+    subjectId: number
+    classworkScore?: number
+    examScore?: number
+    totalScore?: number
+    grade?: string | null
+    gradePoint?: number | null
+    remarks?: string | null
+    configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type LessonUpdateWithoutClassInput = {
@@ -25587,6 +29914,7 @@ export namespace Prisma {
     grade?: GradeUpdateOneRequiredWithoutStudentsNestedInput
     attendances?: AttendanceUpdateManyWithoutStudentNestedInput
     results?: ResultUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutClassInput = {
@@ -25605,6 +29933,7 @@ export namespace Prisma {
     gradeId?: IntFieldUpdateOperationsInput | number
     attendances?: AttendanceUncheckedUpdateManyWithoutStudentNestedInput
     results?: ResultUncheckedUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateManyWithoutClassInput = {
@@ -25666,6 +29995,59 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ContinuousAssessmentUpdateWithoutClassInput = {
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    classworkScore?: FloatFieldUpdateOperationsInput | number
+    examScore?: FloatFieldUpdateOperationsInput | number
+    totalScore?: FloatFieldUpdateOperationsInput | number
+    grade?: NullableStringFieldUpdateOperationsInput | string | null
+    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    student?: StudentUpdateOneRequiredWithoutContinuousAssessmentsNestedInput
+    teacher?: TeacherUpdateOneRequiredWithoutContinuousAssessmentsNestedInput
+    subject?: SubjectUpdateOneRequiredWithoutContinuousAssessmentsNestedInput
+  }
+
+  export type ContinuousAssessmentUncheckedUpdateWithoutClassInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    studentId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    subjectId?: IntFieldUpdateOperationsInput | number
+    classworkScore?: FloatFieldUpdateOperationsInput | number
+    examScore?: FloatFieldUpdateOperationsInput | number
+    totalScore?: FloatFieldUpdateOperationsInput | number
+    grade?: NullableStringFieldUpdateOperationsInput | string | null
+    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContinuousAssessmentUncheckedUpdateManyWithoutClassInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    studentId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    subjectId?: IntFieldUpdateOperationsInput | number
+    classworkScore?: FloatFieldUpdateOperationsInput | number
+    examScore?: FloatFieldUpdateOperationsInput | number
+    totalScore?: FloatFieldUpdateOperationsInput | number
+    grade?: NullableStringFieldUpdateOperationsInput | string | null
+    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type LessonCreateManySubjectInput = {
     id?: number
     name: string
@@ -25674,6 +30056,24 @@ export namespace Prisma {
     endTime: Date | string
     classId: number
     teacherId: string
+  }
+
+  export type ContinuousAssessmentCreateManySubjectInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    studentId: string
+    teacherId: string
+    classId: number
+    classworkScore?: number
+    examScore?: number
+    totalScore?: number
+    grade?: string | null
+    gradePoint?: number | null
+    remarks?: string | null
+    configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type TeacherUpdateWithoutSubjectsInput = {
@@ -25691,6 +30091,7 @@ export namespace Prisma {
     maxClasses?: IntFieldUpdateOperationsInput | number
     lessons?: LessonUpdateManyWithoutTeacherNestedInput
     classes?: ClassUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutSubjectsInput = {
@@ -25708,6 +30109,7 @@ export namespace Prisma {
     maxClasses?: IntFieldUpdateOperationsInput | number
     lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
     classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateManyWithoutSubjectsInput = {
@@ -25758,6 +30160,59 @@ export namespace Prisma {
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     classId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ContinuousAssessmentUpdateWithoutSubjectInput = {
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    classworkScore?: FloatFieldUpdateOperationsInput | number
+    examScore?: FloatFieldUpdateOperationsInput | number
+    totalScore?: FloatFieldUpdateOperationsInput | number
+    grade?: NullableStringFieldUpdateOperationsInput | string | null
+    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    student?: StudentUpdateOneRequiredWithoutContinuousAssessmentsNestedInput
+    teacher?: TeacherUpdateOneRequiredWithoutContinuousAssessmentsNestedInput
+    class?: ClassUpdateOneRequiredWithoutContinuousAssessmentsNestedInput
+  }
+
+  export type ContinuousAssessmentUncheckedUpdateWithoutSubjectInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    studentId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    classId?: IntFieldUpdateOperationsInput | number
+    classworkScore?: FloatFieldUpdateOperationsInput | number
+    examScore?: FloatFieldUpdateOperationsInput | number
+    totalScore?: FloatFieldUpdateOperationsInput | number
+    grade?: NullableStringFieldUpdateOperationsInput | string | null
+    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContinuousAssessmentUncheckedUpdateManyWithoutSubjectInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    studentId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    classId?: IntFieldUpdateOperationsInput | number
+    classworkScore?: FloatFieldUpdateOperationsInput | number
+    examScore?: FloatFieldUpdateOperationsInput | number
+    totalScore?: FloatFieldUpdateOperationsInput | number
+    grade?: NullableStringFieldUpdateOperationsInput | string | null
+    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ExamCreateManyLessonInput = {
