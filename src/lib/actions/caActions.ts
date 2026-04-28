@@ -1,0 +1,303 @@
+"use server";
+
+// src/lib/actions/caActions.ts
+// Server actions for Continuous Assessment feature
+
+import prisma from "@/src/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
+import type { Term } from "@/src/generated/prisma";
+
+// ─── Ghana BECE Grading System ────────────────────────────────────────────────
+// Score ranges → letter grade + grade point
+export function getBECEGrade(score: number): { grade: string; gradePoint: number } {
+  if (score >= 90) return { grade: "A1", gradePoint: 1 };
+  if (score >= 80) return { grade: "B2", gradePoint: 2 };
+  if (score >= 75) return { grade: "B3", gradePoint: 3 };
+  if (score >= 70) return { grade: "C4", gradePoint: 4 };
+  if (score >= 65) return { grade: "C5", gradePoint: 5 };
+  if (score >= 60) return { grade: "C6", gradePoint: 6 };
+  if (score >= 55) return { grade: "D7", gradePoint: 7 };
+  if (score >= 50) return { grade: "E8", gradePoint: 8 };
+  return               { grade: "F9", gradePoint: 9 };
+}
+
+export function getGradeLabel(grade: string): string {
+  const labels: Record<string, string> = {
+    A1: "Excellent",       B2: "Very Good",
+    B3: "Good",            C4: "Credit",
+    C5: "Credit",          C6: "Credit",
+    D7: "Pass",            E8: "Pass",
+    F9: "Fail",
+  };
+  return labels[grade] ?? "—";
+}
+
+// ─── Auth: only class supervisor / admin may write CA records ─────────────────
+async function requireCAAccess(classId: number): Promise<string> {
+  const { userId, sessionClaims } = await auth();
+  if (!userId) throw new Error("Not authenticated");
+
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  if (role === "admin") return userId;
+
+  if (role === "teacher") {
+    const cls = await prisma.class.findUnique({
+      where: { id: classId },
+      select: { supervisorId: true },
+    });
+    if (cls?.supervisorId !== userId) {
+      throw new Error("Only the class supervisor can manage CA records for this class.");
+    }
+    return userId;
+  }
+
+  throw new Error("Unauthorized");
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CA CONFIG
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export type CAConfigInput = {
+  academicYear:    string;
+  classworkWeight: number;
+  examWeight:      number;
+};
+
+export async function upsertCAConfig(data: CAConfigInput) {
+  const { sessionClaims } = await auth();
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  if (role !== "admin") throw new Error("Only admins can configure CA weights.");
+
+  if (data.classworkWeight + data.examWeight !== 100) {
+    throw new Error("Classwork weight and exam weight must sum to 100.");
+  }
+
+  const config = await prisma.cAConfig.upsert({
+    where: { academicYear: data.academicYear },
+    create: {
+      academicYear:    data.academicYear,
+      classworkWeight: data.classworkWeight,
+      examWeight:      data.examWeight,
+    },
+    update: {
+      classworkWeight: data.classworkWeight,
+      examWeight:      data.examWeight,
+    },
+  });
+
+  revalidatePath("/list/ca");
+  revalidatePath("/admin");
+  return config;
+}
+
+export async function getCAConfig(academicYear: string) {
+  return prisma.cAConfig.findUnique({ where: { academicYear } });
+}
+
+export async function getAllCAConfigs() {
+  return prisma.cAConfig.findMany({ orderBy: { academicYear: "desc" } });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONTINUOUS ASSESSMENT CRUD
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export type CAInput = {
+  id?:           number;
+  studentId:     string;
+  subjectId:     number;
+  classId:       number;
+  term:          Term;
+  academicYear:  string;
+  classworkScore: number; // 0–100
+  examScore:      number; // 0–100
+  remarks?:       string;
+};
+
+/** Calculate weighted total and derive grade */
+function computeCA(
+  classworkScore: number,
+  examScore: number,
+  classworkWeight: number,
+  examWeight: number
+): { totalScore: number; grade: string; gradePoint: number } {
+  const totalScore =
+    (classworkScore * classworkWeight) / 100 +
+    (examScore * examWeight) / 100;
+
+  const rounded = Math.round(totalScore * 100) / 100;
+  const { grade, gradePoint } = getBECEGrade(rounded);
+  return { totalScore: rounded, grade, gradePoint };
+}
+
+export async function createCA(data: CAInput) {
+  const teacherId = await requireCAAccess(data.classId);
+
+  // Get active config
+  const config = await prisma.cAConfig.findUnique({
+    where: { academicYear: data.academicYear },
+  });
+  if (!config) {
+    throw new Error(
+      `No CA configuration found for ${data.academicYear}. Ask your admin to set it up.`
+    );
+  }
+
+  const { totalScore, grade, gradePoint } = computeCA(
+    data.classworkScore,
+    data.examScore,
+    config.classworkWeight,
+    config.examWeight
+  );
+
+  const ca = await prisma.continuousAssessment.create({
+    data: {
+      classworkScore: data.classworkScore,
+      examScore:      data.examScore,
+      totalScore,
+      grade,
+      gradePoint,
+      remarks:     data.remarks ?? "",
+      term:        data.term,
+      academicYear: data.academicYear,
+      studentId:   data.studentId,
+      subjectId:   data.subjectId,
+      classId:     data.classId,
+      teacherId,
+      configId:    config.id,
+    },
+  });
+
+  revalidatePath("/list/ca");
+  revalidatePath("/teacher");
+  return ca;
+}
+
+export async function updateCA(data: CAInput) {
+  if (!data.id) throw new Error("CA ID required for update.");
+  const teacherId = await requireCAAccess(data.classId);
+
+  const config = await prisma.cAConfig.findUnique({
+    where: { academicYear: data.academicYear },
+  });
+  if (!config) throw new Error(`No CA configuration found for ${data.academicYear}.`);
+
+  const { totalScore, grade, gradePoint } = computeCA(
+    data.classworkScore,
+    data.examScore,
+    config.classworkWeight,
+    config.examWeight
+  );
+
+  await prisma.continuousAssessment.update({
+    where: { id: data.id },
+    data: {
+      classworkScore: data.classworkScore,
+      examScore:      data.examScore,
+      totalScore,
+      grade,
+      gradePoint,
+      remarks:  data.remarks ?? "",
+      teacherId,
+      configId: config.id,
+    },
+  });
+
+  revalidatePath("/list/ca");
+  revalidatePath("/teacher");
+}
+
+export async function deleteCA(id: number) {
+  const ca = await prisma.continuousAssessment.findUnique({
+    where: { id },
+    select: { classId: true },
+  });
+  if (!ca) throw new Error("CA record not found.");
+  await requireCAAccess(ca.classId);
+
+  await prisma.continuousAssessment.delete({ where: { id } });
+  revalidatePath("/list/ca");
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// BULK UPSERT — used by the batch CA entry form
+// Allows a teacher to submit all students in their class for one subject at once
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export type BulkCARow = {
+  studentId:      string;
+  classworkScore: number;
+  examScore:      number;
+  remarks?:       string;
+};
+
+export async function bulkUpsertCA(
+  rows: BulkCARow[],
+  subjectId:    number,
+  classId:      number,
+  term:         Term,
+  academicYear: string
+) {
+  const teacherId = await requireCAAccess(classId);
+
+  const config = await prisma.cAConfig.findUnique({
+    where: { academicYear },
+  });
+  if (!config) {
+    throw new Error(`No CA configuration found for ${academicYear}. Ask your admin to set it up.`);
+  }
+
+  const results = await Promise.all(
+    rows.map(async (row) => {
+      const { totalScore, grade, gradePoint } = computeCA(
+        row.classworkScore,
+        row.examScore,
+        config.classworkWeight,
+        config.examWeight
+      );
+
+      return prisma.continuousAssessment.upsert({
+        where: {
+          studentId_subjectId_classId_term_academicYear: {
+            studentId:    row.studentId,
+            subjectId,
+            classId,
+            term,
+            academicYear,
+          },
+        },
+        create: {
+          classworkScore: row.classworkScore,
+          examScore:      row.examScore,
+          totalScore,
+          grade,
+          gradePoint,
+          remarks:     row.remarks ?? "",
+          term,
+          academicYear,
+          studentId:   row.studentId,
+          subjectId,
+          classId,
+          teacherId,
+          configId:    config.id,
+        },
+        update: {
+          classworkScore: row.classworkScore,
+          examScore:      row.examScore,
+          totalScore,
+          grade,
+          gradePoint,
+          remarks:  row.remarks ?? "",
+          teacherId,
+          configId: config.id,
+        },
+      });
+    })
+  );
+
+  revalidatePath("/list/ca");
+  revalidatePath("/teacher");
+  return results;
+}
