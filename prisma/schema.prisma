@@ -271,24 +271,22 @@ model ContinuousAssessment {
   classId          Int
   class            Class    @relation(fields: [classId], references: [id])
 
-  // RAW DATA (Matches your CAInput type)
+  // RAW DATA
   classworkScore   Float    @default(0) 
   examScore        Float    @default(0)
 
-  // COMPUTED DATA (Matches your computeCA function output)
-  totalScore       Float    @default(0) // Matches 'totalScore' in your action
+  // COMPUTED DATA
+  totalScore       Float    @default(0) 
   
-  // GHANA BECE / SBA STANDARDS
-  grade            String?  // e.g., "A1", "B2"
-  gradePoint       Int?     // e.g., 1, 2, 3
-  remarks          String?  
+  // GHANA BECE / SBA STANDARDS (Now Strict)
+  grade            String   @default("F9")
+  gradePoint       Int      @default(9)
+  remarks          String   @default("")
   
-  // Link to the configuration used
   configId         Int?
 
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  // Match the unique constraint used in your bulkUpsertCA 'where' clause
   @@unique([studentId, subjectId, classId, term, academicYear])
 }

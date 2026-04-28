@@ -20291,9 +20291,9 @@ export namespace Prisma {
     classworkScore: number
     examScore: number
     totalScore: number
-    grade: string | null
-    gradePoint: number | null
-    remarks: string | null
+    grade: string
+    gradePoint: number
+    remarks: string
     configId: number | null
     createdAt: Date
     updatedAt: Date
@@ -20445,9 +20445,9 @@ export namespace Prisma {
       classworkScore: number
       examScore: number
       totalScore: number
-      grade: string | null
-      gradePoint: number | null
-      remarks: string | null
+      grade: string
+      gradePoint: number
+      remarks: string
       configId: number | null
       createdAt: Date
       updatedAt: Date
@@ -22714,9 +22714,9 @@ export namespace Prisma {
     classworkScore?: FloatFilter<"ContinuousAssessment"> | number
     examScore?: FloatFilter<"ContinuousAssessment"> | number
     totalScore?: FloatFilter<"ContinuousAssessment"> | number
-    grade?: StringNullableFilter<"ContinuousAssessment"> | string | null
-    gradePoint?: IntNullableFilter<"ContinuousAssessment"> | number | null
-    remarks?: StringNullableFilter<"ContinuousAssessment"> | string | null
+    grade?: StringFilter<"ContinuousAssessment"> | string
+    gradePoint?: IntFilter<"ContinuousAssessment"> | number
+    remarks?: StringFilter<"ContinuousAssessment"> | string
     configId?: IntNullableFilter<"ContinuousAssessment"> | number | null
     createdAt?: DateTimeFilter<"ContinuousAssessment"> | Date | string
     updatedAt?: DateTimeFilter<"ContinuousAssessment"> | Date | string
@@ -22737,9 +22737,9 @@ export namespace Prisma {
     classworkScore?: SortOrder
     examScore?: SortOrder
     totalScore?: SortOrder
-    grade?: SortOrderInput | SortOrder
-    gradePoint?: SortOrderInput | SortOrder
-    remarks?: SortOrderInput | SortOrder
+    grade?: SortOrder
+    gradePoint?: SortOrder
+    remarks?: SortOrder
     configId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -22764,9 +22764,9 @@ export namespace Prisma {
     classworkScore?: FloatFilter<"ContinuousAssessment"> | number
     examScore?: FloatFilter<"ContinuousAssessment"> | number
     totalScore?: FloatFilter<"ContinuousAssessment"> | number
-    grade?: StringNullableFilter<"ContinuousAssessment"> | string | null
-    gradePoint?: IntNullableFilter<"ContinuousAssessment"> | number | null
-    remarks?: StringNullableFilter<"ContinuousAssessment"> | string | null
+    grade?: StringFilter<"ContinuousAssessment"> | string
+    gradePoint?: IntFilter<"ContinuousAssessment"> | number
+    remarks?: StringFilter<"ContinuousAssessment"> | string
     configId?: IntNullableFilter<"ContinuousAssessment"> | number | null
     createdAt?: DateTimeFilter<"ContinuousAssessment"> | Date | string
     updatedAt?: DateTimeFilter<"ContinuousAssessment"> | Date | string
@@ -22787,9 +22787,9 @@ export namespace Prisma {
     classworkScore?: SortOrder
     examScore?: SortOrder
     totalScore?: SortOrder
-    grade?: SortOrderInput | SortOrder
-    gradePoint?: SortOrderInput | SortOrder
-    remarks?: SortOrderInput | SortOrder
+    grade?: SortOrder
+    gradePoint?: SortOrder
+    remarks?: SortOrder
     configId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -22814,9 +22814,9 @@ export namespace Prisma {
     classworkScore?: FloatWithAggregatesFilter<"ContinuousAssessment"> | number
     examScore?: FloatWithAggregatesFilter<"ContinuousAssessment"> | number
     totalScore?: FloatWithAggregatesFilter<"ContinuousAssessment"> | number
-    grade?: StringNullableWithAggregatesFilter<"ContinuousAssessment"> | string | null
-    gradePoint?: IntNullableWithAggregatesFilter<"ContinuousAssessment"> | number | null
-    remarks?: StringNullableWithAggregatesFilter<"ContinuousAssessment"> | string | null
+    grade?: StringWithAggregatesFilter<"ContinuousAssessment"> | string
+    gradePoint?: IntWithAggregatesFilter<"ContinuousAssessment"> | number
+    remarks?: StringWithAggregatesFilter<"ContinuousAssessment"> | string
     configId?: IntNullableWithAggregatesFilter<"ContinuousAssessment"> | number | null
     createdAt?: DateTimeWithAggregatesFilter<"ContinuousAssessment"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ContinuousAssessment"> | Date | string
@@ -23836,9 +23836,9 @@ export namespace Prisma {
     classworkScore?: number
     examScore?: number
     totalScore?: number
-    grade?: string | null
-    gradePoint?: number | null
-    remarks?: string | null
+    grade?: string
+    gradePoint?: number
+    remarks?: string
     configId?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -23859,9 +23859,9 @@ export namespace Prisma {
     classworkScore?: number
     examScore?: number
     totalScore?: number
-    grade?: string | null
-    gradePoint?: number | null
-    remarks?: string | null
+    grade?: string
+    gradePoint?: number
+    remarks?: string
     configId?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -23873,9 +23873,9 @@ export namespace Prisma {
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
     totalScore?: FloatFieldUpdateOperationsInput | number
-    grade?: NullableStringFieldUpdateOperationsInput | string | null
-    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: StringFieldUpdateOperationsInput | string
+    gradePoint?: IntFieldUpdateOperationsInput | number
+    remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23896,9 +23896,9 @@ export namespace Prisma {
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
     totalScore?: FloatFieldUpdateOperationsInput | number
-    grade?: NullableStringFieldUpdateOperationsInput | string | null
-    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: StringFieldUpdateOperationsInput | string
+    gradePoint?: IntFieldUpdateOperationsInput | number
+    remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23915,9 +23915,9 @@ export namespace Prisma {
     classworkScore?: number
     examScore?: number
     totalScore?: number
-    grade?: string | null
-    gradePoint?: number | null
-    remarks?: string | null
+    grade?: string
+    gradePoint?: number
+    remarks?: string
     configId?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -23929,9 +23929,9 @@ export namespace Prisma {
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
     totalScore?: FloatFieldUpdateOperationsInput | number
-    grade?: NullableStringFieldUpdateOperationsInput | string | null
-    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: StringFieldUpdateOperationsInput | string
+    gradePoint?: IntFieldUpdateOperationsInput | number
+    remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23948,9 +23948,9 @@ export namespace Prisma {
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
     totalScore?: FloatFieldUpdateOperationsInput | number
-    grade?: NullableStringFieldUpdateOperationsInput | string | null
-    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: StringFieldUpdateOperationsInput | string
+    gradePoint?: IntFieldUpdateOperationsInput | number
+    remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26748,9 +26748,9 @@ export namespace Prisma {
     classworkScore?: number
     examScore?: number
     totalScore?: number
-    grade?: string | null
-    gradePoint?: number | null
-    remarks?: string | null
+    grade?: string
+    gradePoint?: number
+    remarks?: string
     configId?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -26769,9 +26769,9 @@ export namespace Prisma {
     classworkScore?: number
     examScore?: number
     totalScore?: number
-    grade?: string | null
-    gradePoint?: number | null
-    remarks?: string | null
+    grade?: string
+    gradePoint?: number
+    remarks?: string
     configId?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -26966,9 +26966,9 @@ export namespace Prisma {
     classworkScore?: FloatFilter<"ContinuousAssessment"> | number
     examScore?: FloatFilter<"ContinuousAssessment"> | number
     totalScore?: FloatFilter<"ContinuousAssessment"> | number
-    grade?: StringNullableFilter<"ContinuousAssessment"> | string | null
-    gradePoint?: IntNullableFilter<"ContinuousAssessment"> | number | null
-    remarks?: StringNullableFilter<"ContinuousAssessment"> | string | null
+    grade?: StringFilter<"ContinuousAssessment"> | string
+    gradePoint?: IntFilter<"ContinuousAssessment"> | number
+    remarks?: StringFilter<"ContinuousAssessment"> | string
     configId?: IntNullableFilter<"ContinuousAssessment"> | number | null
     createdAt?: DateTimeFilter<"ContinuousAssessment"> | Date | string
     updatedAt?: DateTimeFilter<"ContinuousAssessment"> | Date | string
@@ -27068,9 +27068,9 @@ export namespace Prisma {
     classworkScore?: number
     examScore?: number
     totalScore?: number
-    grade?: string | null
-    gradePoint?: number | null
-    remarks?: string | null
+    grade?: string
+    gradePoint?: number
+    remarks?: string
     configId?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27089,9 +27089,9 @@ export namespace Prisma {
     classworkScore?: number
     examScore?: number
     totalScore?: number
-    grade?: string | null
-    gradePoint?: number | null
-    remarks?: string | null
+    grade?: string
+    gradePoint?: number
+    remarks?: string
     configId?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27600,9 +27600,9 @@ export namespace Prisma {
     classworkScore?: number
     examScore?: number
     totalScore?: number
-    grade?: string | null
-    gradePoint?: number | null
-    remarks?: string | null
+    grade?: string
+    gradePoint?: number
+    remarks?: string
     configId?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27621,9 +27621,9 @@ export namespace Prisma {
     classworkScore?: number
     examScore?: number
     totalScore?: number
-    grade?: string | null
-    gradePoint?: number | null
-    remarks?: string | null
+    grade?: string
+    gradePoint?: number
+    remarks?: string
     configId?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27895,9 +27895,9 @@ export namespace Prisma {
     classworkScore?: number
     examScore?: number
     totalScore?: number
-    grade?: string | null
-    gradePoint?: number | null
-    remarks?: string | null
+    grade?: string
+    gradePoint?: number
+    remarks?: string
     configId?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27916,9 +27916,9 @@ export namespace Prisma {
     classworkScore?: number
     examScore?: number
     totalScore?: number
-    grade?: string | null
-    gradePoint?: number | null
-    remarks?: string | null
+    grade?: string
+    gradePoint?: number
+    remarks?: string
     configId?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29341,9 +29341,9 @@ export namespace Prisma {
     classworkScore?: number
     examScore?: number
     totalScore?: number
-    grade?: string | null
-    gradePoint?: number | null
-    remarks?: string | null
+    grade?: string
+    gradePoint?: number
+    remarks?: string
     configId?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29401,9 +29401,9 @@ export namespace Prisma {
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
     totalScore?: FloatFieldUpdateOperationsInput | number
-    grade?: NullableStringFieldUpdateOperationsInput | string | null
-    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: StringFieldUpdateOperationsInput | string
+    gradePoint?: IntFieldUpdateOperationsInput | number
+    remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29422,9 +29422,9 @@ export namespace Prisma {
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
     totalScore?: FloatFieldUpdateOperationsInput | number
-    grade?: NullableStringFieldUpdateOperationsInput | string | null
-    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: StringFieldUpdateOperationsInput | string
+    gradePoint?: IntFieldUpdateOperationsInput | number
+    remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29440,9 +29440,9 @@ export namespace Prisma {
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
     totalScore?: FloatFieldUpdateOperationsInput | number
-    grade?: NullableStringFieldUpdateOperationsInput | string | null
-    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: StringFieldUpdateOperationsInput | string
+    gradePoint?: IntFieldUpdateOperationsInput | number
+    remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29476,9 +29476,9 @@ export namespace Prisma {
     classworkScore?: number
     examScore?: number
     totalScore?: number
-    grade?: string | null
-    gradePoint?: number | null
-    remarks?: string | null
+    grade?: string
+    gradePoint?: number
+    remarks?: string
     configId?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29576,9 +29576,9 @@ export namespace Prisma {
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
     totalScore?: FloatFieldUpdateOperationsInput | number
-    grade?: NullableStringFieldUpdateOperationsInput | string | null
-    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: StringFieldUpdateOperationsInput | string
+    gradePoint?: IntFieldUpdateOperationsInput | number
+    remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29597,9 +29597,9 @@ export namespace Prisma {
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
     totalScore?: FloatFieldUpdateOperationsInput | number
-    grade?: NullableStringFieldUpdateOperationsInput | string | null
-    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: StringFieldUpdateOperationsInput | string
+    gradePoint?: IntFieldUpdateOperationsInput | number
+    remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29615,9 +29615,9 @@ export namespace Prisma {
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
     totalScore?: FloatFieldUpdateOperationsInput | number
-    grade?: NullableStringFieldUpdateOperationsInput | string | null
-    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: StringFieldUpdateOperationsInput | string
+    gradePoint?: IntFieldUpdateOperationsInput | number
+    remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29855,9 +29855,9 @@ export namespace Prisma {
     classworkScore?: number
     examScore?: number
     totalScore?: number
-    grade?: string | null
-    gradePoint?: number | null
-    remarks?: string | null
+    grade?: string
+    gradePoint?: number
+    remarks?: string
     configId?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -30001,9 +30001,9 @@ export namespace Prisma {
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
     totalScore?: FloatFieldUpdateOperationsInput | number
-    grade?: NullableStringFieldUpdateOperationsInput | string | null
-    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: StringFieldUpdateOperationsInput | string
+    gradePoint?: IntFieldUpdateOperationsInput | number
+    remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30022,9 +30022,9 @@ export namespace Prisma {
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
     totalScore?: FloatFieldUpdateOperationsInput | number
-    grade?: NullableStringFieldUpdateOperationsInput | string | null
-    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: StringFieldUpdateOperationsInput | string
+    gradePoint?: IntFieldUpdateOperationsInput | number
+    remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30040,9 +30040,9 @@ export namespace Prisma {
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
     totalScore?: FloatFieldUpdateOperationsInput | number
-    grade?: NullableStringFieldUpdateOperationsInput | string | null
-    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: StringFieldUpdateOperationsInput | string
+    gradePoint?: IntFieldUpdateOperationsInput | number
+    remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30068,9 +30068,9 @@ export namespace Prisma {
     classworkScore?: number
     examScore?: number
     totalScore?: number
-    grade?: string | null
-    gradePoint?: number | null
-    remarks?: string | null
+    grade?: string
+    gradePoint?: number
+    remarks?: string
     configId?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -30168,9 +30168,9 @@ export namespace Prisma {
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
     totalScore?: FloatFieldUpdateOperationsInput | number
-    grade?: NullableStringFieldUpdateOperationsInput | string | null
-    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: StringFieldUpdateOperationsInput | string
+    gradePoint?: IntFieldUpdateOperationsInput | number
+    remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30189,9 +30189,9 @@ export namespace Prisma {
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
     totalScore?: FloatFieldUpdateOperationsInput | number
-    grade?: NullableStringFieldUpdateOperationsInput | string | null
-    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: StringFieldUpdateOperationsInput | string
+    gradePoint?: IntFieldUpdateOperationsInput | number
+    remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30207,9 +30207,9 @@ export namespace Prisma {
     classworkScore?: FloatFieldUpdateOperationsInput | number
     examScore?: FloatFieldUpdateOperationsInput | number
     totalScore?: FloatFieldUpdateOperationsInput | number
-    grade?: NullableStringFieldUpdateOperationsInput | string | null
-    gradePoint?: NullableIntFieldUpdateOperationsInput | number | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: StringFieldUpdateOperationsInput | string
+    gradePoint?: IntFieldUpdateOperationsInput | number
+    remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
