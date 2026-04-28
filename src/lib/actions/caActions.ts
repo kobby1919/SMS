@@ -10,7 +10,7 @@ import type { Term } from "@/src/generated/prisma";
 
 // ─── Ghana BECE Grading System ────────────────────────────────────────────────
 // Score ranges → letter grade + grade point
-export function getBECEGrade(score: number): { grade: string; gradePoint: number } {
+export async function getBECEGrade(score: number): Promise<{ grade: string; gradePoint: number }> {
   if (score >= 90) return { grade: "A1", gradePoint: 1 };
   if (score >= 80) return { grade: "B2", gradePoint: 2 };
   if (score >= 75) return { grade: "B3", gradePoint: 3 };
@@ -19,10 +19,11 @@ export function getBECEGrade(score: number): { grade: string; gradePoint: number
   if (score >= 60) return { grade: "C6", gradePoint: 6 };
   if (score >= 55) return { grade: "D7", gradePoint: 7 };
   if (score >= 50) return { grade: "E8", gradePoint: 8 };
-  return               { grade: "F9", gradePoint: 9 };
+  return { grade: "F9", gradePoint: 9 };
 }
 
-export function getGradeLabel(grade: string): string {
+// Corrected return type to Promise
+export async function getGradeLabel(grade: string): Promise<string> {
   const labels: Record<string, string> = {
     A1: "Excellent",       B2: "Very Good",
     B3: "Good",            C4: "Credit",
@@ -117,18 +118,20 @@ export type CAInput = {
 };
 
 /** Calculate weighted total and derive grade */
-function computeCA(
+async function computeCA(
   classworkScore: number,
   examScore: number,
   classworkWeight: number,
   examWeight: number
-): { totalScore: number; grade: string; gradePoint: number } {
+): Promise<{ totalScore: number; grade: string; gradePoint: number }> { 
   const totalScore =
     (classworkScore * classworkWeight) / 100 +
     (examScore * examWeight) / 100;
 
   const rounded = Math.round(totalScore * 100) / 100;
-  const { grade, gradePoint } = getBECEGrade(rounded);
+  
+  const { grade, gradePoint } = await getBECEGrade(rounded); 
+  
   return { totalScore: rounded, grade, gradePoint };
 }
 
@@ -145,7 +148,7 @@ export async function createCA(data: CAInput) {
     );
   }
 
-  const { totalScore, grade, gradePoint } = computeCA(
+  const { totalScore, grade, gradePoint } = await computeCA(
     data.classworkScore,
     data.examScore,
     config.classworkWeight,
@@ -184,7 +187,7 @@ export async function updateCA(data: CAInput) {
   });
   if (!config) throw new Error(`No CA configuration found for ${data.academicYear}.`);
 
-  const { totalScore, grade, gradePoint } = computeCA(
+  const { totalScore, grade, gradePoint } = await computeCA(
     data.classworkScore,
     data.examScore,
     config.classworkWeight,
@@ -223,7 +226,6 @@ export async function deleteCA(id: number) {
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // BULK UPSERT — used by the batch CA entry form
-// Allows a teacher to submit all students in their class for one subject at once
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export type BulkCARow = {
@@ -237,7 +239,7 @@ export async function bulkUpsertCA(
   rows: BulkCARow[],
   subjectId:    number,
   classId:      number,
-  term:         Term,
+  term:          Term,
   academicYear: string
 ) {
   const teacherId = await requireCAAccess(classId);
@@ -251,7 +253,7 @@ export async function bulkUpsertCA(
 
   const results = await Promise.all(
     rows.map(async (row) => {
-      const { totalScore, grade, gradePoint } = computeCA(
+      const { totalScore, grade, gradePoint } = await computeCA(
         row.classworkScore,
         row.examScore,
         config.classworkWeight,
