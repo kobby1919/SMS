@@ -110,6 +110,12 @@ const menuItems = [
         href: "/list/attendance",
         visible: ["admin", "teacher", "student", "parent"],
       },
+      {
+        icon: "/lesson.png", // Or use a clipboard icon if you have one
+        label: "Continuous Assessment",
+        href: "/list/ca",
+        visible: ["admin", "teacher"],
+      },
     ],
   },
   {
@@ -167,6 +173,12 @@ const menuItems = [
         href: "/logout",
         visible: ["admin", "teacher", "student", "parent"],
       },
+      {
+        icon: "/setting.png",
+        label: "CA Settings",
+        href: "/admin/ca-config",
+        visible: ["admin"],
+      },
     ],
   },
 ];
@@ -179,7 +191,7 @@ const MenuClient = ({ role }: { role: string }) => {
       {menuItems.map((section) => {
         // Filter items visible to this role
         const visibleItems = section.items.filter((item) =>
-          item.visible.includes(role)
+          item.visible.includes(role),
         );
 
         // Skip entire section if no items are visible
@@ -210,9 +222,10 @@ const MenuClient = ({ role }: { role: string }) => {
                   key={item.label + item.href}
                   className={`flex items-center justify-center lg:justify-start gap-3
                     py-2.5 px-0 lg:px-3 rounded-xl transition-all group
-                    ${isActive
-                      ? "bg-jayPurpleLight text-jayPurple font-semibold"
-                      : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                    ${
+                      isActive
+                        ? "bg-jayPurpleLight text-jayPurple font-semibold"
+                        : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                     }`}
                 >
                   {/* Icon */}
@@ -223,7 +236,9 @@ const MenuClient = ({ role }: { role: string }) => {
                       width={20}
                       height={20}
                       className={`w-5 h-5 transition-opacity ${
-                        isActive ? "opacity-100" : "opacity-60 group-hover:opacity-80"
+                        isActive
+                          ? "opacity-100"
+                          : "opacity-60 group-hover:opacity-80"
                       }`}
                     />
                   </span>

@@ -8,6 +8,7 @@ import EventList from "@/src/components/EventList";
 import BigCalendar from "@/src/components/BigCalendar";
 import WelcomeBanner from "@/src/components/WelcomeBanner";
 import type { CalendarLesson } from "@/src/components/BigCalendar";
+import CAQuickCard from "@/src/components/CAQuickCard";
 
 const TeacherPage = async ({
   searchParams,
@@ -108,6 +109,7 @@ const TeacherPage = async ({
       </div>
 
       <div className="w-full xl:w-1/3 flex flex-col gap-4">
+      <CAQuickCard teacherId={user!.id}/>
         <EventCalendar />
         <EventList dateParam={searchParams.date} />
         <Announcements />
