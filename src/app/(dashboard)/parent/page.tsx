@@ -1,5 +1,6 @@
 // src/app/(dashboard)/parent/page.tsx
 
+
 import prisma from "@/src/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 import Announcements from "@/src/components/Announcements";
@@ -12,8 +13,11 @@ import type { CalendarLesson } from "@/src/components/BigCalendar";
 import Link from "next/link";
 import {
   CheckCircle2, XCircle, Clock, FileCheck,
-  AlertTriangle, TrendingUp, CalendarDays, ShieldAlert,
+  AlertTriangle, TrendingUp, TrendingDown, Minus,
+  CalendarDays, ShieldAlert, FileText, Award,
+  AlertCircle, Star, BookOpen,
 } from "lucide-react";
+import { getGradeBandByGrade, computeAggregate, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +47,7 @@ const ParentPage = async ({
     },
   });
 
-  const children = parent?.students ?? [];
+  const children  = parent?.students ?? [];
   const parentName = parent
     ? `${parent.name} ${parent.surname}`
     : (user?.firstName ?? "Parent");
@@ -55,6 +59,7 @@ const ParentPage = async ({
 
   const childrenData = await Promise.all(
     children.map(async (child) => {
+      // ── Timetable ────────────────────────────────────────────────────────
       const lessons = await prisma.lesson.findMany({
         where:   { classId: child.classId },
         include: {
@@ -64,8 +69,9 @@ const ParentPage = async ({
         orderBy: [{ day: "asc" }, { startTime: "asc" }],
       });
 
+      // ── Attendance ───────────────────────────────────────────────────────
       const todayAttendance = await prisma.attendance.findMany({
-        where: { studentId: child.id, date: { gte: today, lte: todayEnd } },
+        where:   { studentId: child.id, date: { gte: today, lte: todayEnd } },
         include: { lesson: { include: { subject: { select: { name: true } } } } },
         orderBy: { date: "asc" },
       });
@@ -101,12 +107,84 @@ const ParentPage = async ({
         teacher:   `${l.teacher.name} ${l.teacher.surname}`,
       }));
 
+      // ── CA records — all terms, ordered oldest first ──────────────────────
+      const allCA = await prisma.continuousAssessment.findMany({
+        where:   { studentId: child.id },
+        include: { subject: { select: { name: true } } },
+        orderBy: [{ academicYear: "asc" }, { term: "asc" }],
+      });
+
+      // Group into term buckets
+      const groupMap = new Map<string, typeof allCA>();
+      for (const r of allCA) {
+        const key = `${r.academicYear}__${r.term}`;
+        if (!groupMap.has(key)) groupMap.set(key, []);
+        groupMap.get(key)!.push(r);
+      }
+
+      const termGroups = Array.from(groupMap.entries()).map(([key, records]) => {
+        const [year, term] = key.split("__");
+        const scores       = records.map((r) => r.totalScore);
+        const gps          = records.map((r) => r.gradePoint);
+        const avg          = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+        return {
+          term, year, records,
+          avgScore:  Math.round(avg * 10) / 10,
+          aggregate: computeAggregate(gps),
+        };
+      });
+
+      const latestGroup = termGroups[termGroups.length - 1] ?? null;
+      const prevGroup   = termGroups[termGroups.length - 2] ?? null;
+
+      // Trend vs previous term
+      const trendDiff = prevGroup && latestGroup
+        ? Math.round((latestGroup.avgScore - prevGroup.avgScore) * 10) / 10
+        : 0;
+      const trend = !prevGroup || !latestGroup ? "neutral"
+        : trendDiff > 2  ? "up"
+        : trendDiff < -2 ? "down"
+        : "neutral";
+
+      // Class position for latest term
+      let myPosition = 0;
+      if (latestGroup) {
+        const classmatesCA = await prisma.continuousAssessment.findMany({
+          where: {
+            classId:      child.classId,
+            term:         latestGroup.term as any,
+            academicYear: latestGroup.year,
+          },
+          select: { studentId: true, gradePoint: true },
+        });
+        const gpMap: Record<string, number[]> = {};
+        for (const r of classmatesCA) {
+          if (!gpMap[r.studentId]) gpMap[r.studentId] = [];
+          gpMap[r.studentId].push(r.gradePoint);
+        }
+        const sorted = Object.entries(gpMap)
+          .map(([sid, gps]) => ({ sid, agg: computeAggregate(gps) }))
+          .sort((a, b) => a.agg - b.agg);
+        myPosition = sorted.findIndex((s) => s.sid === child.id) + 1;
+      }
+
+      const classSize = await prisma.student.count({ where: { classId: child.classId } });
+
+      // Best / weakest subject in latest term
+      const sortedByGP = latestGroup
+        ? [...latestGroup.records].sort((a, b) => a.gradePoint - b.gradePoint)
+        : [];
+      const bestSubject = sortedByGP[0] ?? null;
+      const weakSubject = sortedByGP[sortedByGP.length - 1] ?? null;
+
       return {
         id: child.id, name: child.name, surname: child.surname,
-        className: child.class.name, lessons: calendarLessons,
+        className: child.class.name, classId: child.classId,
+        lessons: calendarLessons,
         streak, isFlagged: streak >= 3,
         todayAttendance, history,
         stats: { total, present, absent, late, excused, rate },
+        ca: { latestGroup, prevGroup, termGroups, trend, trendDiff, myPosition, classSize, bestSubject, weakSubject },
       };
     })
   );
@@ -116,8 +194,8 @@ const ParentPage = async ({
     className: c.className, lessons: c.lessons,
   }));
 
-  const anyFlagged  = childrenData.some((c) => c.isFlagged);
-  const childCount  = children.length;
+  const anyFlagged = childrenData.some((c) => c.isFlagged);
+  const childCount = children.length;
 
   return (
     <div className="p-4 flex flex-col gap-5">
@@ -162,7 +240,9 @@ const ParentPage = async ({
                 <div className="flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h2 className="font-black text-gray-800 text-base">{child.name} {child.surname}</h2>
-                    <span className="text-[11px] font-bold px-2 py-0.5 bg-violet-50 text-violet-600 rounded-lg">{child.className}</span>
+                    <span className="text-[11px] font-bold px-2 py-0.5 bg-violet-50 text-violet-600 rounded-lg">
+                      {child.className}
+                    </span>
                     {child.isFlagged && (
                       <span className="flex items-center gap-1 text-[11px] font-black px-2 py-0.5 bg-rose-100 text-rose-600 rounded-lg">
                         <AlertTriangle size={10} />{child.streak} days absent
@@ -178,7 +258,174 @@ const ParentPage = async ({
                 </div>
               </div>
 
-              {/* Stats */}
+              {/* ── CA PERFORMANCE CARD ── */}
+              {child.ca.latestGroup ? (
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                  {/* Card header */}
+                  <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-violet-50 rounded-xl flex items-center justify-center">
+                        <Award size={14} className="text-violet-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-black text-gray-800">Academic Performance</p>
+                        <p className="text-[10px] text-gray-400 font-medium">
+                          {TERM_LABELS[child.ca.latestGroup.term]} · {child.ca.latestGroup.year}
+                        </p>
+                      </div>
+                    </div>
+                    <Link
+                      href={`/list/report-cards/${child.id}?term=${child.ca.latestGroup.term}&year=${child.ca.latestGroup.year}&classId=${child.classId}`}
+                      className="flex items-center gap-1.5 px-3 py-2 bg-violet-600 text-white rounded-xl text-xs font-bold hover:bg-violet-700 transition-colors shrink-0"
+                    >
+                      <FileText size={12} /> Report Card
+                    </Link>
+                  </div>
+
+                  {/* Stats row */}
+                  <div className="grid grid-cols-3 divide-x divide-gray-100">
+                    {/* Average + trend */}
+                    <div className="flex flex-col gap-0.5 p-4">
+                      <div className="flex items-center gap-1 mb-0.5">
+                        {child.ca.trend === "up"
+                          ? <TrendingUp   size={12} className="text-emerald-500" />
+                          : child.ca.trend === "down"
+                          ? <TrendingDown size={12} className="text-rose-500" />
+                          : <Minus        size={12} className="text-gray-400" />}
+                        <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Average</p>
+                      </div>
+                      <p className={`text-2xl font-black leading-none
+                        ${child.ca.trend === "up" ? "text-emerald-700" : child.ca.trend === "down" ? "text-rose-700" : "text-gray-800"}`}>
+                        {child.ca.latestGroup.avgScore}%
+                      </p>
+                      {child.ca.prevGroup && (
+                        <p className={`text-[10px] font-semibold mt-0.5
+                          ${child.ca.trendDiff > 0 ? "text-emerald-600" : child.ca.trendDiff < 0 ? "text-rose-600" : "text-gray-400"}`}>
+                          {child.ca.trendDiff > 0 ? "+" : ""}{child.ca.trendDiff}% vs last term
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Aggregate */}
+                    <div className="flex flex-col gap-0.5 p-4">
+                      <p className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-0.5">Aggregate</p>
+                      <p className="text-2xl font-black text-amber-600 leading-none">
+                        {child.ca.latestGroup.aggregate}
+                      </p>
+                      <p className="text-[10px] text-gray-400 font-semibold mt-0.5">BECE system</p>
+                    </div>
+
+                    {/* Position */}
+                    <div className="flex flex-col gap-0.5 p-4">
+                      <p className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-0.5">Position</p>
+                      <p className={`text-2xl font-black leading-none
+                        ${child.ca.myPosition <= 3 ? "text-amber-600" : "text-gray-800"}`}>
+                        {child.ca.myPosition > 0 ? ordinal(child.ca.myPosition) : "—"}
+                      </p>
+                      <p className="text-[10px] text-gray-400 font-semibold mt-0.5">
+                        of {child.ca.classSize} students
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Subject bars */}
+                  <div className="px-5 py-3 border-t border-gray-100 flex flex-col gap-2">
+                    {child.ca.latestGroup.records.map((r) => {
+                      const band = getGradeBandByGrade(r.grade);
+                      return (
+                        <div key={r.id} className="flex items-center gap-3">
+                          <p className="text-xs font-semibold text-gray-600 w-28 shrink-0 truncate">
+                            {r.subject.name}
+                          </p>
+                          <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full ${band.bar}`}
+                              style={{ width: `${r.totalScore}%` }}
+                            />
+                          </div>
+                          <span className={`text-[10px] font-black w-7 text-right ${band.color}`}>
+                            {r.grade}
+                          </span>
+                          <span className="text-[10px] text-gray-400 w-10 text-right">
+                            {r.totalScore.toFixed(1)}%
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Best / weakest */}
+                  {child.ca.bestSubject && child.ca.weakSubject &&
+                   child.ca.bestSubject.id !== child.ca.weakSubject.id && (
+                    <div className="grid grid-cols-2 gap-3 px-5 pb-5">
+                      <div className="flex items-start gap-2 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                        <Star size={12} className="text-emerald-600 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-[10px] font-black text-emerald-700">🌟 Excelling In</p>
+                          <p className="text-xs font-bold text-emerald-800">{child.ca.bestSubject.subject.name}</p>
+                          <p className="text-[10px] text-emerald-600">
+                            {child.ca.bestSubject.grade} · {child.ca.bestSubject.totalScore.toFixed(1)}%
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2 p-3 bg-amber-50 rounded-xl border border-amber-100">
+                        <AlertCircle size={12} className="text-amber-500 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-[10px] font-black text-amber-700">📚 Needs Support</p>
+                          <p className="text-xs font-bold text-amber-800">{child.ca.weakSubject.subject.name}</p>
+                          <p className="text-[10px] text-amber-600">
+                            {child.ca.weakSubject.grade} · {child.ca.weakSubject.totalScore.toFixed(1)}%
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Term-on-term mini chart */}
+                  {child.ca.termGroups.length > 1 && (
+                    <div className="px-5 pb-5 border-t border-gray-50 pt-4">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">
+                        Term Progress
+                      </p>
+                      <div className="flex items-end gap-2 h-12">
+                        {child.ca.termGroups.map((g, i) => {
+                          const isLatest = i === child.ca.termGroups.length - 1;
+                          const barH     = Math.max((g.avgScore / 100) * 100, 8);
+                          const topGrade = g.records.sort((a, b) => a.gradePoint - b.gradePoint)[0]?.grade ?? "F9";
+                          const band     = getGradeBandByGrade(topGrade);
+                          return (
+                            <div key={`${g.year}${g.term}`} className="flex flex-col items-center gap-1 flex-1">
+                              <span className="text-[9px] font-black text-gray-400">{g.avgScore}%</span>
+                              <div
+                                className={`w-full rounded-t-lg ${isLatest ? band.bar : "bg-gray-200"}`}
+                                style={{ height: `${barH * 0.4}px` }}
+                              />
+                              <span className={`text-[9px] font-bold truncate max-w-full text-center
+                                ${isLatest ? "text-indigo-600" : "text-gray-400"}`}>
+                                {TERM_LABELS[g.term]?.replace("Term ", "T")} {g.year.slice(-2)}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4">
+                  <div className="w-9 h-9 bg-gray-50 rounded-xl flex items-center justify-center shrink-0">
+                    <BookOpen size={16} className="text-gray-300" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-black text-gray-400">No CA records yet</p>
+                    <p className="text-xs text-gray-300 mt-0.5">
+                      {child.name}&apos;s class teacher hasn&apos;t entered scores for this term yet.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* ── ATTENDANCE STATS (unchanged) ── */}
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 {[
                   { label: "Present", value: child.stats.present, icon: <CheckCircle2 size={14} />, color: "bg-emerald-50 text-emerald-700" },
@@ -216,7 +463,7 @@ const ParentPage = async ({
                 </p>
               </div>
 
-              {/* Today's attendance */}
+              {/* Today's attendance (unchanged) */}
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -236,9 +483,9 @@ const ParentPage = async ({
                     {child.todayAttendance.map((record) => {
                       const statusConfig = {
                         PRESENT: { color: "text-emerald-600 bg-emerald-50 border-emerald-200", icon: <CheckCircle2 size={12} /> },
-                        ABSENT:  { color: "text-rose-600 bg-rose-50 border-rose-200",         icon: <XCircle      size={12} /> },
-                        LATE:    { color: "text-amber-600 bg-amber-50 border-amber-200",       icon: <Clock        size={12} /> },
-                        EXCUSED: { color: "text-indigo-600 bg-indigo-50 border-indigo-200",   icon: <FileCheck    size={12} /> },
+                        ABSENT:  { color: "text-rose-600 bg-rose-50 border-rose-200",           icon: <XCircle      size={12} /> },
+                        LATE:    { color: "text-amber-600 bg-amber-50 border-amber-200",         icon: <Clock        size={12} /> },
+                        EXCUSED: { color: "text-indigo-600 bg-indigo-50 border-indigo-200",     icon: <FileCheck    size={12} /> },
                       };
                       const cfg = statusConfig[record.status as keyof typeof statusConfig];
                       return (
@@ -257,7 +504,7 @@ const ParentPage = async ({
                 )}
               </div>
 
-              {/* Recent history */}
+              {/* Recent history (unchanged) */}
               {child.history.length > 0 && (
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                   <div className="px-4 py-3 border-b border-gray-100">
@@ -271,7 +518,7 @@ const ParentPage = async ({
                         ABSENT:  { dot: "bg-rose-400",    text: "text-rose-700",    light: "bg-rose-50"    },
                         LATE:    { dot: "bg-amber-400",   text: "text-amber-700",   light: "bg-amber-50"   },
                         EXCUSED: { dot: "bg-indigo-400",  text: "text-indigo-700",  light: "bg-indigo-50"  },
-                      }[record.status as "PRESENT"|"ABSENT"|"LATE"|"EXCUSED"];
+                      }[record.status as "PRESENT" | "ABSENT" | "LATE" | "EXCUSED"];
                       return (
                         <div key={record.id} className="flex items-center gap-3 px-4 py-2.5">
                           <span className={`w-2 h-2 rounded-full shrink-0 ${cfg.dot}`} />
@@ -294,7 +541,7 @@ const ParentPage = async ({
                 </div>
               )}
 
-              {/* Consecutive absence warning */}
+              {/* Consecutive absence warning (unchanged) */}
               {child.isFlagged && (
                 <div className="flex items-start gap-3 p-4 bg-rose-50 border border-rose-200 rounded-2xl">
                   <AlertTriangle size={16} className="text-rose-500 shrink-0 mt-0.5" />
@@ -319,7 +566,7 @@ const ParentPage = async ({
             </div>
           )}
 
-          {/* Timetable */}
+          {/* Timetable (unchanged) */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <h2 className="font-black text-gray-800 text-base mb-4">Class Timetables</h2>
             <ParentTimetableTabs children={childrenSchedules} />
