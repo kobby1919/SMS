@@ -1,10 +1,5 @@
 // src/app/(dashboard)/student/page.tsx
-//
-// feat: add CA summary and report card link to student dashboard
-//   - Preserves existing attendance card, timetable, and layout exactly
-//   - Adds CA results card showing latest term grades, subject bars,
-//     best/weakest subject callout, and a direct report card link
-//   - Falls back gracefully when no CA records exist yet
+
 
 import prisma from "@/src/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
