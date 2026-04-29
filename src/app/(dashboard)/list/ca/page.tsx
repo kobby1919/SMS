@@ -137,7 +137,7 @@ const CAPage = async ({
   const academicYears =
     configs.length > 0
       ? configs.map((c) => c.academicYear)
-      : ["2024/25", "2025/26"];
+      : ["2025/26", "2026/27"];
 
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
