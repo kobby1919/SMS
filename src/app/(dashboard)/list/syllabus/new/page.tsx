@@ -1,6 +1,5 @@
 // src/app/(dashboard)/list/syllabus/new/page.tsx
-// Admin-only: create a new syllabus (pick subject, grade, term, year).
-// Redirects to the edit page after creation so topics can be added immediately.
+
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
