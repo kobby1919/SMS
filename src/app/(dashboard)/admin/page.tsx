@@ -1,13 +1,11 @@
 // src/app/(dashboard)/admin/page.tsx
 
+
 import prisma from "@/src/lib/prisma";
 import AdminDashboard from "@/src/components/AdminDashboard";
 import EventList from "@/src/components/EventList";
 import Announcements from "@/src/components/Announcements";
 
-// ✅ CRITICAL FIX: Force this page to always server-render fresh on every request.
-// Without this, Next.js statically caches the page at build time and the
-// attendance chart (and all other data) never updates on refresh.
 export const dynamic = "force-dynamic";
 
 const DAY_ENUM_MAP: Record<number, string> = {
@@ -22,7 +20,6 @@ const AdminPage = async ({
   const currentYear = new Date().getFullYear();
   const now         = new Date();
 
-  // Last 5 school days for attendance chart
   const weekDays: { label: string; date: Date }[] = [];
   let d = new Date();
   while (weekDays.length < 5) {
@@ -35,12 +32,9 @@ const AdminPage = async ({
 
   const months     = Array.from({ length: 12 }, (_, i) => i);
   const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-
   const todayJsDay = now.getDay();
   const todayEnum  = DAY_ENUM_MAP[todayJsDay] ?? "MONDAY";
   const todayLabel = now.toLocaleDateString("en-US", { weekday: "long" });
-
-  // Today boundaries
   const todayStart = new Date(now); todayStart.setHours(0, 0, 0, 0);
   const todayEnd   = new Date(now); todayEnd.setHours(23, 59, 59, 999);
 
@@ -50,12 +44,16 @@ const AdminPage = async ({
     totalLessons, totalClasses, todayLessons,
     todayPresent, todayAbsent, todayLate, todayExcused,
     totalStudents,
+    // CA stats
+    totalCARecords, caConfigCount,
+    // Syllabus stats
+    totalSyllabi, publishedSyllabi,
   ] = await Promise.all([
     prisma.admin.count(),
     prisma.teacher.count(),
     prisma.student.count(),
     prisma.parent.count(),
-    prisma.student.count({ where: { sex: "MALE" } }),
+    prisma.student.count({ where: { sex: "MALE"   } }),
     prisma.student.count({ where: { sex: "FEMALE" } }),
     prisma.lesson.count(),
     prisma.class.count(),
@@ -65,9 +63,17 @@ const AdminPage = async ({
     prisma.attendance.count({ where: { date: { gte: todayStart, lte: todayEnd }, status: "LATE"    } }),
     prisma.attendance.count({ where: { date: { gte: todayStart, lte: todayEnd }, status: "EXCUSED" } }),
     prisma.student.count(),
+    prisma.continuousAssessment.count(),
+    prisma.cAConfig.count(),
+    prisma.syllabus.count(),
+    prisma.syllabus.count({ where: { status: "PUBLISHED" } }),
   ]);
 
-  // Attendance chart data — last 5 school days
+  // CA school average
+  const caAvgResult = await prisma.continuousAssessment.aggregate({ _avg: { totalScore: true } });
+  const caAvg       = Math.round((caAvgResult._avg.totalScore ?? 0) * 10) / 10;
+
+  // Attendance chart
   const attendanceData = await Promise.all(
     weekDays.map(async ({ label, date }) => {
       const start = new Date(date); start.setHours(0, 0, 0, 0);
@@ -80,7 +86,7 @@ const AdminPage = async ({
     })
   );
 
-  // Finance data
+  // Finance chart
   const financeData = await Promise.all(
     months.map(async (i) => {
       const start = new Date(currentYear, i, 1);
@@ -97,23 +103,17 @@ const AdminPage = async ({
     })
   );
 
-  // Flagged students (3+ consecutive absences)
+  // Flagged students
   const allStudents = await prisma.student.findMany({
     select: { id: true, name: true, surname: true, class: { select: { name: true } } },
   });
   const flagged: { name: string; surname: string; className: string; streak: number }[] = [];
   for (const student of allStudents) {
     const recent = await prisma.attendance.findMany({
-      where:   { studentId: student.id },
-      orderBy: { date: "desc" },
-      take:    5,
-      select:  { status: true },
+      where: { studentId: student.id }, orderBy: { date: "desc" }, take: 5, select: { status: true },
     });
     let streak = 0;
-    for (const r of recent) {
-      if (r.status === "ABSENT") streak++;
-      else break;
-    }
+    for (const r of recent) { if (r.status === "ABSENT") streak++; else break; }
     if (streak >= 3) flagged.push({ ...student, className: student.class.name, streak });
   }
 
@@ -139,6 +139,16 @@ const AdminPage = async ({
         todayPresent, todayAbsent, todayLate, todayExcused,
         todayRate, totalStudents, flaggedCount: flagged.length,
         flagged: flagged.slice(0, 5),
+      }}
+      caSnapshot={{
+        totalRecords:  totalCARecords,
+        schoolAvg:     caAvg,
+        configExists:  caConfigCount > 0,
+      }}
+      syllabusSnapshot={{
+        total:     totalSyllabi,
+        published: publishedSyllabi,
+        draft:     totalSyllabi - publishedSyllabi,
       }}
     />
   );

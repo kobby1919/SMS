@@ -2,6 +2,7 @@
 
 // src/components/AdminDashboard.tsx
 
+
 import FinanceChart from "@/src/components/FinanceChart";
 import CountChart from "@/src/components/CountChart";
 import AttendanceBarChart from "@/src/components/AttendanceBarChart";
@@ -10,27 +11,51 @@ import WelcomeBanner from "@/src/components/WelcomeBanner";
 import { motion } from "framer-motion";
 import UserCardClient from "./UserCardClient ";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, XCircle, Clock, FileCheck, AlertTriangle, CalendarDays } from "lucide-react";
+import {
+  CheckCircle2, XCircle, Clock, FileCheck,
+  AlertTriangle, CalendarDays, TrendingUp,
+  BookMarked, ScrollText, ChevronRight,
+} from "lucide-react";
+import Link from "next/link";
 
-type CountEntry = { type: "admin" | "teacher" | "student" | "parent"; count: number };
-type DayData    = { name: string; present: number; absent: number };
-type MonthData  = { name: string; income: number; expense: number };
+type CountEntry        = { type: "admin" | "teacher" | "student" | "parent"; count: number };
+type DayData           = { name: string; present: number; absent: number };
+type MonthData         = { name: string; income: number; expense: number };
 type TimetableSnapshot = { totalLessons: number; totalClasses: number; todayLessons: number; todayDay: string };
 type AttendanceSnapshot = {
   todayPresent: number; todayAbsent: number; todayLate: number; todayExcused: number;
   todayRate: number; totalStudents: number; flaggedCount: number;
   flagged: { name: string; surname: string; className: string; streak: number }[];
 };
+type CASnapshot = {
+  totalRecords: number;
+  schoolAvg:    number;
+  configExists: boolean;
+};
+type SyllabusSnapshot = {
+  total:     number;
+  published: number;
+  draft:     number;
+};
+
 type Props = {
-  counts: CountEntry[]; boys: number; girls: number;
-  attendanceData: DayData[]; financeData: MonthData[];
-  eventList: React.ReactNode; announcements: React.ReactNode;
-  timetableSnapshot: TimetableSnapshot; attendanceSnapshot: AttendanceSnapshot;
+  counts:            CountEntry[];
+  boys:              number;
+  girls:             number;
+  attendanceData:    DayData[];
+  financeData:       MonthData[];
+  eventList:         React.ReactNode;
+  announcements:     React.ReactNode;
+  timetableSnapshot: TimetableSnapshot;
+  attendanceSnapshot: AttendanceSnapshot;
+  caSnapshot:        CASnapshot;
+  syllabusSnapshot:  SyllabusSnapshot;
 };
 
 const AdminDashboard = ({
   counts, boys, girls, attendanceData, financeData,
   eventList, announcements, timetableSnapshot, attendanceSnapshot,
+  caSnapshot, syllabusSnapshot,
 }: Props) => {
   const router = useRouter();
   const noAttendanceTaken = attendanceSnapshot.todayPresent + attendanceSnapshot.todayAbsent === 0;
@@ -61,6 +86,7 @@ const AdminDashboard = ({
             <div className="md:col-span-2 h-[300px]"><AttendanceBarChart data={attendanceData} /></div>
           </div>
 
+          {/* Attendance card */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 }}>
             <div
               onClick={() => router.push("/list/attendance")}
@@ -80,7 +106,6 @@ const AdminDashboard = ({
                 </div>
                 <span className="text-xs font-bold text-emerald-500 group-hover:text-emerald-700 transition-colors">View All →</span>
               </div>
-
               <div className="grid grid-cols-4 gap-2 mb-4">
                 {[
                   { label: "Present", value: attendanceSnapshot.todayPresent, icon: <CheckCircle2 size={13} />, color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
@@ -94,7 +119,6 @@ const AdminDashboard = ({
                   </div>
                 ))}
               </div>
-
               <div className="mb-3">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[11px] text-gray-400 font-semibold">School-wide rate</span>
@@ -109,7 +133,6 @@ const AdminDashboard = ({
                   />
                 </div>
               </div>
-
               {attendanceSnapshot.flaggedCount > 0 ? (
                 <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl">
                   <AlertTriangle size={13} className="text-amber-600 shrink-0 mt-0.5" />
@@ -129,11 +152,7 @@ const AdminDashboard = ({
               ) : (
                 <div className="text-center py-2">
                   {noAttendanceTaken ? (
-                    <button
-                      type="button"
-                      onClick={(e) => { e.stopPropagation(); router.push("/list/attendance/take"); }}
-                      className="text-xs text-emerald-600 font-bold hover:underline cursor-pointer bg-transparent border-none p-0"
-                    >
+                    <button type="button" onClick={(e) => { e.stopPropagation(); router.push("/list/attendance/take"); }} className="text-xs text-emerald-600 font-bold hover:underline cursor-pointer bg-transparent border-none p-0">
                       → No attendance taken yet — take attendance now
                     </button>
                   ) : (
@@ -146,6 +165,7 @@ const AdminDashboard = ({
 
           <div className="h-[420px]"><FinanceChart data={financeData} /></div>
 
+          {/* Timetable card */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.3 }}>
             <a href="/admin/timetable" className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hover:shadow-md hover:border-indigo-100 transition-all group">
               <div className="flex items-center justify-between mb-4">
@@ -185,7 +205,81 @@ const AdminDashboard = ({
           </motion.div>
         </div>
 
+        {/* ── RIGHT SIDEBAR ── */}
         <div className="flex flex-col gap-4 xl:sticky xl:top-[80px] xl:self-start">
+
+          {/* CA Snapshot card */}
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+            <Link href="/list/ca" className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hover:shadow-md hover:border-violet-100 transition-all group">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-violet-50 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-violet-100 transition-colors">
+                    <TrendingUp size={16} className="text-violet-600" />
+                  </div>
+                  <div>
+                    <h2 className="font-black text-gray-800 text-sm">Continuous Assessment</h2>
+                    <p className="text-[10px] text-gray-400 font-medium">School-wide CA overview</p>
+                  </div>
+                </div>
+                <ChevronRight size={14} className="text-gray-300 group-hover:text-violet-500 transition-colors" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-violet-50 rounded-xl p-3">
+                  <p className="text-xl font-black text-violet-700 leading-none">{caSnapshot.totalRecords}</p>
+                  <p className="text-[9px] font-bold text-violet-500 uppercase mt-1">Total Records</p>
+                </div>
+                <div className={`rounded-xl p-3 ${caSnapshot.schoolAvg >= 70 ? "bg-emerald-50" : caSnapshot.schoolAvg >= 50 ? "bg-amber-50" : "bg-rose-50"}`}>
+                  <p className={`text-xl font-black leading-none ${caSnapshot.schoolAvg >= 70 ? "text-emerald-700" : caSnapshot.schoolAvg >= 50 ? "text-amber-700" : "text-rose-700"}`}>
+                    {caSnapshot.totalRecords > 0 ? `${caSnapshot.schoolAvg}%` : "—"}
+                  </p>
+                  <p className={`text-[9px] font-bold uppercase mt-1 ${caSnapshot.schoolAvg >= 70 ? "text-emerald-500" : caSnapshot.schoolAvg >= 50 ? "text-amber-500" : "text-rose-500"}`}>
+                    School Avg
+                  </p>
+                </div>
+              </div>
+              {!caSnapshot.configExists && (
+                <p className="text-[10px] text-amber-600 font-semibold mt-3 flex items-center gap-1">
+                  <AlertTriangle size={10} /> No CA config set — <Link href="/admin/ca-config" className="underline" onClick={(e) => e.stopPropagation()}>set up now</Link>
+                </p>
+              )}
+            </Link>
+          </motion.div>
+
+          {/* Syllabus Snapshot card */}
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
+            <Link href="/list/syllabus" className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hover:shadow-md hover:border-indigo-100 transition-all group">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-indigo-50 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-indigo-100 transition-colors">
+                    <ScrollText size={16} className="text-indigo-600" />
+                  </div>
+                  <div>
+                    <h2 className="font-black text-gray-800 text-sm">Syllabi</h2>
+                    <p className="text-[10px] text-gray-400 font-medium">Subject syllabus management</p>
+                  </div>
+                </div>
+                <ChevronRight size={14} className="text-gray-300 group-hover:text-indigo-500 transition-colors" />
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { label: "Total",     value: syllabusSnapshot.total,     color: "bg-indigo-50 text-indigo-700"  },
+                  { label: "Published", value: syllabusSnapshot.published, color: "bg-emerald-50 text-emerald-700" },
+                  { label: "Draft",     value: syllabusSnapshot.draft,     color: "bg-amber-50 text-amber-700"    },
+                ].map((s) => (
+                  <div key={s.label} className={`rounded-xl p-3 ${s.color} text-center`}>
+                    <p className="text-xl font-black leading-none">{s.value}</p>
+                    <p className="text-[9px] font-bold uppercase mt-1 opacity-70">{s.label}</p>
+                  </div>
+                ))}
+              </div>
+              {syllabusSnapshot.total === 0 && (
+                <p className="text-[10px] text-gray-400 font-semibold mt-3 text-center">
+                  No syllabi yet — <Link href="/list/syllabus/new" className="text-indigo-500 underline" onClick={(e) => e.stopPropagation()}>create the first one</Link>
+                </p>
+              )}
+            </Link>
+          </motion.div>
+
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}><EventCalendar /></motion.div>
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>{eventList}</motion.div>
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>{announcements}</motion.div>
