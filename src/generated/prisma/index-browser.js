@@ -277,6 +277,43 @@ exports.Prisma.ContinuousAssessmentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SyllabusScalarFieldEnum = {
+  id: 'id',
+  description: 'description',
+  status: 'status',
+  term: 'term',
+  academicYear: 'academicYear',
+  subjectId: 'subjectId',
+  gradeId: 'gradeId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SyllabusTopicScalarFieldEnum = {
+  id: 'id',
+  weekNumber: 'weekNumber',
+  durationWeeks: 'durationWeeks',
+  order: 'order',
+  title: 'title',
+  subtopics: 'subtopics',
+  objectives: 'objectives',
+  coreCompetencies: 'coreCompetencies',
+  teachingResources: 'teachingResources',
+  syllabusId: 'syllabusId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SyllabusTopicProgressScalarFieldEnum = {
+  id: 'id',
+  coveredDate: 'coveredDate',
+  notes: 'notes',
+  syllabusTopicId: 'syllabusTopicId',
+  classId: 'classId',
+  teacherId: 'teacherId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -317,6 +354,11 @@ exports.Term = exports.$Enums.Term = {
   TERM_3: 'TERM_3'
 };
 
+exports.SyllabusStatus = exports.$Enums.SyllabusStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED'
+};
+
 exports.Prisma.ModelName = {
   Admin: 'Admin',
   Student: 'Student',
@@ -333,7 +375,10 @@ exports.Prisma.ModelName = {
   Event: 'Event',
   Announcement: 'Announcement',
   CAConfig: 'CAConfig',
-  ContinuousAssessment: 'ContinuousAssessment'
+  ContinuousAssessment: 'ContinuousAssessment',
+  Syllabus: 'Syllabus',
+  SyllabusTopic: 'SyllabusTopic',
+  SyllabusTopicProgress: 'SyllabusTopicProgress'
 };
 
 /**

@@ -133,7 +133,7 @@ const menuItems = [
         icon: Star,
         label: "Continuous Assessment",
         href: "/list/ca",
-        visible: ["admin", "teacher"],
+        visible: ["admin"],
       },
       {
         icon: FileText,

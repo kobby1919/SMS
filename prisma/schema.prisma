@@ -1,7 +1,7 @@
 // prisma/schema.prisma
 
 generator client {
-  provider = "prisma-client-js" // FIXED: changed from "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
@@ -9,7 +9,7 @@ datasource db {
   provider = "postgresql"
 }
 
-// --- ENUMS ---
+// ─── ENUMS ───────────────────────────────────────────────────────────────────
 
 enum UserSex {
   MALE
@@ -37,7 +37,12 @@ enum Term {
   TERM_3
 }
 
-// --- MODELS ---
+enum SyllabusStatus {
+  DRAFT
+  PUBLISHED
+}
+
+// ─── MODELS ──────────────────────────────────────────────────────────────────
 
 model Admin {
   id       String @id
@@ -57,7 +62,6 @@ model Student {
   sex       UserSex
   createdAt DateTime @default(now())
 
-  // Relationships
   parentId String
   parent   Parent @relation(fields: [parentId], references: [id])
   classId  Int
@@ -65,32 +69,31 @@ model Student {
   gradeId  Int
   grade    Grade  @relation(fields: [gradeId], references: [id])
 
-  attendances Attendance[]
-  results     Result[]
-
+  attendances           Attendance[]
+  results               Result[]
   continuousAssessments ContinuousAssessment[]
 }
 
 model Teacher {
-  id        String   @id
-  username  String   @unique
-  name      String
-  surname   String
-  email     String?
-  phone     String?
-  address   String
-  img       String?
-  bloodType String
-  sex       UserSex
-  createdAt DateTime @default(now())
-  maxClasses Int @default(5)   // configurable per teacher if needed
+  id         String   @id
+  username   String   @unique
+  name       String
+  surname    String
+  email      String?
+  phone      String?
+  address    String
+  img        String?
+  bloodType  String
+  sex        UserSex
+  createdAt  DateTime @default(now())
+  maxClasses Int      @default(5)
 
-  // Relationships
   subjects Subject[]
   lessons  Lesson[]
   classes  Class[]   @relation("ClassTeacher")
 
-  continuousAssessments ContinuousAssessment[]
+  continuousAssessments  ContinuousAssessment[]
+  syllabusTopicProgress  SyllabusTopicProgress[]
 }
 
 model Parent {
@@ -107,31 +110,32 @@ model Parent {
 }
 
 model Grade {
-  id       Int    @id @default(autoincrement())
-  level    String @unique   // e.g. "Nursery", "KG1", "KG2", "Class 1", "JHS 3"
-  order    Int    @unique   // 1,2,3... for sorting (Nursery=1, KG1=2, ... JHS3=11)
+  id    Int    @id @default(autoincrement())
+  level String @unique
+  order Int    @unique
 
-  students Student[]
-  classes  Class[]
+  students  Student[]
+  classes   Class[]
+  syllabi   Syllabus[]
 }
 
 model Class {
   id       Int     @id @default(autoincrement())
-  name     String  @unique   // e.g. "Class 3A", "JHS 2B", "KG1"
+  name     String  @unique
   capacity Int
-  section  String? // "A" | "B" | null  (null = unsplit class)
+  section  String?
 
   supervisorId String?
   supervisor   Teacher? @relation("ClassTeacher", fields: [supervisorId], references: [id])
 
-  lessons       Lesson[]
-  students      Student[]
-  gradeId       Int
-  grade         Grade     @relation(fields: [gradeId], references: [id])
-  events        Event[]
-  announcements Announcement[]
-
+  lessons               Lesson[]
+  students              Student[]
+  gradeId               Int
+  grade                 Grade          @relation(fields: [gradeId], references: [id])
+  events                Event[]
+  announcements         Announcement[]
   continuousAssessments ContinuousAssessment[]
+  syllabusTopicProgress SyllabusTopicProgress[]
 }
 
 model Subject {
@@ -140,7 +144,9 @@ model Subject {
 
   teachers Teacher[]
   lessons  Lesson[]
+
   continuousAssessments ContinuousAssessment[]
+  syllabi               Syllabus[]
 }
 
 model Lesson {
@@ -150,7 +156,6 @@ model Lesson {
   startTime DateTime
   endTime   DateTime
 
-  // Relationships
   subjectId Int
   subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
 
@@ -171,7 +176,6 @@ model Exam {
   startTime DateTime
   endTime   DateTime
 
-  // Relationships
   lessonId Int
   lesson   Lesson   @relation(fields: [lessonId], references: [id])
   results  Result[]
@@ -183,7 +187,6 @@ model Assignment {
   startDate DateTime
   dueDate   DateTime
 
-  // Relationships
   lessonId Int
   lesson   Lesson   @relation(fields: [lessonId], references: [id])
   results  Result[]
@@ -193,7 +196,6 @@ model Result {
   id    Int @id @default(autoincrement())
   score Int
 
-  // Relationships
   examId Int?
   exam   Exam? @relation(fields: [examId], references: [id])
 
@@ -205,21 +207,20 @@ model Result {
 }
 
 model Attendance {
-  id        Int              @id @default(autoincrement())
-  date      DateTime         @default(now())
-  present   Boolean          // kept for backwards compatibility
-  status    AttendanceStatus @default(PRESENT)
-  note      String?          // reason for absence, late arrival note etc
+  id      Int              @id @default(autoincrement())
+  date    DateTime         @default(now())
+  present Boolean
+  status  AttendanceStatus @default(PRESENT)
+  note    String?
 
   studentId String
   student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
-  lessonId  Int
-  lesson    Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId Int
+  lesson   Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
-  @@unique([studentId, lessonId, date]) // one record per student per lesson per day
+  @@unique([studentId, lessonId, date])
 }
-
 
 model Event {
   id          Int      @id @default(autoincrement())
@@ -228,7 +229,6 @@ model Event {
   startTime   DateTime
   endTime     DateTime
 
-  // Relationships 
   classId Int?
   class   Class? @relation(fields: [classId], references: [id])
 }
@@ -239,54 +239,116 @@ model Announcement {
   description String
   date        DateTime
 
-  // Relationships
   classId Int?
   class   Class? @relation(fields: [classId], references: [id])
 }
 
-
-// --- NEW MODELS ---
-// --- UPDATED NEW MODELS ---
+// ─── CA MODELS ───────────────────────────────────────────────────────────────
 
 model CAConfig {
-  id               Int      @id @default(autoincrement())
-  academicYear     String   @unique // Matches the 'where' clause in your upsert
-  classworkWeight  Float    @default(30.0) // Matches 'data.classworkWeight'
-  examWeight       Float    @default(70.0) // Matches 'data.examWeight'
-  createdAt        DateTime @default(now())
+  id              Int      @id @default(autoincrement())
+  academicYear    String   @unique
+  classworkWeight Float    @default(30.0)
+  examWeight      Float    @default(70.0)
+  createdAt       DateTime @default(now())
 }
 
 model ContinuousAssessment {
-  id               Int      @id @default(autoincrement())
-  academicYear     String   // e.g., "2025/2026"
-  term             Term
-  
-  // Relations
-  studentId        String
-  student          Student  @relation(fields: [studentId], references: [id])
-  teacherId        String
-  teacher          Teacher  @relation(fields: [teacherId], references: [id])
-  subjectId        Int
-  subject          Subject  @relation(fields: [subjectId], references: [id])
-  classId          Int
-  class            Class    @relation(fields: [classId], references: [id])
+  id           Int    @id @default(autoincrement())
+  academicYear String
+  term         Term
 
-  // RAW DATA
-  classworkScore   Float    @default(0) 
-  examScore        Float    @default(0)
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  subjectId Int
+  subject   Subject @relation(fields: [subjectId], references: [id])
+  classId   Int
+  class     Class   @relation(fields: [classId], references: [id])
 
-  // COMPUTED DATA
-  totalScore       Float    @default(0) 
-  
-  // GHANA BECE / SBA STANDARDS (Now Strict)
-  grade            String   @default("F9")
-  gradePoint       Int      @default(9)
-  remarks          String   @default("")
-  
-  configId         Int?
+  classworkScore Float  @default(0)
+  examScore      Float  @default(0)
+  totalScore     Float  @default(0)
+  grade          String @default("F9")
+  gradePoint     Int    @default(9)
+  remarks        String @default("")
 
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  configId Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([studentId, subjectId, classId, term, academicYear])
+}
+
+// ─── SYLLABUS MODELS ─────────────────────────────────────────────────────────
+
+// One syllabus per subject per grade per term per academic year.
+// Admins create and publish. Teachers view and track progress.
+
+model Syllabus {
+  id           Int            @id @default(autoincrement())
+  description  String?
+  status       SyllabusStatus @default(DRAFT)
+  term         Term
+  academicYear String
+
+  subjectId Int
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  gradeId Int
+  grade   Grade @relation(fields: [gradeId], references: [id], onDelete: Cascade)
+
+  topics    SyllabusTopic[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([subjectId, gradeId, term, academicYear])
+}
+
+// Each topic/unit inside a syllabus.
+// Subtopics, objectives, and coreCompetencies are stored as String arrays.
+
+model SyllabusTopic {
+  id                Int      @id @default(autoincrement())
+  weekNumber        Int
+  durationWeeks     Int      @default(1)
+  order             Int
+  title             String
+  subtopics         String[]
+  objectives        String[]
+  coreCompetencies  String[]
+  teachingResources String?
+
+  syllabusId Int
+  syllabus   Syllabus @relation(fields: [syllabusId], references: [id], onDelete: Cascade)
+
+  progress SyllabusTopicProgress[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Tracks which topics have been covered by which class.
+// One record per topic per class — teacher marks it when done.
+
+model SyllabusTopicProgress {
+  id          Int      @id @default(autoincrement())
+  coveredDate DateTime @default(now())
+  notes       String?
+
+  syllabusTopicId Int
+  syllabusTopic   SyllabusTopic @relation(fields: [syllabusTopicId], references: [id], onDelete: Cascade)
+
+  classId Int
+  class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([syllabusTopicId, classId])
 }

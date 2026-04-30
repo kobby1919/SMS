@@ -93,6 +93,21 @@ export type CAConfig = $Result.DefaultSelection<Prisma.$CAConfigPayload>
  * 
  */
 export type ContinuousAssessment = $Result.DefaultSelection<Prisma.$ContinuousAssessmentPayload>
+/**
+ * Model Syllabus
+ * 
+ */
+export type Syllabus = $Result.DefaultSelection<Prisma.$SyllabusPayload>
+/**
+ * Model SyllabusTopic
+ * 
+ */
+export type SyllabusTopic = $Result.DefaultSelection<Prisma.$SyllabusTopicPayload>
+/**
+ * Model SyllabusTopicProgress
+ * 
+ */
+export type SyllabusTopicProgress = $Result.DefaultSelection<Prisma.$SyllabusTopicProgressPayload>
 
 /**
  * Enums
@@ -135,6 +150,14 @@ export const Term: {
 
 export type Term = (typeof Term)[keyof typeof Term]
 
+
+export const SyllabusStatus: {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED'
+};
+
+export type SyllabusStatus = (typeof SyllabusStatus)[keyof typeof SyllabusStatus]
+
 }
 
 export type UserSex = $Enums.UserSex
@@ -152,6 +175,10 @@ export const AttendanceStatus: typeof $Enums.AttendanceStatus
 export type Term = $Enums.Term
 
 export const Term: typeof $Enums.Term
+
+export type SyllabusStatus = $Enums.SyllabusStatus
+
+export const SyllabusStatus: typeof $Enums.SyllabusStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -433,6 +460,36 @@ export class PrismaClient<
     * ```
     */
   get continuousAssessment(): Prisma.ContinuousAssessmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.syllabus`: Exposes CRUD operations for the **Syllabus** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Syllabi
+    * const syllabi = await prisma.syllabus.findMany()
+    * ```
+    */
+  get syllabus(): Prisma.SyllabusDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.syllabusTopic`: Exposes CRUD operations for the **SyllabusTopic** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SyllabusTopics
+    * const syllabusTopics = await prisma.syllabusTopic.findMany()
+    * ```
+    */
+  get syllabusTopic(): Prisma.SyllabusTopicDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.syllabusTopicProgress`: Exposes CRUD operations for the **SyllabusTopicProgress** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SyllabusTopicProgresses
+    * const syllabusTopicProgresses = await prisma.syllabusTopicProgress.findMany()
+    * ```
+    */
+  get syllabusTopicProgress(): Prisma.SyllabusTopicProgressDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -882,7 +939,10 @@ export namespace Prisma {
     Event: 'Event',
     Announcement: 'Announcement',
     CAConfig: 'CAConfig',
-    ContinuousAssessment: 'ContinuousAssessment'
+    ContinuousAssessment: 'ContinuousAssessment',
+    Syllabus: 'Syllabus',
+    SyllabusTopic: 'SyllabusTopic',
+    SyllabusTopicProgress: 'SyllabusTopicProgress'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -898,7 +958,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "admin" | "student" | "teacher" | "parent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "result" | "attendance" | "event" | "announcement" | "cAConfig" | "continuousAssessment"
+      modelProps: "admin" | "student" | "teacher" | "parent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "result" | "attendance" | "event" | "announcement" | "cAConfig" | "continuousAssessment" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2086,6 +2146,228 @@ export namespace Prisma {
           }
         }
       }
+      Syllabus: {
+        payload: Prisma.$SyllabusPayload<ExtArgs>
+        fields: Prisma.SyllabusFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SyllabusFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SyllabusFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusPayload>
+          }
+          findFirst: {
+            args: Prisma.SyllabusFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SyllabusFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusPayload>
+          }
+          findMany: {
+            args: Prisma.SyllabusFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusPayload>[]
+          }
+          create: {
+            args: Prisma.SyllabusCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusPayload>
+          }
+          createMany: {
+            args: Prisma.SyllabusCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SyllabusCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusPayload>[]
+          }
+          delete: {
+            args: Prisma.SyllabusDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusPayload>
+          }
+          update: {
+            args: Prisma.SyllabusUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusPayload>
+          }
+          deleteMany: {
+            args: Prisma.SyllabusDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SyllabusUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SyllabusUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusPayload>[]
+          }
+          upsert: {
+            args: Prisma.SyllabusUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusPayload>
+          }
+          aggregate: {
+            args: Prisma.SyllabusAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSyllabus>
+          }
+          groupBy: {
+            args: Prisma.SyllabusGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SyllabusGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SyllabusCountArgs<ExtArgs>
+            result: $Utils.Optional<SyllabusCountAggregateOutputType> | number
+          }
+        }
+      }
+      SyllabusTopic: {
+        payload: Prisma.$SyllabusTopicPayload<ExtArgs>
+        fields: Prisma.SyllabusTopicFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SyllabusTopicFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SyllabusTopicFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicPayload>
+          }
+          findFirst: {
+            args: Prisma.SyllabusTopicFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SyllabusTopicFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicPayload>
+          }
+          findMany: {
+            args: Prisma.SyllabusTopicFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicPayload>[]
+          }
+          create: {
+            args: Prisma.SyllabusTopicCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicPayload>
+          }
+          createMany: {
+            args: Prisma.SyllabusTopicCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SyllabusTopicCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicPayload>[]
+          }
+          delete: {
+            args: Prisma.SyllabusTopicDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicPayload>
+          }
+          update: {
+            args: Prisma.SyllabusTopicUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicPayload>
+          }
+          deleteMany: {
+            args: Prisma.SyllabusTopicDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SyllabusTopicUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SyllabusTopicUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicPayload>[]
+          }
+          upsert: {
+            args: Prisma.SyllabusTopicUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicPayload>
+          }
+          aggregate: {
+            args: Prisma.SyllabusTopicAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSyllabusTopic>
+          }
+          groupBy: {
+            args: Prisma.SyllabusTopicGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SyllabusTopicGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SyllabusTopicCountArgs<ExtArgs>
+            result: $Utils.Optional<SyllabusTopicCountAggregateOutputType> | number
+          }
+        }
+      }
+      SyllabusTopicProgress: {
+        payload: Prisma.$SyllabusTopicProgressPayload<ExtArgs>
+        fields: Prisma.SyllabusTopicProgressFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SyllabusTopicProgressFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicProgressPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SyllabusTopicProgressFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicProgressPayload>
+          }
+          findFirst: {
+            args: Prisma.SyllabusTopicProgressFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicProgressPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SyllabusTopicProgressFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicProgressPayload>
+          }
+          findMany: {
+            args: Prisma.SyllabusTopicProgressFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicProgressPayload>[]
+          }
+          create: {
+            args: Prisma.SyllabusTopicProgressCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicProgressPayload>
+          }
+          createMany: {
+            args: Prisma.SyllabusTopicProgressCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SyllabusTopicProgressCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicProgressPayload>[]
+          }
+          delete: {
+            args: Prisma.SyllabusTopicProgressDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicProgressPayload>
+          }
+          update: {
+            args: Prisma.SyllabusTopicProgressUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicProgressPayload>
+          }
+          deleteMany: {
+            args: Prisma.SyllabusTopicProgressDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SyllabusTopicProgressUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SyllabusTopicProgressUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicProgressPayload>[]
+          }
+          upsert: {
+            args: Prisma.SyllabusTopicProgressUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SyllabusTopicProgressPayload>
+          }
+          aggregate: {
+            args: Prisma.SyllabusTopicProgressAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSyllabusTopicProgress>
+          }
+          groupBy: {
+            args: Prisma.SyllabusTopicProgressGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SyllabusTopicProgressGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SyllabusTopicProgressCountArgs<ExtArgs>
+            result: $Utils.Optional<SyllabusTopicProgressCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2210,6 +2492,9 @@ export namespace Prisma {
     announcement?: AnnouncementOmit
     cAConfig?: CAConfigOmit
     continuousAssessment?: ContinuousAssessmentOmit
+    syllabus?: SyllabusOmit
+    syllabusTopic?: SyllabusTopicOmit
+    syllabusTopicProgress?: SyllabusTopicProgressOmit
   }
 
   /* Types for Logging */
@@ -2343,6 +2628,7 @@ export namespace Prisma {
     lessons: number
     classes: number
     continuousAssessments: number
+    syllabusTopicProgress: number
   }
 
   export type TeacherCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2350,6 +2636,7 @@ export namespace Prisma {
     lessons?: boolean | TeacherCountOutputTypeCountLessonsArgs
     classes?: boolean | TeacherCountOutputTypeCountClassesArgs
     continuousAssessments?: boolean | TeacherCountOutputTypeCountContinuousAssessmentsArgs
+    syllabusTopicProgress?: boolean | TeacherCountOutputTypeCountSyllabusTopicProgressArgs
   }
 
   // Custom InputTypes
@@ -2391,6 +2678,13 @@ export namespace Prisma {
     where?: ContinuousAssessmentWhereInput
   }
 
+  /**
+   * TeacherCountOutputType without action
+   */
+  export type TeacherCountOutputTypeCountSyllabusTopicProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SyllabusTopicProgressWhereInput
+  }
+
 
   /**
    * Count Type ParentCountOutputType
@@ -2430,11 +2724,13 @@ export namespace Prisma {
   export type GradeCountOutputType = {
     students: number
     classes: number
+    syllabi: number
   }
 
   export type GradeCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     students?: boolean | GradeCountOutputTypeCountStudentsArgs
     classes?: boolean | GradeCountOutputTypeCountClassesArgs
+    syllabi?: boolean | GradeCountOutputTypeCountSyllabiArgs
   }
 
   // Custom InputTypes
@@ -2462,6 +2758,13 @@ export namespace Prisma {
     where?: ClassWhereInput
   }
 
+  /**
+   * GradeCountOutputType without action
+   */
+  export type GradeCountOutputTypeCountSyllabiArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SyllabusWhereInput
+  }
+
 
   /**
    * Count Type ClassCountOutputType
@@ -2473,6 +2776,7 @@ export namespace Prisma {
     events: number
     announcements: number
     continuousAssessments: number
+    syllabusTopicProgress: number
   }
 
   export type ClassCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2481,6 +2785,7 @@ export namespace Prisma {
     events?: boolean | ClassCountOutputTypeCountEventsArgs
     announcements?: boolean | ClassCountOutputTypeCountAnnouncementsArgs
     continuousAssessments?: boolean | ClassCountOutputTypeCountContinuousAssessmentsArgs
+    syllabusTopicProgress?: boolean | ClassCountOutputTypeCountSyllabusTopicProgressArgs
   }
 
   // Custom InputTypes
@@ -2529,6 +2834,13 @@ export namespace Prisma {
     where?: ContinuousAssessmentWhereInput
   }
 
+  /**
+   * ClassCountOutputType without action
+   */
+  export type ClassCountOutputTypeCountSyllabusTopicProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SyllabusTopicProgressWhereInput
+  }
+
 
   /**
    * Count Type SubjectCountOutputType
@@ -2538,12 +2850,14 @@ export namespace Prisma {
     teachers: number
     lessons: number
     continuousAssessments: number
+    syllabi: number
   }
 
   export type SubjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     teachers?: boolean | SubjectCountOutputTypeCountTeachersArgs
     lessons?: boolean | SubjectCountOutputTypeCountLessonsArgs
     continuousAssessments?: boolean | SubjectCountOutputTypeCountContinuousAssessmentsArgs
+    syllabi?: boolean | SubjectCountOutputTypeCountSyllabiArgs
   }
 
   // Custom InputTypes
@@ -2576,6 +2890,13 @@ export namespace Prisma {
    */
   export type SubjectCountOutputTypeCountContinuousAssessmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ContinuousAssessmentWhereInput
+  }
+
+  /**
+   * SubjectCountOutputType without action
+   */
+  export type SubjectCountOutputTypeCountSyllabiArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SyllabusWhereInput
   }
 
 
@@ -2687,6 +3008,68 @@ export namespace Prisma {
    */
   export type AssignmentCountOutputTypeCountResultsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ResultWhereInput
+  }
+
+
+  /**
+   * Count Type SyllabusCountOutputType
+   */
+
+  export type SyllabusCountOutputType = {
+    topics: number
+  }
+
+  export type SyllabusCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    topics?: boolean | SyllabusCountOutputTypeCountTopicsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * SyllabusCountOutputType without action
+   */
+  export type SyllabusCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusCountOutputType
+     */
+    select?: SyllabusCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * SyllabusCountOutputType without action
+   */
+  export type SyllabusCountOutputTypeCountTopicsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SyllabusTopicWhereInput
+  }
+
+
+  /**
+   * Count Type SyllabusTopicCountOutputType
+   */
+
+  export type SyllabusTopicCountOutputType = {
+    progress: number
+  }
+
+  export type SyllabusTopicCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    progress?: boolean | SyllabusTopicCountOutputTypeCountProgressArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * SyllabusTopicCountOutputType without action
+   */
+  export type SyllabusTopicCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopicCountOutputType
+     */
+    select?: SyllabusTopicCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * SyllabusTopicCountOutputType without action
+   */
+  export type SyllabusTopicCountOutputTypeCountProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SyllabusTopicProgressWhereInput
   }
 
 
@@ -5233,6 +5616,7 @@ export namespace Prisma {
     lessons?: boolean | Teacher$lessonsArgs<ExtArgs>
     classes?: boolean | Teacher$classesArgs<ExtArgs>
     continuousAssessments?: boolean | Teacher$continuousAssessmentsArgs<ExtArgs>
+    syllabusTopicProgress?: boolean | Teacher$syllabusTopicProgressArgs<ExtArgs>
     _count?: boolean | TeacherCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["teacher"]>
 
@@ -5287,6 +5671,7 @@ export namespace Prisma {
     lessons?: boolean | Teacher$lessonsArgs<ExtArgs>
     classes?: boolean | Teacher$classesArgs<ExtArgs>
     continuousAssessments?: boolean | Teacher$continuousAssessmentsArgs<ExtArgs>
+    syllabusTopicProgress?: boolean | Teacher$syllabusTopicProgressArgs<ExtArgs>
     _count?: boolean | TeacherCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TeacherIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -5299,6 +5684,7 @@ export namespace Prisma {
       lessons: Prisma.$LessonPayload<ExtArgs>[]
       classes: Prisma.$ClassPayload<ExtArgs>[]
       continuousAssessments: Prisma.$ContinuousAssessmentPayload<ExtArgs>[]
+      syllabusTopicProgress: Prisma.$SyllabusTopicProgressPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5711,6 +6097,7 @@ export namespace Prisma {
     lessons<T extends Teacher$lessonsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$lessonsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     classes<T extends Teacher$classesArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$classesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClassPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     continuousAssessments<T extends Teacher$continuousAssessmentsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$continuousAssessmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    syllabusTopicProgress<T extends Teacher$syllabusTopicProgressArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$syllabusTopicProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6238,6 +6625,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ContinuousAssessmentScalarFieldEnum | ContinuousAssessmentScalarFieldEnum[]
+  }
+
+  /**
+   * Teacher.syllabusTopicProgress
+   */
+  export type Teacher$syllabusTopicProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopicProgress
+     */
+    select?: SyllabusTopicProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopicProgress
+     */
+    omit?: SyllabusTopicProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicProgressInclude<ExtArgs> | null
+    where?: SyllabusTopicProgressWhereInput
+    orderBy?: SyllabusTopicProgressOrderByWithRelationInput | SyllabusTopicProgressOrderByWithRelationInput[]
+    cursor?: SyllabusTopicProgressWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SyllabusTopicProgressScalarFieldEnum | SyllabusTopicProgressScalarFieldEnum[]
   }
 
   /**
@@ -7561,6 +7972,7 @@ export namespace Prisma {
     order?: boolean
     students?: boolean | Grade$studentsArgs<ExtArgs>
     classes?: boolean | Grade$classesArgs<ExtArgs>
+    syllabi?: boolean | Grade$syllabiArgs<ExtArgs>
     _count?: boolean | GradeCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["grade"]>
 
@@ -7586,6 +7998,7 @@ export namespace Prisma {
   export type GradeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     students?: boolean | Grade$studentsArgs<ExtArgs>
     classes?: boolean | Grade$classesArgs<ExtArgs>
+    syllabi?: boolean | Grade$syllabiArgs<ExtArgs>
     _count?: boolean | GradeCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type GradeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -7596,6 +8009,7 @@ export namespace Prisma {
     objects: {
       students: Prisma.$StudentPayload<ExtArgs>[]
       classes: Prisma.$ClassPayload<ExtArgs>[]
+      syllabi: Prisma.$SyllabusPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -7997,6 +8411,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     students<T extends Grade$studentsArgs<ExtArgs> = {}>(args?: Subset<T, Grade$studentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     classes<T extends Grade$classesArgs<ExtArgs> = {}>(args?: Subset<T, Grade$classesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClassPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    syllabi<T extends Grade$syllabiArgs<ExtArgs> = {}>(args?: Subset<T, Grade$syllabiArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8470,6 +8885,30 @@ export namespace Prisma {
   }
 
   /**
+   * Grade.syllabi
+   */
+  export type Grade$syllabiArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Syllabus
+     */
+    select?: SyllabusSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Syllabus
+     */
+    omit?: SyllabusOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusInclude<ExtArgs> | null
+    where?: SyllabusWhereInput
+    orderBy?: SyllabusOrderByWithRelationInput | SyllabusOrderByWithRelationInput[]
+    cursor?: SyllabusWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SyllabusScalarFieldEnum | SyllabusScalarFieldEnum[]
+  }
+
+  /**
    * Grade without action
    */
   export type GradeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8709,6 +9148,7 @@ export namespace Prisma {
     events?: boolean | Class$eventsArgs<ExtArgs>
     announcements?: boolean | Class$announcementsArgs<ExtArgs>
     continuousAssessments?: boolean | Class$continuousAssessmentsArgs<ExtArgs>
+    syllabusTopicProgress?: boolean | Class$syllabusTopicProgressArgs<ExtArgs>
     _count?: boolean | ClassCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["class"]>
 
@@ -8752,6 +9192,7 @@ export namespace Prisma {
     events?: boolean | Class$eventsArgs<ExtArgs>
     announcements?: boolean | Class$announcementsArgs<ExtArgs>
     continuousAssessments?: boolean | Class$continuousAssessmentsArgs<ExtArgs>
+    syllabusTopicProgress?: boolean | Class$syllabusTopicProgressArgs<ExtArgs>
     _count?: boolean | ClassCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ClassIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8773,6 +9214,7 @@ export namespace Prisma {
       events: Prisma.$EventPayload<ExtArgs>[]
       announcements: Prisma.$AnnouncementPayload<ExtArgs>[]
       continuousAssessments: Prisma.$ContinuousAssessmentPayload<ExtArgs>[]
+      syllabusTopicProgress: Prisma.$SyllabusTopicProgressPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -9182,6 +9624,7 @@ export namespace Prisma {
     events<T extends Class$eventsArgs<ExtArgs> = {}>(args?: Subset<T, Class$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     announcements<T extends Class$announcementsArgs<ExtArgs> = {}>(args?: Subset<T, Class$announcementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AnnouncementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     continuousAssessments<T extends Class$continuousAssessmentsArgs<ExtArgs> = {}>(args?: Subset<T, Class$continuousAssessmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    syllabusTopicProgress<T extends Class$syllabusTopicProgressArgs<ExtArgs> = {}>(args?: Subset<T, Class$syllabusTopicProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9757,6 +10200,30 @@ export namespace Prisma {
   }
 
   /**
+   * Class.syllabusTopicProgress
+   */
+  export type Class$syllabusTopicProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopicProgress
+     */
+    select?: SyllabusTopicProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopicProgress
+     */
+    omit?: SyllabusTopicProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicProgressInclude<ExtArgs> | null
+    where?: SyllabusTopicProgressWhereInput
+    orderBy?: SyllabusTopicProgressOrderByWithRelationInput | SyllabusTopicProgressOrderByWithRelationInput[]
+    cursor?: SyllabusTopicProgressWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SyllabusTopicProgressScalarFieldEnum | SyllabusTopicProgressScalarFieldEnum[]
+  }
+
+  /**
    * Class without action
    */
   export type ClassDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9952,6 +10419,7 @@ export namespace Prisma {
     teachers?: boolean | Subject$teachersArgs<ExtArgs>
     lessons?: boolean | Subject$lessonsArgs<ExtArgs>
     continuousAssessments?: boolean | Subject$continuousAssessmentsArgs<ExtArgs>
+    syllabi?: boolean | Subject$syllabiArgs<ExtArgs>
     _count?: boolean | SubjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["subject"]>
 
@@ -9975,6 +10443,7 @@ export namespace Prisma {
     teachers?: boolean | Subject$teachersArgs<ExtArgs>
     lessons?: boolean | Subject$lessonsArgs<ExtArgs>
     continuousAssessments?: boolean | Subject$continuousAssessmentsArgs<ExtArgs>
+    syllabi?: boolean | Subject$syllabiArgs<ExtArgs>
     _count?: boolean | SubjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type SubjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -9986,6 +10455,7 @@ export namespace Prisma {
       teachers: Prisma.$TeacherPayload<ExtArgs>[]
       lessons: Prisma.$LessonPayload<ExtArgs>[]
       continuousAssessments: Prisma.$ContinuousAssessmentPayload<ExtArgs>[]
+      syllabi: Prisma.$SyllabusPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -10387,6 +10857,7 @@ export namespace Prisma {
     teachers<T extends Subject$teachersArgs<ExtArgs> = {}>(args?: Subset<T, Subject$teachersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     lessons<T extends Subject$lessonsArgs<ExtArgs> = {}>(args?: Subset<T, Subject$lessonsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     continuousAssessments<T extends Subject$continuousAssessmentsArgs<ExtArgs> = {}>(args?: Subset<T, Subject$continuousAssessmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    syllabi<T extends Subject$syllabiArgs<ExtArgs> = {}>(args?: Subset<T, Subject$syllabiArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10880,6 +11351,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ContinuousAssessmentScalarFieldEnum | ContinuousAssessmentScalarFieldEnum[]
+  }
+
+  /**
+   * Subject.syllabi
+   */
+  export type Subject$syllabiArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Syllabus
+     */
+    select?: SyllabusSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Syllabus
+     */
+    omit?: SyllabusOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusInclude<ExtArgs> | null
+    where?: SyllabusWhereInput
+    orderBy?: SyllabusOrderByWithRelationInput | SyllabusOrderByWithRelationInput[]
+    cursor?: SyllabusWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SyllabusScalarFieldEnum | SyllabusScalarFieldEnum[]
   }
 
   /**
@@ -21314,6 +21809,3570 @@ export namespace Prisma {
 
 
   /**
+   * Model Syllabus
+   */
+
+  export type AggregateSyllabus = {
+    _count: SyllabusCountAggregateOutputType | null
+    _avg: SyllabusAvgAggregateOutputType | null
+    _sum: SyllabusSumAggregateOutputType | null
+    _min: SyllabusMinAggregateOutputType | null
+    _max: SyllabusMaxAggregateOutputType | null
+  }
+
+  export type SyllabusAvgAggregateOutputType = {
+    id: number | null
+    subjectId: number | null
+    gradeId: number | null
+  }
+
+  export type SyllabusSumAggregateOutputType = {
+    id: number | null
+    subjectId: number | null
+    gradeId: number | null
+  }
+
+  export type SyllabusMinAggregateOutputType = {
+    id: number | null
+    description: string | null
+    status: $Enums.SyllabusStatus | null
+    term: $Enums.Term | null
+    academicYear: string | null
+    subjectId: number | null
+    gradeId: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SyllabusMaxAggregateOutputType = {
+    id: number | null
+    description: string | null
+    status: $Enums.SyllabusStatus | null
+    term: $Enums.Term | null
+    academicYear: string | null
+    subjectId: number | null
+    gradeId: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SyllabusCountAggregateOutputType = {
+    id: number
+    description: number
+    status: number
+    term: number
+    academicYear: number
+    subjectId: number
+    gradeId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type SyllabusAvgAggregateInputType = {
+    id?: true
+    subjectId?: true
+    gradeId?: true
+  }
+
+  export type SyllabusSumAggregateInputType = {
+    id?: true
+    subjectId?: true
+    gradeId?: true
+  }
+
+  export type SyllabusMinAggregateInputType = {
+    id?: true
+    description?: true
+    status?: true
+    term?: true
+    academicYear?: true
+    subjectId?: true
+    gradeId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SyllabusMaxAggregateInputType = {
+    id?: true
+    description?: true
+    status?: true
+    term?: true
+    academicYear?: true
+    subjectId?: true
+    gradeId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SyllabusCountAggregateInputType = {
+    id?: true
+    description?: true
+    status?: true
+    term?: true
+    academicYear?: true
+    subjectId?: true
+    gradeId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type SyllabusAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Syllabus to aggregate.
+     */
+    where?: SyllabusWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Syllabi to fetch.
+     */
+    orderBy?: SyllabusOrderByWithRelationInput | SyllabusOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SyllabusWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Syllabi from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Syllabi.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Syllabi
+    **/
+    _count?: true | SyllabusCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SyllabusAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SyllabusSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SyllabusMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SyllabusMaxAggregateInputType
+  }
+
+  export type GetSyllabusAggregateType<T extends SyllabusAggregateArgs> = {
+        [P in keyof T & keyof AggregateSyllabus]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSyllabus[P]>
+      : GetScalarType<T[P], AggregateSyllabus[P]>
+  }
+
+
+
+
+  export type SyllabusGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SyllabusWhereInput
+    orderBy?: SyllabusOrderByWithAggregationInput | SyllabusOrderByWithAggregationInput[]
+    by: SyllabusScalarFieldEnum[] | SyllabusScalarFieldEnum
+    having?: SyllabusScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SyllabusCountAggregateInputType | true
+    _avg?: SyllabusAvgAggregateInputType
+    _sum?: SyllabusSumAggregateInputType
+    _min?: SyllabusMinAggregateInputType
+    _max?: SyllabusMaxAggregateInputType
+  }
+
+  export type SyllabusGroupByOutputType = {
+    id: number
+    description: string | null
+    status: $Enums.SyllabusStatus
+    term: $Enums.Term
+    academicYear: string
+    subjectId: number
+    gradeId: number
+    createdAt: Date
+    updatedAt: Date
+    _count: SyllabusCountAggregateOutputType | null
+    _avg: SyllabusAvgAggregateOutputType | null
+    _sum: SyllabusSumAggregateOutputType | null
+    _min: SyllabusMinAggregateOutputType | null
+    _max: SyllabusMaxAggregateOutputType | null
+  }
+
+  type GetSyllabusGroupByPayload<T extends SyllabusGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SyllabusGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SyllabusGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SyllabusGroupByOutputType[P]>
+            : GetScalarType<T[P], SyllabusGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SyllabusSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    description?: boolean
+    status?: boolean
+    term?: boolean
+    academicYear?: boolean
+    subjectId?: boolean
+    gradeId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
+    grade?: boolean | GradeDefaultArgs<ExtArgs>
+    topics?: boolean | Syllabus$topicsArgs<ExtArgs>
+    _count?: boolean | SyllabusCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["syllabus"]>
+
+  export type SyllabusSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    description?: boolean
+    status?: boolean
+    term?: boolean
+    academicYear?: boolean
+    subjectId?: boolean
+    gradeId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
+    grade?: boolean | GradeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["syllabus"]>
+
+  export type SyllabusSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    description?: boolean
+    status?: boolean
+    term?: boolean
+    academicYear?: boolean
+    subjectId?: boolean
+    gradeId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
+    grade?: boolean | GradeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["syllabus"]>
+
+  export type SyllabusSelectScalar = {
+    id?: boolean
+    description?: boolean
+    status?: boolean
+    term?: boolean
+    academicYear?: boolean
+    subjectId?: boolean
+    gradeId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type SyllabusOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "description" | "status" | "term" | "academicYear" | "subjectId" | "gradeId" | "createdAt" | "updatedAt", ExtArgs["result"]["syllabus"]>
+  export type SyllabusInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
+    grade?: boolean | GradeDefaultArgs<ExtArgs>
+    topics?: boolean | Syllabus$topicsArgs<ExtArgs>
+    _count?: boolean | SyllabusCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type SyllabusIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
+    grade?: boolean | GradeDefaultArgs<ExtArgs>
+  }
+  export type SyllabusIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    subject?: boolean | SubjectDefaultArgs<ExtArgs>
+    grade?: boolean | GradeDefaultArgs<ExtArgs>
+  }
+
+  export type $SyllabusPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Syllabus"
+    objects: {
+      subject: Prisma.$SubjectPayload<ExtArgs>
+      grade: Prisma.$GradePayload<ExtArgs>
+      topics: Prisma.$SyllabusTopicPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      description: string | null
+      status: $Enums.SyllabusStatus
+      term: $Enums.Term
+      academicYear: string
+      subjectId: number
+      gradeId: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["syllabus"]>
+    composites: {}
+  }
+
+  type SyllabusGetPayload<S extends boolean | null | undefined | SyllabusDefaultArgs> = $Result.GetResult<Prisma.$SyllabusPayload, S>
+
+  type SyllabusCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SyllabusFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SyllabusCountAggregateInputType | true
+    }
+
+  export interface SyllabusDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Syllabus'], meta: { name: 'Syllabus' } }
+    /**
+     * Find zero or one Syllabus that matches the filter.
+     * @param {SyllabusFindUniqueArgs} args - Arguments to find a Syllabus
+     * @example
+     * // Get one Syllabus
+     * const syllabus = await prisma.syllabus.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SyllabusFindUniqueArgs>(args: SelectSubset<T, SyllabusFindUniqueArgs<ExtArgs>>): Prisma__SyllabusClient<$Result.GetResult<Prisma.$SyllabusPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Syllabus that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SyllabusFindUniqueOrThrowArgs} args - Arguments to find a Syllabus
+     * @example
+     * // Get one Syllabus
+     * const syllabus = await prisma.syllabus.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SyllabusFindUniqueOrThrowArgs>(args: SelectSubset<T, SyllabusFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SyllabusClient<$Result.GetResult<Prisma.$SyllabusPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Syllabus that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusFindFirstArgs} args - Arguments to find a Syllabus
+     * @example
+     * // Get one Syllabus
+     * const syllabus = await prisma.syllabus.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SyllabusFindFirstArgs>(args?: SelectSubset<T, SyllabusFindFirstArgs<ExtArgs>>): Prisma__SyllabusClient<$Result.GetResult<Prisma.$SyllabusPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Syllabus that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusFindFirstOrThrowArgs} args - Arguments to find a Syllabus
+     * @example
+     * // Get one Syllabus
+     * const syllabus = await prisma.syllabus.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SyllabusFindFirstOrThrowArgs>(args?: SelectSubset<T, SyllabusFindFirstOrThrowArgs<ExtArgs>>): Prisma__SyllabusClient<$Result.GetResult<Prisma.$SyllabusPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Syllabi that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Syllabi
+     * const syllabi = await prisma.syllabus.findMany()
+     * 
+     * // Get first 10 Syllabi
+     * const syllabi = await prisma.syllabus.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const syllabusWithIdOnly = await prisma.syllabus.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SyllabusFindManyArgs>(args?: SelectSubset<T, SyllabusFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Syllabus.
+     * @param {SyllabusCreateArgs} args - Arguments to create a Syllabus.
+     * @example
+     * // Create one Syllabus
+     * const Syllabus = await prisma.syllabus.create({
+     *   data: {
+     *     // ... data to create a Syllabus
+     *   }
+     * })
+     * 
+     */
+    create<T extends SyllabusCreateArgs>(args: SelectSubset<T, SyllabusCreateArgs<ExtArgs>>): Prisma__SyllabusClient<$Result.GetResult<Prisma.$SyllabusPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Syllabi.
+     * @param {SyllabusCreateManyArgs} args - Arguments to create many Syllabi.
+     * @example
+     * // Create many Syllabi
+     * const syllabus = await prisma.syllabus.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SyllabusCreateManyArgs>(args?: SelectSubset<T, SyllabusCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Syllabi and returns the data saved in the database.
+     * @param {SyllabusCreateManyAndReturnArgs} args - Arguments to create many Syllabi.
+     * @example
+     * // Create many Syllabi
+     * const syllabus = await prisma.syllabus.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Syllabi and only return the `id`
+     * const syllabusWithIdOnly = await prisma.syllabus.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SyllabusCreateManyAndReturnArgs>(args?: SelectSubset<T, SyllabusCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Syllabus.
+     * @param {SyllabusDeleteArgs} args - Arguments to delete one Syllabus.
+     * @example
+     * // Delete one Syllabus
+     * const Syllabus = await prisma.syllabus.delete({
+     *   where: {
+     *     // ... filter to delete one Syllabus
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SyllabusDeleteArgs>(args: SelectSubset<T, SyllabusDeleteArgs<ExtArgs>>): Prisma__SyllabusClient<$Result.GetResult<Prisma.$SyllabusPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Syllabus.
+     * @param {SyllabusUpdateArgs} args - Arguments to update one Syllabus.
+     * @example
+     * // Update one Syllabus
+     * const syllabus = await prisma.syllabus.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SyllabusUpdateArgs>(args: SelectSubset<T, SyllabusUpdateArgs<ExtArgs>>): Prisma__SyllabusClient<$Result.GetResult<Prisma.$SyllabusPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Syllabi.
+     * @param {SyllabusDeleteManyArgs} args - Arguments to filter Syllabi to delete.
+     * @example
+     * // Delete a few Syllabi
+     * const { count } = await prisma.syllabus.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SyllabusDeleteManyArgs>(args?: SelectSubset<T, SyllabusDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Syllabi.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Syllabi
+     * const syllabus = await prisma.syllabus.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SyllabusUpdateManyArgs>(args: SelectSubset<T, SyllabusUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Syllabi and returns the data updated in the database.
+     * @param {SyllabusUpdateManyAndReturnArgs} args - Arguments to update many Syllabi.
+     * @example
+     * // Update many Syllabi
+     * const syllabus = await prisma.syllabus.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Syllabi and only return the `id`
+     * const syllabusWithIdOnly = await prisma.syllabus.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SyllabusUpdateManyAndReturnArgs>(args: SelectSubset<T, SyllabusUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Syllabus.
+     * @param {SyllabusUpsertArgs} args - Arguments to update or create a Syllabus.
+     * @example
+     * // Update or create a Syllabus
+     * const syllabus = await prisma.syllabus.upsert({
+     *   create: {
+     *     // ... data to create a Syllabus
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Syllabus we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SyllabusUpsertArgs>(args: SelectSubset<T, SyllabusUpsertArgs<ExtArgs>>): Prisma__SyllabusClient<$Result.GetResult<Prisma.$SyllabusPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Syllabi.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusCountArgs} args - Arguments to filter Syllabi to count.
+     * @example
+     * // Count the number of Syllabi
+     * const count = await prisma.syllabus.count({
+     *   where: {
+     *     // ... the filter for the Syllabi we want to count
+     *   }
+     * })
+    **/
+    count<T extends SyllabusCountArgs>(
+      args?: Subset<T, SyllabusCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SyllabusCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Syllabus.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SyllabusAggregateArgs>(args: Subset<T, SyllabusAggregateArgs>): Prisma.PrismaPromise<GetSyllabusAggregateType<T>>
+
+    /**
+     * Group by Syllabus.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SyllabusGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SyllabusGroupByArgs['orderBy'] }
+        : { orderBy?: SyllabusGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SyllabusGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSyllabusGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Syllabus model
+   */
+  readonly fields: SyllabusFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Syllabus.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SyllabusClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    subject<T extends SubjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SubjectDefaultArgs<ExtArgs>>): Prisma__SubjectClient<$Result.GetResult<Prisma.$SubjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    grade<T extends GradeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GradeDefaultArgs<ExtArgs>>): Prisma__GradeClient<$Result.GetResult<Prisma.$GradePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    topics<T extends Syllabus$topicsArgs<ExtArgs> = {}>(args?: Subset<T, Syllabus$topicsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusTopicPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Syllabus model
+   */
+  interface SyllabusFieldRefs {
+    readonly id: FieldRef<"Syllabus", 'Int'>
+    readonly description: FieldRef<"Syllabus", 'String'>
+    readonly status: FieldRef<"Syllabus", 'SyllabusStatus'>
+    readonly term: FieldRef<"Syllabus", 'Term'>
+    readonly academicYear: FieldRef<"Syllabus", 'String'>
+    readonly subjectId: FieldRef<"Syllabus", 'Int'>
+    readonly gradeId: FieldRef<"Syllabus", 'Int'>
+    readonly createdAt: FieldRef<"Syllabus", 'DateTime'>
+    readonly updatedAt: FieldRef<"Syllabus", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Syllabus findUnique
+   */
+  export type SyllabusFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Syllabus
+     */
+    select?: SyllabusSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Syllabus
+     */
+    omit?: SyllabusOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusInclude<ExtArgs> | null
+    /**
+     * Filter, which Syllabus to fetch.
+     */
+    where: SyllabusWhereUniqueInput
+  }
+
+  /**
+   * Syllabus findUniqueOrThrow
+   */
+  export type SyllabusFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Syllabus
+     */
+    select?: SyllabusSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Syllabus
+     */
+    omit?: SyllabusOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusInclude<ExtArgs> | null
+    /**
+     * Filter, which Syllabus to fetch.
+     */
+    where: SyllabusWhereUniqueInput
+  }
+
+  /**
+   * Syllabus findFirst
+   */
+  export type SyllabusFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Syllabus
+     */
+    select?: SyllabusSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Syllabus
+     */
+    omit?: SyllabusOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusInclude<ExtArgs> | null
+    /**
+     * Filter, which Syllabus to fetch.
+     */
+    where?: SyllabusWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Syllabi to fetch.
+     */
+    orderBy?: SyllabusOrderByWithRelationInput | SyllabusOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Syllabi.
+     */
+    cursor?: SyllabusWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Syllabi from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Syllabi.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Syllabi.
+     */
+    distinct?: SyllabusScalarFieldEnum | SyllabusScalarFieldEnum[]
+  }
+
+  /**
+   * Syllabus findFirstOrThrow
+   */
+  export type SyllabusFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Syllabus
+     */
+    select?: SyllabusSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Syllabus
+     */
+    omit?: SyllabusOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusInclude<ExtArgs> | null
+    /**
+     * Filter, which Syllabus to fetch.
+     */
+    where?: SyllabusWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Syllabi to fetch.
+     */
+    orderBy?: SyllabusOrderByWithRelationInput | SyllabusOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Syllabi.
+     */
+    cursor?: SyllabusWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Syllabi from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Syllabi.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Syllabi.
+     */
+    distinct?: SyllabusScalarFieldEnum | SyllabusScalarFieldEnum[]
+  }
+
+  /**
+   * Syllabus findMany
+   */
+  export type SyllabusFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Syllabus
+     */
+    select?: SyllabusSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Syllabus
+     */
+    omit?: SyllabusOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusInclude<ExtArgs> | null
+    /**
+     * Filter, which Syllabi to fetch.
+     */
+    where?: SyllabusWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Syllabi to fetch.
+     */
+    orderBy?: SyllabusOrderByWithRelationInput | SyllabusOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Syllabi.
+     */
+    cursor?: SyllabusWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Syllabi from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Syllabi.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Syllabi.
+     */
+    distinct?: SyllabusScalarFieldEnum | SyllabusScalarFieldEnum[]
+  }
+
+  /**
+   * Syllabus create
+   */
+  export type SyllabusCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Syllabus
+     */
+    select?: SyllabusSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Syllabus
+     */
+    omit?: SyllabusOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Syllabus.
+     */
+    data: XOR<SyllabusCreateInput, SyllabusUncheckedCreateInput>
+  }
+
+  /**
+   * Syllabus createMany
+   */
+  export type SyllabusCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Syllabi.
+     */
+    data: SyllabusCreateManyInput | SyllabusCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Syllabus createManyAndReturn
+   */
+  export type SyllabusCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Syllabus
+     */
+    select?: SyllabusSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Syllabus
+     */
+    omit?: SyllabusOmit<ExtArgs> | null
+    /**
+     * The data used to create many Syllabi.
+     */
+    data: SyllabusCreateManyInput | SyllabusCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Syllabus update
+   */
+  export type SyllabusUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Syllabus
+     */
+    select?: SyllabusSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Syllabus
+     */
+    omit?: SyllabusOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Syllabus.
+     */
+    data: XOR<SyllabusUpdateInput, SyllabusUncheckedUpdateInput>
+    /**
+     * Choose, which Syllabus to update.
+     */
+    where: SyllabusWhereUniqueInput
+  }
+
+  /**
+   * Syllabus updateMany
+   */
+  export type SyllabusUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Syllabi.
+     */
+    data: XOR<SyllabusUpdateManyMutationInput, SyllabusUncheckedUpdateManyInput>
+    /**
+     * Filter which Syllabi to update
+     */
+    where?: SyllabusWhereInput
+    /**
+     * Limit how many Syllabi to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Syllabus updateManyAndReturn
+   */
+  export type SyllabusUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Syllabus
+     */
+    select?: SyllabusSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Syllabus
+     */
+    omit?: SyllabusOmit<ExtArgs> | null
+    /**
+     * The data used to update Syllabi.
+     */
+    data: XOR<SyllabusUpdateManyMutationInput, SyllabusUncheckedUpdateManyInput>
+    /**
+     * Filter which Syllabi to update
+     */
+    where?: SyllabusWhereInput
+    /**
+     * Limit how many Syllabi to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Syllabus upsert
+   */
+  export type SyllabusUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Syllabus
+     */
+    select?: SyllabusSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Syllabus
+     */
+    omit?: SyllabusOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Syllabus to update in case it exists.
+     */
+    where: SyllabusWhereUniqueInput
+    /**
+     * In case the Syllabus found by the `where` argument doesn't exist, create a new Syllabus with this data.
+     */
+    create: XOR<SyllabusCreateInput, SyllabusUncheckedCreateInput>
+    /**
+     * In case the Syllabus was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SyllabusUpdateInput, SyllabusUncheckedUpdateInput>
+  }
+
+  /**
+   * Syllabus delete
+   */
+  export type SyllabusDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Syllabus
+     */
+    select?: SyllabusSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Syllabus
+     */
+    omit?: SyllabusOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusInclude<ExtArgs> | null
+    /**
+     * Filter which Syllabus to delete.
+     */
+    where: SyllabusWhereUniqueInput
+  }
+
+  /**
+   * Syllabus deleteMany
+   */
+  export type SyllabusDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Syllabi to delete
+     */
+    where?: SyllabusWhereInput
+    /**
+     * Limit how many Syllabi to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Syllabus.topics
+   */
+  export type Syllabus$topicsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopic
+     */
+    select?: SyllabusTopicSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopic
+     */
+    omit?: SyllabusTopicOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicInclude<ExtArgs> | null
+    where?: SyllabusTopicWhereInput
+    orderBy?: SyllabusTopicOrderByWithRelationInput | SyllabusTopicOrderByWithRelationInput[]
+    cursor?: SyllabusTopicWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SyllabusTopicScalarFieldEnum | SyllabusTopicScalarFieldEnum[]
+  }
+
+  /**
+   * Syllabus without action
+   */
+  export type SyllabusDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Syllabus
+     */
+    select?: SyllabusSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Syllabus
+     */
+    omit?: SyllabusOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SyllabusTopic
+   */
+
+  export type AggregateSyllabusTopic = {
+    _count: SyllabusTopicCountAggregateOutputType | null
+    _avg: SyllabusTopicAvgAggregateOutputType | null
+    _sum: SyllabusTopicSumAggregateOutputType | null
+    _min: SyllabusTopicMinAggregateOutputType | null
+    _max: SyllabusTopicMaxAggregateOutputType | null
+  }
+
+  export type SyllabusTopicAvgAggregateOutputType = {
+    id: number | null
+    weekNumber: number | null
+    durationWeeks: number | null
+    order: number | null
+    syllabusId: number | null
+  }
+
+  export type SyllabusTopicSumAggregateOutputType = {
+    id: number | null
+    weekNumber: number | null
+    durationWeeks: number | null
+    order: number | null
+    syllabusId: number | null
+  }
+
+  export type SyllabusTopicMinAggregateOutputType = {
+    id: number | null
+    weekNumber: number | null
+    durationWeeks: number | null
+    order: number | null
+    title: string | null
+    teachingResources: string | null
+    syllabusId: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SyllabusTopicMaxAggregateOutputType = {
+    id: number | null
+    weekNumber: number | null
+    durationWeeks: number | null
+    order: number | null
+    title: string | null
+    teachingResources: string | null
+    syllabusId: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SyllabusTopicCountAggregateOutputType = {
+    id: number
+    weekNumber: number
+    durationWeeks: number
+    order: number
+    title: number
+    subtopics: number
+    objectives: number
+    coreCompetencies: number
+    teachingResources: number
+    syllabusId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type SyllabusTopicAvgAggregateInputType = {
+    id?: true
+    weekNumber?: true
+    durationWeeks?: true
+    order?: true
+    syllabusId?: true
+  }
+
+  export type SyllabusTopicSumAggregateInputType = {
+    id?: true
+    weekNumber?: true
+    durationWeeks?: true
+    order?: true
+    syllabusId?: true
+  }
+
+  export type SyllabusTopicMinAggregateInputType = {
+    id?: true
+    weekNumber?: true
+    durationWeeks?: true
+    order?: true
+    title?: true
+    teachingResources?: true
+    syllabusId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SyllabusTopicMaxAggregateInputType = {
+    id?: true
+    weekNumber?: true
+    durationWeeks?: true
+    order?: true
+    title?: true
+    teachingResources?: true
+    syllabusId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SyllabusTopicCountAggregateInputType = {
+    id?: true
+    weekNumber?: true
+    durationWeeks?: true
+    order?: true
+    title?: true
+    subtopics?: true
+    objectives?: true
+    coreCompetencies?: true
+    teachingResources?: true
+    syllabusId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type SyllabusTopicAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SyllabusTopic to aggregate.
+     */
+    where?: SyllabusTopicWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SyllabusTopics to fetch.
+     */
+    orderBy?: SyllabusTopicOrderByWithRelationInput | SyllabusTopicOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SyllabusTopicWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SyllabusTopics from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SyllabusTopics.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SyllabusTopics
+    **/
+    _count?: true | SyllabusTopicCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SyllabusTopicAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SyllabusTopicSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SyllabusTopicMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SyllabusTopicMaxAggregateInputType
+  }
+
+  export type GetSyllabusTopicAggregateType<T extends SyllabusTopicAggregateArgs> = {
+        [P in keyof T & keyof AggregateSyllabusTopic]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSyllabusTopic[P]>
+      : GetScalarType<T[P], AggregateSyllabusTopic[P]>
+  }
+
+
+
+
+  export type SyllabusTopicGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SyllabusTopicWhereInput
+    orderBy?: SyllabusTopicOrderByWithAggregationInput | SyllabusTopicOrderByWithAggregationInput[]
+    by: SyllabusTopicScalarFieldEnum[] | SyllabusTopicScalarFieldEnum
+    having?: SyllabusTopicScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SyllabusTopicCountAggregateInputType | true
+    _avg?: SyllabusTopicAvgAggregateInputType
+    _sum?: SyllabusTopicSumAggregateInputType
+    _min?: SyllabusTopicMinAggregateInputType
+    _max?: SyllabusTopicMaxAggregateInputType
+  }
+
+  export type SyllabusTopicGroupByOutputType = {
+    id: number
+    weekNumber: number
+    durationWeeks: number
+    order: number
+    title: string
+    subtopics: string[]
+    objectives: string[]
+    coreCompetencies: string[]
+    teachingResources: string | null
+    syllabusId: number
+    createdAt: Date
+    updatedAt: Date
+    _count: SyllabusTopicCountAggregateOutputType | null
+    _avg: SyllabusTopicAvgAggregateOutputType | null
+    _sum: SyllabusTopicSumAggregateOutputType | null
+    _min: SyllabusTopicMinAggregateOutputType | null
+    _max: SyllabusTopicMaxAggregateOutputType | null
+  }
+
+  type GetSyllabusTopicGroupByPayload<T extends SyllabusTopicGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SyllabusTopicGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SyllabusTopicGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SyllabusTopicGroupByOutputType[P]>
+            : GetScalarType<T[P], SyllabusTopicGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SyllabusTopicSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    weekNumber?: boolean
+    durationWeeks?: boolean
+    order?: boolean
+    title?: boolean
+    subtopics?: boolean
+    objectives?: boolean
+    coreCompetencies?: boolean
+    teachingResources?: boolean
+    syllabusId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    syllabus?: boolean | SyllabusDefaultArgs<ExtArgs>
+    progress?: boolean | SyllabusTopic$progressArgs<ExtArgs>
+    _count?: boolean | SyllabusTopicCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["syllabusTopic"]>
+
+  export type SyllabusTopicSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    weekNumber?: boolean
+    durationWeeks?: boolean
+    order?: boolean
+    title?: boolean
+    subtopics?: boolean
+    objectives?: boolean
+    coreCompetencies?: boolean
+    teachingResources?: boolean
+    syllabusId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    syllabus?: boolean | SyllabusDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["syllabusTopic"]>
+
+  export type SyllabusTopicSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    weekNumber?: boolean
+    durationWeeks?: boolean
+    order?: boolean
+    title?: boolean
+    subtopics?: boolean
+    objectives?: boolean
+    coreCompetencies?: boolean
+    teachingResources?: boolean
+    syllabusId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    syllabus?: boolean | SyllabusDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["syllabusTopic"]>
+
+  export type SyllabusTopicSelectScalar = {
+    id?: boolean
+    weekNumber?: boolean
+    durationWeeks?: boolean
+    order?: boolean
+    title?: boolean
+    subtopics?: boolean
+    objectives?: boolean
+    coreCompetencies?: boolean
+    teachingResources?: boolean
+    syllabusId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type SyllabusTopicOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "weekNumber" | "durationWeeks" | "order" | "title" | "subtopics" | "objectives" | "coreCompetencies" | "teachingResources" | "syllabusId" | "createdAt" | "updatedAt", ExtArgs["result"]["syllabusTopic"]>
+  export type SyllabusTopicInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    syllabus?: boolean | SyllabusDefaultArgs<ExtArgs>
+    progress?: boolean | SyllabusTopic$progressArgs<ExtArgs>
+    _count?: boolean | SyllabusTopicCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type SyllabusTopicIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    syllabus?: boolean | SyllabusDefaultArgs<ExtArgs>
+  }
+  export type SyllabusTopicIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    syllabus?: boolean | SyllabusDefaultArgs<ExtArgs>
+  }
+
+  export type $SyllabusTopicPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SyllabusTopic"
+    objects: {
+      syllabus: Prisma.$SyllabusPayload<ExtArgs>
+      progress: Prisma.$SyllabusTopicProgressPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      weekNumber: number
+      durationWeeks: number
+      order: number
+      title: string
+      subtopics: string[]
+      objectives: string[]
+      coreCompetencies: string[]
+      teachingResources: string | null
+      syllabusId: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["syllabusTopic"]>
+    composites: {}
+  }
+
+  type SyllabusTopicGetPayload<S extends boolean | null | undefined | SyllabusTopicDefaultArgs> = $Result.GetResult<Prisma.$SyllabusTopicPayload, S>
+
+  type SyllabusTopicCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SyllabusTopicFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SyllabusTopicCountAggregateInputType | true
+    }
+
+  export interface SyllabusTopicDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SyllabusTopic'], meta: { name: 'SyllabusTopic' } }
+    /**
+     * Find zero or one SyllabusTopic that matches the filter.
+     * @param {SyllabusTopicFindUniqueArgs} args - Arguments to find a SyllabusTopic
+     * @example
+     * // Get one SyllabusTopic
+     * const syllabusTopic = await prisma.syllabusTopic.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SyllabusTopicFindUniqueArgs>(args: SelectSubset<T, SyllabusTopicFindUniqueArgs<ExtArgs>>): Prisma__SyllabusTopicClient<$Result.GetResult<Prisma.$SyllabusTopicPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SyllabusTopic that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SyllabusTopicFindUniqueOrThrowArgs} args - Arguments to find a SyllabusTopic
+     * @example
+     * // Get one SyllabusTopic
+     * const syllabusTopic = await prisma.syllabusTopic.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SyllabusTopicFindUniqueOrThrowArgs>(args: SelectSubset<T, SyllabusTopicFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SyllabusTopicClient<$Result.GetResult<Prisma.$SyllabusTopicPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SyllabusTopic that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusTopicFindFirstArgs} args - Arguments to find a SyllabusTopic
+     * @example
+     * // Get one SyllabusTopic
+     * const syllabusTopic = await prisma.syllabusTopic.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SyllabusTopicFindFirstArgs>(args?: SelectSubset<T, SyllabusTopicFindFirstArgs<ExtArgs>>): Prisma__SyllabusTopicClient<$Result.GetResult<Prisma.$SyllabusTopicPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SyllabusTopic that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusTopicFindFirstOrThrowArgs} args - Arguments to find a SyllabusTopic
+     * @example
+     * // Get one SyllabusTopic
+     * const syllabusTopic = await prisma.syllabusTopic.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SyllabusTopicFindFirstOrThrowArgs>(args?: SelectSubset<T, SyllabusTopicFindFirstOrThrowArgs<ExtArgs>>): Prisma__SyllabusTopicClient<$Result.GetResult<Prisma.$SyllabusTopicPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SyllabusTopics that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusTopicFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SyllabusTopics
+     * const syllabusTopics = await prisma.syllabusTopic.findMany()
+     * 
+     * // Get first 10 SyllabusTopics
+     * const syllabusTopics = await prisma.syllabusTopic.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const syllabusTopicWithIdOnly = await prisma.syllabusTopic.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SyllabusTopicFindManyArgs>(args?: SelectSubset<T, SyllabusTopicFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusTopicPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SyllabusTopic.
+     * @param {SyllabusTopicCreateArgs} args - Arguments to create a SyllabusTopic.
+     * @example
+     * // Create one SyllabusTopic
+     * const SyllabusTopic = await prisma.syllabusTopic.create({
+     *   data: {
+     *     // ... data to create a SyllabusTopic
+     *   }
+     * })
+     * 
+     */
+    create<T extends SyllabusTopicCreateArgs>(args: SelectSubset<T, SyllabusTopicCreateArgs<ExtArgs>>): Prisma__SyllabusTopicClient<$Result.GetResult<Prisma.$SyllabusTopicPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SyllabusTopics.
+     * @param {SyllabusTopicCreateManyArgs} args - Arguments to create many SyllabusTopics.
+     * @example
+     * // Create many SyllabusTopics
+     * const syllabusTopic = await prisma.syllabusTopic.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SyllabusTopicCreateManyArgs>(args?: SelectSubset<T, SyllabusTopicCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SyllabusTopics and returns the data saved in the database.
+     * @param {SyllabusTopicCreateManyAndReturnArgs} args - Arguments to create many SyllabusTopics.
+     * @example
+     * // Create many SyllabusTopics
+     * const syllabusTopic = await prisma.syllabusTopic.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SyllabusTopics and only return the `id`
+     * const syllabusTopicWithIdOnly = await prisma.syllabusTopic.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SyllabusTopicCreateManyAndReturnArgs>(args?: SelectSubset<T, SyllabusTopicCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusTopicPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SyllabusTopic.
+     * @param {SyllabusTopicDeleteArgs} args - Arguments to delete one SyllabusTopic.
+     * @example
+     * // Delete one SyllabusTopic
+     * const SyllabusTopic = await prisma.syllabusTopic.delete({
+     *   where: {
+     *     // ... filter to delete one SyllabusTopic
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SyllabusTopicDeleteArgs>(args: SelectSubset<T, SyllabusTopicDeleteArgs<ExtArgs>>): Prisma__SyllabusTopicClient<$Result.GetResult<Prisma.$SyllabusTopicPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SyllabusTopic.
+     * @param {SyllabusTopicUpdateArgs} args - Arguments to update one SyllabusTopic.
+     * @example
+     * // Update one SyllabusTopic
+     * const syllabusTopic = await prisma.syllabusTopic.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SyllabusTopicUpdateArgs>(args: SelectSubset<T, SyllabusTopicUpdateArgs<ExtArgs>>): Prisma__SyllabusTopicClient<$Result.GetResult<Prisma.$SyllabusTopicPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SyllabusTopics.
+     * @param {SyllabusTopicDeleteManyArgs} args - Arguments to filter SyllabusTopics to delete.
+     * @example
+     * // Delete a few SyllabusTopics
+     * const { count } = await prisma.syllabusTopic.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SyllabusTopicDeleteManyArgs>(args?: SelectSubset<T, SyllabusTopicDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SyllabusTopics.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusTopicUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SyllabusTopics
+     * const syllabusTopic = await prisma.syllabusTopic.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SyllabusTopicUpdateManyArgs>(args: SelectSubset<T, SyllabusTopicUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SyllabusTopics and returns the data updated in the database.
+     * @param {SyllabusTopicUpdateManyAndReturnArgs} args - Arguments to update many SyllabusTopics.
+     * @example
+     * // Update many SyllabusTopics
+     * const syllabusTopic = await prisma.syllabusTopic.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SyllabusTopics and only return the `id`
+     * const syllabusTopicWithIdOnly = await prisma.syllabusTopic.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SyllabusTopicUpdateManyAndReturnArgs>(args: SelectSubset<T, SyllabusTopicUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusTopicPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SyllabusTopic.
+     * @param {SyllabusTopicUpsertArgs} args - Arguments to update or create a SyllabusTopic.
+     * @example
+     * // Update or create a SyllabusTopic
+     * const syllabusTopic = await prisma.syllabusTopic.upsert({
+     *   create: {
+     *     // ... data to create a SyllabusTopic
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SyllabusTopic we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SyllabusTopicUpsertArgs>(args: SelectSubset<T, SyllabusTopicUpsertArgs<ExtArgs>>): Prisma__SyllabusTopicClient<$Result.GetResult<Prisma.$SyllabusTopicPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SyllabusTopics.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusTopicCountArgs} args - Arguments to filter SyllabusTopics to count.
+     * @example
+     * // Count the number of SyllabusTopics
+     * const count = await prisma.syllabusTopic.count({
+     *   where: {
+     *     // ... the filter for the SyllabusTopics we want to count
+     *   }
+     * })
+    **/
+    count<T extends SyllabusTopicCountArgs>(
+      args?: Subset<T, SyllabusTopicCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SyllabusTopicCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SyllabusTopic.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusTopicAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SyllabusTopicAggregateArgs>(args: Subset<T, SyllabusTopicAggregateArgs>): Prisma.PrismaPromise<GetSyllabusTopicAggregateType<T>>
+
+    /**
+     * Group by SyllabusTopic.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusTopicGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SyllabusTopicGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SyllabusTopicGroupByArgs['orderBy'] }
+        : { orderBy?: SyllabusTopicGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SyllabusTopicGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSyllabusTopicGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SyllabusTopic model
+   */
+  readonly fields: SyllabusTopicFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SyllabusTopic.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SyllabusTopicClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    syllabus<T extends SyllabusDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SyllabusDefaultArgs<ExtArgs>>): Prisma__SyllabusClient<$Result.GetResult<Prisma.$SyllabusPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    progress<T extends SyllabusTopic$progressArgs<ExtArgs> = {}>(args?: Subset<T, SyllabusTopic$progressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SyllabusTopic model
+   */
+  interface SyllabusTopicFieldRefs {
+    readonly id: FieldRef<"SyllabusTopic", 'Int'>
+    readonly weekNumber: FieldRef<"SyllabusTopic", 'Int'>
+    readonly durationWeeks: FieldRef<"SyllabusTopic", 'Int'>
+    readonly order: FieldRef<"SyllabusTopic", 'Int'>
+    readonly title: FieldRef<"SyllabusTopic", 'String'>
+    readonly subtopics: FieldRef<"SyllabusTopic", 'String[]'>
+    readonly objectives: FieldRef<"SyllabusTopic", 'String[]'>
+    readonly coreCompetencies: FieldRef<"SyllabusTopic", 'String[]'>
+    readonly teachingResources: FieldRef<"SyllabusTopic", 'String'>
+    readonly syllabusId: FieldRef<"SyllabusTopic", 'Int'>
+    readonly createdAt: FieldRef<"SyllabusTopic", 'DateTime'>
+    readonly updatedAt: FieldRef<"SyllabusTopic", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SyllabusTopic findUnique
+   */
+  export type SyllabusTopicFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopic
+     */
+    select?: SyllabusTopicSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopic
+     */
+    omit?: SyllabusTopicOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicInclude<ExtArgs> | null
+    /**
+     * Filter, which SyllabusTopic to fetch.
+     */
+    where: SyllabusTopicWhereUniqueInput
+  }
+
+  /**
+   * SyllabusTopic findUniqueOrThrow
+   */
+  export type SyllabusTopicFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopic
+     */
+    select?: SyllabusTopicSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopic
+     */
+    omit?: SyllabusTopicOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicInclude<ExtArgs> | null
+    /**
+     * Filter, which SyllabusTopic to fetch.
+     */
+    where: SyllabusTopicWhereUniqueInput
+  }
+
+  /**
+   * SyllabusTopic findFirst
+   */
+  export type SyllabusTopicFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopic
+     */
+    select?: SyllabusTopicSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopic
+     */
+    omit?: SyllabusTopicOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicInclude<ExtArgs> | null
+    /**
+     * Filter, which SyllabusTopic to fetch.
+     */
+    where?: SyllabusTopicWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SyllabusTopics to fetch.
+     */
+    orderBy?: SyllabusTopicOrderByWithRelationInput | SyllabusTopicOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SyllabusTopics.
+     */
+    cursor?: SyllabusTopicWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SyllabusTopics from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SyllabusTopics.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SyllabusTopics.
+     */
+    distinct?: SyllabusTopicScalarFieldEnum | SyllabusTopicScalarFieldEnum[]
+  }
+
+  /**
+   * SyllabusTopic findFirstOrThrow
+   */
+  export type SyllabusTopicFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopic
+     */
+    select?: SyllabusTopicSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopic
+     */
+    omit?: SyllabusTopicOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicInclude<ExtArgs> | null
+    /**
+     * Filter, which SyllabusTopic to fetch.
+     */
+    where?: SyllabusTopicWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SyllabusTopics to fetch.
+     */
+    orderBy?: SyllabusTopicOrderByWithRelationInput | SyllabusTopicOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SyllabusTopics.
+     */
+    cursor?: SyllabusTopicWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SyllabusTopics from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SyllabusTopics.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SyllabusTopics.
+     */
+    distinct?: SyllabusTopicScalarFieldEnum | SyllabusTopicScalarFieldEnum[]
+  }
+
+  /**
+   * SyllabusTopic findMany
+   */
+  export type SyllabusTopicFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopic
+     */
+    select?: SyllabusTopicSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopic
+     */
+    omit?: SyllabusTopicOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicInclude<ExtArgs> | null
+    /**
+     * Filter, which SyllabusTopics to fetch.
+     */
+    where?: SyllabusTopicWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SyllabusTopics to fetch.
+     */
+    orderBy?: SyllabusTopicOrderByWithRelationInput | SyllabusTopicOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SyllabusTopics.
+     */
+    cursor?: SyllabusTopicWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SyllabusTopics from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SyllabusTopics.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SyllabusTopics.
+     */
+    distinct?: SyllabusTopicScalarFieldEnum | SyllabusTopicScalarFieldEnum[]
+  }
+
+  /**
+   * SyllabusTopic create
+   */
+  export type SyllabusTopicCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopic
+     */
+    select?: SyllabusTopicSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopic
+     */
+    omit?: SyllabusTopicOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SyllabusTopic.
+     */
+    data: XOR<SyllabusTopicCreateInput, SyllabusTopicUncheckedCreateInput>
+  }
+
+  /**
+   * SyllabusTopic createMany
+   */
+  export type SyllabusTopicCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SyllabusTopics.
+     */
+    data: SyllabusTopicCreateManyInput | SyllabusTopicCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SyllabusTopic createManyAndReturn
+   */
+  export type SyllabusTopicCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopic
+     */
+    select?: SyllabusTopicSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopic
+     */
+    omit?: SyllabusTopicOmit<ExtArgs> | null
+    /**
+     * The data used to create many SyllabusTopics.
+     */
+    data: SyllabusTopicCreateManyInput | SyllabusTopicCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SyllabusTopic update
+   */
+  export type SyllabusTopicUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopic
+     */
+    select?: SyllabusTopicSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopic
+     */
+    omit?: SyllabusTopicOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SyllabusTopic.
+     */
+    data: XOR<SyllabusTopicUpdateInput, SyllabusTopicUncheckedUpdateInput>
+    /**
+     * Choose, which SyllabusTopic to update.
+     */
+    where: SyllabusTopicWhereUniqueInput
+  }
+
+  /**
+   * SyllabusTopic updateMany
+   */
+  export type SyllabusTopicUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SyllabusTopics.
+     */
+    data: XOR<SyllabusTopicUpdateManyMutationInput, SyllabusTopicUncheckedUpdateManyInput>
+    /**
+     * Filter which SyllabusTopics to update
+     */
+    where?: SyllabusTopicWhereInput
+    /**
+     * Limit how many SyllabusTopics to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SyllabusTopic updateManyAndReturn
+   */
+  export type SyllabusTopicUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopic
+     */
+    select?: SyllabusTopicSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopic
+     */
+    omit?: SyllabusTopicOmit<ExtArgs> | null
+    /**
+     * The data used to update SyllabusTopics.
+     */
+    data: XOR<SyllabusTopicUpdateManyMutationInput, SyllabusTopicUncheckedUpdateManyInput>
+    /**
+     * Filter which SyllabusTopics to update
+     */
+    where?: SyllabusTopicWhereInput
+    /**
+     * Limit how many SyllabusTopics to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SyllabusTopic upsert
+   */
+  export type SyllabusTopicUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopic
+     */
+    select?: SyllabusTopicSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopic
+     */
+    omit?: SyllabusTopicOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SyllabusTopic to update in case it exists.
+     */
+    where: SyllabusTopicWhereUniqueInput
+    /**
+     * In case the SyllabusTopic found by the `where` argument doesn't exist, create a new SyllabusTopic with this data.
+     */
+    create: XOR<SyllabusTopicCreateInput, SyllabusTopicUncheckedCreateInput>
+    /**
+     * In case the SyllabusTopic was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SyllabusTopicUpdateInput, SyllabusTopicUncheckedUpdateInput>
+  }
+
+  /**
+   * SyllabusTopic delete
+   */
+  export type SyllabusTopicDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopic
+     */
+    select?: SyllabusTopicSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopic
+     */
+    omit?: SyllabusTopicOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicInclude<ExtArgs> | null
+    /**
+     * Filter which SyllabusTopic to delete.
+     */
+    where: SyllabusTopicWhereUniqueInput
+  }
+
+  /**
+   * SyllabusTopic deleteMany
+   */
+  export type SyllabusTopicDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SyllabusTopics to delete
+     */
+    where?: SyllabusTopicWhereInput
+    /**
+     * Limit how many SyllabusTopics to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SyllabusTopic.progress
+   */
+  export type SyllabusTopic$progressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopicProgress
+     */
+    select?: SyllabusTopicProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopicProgress
+     */
+    omit?: SyllabusTopicProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicProgressInclude<ExtArgs> | null
+    where?: SyllabusTopicProgressWhereInput
+    orderBy?: SyllabusTopicProgressOrderByWithRelationInput | SyllabusTopicProgressOrderByWithRelationInput[]
+    cursor?: SyllabusTopicProgressWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SyllabusTopicProgressScalarFieldEnum | SyllabusTopicProgressScalarFieldEnum[]
+  }
+
+  /**
+   * SyllabusTopic without action
+   */
+  export type SyllabusTopicDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopic
+     */
+    select?: SyllabusTopicSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopic
+     */
+    omit?: SyllabusTopicOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SyllabusTopicProgress
+   */
+
+  export type AggregateSyllabusTopicProgress = {
+    _count: SyllabusTopicProgressCountAggregateOutputType | null
+    _avg: SyllabusTopicProgressAvgAggregateOutputType | null
+    _sum: SyllabusTopicProgressSumAggregateOutputType | null
+    _min: SyllabusTopicProgressMinAggregateOutputType | null
+    _max: SyllabusTopicProgressMaxAggregateOutputType | null
+  }
+
+  export type SyllabusTopicProgressAvgAggregateOutputType = {
+    id: number | null
+    syllabusTopicId: number | null
+    classId: number | null
+  }
+
+  export type SyllabusTopicProgressSumAggregateOutputType = {
+    id: number | null
+    syllabusTopicId: number | null
+    classId: number | null
+  }
+
+  export type SyllabusTopicProgressMinAggregateOutputType = {
+    id: number | null
+    coveredDate: Date | null
+    notes: string | null
+    syllabusTopicId: number | null
+    classId: number | null
+    teacherId: string | null
+    createdAt: Date | null
+  }
+
+  export type SyllabusTopicProgressMaxAggregateOutputType = {
+    id: number | null
+    coveredDate: Date | null
+    notes: string | null
+    syllabusTopicId: number | null
+    classId: number | null
+    teacherId: string | null
+    createdAt: Date | null
+  }
+
+  export type SyllabusTopicProgressCountAggregateOutputType = {
+    id: number
+    coveredDate: number
+    notes: number
+    syllabusTopicId: number
+    classId: number
+    teacherId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type SyllabusTopicProgressAvgAggregateInputType = {
+    id?: true
+    syllabusTopicId?: true
+    classId?: true
+  }
+
+  export type SyllabusTopicProgressSumAggregateInputType = {
+    id?: true
+    syllabusTopicId?: true
+    classId?: true
+  }
+
+  export type SyllabusTopicProgressMinAggregateInputType = {
+    id?: true
+    coveredDate?: true
+    notes?: true
+    syllabusTopicId?: true
+    classId?: true
+    teacherId?: true
+    createdAt?: true
+  }
+
+  export type SyllabusTopicProgressMaxAggregateInputType = {
+    id?: true
+    coveredDate?: true
+    notes?: true
+    syllabusTopicId?: true
+    classId?: true
+    teacherId?: true
+    createdAt?: true
+  }
+
+  export type SyllabusTopicProgressCountAggregateInputType = {
+    id?: true
+    coveredDate?: true
+    notes?: true
+    syllabusTopicId?: true
+    classId?: true
+    teacherId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type SyllabusTopicProgressAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SyllabusTopicProgress to aggregate.
+     */
+    where?: SyllabusTopicProgressWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SyllabusTopicProgresses to fetch.
+     */
+    orderBy?: SyllabusTopicProgressOrderByWithRelationInput | SyllabusTopicProgressOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SyllabusTopicProgressWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SyllabusTopicProgresses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SyllabusTopicProgresses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SyllabusTopicProgresses
+    **/
+    _count?: true | SyllabusTopicProgressCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SyllabusTopicProgressAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SyllabusTopicProgressSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SyllabusTopicProgressMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SyllabusTopicProgressMaxAggregateInputType
+  }
+
+  export type GetSyllabusTopicProgressAggregateType<T extends SyllabusTopicProgressAggregateArgs> = {
+        [P in keyof T & keyof AggregateSyllabusTopicProgress]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSyllabusTopicProgress[P]>
+      : GetScalarType<T[P], AggregateSyllabusTopicProgress[P]>
+  }
+
+
+
+
+  export type SyllabusTopicProgressGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SyllabusTopicProgressWhereInput
+    orderBy?: SyllabusTopicProgressOrderByWithAggregationInput | SyllabusTopicProgressOrderByWithAggregationInput[]
+    by: SyllabusTopicProgressScalarFieldEnum[] | SyllabusTopicProgressScalarFieldEnum
+    having?: SyllabusTopicProgressScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SyllabusTopicProgressCountAggregateInputType | true
+    _avg?: SyllabusTopicProgressAvgAggregateInputType
+    _sum?: SyllabusTopicProgressSumAggregateInputType
+    _min?: SyllabusTopicProgressMinAggregateInputType
+    _max?: SyllabusTopicProgressMaxAggregateInputType
+  }
+
+  export type SyllabusTopicProgressGroupByOutputType = {
+    id: number
+    coveredDate: Date
+    notes: string | null
+    syllabusTopicId: number
+    classId: number
+    teacherId: string
+    createdAt: Date
+    _count: SyllabusTopicProgressCountAggregateOutputType | null
+    _avg: SyllabusTopicProgressAvgAggregateOutputType | null
+    _sum: SyllabusTopicProgressSumAggregateOutputType | null
+    _min: SyllabusTopicProgressMinAggregateOutputType | null
+    _max: SyllabusTopicProgressMaxAggregateOutputType | null
+  }
+
+  type GetSyllabusTopicProgressGroupByPayload<T extends SyllabusTopicProgressGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SyllabusTopicProgressGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SyllabusTopicProgressGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SyllabusTopicProgressGroupByOutputType[P]>
+            : GetScalarType<T[P], SyllabusTopicProgressGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SyllabusTopicProgressSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    coveredDate?: boolean
+    notes?: boolean
+    syllabusTopicId?: boolean
+    classId?: boolean
+    teacherId?: boolean
+    createdAt?: boolean
+    syllabusTopic?: boolean | SyllabusTopicDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["syllabusTopicProgress"]>
+
+  export type SyllabusTopicProgressSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    coveredDate?: boolean
+    notes?: boolean
+    syllabusTopicId?: boolean
+    classId?: boolean
+    teacherId?: boolean
+    createdAt?: boolean
+    syllabusTopic?: boolean | SyllabusTopicDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["syllabusTopicProgress"]>
+
+  export type SyllabusTopicProgressSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    coveredDate?: boolean
+    notes?: boolean
+    syllabusTopicId?: boolean
+    classId?: boolean
+    teacherId?: boolean
+    createdAt?: boolean
+    syllabusTopic?: boolean | SyllabusTopicDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["syllabusTopicProgress"]>
+
+  export type SyllabusTopicProgressSelectScalar = {
+    id?: boolean
+    coveredDate?: boolean
+    notes?: boolean
+    syllabusTopicId?: boolean
+    classId?: boolean
+    teacherId?: boolean
+    createdAt?: boolean
+  }
+
+  export type SyllabusTopicProgressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "coveredDate" | "notes" | "syllabusTopicId" | "classId" | "teacherId" | "createdAt", ExtArgs["result"]["syllabusTopicProgress"]>
+  export type SyllabusTopicProgressInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    syllabusTopic?: boolean | SyllabusTopicDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+  }
+  export type SyllabusTopicProgressIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    syllabusTopic?: boolean | SyllabusTopicDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+  }
+  export type SyllabusTopicProgressIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    syllabusTopic?: boolean | SyllabusTopicDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+  }
+
+  export type $SyllabusTopicProgressPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SyllabusTopicProgress"
+    objects: {
+      syllabusTopic: Prisma.$SyllabusTopicPayload<ExtArgs>
+      class: Prisma.$ClassPayload<ExtArgs>
+      teacher: Prisma.$TeacherPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      coveredDate: Date
+      notes: string | null
+      syllabusTopicId: number
+      classId: number
+      teacherId: string
+      createdAt: Date
+    }, ExtArgs["result"]["syllabusTopicProgress"]>
+    composites: {}
+  }
+
+  type SyllabusTopicProgressGetPayload<S extends boolean | null | undefined | SyllabusTopicProgressDefaultArgs> = $Result.GetResult<Prisma.$SyllabusTopicProgressPayload, S>
+
+  type SyllabusTopicProgressCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SyllabusTopicProgressFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SyllabusTopicProgressCountAggregateInputType | true
+    }
+
+  export interface SyllabusTopicProgressDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SyllabusTopicProgress'], meta: { name: 'SyllabusTopicProgress' } }
+    /**
+     * Find zero or one SyllabusTopicProgress that matches the filter.
+     * @param {SyllabusTopicProgressFindUniqueArgs} args - Arguments to find a SyllabusTopicProgress
+     * @example
+     * // Get one SyllabusTopicProgress
+     * const syllabusTopicProgress = await prisma.syllabusTopicProgress.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SyllabusTopicProgressFindUniqueArgs>(args: SelectSubset<T, SyllabusTopicProgressFindUniqueArgs<ExtArgs>>): Prisma__SyllabusTopicProgressClient<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SyllabusTopicProgress that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SyllabusTopicProgressFindUniqueOrThrowArgs} args - Arguments to find a SyllabusTopicProgress
+     * @example
+     * // Get one SyllabusTopicProgress
+     * const syllabusTopicProgress = await prisma.syllabusTopicProgress.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SyllabusTopicProgressFindUniqueOrThrowArgs>(args: SelectSubset<T, SyllabusTopicProgressFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SyllabusTopicProgressClient<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SyllabusTopicProgress that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusTopicProgressFindFirstArgs} args - Arguments to find a SyllabusTopicProgress
+     * @example
+     * // Get one SyllabusTopicProgress
+     * const syllabusTopicProgress = await prisma.syllabusTopicProgress.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SyllabusTopicProgressFindFirstArgs>(args?: SelectSubset<T, SyllabusTopicProgressFindFirstArgs<ExtArgs>>): Prisma__SyllabusTopicProgressClient<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SyllabusTopicProgress that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusTopicProgressFindFirstOrThrowArgs} args - Arguments to find a SyllabusTopicProgress
+     * @example
+     * // Get one SyllabusTopicProgress
+     * const syllabusTopicProgress = await prisma.syllabusTopicProgress.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SyllabusTopicProgressFindFirstOrThrowArgs>(args?: SelectSubset<T, SyllabusTopicProgressFindFirstOrThrowArgs<ExtArgs>>): Prisma__SyllabusTopicProgressClient<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SyllabusTopicProgresses that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusTopicProgressFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SyllabusTopicProgresses
+     * const syllabusTopicProgresses = await prisma.syllabusTopicProgress.findMany()
+     * 
+     * // Get first 10 SyllabusTopicProgresses
+     * const syllabusTopicProgresses = await prisma.syllabusTopicProgress.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const syllabusTopicProgressWithIdOnly = await prisma.syllabusTopicProgress.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SyllabusTopicProgressFindManyArgs>(args?: SelectSubset<T, SyllabusTopicProgressFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SyllabusTopicProgress.
+     * @param {SyllabusTopicProgressCreateArgs} args - Arguments to create a SyllabusTopicProgress.
+     * @example
+     * // Create one SyllabusTopicProgress
+     * const SyllabusTopicProgress = await prisma.syllabusTopicProgress.create({
+     *   data: {
+     *     // ... data to create a SyllabusTopicProgress
+     *   }
+     * })
+     * 
+     */
+    create<T extends SyllabusTopicProgressCreateArgs>(args: SelectSubset<T, SyllabusTopicProgressCreateArgs<ExtArgs>>): Prisma__SyllabusTopicProgressClient<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SyllabusTopicProgresses.
+     * @param {SyllabusTopicProgressCreateManyArgs} args - Arguments to create many SyllabusTopicProgresses.
+     * @example
+     * // Create many SyllabusTopicProgresses
+     * const syllabusTopicProgress = await prisma.syllabusTopicProgress.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SyllabusTopicProgressCreateManyArgs>(args?: SelectSubset<T, SyllabusTopicProgressCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SyllabusTopicProgresses and returns the data saved in the database.
+     * @param {SyllabusTopicProgressCreateManyAndReturnArgs} args - Arguments to create many SyllabusTopicProgresses.
+     * @example
+     * // Create many SyllabusTopicProgresses
+     * const syllabusTopicProgress = await prisma.syllabusTopicProgress.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SyllabusTopicProgresses and only return the `id`
+     * const syllabusTopicProgressWithIdOnly = await prisma.syllabusTopicProgress.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SyllabusTopicProgressCreateManyAndReturnArgs>(args?: SelectSubset<T, SyllabusTopicProgressCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SyllabusTopicProgress.
+     * @param {SyllabusTopicProgressDeleteArgs} args - Arguments to delete one SyllabusTopicProgress.
+     * @example
+     * // Delete one SyllabusTopicProgress
+     * const SyllabusTopicProgress = await prisma.syllabusTopicProgress.delete({
+     *   where: {
+     *     // ... filter to delete one SyllabusTopicProgress
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SyllabusTopicProgressDeleteArgs>(args: SelectSubset<T, SyllabusTopicProgressDeleteArgs<ExtArgs>>): Prisma__SyllabusTopicProgressClient<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SyllabusTopicProgress.
+     * @param {SyllabusTopicProgressUpdateArgs} args - Arguments to update one SyllabusTopicProgress.
+     * @example
+     * // Update one SyllabusTopicProgress
+     * const syllabusTopicProgress = await prisma.syllabusTopicProgress.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SyllabusTopicProgressUpdateArgs>(args: SelectSubset<T, SyllabusTopicProgressUpdateArgs<ExtArgs>>): Prisma__SyllabusTopicProgressClient<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SyllabusTopicProgresses.
+     * @param {SyllabusTopicProgressDeleteManyArgs} args - Arguments to filter SyllabusTopicProgresses to delete.
+     * @example
+     * // Delete a few SyllabusTopicProgresses
+     * const { count } = await prisma.syllabusTopicProgress.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SyllabusTopicProgressDeleteManyArgs>(args?: SelectSubset<T, SyllabusTopicProgressDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SyllabusTopicProgresses.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusTopicProgressUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SyllabusTopicProgresses
+     * const syllabusTopicProgress = await prisma.syllabusTopicProgress.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SyllabusTopicProgressUpdateManyArgs>(args: SelectSubset<T, SyllabusTopicProgressUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SyllabusTopicProgresses and returns the data updated in the database.
+     * @param {SyllabusTopicProgressUpdateManyAndReturnArgs} args - Arguments to update many SyllabusTopicProgresses.
+     * @example
+     * // Update many SyllabusTopicProgresses
+     * const syllabusTopicProgress = await prisma.syllabusTopicProgress.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SyllabusTopicProgresses and only return the `id`
+     * const syllabusTopicProgressWithIdOnly = await prisma.syllabusTopicProgress.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SyllabusTopicProgressUpdateManyAndReturnArgs>(args: SelectSubset<T, SyllabusTopicProgressUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SyllabusTopicProgress.
+     * @param {SyllabusTopicProgressUpsertArgs} args - Arguments to update or create a SyllabusTopicProgress.
+     * @example
+     * // Update or create a SyllabusTopicProgress
+     * const syllabusTopicProgress = await prisma.syllabusTopicProgress.upsert({
+     *   create: {
+     *     // ... data to create a SyllabusTopicProgress
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SyllabusTopicProgress we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SyllabusTopicProgressUpsertArgs>(args: SelectSubset<T, SyllabusTopicProgressUpsertArgs<ExtArgs>>): Prisma__SyllabusTopicProgressClient<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SyllabusTopicProgresses.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusTopicProgressCountArgs} args - Arguments to filter SyllabusTopicProgresses to count.
+     * @example
+     * // Count the number of SyllabusTopicProgresses
+     * const count = await prisma.syllabusTopicProgress.count({
+     *   where: {
+     *     // ... the filter for the SyllabusTopicProgresses we want to count
+     *   }
+     * })
+    **/
+    count<T extends SyllabusTopicProgressCountArgs>(
+      args?: Subset<T, SyllabusTopicProgressCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SyllabusTopicProgressCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SyllabusTopicProgress.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusTopicProgressAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SyllabusTopicProgressAggregateArgs>(args: Subset<T, SyllabusTopicProgressAggregateArgs>): Prisma.PrismaPromise<GetSyllabusTopicProgressAggregateType<T>>
+
+    /**
+     * Group by SyllabusTopicProgress.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SyllabusTopicProgressGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SyllabusTopicProgressGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SyllabusTopicProgressGroupByArgs['orderBy'] }
+        : { orderBy?: SyllabusTopicProgressGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SyllabusTopicProgressGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSyllabusTopicProgressGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SyllabusTopicProgress model
+   */
+  readonly fields: SyllabusTopicProgressFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SyllabusTopicProgress.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SyllabusTopicProgressClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    syllabusTopic<T extends SyllabusTopicDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SyllabusTopicDefaultArgs<ExtArgs>>): Prisma__SyllabusTopicClient<$Result.GetResult<Prisma.$SyllabusTopicPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    class<T extends ClassDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClassDefaultArgs<ExtArgs>>): Prisma__ClassClient<$Result.GetResult<Prisma.$ClassPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    teacher<T extends TeacherDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TeacherDefaultArgs<ExtArgs>>): Prisma__TeacherClient<$Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SyllabusTopicProgress model
+   */
+  interface SyllabusTopicProgressFieldRefs {
+    readonly id: FieldRef<"SyllabusTopicProgress", 'Int'>
+    readonly coveredDate: FieldRef<"SyllabusTopicProgress", 'DateTime'>
+    readonly notes: FieldRef<"SyllabusTopicProgress", 'String'>
+    readonly syllabusTopicId: FieldRef<"SyllabusTopicProgress", 'Int'>
+    readonly classId: FieldRef<"SyllabusTopicProgress", 'Int'>
+    readonly teacherId: FieldRef<"SyllabusTopicProgress", 'String'>
+    readonly createdAt: FieldRef<"SyllabusTopicProgress", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SyllabusTopicProgress findUnique
+   */
+  export type SyllabusTopicProgressFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopicProgress
+     */
+    select?: SyllabusTopicProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopicProgress
+     */
+    omit?: SyllabusTopicProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicProgressInclude<ExtArgs> | null
+    /**
+     * Filter, which SyllabusTopicProgress to fetch.
+     */
+    where: SyllabusTopicProgressWhereUniqueInput
+  }
+
+  /**
+   * SyllabusTopicProgress findUniqueOrThrow
+   */
+  export type SyllabusTopicProgressFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopicProgress
+     */
+    select?: SyllabusTopicProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopicProgress
+     */
+    omit?: SyllabusTopicProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicProgressInclude<ExtArgs> | null
+    /**
+     * Filter, which SyllabusTopicProgress to fetch.
+     */
+    where: SyllabusTopicProgressWhereUniqueInput
+  }
+
+  /**
+   * SyllabusTopicProgress findFirst
+   */
+  export type SyllabusTopicProgressFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopicProgress
+     */
+    select?: SyllabusTopicProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopicProgress
+     */
+    omit?: SyllabusTopicProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicProgressInclude<ExtArgs> | null
+    /**
+     * Filter, which SyllabusTopicProgress to fetch.
+     */
+    where?: SyllabusTopicProgressWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SyllabusTopicProgresses to fetch.
+     */
+    orderBy?: SyllabusTopicProgressOrderByWithRelationInput | SyllabusTopicProgressOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SyllabusTopicProgresses.
+     */
+    cursor?: SyllabusTopicProgressWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SyllabusTopicProgresses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SyllabusTopicProgresses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SyllabusTopicProgresses.
+     */
+    distinct?: SyllabusTopicProgressScalarFieldEnum | SyllabusTopicProgressScalarFieldEnum[]
+  }
+
+  /**
+   * SyllabusTopicProgress findFirstOrThrow
+   */
+  export type SyllabusTopicProgressFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopicProgress
+     */
+    select?: SyllabusTopicProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopicProgress
+     */
+    omit?: SyllabusTopicProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicProgressInclude<ExtArgs> | null
+    /**
+     * Filter, which SyllabusTopicProgress to fetch.
+     */
+    where?: SyllabusTopicProgressWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SyllabusTopicProgresses to fetch.
+     */
+    orderBy?: SyllabusTopicProgressOrderByWithRelationInput | SyllabusTopicProgressOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SyllabusTopicProgresses.
+     */
+    cursor?: SyllabusTopicProgressWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SyllabusTopicProgresses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SyllabusTopicProgresses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SyllabusTopicProgresses.
+     */
+    distinct?: SyllabusTopicProgressScalarFieldEnum | SyllabusTopicProgressScalarFieldEnum[]
+  }
+
+  /**
+   * SyllabusTopicProgress findMany
+   */
+  export type SyllabusTopicProgressFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopicProgress
+     */
+    select?: SyllabusTopicProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopicProgress
+     */
+    omit?: SyllabusTopicProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicProgressInclude<ExtArgs> | null
+    /**
+     * Filter, which SyllabusTopicProgresses to fetch.
+     */
+    where?: SyllabusTopicProgressWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SyllabusTopicProgresses to fetch.
+     */
+    orderBy?: SyllabusTopicProgressOrderByWithRelationInput | SyllabusTopicProgressOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SyllabusTopicProgresses.
+     */
+    cursor?: SyllabusTopicProgressWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SyllabusTopicProgresses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SyllabusTopicProgresses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SyllabusTopicProgresses.
+     */
+    distinct?: SyllabusTopicProgressScalarFieldEnum | SyllabusTopicProgressScalarFieldEnum[]
+  }
+
+  /**
+   * SyllabusTopicProgress create
+   */
+  export type SyllabusTopicProgressCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopicProgress
+     */
+    select?: SyllabusTopicProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopicProgress
+     */
+    omit?: SyllabusTopicProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicProgressInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SyllabusTopicProgress.
+     */
+    data: XOR<SyllabusTopicProgressCreateInput, SyllabusTopicProgressUncheckedCreateInput>
+  }
+
+  /**
+   * SyllabusTopicProgress createMany
+   */
+  export type SyllabusTopicProgressCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SyllabusTopicProgresses.
+     */
+    data: SyllabusTopicProgressCreateManyInput | SyllabusTopicProgressCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SyllabusTopicProgress createManyAndReturn
+   */
+  export type SyllabusTopicProgressCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopicProgress
+     */
+    select?: SyllabusTopicProgressSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopicProgress
+     */
+    omit?: SyllabusTopicProgressOmit<ExtArgs> | null
+    /**
+     * The data used to create many SyllabusTopicProgresses.
+     */
+    data: SyllabusTopicProgressCreateManyInput | SyllabusTopicProgressCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicProgressIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SyllabusTopicProgress update
+   */
+  export type SyllabusTopicProgressUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopicProgress
+     */
+    select?: SyllabusTopicProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopicProgress
+     */
+    omit?: SyllabusTopicProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicProgressInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SyllabusTopicProgress.
+     */
+    data: XOR<SyllabusTopicProgressUpdateInput, SyllabusTopicProgressUncheckedUpdateInput>
+    /**
+     * Choose, which SyllabusTopicProgress to update.
+     */
+    where: SyllabusTopicProgressWhereUniqueInput
+  }
+
+  /**
+   * SyllabusTopicProgress updateMany
+   */
+  export type SyllabusTopicProgressUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SyllabusTopicProgresses.
+     */
+    data: XOR<SyllabusTopicProgressUpdateManyMutationInput, SyllabusTopicProgressUncheckedUpdateManyInput>
+    /**
+     * Filter which SyllabusTopicProgresses to update
+     */
+    where?: SyllabusTopicProgressWhereInput
+    /**
+     * Limit how many SyllabusTopicProgresses to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SyllabusTopicProgress updateManyAndReturn
+   */
+  export type SyllabusTopicProgressUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopicProgress
+     */
+    select?: SyllabusTopicProgressSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopicProgress
+     */
+    omit?: SyllabusTopicProgressOmit<ExtArgs> | null
+    /**
+     * The data used to update SyllabusTopicProgresses.
+     */
+    data: XOR<SyllabusTopicProgressUpdateManyMutationInput, SyllabusTopicProgressUncheckedUpdateManyInput>
+    /**
+     * Filter which SyllabusTopicProgresses to update
+     */
+    where?: SyllabusTopicProgressWhereInput
+    /**
+     * Limit how many SyllabusTopicProgresses to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicProgressIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SyllabusTopicProgress upsert
+   */
+  export type SyllabusTopicProgressUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopicProgress
+     */
+    select?: SyllabusTopicProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopicProgress
+     */
+    omit?: SyllabusTopicProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicProgressInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SyllabusTopicProgress to update in case it exists.
+     */
+    where: SyllabusTopicProgressWhereUniqueInput
+    /**
+     * In case the SyllabusTopicProgress found by the `where` argument doesn't exist, create a new SyllabusTopicProgress with this data.
+     */
+    create: XOR<SyllabusTopicProgressCreateInput, SyllabusTopicProgressUncheckedCreateInput>
+    /**
+     * In case the SyllabusTopicProgress was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SyllabusTopicProgressUpdateInput, SyllabusTopicProgressUncheckedUpdateInput>
+  }
+
+  /**
+   * SyllabusTopicProgress delete
+   */
+  export type SyllabusTopicProgressDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopicProgress
+     */
+    select?: SyllabusTopicProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopicProgress
+     */
+    omit?: SyllabusTopicProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicProgressInclude<ExtArgs> | null
+    /**
+     * Filter which SyllabusTopicProgress to delete.
+     */
+    where: SyllabusTopicProgressWhereUniqueInput
+  }
+
+  /**
+   * SyllabusTopicProgress deleteMany
+   */
+  export type SyllabusTopicProgressDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SyllabusTopicProgresses to delete
+     */
+    where?: SyllabusTopicProgressWhereInput
+    /**
+     * Limit how many SyllabusTopicProgresses to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SyllabusTopicProgress without action
+   */
+  export type SyllabusTopicProgressDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SyllabusTopicProgress
+     */
+    select?: SyllabusTopicProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SyllabusTopicProgress
+     */
+    omit?: SyllabusTopicProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SyllabusTopicProgressInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -21532,6 +25591,52 @@ export namespace Prisma {
   export type ContinuousAssessmentScalarFieldEnum = (typeof ContinuousAssessmentScalarFieldEnum)[keyof typeof ContinuousAssessmentScalarFieldEnum]
 
 
+  export const SyllabusScalarFieldEnum: {
+    id: 'id',
+    description: 'description',
+    status: 'status',
+    term: 'term',
+    academicYear: 'academicYear',
+    subjectId: 'subjectId',
+    gradeId: 'gradeId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type SyllabusScalarFieldEnum = (typeof SyllabusScalarFieldEnum)[keyof typeof SyllabusScalarFieldEnum]
+
+
+  export const SyllabusTopicScalarFieldEnum: {
+    id: 'id',
+    weekNumber: 'weekNumber',
+    durationWeeks: 'durationWeeks',
+    order: 'order',
+    title: 'title',
+    subtopics: 'subtopics',
+    objectives: 'objectives',
+    coreCompetencies: 'coreCompetencies',
+    teachingResources: 'teachingResources',
+    syllabusId: 'syllabusId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type SyllabusTopicScalarFieldEnum = (typeof SyllabusTopicScalarFieldEnum)[keyof typeof SyllabusTopicScalarFieldEnum]
+
+
+  export const SyllabusTopicProgressScalarFieldEnum: {
+    id: 'id',
+    coveredDate: 'coveredDate',
+    notes: 'notes',
+    syllabusTopicId: 'syllabusTopicId',
+    classId: 'classId',
+    teacherId: 'teacherId',
+    createdAt: 'createdAt'
+  };
+
+  export type SyllabusTopicProgressScalarFieldEnum = (typeof SyllabusTopicProgressScalarFieldEnum)[keyof typeof SyllabusTopicProgressScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -21677,6 +25782,20 @@ export namespace Prisma {
    * Reference to a field of type 'Term[]'
    */
   export type ListEnumTermFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Term[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'SyllabusStatus'
+   */
+  export type EnumSyllabusStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SyllabusStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'SyllabusStatus[]'
+   */
+  export type ListEnumSyllabusStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SyllabusStatus[]'>
     
   /**
    * Deep Input Types
@@ -21857,6 +25976,7 @@ export namespace Prisma {
     lessons?: LessonListRelationFilter
     classes?: ClassListRelationFilter
     continuousAssessments?: ContinuousAssessmentListRelationFilter
+    syllabusTopicProgress?: SyllabusTopicProgressListRelationFilter
   }
 
   export type TeacherOrderByWithRelationInput = {
@@ -21876,6 +25996,7 @@ export namespace Prisma {
     lessons?: LessonOrderByRelationAggregateInput
     classes?: ClassOrderByRelationAggregateInput
     continuousAssessments?: ContinuousAssessmentOrderByRelationAggregateInput
+    syllabusTopicProgress?: SyllabusTopicProgressOrderByRelationAggregateInput
   }
 
   export type TeacherWhereUniqueInput = Prisma.AtLeast<{
@@ -21898,6 +26019,7 @@ export namespace Prisma {
     lessons?: LessonListRelationFilter
     classes?: ClassListRelationFilter
     continuousAssessments?: ContinuousAssessmentListRelationFilter
+    syllabusTopicProgress?: SyllabusTopicProgressListRelationFilter
   }, "id" | "username">
 
   export type TeacherOrderByWithAggregationInput = {
@@ -22017,6 +26139,7 @@ export namespace Prisma {
     order?: IntFilter<"Grade"> | number
     students?: StudentListRelationFilter
     classes?: ClassListRelationFilter
+    syllabi?: SyllabusListRelationFilter
   }
 
   export type GradeOrderByWithRelationInput = {
@@ -22025,6 +26148,7 @@ export namespace Prisma {
     order?: SortOrder
     students?: StudentOrderByRelationAggregateInput
     classes?: ClassOrderByRelationAggregateInput
+    syllabi?: SyllabusOrderByRelationAggregateInput
   }
 
   export type GradeWhereUniqueInput = Prisma.AtLeast<{
@@ -22036,6 +26160,7 @@ export namespace Prisma {
     NOT?: GradeWhereInput | GradeWhereInput[]
     students?: StudentListRelationFilter
     classes?: ClassListRelationFilter
+    syllabi?: SyllabusListRelationFilter
   }, "id" | "level" | "order">
 
   export type GradeOrderByWithAggregationInput = {
@@ -22075,6 +26200,7 @@ export namespace Prisma {
     events?: EventListRelationFilter
     announcements?: AnnouncementListRelationFilter
     continuousAssessments?: ContinuousAssessmentListRelationFilter
+    syllabusTopicProgress?: SyllabusTopicProgressListRelationFilter
   }
 
   export type ClassOrderByWithRelationInput = {
@@ -22091,6 +26217,7 @@ export namespace Prisma {
     events?: EventOrderByRelationAggregateInput
     announcements?: AnnouncementOrderByRelationAggregateInput
     continuousAssessments?: ContinuousAssessmentOrderByRelationAggregateInput
+    syllabusTopicProgress?: SyllabusTopicProgressOrderByRelationAggregateInput
   }
 
   export type ClassWhereUniqueInput = Prisma.AtLeast<{
@@ -22110,6 +26237,7 @@ export namespace Prisma {
     events?: EventListRelationFilter
     announcements?: AnnouncementListRelationFilter
     continuousAssessments?: ContinuousAssessmentListRelationFilter
+    syllabusTopicProgress?: SyllabusTopicProgressListRelationFilter
   }, "id" | "name">
 
   export type ClassOrderByWithAggregationInput = {
@@ -22147,6 +26275,7 @@ export namespace Prisma {
     teachers?: TeacherListRelationFilter
     lessons?: LessonListRelationFilter
     continuousAssessments?: ContinuousAssessmentListRelationFilter
+    syllabi?: SyllabusListRelationFilter
   }
 
   export type SubjectOrderByWithRelationInput = {
@@ -22155,6 +26284,7 @@ export namespace Prisma {
     teachers?: TeacherOrderByRelationAggregateInput
     lessons?: LessonOrderByRelationAggregateInput
     continuousAssessments?: ContinuousAssessmentOrderByRelationAggregateInput
+    syllabi?: SyllabusOrderByRelationAggregateInput
   }
 
   export type SubjectWhereUniqueInput = Prisma.AtLeast<{
@@ -22166,6 +26296,7 @@ export namespace Prisma {
     teachers?: TeacherListRelationFilter
     lessons?: LessonListRelationFilter
     continuousAssessments?: ContinuousAssessmentListRelationFilter
+    syllabi?: SyllabusListRelationFilter
   }, "id" | "name">
 
   export type SubjectOrderByWithAggregationInput = {
@@ -22822,6 +26953,259 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"ContinuousAssessment"> | Date | string
   }
 
+  export type SyllabusWhereInput = {
+    AND?: SyllabusWhereInput | SyllabusWhereInput[]
+    OR?: SyllabusWhereInput[]
+    NOT?: SyllabusWhereInput | SyllabusWhereInput[]
+    id?: IntFilter<"Syllabus"> | number
+    description?: StringNullableFilter<"Syllabus"> | string | null
+    status?: EnumSyllabusStatusFilter<"Syllabus"> | $Enums.SyllabusStatus
+    term?: EnumTermFilter<"Syllabus"> | $Enums.Term
+    academicYear?: StringFilter<"Syllabus"> | string
+    subjectId?: IntFilter<"Syllabus"> | number
+    gradeId?: IntFilter<"Syllabus"> | number
+    createdAt?: DateTimeFilter<"Syllabus"> | Date | string
+    updatedAt?: DateTimeFilter<"Syllabus"> | Date | string
+    subject?: XOR<SubjectScalarRelationFilter, SubjectWhereInput>
+    grade?: XOR<GradeScalarRelationFilter, GradeWhereInput>
+    topics?: SyllabusTopicListRelationFilter
+  }
+
+  export type SyllabusOrderByWithRelationInput = {
+    id?: SortOrder
+    description?: SortOrderInput | SortOrder
+    status?: SortOrder
+    term?: SortOrder
+    academicYear?: SortOrder
+    subjectId?: SortOrder
+    gradeId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    subject?: SubjectOrderByWithRelationInput
+    grade?: GradeOrderByWithRelationInput
+    topics?: SyllabusTopicOrderByRelationAggregateInput
+  }
+
+  export type SyllabusWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    subjectId_gradeId_term_academicYear?: SyllabusSubjectIdGradeIdTermAcademicYearCompoundUniqueInput
+    AND?: SyllabusWhereInput | SyllabusWhereInput[]
+    OR?: SyllabusWhereInput[]
+    NOT?: SyllabusWhereInput | SyllabusWhereInput[]
+    description?: StringNullableFilter<"Syllabus"> | string | null
+    status?: EnumSyllabusStatusFilter<"Syllabus"> | $Enums.SyllabusStatus
+    term?: EnumTermFilter<"Syllabus"> | $Enums.Term
+    academicYear?: StringFilter<"Syllabus"> | string
+    subjectId?: IntFilter<"Syllabus"> | number
+    gradeId?: IntFilter<"Syllabus"> | number
+    createdAt?: DateTimeFilter<"Syllabus"> | Date | string
+    updatedAt?: DateTimeFilter<"Syllabus"> | Date | string
+    subject?: XOR<SubjectScalarRelationFilter, SubjectWhereInput>
+    grade?: XOR<GradeScalarRelationFilter, GradeWhereInput>
+    topics?: SyllabusTopicListRelationFilter
+  }, "id" | "subjectId_gradeId_term_academicYear">
+
+  export type SyllabusOrderByWithAggregationInput = {
+    id?: SortOrder
+    description?: SortOrderInput | SortOrder
+    status?: SortOrder
+    term?: SortOrder
+    academicYear?: SortOrder
+    subjectId?: SortOrder
+    gradeId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: SyllabusCountOrderByAggregateInput
+    _avg?: SyllabusAvgOrderByAggregateInput
+    _max?: SyllabusMaxOrderByAggregateInput
+    _min?: SyllabusMinOrderByAggregateInput
+    _sum?: SyllabusSumOrderByAggregateInput
+  }
+
+  export type SyllabusScalarWhereWithAggregatesInput = {
+    AND?: SyllabusScalarWhereWithAggregatesInput | SyllabusScalarWhereWithAggregatesInput[]
+    OR?: SyllabusScalarWhereWithAggregatesInput[]
+    NOT?: SyllabusScalarWhereWithAggregatesInput | SyllabusScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Syllabus"> | number
+    description?: StringNullableWithAggregatesFilter<"Syllabus"> | string | null
+    status?: EnumSyllabusStatusWithAggregatesFilter<"Syllabus"> | $Enums.SyllabusStatus
+    term?: EnumTermWithAggregatesFilter<"Syllabus"> | $Enums.Term
+    academicYear?: StringWithAggregatesFilter<"Syllabus"> | string
+    subjectId?: IntWithAggregatesFilter<"Syllabus"> | number
+    gradeId?: IntWithAggregatesFilter<"Syllabus"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"Syllabus"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Syllabus"> | Date | string
+  }
+
+  export type SyllabusTopicWhereInput = {
+    AND?: SyllabusTopicWhereInput | SyllabusTopicWhereInput[]
+    OR?: SyllabusTopicWhereInput[]
+    NOT?: SyllabusTopicWhereInput | SyllabusTopicWhereInput[]
+    id?: IntFilter<"SyllabusTopic"> | number
+    weekNumber?: IntFilter<"SyllabusTopic"> | number
+    durationWeeks?: IntFilter<"SyllabusTopic"> | number
+    order?: IntFilter<"SyllabusTopic"> | number
+    title?: StringFilter<"SyllabusTopic"> | string
+    subtopics?: StringNullableListFilter<"SyllabusTopic">
+    objectives?: StringNullableListFilter<"SyllabusTopic">
+    coreCompetencies?: StringNullableListFilter<"SyllabusTopic">
+    teachingResources?: StringNullableFilter<"SyllabusTopic"> | string | null
+    syllabusId?: IntFilter<"SyllabusTopic"> | number
+    createdAt?: DateTimeFilter<"SyllabusTopic"> | Date | string
+    updatedAt?: DateTimeFilter<"SyllabusTopic"> | Date | string
+    syllabus?: XOR<SyllabusScalarRelationFilter, SyllabusWhereInput>
+    progress?: SyllabusTopicProgressListRelationFilter
+  }
+
+  export type SyllabusTopicOrderByWithRelationInput = {
+    id?: SortOrder
+    weekNumber?: SortOrder
+    durationWeeks?: SortOrder
+    order?: SortOrder
+    title?: SortOrder
+    subtopics?: SortOrder
+    objectives?: SortOrder
+    coreCompetencies?: SortOrder
+    teachingResources?: SortOrderInput | SortOrder
+    syllabusId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    syllabus?: SyllabusOrderByWithRelationInput
+    progress?: SyllabusTopicProgressOrderByRelationAggregateInput
+  }
+
+  export type SyllabusTopicWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: SyllabusTopicWhereInput | SyllabusTopicWhereInput[]
+    OR?: SyllabusTopicWhereInput[]
+    NOT?: SyllabusTopicWhereInput | SyllabusTopicWhereInput[]
+    weekNumber?: IntFilter<"SyllabusTopic"> | number
+    durationWeeks?: IntFilter<"SyllabusTopic"> | number
+    order?: IntFilter<"SyllabusTopic"> | number
+    title?: StringFilter<"SyllabusTopic"> | string
+    subtopics?: StringNullableListFilter<"SyllabusTopic">
+    objectives?: StringNullableListFilter<"SyllabusTopic">
+    coreCompetencies?: StringNullableListFilter<"SyllabusTopic">
+    teachingResources?: StringNullableFilter<"SyllabusTopic"> | string | null
+    syllabusId?: IntFilter<"SyllabusTopic"> | number
+    createdAt?: DateTimeFilter<"SyllabusTopic"> | Date | string
+    updatedAt?: DateTimeFilter<"SyllabusTopic"> | Date | string
+    syllabus?: XOR<SyllabusScalarRelationFilter, SyllabusWhereInput>
+    progress?: SyllabusTopicProgressListRelationFilter
+  }, "id">
+
+  export type SyllabusTopicOrderByWithAggregationInput = {
+    id?: SortOrder
+    weekNumber?: SortOrder
+    durationWeeks?: SortOrder
+    order?: SortOrder
+    title?: SortOrder
+    subtopics?: SortOrder
+    objectives?: SortOrder
+    coreCompetencies?: SortOrder
+    teachingResources?: SortOrderInput | SortOrder
+    syllabusId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: SyllabusTopicCountOrderByAggregateInput
+    _avg?: SyllabusTopicAvgOrderByAggregateInput
+    _max?: SyllabusTopicMaxOrderByAggregateInput
+    _min?: SyllabusTopicMinOrderByAggregateInput
+    _sum?: SyllabusTopicSumOrderByAggregateInput
+  }
+
+  export type SyllabusTopicScalarWhereWithAggregatesInput = {
+    AND?: SyllabusTopicScalarWhereWithAggregatesInput | SyllabusTopicScalarWhereWithAggregatesInput[]
+    OR?: SyllabusTopicScalarWhereWithAggregatesInput[]
+    NOT?: SyllabusTopicScalarWhereWithAggregatesInput | SyllabusTopicScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"SyllabusTopic"> | number
+    weekNumber?: IntWithAggregatesFilter<"SyllabusTopic"> | number
+    durationWeeks?: IntWithAggregatesFilter<"SyllabusTopic"> | number
+    order?: IntWithAggregatesFilter<"SyllabusTopic"> | number
+    title?: StringWithAggregatesFilter<"SyllabusTopic"> | string
+    subtopics?: StringNullableListFilter<"SyllabusTopic">
+    objectives?: StringNullableListFilter<"SyllabusTopic">
+    coreCompetencies?: StringNullableListFilter<"SyllabusTopic">
+    teachingResources?: StringNullableWithAggregatesFilter<"SyllabusTopic"> | string | null
+    syllabusId?: IntWithAggregatesFilter<"SyllabusTopic"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"SyllabusTopic"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"SyllabusTopic"> | Date | string
+  }
+
+  export type SyllabusTopicProgressWhereInput = {
+    AND?: SyllabusTopicProgressWhereInput | SyllabusTopicProgressWhereInput[]
+    OR?: SyllabusTopicProgressWhereInput[]
+    NOT?: SyllabusTopicProgressWhereInput | SyllabusTopicProgressWhereInput[]
+    id?: IntFilter<"SyllabusTopicProgress"> | number
+    coveredDate?: DateTimeFilter<"SyllabusTopicProgress"> | Date | string
+    notes?: StringNullableFilter<"SyllabusTopicProgress"> | string | null
+    syllabusTopicId?: IntFilter<"SyllabusTopicProgress"> | number
+    classId?: IntFilter<"SyllabusTopicProgress"> | number
+    teacherId?: StringFilter<"SyllabusTopicProgress"> | string
+    createdAt?: DateTimeFilter<"SyllabusTopicProgress"> | Date | string
+    syllabusTopic?: XOR<SyllabusTopicScalarRelationFilter, SyllabusTopicWhereInput>
+    class?: XOR<ClassScalarRelationFilter, ClassWhereInput>
+    teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
+  }
+
+  export type SyllabusTopicProgressOrderByWithRelationInput = {
+    id?: SortOrder
+    coveredDate?: SortOrder
+    notes?: SortOrderInput | SortOrder
+    syllabusTopicId?: SortOrder
+    classId?: SortOrder
+    teacherId?: SortOrder
+    createdAt?: SortOrder
+    syllabusTopic?: SyllabusTopicOrderByWithRelationInput
+    class?: ClassOrderByWithRelationInput
+    teacher?: TeacherOrderByWithRelationInput
+  }
+
+  export type SyllabusTopicProgressWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    syllabusTopicId_classId?: SyllabusTopicProgressSyllabusTopicIdClassIdCompoundUniqueInput
+    AND?: SyllabusTopicProgressWhereInput | SyllabusTopicProgressWhereInput[]
+    OR?: SyllabusTopicProgressWhereInput[]
+    NOT?: SyllabusTopicProgressWhereInput | SyllabusTopicProgressWhereInput[]
+    coveredDate?: DateTimeFilter<"SyllabusTopicProgress"> | Date | string
+    notes?: StringNullableFilter<"SyllabusTopicProgress"> | string | null
+    syllabusTopicId?: IntFilter<"SyllabusTopicProgress"> | number
+    classId?: IntFilter<"SyllabusTopicProgress"> | number
+    teacherId?: StringFilter<"SyllabusTopicProgress"> | string
+    createdAt?: DateTimeFilter<"SyllabusTopicProgress"> | Date | string
+    syllabusTopic?: XOR<SyllabusTopicScalarRelationFilter, SyllabusTopicWhereInput>
+    class?: XOR<ClassScalarRelationFilter, ClassWhereInput>
+    teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
+  }, "id" | "syllabusTopicId_classId">
+
+  export type SyllabusTopicProgressOrderByWithAggregationInput = {
+    id?: SortOrder
+    coveredDate?: SortOrder
+    notes?: SortOrderInput | SortOrder
+    syllabusTopicId?: SortOrder
+    classId?: SortOrder
+    teacherId?: SortOrder
+    createdAt?: SortOrder
+    _count?: SyllabusTopicProgressCountOrderByAggregateInput
+    _avg?: SyllabusTopicProgressAvgOrderByAggregateInput
+    _max?: SyllabusTopicProgressMaxOrderByAggregateInput
+    _min?: SyllabusTopicProgressMinOrderByAggregateInput
+    _sum?: SyllabusTopicProgressSumOrderByAggregateInput
+  }
+
+  export type SyllabusTopicProgressScalarWhereWithAggregatesInput = {
+    AND?: SyllabusTopicProgressScalarWhereWithAggregatesInput | SyllabusTopicProgressScalarWhereWithAggregatesInput[]
+    OR?: SyllabusTopicProgressScalarWhereWithAggregatesInput[]
+    NOT?: SyllabusTopicProgressScalarWhereWithAggregatesInput | SyllabusTopicProgressScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"SyllabusTopicProgress"> | number
+    coveredDate?: DateTimeWithAggregatesFilter<"SyllabusTopicProgress"> | Date | string
+    notes?: StringNullableWithAggregatesFilter<"SyllabusTopicProgress"> | string | null
+    syllabusTopicId?: IntWithAggregatesFilter<"SyllabusTopicProgress"> | number
+    classId?: IntWithAggregatesFilter<"SyllabusTopicProgress"> | number
+    teacherId?: StringWithAggregatesFilter<"SyllabusTopicProgress"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"SyllabusTopicProgress"> | Date | string
+  }
+
   export type AdminCreateInput = {
     id: string
     username: string
@@ -23002,6 +27386,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutTeacherInput
     classes?: ClassCreateNestedManyWithoutSupervisorInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateInput = {
@@ -23021,6 +27406,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
     classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUpdateInput = {
@@ -23040,6 +27426,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutTeacherNestedInput
     classes?: ClassUpdateManyWithoutSupervisorNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateInput = {
@@ -23059,6 +27446,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
     classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherCreateManyInput = {
@@ -23192,6 +27580,7 @@ export namespace Prisma {
     order: number
     students?: StudentCreateNestedManyWithoutGradeInput
     classes?: ClassCreateNestedManyWithoutGradeInput
+    syllabi?: SyllabusCreateNestedManyWithoutGradeInput
   }
 
   export type GradeUncheckedCreateInput = {
@@ -23200,6 +27589,7 @@ export namespace Prisma {
     order: number
     students?: StudentUncheckedCreateNestedManyWithoutGradeInput
     classes?: ClassUncheckedCreateNestedManyWithoutGradeInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutGradeInput
   }
 
   export type GradeUpdateInput = {
@@ -23207,6 +27597,7 @@ export namespace Prisma {
     order?: IntFieldUpdateOperationsInput | number
     students?: StudentUpdateManyWithoutGradeNestedInput
     classes?: ClassUpdateManyWithoutGradeNestedInput
+    syllabi?: SyllabusUpdateManyWithoutGradeNestedInput
   }
 
   export type GradeUncheckedUpdateInput = {
@@ -23215,6 +27606,7 @@ export namespace Prisma {
     order?: IntFieldUpdateOperationsInput | number
     students?: StudentUncheckedUpdateManyWithoutGradeNestedInput
     classes?: ClassUncheckedUpdateManyWithoutGradeNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutGradeNestedInput
   }
 
   export type GradeCreateManyInput = {
@@ -23245,6 +27637,7 @@ export namespace Prisma {
     events?: EventCreateNestedManyWithoutClassInput
     announcements?: AnnouncementCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
   export type ClassUncheckedCreateInput = {
@@ -23259,6 +27652,7 @@ export namespace Prisma {
     events?: EventUncheckedCreateNestedManyWithoutClassInput
     announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
   export type ClassUpdateInput = {
@@ -23272,6 +27666,7 @@ export namespace Prisma {
     events?: EventUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateInput = {
@@ -23286,6 +27681,7 @@ export namespace Prisma {
     events?: EventUncheckedUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
   export type ClassCreateManyInput = {
@@ -23317,6 +27713,7 @@ export namespace Prisma {
     teachers?: TeacherCreateNestedManyWithoutSubjectsInput
     lessons?: LessonCreateNestedManyWithoutSubjectInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSubjectInput
+    syllabi?: SyllabusCreateNestedManyWithoutSubjectInput
   }
 
   export type SubjectUncheckedCreateInput = {
@@ -23325,6 +27722,7 @@ export namespace Prisma {
     teachers?: TeacherUncheckedCreateNestedManyWithoutSubjectsInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSubjectInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSubjectInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSubjectInput
   }
 
   export type SubjectUpdateInput = {
@@ -23332,6 +27730,7 @@ export namespace Prisma {
     teachers?: TeacherUpdateManyWithoutSubjectsNestedInput
     lessons?: LessonUpdateManyWithoutSubjectNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSubjectNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSubjectNestedInput
   }
 
   export type SubjectUncheckedUpdateInput = {
@@ -23340,6 +27739,7 @@ export namespace Prisma {
     teachers?: TeacherUncheckedUpdateManyWithoutSubjectsNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSubjectNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSubjectNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSubjectNestedInput
   }
 
   export type SubjectCreateManyInput = {
@@ -23956,6 +28356,258 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SyllabusCreateInput = {
+    description?: string | null
+    status?: $Enums.SyllabusStatus
+    term: $Enums.Term
+    academicYear: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    subject: SubjectCreateNestedOneWithoutSyllabiInput
+    grade: GradeCreateNestedOneWithoutSyllabiInput
+    topics?: SyllabusTopicCreateNestedManyWithoutSyllabusInput
+  }
+
+  export type SyllabusUncheckedCreateInput = {
+    id?: number
+    description?: string | null
+    status?: $Enums.SyllabusStatus
+    term: $Enums.Term
+    academicYear: string
+    subjectId: number
+    gradeId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    topics?: SyllabusTopicUncheckedCreateNestedManyWithoutSyllabusInput
+  }
+
+  export type SyllabusUpdateInput = {
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSyllabusStatusFieldUpdateOperationsInput | $Enums.SyllabusStatus
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    academicYear?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    subject?: SubjectUpdateOneRequiredWithoutSyllabiNestedInput
+    grade?: GradeUpdateOneRequiredWithoutSyllabiNestedInput
+    topics?: SyllabusTopicUpdateManyWithoutSyllabusNestedInput
+  }
+
+  export type SyllabusUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSyllabusStatusFieldUpdateOperationsInput | $Enums.SyllabusStatus
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    academicYear?: StringFieldUpdateOperationsInput | string
+    subjectId?: IntFieldUpdateOperationsInput | number
+    gradeId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    topics?: SyllabusTopicUncheckedUpdateManyWithoutSyllabusNestedInput
+  }
+
+  export type SyllabusCreateManyInput = {
+    id?: number
+    description?: string | null
+    status?: $Enums.SyllabusStatus
+    term: $Enums.Term
+    academicYear: string
+    subjectId: number
+    gradeId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SyllabusUpdateManyMutationInput = {
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSyllabusStatusFieldUpdateOperationsInput | $Enums.SyllabusStatus
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    academicYear?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SyllabusUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSyllabusStatusFieldUpdateOperationsInput | $Enums.SyllabusStatus
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    academicYear?: StringFieldUpdateOperationsInput | string
+    subjectId?: IntFieldUpdateOperationsInput | number
+    gradeId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SyllabusTopicCreateInput = {
+    weekNumber: number
+    durationWeeks?: number
+    order: number
+    title: string
+    subtopics?: SyllabusTopicCreatesubtopicsInput | string[]
+    objectives?: SyllabusTopicCreateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicCreatecoreCompetenciesInput | string[]
+    teachingResources?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    syllabus: SyllabusCreateNestedOneWithoutTopicsInput
+    progress?: SyllabusTopicProgressCreateNestedManyWithoutSyllabusTopicInput
+  }
+
+  export type SyllabusTopicUncheckedCreateInput = {
+    id?: number
+    weekNumber: number
+    durationWeeks?: number
+    order: number
+    title: string
+    subtopics?: SyllabusTopicCreatesubtopicsInput | string[]
+    objectives?: SyllabusTopicCreateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicCreatecoreCompetenciesInput | string[]
+    teachingResources?: string | null
+    syllabusId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    progress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSyllabusTopicInput
+  }
+
+  export type SyllabusTopicUpdateInput = {
+    weekNumber?: IntFieldUpdateOperationsInput | number
+    durationWeeks?: IntFieldUpdateOperationsInput | number
+    order?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    subtopics?: SyllabusTopicUpdatesubtopicsInput | string[]
+    objectives?: SyllabusTopicUpdateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicUpdatecoreCompetenciesInput | string[]
+    teachingResources?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    syllabus?: SyllabusUpdateOneRequiredWithoutTopicsNestedInput
+    progress?: SyllabusTopicProgressUpdateManyWithoutSyllabusTopicNestedInput
+  }
+
+  export type SyllabusTopicUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    weekNumber?: IntFieldUpdateOperationsInput | number
+    durationWeeks?: IntFieldUpdateOperationsInput | number
+    order?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    subtopics?: SyllabusTopicUpdatesubtopicsInput | string[]
+    objectives?: SyllabusTopicUpdateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicUpdatecoreCompetenciesInput | string[]
+    teachingResources?: NullableStringFieldUpdateOperationsInput | string | null
+    syllabusId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    progress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSyllabusTopicNestedInput
+  }
+
+  export type SyllabusTopicCreateManyInput = {
+    id?: number
+    weekNumber: number
+    durationWeeks?: number
+    order: number
+    title: string
+    subtopics?: SyllabusTopicCreatesubtopicsInput | string[]
+    objectives?: SyllabusTopicCreateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicCreatecoreCompetenciesInput | string[]
+    teachingResources?: string | null
+    syllabusId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SyllabusTopicUpdateManyMutationInput = {
+    weekNumber?: IntFieldUpdateOperationsInput | number
+    durationWeeks?: IntFieldUpdateOperationsInput | number
+    order?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    subtopics?: SyllabusTopicUpdatesubtopicsInput | string[]
+    objectives?: SyllabusTopicUpdateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicUpdatecoreCompetenciesInput | string[]
+    teachingResources?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SyllabusTopicUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    weekNumber?: IntFieldUpdateOperationsInput | number
+    durationWeeks?: IntFieldUpdateOperationsInput | number
+    order?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    subtopics?: SyllabusTopicUpdatesubtopicsInput | string[]
+    objectives?: SyllabusTopicUpdateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicUpdatecoreCompetenciesInput | string[]
+    teachingResources?: NullableStringFieldUpdateOperationsInput | string | null
+    syllabusId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SyllabusTopicProgressCreateInput = {
+    coveredDate?: Date | string
+    notes?: string | null
+    createdAt?: Date | string
+    syllabusTopic: SyllabusTopicCreateNestedOneWithoutProgressInput
+    class: ClassCreateNestedOneWithoutSyllabusTopicProgressInput
+    teacher: TeacherCreateNestedOneWithoutSyllabusTopicProgressInput
+  }
+
+  export type SyllabusTopicProgressUncheckedCreateInput = {
+    id?: number
+    coveredDate?: Date | string
+    notes?: string | null
+    syllabusTopicId: number
+    classId: number
+    teacherId: string
+    createdAt?: Date | string
+  }
+
+  export type SyllabusTopicProgressUpdateInput = {
+    coveredDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    syllabusTopic?: SyllabusTopicUpdateOneRequiredWithoutProgressNestedInput
+    class?: ClassUpdateOneRequiredWithoutSyllabusTopicProgressNestedInput
+    teacher?: TeacherUpdateOneRequiredWithoutSyllabusTopicProgressNestedInput
+  }
+
+  export type SyllabusTopicProgressUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    coveredDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    syllabusTopicId?: IntFieldUpdateOperationsInput | number
+    classId?: IntFieldUpdateOperationsInput | number
+    teacherId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SyllabusTopicProgressCreateManyInput = {
+    id?: number
+    coveredDate?: Date | string
+    notes?: string | null
+    syllabusTopicId: number
+    classId: number
+    teacherId: string
+    createdAt?: Date | string
+  }
+
+  export type SyllabusTopicProgressUpdateManyMutationInput = {
+    coveredDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SyllabusTopicProgressUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    coveredDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    syllabusTopicId?: IntFieldUpdateOperationsInput | number
+    classId?: IntFieldUpdateOperationsInput | number
+    teacherId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -24235,6 +28887,12 @@ export namespace Prisma {
     none?: ClassWhereInput
   }
 
+  export type SyllabusTopicProgressListRelationFilter = {
+    every?: SyllabusTopicProgressWhereInput
+    some?: SyllabusTopicProgressWhereInput
+    none?: SyllabusTopicProgressWhereInput
+  }
+
   export type SubjectOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -24244,6 +28902,10 @@ export namespace Prisma {
   }
 
   export type ClassOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SyllabusTopicProgressOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -24341,6 +29003,16 @@ export namespace Prisma {
     phone?: SortOrder
     address?: SortOrder
     createdAt?: SortOrder
+  }
+
+  export type SyllabusListRelationFilter = {
+    every?: SyllabusWhereInput
+    some?: SyllabusWhereInput
+    none?: SyllabusWhereInput
+  }
+
+  export type SyllabusOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type GradeCountOrderByAggregateInput = {
@@ -25037,6 +29709,208 @@ export namespace Prisma {
     _max?: NestedEnumTermFilter<$PrismaModel>
   }
 
+  export type EnumSyllabusStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SyllabusStatus | EnumSyllabusStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SyllabusStatus[] | ListEnumSyllabusStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SyllabusStatus[] | ListEnumSyllabusStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSyllabusStatusFilter<$PrismaModel> | $Enums.SyllabusStatus
+  }
+
+  export type SyllabusTopicListRelationFilter = {
+    every?: SyllabusTopicWhereInput
+    some?: SyllabusTopicWhereInput
+    none?: SyllabusTopicWhereInput
+  }
+
+  export type SyllabusTopicOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SyllabusSubjectIdGradeIdTermAcademicYearCompoundUniqueInput = {
+    subjectId: number
+    gradeId: number
+    term: $Enums.Term
+    academicYear: string
+  }
+
+  export type SyllabusCountOrderByAggregateInput = {
+    id?: SortOrder
+    description?: SortOrder
+    status?: SortOrder
+    term?: SortOrder
+    academicYear?: SortOrder
+    subjectId?: SortOrder
+    gradeId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SyllabusAvgOrderByAggregateInput = {
+    id?: SortOrder
+    subjectId?: SortOrder
+    gradeId?: SortOrder
+  }
+
+  export type SyllabusMaxOrderByAggregateInput = {
+    id?: SortOrder
+    description?: SortOrder
+    status?: SortOrder
+    term?: SortOrder
+    academicYear?: SortOrder
+    subjectId?: SortOrder
+    gradeId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SyllabusMinOrderByAggregateInput = {
+    id?: SortOrder
+    description?: SortOrder
+    status?: SortOrder
+    term?: SortOrder
+    academicYear?: SortOrder
+    subjectId?: SortOrder
+    gradeId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SyllabusSumOrderByAggregateInput = {
+    id?: SortOrder
+    subjectId?: SortOrder
+    gradeId?: SortOrder
+  }
+
+  export type EnumSyllabusStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SyllabusStatus | EnumSyllabusStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SyllabusStatus[] | ListEnumSyllabusStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SyllabusStatus[] | ListEnumSyllabusStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSyllabusStatusWithAggregatesFilter<$PrismaModel> | $Enums.SyllabusStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSyllabusStatusFilter<$PrismaModel>
+    _max?: NestedEnumSyllabusStatusFilter<$PrismaModel>
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type SyllabusScalarRelationFilter = {
+    is?: SyllabusWhereInput
+    isNot?: SyllabusWhereInput
+  }
+
+  export type SyllabusTopicCountOrderByAggregateInput = {
+    id?: SortOrder
+    weekNumber?: SortOrder
+    durationWeeks?: SortOrder
+    order?: SortOrder
+    title?: SortOrder
+    subtopics?: SortOrder
+    objectives?: SortOrder
+    coreCompetencies?: SortOrder
+    teachingResources?: SortOrder
+    syllabusId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SyllabusTopicAvgOrderByAggregateInput = {
+    id?: SortOrder
+    weekNumber?: SortOrder
+    durationWeeks?: SortOrder
+    order?: SortOrder
+    syllabusId?: SortOrder
+  }
+
+  export type SyllabusTopicMaxOrderByAggregateInput = {
+    id?: SortOrder
+    weekNumber?: SortOrder
+    durationWeeks?: SortOrder
+    order?: SortOrder
+    title?: SortOrder
+    teachingResources?: SortOrder
+    syllabusId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SyllabusTopicMinOrderByAggregateInput = {
+    id?: SortOrder
+    weekNumber?: SortOrder
+    durationWeeks?: SortOrder
+    order?: SortOrder
+    title?: SortOrder
+    teachingResources?: SortOrder
+    syllabusId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SyllabusTopicSumOrderByAggregateInput = {
+    id?: SortOrder
+    weekNumber?: SortOrder
+    durationWeeks?: SortOrder
+    order?: SortOrder
+    syllabusId?: SortOrder
+  }
+
+  export type SyllabusTopicScalarRelationFilter = {
+    is?: SyllabusTopicWhereInput
+    isNot?: SyllabusTopicWhereInput
+  }
+
+  export type SyllabusTopicProgressSyllabusTopicIdClassIdCompoundUniqueInput = {
+    syllabusTopicId: number
+    classId: number
+  }
+
+  export type SyllabusTopicProgressCountOrderByAggregateInput = {
+    id?: SortOrder
+    coveredDate?: SortOrder
+    notes?: SortOrder
+    syllabusTopicId?: SortOrder
+    classId?: SortOrder
+    teacherId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SyllabusTopicProgressAvgOrderByAggregateInput = {
+    id?: SortOrder
+    syllabusTopicId?: SortOrder
+    classId?: SortOrder
+  }
+
+  export type SyllabusTopicProgressMaxOrderByAggregateInput = {
+    id?: SortOrder
+    coveredDate?: SortOrder
+    notes?: SortOrder
+    syllabusTopicId?: SortOrder
+    classId?: SortOrder
+    teacherId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SyllabusTopicProgressMinOrderByAggregateInput = {
+    id?: SortOrder
+    coveredDate?: SortOrder
+    notes?: SortOrder
+    syllabusTopicId?: SortOrder
+    classId?: SortOrder
+    teacherId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SyllabusTopicProgressSumOrderByAggregateInput = {
+    id?: SortOrder
+    syllabusTopicId?: SortOrder
+    classId?: SortOrder
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -25256,6 +30130,13 @@ export namespace Prisma {
     connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
   }
 
+  export type SyllabusTopicProgressCreateNestedManyWithoutTeacherInput = {
+    create?: XOR<SyllabusTopicProgressCreateWithoutTeacherInput, SyllabusTopicProgressUncheckedCreateWithoutTeacherInput> | SyllabusTopicProgressCreateWithoutTeacherInput[] | SyllabusTopicProgressUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: SyllabusTopicProgressCreateOrConnectWithoutTeacherInput | SyllabusTopicProgressCreateOrConnectWithoutTeacherInput[]
+    createMany?: SyllabusTopicProgressCreateManyTeacherInputEnvelope
+    connect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+  }
+
   export type SubjectUncheckedCreateNestedManyWithoutTeachersInput = {
     create?: XOR<SubjectCreateWithoutTeachersInput, SubjectUncheckedCreateWithoutTeachersInput> | SubjectCreateWithoutTeachersInput[] | SubjectUncheckedCreateWithoutTeachersInput[]
     connectOrCreate?: SubjectCreateOrConnectWithoutTeachersInput | SubjectCreateOrConnectWithoutTeachersInput[]
@@ -25281,6 +30162,13 @@ export namespace Prisma {
     connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutTeacherInput | ContinuousAssessmentCreateOrConnectWithoutTeacherInput[]
     createMany?: ContinuousAssessmentCreateManyTeacherInputEnvelope
     connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+  }
+
+  export type SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput = {
+    create?: XOR<SyllabusTopicProgressCreateWithoutTeacherInput, SyllabusTopicProgressUncheckedCreateWithoutTeacherInput> | SyllabusTopicProgressCreateWithoutTeacherInput[] | SyllabusTopicProgressUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: SyllabusTopicProgressCreateOrConnectWithoutTeacherInput | SyllabusTopicProgressCreateOrConnectWithoutTeacherInput[]
+    createMany?: SyllabusTopicProgressCreateManyTeacherInputEnvelope
+    connect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
   }
 
   export type SubjectUpdateManyWithoutTeachersNestedInput = {
@@ -25338,6 +30226,20 @@ export namespace Prisma {
     deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
   }
 
+  export type SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput = {
+    create?: XOR<SyllabusTopicProgressCreateWithoutTeacherInput, SyllabusTopicProgressUncheckedCreateWithoutTeacherInput> | SyllabusTopicProgressCreateWithoutTeacherInput[] | SyllabusTopicProgressUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: SyllabusTopicProgressCreateOrConnectWithoutTeacherInput | SyllabusTopicProgressCreateOrConnectWithoutTeacherInput[]
+    upsert?: SyllabusTopicProgressUpsertWithWhereUniqueWithoutTeacherInput | SyllabusTopicProgressUpsertWithWhereUniqueWithoutTeacherInput[]
+    createMany?: SyllabusTopicProgressCreateManyTeacherInputEnvelope
+    set?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    disconnect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    delete?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    connect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    update?: SyllabusTopicProgressUpdateWithWhereUniqueWithoutTeacherInput | SyllabusTopicProgressUpdateWithWhereUniqueWithoutTeacherInput[]
+    updateMany?: SyllabusTopicProgressUpdateManyWithWhereWithoutTeacherInput | SyllabusTopicProgressUpdateManyWithWhereWithoutTeacherInput[]
+    deleteMany?: SyllabusTopicProgressScalarWhereInput | SyllabusTopicProgressScalarWhereInput[]
+  }
+
   export type SubjectUncheckedUpdateManyWithoutTeachersNestedInput = {
     create?: XOR<SubjectCreateWithoutTeachersInput, SubjectUncheckedCreateWithoutTeachersInput> | SubjectCreateWithoutTeachersInput[] | SubjectUncheckedCreateWithoutTeachersInput[]
     connectOrCreate?: SubjectCreateOrConnectWithoutTeachersInput | SubjectCreateOrConnectWithoutTeachersInput[]
@@ -25391,6 +30293,20 @@ export namespace Prisma {
     update?: ContinuousAssessmentUpdateWithWhereUniqueWithoutTeacherInput | ContinuousAssessmentUpdateWithWhereUniqueWithoutTeacherInput[]
     updateMany?: ContinuousAssessmentUpdateManyWithWhereWithoutTeacherInput | ContinuousAssessmentUpdateManyWithWhereWithoutTeacherInput[]
     deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
+  }
+
+  export type SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput = {
+    create?: XOR<SyllabusTopicProgressCreateWithoutTeacherInput, SyllabusTopicProgressUncheckedCreateWithoutTeacherInput> | SyllabusTopicProgressCreateWithoutTeacherInput[] | SyllabusTopicProgressUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: SyllabusTopicProgressCreateOrConnectWithoutTeacherInput | SyllabusTopicProgressCreateOrConnectWithoutTeacherInput[]
+    upsert?: SyllabusTopicProgressUpsertWithWhereUniqueWithoutTeacherInput | SyllabusTopicProgressUpsertWithWhereUniqueWithoutTeacherInput[]
+    createMany?: SyllabusTopicProgressCreateManyTeacherInputEnvelope
+    set?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    disconnect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    delete?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    connect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    update?: SyllabusTopicProgressUpdateWithWhereUniqueWithoutTeacherInput | SyllabusTopicProgressUpdateWithWhereUniqueWithoutTeacherInput[]
+    updateMany?: SyllabusTopicProgressUpdateManyWithWhereWithoutTeacherInput | SyllabusTopicProgressUpdateManyWithWhereWithoutTeacherInput[]
+    deleteMany?: SyllabusTopicProgressScalarWhereInput | SyllabusTopicProgressScalarWhereInput[]
   }
 
   export type StudentCreateNestedManyWithoutParentInput = {
@@ -25449,6 +30365,13 @@ export namespace Prisma {
     connect?: ClassWhereUniqueInput | ClassWhereUniqueInput[]
   }
 
+  export type SyllabusCreateNestedManyWithoutGradeInput = {
+    create?: XOR<SyllabusCreateWithoutGradeInput, SyllabusUncheckedCreateWithoutGradeInput> | SyllabusCreateWithoutGradeInput[] | SyllabusUncheckedCreateWithoutGradeInput[]
+    connectOrCreate?: SyllabusCreateOrConnectWithoutGradeInput | SyllabusCreateOrConnectWithoutGradeInput[]
+    createMany?: SyllabusCreateManyGradeInputEnvelope
+    connect?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+  }
+
   export type StudentUncheckedCreateNestedManyWithoutGradeInput = {
     create?: XOR<StudentCreateWithoutGradeInput, StudentUncheckedCreateWithoutGradeInput> | StudentCreateWithoutGradeInput[] | StudentUncheckedCreateWithoutGradeInput[]
     connectOrCreate?: StudentCreateOrConnectWithoutGradeInput | StudentCreateOrConnectWithoutGradeInput[]
@@ -25461,6 +30384,13 @@ export namespace Prisma {
     connectOrCreate?: ClassCreateOrConnectWithoutGradeInput | ClassCreateOrConnectWithoutGradeInput[]
     createMany?: ClassCreateManyGradeInputEnvelope
     connect?: ClassWhereUniqueInput | ClassWhereUniqueInput[]
+  }
+
+  export type SyllabusUncheckedCreateNestedManyWithoutGradeInput = {
+    create?: XOR<SyllabusCreateWithoutGradeInput, SyllabusUncheckedCreateWithoutGradeInput> | SyllabusCreateWithoutGradeInput[] | SyllabusUncheckedCreateWithoutGradeInput[]
+    connectOrCreate?: SyllabusCreateOrConnectWithoutGradeInput | SyllabusCreateOrConnectWithoutGradeInput[]
+    createMany?: SyllabusCreateManyGradeInputEnvelope
+    connect?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
   }
 
   export type StudentUpdateManyWithoutGradeNestedInput = {
@@ -25491,6 +30421,20 @@ export namespace Prisma {
     deleteMany?: ClassScalarWhereInput | ClassScalarWhereInput[]
   }
 
+  export type SyllabusUpdateManyWithoutGradeNestedInput = {
+    create?: XOR<SyllabusCreateWithoutGradeInput, SyllabusUncheckedCreateWithoutGradeInput> | SyllabusCreateWithoutGradeInput[] | SyllabusUncheckedCreateWithoutGradeInput[]
+    connectOrCreate?: SyllabusCreateOrConnectWithoutGradeInput | SyllabusCreateOrConnectWithoutGradeInput[]
+    upsert?: SyllabusUpsertWithWhereUniqueWithoutGradeInput | SyllabusUpsertWithWhereUniqueWithoutGradeInput[]
+    createMany?: SyllabusCreateManyGradeInputEnvelope
+    set?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+    disconnect?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+    delete?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+    connect?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+    update?: SyllabusUpdateWithWhereUniqueWithoutGradeInput | SyllabusUpdateWithWhereUniqueWithoutGradeInput[]
+    updateMany?: SyllabusUpdateManyWithWhereWithoutGradeInput | SyllabusUpdateManyWithWhereWithoutGradeInput[]
+    deleteMany?: SyllabusScalarWhereInput | SyllabusScalarWhereInput[]
+  }
+
   export type StudentUncheckedUpdateManyWithoutGradeNestedInput = {
     create?: XOR<StudentCreateWithoutGradeInput, StudentUncheckedCreateWithoutGradeInput> | StudentCreateWithoutGradeInput[] | StudentUncheckedCreateWithoutGradeInput[]
     connectOrCreate?: StudentCreateOrConnectWithoutGradeInput | StudentCreateOrConnectWithoutGradeInput[]
@@ -25517,6 +30461,20 @@ export namespace Prisma {
     update?: ClassUpdateWithWhereUniqueWithoutGradeInput | ClassUpdateWithWhereUniqueWithoutGradeInput[]
     updateMany?: ClassUpdateManyWithWhereWithoutGradeInput | ClassUpdateManyWithWhereWithoutGradeInput[]
     deleteMany?: ClassScalarWhereInput | ClassScalarWhereInput[]
+  }
+
+  export type SyllabusUncheckedUpdateManyWithoutGradeNestedInput = {
+    create?: XOR<SyllabusCreateWithoutGradeInput, SyllabusUncheckedCreateWithoutGradeInput> | SyllabusCreateWithoutGradeInput[] | SyllabusUncheckedCreateWithoutGradeInput[]
+    connectOrCreate?: SyllabusCreateOrConnectWithoutGradeInput | SyllabusCreateOrConnectWithoutGradeInput[]
+    upsert?: SyllabusUpsertWithWhereUniqueWithoutGradeInput | SyllabusUpsertWithWhereUniqueWithoutGradeInput[]
+    createMany?: SyllabusCreateManyGradeInputEnvelope
+    set?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+    disconnect?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+    delete?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+    connect?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+    update?: SyllabusUpdateWithWhereUniqueWithoutGradeInput | SyllabusUpdateWithWhereUniqueWithoutGradeInput[]
+    updateMany?: SyllabusUpdateManyWithWhereWithoutGradeInput | SyllabusUpdateManyWithWhereWithoutGradeInput[]
+    deleteMany?: SyllabusScalarWhereInput | SyllabusScalarWhereInput[]
   }
 
   export type TeacherCreateNestedOneWithoutClassesInput = {
@@ -25566,6 +30524,13 @@ export namespace Prisma {
     connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
   }
 
+  export type SyllabusTopicProgressCreateNestedManyWithoutClassInput = {
+    create?: XOR<SyllabusTopicProgressCreateWithoutClassInput, SyllabusTopicProgressUncheckedCreateWithoutClassInput> | SyllabusTopicProgressCreateWithoutClassInput[] | SyllabusTopicProgressUncheckedCreateWithoutClassInput[]
+    connectOrCreate?: SyllabusTopicProgressCreateOrConnectWithoutClassInput | SyllabusTopicProgressCreateOrConnectWithoutClassInput[]
+    createMany?: SyllabusTopicProgressCreateManyClassInputEnvelope
+    connect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+  }
+
   export type LessonUncheckedCreateNestedManyWithoutClassInput = {
     create?: XOR<LessonCreateWithoutClassInput, LessonUncheckedCreateWithoutClassInput> | LessonCreateWithoutClassInput[] | LessonUncheckedCreateWithoutClassInput[]
     connectOrCreate?: LessonCreateOrConnectWithoutClassInput | LessonCreateOrConnectWithoutClassInput[]
@@ -25599,6 +30564,13 @@ export namespace Prisma {
     connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutClassInput | ContinuousAssessmentCreateOrConnectWithoutClassInput[]
     createMany?: ContinuousAssessmentCreateManyClassInputEnvelope
     connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+  }
+
+  export type SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput = {
+    create?: XOR<SyllabusTopicProgressCreateWithoutClassInput, SyllabusTopicProgressUncheckedCreateWithoutClassInput> | SyllabusTopicProgressCreateWithoutClassInput[] | SyllabusTopicProgressUncheckedCreateWithoutClassInput[]
+    connectOrCreate?: SyllabusTopicProgressCreateOrConnectWithoutClassInput | SyllabusTopicProgressCreateOrConnectWithoutClassInput[]
+    createMany?: SyllabusTopicProgressCreateManyClassInputEnvelope
+    connect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
   }
 
   export type TeacherUpdateOneWithoutClassesNestedInput = {
@@ -25689,6 +30661,20 @@ export namespace Prisma {
     deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
   }
 
+  export type SyllabusTopicProgressUpdateManyWithoutClassNestedInput = {
+    create?: XOR<SyllabusTopicProgressCreateWithoutClassInput, SyllabusTopicProgressUncheckedCreateWithoutClassInput> | SyllabusTopicProgressCreateWithoutClassInput[] | SyllabusTopicProgressUncheckedCreateWithoutClassInput[]
+    connectOrCreate?: SyllabusTopicProgressCreateOrConnectWithoutClassInput | SyllabusTopicProgressCreateOrConnectWithoutClassInput[]
+    upsert?: SyllabusTopicProgressUpsertWithWhereUniqueWithoutClassInput | SyllabusTopicProgressUpsertWithWhereUniqueWithoutClassInput[]
+    createMany?: SyllabusTopicProgressCreateManyClassInputEnvelope
+    set?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    disconnect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    delete?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    connect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    update?: SyllabusTopicProgressUpdateWithWhereUniqueWithoutClassInput | SyllabusTopicProgressUpdateWithWhereUniqueWithoutClassInput[]
+    updateMany?: SyllabusTopicProgressUpdateManyWithWhereWithoutClassInput | SyllabusTopicProgressUpdateManyWithWhereWithoutClassInput[]
+    deleteMany?: SyllabusTopicProgressScalarWhereInput | SyllabusTopicProgressScalarWhereInput[]
+  }
+
   export type LessonUncheckedUpdateManyWithoutClassNestedInput = {
     create?: XOR<LessonCreateWithoutClassInput, LessonUncheckedCreateWithoutClassInput> | LessonCreateWithoutClassInput[] | LessonUncheckedCreateWithoutClassInput[]
     connectOrCreate?: LessonCreateOrConnectWithoutClassInput | LessonCreateOrConnectWithoutClassInput[]
@@ -25759,6 +30745,20 @@ export namespace Prisma {
     deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
   }
 
+  export type SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput = {
+    create?: XOR<SyllabusTopicProgressCreateWithoutClassInput, SyllabusTopicProgressUncheckedCreateWithoutClassInput> | SyllabusTopicProgressCreateWithoutClassInput[] | SyllabusTopicProgressUncheckedCreateWithoutClassInput[]
+    connectOrCreate?: SyllabusTopicProgressCreateOrConnectWithoutClassInput | SyllabusTopicProgressCreateOrConnectWithoutClassInput[]
+    upsert?: SyllabusTopicProgressUpsertWithWhereUniqueWithoutClassInput | SyllabusTopicProgressUpsertWithWhereUniqueWithoutClassInput[]
+    createMany?: SyllabusTopicProgressCreateManyClassInputEnvelope
+    set?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    disconnect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    delete?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    connect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    update?: SyllabusTopicProgressUpdateWithWhereUniqueWithoutClassInput | SyllabusTopicProgressUpdateWithWhereUniqueWithoutClassInput[]
+    updateMany?: SyllabusTopicProgressUpdateManyWithWhereWithoutClassInput | SyllabusTopicProgressUpdateManyWithWhereWithoutClassInput[]
+    deleteMany?: SyllabusTopicProgressScalarWhereInput | SyllabusTopicProgressScalarWhereInput[]
+  }
+
   export type TeacherCreateNestedManyWithoutSubjectsInput = {
     create?: XOR<TeacherCreateWithoutSubjectsInput, TeacherUncheckedCreateWithoutSubjectsInput> | TeacherCreateWithoutSubjectsInput[] | TeacherUncheckedCreateWithoutSubjectsInput[]
     connectOrCreate?: TeacherCreateOrConnectWithoutSubjectsInput | TeacherCreateOrConnectWithoutSubjectsInput[]
@@ -25779,6 +30779,13 @@ export namespace Prisma {
     connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
   }
 
+  export type SyllabusCreateNestedManyWithoutSubjectInput = {
+    create?: XOR<SyllabusCreateWithoutSubjectInput, SyllabusUncheckedCreateWithoutSubjectInput> | SyllabusCreateWithoutSubjectInput[] | SyllabusUncheckedCreateWithoutSubjectInput[]
+    connectOrCreate?: SyllabusCreateOrConnectWithoutSubjectInput | SyllabusCreateOrConnectWithoutSubjectInput[]
+    createMany?: SyllabusCreateManySubjectInputEnvelope
+    connect?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+  }
+
   export type TeacherUncheckedCreateNestedManyWithoutSubjectsInput = {
     create?: XOR<TeacherCreateWithoutSubjectsInput, TeacherUncheckedCreateWithoutSubjectsInput> | TeacherCreateWithoutSubjectsInput[] | TeacherUncheckedCreateWithoutSubjectsInput[]
     connectOrCreate?: TeacherCreateOrConnectWithoutSubjectsInput | TeacherCreateOrConnectWithoutSubjectsInput[]
@@ -25797,6 +30804,13 @@ export namespace Prisma {
     connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutSubjectInput | ContinuousAssessmentCreateOrConnectWithoutSubjectInput[]
     createMany?: ContinuousAssessmentCreateManySubjectInputEnvelope
     connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+  }
+
+  export type SyllabusUncheckedCreateNestedManyWithoutSubjectInput = {
+    create?: XOR<SyllabusCreateWithoutSubjectInput, SyllabusUncheckedCreateWithoutSubjectInput> | SyllabusCreateWithoutSubjectInput[] | SyllabusUncheckedCreateWithoutSubjectInput[]
+    connectOrCreate?: SyllabusCreateOrConnectWithoutSubjectInput | SyllabusCreateOrConnectWithoutSubjectInput[]
+    createMany?: SyllabusCreateManySubjectInputEnvelope
+    connect?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
   }
 
   export type TeacherUpdateManyWithoutSubjectsNestedInput = {
@@ -25840,6 +30854,20 @@ export namespace Prisma {
     deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
   }
 
+  export type SyllabusUpdateManyWithoutSubjectNestedInput = {
+    create?: XOR<SyllabusCreateWithoutSubjectInput, SyllabusUncheckedCreateWithoutSubjectInput> | SyllabusCreateWithoutSubjectInput[] | SyllabusUncheckedCreateWithoutSubjectInput[]
+    connectOrCreate?: SyllabusCreateOrConnectWithoutSubjectInput | SyllabusCreateOrConnectWithoutSubjectInput[]
+    upsert?: SyllabusUpsertWithWhereUniqueWithoutSubjectInput | SyllabusUpsertWithWhereUniqueWithoutSubjectInput[]
+    createMany?: SyllabusCreateManySubjectInputEnvelope
+    set?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+    disconnect?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+    delete?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+    connect?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+    update?: SyllabusUpdateWithWhereUniqueWithoutSubjectInput | SyllabusUpdateWithWhereUniqueWithoutSubjectInput[]
+    updateMany?: SyllabusUpdateManyWithWhereWithoutSubjectInput | SyllabusUpdateManyWithWhereWithoutSubjectInput[]
+    deleteMany?: SyllabusScalarWhereInput | SyllabusScalarWhereInput[]
+  }
+
   export type TeacherUncheckedUpdateManyWithoutSubjectsNestedInput = {
     create?: XOR<TeacherCreateWithoutSubjectsInput, TeacherUncheckedCreateWithoutSubjectsInput> | TeacherCreateWithoutSubjectsInput[] | TeacherUncheckedCreateWithoutSubjectsInput[]
     connectOrCreate?: TeacherCreateOrConnectWithoutSubjectsInput | TeacherCreateOrConnectWithoutSubjectsInput[]
@@ -25879,6 +30907,20 @@ export namespace Prisma {
     update?: ContinuousAssessmentUpdateWithWhereUniqueWithoutSubjectInput | ContinuousAssessmentUpdateWithWhereUniqueWithoutSubjectInput[]
     updateMany?: ContinuousAssessmentUpdateManyWithWhereWithoutSubjectInput | ContinuousAssessmentUpdateManyWithWhereWithoutSubjectInput[]
     deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
+  }
+
+  export type SyllabusUncheckedUpdateManyWithoutSubjectNestedInput = {
+    create?: XOR<SyllabusCreateWithoutSubjectInput, SyllabusUncheckedCreateWithoutSubjectInput> | SyllabusCreateWithoutSubjectInput[] | SyllabusUncheckedCreateWithoutSubjectInput[]
+    connectOrCreate?: SyllabusCreateOrConnectWithoutSubjectInput | SyllabusCreateOrConnectWithoutSubjectInput[]
+    upsert?: SyllabusUpsertWithWhereUniqueWithoutSubjectInput | SyllabusUpsertWithWhereUniqueWithoutSubjectInput[]
+    createMany?: SyllabusCreateManySubjectInputEnvelope
+    set?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+    disconnect?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+    delete?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+    connect?: SyllabusWhereUniqueInput | SyllabusWhereUniqueInput[]
+    update?: SyllabusUpdateWithWhereUniqueWithoutSubjectInput | SyllabusUpdateWithWhereUniqueWithoutSubjectInput[]
+    updateMany?: SyllabusUpdateManyWithWhereWithoutSubjectInput | SyllabusUpdateManyWithWhereWithoutSubjectInput[]
+    deleteMany?: SyllabusScalarWhereInput | SyllabusScalarWhereInput[]
   }
 
   export type SubjectCreateNestedOneWithoutLessonsInput = {
@@ -26357,6 +31399,205 @@ export namespace Prisma {
     update?: XOR<XOR<ClassUpdateToOneWithWhereWithoutContinuousAssessmentsInput, ClassUpdateWithoutContinuousAssessmentsInput>, ClassUncheckedUpdateWithoutContinuousAssessmentsInput>
   }
 
+  export type SubjectCreateNestedOneWithoutSyllabiInput = {
+    create?: XOR<SubjectCreateWithoutSyllabiInput, SubjectUncheckedCreateWithoutSyllabiInput>
+    connectOrCreate?: SubjectCreateOrConnectWithoutSyllabiInput
+    connect?: SubjectWhereUniqueInput
+  }
+
+  export type GradeCreateNestedOneWithoutSyllabiInput = {
+    create?: XOR<GradeCreateWithoutSyllabiInput, GradeUncheckedCreateWithoutSyllabiInput>
+    connectOrCreate?: GradeCreateOrConnectWithoutSyllabiInput
+    connect?: GradeWhereUniqueInput
+  }
+
+  export type SyllabusTopicCreateNestedManyWithoutSyllabusInput = {
+    create?: XOR<SyllabusTopicCreateWithoutSyllabusInput, SyllabusTopicUncheckedCreateWithoutSyllabusInput> | SyllabusTopicCreateWithoutSyllabusInput[] | SyllabusTopicUncheckedCreateWithoutSyllabusInput[]
+    connectOrCreate?: SyllabusTopicCreateOrConnectWithoutSyllabusInput | SyllabusTopicCreateOrConnectWithoutSyllabusInput[]
+    createMany?: SyllabusTopicCreateManySyllabusInputEnvelope
+    connect?: SyllabusTopicWhereUniqueInput | SyllabusTopicWhereUniqueInput[]
+  }
+
+  export type SyllabusTopicUncheckedCreateNestedManyWithoutSyllabusInput = {
+    create?: XOR<SyllabusTopicCreateWithoutSyllabusInput, SyllabusTopicUncheckedCreateWithoutSyllabusInput> | SyllabusTopicCreateWithoutSyllabusInput[] | SyllabusTopicUncheckedCreateWithoutSyllabusInput[]
+    connectOrCreate?: SyllabusTopicCreateOrConnectWithoutSyllabusInput | SyllabusTopicCreateOrConnectWithoutSyllabusInput[]
+    createMany?: SyllabusTopicCreateManySyllabusInputEnvelope
+    connect?: SyllabusTopicWhereUniqueInput | SyllabusTopicWhereUniqueInput[]
+  }
+
+  export type EnumSyllabusStatusFieldUpdateOperationsInput = {
+    set?: $Enums.SyllabusStatus
+  }
+
+  export type SubjectUpdateOneRequiredWithoutSyllabiNestedInput = {
+    create?: XOR<SubjectCreateWithoutSyllabiInput, SubjectUncheckedCreateWithoutSyllabiInput>
+    connectOrCreate?: SubjectCreateOrConnectWithoutSyllabiInput
+    upsert?: SubjectUpsertWithoutSyllabiInput
+    connect?: SubjectWhereUniqueInput
+    update?: XOR<XOR<SubjectUpdateToOneWithWhereWithoutSyllabiInput, SubjectUpdateWithoutSyllabiInput>, SubjectUncheckedUpdateWithoutSyllabiInput>
+  }
+
+  export type GradeUpdateOneRequiredWithoutSyllabiNestedInput = {
+    create?: XOR<GradeCreateWithoutSyllabiInput, GradeUncheckedCreateWithoutSyllabiInput>
+    connectOrCreate?: GradeCreateOrConnectWithoutSyllabiInput
+    upsert?: GradeUpsertWithoutSyllabiInput
+    connect?: GradeWhereUniqueInput
+    update?: XOR<XOR<GradeUpdateToOneWithWhereWithoutSyllabiInput, GradeUpdateWithoutSyllabiInput>, GradeUncheckedUpdateWithoutSyllabiInput>
+  }
+
+  export type SyllabusTopicUpdateManyWithoutSyllabusNestedInput = {
+    create?: XOR<SyllabusTopicCreateWithoutSyllabusInput, SyllabusTopicUncheckedCreateWithoutSyllabusInput> | SyllabusTopicCreateWithoutSyllabusInput[] | SyllabusTopicUncheckedCreateWithoutSyllabusInput[]
+    connectOrCreate?: SyllabusTopicCreateOrConnectWithoutSyllabusInput | SyllabusTopicCreateOrConnectWithoutSyllabusInput[]
+    upsert?: SyllabusTopicUpsertWithWhereUniqueWithoutSyllabusInput | SyllabusTopicUpsertWithWhereUniqueWithoutSyllabusInput[]
+    createMany?: SyllabusTopicCreateManySyllabusInputEnvelope
+    set?: SyllabusTopicWhereUniqueInput | SyllabusTopicWhereUniqueInput[]
+    disconnect?: SyllabusTopicWhereUniqueInput | SyllabusTopicWhereUniqueInput[]
+    delete?: SyllabusTopicWhereUniqueInput | SyllabusTopicWhereUniqueInput[]
+    connect?: SyllabusTopicWhereUniqueInput | SyllabusTopicWhereUniqueInput[]
+    update?: SyllabusTopicUpdateWithWhereUniqueWithoutSyllabusInput | SyllabusTopicUpdateWithWhereUniqueWithoutSyllabusInput[]
+    updateMany?: SyllabusTopicUpdateManyWithWhereWithoutSyllabusInput | SyllabusTopicUpdateManyWithWhereWithoutSyllabusInput[]
+    deleteMany?: SyllabusTopicScalarWhereInput | SyllabusTopicScalarWhereInput[]
+  }
+
+  export type SyllabusTopicUncheckedUpdateManyWithoutSyllabusNestedInput = {
+    create?: XOR<SyllabusTopicCreateWithoutSyllabusInput, SyllabusTopicUncheckedCreateWithoutSyllabusInput> | SyllabusTopicCreateWithoutSyllabusInput[] | SyllabusTopicUncheckedCreateWithoutSyllabusInput[]
+    connectOrCreate?: SyllabusTopicCreateOrConnectWithoutSyllabusInput | SyllabusTopicCreateOrConnectWithoutSyllabusInput[]
+    upsert?: SyllabusTopicUpsertWithWhereUniqueWithoutSyllabusInput | SyllabusTopicUpsertWithWhereUniqueWithoutSyllabusInput[]
+    createMany?: SyllabusTopicCreateManySyllabusInputEnvelope
+    set?: SyllabusTopicWhereUniqueInput | SyllabusTopicWhereUniqueInput[]
+    disconnect?: SyllabusTopicWhereUniqueInput | SyllabusTopicWhereUniqueInput[]
+    delete?: SyllabusTopicWhereUniqueInput | SyllabusTopicWhereUniqueInput[]
+    connect?: SyllabusTopicWhereUniqueInput | SyllabusTopicWhereUniqueInput[]
+    update?: SyllabusTopicUpdateWithWhereUniqueWithoutSyllabusInput | SyllabusTopicUpdateWithWhereUniqueWithoutSyllabusInput[]
+    updateMany?: SyllabusTopicUpdateManyWithWhereWithoutSyllabusInput | SyllabusTopicUpdateManyWithWhereWithoutSyllabusInput[]
+    deleteMany?: SyllabusTopicScalarWhereInput | SyllabusTopicScalarWhereInput[]
+  }
+
+  export type SyllabusTopicCreatesubtopicsInput = {
+    set: string[]
+  }
+
+  export type SyllabusTopicCreateobjectivesInput = {
+    set: string[]
+  }
+
+  export type SyllabusTopicCreatecoreCompetenciesInput = {
+    set: string[]
+  }
+
+  export type SyllabusCreateNestedOneWithoutTopicsInput = {
+    create?: XOR<SyllabusCreateWithoutTopicsInput, SyllabusUncheckedCreateWithoutTopicsInput>
+    connectOrCreate?: SyllabusCreateOrConnectWithoutTopicsInput
+    connect?: SyllabusWhereUniqueInput
+  }
+
+  export type SyllabusTopicProgressCreateNestedManyWithoutSyllabusTopicInput = {
+    create?: XOR<SyllabusTopicProgressCreateWithoutSyllabusTopicInput, SyllabusTopicProgressUncheckedCreateWithoutSyllabusTopicInput> | SyllabusTopicProgressCreateWithoutSyllabusTopicInput[] | SyllabusTopicProgressUncheckedCreateWithoutSyllabusTopicInput[]
+    connectOrCreate?: SyllabusTopicProgressCreateOrConnectWithoutSyllabusTopicInput | SyllabusTopicProgressCreateOrConnectWithoutSyllabusTopicInput[]
+    createMany?: SyllabusTopicProgressCreateManySyllabusTopicInputEnvelope
+    connect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+  }
+
+  export type SyllabusTopicProgressUncheckedCreateNestedManyWithoutSyllabusTopicInput = {
+    create?: XOR<SyllabusTopicProgressCreateWithoutSyllabusTopicInput, SyllabusTopicProgressUncheckedCreateWithoutSyllabusTopicInput> | SyllabusTopicProgressCreateWithoutSyllabusTopicInput[] | SyllabusTopicProgressUncheckedCreateWithoutSyllabusTopicInput[]
+    connectOrCreate?: SyllabusTopicProgressCreateOrConnectWithoutSyllabusTopicInput | SyllabusTopicProgressCreateOrConnectWithoutSyllabusTopicInput[]
+    createMany?: SyllabusTopicProgressCreateManySyllabusTopicInputEnvelope
+    connect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+  }
+
+  export type SyllabusTopicUpdatesubtopicsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type SyllabusTopicUpdateobjectivesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type SyllabusTopicUpdatecoreCompetenciesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type SyllabusUpdateOneRequiredWithoutTopicsNestedInput = {
+    create?: XOR<SyllabusCreateWithoutTopicsInput, SyllabusUncheckedCreateWithoutTopicsInput>
+    connectOrCreate?: SyllabusCreateOrConnectWithoutTopicsInput
+    upsert?: SyllabusUpsertWithoutTopicsInput
+    connect?: SyllabusWhereUniqueInput
+    update?: XOR<XOR<SyllabusUpdateToOneWithWhereWithoutTopicsInput, SyllabusUpdateWithoutTopicsInput>, SyllabusUncheckedUpdateWithoutTopicsInput>
+  }
+
+  export type SyllabusTopicProgressUpdateManyWithoutSyllabusTopicNestedInput = {
+    create?: XOR<SyllabusTopicProgressCreateWithoutSyllabusTopicInput, SyllabusTopicProgressUncheckedCreateWithoutSyllabusTopicInput> | SyllabusTopicProgressCreateWithoutSyllabusTopicInput[] | SyllabusTopicProgressUncheckedCreateWithoutSyllabusTopicInput[]
+    connectOrCreate?: SyllabusTopicProgressCreateOrConnectWithoutSyllabusTopicInput | SyllabusTopicProgressCreateOrConnectWithoutSyllabusTopicInput[]
+    upsert?: SyllabusTopicProgressUpsertWithWhereUniqueWithoutSyllabusTopicInput | SyllabusTopicProgressUpsertWithWhereUniqueWithoutSyllabusTopicInput[]
+    createMany?: SyllabusTopicProgressCreateManySyllabusTopicInputEnvelope
+    set?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    disconnect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    delete?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    connect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    update?: SyllabusTopicProgressUpdateWithWhereUniqueWithoutSyllabusTopicInput | SyllabusTopicProgressUpdateWithWhereUniqueWithoutSyllabusTopicInput[]
+    updateMany?: SyllabusTopicProgressUpdateManyWithWhereWithoutSyllabusTopicInput | SyllabusTopicProgressUpdateManyWithWhereWithoutSyllabusTopicInput[]
+    deleteMany?: SyllabusTopicProgressScalarWhereInput | SyllabusTopicProgressScalarWhereInput[]
+  }
+
+  export type SyllabusTopicProgressUncheckedUpdateManyWithoutSyllabusTopicNestedInput = {
+    create?: XOR<SyllabusTopicProgressCreateWithoutSyllabusTopicInput, SyllabusTopicProgressUncheckedCreateWithoutSyllabusTopicInput> | SyllabusTopicProgressCreateWithoutSyllabusTopicInput[] | SyllabusTopicProgressUncheckedCreateWithoutSyllabusTopicInput[]
+    connectOrCreate?: SyllabusTopicProgressCreateOrConnectWithoutSyllabusTopicInput | SyllabusTopicProgressCreateOrConnectWithoutSyllabusTopicInput[]
+    upsert?: SyllabusTopicProgressUpsertWithWhereUniqueWithoutSyllabusTopicInput | SyllabusTopicProgressUpsertWithWhereUniqueWithoutSyllabusTopicInput[]
+    createMany?: SyllabusTopicProgressCreateManySyllabusTopicInputEnvelope
+    set?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    disconnect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    delete?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    connect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+    update?: SyllabusTopicProgressUpdateWithWhereUniqueWithoutSyllabusTopicInput | SyllabusTopicProgressUpdateWithWhereUniqueWithoutSyllabusTopicInput[]
+    updateMany?: SyllabusTopicProgressUpdateManyWithWhereWithoutSyllabusTopicInput | SyllabusTopicProgressUpdateManyWithWhereWithoutSyllabusTopicInput[]
+    deleteMany?: SyllabusTopicProgressScalarWhereInput | SyllabusTopicProgressScalarWhereInput[]
+  }
+
+  export type SyllabusTopicCreateNestedOneWithoutProgressInput = {
+    create?: XOR<SyllabusTopicCreateWithoutProgressInput, SyllabusTopicUncheckedCreateWithoutProgressInput>
+    connectOrCreate?: SyllabusTopicCreateOrConnectWithoutProgressInput
+    connect?: SyllabusTopicWhereUniqueInput
+  }
+
+  export type ClassCreateNestedOneWithoutSyllabusTopicProgressInput = {
+    create?: XOR<ClassCreateWithoutSyllabusTopicProgressInput, ClassUncheckedCreateWithoutSyllabusTopicProgressInput>
+    connectOrCreate?: ClassCreateOrConnectWithoutSyllabusTopicProgressInput
+    connect?: ClassWhereUniqueInput
+  }
+
+  export type TeacherCreateNestedOneWithoutSyllabusTopicProgressInput = {
+    create?: XOR<TeacherCreateWithoutSyllabusTopicProgressInput, TeacherUncheckedCreateWithoutSyllabusTopicProgressInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutSyllabusTopicProgressInput
+    connect?: TeacherWhereUniqueInput
+  }
+
+  export type SyllabusTopicUpdateOneRequiredWithoutProgressNestedInput = {
+    create?: XOR<SyllabusTopicCreateWithoutProgressInput, SyllabusTopicUncheckedCreateWithoutProgressInput>
+    connectOrCreate?: SyllabusTopicCreateOrConnectWithoutProgressInput
+    upsert?: SyllabusTopicUpsertWithoutProgressInput
+    connect?: SyllabusTopicWhereUniqueInput
+    update?: XOR<XOR<SyllabusTopicUpdateToOneWithWhereWithoutProgressInput, SyllabusTopicUpdateWithoutProgressInput>, SyllabusTopicUncheckedUpdateWithoutProgressInput>
+  }
+
+  export type ClassUpdateOneRequiredWithoutSyllabusTopicProgressNestedInput = {
+    create?: XOR<ClassCreateWithoutSyllabusTopicProgressInput, ClassUncheckedCreateWithoutSyllabusTopicProgressInput>
+    connectOrCreate?: ClassCreateOrConnectWithoutSyllabusTopicProgressInput
+    upsert?: ClassUpsertWithoutSyllabusTopicProgressInput
+    connect?: ClassWhereUniqueInput
+    update?: XOR<XOR<ClassUpdateToOneWithWhereWithoutSyllabusTopicProgressInput, ClassUpdateWithoutSyllabusTopicProgressInput>, ClassUncheckedUpdateWithoutSyllabusTopicProgressInput>
+  }
+
+  export type TeacherUpdateOneRequiredWithoutSyllabusTopicProgressNestedInput = {
+    create?: XOR<TeacherCreateWithoutSyllabusTopicProgressInput, TeacherUncheckedCreateWithoutSyllabusTopicProgressInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutSyllabusTopicProgressInput
+    upsert?: TeacherUpsertWithoutSyllabusTopicProgressInput
+    connect?: TeacherWhereUniqueInput
+    update?: XOR<XOR<TeacherUpdateToOneWithWhereWithoutSyllabusTopicProgressInput, TeacherUpdateWithoutSyllabusTopicProgressInput>, TeacherUncheckedUpdateWithoutSyllabusTopicProgressInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -26617,6 +31858,23 @@ export namespace Prisma {
     _max?: NestedEnumTermFilter<$PrismaModel>
   }
 
+  export type NestedEnumSyllabusStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SyllabusStatus | EnumSyllabusStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SyllabusStatus[] | ListEnumSyllabusStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SyllabusStatus[] | ListEnumSyllabusStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSyllabusStatusFilter<$PrismaModel> | $Enums.SyllabusStatus
+  }
+
+  export type NestedEnumSyllabusStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SyllabusStatus | EnumSyllabusStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SyllabusStatus[] | ListEnumSyllabusStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SyllabusStatus[] | ListEnumSyllabusStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSyllabusStatusWithAggregatesFilter<$PrismaModel> | $Enums.SyllabusStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSyllabusStatusFilter<$PrismaModel>
+    _max?: NestedEnumSyllabusStatusFilter<$PrismaModel>
+  }
+
   export type ParentCreateWithoutStudentsInput = {
     id: string
     username: string
@@ -26654,6 +31912,7 @@ export namespace Prisma {
     events?: EventCreateNestedManyWithoutClassInput
     announcements?: AnnouncementCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
   export type ClassUncheckedCreateWithoutStudentsInput = {
@@ -26667,6 +31926,7 @@ export namespace Prisma {
     events?: EventUncheckedCreateNestedManyWithoutClassInput
     announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
   export type ClassCreateOrConnectWithoutStudentsInput = {
@@ -26678,6 +31938,7 @@ export namespace Prisma {
     level: string
     order: number
     classes?: ClassCreateNestedManyWithoutGradeInput
+    syllabi?: SyllabusCreateNestedManyWithoutGradeInput
   }
 
   export type GradeUncheckedCreateWithoutStudentsInput = {
@@ -26685,6 +31946,7 @@ export namespace Prisma {
     level: string
     order: number
     classes?: ClassUncheckedCreateNestedManyWithoutGradeInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutGradeInput
   }
 
   export type GradeCreateOrConnectWithoutStudentsInput = {
@@ -26841,6 +32103,7 @@ export namespace Prisma {
     events?: EventUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateWithoutStudentsInput = {
@@ -26854,6 +32117,7 @@ export namespace Prisma {
     events?: EventUncheckedUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
   export type GradeUpsertWithoutStudentsInput = {
@@ -26871,6 +32135,7 @@ export namespace Prisma {
     level?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     classes?: ClassUpdateManyWithoutGradeNestedInput
+    syllabi?: SyllabusUpdateManyWithoutGradeNestedInput
   }
 
   export type GradeUncheckedUpdateWithoutStudentsInput = {
@@ -26878,6 +32143,7 @@ export namespace Prisma {
     level?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     classes?: ClassUncheckedUpdateManyWithoutGradeNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutGradeNestedInput
   }
 
   export type AttendanceUpsertWithWhereUniqueWithoutStudentInput = {
@@ -26978,6 +32244,7 @@ export namespace Prisma {
     name: string
     lessons?: LessonCreateNestedManyWithoutSubjectInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSubjectInput
+    syllabi?: SyllabusCreateNestedManyWithoutSubjectInput
   }
 
   export type SubjectUncheckedCreateWithoutTeachersInput = {
@@ -26985,6 +32252,7 @@ export namespace Prisma {
     name: string
     lessons?: LessonUncheckedCreateNestedManyWithoutSubjectInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSubjectInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSubjectInput
   }
 
   export type SubjectCreateOrConnectWithoutTeachersInput = {
@@ -27037,6 +32305,7 @@ export namespace Prisma {
     events?: EventCreateNestedManyWithoutClassInput
     announcements?: AnnouncementCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
   export type ClassUncheckedCreateWithoutSupervisorInput = {
@@ -27050,6 +32319,7 @@ export namespace Prisma {
     events?: EventUncheckedCreateNestedManyWithoutClassInput
     announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
   export type ClassCreateOrConnectWithoutSupervisorInput = {
@@ -27104,6 +32374,33 @@ export namespace Prisma {
 
   export type ContinuousAssessmentCreateManyTeacherInputEnvelope = {
     data: ContinuousAssessmentCreateManyTeacherInput | ContinuousAssessmentCreateManyTeacherInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SyllabusTopicProgressCreateWithoutTeacherInput = {
+    coveredDate?: Date | string
+    notes?: string | null
+    createdAt?: Date | string
+    syllabusTopic: SyllabusTopicCreateNestedOneWithoutProgressInput
+    class: ClassCreateNestedOneWithoutSyllabusTopicProgressInput
+  }
+
+  export type SyllabusTopicProgressUncheckedCreateWithoutTeacherInput = {
+    id?: number
+    coveredDate?: Date | string
+    notes?: string | null
+    syllabusTopicId: number
+    classId: number
+    createdAt?: Date | string
+  }
+
+  export type SyllabusTopicProgressCreateOrConnectWithoutTeacherInput = {
+    where: SyllabusTopicProgressWhereUniqueInput
+    create: XOR<SyllabusTopicProgressCreateWithoutTeacherInput, SyllabusTopicProgressUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type SyllabusTopicProgressCreateManyTeacherInputEnvelope = {
+    data: SyllabusTopicProgressCreateManyTeacherInput | SyllabusTopicProgressCreateManyTeacherInput[]
     skipDuplicates?: boolean
   }
 
@@ -27203,6 +32500,35 @@ export namespace Prisma {
   export type ContinuousAssessmentUpdateManyWithWhereWithoutTeacherInput = {
     where: ContinuousAssessmentScalarWhereInput
     data: XOR<ContinuousAssessmentUpdateManyMutationInput, ContinuousAssessmentUncheckedUpdateManyWithoutTeacherInput>
+  }
+
+  export type SyllabusTopicProgressUpsertWithWhereUniqueWithoutTeacherInput = {
+    where: SyllabusTopicProgressWhereUniqueInput
+    update: XOR<SyllabusTopicProgressUpdateWithoutTeacherInput, SyllabusTopicProgressUncheckedUpdateWithoutTeacherInput>
+    create: XOR<SyllabusTopicProgressCreateWithoutTeacherInput, SyllabusTopicProgressUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type SyllabusTopicProgressUpdateWithWhereUniqueWithoutTeacherInput = {
+    where: SyllabusTopicProgressWhereUniqueInput
+    data: XOR<SyllabusTopicProgressUpdateWithoutTeacherInput, SyllabusTopicProgressUncheckedUpdateWithoutTeacherInput>
+  }
+
+  export type SyllabusTopicProgressUpdateManyWithWhereWithoutTeacherInput = {
+    where: SyllabusTopicProgressScalarWhereInput
+    data: XOR<SyllabusTopicProgressUpdateManyMutationInput, SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherInput>
+  }
+
+  export type SyllabusTopicProgressScalarWhereInput = {
+    AND?: SyllabusTopicProgressScalarWhereInput | SyllabusTopicProgressScalarWhereInput[]
+    OR?: SyllabusTopicProgressScalarWhereInput[]
+    NOT?: SyllabusTopicProgressScalarWhereInput | SyllabusTopicProgressScalarWhereInput[]
+    id?: IntFilter<"SyllabusTopicProgress"> | number
+    coveredDate?: DateTimeFilter<"SyllabusTopicProgress"> | Date | string
+    notes?: StringNullableFilter<"SyllabusTopicProgress"> | string | null
+    syllabusTopicId?: IntFilter<"SyllabusTopicProgress"> | number
+    classId?: IntFilter<"SyllabusTopicProgress"> | number
+    teacherId?: StringFilter<"SyllabusTopicProgress"> | string
+    createdAt?: DateTimeFilter<"SyllabusTopicProgress"> | Date | string
   }
 
   export type StudentCreateWithoutParentInput = {
@@ -27347,6 +32673,7 @@ export namespace Prisma {
     events?: EventCreateNestedManyWithoutClassInput
     announcements?: AnnouncementCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
   export type ClassUncheckedCreateWithoutGradeInput = {
@@ -27360,6 +32687,7 @@ export namespace Prisma {
     events?: EventUncheckedCreateNestedManyWithoutClassInput
     announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
   export type ClassCreateOrConnectWithoutGradeInput = {
@@ -27369,6 +32697,39 @@ export namespace Prisma {
 
   export type ClassCreateManyGradeInputEnvelope = {
     data: ClassCreateManyGradeInput | ClassCreateManyGradeInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SyllabusCreateWithoutGradeInput = {
+    description?: string | null
+    status?: $Enums.SyllabusStatus
+    term: $Enums.Term
+    academicYear: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    subject: SubjectCreateNestedOneWithoutSyllabiInput
+    topics?: SyllabusTopicCreateNestedManyWithoutSyllabusInput
+  }
+
+  export type SyllabusUncheckedCreateWithoutGradeInput = {
+    id?: number
+    description?: string | null
+    status?: $Enums.SyllabusStatus
+    term: $Enums.Term
+    academicYear: string
+    subjectId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    topics?: SyllabusTopicUncheckedCreateNestedManyWithoutSyllabusInput
+  }
+
+  export type SyllabusCreateOrConnectWithoutGradeInput = {
+    where: SyllabusWhereUniqueInput
+    create: XOR<SyllabusCreateWithoutGradeInput, SyllabusUncheckedCreateWithoutGradeInput>
+  }
+
+  export type SyllabusCreateManyGradeInputEnvelope = {
+    data: SyllabusCreateManyGradeInput | SyllabusCreateManyGradeInput[]
     skipDuplicates?: boolean
   }
 
@@ -27404,6 +32765,37 @@ export namespace Prisma {
     data: XOR<ClassUpdateManyMutationInput, ClassUncheckedUpdateManyWithoutGradeInput>
   }
 
+  export type SyllabusUpsertWithWhereUniqueWithoutGradeInput = {
+    where: SyllabusWhereUniqueInput
+    update: XOR<SyllabusUpdateWithoutGradeInput, SyllabusUncheckedUpdateWithoutGradeInput>
+    create: XOR<SyllabusCreateWithoutGradeInput, SyllabusUncheckedCreateWithoutGradeInput>
+  }
+
+  export type SyllabusUpdateWithWhereUniqueWithoutGradeInput = {
+    where: SyllabusWhereUniqueInput
+    data: XOR<SyllabusUpdateWithoutGradeInput, SyllabusUncheckedUpdateWithoutGradeInput>
+  }
+
+  export type SyllabusUpdateManyWithWhereWithoutGradeInput = {
+    where: SyllabusScalarWhereInput
+    data: XOR<SyllabusUpdateManyMutationInput, SyllabusUncheckedUpdateManyWithoutGradeInput>
+  }
+
+  export type SyllabusScalarWhereInput = {
+    AND?: SyllabusScalarWhereInput | SyllabusScalarWhereInput[]
+    OR?: SyllabusScalarWhereInput[]
+    NOT?: SyllabusScalarWhereInput | SyllabusScalarWhereInput[]
+    id?: IntFilter<"Syllabus"> | number
+    description?: StringNullableFilter<"Syllabus"> | string | null
+    status?: EnumSyllabusStatusFilter<"Syllabus"> | $Enums.SyllabusStatus
+    term?: EnumTermFilter<"Syllabus"> | $Enums.Term
+    academicYear?: StringFilter<"Syllabus"> | string
+    subjectId?: IntFilter<"Syllabus"> | number
+    gradeId?: IntFilter<"Syllabus"> | number
+    createdAt?: DateTimeFilter<"Syllabus"> | Date | string
+    updatedAt?: DateTimeFilter<"Syllabus"> | Date | string
+  }
+
   export type TeacherCreateWithoutClassesInput = {
     id: string
     username: string
@@ -27420,6 +32812,7 @@ export namespace Prisma {
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
     lessons?: LessonCreateNestedManyWithoutTeacherInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutClassesInput = {
@@ -27438,6 +32831,7 @@ export namespace Prisma {
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
     lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutClassesInput = {
@@ -27532,6 +32926,7 @@ export namespace Prisma {
     level: string
     order: number
     students?: StudentCreateNestedManyWithoutGradeInput
+    syllabi?: SyllabusCreateNestedManyWithoutGradeInput
   }
 
   export type GradeUncheckedCreateWithoutClassesInput = {
@@ -27539,6 +32934,7 @@ export namespace Prisma {
     level: string
     order: number
     students?: StudentUncheckedCreateNestedManyWithoutGradeInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutGradeInput
   }
 
   export type GradeCreateOrConnectWithoutClassesInput = {
@@ -27639,6 +33035,33 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type SyllabusTopicProgressCreateWithoutClassInput = {
+    coveredDate?: Date | string
+    notes?: string | null
+    createdAt?: Date | string
+    syllabusTopic: SyllabusTopicCreateNestedOneWithoutProgressInput
+    teacher: TeacherCreateNestedOneWithoutSyllabusTopicProgressInput
+  }
+
+  export type SyllabusTopicProgressUncheckedCreateWithoutClassInput = {
+    id?: number
+    coveredDate?: Date | string
+    notes?: string | null
+    syllabusTopicId: number
+    teacherId: string
+    createdAt?: Date | string
+  }
+
+  export type SyllabusTopicProgressCreateOrConnectWithoutClassInput = {
+    where: SyllabusTopicProgressWhereUniqueInput
+    create: XOR<SyllabusTopicProgressCreateWithoutClassInput, SyllabusTopicProgressUncheckedCreateWithoutClassInput>
+  }
+
+  export type SyllabusTopicProgressCreateManyClassInputEnvelope = {
+    data: SyllabusTopicProgressCreateManyClassInput | SyllabusTopicProgressCreateManyClassInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TeacherUpsertWithoutClassesInput = {
     update: XOR<TeacherUpdateWithoutClassesInput, TeacherUncheckedUpdateWithoutClassesInput>
     create: XOR<TeacherCreateWithoutClassesInput, TeacherUncheckedCreateWithoutClassesInput>
@@ -27666,6 +33089,7 @@ export namespace Prisma {
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
     lessons?: LessonUpdateManyWithoutTeacherNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutClassesInput = {
@@ -27684,6 +33108,7 @@ export namespace Prisma {
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type LessonUpsertWithWhereUniqueWithoutClassInput = {
@@ -27733,6 +33158,7 @@ export namespace Prisma {
     level?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     students?: StudentUpdateManyWithoutGradeNestedInput
+    syllabi?: SyllabusUpdateManyWithoutGradeNestedInput
   }
 
   export type GradeUncheckedUpdateWithoutClassesInput = {
@@ -27740,6 +33166,7 @@ export namespace Prisma {
     level?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     students?: StudentUncheckedUpdateManyWithoutGradeNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutGradeNestedInput
   }
 
   export type EventUpsertWithWhereUniqueWithoutClassInput = {
@@ -27813,6 +33240,22 @@ export namespace Prisma {
     data: XOR<ContinuousAssessmentUpdateManyMutationInput, ContinuousAssessmentUncheckedUpdateManyWithoutClassInput>
   }
 
+  export type SyllabusTopicProgressUpsertWithWhereUniqueWithoutClassInput = {
+    where: SyllabusTopicProgressWhereUniqueInput
+    update: XOR<SyllabusTopicProgressUpdateWithoutClassInput, SyllabusTopicProgressUncheckedUpdateWithoutClassInput>
+    create: XOR<SyllabusTopicProgressCreateWithoutClassInput, SyllabusTopicProgressUncheckedCreateWithoutClassInput>
+  }
+
+  export type SyllabusTopicProgressUpdateWithWhereUniqueWithoutClassInput = {
+    where: SyllabusTopicProgressWhereUniqueInput
+    data: XOR<SyllabusTopicProgressUpdateWithoutClassInput, SyllabusTopicProgressUncheckedUpdateWithoutClassInput>
+  }
+
+  export type SyllabusTopicProgressUpdateManyWithWhereWithoutClassInput = {
+    where: SyllabusTopicProgressScalarWhereInput
+    data: XOR<SyllabusTopicProgressUpdateManyMutationInput, SyllabusTopicProgressUncheckedUpdateManyWithoutClassInput>
+  }
+
   export type TeacherCreateWithoutSubjectsInput = {
     id: string
     username: string
@@ -27829,6 +33272,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutTeacherInput
     classes?: ClassCreateNestedManyWithoutSupervisorInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutSubjectsInput = {
@@ -27847,6 +33291,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
     classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutSubjectsInput = {
@@ -27934,6 +33379,39 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type SyllabusCreateWithoutSubjectInput = {
+    description?: string | null
+    status?: $Enums.SyllabusStatus
+    term: $Enums.Term
+    academicYear: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    grade: GradeCreateNestedOneWithoutSyllabiInput
+    topics?: SyllabusTopicCreateNestedManyWithoutSyllabusInput
+  }
+
+  export type SyllabusUncheckedCreateWithoutSubjectInput = {
+    id?: number
+    description?: string | null
+    status?: $Enums.SyllabusStatus
+    term: $Enums.Term
+    academicYear: string
+    gradeId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    topics?: SyllabusTopicUncheckedCreateNestedManyWithoutSyllabusInput
+  }
+
+  export type SyllabusCreateOrConnectWithoutSubjectInput = {
+    where: SyllabusWhereUniqueInput
+    create: XOR<SyllabusCreateWithoutSubjectInput, SyllabusUncheckedCreateWithoutSubjectInput>
+  }
+
+  export type SyllabusCreateManySubjectInputEnvelope = {
+    data: SyllabusCreateManySubjectInput | SyllabusCreateManySubjectInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TeacherUpsertWithWhereUniqueWithoutSubjectsInput = {
     where: TeacherWhereUniqueInput
     update: XOR<TeacherUpdateWithoutSubjectsInput, TeacherUncheckedUpdateWithoutSubjectsInput>
@@ -28000,10 +33478,27 @@ export namespace Prisma {
     data: XOR<ContinuousAssessmentUpdateManyMutationInput, ContinuousAssessmentUncheckedUpdateManyWithoutSubjectInput>
   }
 
+  export type SyllabusUpsertWithWhereUniqueWithoutSubjectInput = {
+    where: SyllabusWhereUniqueInput
+    update: XOR<SyllabusUpdateWithoutSubjectInput, SyllabusUncheckedUpdateWithoutSubjectInput>
+    create: XOR<SyllabusCreateWithoutSubjectInput, SyllabusUncheckedCreateWithoutSubjectInput>
+  }
+
+  export type SyllabusUpdateWithWhereUniqueWithoutSubjectInput = {
+    where: SyllabusWhereUniqueInput
+    data: XOR<SyllabusUpdateWithoutSubjectInput, SyllabusUncheckedUpdateWithoutSubjectInput>
+  }
+
+  export type SyllabusUpdateManyWithWhereWithoutSubjectInput = {
+    where: SyllabusScalarWhereInput
+    data: XOR<SyllabusUpdateManyMutationInput, SyllabusUncheckedUpdateManyWithoutSubjectInput>
+  }
+
   export type SubjectCreateWithoutLessonsInput = {
     name: string
     teachers?: TeacherCreateNestedManyWithoutSubjectsInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSubjectInput
+    syllabi?: SyllabusCreateNestedManyWithoutSubjectInput
   }
 
   export type SubjectUncheckedCreateWithoutLessonsInput = {
@@ -28011,6 +33506,7 @@ export namespace Prisma {
     name: string
     teachers?: TeacherUncheckedCreateNestedManyWithoutSubjectsInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSubjectInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSubjectInput
   }
 
   export type SubjectCreateOrConnectWithoutLessonsInput = {
@@ -28028,6 +33524,7 @@ export namespace Prisma {
     events?: EventCreateNestedManyWithoutClassInput
     announcements?: AnnouncementCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
   export type ClassUncheckedCreateWithoutLessonsInput = {
@@ -28041,6 +33538,7 @@ export namespace Prisma {
     events?: EventUncheckedCreateNestedManyWithoutClassInput
     announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
   export type ClassCreateOrConnectWithoutLessonsInput = {
@@ -28064,6 +33562,7 @@ export namespace Prisma {
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
     classes?: ClassCreateNestedManyWithoutSupervisorInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutLessonsInput = {
@@ -28082,6 +33581,7 @@ export namespace Prisma {
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
     classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutLessonsInput = {
@@ -28181,6 +33681,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     teachers?: TeacherUpdateManyWithoutSubjectsNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSubjectNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSubjectNestedInput
   }
 
   export type SubjectUncheckedUpdateWithoutLessonsInput = {
@@ -28188,6 +33689,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     teachers?: TeacherUncheckedUpdateManyWithoutSubjectsNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSubjectNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSubjectNestedInput
   }
 
   export type ClassUpsertWithoutLessonsInput = {
@@ -28211,6 +33713,7 @@ export namespace Prisma {
     events?: EventUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateWithoutLessonsInput = {
@@ -28224,6 +33727,7 @@ export namespace Prisma {
     events?: EventUncheckedUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
   export type TeacherUpsertWithoutLessonsInput = {
@@ -28253,6 +33757,7 @@ export namespace Prisma {
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
     classes?: ClassUpdateManyWithoutSupervisorNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutLessonsInput = {
@@ -28271,6 +33776,7 @@ export namespace Prisma {
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
     classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type ExamUpsertWithWhereUniqueWithoutLessonInput = {
@@ -28905,6 +34411,7 @@ export namespace Prisma {
     grade: GradeCreateNestedOneWithoutClassesInput
     announcements?: AnnouncementCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
   export type ClassUncheckedCreateWithoutEventsInput = {
@@ -28918,6 +34425,7 @@ export namespace Prisma {
     students?: StudentUncheckedCreateNestedManyWithoutClassInput
     announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
   export type ClassCreateOrConnectWithoutEventsInput = {
@@ -28946,6 +34454,7 @@ export namespace Prisma {
     grade?: GradeUpdateOneRequiredWithoutClassesNestedInput
     announcements?: AnnouncementUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateWithoutEventsInput = {
@@ -28959,6 +34468,7 @@ export namespace Prisma {
     students?: StudentUncheckedUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
   export type ClassCreateWithoutAnnouncementsInput = {
@@ -28971,6 +34481,7 @@ export namespace Prisma {
     grade: GradeCreateNestedOneWithoutClassesInput
     events?: EventCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
   export type ClassUncheckedCreateWithoutAnnouncementsInput = {
@@ -28984,6 +34495,7 @@ export namespace Prisma {
     students?: StudentUncheckedCreateNestedManyWithoutClassInput
     events?: EventUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
   export type ClassCreateOrConnectWithoutAnnouncementsInput = {
@@ -29012,6 +34524,7 @@ export namespace Prisma {
     grade?: GradeUpdateOneRequiredWithoutClassesNestedInput
     events?: EventUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateWithoutAnnouncementsInput = {
@@ -29025,6 +34538,7 @@ export namespace Prisma {
     students?: StudentUncheckedUpdateManyWithoutClassNestedInput
     events?: EventUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
   export type StudentCreateWithoutContinuousAssessmentsInput = {
@@ -29086,6 +34600,7 @@ export namespace Prisma {
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
     lessons?: LessonCreateNestedManyWithoutTeacherInput
     classes?: ClassCreateNestedManyWithoutSupervisorInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutContinuousAssessmentsInput = {
@@ -29104,6 +34619,7 @@ export namespace Prisma {
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
     lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
     classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutContinuousAssessmentsInput = {
@@ -29115,6 +34631,7 @@ export namespace Prisma {
     name: string
     teachers?: TeacherCreateNestedManyWithoutSubjectsInput
     lessons?: LessonCreateNestedManyWithoutSubjectInput
+    syllabi?: SyllabusCreateNestedManyWithoutSubjectInput
   }
 
   export type SubjectUncheckedCreateWithoutContinuousAssessmentsInput = {
@@ -29122,6 +34639,7 @@ export namespace Prisma {
     name: string
     teachers?: TeacherUncheckedCreateNestedManyWithoutSubjectsInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSubjectInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSubjectInput
   }
 
   export type SubjectCreateOrConnectWithoutContinuousAssessmentsInput = {
@@ -29139,6 +34657,7 @@ export namespace Prisma {
     grade: GradeCreateNestedOneWithoutClassesInput
     events?: EventCreateNestedManyWithoutClassInput
     announcements?: AnnouncementCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
   export type ClassUncheckedCreateWithoutContinuousAssessmentsInput = {
@@ -29152,6 +34671,7 @@ export namespace Prisma {
     students?: StudentUncheckedCreateNestedManyWithoutClassInput
     events?: EventUncheckedCreateNestedManyWithoutClassInput
     announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
   export type ClassCreateOrConnectWithoutContinuousAssessmentsInput = {
@@ -29235,6 +34755,7 @@ export namespace Prisma {
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
     lessons?: LessonUpdateManyWithoutTeacherNestedInput
     classes?: ClassUpdateManyWithoutSupervisorNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutContinuousAssessmentsInput = {
@@ -29253,6 +34774,7 @@ export namespace Prisma {
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
     classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type SubjectUpsertWithoutContinuousAssessmentsInput = {
@@ -29270,6 +34792,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     teachers?: TeacherUpdateManyWithoutSubjectsNestedInput
     lessons?: LessonUpdateManyWithoutSubjectNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSubjectNestedInput
   }
 
   export type SubjectUncheckedUpdateWithoutContinuousAssessmentsInput = {
@@ -29277,6 +34800,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     teachers?: TeacherUncheckedUpdateManyWithoutSubjectsNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSubjectNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSubjectNestedInput
   }
 
   export type ClassUpsertWithoutContinuousAssessmentsInput = {
@@ -29300,6 +34824,7 @@ export namespace Prisma {
     grade?: GradeUpdateOneRequiredWithoutClassesNestedInput
     events?: EventUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateWithoutContinuousAssessmentsInput = {
@@ -29313,6 +34838,513 @@ export namespace Prisma {
     students?: StudentUncheckedUpdateManyWithoutClassNestedInput
     events?: EventUncheckedUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
+  }
+
+  export type SubjectCreateWithoutSyllabiInput = {
+    name: string
+    teachers?: TeacherCreateNestedManyWithoutSubjectsInput
+    lessons?: LessonCreateNestedManyWithoutSubjectInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSubjectInput
+  }
+
+  export type SubjectUncheckedCreateWithoutSyllabiInput = {
+    id?: number
+    name: string
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSubjectsInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSubjectInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSubjectInput
+  }
+
+  export type SubjectCreateOrConnectWithoutSyllabiInput = {
+    where: SubjectWhereUniqueInput
+    create: XOR<SubjectCreateWithoutSyllabiInput, SubjectUncheckedCreateWithoutSyllabiInput>
+  }
+
+  export type GradeCreateWithoutSyllabiInput = {
+    level: string
+    order: number
+    students?: StudentCreateNestedManyWithoutGradeInput
+    classes?: ClassCreateNestedManyWithoutGradeInput
+  }
+
+  export type GradeUncheckedCreateWithoutSyllabiInput = {
+    id?: number
+    level: string
+    order: number
+    students?: StudentUncheckedCreateNestedManyWithoutGradeInput
+    classes?: ClassUncheckedCreateNestedManyWithoutGradeInput
+  }
+
+  export type GradeCreateOrConnectWithoutSyllabiInput = {
+    where: GradeWhereUniqueInput
+    create: XOR<GradeCreateWithoutSyllabiInput, GradeUncheckedCreateWithoutSyllabiInput>
+  }
+
+  export type SyllabusTopicCreateWithoutSyllabusInput = {
+    weekNumber: number
+    durationWeeks?: number
+    order: number
+    title: string
+    subtopics?: SyllabusTopicCreatesubtopicsInput | string[]
+    objectives?: SyllabusTopicCreateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicCreatecoreCompetenciesInput | string[]
+    teachingResources?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    progress?: SyllabusTopicProgressCreateNestedManyWithoutSyllabusTopicInput
+  }
+
+  export type SyllabusTopicUncheckedCreateWithoutSyllabusInput = {
+    id?: number
+    weekNumber: number
+    durationWeeks?: number
+    order: number
+    title: string
+    subtopics?: SyllabusTopicCreatesubtopicsInput | string[]
+    objectives?: SyllabusTopicCreateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicCreatecoreCompetenciesInput | string[]
+    teachingResources?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    progress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSyllabusTopicInput
+  }
+
+  export type SyllabusTopicCreateOrConnectWithoutSyllabusInput = {
+    where: SyllabusTopicWhereUniqueInput
+    create: XOR<SyllabusTopicCreateWithoutSyllabusInput, SyllabusTopicUncheckedCreateWithoutSyllabusInput>
+  }
+
+  export type SyllabusTopicCreateManySyllabusInputEnvelope = {
+    data: SyllabusTopicCreateManySyllabusInput | SyllabusTopicCreateManySyllabusInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SubjectUpsertWithoutSyllabiInput = {
+    update: XOR<SubjectUpdateWithoutSyllabiInput, SubjectUncheckedUpdateWithoutSyllabiInput>
+    create: XOR<SubjectCreateWithoutSyllabiInput, SubjectUncheckedCreateWithoutSyllabiInput>
+    where?: SubjectWhereInput
+  }
+
+  export type SubjectUpdateToOneWithWhereWithoutSyllabiInput = {
+    where?: SubjectWhereInput
+    data: XOR<SubjectUpdateWithoutSyllabiInput, SubjectUncheckedUpdateWithoutSyllabiInput>
+  }
+
+  export type SubjectUpdateWithoutSyllabiInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    teachers?: TeacherUpdateManyWithoutSubjectsNestedInput
+    lessons?: LessonUpdateManyWithoutSubjectNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSubjectNestedInput
+  }
+
+  export type SubjectUncheckedUpdateWithoutSyllabiInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    teachers?: TeacherUncheckedUpdateManyWithoutSubjectsNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSubjectNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSubjectNestedInput
+  }
+
+  export type GradeUpsertWithoutSyllabiInput = {
+    update: XOR<GradeUpdateWithoutSyllabiInput, GradeUncheckedUpdateWithoutSyllabiInput>
+    create: XOR<GradeCreateWithoutSyllabiInput, GradeUncheckedCreateWithoutSyllabiInput>
+    where?: GradeWhereInput
+  }
+
+  export type GradeUpdateToOneWithWhereWithoutSyllabiInput = {
+    where?: GradeWhereInput
+    data: XOR<GradeUpdateWithoutSyllabiInput, GradeUncheckedUpdateWithoutSyllabiInput>
+  }
+
+  export type GradeUpdateWithoutSyllabiInput = {
+    level?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    students?: StudentUpdateManyWithoutGradeNestedInput
+    classes?: ClassUpdateManyWithoutGradeNestedInput
+  }
+
+  export type GradeUncheckedUpdateWithoutSyllabiInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    level?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    students?: StudentUncheckedUpdateManyWithoutGradeNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutGradeNestedInput
+  }
+
+  export type SyllabusTopicUpsertWithWhereUniqueWithoutSyllabusInput = {
+    where: SyllabusTopicWhereUniqueInput
+    update: XOR<SyllabusTopicUpdateWithoutSyllabusInput, SyllabusTopicUncheckedUpdateWithoutSyllabusInput>
+    create: XOR<SyllabusTopicCreateWithoutSyllabusInput, SyllabusTopicUncheckedCreateWithoutSyllabusInput>
+  }
+
+  export type SyllabusTopicUpdateWithWhereUniqueWithoutSyllabusInput = {
+    where: SyllabusTopicWhereUniqueInput
+    data: XOR<SyllabusTopicUpdateWithoutSyllabusInput, SyllabusTopicUncheckedUpdateWithoutSyllabusInput>
+  }
+
+  export type SyllabusTopicUpdateManyWithWhereWithoutSyllabusInput = {
+    where: SyllabusTopicScalarWhereInput
+    data: XOR<SyllabusTopicUpdateManyMutationInput, SyllabusTopicUncheckedUpdateManyWithoutSyllabusInput>
+  }
+
+  export type SyllabusTopicScalarWhereInput = {
+    AND?: SyllabusTopicScalarWhereInput | SyllabusTopicScalarWhereInput[]
+    OR?: SyllabusTopicScalarWhereInput[]
+    NOT?: SyllabusTopicScalarWhereInput | SyllabusTopicScalarWhereInput[]
+    id?: IntFilter<"SyllabusTopic"> | number
+    weekNumber?: IntFilter<"SyllabusTopic"> | number
+    durationWeeks?: IntFilter<"SyllabusTopic"> | number
+    order?: IntFilter<"SyllabusTopic"> | number
+    title?: StringFilter<"SyllabusTopic"> | string
+    subtopics?: StringNullableListFilter<"SyllabusTopic">
+    objectives?: StringNullableListFilter<"SyllabusTopic">
+    coreCompetencies?: StringNullableListFilter<"SyllabusTopic">
+    teachingResources?: StringNullableFilter<"SyllabusTopic"> | string | null
+    syllabusId?: IntFilter<"SyllabusTopic"> | number
+    createdAt?: DateTimeFilter<"SyllabusTopic"> | Date | string
+    updatedAt?: DateTimeFilter<"SyllabusTopic"> | Date | string
+  }
+
+  export type SyllabusCreateWithoutTopicsInput = {
+    description?: string | null
+    status?: $Enums.SyllabusStatus
+    term: $Enums.Term
+    academicYear: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    subject: SubjectCreateNestedOneWithoutSyllabiInput
+    grade: GradeCreateNestedOneWithoutSyllabiInput
+  }
+
+  export type SyllabusUncheckedCreateWithoutTopicsInput = {
+    id?: number
+    description?: string | null
+    status?: $Enums.SyllabusStatus
+    term: $Enums.Term
+    academicYear: string
+    subjectId: number
+    gradeId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SyllabusCreateOrConnectWithoutTopicsInput = {
+    where: SyllabusWhereUniqueInput
+    create: XOR<SyllabusCreateWithoutTopicsInput, SyllabusUncheckedCreateWithoutTopicsInput>
+  }
+
+  export type SyllabusTopicProgressCreateWithoutSyllabusTopicInput = {
+    coveredDate?: Date | string
+    notes?: string | null
+    createdAt?: Date | string
+    class: ClassCreateNestedOneWithoutSyllabusTopicProgressInput
+    teacher: TeacherCreateNestedOneWithoutSyllabusTopicProgressInput
+  }
+
+  export type SyllabusTopicProgressUncheckedCreateWithoutSyllabusTopicInput = {
+    id?: number
+    coveredDate?: Date | string
+    notes?: string | null
+    classId: number
+    teacherId: string
+    createdAt?: Date | string
+  }
+
+  export type SyllabusTopicProgressCreateOrConnectWithoutSyllabusTopicInput = {
+    where: SyllabusTopicProgressWhereUniqueInput
+    create: XOR<SyllabusTopicProgressCreateWithoutSyllabusTopicInput, SyllabusTopicProgressUncheckedCreateWithoutSyllabusTopicInput>
+  }
+
+  export type SyllabusTopicProgressCreateManySyllabusTopicInputEnvelope = {
+    data: SyllabusTopicProgressCreateManySyllabusTopicInput | SyllabusTopicProgressCreateManySyllabusTopicInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SyllabusUpsertWithoutTopicsInput = {
+    update: XOR<SyllabusUpdateWithoutTopicsInput, SyllabusUncheckedUpdateWithoutTopicsInput>
+    create: XOR<SyllabusCreateWithoutTopicsInput, SyllabusUncheckedCreateWithoutTopicsInput>
+    where?: SyllabusWhereInput
+  }
+
+  export type SyllabusUpdateToOneWithWhereWithoutTopicsInput = {
+    where?: SyllabusWhereInput
+    data: XOR<SyllabusUpdateWithoutTopicsInput, SyllabusUncheckedUpdateWithoutTopicsInput>
+  }
+
+  export type SyllabusUpdateWithoutTopicsInput = {
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSyllabusStatusFieldUpdateOperationsInput | $Enums.SyllabusStatus
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    academicYear?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    subject?: SubjectUpdateOneRequiredWithoutSyllabiNestedInput
+    grade?: GradeUpdateOneRequiredWithoutSyllabiNestedInput
+  }
+
+  export type SyllabusUncheckedUpdateWithoutTopicsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSyllabusStatusFieldUpdateOperationsInput | $Enums.SyllabusStatus
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    academicYear?: StringFieldUpdateOperationsInput | string
+    subjectId?: IntFieldUpdateOperationsInput | number
+    gradeId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SyllabusTopicProgressUpsertWithWhereUniqueWithoutSyllabusTopicInput = {
+    where: SyllabusTopicProgressWhereUniqueInput
+    update: XOR<SyllabusTopicProgressUpdateWithoutSyllabusTopicInput, SyllabusTopicProgressUncheckedUpdateWithoutSyllabusTopicInput>
+    create: XOR<SyllabusTopicProgressCreateWithoutSyllabusTopicInput, SyllabusTopicProgressUncheckedCreateWithoutSyllabusTopicInput>
+  }
+
+  export type SyllabusTopicProgressUpdateWithWhereUniqueWithoutSyllabusTopicInput = {
+    where: SyllabusTopicProgressWhereUniqueInput
+    data: XOR<SyllabusTopicProgressUpdateWithoutSyllabusTopicInput, SyllabusTopicProgressUncheckedUpdateWithoutSyllabusTopicInput>
+  }
+
+  export type SyllabusTopicProgressUpdateManyWithWhereWithoutSyllabusTopicInput = {
+    where: SyllabusTopicProgressScalarWhereInput
+    data: XOR<SyllabusTopicProgressUpdateManyMutationInput, SyllabusTopicProgressUncheckedUpdateManyWithoutSyllabusTopicInput>
+  }
+
+  export type SyllabusTopicCreateWithoutProgressInput = {
+    weekNumber: number
+    durationWeeks?: number
+    order: number
+    title: string
+    subtopics?: SyllabusTopicCreatesubtopicsInput | string[]
+    objectives?: SyllabusTopicCreateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicCreatecoreCompetenciesInput | string[]
+    teachingResources?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    syllabus: SyllabusCreateNestedOneWithoutTopicsInput
+  }
+
+  export type SyllabusTopicUncheckedCreateWithoutProgressInput = {
+    id?: number
+    weekNumber: number
+    durationWeeks?: number
+    order: number
+    title: string
+    subtopics?: SyllabusTopicCreatesubtopicsInput | string[]
+    objectives?: SyllabusTopicCreateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicCreatecoreCompetenciesInput | string[]
+    teachingResources?: string | null
+    syllabusId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SyllabusTopicCreateOrConnectWithoutProgressInput = {
+    where: SyllabusTopicWhereUniqueInput
+    create: XOR<SyllabusTopicCreateWithoutProgressInput, SyllabusTopicUncheckedCreateWithoutProgressInput>
+  }
+
+  export type ClassCreateWithoutSyllabusTopicProgressInput = {
+    name: string
+    capacity: number
+    section?: string | null
+    supervisor?: TeacherCreateNestedOneWithoutClassesInput
+    lessons?: LessonCreateNestedManyWithoutClassInput
+    students?: StudentCreateNestedManyWithoutClassInput
+    grade: GradeCreateNestedOneWithoutClassesInput
+    events?: EventCreateNestedManyWithoutClassInput
+    announcements?: AnnouncementCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+  }
+
+  export type ClassUncheckedCreateWithoutSyllabusTopicProgressInput = {
+    id?: number
+    name: string
+    capacity: number
+    section?: string | null
+    supervisorId?: string | null
+    gradeId: number
+    lessons?: LessonUncheckedCreateNestedManyWithoutClassInput
+    students?: StudentUncheckedCreateNestedManyWithoutClassInput
+    events?: EventUncheckedCreateNestedManyWithoutClassInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+  }
+
+  export type ClassCreateOrConnectWithoutSyllabusTopicProgressInput = {
+    where: ClassWhereUniqueInput
+    create: XOR<ClassCreateWithoutSyllabusTopicProgressInput, ClassUncheckedCreateWithoutSyllabusTopicProgressInput>
+  }
+
+  export type TeacherCreateWithoutSyllabusTopicProgressInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    subjects?: SubjectCreateNestedManyWithoutTeachersInput
+    lessons?: LessonCreateNestedManyWithoutTeacherInput
+    classes?: ClassCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherUncheckedCreateWithoutSyllabusTopicProgressInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherCreateOrConnectWithoutSyllabusTopicProgressInput = {
+    where: TeacherWhereUniqueInput
+    create: XOR<TeacherCreateWithoutSyllabusTopicProgressInput, TeacherUncheckedCreateWithoutSyllabusTopicProgressInput>
+  }
+
+  export type SyllabusTopicUpsertWithoutProgressInput = {
+    update: XOR<SyllabusTopicUpdateWithoutProgressInput, SyllabusTopicUncheckedUpdateWithoutProgressInput>
+    create: XOR<SyllabusTopicCreateWithoutProgressInput, SyllabusTopicUncheckedCreateWithoutProgressInput>
+    where?: SyllabusTopicWhereInput
+  }
+
+  export type SyllabusTopicUpdateToOneWithWhereWithoutProgressInput = {
+    where?: SyllabusTopicWhereInput
+    data: XOR<SyllabusTopicUpdateWithoutProgressInput, SyllabusTopicUncheckedUpdateWithoutProgressInput>
+  }
+
+  export type SyllabusTopicUpdateWithoutProgressInput = {
+    weekNumber?: IntFieldUpdateOperationsInput | number
+    durationWeeks?: IntFieldUpdateOperationsInput | number
+    order?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    subtopics?: SyllabusTopicUpdatesubtopicsInput | string[]
+    objectives?: SyllabusTopicUpdateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicUpdatecoreCompetenciesInput | string[]
+    teachingResources?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    syllabus?: SyllabusUpdateOneRequiredWithoutTopicsNestedInput
+  }
+
+  export type SyllabusTopicUncheckedUpdateWithoutProgressInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    weekNumber?: IntFieldUpdateOperationsInput | number
+    durationWeeks?: IntFieldUpdateOperationsInput | number
+    order?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    subtopics?: SyllabusTopicUpdatesubtopicsInput | string[]
+    objectives?: SyllabusTopicUpdateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicUpdatecoreCompetenciesInput | string[]
+    teachingResources?: NullableStringFieldUpdateOperationsInput | string | null
+    syllabusId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ClassUpsertWithoutSyllabusTopicProgressInput = {
+    update: XOR<ClassUpdateWithoutSyllabusTopicProgressInput, ClassUncheckedUpdateWithoutSyllabusTopicProgressInput>
+    create: XOR<ClassCreateWithoutSyllabusTopicProgressInput, ClassUncheckedCreateWithoutSyllabusTopicProgressInput>
+    where?: ClassWhereInput
+  }
+
+  export type ClassUpdateToOneWithWhereWithoutSyllabusTopicProgressInput = {
+    where?: ClassWhereInput
+    data: XOR<ClassUpdateWithoutSyllabusTopicProgressInput, ClassUncheckedUpdateWithoutSyllabusTopicProgressInput>
+  }
+
+  export type ClassUpdateWithoutSyllabusTopicProgressInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisor?: TeacherUpdateOneWithoutClassesNestedInput
+    lessons?: LessonUpdateManyWithoutClassNestedInput
+    students?: StudentUpdateManyWithoutClassNestedInput
+    grade?: GradeUpdateOneRequiredWithoutClassesNestedInput
+    events?: EventUpdateManyWithoutClassNestedInput
+    announcements?: AnnouncementUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+  }
+
+  export type ClassUncheckedUpdateWithoutSyllabusTopicProgressInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+    gradeId?: IntFieldUpdateOperationsInput | number
+    lessons?: LessonUncheckedUpdateManyWithoutClassNestedInput
+    students?: StudentUncheckedUpdateManyWithoutClassNestedInput
+    events?: EventUncheckedUpdateManyWithoutClassNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+  }
+
+  export type TeacherUpsertWithoutSyllabusTopicProgressInput = {
+    update: XOR<TeacherUpdateWithoutSyllabusTopicProgressInput, TeacherUncheckedUpdateWithoutSyllabusTopicProgressInput>
+    create: XOR<TeacherCreateWithoutSyllabusTopicProgressInput, TeacherUncheckedCreateWithoutSyllabusTopicProgressInput>
+    where?: TeacherWhereInput
+  }
+
+  export type TeacherUpdateToOneWithWhereWithoutSyllabusTopicProgressInput = {
+    where?: TeacherWhereInput
+    data: XOR<TeacherUpdateWithoutSyllabusTopicProgressInput, TeacherUncheckedUpdateWithoutSyllabusTopicProgressInput>
+  }
+
+  export type TeacherUpdateWithoutSyllabusTopicProgressInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    subjects?: SubjectUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
+  }
+
+  export type TeacherUncheckedUpdateWithoutSyllabusTopicProgressInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type AttendanceCreateManyStudentInput = {
@@ -29484,10 +35516,20 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type SyllabusTopicProgressCreateManyTeacherInput = {
+    id?: number
+    coveredDate?: Date | string
+    notes?: string | null
+    syllabusTopicId: number
+    classId: number
+    createdAt?: Date | string
+  }
+
   export type SubjectUpdateWithoutTeachersInput = {
     name?: StringFieldUpdateOperationsInput | string
     lessons?: LessonUpdateManyWithoutSubjectNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSubjectNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSubjectNestedInput
   }
 
   export type SubjectUncheckedUpdateWithoutTeachersInput = {
@@ -29495,6 +35537,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     lessons?: LessonUncheckedUpdateManyWithoutSubjectNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSubjectNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSubjectNestedInput
   }
 
   export type SubjectUncheckedUpdateManyWithoutTeachersInput = {
@@ -29547,6 +35590,7 @@ export namespace Prisma {
     events?: EventUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateWithoutSupervisorInput = {
@@ -29560,6 +35604,7 @@ export namespace Prisma {
     events?: EventUncheckedUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateManyWithoutSupervisorInput = {
@@ -29621,6 +35666,32 @@ export namespace Prisma {
     configId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SyllabusTopicProgressUpdateWithoutTeacherInput = {
+    coveredDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    syllabusTopic?: SyllabusTopicUpdateOneRequiredWithoutProgressNestedInput
+    class?: ClassUpdateOneRequiredWithoutSyllabusTopicProgressNestedInput
+  }
+
+  export type SyllabusTopicProgressUncheckedUpdateWithoutTeacherInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    coveredDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    syllabusTopicId?: IntFieldUpdateOperationsInput | number
+    classId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    coveredDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    syllabusTopicId?: IntFieldUpdateOperationsInput | number
+    classId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StudentCreateManyParentInput = {
@@ -29717,6 +35788,17 @@ export namespace Prisma {
     supervisorId?: string | null
   }
 
+  export type SyllabusCreateManyGradeInput = {
+    id?: number
+    description?: string | null
+    status?: $Enums.SyllabusStatus
+    term: $Enums.Term
+    academicYear: string
+    subjectId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type StudentUpdateWithoutGradeInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
@@ -29781,6 +35863,7 @@ export namespace Prisma {
     events?: EventUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateWithoutGradeInput = {
@@ -29794,6 +35877,7 @@ export namespace Prisma {
     events?: EventUncheckedUpdateManyWithoutClassNestedInput
     announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateManyWithoutGradeInput = {
@@ -29802,6 +35886,40 @@ export namespace Prisma {
     capacity?: IntFieldUpdateOperationsInput | number
     section?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SyllabusUpdateWithoutGradeInput = {
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSyllabusStatusFieldUpdateOperationsInput | $Enums.SyllabusStatus
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    academicYear?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    subject?: SubjectUpdateOneRequiredWithoutSyllabiNestedInput
+    topics?: SyllabusTopicUpdateManyWithoutSyllabusNestedInput
+  }
+
+  export type SyllabusUncheckedUpdateWithoutGradeInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSyllabusStatusFieldUpdateOperationsInput | $Enums.SyllabusStatus
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    academicYear?: StringFieldUpdateOperationsInput | string
+    subjectId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    topics?: SyllabusTopicUncheckedUpdateManyWithoutSyllabusNestedInput
+  }
+
+  export type SyllabusUncheckedUpdateManyWithoutGradeInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSyllabusStatusFieldUpdateOperationsInput | $Enums.SyllabusStatus
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    academicYear?: StringFieldUpdateOperationsInput | string
+    subjectId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type LessonCreateManyClassInput = {
@@ -29861,6 +35979,15 @@ export namespace Prisma {
     configId?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type SyllabusTopicProgressCreateManyClassInput = {
+    id?: number
+    coveredDate?: Date | string
+    notes?: string | null
+    syllabusTopicId: number
+    teacherId: string
+    createdAt?: Date | string
   }
 
   export type LessonUpdateWithoutClassInput = {
@@ -30048,6 +36175,32 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SyllabusTopicProgressUpdateWithoutClassInput = {
+    coveredDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    syllabusTopic?: SyllabusTopicUpdateOneRequiredWithoutProgressNestedInput
+    teacher?: TeacherUpdateOneRequiredWithoutSyllabusTopicProgressNestedInput
+  }
+
+  export type SyllabusTopicProgressUncheckedUpdateWithoutClassInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    coveredDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    syllabusTopicId?: IntFieldUpdateOperationsInput | number
+    teacherId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SyllabusTopicProgressUncheckedUpdateManyWithoutClassInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    coveredDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    syllabusTopicId?: IntFieldUpdateOperationsInput | number
+    teacherId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type LessonCreateManySubjectInput = {
     id?: number
     name: string
@@ -30076,6 +36229,17 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type SyllabusCreateManySubjectInput = {
+    id?: number
+    description?: string | null
+    status?: $Enums.SyllabusStatus
+    term: $Enums.Term
+    academicYear: string
+    gradeId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type TeacherUpdateWithoutSubjectsInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
@@ -30092,6 +36256,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutTeacherNestedInput
     classes?: ClassUpdateManyWithoutSupervisorNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutSubjectsInput = {
@@ -30110,6 +36275,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
     classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateManyWithoutSubjectsInput = {
@@ -30211,6 +36377,40 @@ export namespace Prisma {
     gradePoint?: IntFieldUpdateOperationsInput | number
     remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SyllabusUpdateWithoutSubjectInput = {
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSyllabusStatusFieldUpdateOperationsInput | $Enums.SyllabusStatus
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    academicYear?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    grade?: GradeUpdateOneRequiredWithoutSyllabiNestedInput
+    topics?: SyllabusTopicUpdateManyWithoutSyllabusNestedInput
+  }
+
+  export type SyllabusUncheckedUpdateWithoutSubjectInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSyllabusStatusFieldUpdateOperationsInput | $Enums.SyllabusStatus
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    academicYear?: StringFieldUpdateOperationsInput | string
+    gradeId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    topics?: SyllabusTopicUncheckedUpdateManyWithoutSyllabusNestedInput
+  }
+
+  export type SyllabusUncheckedUpdateManyWithoutSubjectInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSyllabusStatusFieldUpdateOperationsInput | $Enums.SyllabusStatus
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    academicYear?: StringFieldUpdateOperationsInput | string
+    gradeId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -30360,6 +36560,98 @@ export namespace Prisma {
     score?: IntFieldUpdateOperationsInput | number
     examId?: NullableIntFieldUpdateOperationsInput | number | null
     studentId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SyllabusTopicCreateManySyllabusInput = {
+    id?: number
+    weekNumber: number
+    durationWeeks?: number
+    order: number
+    title: string
+    subtopics?: SyllabusTopicCreatesubtopicsInput | string[]
+    objectives?: SyllabusTopicCreateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicCreatecoreCompetenciesInput | string[]
+    teachingResources?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SyllabusTopicUpdateWithoutSyllabusInput = {
+    weekNumber?: IntFieldUpdateOperationsInput | number
+    durationWeeks?: IntFieldUpdateOperationsInput | number
+    order?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    subtopics?: SyllabusTopicUpdatesubtopicsInput | string[]
+    objectives?: SyllabusTopicUpdateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicUpdatecoreCompetenciesInput | string[]
+    teachingResources?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    progress?: SyllabusTopicProgressUpdateManyWithoutSyllabusTopicNestedInput
+  }
+
+  export type SyllabusTopicUncheckedUpdateWithoutSyllabusInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    weekNumber?: IntFieldUpdateOperationsInput | number
+    durationWeeks?: IntFieldUpdateOperationsInput | number
+    order?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    subtopics?: SyllabusTopicUpdatesubtopicsInput | string[]
+    objectives?: SyllabusTopicUpdateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicUpdatecoreCompetenciesInput | string[]
+    teachingResources?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    progress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSyllabusTopicNestedInput
+  }
+
+  export type SyllabusTopicUncheckedUpdateManyWithoutSyllabusInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    weekNumber?: IntFieldUpdateOperationsInput | number
+    durationWeeks?: IntFieldUpdateOperationsInput | number
+    order?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    subtopics?: SyllabusTopicUpdatesubtopicsInput | string[]
+    objectives?: SyllabusTopicUpdateobjectivesInput | string[]
+    coreCompetencies?: SyllabusTopicUpdatecoreCompetenciesInput | string[]
+    teachingResources?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SyllabusTopicProgressCreateManySyllabusTopicInput = {
+    id?: number
+    coveredDate?: Date | string
+    notes?: string | null
+    classId: number
+    teacherId: string
+    createdAt?: Date | string
+  }
+
+  export type SyllabusTopicProgressUpdateWithoutSyllabusTopicInput = {
+    coveredDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    class?: ClassUpdateOneRequiredWithoutSyllabusTopicProgressNestedInput
+    teacher?: TeacherUpdateOneRequiredWithoutSyllabusTopicProgressNestedInput
+  }
+
+  export type SyllabusTopicProgressUncheckedUpdateWithoutSyllabusTopicInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    coveredDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    classId?: IntFieldUpdateOperationsInput | number
+    teacherId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SyllabusTopicProgressUncheckedUpdateManyWithoutSyllabusTopicInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    coveredDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    classId?: IntFieldUpdateOperationsInput | number
+    teacherId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 
