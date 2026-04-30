@@ -1,5 +1,5 @@
 // src/app/(dashboard)/list/syllabus/page.tsx
-// Browse all syllabi. Admins can create/edit/delete. Teachers see their subjects.
+
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
