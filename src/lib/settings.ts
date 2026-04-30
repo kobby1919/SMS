@@ -28,7 +28,7 @@ export const routeAccessMap: RouteAccessMap = {
   "/admin/ca-config(.*)":     ["admin"],
   // ── Report Cards ─────────────────────────────────────────────────────────
   // List (class overview) — teacher and admin only
-  "/list/report-cards":       ["admin", "teacher"],
+  "/list/report-cards":       ["admin", "teacher", "student", "parent"],
   // Individual card — all roles (auth guard inside the page handles scoping)
   "/list/report-cards/(.*)":  ["admin", "teacher", "student", "parent"],
 };
