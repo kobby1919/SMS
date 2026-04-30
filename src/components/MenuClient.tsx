@@ -1,5 +1,8 @@
 "use client";
 
+// src/components/MenuClient.tsx
+// Updated to include Syllabus and CA links for all relevant roles.
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -23,6 +26,7 @@ import {
   LogOut,
   SlidersHorizontal,
   Star,
+  ScrollText,
 } from "lucide-react";
 
 const menuItems = [
@@ -106,6 +110,12 @@ const menuItems = [
         visible: ["admin", "teacher"],
       },
       {
+        icon: ScrollText,
+        label: "Syllabus",
+        href: "/list/syllabus",
+        visible: ["admin", "teacher"],
+      },
+      {
         icon: GraduationCap,
         label: "Exams",
         href: "/list/exams",
@@ -133,7 +143,7 @@ const menuItems = [
         icon: Star,
         label: "Continuous Assessment",
         href: "/list/ca",
-        visible: ["admin"],
+        visible: ["admin", "teacher"],
       },
       {
         icon: FileText,
@@ -217,7 +227,6 @@ const MenuClient = ({ role }: { role: string }) => {
         const visibleItems = section.items.filter((item) =>
           item.visible.includes(role),
         );
-
         if (visibleItems.length === 0) return null;
 
         return (
@@ -225,7 +234,6 @@ const MenuClient = ({ role }: { role: string }) => {
             <span className="hidden lg:block text-[9px] font-black text-gray-300 uppercase tracking-[0.15em] mt-4 mb-1 px-3">
               {section.title}
             </span>
-
             <div className="lg:hidden border-t border-gray-100 my-2 mx-2" />
 
             {visibleItems.map((item) => {
@@ -254,16 +262,10 @@ const MenuClient = ({ role }: { role: string }) => {
                     <Icon
                       size={20}
                       strokeWidth={isActive ? 2.5 : 2}
-                      className={`transition-opacity ${
-                        isActive
-                          ? "opacity-100"
-                          : "opacity-60 group-hover:opacity-80"
-                      }`}
+                      className={`transition-opacity ${isActive ? "opacity-100" : "opacity-60 group-hover:opacity-80"}`}
                     />
                   </span>
-
                   <span className="hidden lg:block text-sm">{item.label}</span>
-
                   {isActive && (
                     <span className="hidden lg:block ml-auto w-1.5 h-1.5 rounded-full bg-jayPurple" />
                   )}
