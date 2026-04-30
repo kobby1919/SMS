@@ -1,7 +1,6 @@
 "use server";
 
 // src/lib/actions/syllabusActions.ts
-// All server actions for the Syllabus Management feature.
 
 import prisma from "@/src/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
