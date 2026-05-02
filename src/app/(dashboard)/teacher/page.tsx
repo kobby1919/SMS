@@ -7,6 +7,7 @@ import EventCalendar from "@/src/components/EventCalendar";
 import EventList from "@/src/components/EventList";
 import BigCalendar from "@/src/components/BigCalendar";
 import WelcomeBanner from "@/src/components/WelcomeBanner";
+import UpcomingExams from "@/src/components/UpcomingExams";
 import type { CalendarLesson } from "@/src/components/BigCalendar";
 import CAQuickCard from "@/src/components/CAQuickCard";
 
@@ -51,7 +52,6 @@ const TeacherPage = async ({
 
       <div className="w-full xl:w-2/3 flex flex-col gap-4">
 
-        {/* ── WELCOME BANNER ── */}
         <WelcomeBanner
           role="teacher"
           name={teacherFirstName}
@@ -91,7 +91,9 @@ const TeacherPage = async ({
             <div className="flex flex-wrap gap-1.5">
               {taughtClasses.length > 0
                 ? taughtClasses.map((name) => (
-                    <span key={name} className="text-[11px] font-bold px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-lg">{name}</span>
+                    <span key={name} className="text-[11px] font-bold px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-lg">
+                      {name}
+                    </span>
                   ))
                 : <span className="text-xs text-gray-300">No classes assigned</span>}
             </div>
@@ -109,7 +111,9 @@ const TeacherPage = async ({
       </div>
 
       <div className="w-full xl:w-1/3 flex flex-col gap-4">
-      <CAQuickCard teacherId={user!.id}/>
+        <CAQuickCard teacherId={user!.id} />
+        {/* ✅ Upcoming exams — new addition */}
+        <UpcomingExams teacherId={user!.id} />
         <EventCalendar />
         <EventList dateParam={searchParams.date} />
         <Announcements />
