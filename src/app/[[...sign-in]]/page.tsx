@@ -32,16 +32,16 @@ export default function SignInPage() {
             <GraduationCap className="text-indigo-700" size={32} />
           </div>
           <h1 className="text-2xl font-extrabold text-gray-800 tracking-tight">
-            SchoolJay
+            Jayline 
           </h1>
-          <p className="text-sm text-gray-500 mt-1">Management System</p>
+          <p className="text-sm text-gray-500 mt-1">Academic</p>
         </div>
 
         {/* Stats strip */}
         <div className="flex items-center justify-center gap-6 mb-6">
           {[
-            { icon: <Users size={13} />, label: "2,400 Students" },
-            { icon: <BookOpen size={13} />, label: "6 Subjects" },
+            { icon: <Users size={13} />, label: "42 Students" },
+            { icon: <BookOpen size={13} />, label: "23 Subjects" },
             { icon: <Shield size={13} />, label: "Secure Login" },
           ].map(({ icon, label }) => (
             <div
@@ -119,7 +119,7 @@ export default function SignInPage() {
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-4 font-medium">
-          SchoolJay Management System • Term 2 • 2025/26
+          Jayline Academic • Term 2 • 2025/26
         </p>
       </div>
     </div>

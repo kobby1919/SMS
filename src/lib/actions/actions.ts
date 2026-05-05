@@ -6,7 +6,7 @@ import prisma from "@/src/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
-// ─── Auth guard ───────────────────────────────────────────────────────────────
+// ─── Auth guards ──────────────────────────────────────────────────────────────
 async function requireAdmin() {
   const { sessionClaims } = await auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
@@ -117,15 +117,14 @@ export async function deleteStudent(id: string) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// EXAM — admin + teacher (supervisor) can create/update
-// Auto-creates an Announcement so students/parents see it in their dashboard
+// EXAM
 // ═══════════════════════════════════════════════════════════════════════════════
 export type ExamFormData = {
   id?:       number;
   title:     string;
   lessonId:  number;
-  startTime: string; // ISO string
-  endTime:   string; // ISO string
+  startTime: string;
+  endTime:   string;
 };
 
 export async function createExam(data: ExamFormData): Promise<void> {
@@ -148,25 +147,16 @@ export async function createExam(data: ExamFormData): Promise<void> {
     },
   });
 
-  // Auto-announce to the class
-  const examDate = new Intl.DateTimeFormat("en-GH", {
-    day: "numeric", month: "long", year: "numeric",
-  }).format(new Date(data.startTime));
-
-  const startFmt = new Intl.DateTimeFormat("en-GH", {
-    hour: "2-digit", minute: "2-digit",
-  }).format(new Date(data.startTime));
-
-  const endFmt = new Intl.DateTimeFormat("en-GH", {
-    hour: "2-digit", minute: "2-digit",
-  }).format(new Date(data.endTime));
+  const examDate  = new Intl.DateTimeFormat("en-GH", { day: "numeric", month: "long", year: "numeric" }).format(new Date(data.startTime));
+  const startFmt  = new Intl.DateTimeFormat("en-GH", { hour: "2-digit", minute: "2-digit" }).format(new Date(data.startTime));
+  const endFmt    = new Intl.DateTimeFormat("en-GH", { hour: "2-digit", minute: "2-digit" }).format(new Date(data.endTime));
 
   await prisma.announcement.create({
     data: {
       title:       `📝 Exam Scheduled: ${exam.lesson.subject.name}`,
       description: `${data.title} for ${exam.lesson.class.name} has been scheduled on ${examDate} from ${startFmt} to ${endFmt}. Please prepare accordingly.`,
       date:        new Date(),
-      classId:     exam.lesson.class.id, // scoped to this class only
+      classId:     exam.lesson.class.id,
     },
   });
 
@@ -196,17 +186,9 @@ export async function updateExam(data: ExamFormData): Promise<void> {
     },
   });
 
-  const examDate = new Intl.DateTimeFormat("en-GH", {
-    day: "numeric", month: "long", year: "numeric",
-  }).format(new Date(data.startTime));
-
-  const startFmt = new Intl.DateTimeFormat("en-GH", {
-    hour: "2-digit", minute: "2-digit",
-  }).format(new Date(data.startTime));
-
-  const endFmt = new Intl.DateTimeFormat("en-GH", {
-    hour: "2-digit", minute: "2-digit",
-  }).format(new Date(data.endTime));
+  const examDate = new Intl.DateTimeFormat("en-GH", { day: "numeric", month: "long", year: "numeric" }).format(new Date(data.startTime));
+  const startFmt = new Intl.DateTimeFormat("en-GH", { hour: "2-digit", minute: "2-digit" }).format(new Date(data.startTime));
+  const endFmt   = new Intl.DateTimeFormat("en-GH", { hour: "2-digit", minute: "2-digit" }).format(new Date(data.endTime));
 
   const announcementData = {
     title:       `📝 Exam Rescheduled: ${exam.lesson.subject.name}`,
@@ -215,21 +197,13 @@ export async function updateExam(data: ExamFormData): Promise<void> {
     classId:     exam.lesson.class.id,
   };
 
-  // Update existing announcement or create new one
   const existing = await prisma.announcement.findFirst({
-    where: {
-      title:   { contains: `Exam` },
-      classId: exam.lesson.class.id,
-      date:    { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }, // within last week
-    },
+    where: { title: { contains: "Exam" }, classId: exam.lesson.class.id, date: { gte: new Date(Date.now() - 7 * 86400000) } },
     orderBy: { date: "desc" },
   });
 
-  if (existing) {
-    await prisma.announcement.update({ where: { id: existing.id }, data: announcementData });
-  } else {
-    await prisma.announcement.create({ data: announcementData });
-  }
+  if (existing) await prisma.announcement.update({ where: { id: existing.id }, data: announcementData });
+  else          await prisma.announcement.create({ data: announcementData });
 
   revalidatePath("/list/exams");
   revalidatePath("/list/announcements");
@@ -239,6 +213,107 @@ export async function deleteExam(id: number): Promise<void> {
   await requireAdminOrTeacher();
   await prisma.exam.delete({ where: { id } });
   revalidatePath("/list/exams");
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ASSIGNMENT — teacher only creates; auto-announces to class
+// ═══════════════════════════════════════════════════════════════════════════════
+export type AssignmentFormData = {
+  id?:       number;
+  title:     string;
+  lessonId:  number;
+  startDate: string; // ISO string
+  dueDate:   string; // ISO string
+};
+
+export async function createAssignment(data: AssignmentFormData): Promise<void> {
+  await requireAdminOrTeacher();
+
+  const assignment = await prisma.assignment.create({
+    data: {
+      title:     data.title,
+      lessonId:  data.lessonId,
+      startDate: new Date(data.startDate),
+      dueDate:   new Date(data.dueDate),
+    },
+    include: {
+      lesson: {
+        select: {
+          subject: { select: { name: true } },
+          class:   { select: { id: true, name: true } },
+          teacher: { select: { name: true, surname: true } },
+        },
+      },
+    },
+  });
+
+  const dueFmt = new Intl.DateTimeFormat("en-GH", { day: "numeric", month: "long", year: "numeric" }).format(new Date(data.dueDate));
+
+  await prisma.announcement.create({
+    data: {
+      title:       `📚 New Assignment: ${assignment.lesson.subject.name}`,
+      description: `${data.title} has been assigned to ${assignment.lesson.class.name} by ${assignment.lesson.teacher.name} ${assignment.lesson.teacher.surname}. Due: ${dueFmt}.`,
+      date:        new Date(),
+      classId:     assignment.lesson.class.id,
+    },
+  });
+
+  revalidatePath("/list/assignments");
+  revalidatePath("/list/announcements");
+}
+
+export async function updateAssignment(data: AssignmentFormData): Promise<void> {
+  if (!data.id) throw new Error("Assignment ID required for update.");
+  await requireAdminOrTeacher();
+
+  const assignment = await prisma.assignment.update({
+    where: { id: data.id },
+    data: {
+      title:     data.title,
+      lessonId:  data.lessonId,
+      startDate: new Date(data.startDate),
+      dueDate:   new Date(data.dueDate),
+    },
+    include: {
+      lesson: {
+        select: {
+          subject: { select: { name: true } },
+          class:   { select: { id: true, name: true } },
+          teacher: { select: { name: true, surname: true } },
+        },
+      },
+    },
+  });
+
+  const dueFmt = new Intl.DateTimeFormat("en-GH", { day: "numeric", month: "long", year: "numeric" }).format(new Date(data.dueDate));
+
+  const announcementData = {
+    title:       `📚 Assignment Updated: ${assignment.lesson.subject.name}`,
+    description: `${data.title} for ${assignment.lesson.class.name} has been updated. New due date: ${dueFmt}.`,
+    date:        new Date(),
+    classId:     assignment.lesson.class.id,
+  };
+
+  const existing = await prisma.announcement.findFirst({
+    where: {
+      title:   { contains: assignment.lesson.subject.name },
+      classId: assignment.lesson.class.id,
+      date:    { gte: new Date(Date.now() - 14 * 86400000) },
+    },
+    orderBy: { date: "desc" },
+  });
+
+  if (existing) await prisma.announcement.update({ where: { id: existing.id }, data: announcementData });
+  else          await prisma.announcement.create({ data: announcementData });
+
+  revalidatePath("/list/assignments");
+  revalidatePath("/list/announcements");
+}
+
+export async function deleteAssignment(id: number): Promise<void> {
+  await requireAdminOrTeacher();
+  await prisma.assignment.delete({ where: { id } });
+  revalidatePath("/list/assignments");
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -253,9 +328,7 @@ export type ResultFormData = {
 };
 
 export async function createResult(data: ResultFormData): Promise<void> {
-  if (!data.examId && !data.assignmentId) {
-    throw new Error("Either an exam or assignment must be selected.");
-  }
+  if (!data.examId && !data.assignmentId) throw new Error("Either an exam or assignment must be selected.");
   await prisma.result.create({
     data: {
       score:        data.score,

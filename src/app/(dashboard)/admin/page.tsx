@@ -66,7 +66,7 @@ const AdminPage = async ({
     prisma.continuousAssessment.count(),
     prisma.cAConfig.count(),
     prisma.syllabus.count(),
-    prisma.syllabus.count({ where: { status: "PUBLISHED" } }),
+    prisma.syllabus.count({ where: { status: "PUBLISHED" } }), 
   ]);
 
   // CA school average

@@ -18,7 +18,7 @@ export default function DashboardLayout({
         >
           <Image src="/school.svg" alt="logo" width={32} height={32} priority />
           <span className="hidden lg:block font-nunito font-extrabold text-lg tracking-tight text-gray-800">
-            SchoolJay
+            Jayline
           </span>
         </Link>
         <Menu />

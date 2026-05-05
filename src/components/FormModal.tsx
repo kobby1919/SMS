@@ -14,7 +14,14 @@ import {
   deleteStudent,
   deleteExam,
   deleteResult,
+  deleteAssignment,
 } from "@/src/lib/actions/actions";
+
+const Skeleton = () => (
+  <div className="py-10 text-center text-gray-400 animate-pulse font-medium">
+    Loading form…
+  </div>
+);
 
 // ─── Dynamically imported forms ───────────────────────────────────────────────
 const TeacherForm = dynamic(() => import("./TeacherForm"), {
@@ -41,72 +48,109 @@ const ExamForm = dynamic(() => import("./ExamForm"), {
 const ResultForm = dynamic(() => import("./ResultForm"), {
   loading: () => <Skeleton />,
 });
-
-const Skeleton = () => (
-  <div className="py-10 text-center text-gray-400 animate-pulse font-medium">
-    Loading form…
-  </div>
-);
+const AssignmentForm = dynamic(() => import("./AssignmentForm"), {
+  loading: () => <Skeleton />,
+});
 
 // ─── Form registry ────────────────────────────────────────────────────────────
 const forms: Record<
   string,
-  (type: "create" | "update", data: any, onSuccess: () => void) => React.ReactNode
+  (
+    type: "create" | "update",
+    data: any,
+    onSuccess: () => void,
+  ) => React.ReactNode
 > = {
-  teacher: (type, data, onSuccess) => <TeacherForm type={type} data={data} onSuccess={onSuccess} />,
-  student: (type, data, onSuccess) => <StudentForm type={type} data={data} onSuccess={onSuccess} />,
-  lesson:  (type, data, onSuccess) => <LessonForm  type={type} data={data} onSuccess={onSuccess} />,
-  class:   (type, data, onSuccess) => <ClassForm   type={type} data={data} onSuccess={onSuccess} />,
-  subject: (type, data, onSuccess) => <SubjectForm type={type} data={data} onSuccess={onSuccess} />,
-  parent:  (type, data, onSuccess) => <ParentForm  type={type} data={data} onSuccess={onSuccess} />,
-  exam:    (type, data, onSuccess) => <ExamForm    type={type} data={data} onSuccess={onSuccess} />,
-  result:  (type, data, onSuccess) => <ResultForm  type={type} data={data} onSuccess={onSuccess} />,
+  teacher: (type, data, onSuccess) => (
+    <TeacherForm type={type} data={data} onSuccess={onSuccess} />
+  ),
+  student: (type, data, onSuccess) => (
+    <StudentForm type={type} data={data} onSuccess={onSuccess} />
+  ),
+  lesson: (type, data, onSuccess) => (
+    <LessonForm type={type} data={data} onSuccess={onSuccess} />
+  ),
+  class: (type, data, onSuccess) => (
+    <ClassForm type={type} data={data} onSuccess={onSuccess} />
+  ),
+  subject: (type, data, onSuccess) => (
+    <SubjectForm type={type} data={data} onSuccess={onSuccess} />
+  ),
+  parent: (type, data, onSuccess) => (
+    <ParentForm type={type} data={data} onSuccess={onSuccess} />
+  ),
+  exam: (type, data, onSuccess) => (
+    <ExamForm type={type} data={data} onSuccess={onSuccess} />
+  ),
+  result: (type, data, onSuccess) => (
+    <ResultForm type={type} data={data} onSuccess={onSuccess} />
+  ),
+  assignment: (type, data, onSuccess) => (
+    <AssignmentForm type={type} data={data} onSuccess={onSuccess} />
+  ),
 };
 
 // ─── Delete action registry ───────────────────────────────────────────────────
 const deleteActions: Partial<Record<string, (id: any) => Promise<void>>> = {
-  lesson:  (id) => deleteLesson(Number(id)),
-  class:   (id) => deleteClass(Number(id)),
+  lesson: (id) => deleteLesson(Number(id)),
+  class: (id) => deleteClass(Number(id)),
   subject: (id) => deleteSubject(Number(id)),
-  parent:  (id) => deleteParent(String(id)),
+  parent: (id) => deleteParent(String(id)),
   teacher: (id) => deleteTeacher(String(id)),
   student: (id) => deleteStudent(String(id)),
-  exam:    (id) => deleteExam(Number(id)),
-  result:  (id) => deleteResult(Number(id)),
+  exam: (id) => deleteExam(Number(id)),
+  result: (id) => deleteResult(Number(id)),
+  assignment: (id) => deleteAssignment(Number(id)),
 };
 
 // ─── Modal width per table ────────────────────────────────────────────────────
 const modalWidths: Partial<Record<string, string>> = {
   lesson: "max-w-[95%] md:max-w-[680px]",
-  exam:   "max-w-[95%] md:max-w-[640px]",
+  exam: "max-w-[95%] md:max-w-[640px]",
   result: "max-w-[95%] md:max-w-[660px]",
+  assignment: "max-w-[95%] md:max-w-[640px]",
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type TableName =
-  | "teacher" | "student" | "parent"  | "subject"
-  | "class"   | "lesson"  | "exam"    | "assignment"
-  | "result"  | "attendance" | "event" | "announcement";
+  | "teacher"
+  | "student"
+  | "parent"
+  | "subject"
+  | "class"
+  | "lesson"
+  | "exam"
+  | "assignment"
+  | "result"
+  | "attendance"
+  | "event"
+  | "announcement";
 
 type Props = {
   table: TableName;
-  type:  "create" | "update" | "delete";
+  type: "create" | "update" | "delete";
   data?: any;
-  id?:   number | string;
+  id?: number | string;
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
 const FormModal = ({ table, type, data, id }: Props) => {
-  const [open, setOpen]               = useState(false);
+  const [open, setOpen] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
-  const [isPending, startTransition]  = useTransition();
+  const [isPending, startTransition] = useTransition();
 
-  const close = () => { setOpen(false); setDeleteError(null); };
+  const close = () => {
+    setOpen(false);
+    setDeleteError(null);
+  };
 
   const buttonStyles = {
-    create: "bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm shadow-indigo-100 transition-all active:scale-95",
-    update: "w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors active:scale-90",
-    delete: "w-8 h-8 flex items-center justify-center rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 transition-colors active:scale-90",
+    create:
+      "bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm shadow-indigo-100 transition-all active:scale-95",
+    update:
+      "w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors active:scale-90",
+    delete:
+      "w-8 h-8 flex items-center justify-center rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 transition-colors active:scale-90",
   };
 
   const handleDelete = () => {
@@ -130,7 +174,8 @@ const FormModal = ({ table, type, data, id }: Props) => {
   const modalWidth =
     type === "delete"
       ? "max-w-md"
-      : (modalWidths[table] ?? "max-w-[90%] md:max-w-[70%] lg:max-w-[60%] xl:max-w-[50%]");
+      : (modalWidths[table] ??
+        "max-w-[90%] md:max-w-[70%] lg:max-w-[60%] xl:max-w-[50%]");
 
   const Form = () => {
     if (type === "delete" && id) {
@@ -144,7 +189,9 @@ const FormModal = ({ table, type, data, id }: Props) => {
             Are you sure you want to delete this{" "}
             <span className="font-semibold text-gray-700">{table}</span>?
             <br />
-            <span className="text-xs text-gray-400 mt-1 block">This action cannot be undone.</span>
+            <span className="text-xs text-gray-400 mt-1 block">
+              This action cannot be undone.
+            </span>
           </p>
           {deleteError && (
             <div className="mt-4 w-full p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs font-semibold text-rose-700 text-left">
@@ -192,7 +239,10 @@ const FormModal = ({ table, type, data, id }: Props) => {
     <>
       <button
         className={buttonStyles[type]}
-        onClick={(e) => { e.stopPropagation(); setOpen(true); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpen(true);
+        }}
       >
         {type === "create" && (
           <>
@@ -202,7 +252,7 @@ const FormModal = ({ table, type, data, id }: Props) => {
             </span>
           </>
         )}
-        {type === "update" && <Edit   size={16} />}
+        {type === "update" && <Edit size={16} />}
         {type === "delete" && <Trash2 size={16} />}
       </button>
 
