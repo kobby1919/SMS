@@ -1,10 +1,11 @@
-import { currentUser } from "@clerk/nextjs/server";
+import type { AppRole } from "@/src/lib/roles";
 import MenuClient from "./MenuClient";
 
-const Menu = async () => {
-  const user = await currentUser();
-  const role = (user?.publicMetadata.role as string) ?? "student";
+type Props = {
+  role: AppRole;
+};
 
+const Menu = ({ role }: Props) => {
   return <MenuClient role={role} />;
 };
 
