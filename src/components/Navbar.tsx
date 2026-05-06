@@ -1,14 +1,14 @@
-import { currentUser } from "@clerk/nextjs/server";
+import type { AppRole } from "@/src/lib/roles";
 import NavbarClient from "./NavbarClient";
 
+type Props = {
+  role: AppRole;
+};
 
-const Navbar = async () => {
-  const user = await currentUser();
-  
-  // Prepare a clean user object to pass to the client
+const Navbar = ({ role }: Props) => {
   const userData = {
-    fullName: user?.firstName ? `${user.firstName} ${user.lastName || ""}` : "Mr. Jay",
-    role: (user?.publicMetadata?.role as string) || "student",
+    fullName: "Mr. Jay",
+    role,
   };
 
   return <NavbarClient user={userData} />;
