@@ -14,6 +14,7 @@ interface NavbarClientProps {
 const NavbarClient = ({ user }: NavbarClientProps) => {
   return (
     <motion.div
+      suppressHydrationWarning
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
@@ -51,7 +52,9 @@ const NavbarClient = ({ user }: NavbarClientProps) => {
           <span className="text-xs font-semibold text-gray-800 leading-tight">
             {user.fullName || "User"}
           </span>
-          <span className="text-[10px] text-gray-400 capitalize">{user.role}</span>
+          <span className="text-[10px] text-gray-400 capitalize">
+            {user.role}
+          </span>
         </div>
 
         <UserButtonWrapper />
