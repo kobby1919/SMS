@@ -13,12 +13,12 @@ export type ChildSchedule = {
   lessons:   CalendarLesson[];
 };
 
-type Props = { children: ChildSchedule[] };
+type Props = { schedules: ChildSchedule[] };
 
-const ParentTimetableTabs = ({ children }: Props) => {
+const ParentTimetableTabs = ({ schedules }: Props) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  if (children.length === 0) {
+  if (schedules.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
@@ -30,15 +30,15 @@ const ParentTimetableTabs = ({ children }: Props) => {
     );
   }
 
-  const active = children[activeIndex];
+  const active = schedules[activeIndex];
 
   return (
     <div className="flex flex-col gap-4">
 
       {/* ── Tab bar — only show if more than one child ── */}
-      {children.length > 1 && (
+      {schedules.length > 1 && (
         <div className="flex gap-2 flex-wrap">
-          {children.map((child, i) => (
+          {schedules.map((child, i) => (
             <button
               key={child.id}
               onClick={() => setActiveIndex(i)}
@@ -84,7 +84,7 @@ const ParentTimetableTabs = ({ children }: Props) => {
             </div>
             {/* Ward badge */}
             <div className="bg-indigo-50 text-indigo-600 text-xs font-bold px-3 py-1.5 rounded-xl border border-indigo-100">
-              Ward {activeIndex + 1} of {children.length}
+              Ward {activeIndex + 1} of {schedules.length}
             </div>
           </div>
 
