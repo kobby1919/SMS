@@ -9,12 +9,13 @@ import { getGradeBand } from "@/src/lib/caGrades";
 
 type Props = {
   teacherId: string;
+  schoolId: string;
 };
 
-const CAQuickCard = async ({ teacherId }: Props) => {
+const CAQuickCard = async ({ teacherId, schoolId }: Props) => {
   // Find supervised classes
   const classes = await prisma.class.findMany({
-    where:   { supervisorId: teacherId },
+    where:   { schoolId, supervisorId: teacherId },
     include: {
       students: { select: { id: true } },
       grade:    { select: { level: true } },
@@ -30,12 +31,12 @@ const CAQuickCard = async ({ teacherId }: Props) => {
 
       const studentsWithCA = await prisma.continuousAssessment.groupBy({
         by:    ["studentId"],
-        where: { classId: cls.id },
+        where: { schoolId, classId: cls.id },
       });
 
       const uniqueStudentsWithCA = studentsWithCA.length;
       const avgRecord = await prisma.continuousAssessment.aggregate({
-        where:   { classId: cls.id },
+        where:   { schoolId, classId: cls.id },
         _avg:    { totalScore: true },
       });
 
