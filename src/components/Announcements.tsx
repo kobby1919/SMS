@@ -1,5 +1,6 @@
 import prisma from "@/src/lib/prisma";
-import { currentUser } from "@clerk/nextjs/server";
+import { requirePageSession } from "@/src/lib/authz";
+import type { Prisma } from "@/src/generated/prisma";
 import { Megaphone } from "lucide-react";
 
 const colorMap = [
@@ -9,38 +10,37 @@ const colorMap = [
 ];
 
 const Announcements = async () => {
-  const user = await currentUser();
-  const role = user?.publicMetadata?.role as string;
+  const { userId, role, schoolId } = await requirePageSession();
 
   // Build the where clause based on role:
   // - admin   → all announcements (no filter)
   // - teacher → global (classId null) + their supervised classes
   // - student → global (classId null) + their own class
   // - parent  → global (classId null) + their children's classes
-  let where: object = {};
+  let where: Prisma.AnnouncementWhereInput = { schoolId };
 
   if (role === "teacher") {
-    const teacher = await prisma.teacher.findUnique({
-      where: { id: user!.id },
+    const teacher = await prisma.teacher.findFirst({
+      where: { id: userId, schoolId },
       select: { classes: { select: { id: true } } },
     });
     const classIds = teacher?.classes.map((c) => c.id) ?? [];
-    where = { OR: [{ classId: null }, { classId: { in: classIds } }] };
+    where = { schoolId, OR: [{ classId: null }, { classId: { in: classIds } }] };
 
   } else if (role === "student") {
-    const student = await prisma.student.findUnique({
-      where: { id: user!.id },
+    const student = await prisma.student.findFirst({
+      where: { id: userId, schoolId },
       select: { classId: true },
     });
-    where = { OR: [{ classId: null }, { classId: student?.classId }] };
+    where = { schoolId, OR: [{ classId: null }, { classId: student?.classId }] };
 
   } else if (role === "parent") {
-    const parent = await prisma.parent.findUnique({
-      where: { id: user!.id },
-      include: { students: { select: { classId: true } } },
+    const parent = await prisma.parent.findFirst({
+      where: { id: userId, schoolId },
+      include: { students: { where: { schoolId }, select: { classId: true } } },
     });
     const classIds = parent?.students.map((s) => s.classId) ?? [];
-    where = { OR: [{ classId: null }, { classId: { in: classIds } }] };
+    where = { schoolId, OR: [{ classId: null }, { classId: { in: classIds } }] };
   }
   // admin: where = {} → fetches everything
 
