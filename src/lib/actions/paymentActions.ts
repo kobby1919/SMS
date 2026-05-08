@@ -183,6 +183,7 @@ export async function reversePayment(paymentId: number, reason: string) {
 
     await tx.paymentReversal.create({
       data: {
+        schoolId,
         paymentId: data.paymentId,
         reason:      data.reason.trim(),
         reversedBy: userId,

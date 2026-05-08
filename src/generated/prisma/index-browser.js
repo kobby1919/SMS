@@ -239,7 +239,9 @@ exports.Prisma.ResultScalarFieldEnum = {
   schoolId: 'schoolId',
   examId: 'examId',
   assignmentId: 'assignmentId',
-  studentId: 'studentId'
+  studentId: 'studentId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.AttendanceScalarFieldEnum = {
@@ -250,7 +252,9 @@ exports.Prisma.AttendanceScalarFieldEnum = {
   note: 'note',
   schoolId: 'schoolId',
   studentId: 'studentId',
-  lessonId: 'lessonId'
+  lessonId: 'lessonId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.EventScalarFieldEnum = {
@@ -415,6 +419,7 @@ exports.Prisma.PaymentReversalScalarFieldEnum = {
   reason: 'reason',
   reversedBy: 'reversedBy',
   reversedAt: 'reversedAt',
+  schoolId: 'schoolId',
   paymentId: 'paymentId'
 };
 
