@@ -7,9 +7,11 @@ const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma  = new PrismaClient({ adapter });
 
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
+const REAL_ADMIN_CLERK_ID       = "user_3CSIHKzHwmvmvh88RvOuRJeN6lC";
 const REAL_TEACHER_CLERK_ID     = "user_3CUBcewPnLl0KYUAVDewhXWEAxd";
 const MAX_CLASSES_PER_TEACHER   = 5;
-const LESSONS_PER_CLASS_PER_DAY = 4; // 4 different teachers visit each class each day
+const LESSONS_PER_CLASS_PER_DAY = 4;
+const DEFAULT_SCHOOL_ID         = "default-school";
 
 // ─── Ghana school structure ───────────────────────────────────────────────────
 const GHANA_GRADES = [
@@ -53,12 +55,11 @@ const SUBJECTS = [
   "French", "Career Technology", "Ghanaian Language (JHS)",
 ];
 
-// ─── 4 period slots (one per teacher visiting the class) ─────────────────────
 const PERIODS: { start: [number, number]; end: [number, number] }[] = [
-  { start: [7,  30], end: [8,  10] }, // P1
-  { start: [8,  10], end: [8,  50] }, // P2
-  { start: [8,  50], end: [9,  30] }, // P3
-  { start: [9,  50], end: [10, 30] }, // P4 (after break)
+  { start: [7,  30], end: [8,  10] },
+  { start: [8,  10], end: [8,  50] },
+  { start: [8,  50], end: [9,  30] },
+  { start: [9,  50], end: [10, 30] },
 ];
 
 const toDateTime = (hour: number, minute: number): Date => {
@@ -70,33 +71,58 @@ const toDateTime = (hour: number, minute: number): Date => {
 async function main() {
   console.log("🌱 Seeding Ghana school data...");
 
-  // 1. Admins
-  await prisma.admin.createMany({
-    data: [
-      { id: "admin1", username: "admin1" },
-      { id: "admin2", username: "admin2" },
-    ],
-    skipDuplicates: true,
+  // ── School ────────────────────────────────────────────────────────────────
+  await prisma.school.upsert({
+    where:  { id: DEFAULT_SCHOOL_ID },
+    update: {},
+    create: {
+      id:   DEFAULT_SCHOOL_ID,
+      name: "Default School",
+      slug: DEFAULT_SCHOOL_ID,
+    },
   });
+  console.log("✅ School created");
 
-  // 2. Grades
+  // ── 1. Admins ─────────────────────────────────────────────────────────────
+  await prisma.admin.upsert({
+    where:  { id: REAL_ADMIN_CLERK_ID },
+    update: { username: "admin1", schoolId: DEFAULT_SCHOOL_ID },
+    create: {
+      id:       REAL_ADMIN_CLERK_ID,
+      username: "admin1",
+      schoolId: DEFAULT_SCHOOL_ID,
+    },
+  });
+  await prisma.admin.upsert({
+    where:  { id: "admin2" },
+    update: { username: "admin2", schoolId: DEFAULT_SCHOOL_ID },
+    create: {
+      id:       "admin2",
+      username: "admin2",
+      schoolId: DEFAULT_SCHOOL_ID,
+    },
+  });
+  console.log("✅ Admins created (admin1 = your Clerk ID)");
+
+  // ── 2. Grades ─────────────────────────────────────────────────────────────
   for (const g of GHANA_GRADES) {
     await prisma.grade.upsert({
-      where:  { level: g.level },
+      where:  { schoolId_level: { schoolId: DEFAULT_SCHOOL_ID, level: g.level } },
       update: { order: g.order },
-      create: g,
+      create: { ...g, schoolId: DEFAULT_SCHOOL_ID },
     });
   }
   console.log("✅ Grades created");
 
-  // 3. Classes
+  // ── 3. Classes ────────────────────────────────────────────────────────────
   const gradeRecords = await prisma.grade.findMany();
   const gradeMap     = Object.fromEntries(gradeRecords.map((g) => [g.level, g.id]));
   for (const cls of CLASS_DEFINITIONS) {
     await prisma.class.upsert({
-      where:  { name: cls.name },
+      where:  { schoolId_name: { schoolId: DEFAULT_SCHOOL_ID, name: cls.name } },
       update: {},
       create: {
+        schoolId: DEFAULT_SCHOOL_ID,
         name:     cls.name,
         section:  cls.section,
         capacity: cls.capacity,
@@ -106,13 +132,17 @@ async function main() {
   }
   console.log("✅ Classes created");
 
-  // 4. Subjects
+  // ── 4. Subjects ───────────────────────────────────────────────────────────
   for (const name of SUBJECTS) {
-    await prisma.subject.upsert({ where: { name }, update: {}, create: { name } });
+    await prisma.subject.upsert({
+      where:  { schoolId_name: { schoolId: DEFAULT_SCHOOL_ID, name } },
+      update: {},
+      create: { schoolId: DEFAULT_SCHOOL_ID, name },
+    });
   }
   console.log("✅ Subjects created");
 
-  // 5. Teachers
+  // ── 5. Teachers ───────────────────────────────────────────────────────────
   const subjectRecords = await prisma.subject.findMany({ orderBy: { id: "asc" } });
 
   for (let i = 1; i <= 15; i++) {
@@ -133,6 +163,7 @@ async function main() {
         address:    `Accra, Ghana`,
         bloodType:  "O+",
         sex:        i % 2 === 0 ? UserSex.MALE : UserSex.FEMALE,
+        schoolId:   DEFAULT_SCHOOL_ID,
         maxClasses: MAX_CLASSES_PER_TEACHER,
         subjects:   { connect: [{ id: subA }, { id: subB }] },
       },
@@ -140,34 +171,18 @@ async function main() {
   }
   console.log("✅ Teachers created (teacher1 = your Clerk ID)");
 
-  // 6. Lessons
-  // ── How this works ───────────────────────────────────────────────────────
-  //
-  // Reality: a class has 4 lessons per day, each taught by a DIFFERENT teacher.
-  // E.g. Class 3A: P1=English(Teacher1), P2=Maths(Teacher5), P3=Science(Teacher9)...
-  //
-  // Each teacher visits at most MAX_CLASSES_PER_TEACHER (5) unique classes.
-  // So teacher1 sees exactly 5 lessons/day in Take Attendance (one per class).
-  //
-  // Algorithm:
-  // For each class, build a roster of 4 teachers (one per period slot).
-  // teacher1 is forced into P1 of the first 5 classes.
-  // All other slots are filled by the next available teacher under their limit.
-  // Then for every day of the week, create one lesson per roster slot.
-
+  // ── 6. Lessons ────────────────────────────────────────────────────────────
   const classRecords   = await prisma.class.findMany({
     orderBy: [{ grade: { order: "asc" } }, { name: "asc" }],
   });
   const teacherRecords = await prisma.teacher.findMany({ orderBy: { username: "asc" } });
   const days           = Object.values(Day);
 
-  // Track unique classes per teacher: teacherId → Set<classId>
   const teacherClassMap = new Map<string, Set<number>>();
   for (const t of teacherRecords) {
     teacherClassMap.set(t.id, new Set());
   }
 
-  // Pick the next available teacher for a given class+period
   const pickTeacher = (
     classId: number,
     usedInThisClass: Set<string>,
@@ -178,10 +193,9 @@ async function main() {
       : teacherRecords;
 
     for (const t of candidates) {
-      const classSet        = teacherClassMap.get(t.id)!;
-      const alreadyInClass  = classSet.has(classId);
-      // Under limit if already teaching this class (just another period) OR has room
-      const underLimit      = alreadyInClass || classSet.size < MAX_CLASSES_PER_TEACHER;
+      const classSet       = teacherClassMap.get(t.id)!;
+      const alreadyInClass = classSet.has(classId);
+      const underLimit     = alreadyInClass || classSet.size < MAX_CLASSES_PER_TEACHER;
       if (!usedInThisClass.has(t.id) && underLimit) return t.id;
     }
     return null;
@@ -190,14 +204,11 @@ async function main() {
   let lessonCount = 0;
 
   for (let ci = 0; ci < classRecords.length; ci++) {
-    const cls = classRecords[ci];
-
-    // Build the 4-teacher roster for this class
-    const usedInThisClass  = new Set<string>();
+    const cls             = classRecords[ci];
+    const usedInThisClass = new Set<string>();
     const roster: { teacherId: string; subjectId: number }[] = [];
 
     for (let p = 0; p < LESSONS_PER_CLASS_PER_DAY; p++) {
-      // Force teacher1 into P1 of the first 5 classes
       const preferred = (p === 0 && ci < MAX_CLASSES_PER_TEACHER)
         ? REAL_TEACHER_CLERK_ID
         : undefined;
@@ -211,15 +222,12 @@ async function main() {
       usedInThisClass.add(teacherId);
       teacherClassMap.get(teacherId)!.add(cls.id);
 
-      // Each period gets a different subject (rotate through all subjects)
       const subject = subjectRecords[
         (ci * LESSONS_PER_CLASS_PER_DAY + p) % subjectRecords.length
       ];
-
       roster.push({ teacherId, subjectId: subject.id });
     }
 
-    // Create lessons: roster slot × 5 days
     for (const day of days) {
       for (let p = 0; p < roster.length; p++) {
         const { teacherId, subjectId } = roster[p];
@@ -228,6 +236,7 @@ async function main() {
 
         await prisma.lesson.create({
           data: {
+            schoolId:  DEFAULT_SCHOOL_ID,
             name:      `${subject.name} - ${cls.name}`,
             day:       day as Day,
             startTime: toDateTime(...period.start),
@@ -244,10 +253,9 @@ async function main() {
 
   const teacher1Classes = teacherClassMap.get(REAL_TEACHER_CLERK_ID)?.size ?? 0;
   console.log(`✅ ${lessonCount} lessons created`);
-  console.log(`   → Each class: ${LESSONS_PER_CLASS_PER_DAY} lessons/day × 5 days`);
-  console.log(`   → teacher1 assigned to ${teacher1Classes} classes → sees exactly ${teacher1Classes} lessons/day in Take Attendance`);
+  console.log(`   → teacher1 assigned to ${teacher1Classes} classes`);
 
-  // 7. Parents
+  // ── 7. Parents ────────────────────────────────────────────────────────────
   for (let i = 1; i <= 25; i++) {
     await prisma.parent.upsert({
       where:  { username: `parent${i}` },
@@ -260,12 +268,13 @@ async function main() {
         email:    `parent${i}@gmail.com`,
         phone:    `020000000${i}`,
         address:  `Accra, Ghana`,
+        schoolId: DEFAULT_SCHOOL_ID,
       },
     });
   }
   console.log("✅ Parents created");
 
-  // 8. Students — two per class
+  // ── 8. Students ───────────────────────────────────────────────────────────
   const allClasses = await prisma.class.findMany({ include: { grade: true } });
   let studentIndex = 1;
   for (const cls of allClasses) {
@@ -284,6 +293,7 @@ async function main() {
           address:   `Accra, Ghana`,
           bloodType: "B+",
           sex:       studentIndex % 2 === 0 ? UserSex.MALE : UserSex.FEMALE,
+          schoolId:  DEFAULT_SCHOOL_ID,
           parentId,
           gradeId:   cls.gradeId,
           classId:   cls.id,
@@ -294,11 +304,12 @@ async function main() {
   }
   console.log(`✅ ${studentIndex - 1} students created`);
 
-  // 9. Exams, assignments, results
+  // ── 9. Exams, assignments, results ────────────────────────────────────────
   const lessons = await prisma.lesson.findMany({ take: 10 });
   for (let i = 0; i < lessons.length; i++) {
     const exam = await prisma.exam.create({
       data: {
+        schoolId:  DEFAULT_SCHOOL_ID,
         title:     `Mid-Term Exam ${i + 1}`,
         startTime: new Date(),
         endTime:   new Date(new Date().setHours(new Date().getHours() + 2)),
@@ -307,6 +318,7 @@ async function main() {
     });
     await prisma.assignment.create({
       data: {
+        schoolId:  DEFAULT_SCHOOL_ID,
         title:     `Assignment ${i + 1}`,
         startDate: new Date(),
         dueDate:   new Date(new Date().setDate(new Date().getDate() + 7)),
@@ -315,6 +327,7 @@ async function main() {
     });
     await prisma.result.create({
       data: {
+        schoolId:  DEFAULT_SCHOOL_ID,
         score:     Math.floor(Math.random() * 40) + 60,
         studentId: `student${i + 1}`,
         examId:    exam.id,

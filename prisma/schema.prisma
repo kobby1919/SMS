@@ -101,11 +101,54 @@ enum AuditAction {
   DISCOUNT_REMOVED
 }
 
+enum WaitlistRole {
+  HEADMASTER
+  ADMINISTRATOR
+  TEACHER
+  OTHER
+}
+
 // ─── EXISTING MODELS ─────────────────────────────────────────────────────────
+
+model School {
+  id        String   @id
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  admins                Admin[]
+  students              Student[]
+  teachers              Teacher[]
+  parents               Parent[]
+  grades                Grade[]
+  classes               Class[]
+  subjects              Subject[]
+  lessons               Lesson[]
+  exams                 Exam[]
+  assignments           Assignment[]
+  results               Result[]
+  attendances           Attendance[]
+  events                Event[]
+  announcements         Announcement[]
+  caConfigs             CAConfig[]
+  continuousAssessments ContinuousAssessment[]
+  syllabi               Syllabus[]
+  syllabusTopicProgress SyllabusTopicProgress[]
+  feeStructures         FeeStructure[]
+  studentBills          StudentBill[]
+  payments              Payment[]
+  discounts             Discount[]
+  receiptCounters       ReceiptCounter[]
+  financeAuditLogs      FinanceAuditLog[]
+}
 
 model Admin {
   id       String @id
   username String @unique
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
 }
 
 model Student {
@@ -121,6 +164,9 @@ model Student {
   sex       UserSex
   createdAt DateTime @default(now())
 
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
   parentId String
   parent   Parent @relation(fields: [parentId], references: [id])
   classId  Int
@@ -132,6 +178,11 @@ model Student {
   results               Result[]
   continuousAssessments ContinuousAssessment[]
   bills                 StudentBill[]
+
+  @@index([schoolId])
+  @@index([schoolId, classId])
+  @@index([parentId])
+  @@index([schoolId, createdAt])
 }
 
 model Teacher {
@@ -147,6 +198,9 @@ model Teacher {
   sex        UserSex
   createdAt  DateTime @default(now())
   maxClasses Int      @default(5)
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
 
   subjects Subject[]
   lessons  Lesson[]
@@ -166,25 +220,37 @@ model Parent {
   address   String
   createdAt DateTime @default(now())
 
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
   students Student[]
 }
 
 model Grade {
   id    Int    @id @default(autoincrement())
-  level String @unique
-  order Int    @unique
+  level String
+  order Int
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
 
   students      Student[]
   classes       Class[]
   syllabi       Syllabus[]
   feeStructures FeeStructure[]
+
+  @@unique([schoolId, level])
+  @@unique([schoolId, order])
 }
 
 model Class {
   id       Int     @id @default(autoincrement())
-  name     String  @unique
+  name     String
   capacity Int
   section  String?
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
 
   supervisorId String?
   supervisor   Teacher? @relation("ClassTeacher", fields: [supervisorId], references: [id])
@@ -197,17 +263,24 @@ model Class {
   announcements         Announcement[]
   continuousAssessments ContinuousAssessment[]
   syllabusTopicProgress SyllabusTopicProgress[]
+
+  @@unique([schoolId, name])
 }
 
 model Subject {
   id   Int    @id @default(autoincrement())
-  name String @unique
+  name String
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
 
   teachers Teacher[]
   lessons  Lesson[]
 
   continuousAssessments ContinuousAssessment[]
   syllabi               Syllabus[]
+
+  @@unique([schoolId, name])
 }
 
 model Lesson {
@@ -216,6 +289,9 @@ model Lesson {
   day       Day
   startTime DateTime
   endTime   DateTime
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
 
   subjectId Int
   subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
@@ -229,6 +305,11 @@ model Lesson {
   exams       Exam[]
   assignments Assignment[]
   attendances Attendance[]
+
+  @@index([schoolId, teacherId])
+  @@index([schoolId, classId])
+  @@index([teacherId, classId, day])
+  @@index([schoolId, day])
 }
 
 model Exam {
@@ -236,6 +317,9 @@ model Exam {
   title     String
   startTime DateTime
   endTime   DateTime
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
 
   lessonId Int
   lesson   Lesson   @relation(fields: [lessonId], references: [id])
@@ -248,6 +332,9 @@ model Assignment {
   startDate DateTime
   dueDate   DateTime
 
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
   lessonId Int
   lesson   Lesson   @relation(fields: [lessonId], references: [id])
   results  Result[]
@@ -256,6 +343,9 @@ model Assignment {
 model Result {
   id    Int @id @default(autoincrement())
   score Int
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
 
   examId Int?
   exam   Exam? @relation(fields: [examId], references: [id])
@@ -274,13 +364,20 @@ model Attendance {
   status  AttendanceStatus @default(PRESENT)
   note    String?
 
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
   studentId String
   student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   lessonId Int
   lesson   Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
-  @@unique([studentId, lessonId, date])
+  @@unique([schoolId, studentId, lessonId, date])
+  @@index([schoolId, lessonId, date])
+  @@index([schoolId, date, status])
+  @@index([studentId, date, status])
+  @@index([schoolId, studentId, date])
 }
 
 model Event {
@@ -289,6 +386,9 @@ model Event {
   description String
   startTime   DateTime
   endTime     DateTime
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
 
   classId Int?
   class   Class? @relation(fields: [classId], references: [id])
@@ -300,6 +400,9 @@ model Announcement {
   description String
   date        DateTime
 
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
   classId Int?
   class   Class? @relation(fields: [classId], references: [id])
 }
@@ -308,16 +411,24 @@ model Announcement {
 
 model CAConfig {
   id              Int      @id @default(autoincrement())
-  academicYear    String   @unique
+  academicYear    String
   classworkWeight Float    @default(30.0)
   examWeight      Float    @default(70.0)
   createdAt       DateTime @default(now())
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
+  @@unique([schoolId, academicYear])
 }
 
 model ContinuousAssessment {
   id           Int    @id @default(autoincrement())
   academicYear String
   term         Term
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
 
   studentId String
   student   Student @relation(fields: [studentId], references: [id])
@@ -340,7 +451,9 @@ model ContinuousAssessment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([studentId, subjectId, classId, term, academicYear])
+  @@unique([schoolId, studentId, subjectId, classId, term, academicYear])
+  @@index([schoolId, studentId])
+  @@index([schoolId, classId, term, academicYear])
 }
 
 // ─── SYLLABUS MODELS ─────────────────────────────────────────────────────────
@@ -351,6 +464,9 @@ model Syllabus {
   status       SyllabusStatus @default(DRAFT)
   term         Term
   academicYear String
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
 
   subjectId Int
   subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
@@ -363,7 +479,7 @@ model Syllabus {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([subjectId, gradeId, term, academicYear])
+  @@unique([schoolId, subjectId, gradeId, term, academicYear])
 }
 
 model SyllabusTopic {
@@ -391,6 +507,9 @@ model SyllabusTopicProgress {
   coveredDate DateTime @default(now())
   notes       String?
 
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
   syllabusTopicId Int
   syllabusTopic   SyllabusTopic @relation(fields: [syllabusTopicId], references: [id], onDelete: Cascade)
 
@@ -402,7 +521,7 @@ model SyllabusTopicProgress {
 
   createdAt DateTime @default(now())
 
-  @@unique([syllabusTopicId, classId])
+  @@unique([schoolId, syllabusTopicId, classId])
 }
 
 // ─── FINANCE MODELS ──────────────────────────────────────────────────────────
@@ -420,6 +539,9 @@ model FeeStructure {
   status       FeeStructureStatus @default(DRAFT)
   publishedAt  DateTime?
 
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
   gradeId Int
   grade   Grade @relation(fields: [gradeId], references: [id])
 
@@ -430,7 +552,8 @@ model FeeStructure {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([gradeId, term, academicYear])
+  @@unique([schoolId, gradeId, term, academicYear])
+  @@index([schoolId, status])
 }
 
 // FeeItem: a single fee line inside a FeeStructure.
@@ -469,6 +592,9 @@ model StudentBill {
   status         BillStatus @default(UNPAID)
   notes          String?
 
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
   studentId String
   student   Student @relation(fields: [studentId], references: [id])
 
@@ -483,7 +609,11 @@ model StudentBill {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@unique([studentId, feeStructureId])
+  @@unique([schoolId, studentId, feeStructureId])
+  @@index([schoolId, status])
+  @@index([schoolId, feeStructureId])
+  @@index([schoolId, studentId])
+  @@index([feeStructureId])
 }
 
 // BillLineItem: one row per FeeItem on a student's bill.
@@ -514,7 +644,7 @@ model BillLineItem {
 
 model Payment {
   id            Int           @id @default(autoincrement())
-  receiptNumber String        @unique
+  receiptNumber String
   amount        Decimal       @db.Decimal(10, 2)
   paymentMethod PaymentMethod
   paymentDate   DateTime      @default(now())
@@ -523,6 +653,9 @@ model Payment {
   notes         String?
   status        PaymentStatus @default(CONFIRMED)
 
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
   studentBillId Int
   studentBill   StudentBill @relation(fields: [studentBillId], references: [id])
 
@@ -530,6 +663,12 @@ model Payment {
   createdAt  DateTime @default(now())
 
   reversal PaymentReversal?
+
+  @@unique([schoolId, receiptNumber])
+  @@index([schoolId, paymentDate])
+  @@index([schoolId, status])
+  @@index([schoolId, paymentDate, status])
+  @@index([studentBillId])
 }
 
 // PaymentReversal: voids a confirmed payment.
@@ -558,6 +697,9 @@ model Discount {
   percentage  Decimal?     @db.Decimal(5, 2)
   approvedBy  String
 
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
   studentBillId Int
   studentBill   StudentBill @relation(fields: [studentBillId], references: [id])
 
@@ -570,8 +712,13 @@ model Discount {
 
 model ReceiptCounter {
   id          Int @id @default(autoincrement())
-  year        Int @unique
+  year        Int
   lastCounter Int @default(0)
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
+  @@unique([schoolId, year])
 }
 
 // FinanceAuditLog: immutable log of every finance action.
@@ -588,4 +735,26 @@ model FinanceAuditLog {
   metadata    Json
   ipAddress   String?
   createdAt   DateTime    @default(now())
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
+  @@index([schoolId, createdAt])
+  @@index([schoolId, action])
+}
+
+// ─── WAITLIST ─────────────────────────────────────────────────────────────────
+// Standalone — no schoolId, no tenant scoping.
+// Collected before any school signs up, so there's nothing to scope to.
+
+model WaitlistEntry {
+  id         String       @id @default(cuid())
+  name       String
+  schoolName String
+  email      String       @unique
+  role       WaitlistRole
+  message    String?
+  createdAt  DateTime     @default(now())
+
+  @@index([createdAt])
 }

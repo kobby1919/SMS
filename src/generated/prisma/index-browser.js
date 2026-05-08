@@ -120,9 +120,18 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.SchoolScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.AdminScalarFieldEnum = {
   id: 'id',
-  username: 'username'
+  username: 'username',
+  schoolId: 'schoolId'
 };
 
 exports.Prisma.StudentScalarFieldEnum = {
@@ -137,6 +146,7 @@ exports.Prisma.StudentScalarFieldEnum = {
   bloodType: 'bloodType',
   sex: 'sex',
   createdAt: 'createdAt',
+  schoolId: 'schoolId',
   parentId: 'parentId',
   classId: 'classId',
   gradeId: 'gradeId'
@@ -154,7 +164,8 @@ exports.Prisma.TeacherScalarFieldEnum = {
   bloodType: 'bloodType',
   sex: 'sex',
   createdAt: 'createdAt',
-  maxClasses: 'maxClasses'
+  maxClasses: 'maxClasses',
+  schoolId: 'schoolId'
 };
 
 exports.Prisma.ParentScalarFieldEnum = {
@@ -165,13 +176,15 @@ exports.Prisma.ParentScalarFieldEnum = {
   email: 'email',
   phone: 'phone',
   address: 'address',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  schoolId: 'schoolId'
 };
 
 exports.Prisma.GradeScalarFieldEnum = {
   id: 'id',
   level: 'level',
-  order: 'order'
+  order: 'order',
+  schoolId: 'schoolId'
 };
 
 exports.Prisma.ClassScalarFieldEnum = {
@@ -179,13 +192,15 @@ exports.Prisma.ClassScalarFieldEnum = {
   name: 'name',
   capacity: 'capacity',
   section: 'section',
+  schoolId: 'schoolId',
   supervisorId: 'supervisorId',
   gradeId: 'gradeId'
 };
 
 exports.Prisma.SubjectScalarFieldEnum = {
   id: 'id',
-  name: 'name'
+  name: 'name',
+  schoolId: 'schoolId'
 };
 
 exports.Prisma.LessonScalarFieldEnum = {
@@ -194,6 +209,7 @@ exports.Prisma.LessonScalarFieldEnum = {
   day: 'day',
   startTime: 'startTime',
   endTime: 'endTime',
+  schoolId: 'schoolId',
   subjectId: 'subjectId',
   classId: 'classId',
   teacherId: 'teacherId'
@@ -204,6 +220,7 @@ exports.Prisma.ExamScalarFieldEnum = {
   title: 'title',
   startTime: 'startTime',
   endTime: 'endTime',
+  schoolId: 'schoolId',
   lessonId: 'lessonId'
 };
 
@@ -212,12 +229,14 @@ exports.Prisma.AssignmentScalarFieldEnum = {
   title: 'title',
   startDate: 'startDate',
   dueDate: 'dueDate',
+  schoolId: 'schoolId',
   lessonId: 'lessonId'
 };
 
 exports.Prisma.ResultScalarFieldEnum = {
   id: 'id',
   score: 'score',
+  schoolId: 'schoolId',
   examId: 'examId',
   assignmentId: 'assignmentId',
   studentId: 'studentId'
@@ -229,6 +248,7 @@ exports.Prisma.AttendanceScalarFieldEnum = {
   present: 'present',
   status: 'status',
   note: 'note',
+  schoolId: 'schoolId',
   studentId: 'studentId',
   lessonId: 'lessonId'
 };
@@ -239,6 +259,7 @@ exports.Prisma.EventScalarFieldEnum = {
   description: 'description',
   startTime: 'startTime',
   endTime: 'endTime',
+  schoolId: 'schoolId',
   classId: 'classId'
 };
 
@@ -247,6 +268,7 @@ exports.Prisma.AnnouncementScalarFieldEnum = {
   title: 'title',
   description: 'description',
   date: 'date',
+  schoolId: 'schoolId',
   classId: 'classId'
 };
 
@@ -255,13 +277,15 @@ exports.Prisma.CAConfigScalarFieldEnum = {
   academicYear: 'academicYear',
   classworkWeight: 'classworkWeight',
   examWeight: 'examWeight',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  schoolId: 'schoolId'
 };
 
 exports.Prisma.ContinuousAssessmentScalarFieldEnum = {
   id: 'id',
   academicYear: 'academicYear',
   term: 'term',
+  schoolId: 'schoolId',
   studentId: 'studentId',
   teacherId: 'teacherId',
   subjectId: 'subjectId',
@@ -283,6 +307,7 @@ exports.Prisma.SyllabusScalarFieldEnum = {
   status: 'status',
   term: 'term',
   academicYear: 'academicYear',
+  schoolId: 'schoolId',
   subjectId: 'subjectId',
   gradeId: 'gradeId',
   createdAt: 'createdAt',
@@ -308,6 +333,7 @@ exports.Prisma.SyllabusTopicProgressScalarFieldEnum = {
   id: 'id',
   coveredDate: 'coveredDate',
   notes: 'notes',
+  schoolId: 'schoolId',
   syllabusTopicId: 'syllabusTopicId',
   classId: 'classId',
   teacherId: 'teacherId',
@@ -322,6 +348,7 @@ exports.Prisma.FeeStructureScalarFieldEnum = {
   term: 'term',
   status: 'status',
   publishedAt: 'publishedAt',
+  schoolId: 'schoolId',
   gradeId: 'gradeId',
   createdBy: 'createdBy',
   createdAt: 'createdAt',
@@ -347,6 +374,7 @@ exports.Prisma.StudentBillScalarFieldEnum = {
   balance: 'balance',
   status: 'status',
   notes: 'notes',
+  schoolId: 'schoolId',
   studentId: 'studentId',
   feeStructureId: 'feeStructureId',
   generatedBy: 'generatedBy',
@@ -376,6 +404,7 @@ exports.Prisma.PaymentScalarFieldEnum = {
   referenceNo: 'referenceNo',
   notes: 'notes',
   status: 'status',
+  schoolId: 'schoolId',
   studentBillId: 'studentBillId',
   recordedBy: 'recordedBy',
   createdAt: 'createdAt'
@@ -396,6 +425,7 @@ exports.Prisma.DiscountScalarFieldEnum = {
   amount: 'amount',
   percentage: 'percentage',
   approvedBy: 'approvedBy',
+  schoolId: 'schoolId',
   studentBillId: 'studentBillId',
   createdAt: 'createdAt'
 };
@@ -403,7 +433,8 @@ exports.Prisma.DiscountScalarFieldEnum = {
 exports.Prisma.ReceiptCounterScalarFieldEnum = {
   id: 'id',
   year: 'year',
-  lastCounter: 'lastCounter'
+  lastCounter: 'lastCounter',
+  schoolId: 'schoolId'
 };
 
 exports.Prisma.FinanceAuditLogScalarFieldEnum = {
@@ -414,6 +445,17 @@ exports.Prisma.FinanceAuditLogScalarFieldEnum = {
   entityId: 'entityId',
   metadata: 'metadata',
   ipAddress: 'ipAddress',
+  createdAt: 'createdAt',
+  schoolId: 'schoolId'
+};
+
+exports.Prisma.WaitlistEntryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  schoolName: 'schoolName',
+  email: 'email',
+  role: 'role',
+  message: 'message',
   createdAt: 'createdAt'
 };
 
@@ -532,7 +574,15 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   DISCOUNT_REMOVED: 'DISCOUNT_REMOVED'
 };
 
+exports.WaitlistRole = exports.$Enums.WaitlistRole = {
+  HEADMASTER: 'HEADMASTER',
+  ADMINISTRATOR: 'ADMINISTRATOR',
+  TEACHER: 'TEACHER',
+  OTHER: 'OTHER'
+};
+
 exports.Prisma.ModelName = {
+  School: 'School',
   Admin: 'Admin',
   Student: 'Student',
   Teacher: 'Teacher',
@@ -560,7 +610,8 @@ exports.Prisma.ModelName = {
   PaymentReversal: 'PaymentReversal',
   Discount: 'Discount',
   ReceiptCounter: 'ReceiptCounter',
-  FinanceAuditLog: 'FinanceAuditLog'
+  FinanceAuditLog: 'FinanceAuditLog',
+  WaitlistEntry: 'WaitlistEntry'
 };
 
 /**
