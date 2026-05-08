@@ -1,7 +1,7 @@
 // src/app/(dashboard)/list/syllabus/[id]/edit/page.tsx
 
-import { auth } from "@clerk/nextjs/server";
-import { redirect, notFound } from "next/navigation";
+import { requirePageSession } from "@/src/lib/authz";
+import { notFound } from "next/navigation";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
 import { ArrowLeft, BookMarked, Eye } from "lucide-react";
@@ -14,15 +14,13 @@ const SyllabusEditPage = async ({
 }: {
   params: Promise<{ id: string }>;
 }) => {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (role !== "admin") redirect("/list/syllabus");
+  const { schoolId } = await requirePageSession(["admin"]);
 
   const { id } = await params;
   const syllabusId = parseInt(id);
 
-  const syllabus = await prisma.syllabus.findUnique({
-    where:   { id: syllabusId },
+  const syllabus = await prisma.syllabus.findFirst({
+    where:   { id: syllabusId, schoolId },
     include: {
       subject: { select: { name: true } },
       grade:   { select: { level: true } },

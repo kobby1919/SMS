@@ -6,7 +6,7 @@ import TableSearch from "@/src/components/TableSearch";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
-import { auth } from "@clerk/nextjs/server";
+import { requirePageSession } from "@/src/lib/authz";
 import { ArrowUpDown, Filter, Megaphone } from "lucide-react";
 
 const AnnouncementListPage = async ({
@@ -14,15 +14,13 @@ const AnnouncementListPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  // Fetch Auth and Role
-  const {userId, sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const { userId, role, schoolId } = await requirePageSession();
   const currentUserId = userId;
 
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
-  const query: Prisma.AnnouncementWhereInput = {};
+  const query: Prisma.AnnouncementWhereInput = { schoolId };
 
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {

@@ -4,12 +4,12 @@
 // primary source of truth for grades is now the CA system.
 
 import Pagination from "@/src/components/pagination";
+import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
 import { Filter, ArrowUpDown, ScrollText, TrendingUp, Award, CheckCircle2 } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
-import { auth } from "@clerk/nextjs/server";
 import { getGradeBandByGrade, TERM_LABELS, ordinal } from "@/src/lib/caGrades";
 import Link from "next/link";
 
@@ -20,15 +20,14 @@ const ResultListPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { userId, sessionClaims } = await auth();
-  const role          = (sessionClaims?.metadata as { role?: string })?.role;
+  const { userId, role, schoolId } = await requirePageSession();
   const currentUserId = userId;
 
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
   // ── Build CA query ────────────────────────────────────────────────────────
-  const where: any = {};
+  const where: any = { schoolId };
 
   if (queryParams.search) {
     where.OR = [
@@ -125,7 +124,7 @@ const ResultListPage = async ({
   );
 
   // Available terms/years for filter dropdowns
-  const configs = await prisma.cAConfig.findMany({ orderBy: { academicYear: "desc" } });
+  const configs = await prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } });
   const years   = configs.map((c) => c.academicYear);
 
   return (

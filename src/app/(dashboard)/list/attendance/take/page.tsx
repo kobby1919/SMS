@@ -1,8 +1,7 @@
 import prisma from "@/src/lib/prisma";
-import { auth, currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+import { requirePageSession } from "@/src/lib/authz";
 import AttendanceTaker from "@/src/components/AttendanceTaker";
-import { Day } from "@/src/generated/prisma";
+import { AttendanceStatus, Day, Prisma } from "@/src/generated/prisma";
 
 
 const TakeAttendancePage = async ({
@@ -10,11 +9,7 @@ const TakeAttendancePage = async ({
 }: {
   searchParams: Promise<{ lessonId?: string; date?: string }>;
 }) => {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (!["admin", "teacher"].includes(role!)) redirect("/");
-
-  const user = await currentUser();
+  const { userId, role, schoolId } = await requirePageSession(["admin", "teacher"]);
   const params = await searchParams;
 
   const todayStr = new Date().toISOString().split("T")[0];
@@ -29,12 +24,31 @@ const TakeAttendancePage = async ({
   // 2. CHECK FOR WEEKENDS: Prevent the Prisma error if today is Saturday or Sunday
   const isWeekend = dayOfWeekStr === "SATURDAY" || dayOfWeekStr === "SUNDAY";
 
-  let teacherLessons: any[] = [];
+  type LessonWithSummary = Prisma.LessonGetPayload<{
+    include: {
+      subject: { select: { name: true } };
+      class: { select: { id: true; name: true } };
+    };
+  }>;
+  type StudentSummary = {
+    id: string;
+    name: string;
+    surname: string;
+    img: string | null;
+  };
+  type AttendanceSummary = {
+    studentId: string;
+    status: AttendanceStatus;
+    note: string | null;
+  };
+
+  let teacherLessons: LessonWithSummary[] = [];
 
   if (!isWeekend) {
     teacherLessons = await prisma.lesson.findMany({
       where: {
-        teacherId: user!.id,
+        schoolId,
+        ...(role === "teacher" ? { teacherId: userId } : {}),
         day: dayOfWeekStr as Day, // Cast to the Enum type safely
       },
       include: {
@@ -46,14 +60,18 @@ const TakeAttendancePage = async ({
   }
 
   // If a lesson is selected, fetch its students + existing attendance
-  let selectedLesson = null;
-  let students: any[] = [];
-  let existingAttendance: any[] = [];
+  let selectedLesson: LessonWithSummary | null = null;
+  let students: StudentSummary[] = [];
+  let existingAttendance: AttendanceSummary[] = [];
 
   // Only proceed with lesson details if it's a weekday and we have an ID
   if (lessonId && !isWeekend) {
-    selectedLesson = await prisma.lesson.findUnique({
-      where: { id: lessonId },
+    selectedLesson = await prisma.lesson.findFirst({
+      where: {
+        id: lessonId,
+        schoolId,
+        ...(role === "teacher" ? { teacherId: userId } : {}),
+      },
       include: {
         subject: { select: { name: true } },
         class: { select: { id: true, name: true } },
@@ -62,7 +80,7 @@ const TakeAttendancePage = async ({
 
     if (selectedLesson) {
       students = await prisma.student.findMany({
-        where: { classId: selectedLesson.classId },
+        where: { schoolId, classId: selectedLesson.classId },
         orderBy: { name: "asc" },
         select: { id: true, name: true, surname: true, img: true },
       });
@@ -74,6 +92,7 @@ const TakeAttendancePage = async ({
 
       existingAttendance = await prisma.attendance.findMany({
         where: {
+          schoolId,
           lessonId,
           date: { gte: dayStart, lte: dayEnd },
         },

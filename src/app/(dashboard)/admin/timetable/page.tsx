@@ -1,26 +1,24 @@
 // src/app/(dashboard)/admin/timetable/page.tsx
 
 import prisma from "@/src/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { requirePageSession } from "@/src/lib/authz";
 import { redirect } from "next/navigation";
 import TimetableBuilder from "@/src/components/TimetableBuilder";
 import type { TBClass, TBTeacher, TBLesson } from "@/src/components/TimetableBuilder";
 import { Calendar } from "lucide-react";
 
 const TimetablePage = async () => {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (role !== "admin") redirect("/");
+  const { schoolId } = await requirePageSession(["admin"]);
 
   const [classes, teachers, lessons] = await Promise.all([
     prisma.class.findMany({
+      where: { schoolId },
       include: { grade: { select: { level: true, order: true } } },
       orderBy: [{ grade: { order: "asc" } }, { name: "asc" }],
     }),
 
-    // ✅ Include each teacher's assigned subjects so the builder
-    //    can filter the subject dropdown to only show their subjects
     prisma.teacher.findMany({
+      where: { schoolId },
       select: {
         id: true, name: true, surname: true, maxClasses: true,
         subjects: { select: { id: true, name: true } },
@@ -29,6 +27,7 @@ const TimetablePage = async () => {
     }),
 
     prisma.lesson.findMany({
+      where: { schoolId },
       include: {
         subject: { select: { id: true, name: true } },
         class:   { select: { id: true, name: true } },

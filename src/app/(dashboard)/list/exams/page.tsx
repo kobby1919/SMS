@@ -1,13 +1,13 @@
 // src/app/(dashboard)/list/exams/page.tsx
 
 import Pagination from "@/src/components/pagination";
+import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
 import { Filter, ArrowUpDown, Calendar, Clock, CheckCircle2, BookOpen } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
-import { auth } from "@clerk/nextjs/server";
 
 // ── Grade helpers ─────────────────────────────────────────────────────────────
 const getCountdown = (date: Date): string => {
@@ -37,8 +37,7 @@ const ExamListPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { userId, sessionClaims } = await auth();
-  const role          = (sessionClaims?.metadata as { role?: string })?.role;
+  const { userId, role, schoolId } = await requirePageSession();
   const currentUserId = userId;
 
   const { page, tab, ...queryParams } = await searchParams;
@@ -46,7 +45,7 @@ const ExamListPage = async ({
   const activeTab  = tab === "past" ? "past" : "upcoming";
   const now        = new Date();
 
-  const query: Prisma.ExamWhereInput = {};
+  const query: Prisma.ExamWhereInput = { schoolId };
   query.lesson = {};
 
   if (queryParams) {

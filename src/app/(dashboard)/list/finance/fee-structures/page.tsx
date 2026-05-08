@@ -1,8 +1,8 @@
 // src/app/(dashboard)/list/finance/fee-structures/page.tsx
 
 
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
 import {
@@ -23,9 +23,7 @@ const FeeStructuresPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (role !== "admin" && role !== "bursar") redirect("/");
+  const { schoolId } = await requirePageSession(["admin", "bursar"]);
 
   const sp           = await searchParams;
   const filterGrade  = sp.grade  ? parseInt(sp.grade) : undefined;
@@ -33,7 +31,7 @@ const FeeStructuresPage = async ({
   const filterYear   = sp.year   as string | undefined;
   const filterStatus = sp.status as string | undefined;
 
-  const where: any = {};
+  const where: any = { schoolId };
   if (filterGrade)  where.gradeId      = filterGrade;
   if (filterTerm)   where.term         = filterTerm;
   if (filterYear)   where.academicYear = filterYear;
@@ -49,7 +47,7 @@ const FeeStructuresPage = async ({
       },
       orderBy: [{ academicYear: "desc" }, { grade: { order: "asc" } }, { term: "asc" }],
     }),
-    prisma.grade.findMany({ orderBy: { order: "asc" } }),
+    prisma.grade.findMany({ where: { schoolId }, orderBy: { order: "asc" } }),
   ]);
 
   // Derive academic years from existing structures for the filter

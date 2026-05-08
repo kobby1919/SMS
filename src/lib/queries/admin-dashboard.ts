@@ -1,0 +1,319 @@
+import prisma from "@/src/lib/prisma";
+
+const DAY_ENUM_MAP: Record<number, string> = {
+  1: "MONDAY",
+  2: "TUESDAY",
+  3: "WEDNESDAY",
+  4: "THURSDAY",
+  5: "FRIDAY",
+};
+
+export type AdminDashboardData = {
+  counts: { type: string; count: number }[];
+  boys: number;
+  girls: number;
+  attendanceData: { name: string; present: number; absent: number }[];
+  financeData: { name: string; income: number; expense: number }[];
+  timetableSnapshot: {
+    totalLessons: number;
+    totalClasses: number;
+    todayLessons: number;
+    todayDay: string;
+  };
+  attendanceSnapshot: {
+    todayPresent: number;
+    todayAbsent: number;
+    todayLate: number;
+    todayExcused: number;
+    todayRate: number;
+    totalStudents: number;
+    flaggedCount: number;
+    flagged: { name: string; surname: string; className: string; streak: number }[];
+  };
+  caSnapshot: {
+    totalRecords: number;
+    schoolAvg: number;
+    configExists: boolean;
+  };
+  syllabusSnapshot: {
+    total: number;
+    published: number;
+    draft: number;
+  };
+};
+
+function startOfDay(d: Date): Date {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  return x;
+}
+
+function endOfDay(d: Date): Date {
+  const x = new Date(d);
+  x.setHours(23, 59, 59, 999);
+  return x;
+}
+
+function buildWeekDays(now: Date): { label: string; date: Date }[] {
+  const weekDays: { label: string; date: Date }[] = [];
+  let d = new Date(now);
+  while (weekDays.length < 5) {
+    const day = d.getDay();
+    if (day !== 0 && day !== 6) {
+      weekDays.unshift({
+        label: d.toLocaleDateString("en-US", { weekday: "short" }),
+        date: new Date(d),
+      });
+    }
+    d.setDate(d.getDate() - 1);
+  }
+  return weekDays;
+}
+
+function aggregateAttendanceByDay(
+  records: { date: Date; status: string }[],
+  weekDays: { label: string; date: Date }[],
+): { name: string; present: number; absent: number }[] {
+  const buckets = new Map<string, { present: number; absent: number }>();
+  for (const { date } of weekDays) {
+    buckets.set(startOfDay(date).toISOString(), { present: 0, absent: 0 });
+  }
+
+  for (const r of records) {
+    const key = startOfDay(r.date).toISOString();
+    const bucket = buckets.get(key);
+    if (!bucket) continue;
+    if (r.status === "PRESENT") bucket.present += 1;
+    if (r.status === "ABSENT") bucket.absent += 1;
+  }
+
+  return weekDays.map(({ label, date }) => {
+    const bucket = buckets.get(startOfDay(date).toISOString()) ?? {
+      present: 0,
+      absent: 0,
+    };
+    return { name: label, present: bucket.present, absent: bucket.absent };
+  });
+}
+
+function computeFlaggedStudents(
+  students: {
+    id: string;
+    name: string;
+    surname: string;
+    class: { name: string };
+  }[],
+  attendanceByStudent: Map<string, { status: string }[]>,
+): { name: string; surname: string; className: string; streak: number }[] {
+  const flagged: { name: string; surname: string; className: string; streak: number }[] =
+    [];
+
+  for (const student of students) {
+    const recent = attendanceByStudent.get(student.id) ?? [];
+    let streak = 0;
+    for (const r of recent) {
+      if (r.status === "ABSENT") streak += 1;
+      else break;
+    }
+    if (streak >= 3) {
+      flagged.push({
+        name: student.name,
+        surname: student.surname,
+        className: student.class.name,
+        streak,
+      });
+    }
+  }
+
+  return flagged.sort((a, b) => b.streak - a.streak);
+}
+
+/** Batched dashboard queries for the admin home page (avoids N+1 per student/day). */
+export async function getAdminDashboardData(
+  schoolId: string,
+): Promise<AdminDashboardData> {
+  const tenantWhere = { schoolId };
+  const currentYear = new Date().getFullYear();
+  const now = new Date();
+  const weekDays = buildWeekDays(now);
+  const monthNames = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  ];
+  const todayEnum = DAY_ENUM_MAP[now.getDay()] ?? "MONDAY";
+  const todayLabel = now.toLocaleDateString("en-US", { weekday: "long" });
+  const todayStart = startOfDay(now);
+  const todayEnd = endOfDay(now);
+  const weekStart = startOfDay(weekDays[0]?.date ?? now);
+  const weekEnd = endOfDay(weekDays[weekDays.length - 1]?.date ?? now);
+
+  const [
+    adminCount,
+    teacherCount,
+    studentCount,
+    parentCount,
+    boyCount,
+    girlCount,
+    totalLessons,
+    totalClasses,
+    todayLessons,
+    todayAttendanceGrouped,
+    totalStudents,
+    totalCARecords,
+    caConfigCount,
+    totalSyllabi,
+    publishedSyllabi,
+    caAvgResult,
+    weekAttendanceRecords,
+    allStudents,
+  ] = await Promise.all([
+    prisma.admin.count({ where: tenantWhere }),
+    prisma.teacher.count({ where: tenantWhere }),
+    prisma.student.count({ where: tenantWhere }),
+    prisma.parent.count({ where: tenantWhere }),
+    prisma.student.count({ where: { ...tenantWhere, sex: "MALE" } }),
+    prisma.student.count({ where: { ...tenantWhere, sex: "FEMALE" } }),
+    prisma.lesson.count({ where: tenantWhere }),
+    prisma.class.count({ where: tenantWhere }),
+    prisma.lesson.count({
+      where: { ...tenantWhere, day: todayEnum as "MONDAY" },
+    }),
+    prisma.attendance.groupBy({
+      by: ["status"],
+      where: {
+        ...tenantWhere,
+        date: { gte: todayStart, lte: todayEnd },
+      },
+      _count: { _all: true },
+    }),
+    prisma.student.count({ where: tenantWhere }),
+    prisma.continuousAssessment.count({ where: tenantWhere }),
+    prisma.cAConfig.count({ where: tenantWhere }),
+    prisma.syllabus.count({ where: tenantWhere }),
+    prisma.syllabus.count({ where: { ...tenantWhere, status: "PUBLISHED" } }),
+    prisma.continuousAssessment.aggregate({
+      _avg: { totalScore: true },
+      where: tenantWhere,
+    }),
+    prisma.attendance.findMany({
+      where: {
+        ...tenantWhere,
+        date: { gte: weekStart, lte: weekEnd },
+        status: { in: ["PRESENT", "ABSENT"] },
+      },
+      select: { date: true, status: true },
+    }),
+    prisma.student.findMany({
+      where: tenantWhere,
+      select: {
+        id: true,
+        name: true,
+        surname: true,
+        class: { select: { name: true } },
+      },
+    }),
+  ]);
+
+  const studentIds = allStudents.map((s) => s.id);
+  const recentAttendanceRows =
+    studentIds.length === 0
+      ? []
+      : await prisma.attendance.findMany({
+          where: { schoolId, studentId: { in: studentIds } },
+          orderBy: [{ studentId: "asc" }, { date: "desc" }],
+          select: { studentId: true, status: true },
+        });
+
+  const statusCounts = Object.fromEntries(
+    todayAttendanceGrouped.map((g) => [g.status, g._count._all]),
+  ) as Record<string, number>;
+  const todayPresent = statusCounts.PRESENT ?? 0;
+  const todayAbsent = statusCounts.ABSENT ?? 0;
+  const todayLate = statusCounts.LATE ?? 0;
+  const todayExcused = statusCounts.EXCUSED ?? 0;
+
+  const caAvg = Math.round((caAvgResult._avg.totalScore ?? 0) * 10) / 10;
+  const attendanceData = aggregateAttendanceByDay(weekAttendanceRecords, weekDays);
+
+  const months = Array.from({ length: 12 }, (_, i) => i);
+  const financeData = await Promise.all(
+    months.map(async (i) => {
+      const start = new Date(currentYear, i, 1);
+      const end = new Date(currentYear, i + 1, 0, 23, 59, 59);
+      const [examAvg, assignAvg] = await Promise.all([
+        prisma.result.aggregate({
+          _avg: { score: true },
+          where: {
+            schoolId,
+            exam: { startTime: { gte: start, lte: end } },
+          },
+        }),
+        prisma.result.aggregate({
+          _avg: { score: true },
+          where: {
+            schoolId,
+            assignment: { dueDate: { gte: start, lte: end } },
+          },
+        }),
+      ]);
+      return {
+        name: monthNames[i],
+        income: Math.round(examAvg._avg.score ?? 0),
+        expense: Math.round(assignAvg._avg.score ?? 0),
+      };
+    }),
+  );
+
+  const attendanceByStudent = new Map<string, { status: string }[]>();
+  for (const row of recentAttendanceRows) {
+    const list = attendanceByStudent.get(row.studentId) ?? [];
+    if (list.length < 5) {
+      list.push({ status: row.status });
+      attendanceByStudent.set(row.studentId, list);
+    }
+  }
+
+  const flagged = computeFlaggedStudents(allStudents, attendanceByStudent);
+  const todayTotal = todayPresent + todayAbsent + todayLate + todayExcused;
+  const todayRate =
+    todayTotal > 0 ? Math.round((todayPresent / todayTotal) * 100) : 0;
+
+  return {
+    counts: [
+      { type: "admin", count: adminCount },
+      { type: "teacher", count: teacherCount },
+      { type: "student", count: studentCount },
+      { type: "parent", count: parentCount },
+    ],
+    boys: boyCount,
+    girls: girlCount,
+    attendanceData,
+    financeData,
+    timetableSnapshot: {
+      totalLessons,
+      totalClasses,
+      todayLessons,
+      todayDay: todayLabel,
+    },
+    attendanceSnapshot: {
+      todayPresent,
+      todayAbsent,
+      todayLate,
+      todayExcused,
+      todayRate,
+      totalStudents,
+      flaggedCount: flagged.length,
+      flagged: flagged.slice(0, 5),
+    },
+    caSnapshot: {
+      totalRecords: totalCARecords,
+      schoolAvg: caAvg,
+      configExists: caConfigCount > 0,
+    },
+    syllabusSnapshot: {
+      total: totalSyllabi,
+      published: publishedSyllabi,
+      draft: totalSyllabi - publishedSyllabi,
+    },
+  };
+}

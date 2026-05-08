@@ -1,6 +1,7 @@
 // src/app/(dashboard)/list/students/page.tsx
 
 import Pagination from "@/src/components/pagination";
+import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,20 +10,18 @@ import FormModal from "@/src/components/FormModal";
 import prisma from "@/src/lib/prisma";
 import { Prisma } from "@/src/generated/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
-import { auth } from "@clerk/nextjs/server";
 
 const StudentListPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const { role, schoolId } = await requirePageSession();
 
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
-  const query: Prisma.StudentWhereInput = {};
+  const query: Prisma.StudentWhereInput = { schoolId };
 
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
@@ -60,9 +59,9 @@ const StudentListPage = async ({
       skip: ITEM_PER_PAGE * (p - 1),
     }),
     prisma.student.count({ where: query }),
-    prisma.class.count(),
+    prisma.class.count({ where: { schoolId } }),
     prisma.student.count({
-      where: { createdAt: { gte: startOfMonth } },
+      where: { schoolId, createdAt: { gte: startOfMonth } },
     }),
   ]);
 

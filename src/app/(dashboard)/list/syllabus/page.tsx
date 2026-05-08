@@ -1,8 +1,8 @@
 // src/app/(dashboard)/list/syllabus/page.tsx
 
 
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
 import {
@@ -19,9 +19,7 @@ const SyllabusListPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { userId, sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (!userId || (role !== "admin" && role !== "teacher")) redirect("/");
+  const { userId, role, schoolId } = await requirePageSession(["admin", "teacher"]);
 
   const sp            = await searchParams;
   const filterSubject = sp.subject ? parseInt(sp.subject) : undefined;
@@ -33,14 +31,14 @@ const SyllabusListPage = async ({
   // For teachers: only show syllabi for subjects they teach
   let teacherSubjectIds: number[] | undefined;
   if (role === "teacher") {
-    const teacher = await prisma.teacher.findUnique({
-      where:  { id: userId },
+    const teacher = await prisma.teacher.findFirst({
+      where:  { id: userId, schoolId },
       select: { subjects: { select: { id: true } } },
     });
     teacherSubjectIds = teacher?.subjects.map((s) => s.id) ?? [];
   }
 
-  const where: any = {};
+  const where: any = { schoolId };
   if (filterSubject)             where.subjectId = filterSubject;
   if (filterGrade)               where.gradeId   = filterGrade;
   if (filterTerm)                where.term      = filterTerm;
@@ -63,9 +61,9 @@ const SyllabusListPage = async ({
     orderBy: [{ grade: { order: "asc" } }, { subject: { name: "asc" } }, { term: "asc" }],
   });
 
-  const subjects = await prisma.subject.findMany({ orderBy: { name: "asc" } });
-  const grades   = await prisma.grade.findMany({ orderBy: { order: "asc" } });
-  const configs  = await prisma.cAConfig.findMany({ orderBy: { academicYear: "desc" } });
+  const subjects = await prisma.subject.findMany({ where: { schoolId }, orderBy: { name: "asc" } });
+  const grades   = await prisma.grade.findMany({ where: { schoolId }, orderBy: { order: "asc" } });
+  const configs  = await prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } });
   const years    = configs.map((c) => c.academicYear);
 
   const totalPublished = syllabi.filter((s) => s.status === "PUBLISHED").length;

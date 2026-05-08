@@ -1,8 +1,7 @@
 // src/app/(dashboard)/list/finance/payments/page.tsx
  
 
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
 import {
@@ -19,6 +18,8 @@ import { formatGHS, PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import Pagination from "@/src/components/pagination";
 import PaymentReverseButton from "@/src/components/PaymentReverseButton";
+import { Prisma } from "@/src/generated/prisma";
+import type { PaymentMethod, PaymentStatus } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -27,26 +28,46 @@ const TERM_LABELS: Record<string, string> = {
   TERM_2: "Term 2",
   TERM_3: "Term 3",
 };
+const PAYMENT_STATUSES = ["CONFIRMED", "REVERSED"] as const;
+const PAYMENT_METHODS = [
+  "CASH",
+  "MTN_MOMO",
+  "VODAFONE_CASH",
+  "AIRTELTIGO_MONEY",
+  "BANK_TRANSFER",
+  "CHEQUE",
+  "OTHER",
+] as const;
+
+function parsePaymentStatus(value: string | undefined): PaymentStatus | undefined {
+  return PAYMENT_STATUSES.includes(value as PaymentStatus)
+    ? (value as PaymentStatus)
+    : undefined;
+}
+
+function parsePaymentMethod(value: string | undefined): PaymentMethod | undefined {
+  return PAYMENT_METHODS.includes(value as PaymentMethod)
+    ? (value as PaymentMethod)
+    : undefined;
+}
 
 const PaymentsPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (role !== "admin" && role !== "bursar") redirect("/");
+  const { schoolId } = await requirePageSession(["admin", "bursar"]);
 
   const sp = await searchParams;
   const page = sp.page ? parseInt(sp.page) : 1;
   const search = sp.search as string | undefined;
-  const filterMethod = sp.method as string | undefined;
-  const filterStatus = sp.status as string | undefined;
+  const filterMethod = parsePaymentMethod(sp.method);
+  const filterStatus = parsePaymentStatus(sp.status);
   const dateFrom = sp.from as string | undefined;
   const dateTo = sp.to as string | undefined;
 
   // ── Build query ────────────────────────────────────────────────────────────
-  const where: any = {};
+  const where: Prisma.PaymentWhereInput = { schoolId };
   if (filterStatus) where.status = filterStatus;
   if (filterMethod) where.paymentMethod = filterMethod;
   if (dateFrom || dateTo) {
@@ -108,66 +129,45 @@ const PaymentsPage = async ({
   const todayEnd = new Date();
   todayEnd.setHours(23, 59, 59, 999);
 
-  const [todayTotal, todayCount, todayCash, todayMomo, todayBank] =
-    await Promise.all([
-      prisma.payment.aggregate({
-        _sum: { amount: true },
-        where: {
-          status: "CONFIRMED",
-          paymentDate: { gte: todayStart, lte: todayEnd },
-        },
-      }),
-      prisma.payment.count({
-        where: {
-          status: "CONFIRMED",
-          paymentDate: { gte: todayStart, lte: todayEnd },
-        },
-      }),
-      prisma.payment.aggregate({
-        _sum: { amount: true },
-        where: {
-          status: "CONFIRMED",
-          paymentDate: { gte: todayStart, lte: todayEnd },
-          paymentMethod: "CASH",
-        },
-      }),
-      prisma.payment.aggregate({
-        _sum: { amount: true },
-        where: {
-          status: "CONFIRMED",
-          paymentDate: { gte: todayStart, lte: todayEnd },
-          paymentMethod: {
-            in: ["MTN_MOMO", "VODAFONE_CASH", "AIRTELTIGO_MONEY"],
-          },
-        },
-      }),
-      prisma.payment.aggregate({
-        _sum: { amount: true },
-        where: {
-          status: "CONFIRMED",
-          paymentDate: { gte: todayStart, lte: todayEnd },
-          paymentMethod: { in: ["BANK_TRANSFER", "CHEQUE"] },
-        },
-      }),
-    ]);
+  const todayByMethod = await prisma.payment.groupBy({
+    by: ["paymentMethod"],
+    where: {
+      schoolId,
+      status: "CONFIRMED",
+      paymentDate: { gte: todayStart, lte: todayEnd },
+    },
+    _count: { _all: true },
+    _sum: { amount: true },
+  });
 
   // ── This year's total ──────────────────────────────────────────────────────
   const yearStart = new Date(new Date().getFullYear(), 0, 1);
-  const yearTotal = await prisma.payment.aggregate({
+  const yearlyByStatus = await prisma.payment.groupBy({
+    by: ["status"],
+    where: { schoolId, createdAt: { gte: yearStart } },
     _sum: { amount: true },
-    where: { status: "CONFIRMED", createdAt: { gte: yearStart } },
-  });
-  const reversedTotal = await prisma.payment.aggregate({
-    _sum: { amount: true },
-    where: { status: "REVERSED", createdAt: { gte: yearStart } },
   });
 
-  const todayCollected = Number(todayTotal._sum.amount ?? 0);
-  const todayCashAmt = Number(todayCash._sum.amount ?? 0);
-  const todayMomoAmt = Number(todayMomo._sum.amount ?? 0);
-  const todayBankAmt = Number(todayBank._sum.amount ?? 0);
-  const yearCollected = Number(yearTotal._sum.amount ?? 0);
-  const yearReversed = Number(reversedTotal._sum.amount ?? 0);
+  const todayCount = todayByMethod.reduce((sum, row) => sum + row._count._all, 0);
+  const todayCollected = todayByMethod.reduce(
+    (sum, row) => sum + Number(row._sum.amount ?? 0),
+    0,
+  );
+  const todayCashAmt = todayByMethod
+    .filter((row) => row.paymentMethod === "CASH")
+    .reduce((sum, row) => sum + Number(row._sum.amount ?? 0), 0);
+  const todayMomoAmt = todayByMethod
+    .filter((row) => ["MTN_MOMO", "VODAFONE_CASH", "AIRTELTIGO_MONEY"].includes(row.paymentMethod))
+    .reduce((sum, row) => sum + Number(row._sum.amount ?? 0), 0);
+  const todayBankAmt = todayByMethod
+    .filter((row) => ["BANK_TRANSFER", "CHEQUE"].includes(row.paymentMethod))
+    .reduce((sum, row) => sum + Number(row._sum.amount ?? 0), 0);
+  const yearCollected = Number(
+    yearlyByStatus.find((row) => row.status === "CONFIRMED")?._sum.amount ?? 0,
+  );
+  const yearReversed = Number(
+    yearlyByStatus.find((row) => row.status === "REVERSED")?._sum.amount ?? 0,
+  );
 
   const today = new Date().toLocaleDateString("en-GH", {
     weekday: "long",

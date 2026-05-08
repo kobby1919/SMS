@@ -1,8 +1,8 @@
 // src/app/(dashboard)/list/syllabus/[id]/page.tsx
 
 
-import { auth } from "@clerk/nextjs/server";
-import { redirect, notFound } from "next/navigation";
+import { requirePageSession } from "@/src/lib/authz";
+import { notFound } from "next/navigation";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
 import {
@@ -19,15 +19,13 @@ const SyllabusViewPage = async ({
 }: {
   params: Promise<{ id: string }>;
 }) => {
-  const { userId, sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (!userId || (role !== "admin" && role !== "teacher")) redirect("/");
+  const { userId, role, schoolId } = await requirePageSession(["admin", "teacher"]);
 
   const { id } = await params;
   const syllabusId = parseInt(id);
 
-  const syllabus = await prisma.syllabus.findUnique({
-    where:   { id: syllabusId },
+  const syllabus = await prisma.syllabus.findFirst({
+    where:   { id: syllabusId, schoolId },
     include: {
       subject: { select: { name: true } },
       grade:   { select: { level: true } },
@@ -51,7 +49,7 @@ const SyllabusViewPage = async ({
   let teacherClasses: { id: number; name: string }[] = [];
   if (role === "teacher") {
     teacherClasses = await prisma.class.findMany({
-      where:  { supervisorId: userId, gradeId: syllabus.gradeId },
+      where:  { schoolId, supervisorId: userId, gradeId: syllabus.gradeId },
       select: { id: true, name: true },
       orderBy: { name: "asc" },
     });
@@ -59,7 +57,7 @@ const SyllabusViewPage = async ({
 
   // All classes at this grade level (for admin progress overview)
   const gradeClasses = await prisma.class.findMany({
-    where:  { gradeId: syllabus.gradeId },
+    where:  { schoolId, gradeId: syllabus.gradeId },
     select: { id: true, name: true },
     orderBy: { name: "asc" },
   });

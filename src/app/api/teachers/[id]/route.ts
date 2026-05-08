@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
 import { clerkClient } from "@clerk/nextjs/server";
 import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
+import { revalidateReferenceData } from "@/src/lib/cacheTags";
 
 export async function PUT(
   req: NextRequest,
@@ -58,6 +59,9 @@ export async function PUT(
         subjects: { set: subjects.map(({ id }) => ({ id })) },
       },
     });
+
+    revalidateReferenceData(schoolId, "teachers");
+    revalidateReferenceData(schoolId, "subjects");
 
     return NextResponse.json(teacher);
   } catch (e: unknown) {

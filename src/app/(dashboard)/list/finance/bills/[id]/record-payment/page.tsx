@@ -1,8 +1,8 @@
 // src/app/(dashboard)/list/finance/bills/[id]/record-payment/page.tsx
  
 
-import { auth } from "@clerk/nextjs/server";
 import { redirect, notFound } from "next/navigation";
+import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
 import { ArrowLeft, Receipt } from "lucide-react";
@@ -20,15 +20,13 @@ const RecordPaymentPage = async ({
 }: {
   params: Promise<{ id: string }>;
 }) => {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (role !== "admin" && role !== "bursar") redirect("/");
+  const { role, schoolId } = await requirePageSession(["admin", "bursar"]);
 
   const { id } = await params;
   const billId = parseInt(id);
 
-  const bill = await prisma.studentBill.findUnique({
-    where:   { id: billId },
+  const bill = await prisma.studentBill.findFirst({
+    where:   { id: billId, schoolId },
     include: {
       student: {
         select: {

@@ -1,7 +1,7 @@
 // src/app/(dashboard)/list/attendance/page.tsx
 
 import prisma from "@/src/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { requirePageSession } from "@/src/lib/authz";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
@@ -16,9 +16,7 @@ const AttendanceListPage = async ({
 }: {
   searchParams: Promise<{ classId?: string; date?: string; status?: string }>;
 }) => {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (!role) redirect("/");
+  const { role, schoolId } = await requirePageSession();
 
   const params = await searchParams;
   const today  = new Date();
@@ -34,11 +32,11 @@ const AttendanceListPage = async ({
   // ── Today's school-wide stats ─────────────────────────────────────────────
   const [todayPresent, todayAbsent, todayLate, todayExcused, totalStudents] =
     await Promise.all([
-      prisma.attendance.count({ where: { date: { gte: today, lte: todayEnd }, status: "PRESENT" } }),
-      prisma.attendance.count({ where: { date: { gte: today, lte: todayEnd }, status: "ABSENT"  } }),
-      prisma.attendance.count({ where: { date: { gte: today, lte: todayEnd }, status: "LATE"    } }),
-      prisma.attendance.count({ where: { date: { gte: today, lte: todayEnd }, status: "EXCUSED" } }),
-      prisma.student.count(),
+      prisma.attendance.count({ where: { schoolId, date: { gte: today, lte: todayEnd }, status: "PRESENT" } }),
+      prisma.attendance.count({ where: { schoolId, date: { gte: today, lte: todayEnd }, status: "ABSENT"  } }),
+      prisma.attendance.count({ where: { schoolId, date: { gte: today, lte: todayEnd }, status: "LATE"    } }),
+      prisma.attendance.count({ where: { schoolId, date: { gte: today, lte: todayEnd }, status: "EXCUSED" } }),
+      prisma.student.count({ where: { schoolId } }),
     ]);
 
   const todayTotal = todayPresent + todayAbsent + todayLate + todayExcused;
@@ -46,12 +44,14 @@ const AttendanceListPage = async ({
 
   // ── All classes for filter ────────────────────────────────────────────────
   const classes = await prisma.class.findMany({
+    where: { schoolId },
     include: { grade: { select: { level: true, order: true } } },
     orderBy: [{ grade: { order: "asc" } }, { name: "asc" }],
   });
 
   // ── Attendance records with filters ──────────────────────────────────────
   const whereClause: any = {
+    schoolId,
     date: { gte: filterDate, lte: filterDateEnd },
   };
   if (params.classId) {
@@ -80,6 +80,7 @@ const AttendanceListPage = async ({
 
   // ── Flagged students (3+ consecutive absences) ────────────────────────────
   const allStudents = await prisma.student.findMany({
+    where: { schoolId },
     select: {
       id: true, name: true, surname: true,
       class: { select: { name: true } },
@@ -89,7 +90,7 @@ const AttendanceListPage = async ({
   const flagged: { id: string; name: string; surname: string; className: string; streak: number }[] = [];
   for (const student of allStudents) {
     const recent = await prisma.attendance.findMany({
-      where:   { studentId: student.id },
+      where:   { schoolId, studentId: student.id },
       orderBy: { date: "desc" },
       take:    5,
       select:  { status: true },

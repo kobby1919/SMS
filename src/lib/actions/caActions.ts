@@ -4,8 +4,10 @@
 // Server actions for Continuous Assessment feature
 
 import prisma from "@/src/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { requireRole } from "@/src/lib/authz";
 import { revalidatePath } from "next/cache";
+import { parseActionInput } from "@/src/lib/validation/parse";
+import { caConfigSchema, caRecordSchema } from "@/src/lib/validation/ca";
 import type { Term } from "@/src/generated/prisma";
 
 // ─── Ghana BECE Grading System ────────────────────────────────────────────────
@@ -35,22 +37,20 @@ export async function getGradeLabel(grade: string): Promise<string> {
 }
 
 // ─── Auth: only class supervisor / admin may write CA records ─────────────────
-async function requireCAAccess(classId: number): Promise<string> {
-  const { userId, sessionClaims } = await auth();
-  if (!userId) throw new Error("Not authenticated");
+async function requireCAAccess(classId: number): Promise<{ userId: string; schoolId: string }> {
+  const { userId, role, schoolId } = await requireRole(["admin", "teacher"]);
 
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (role === "admin") return userId;
+  if (role === "admin") return { userId, schoolId };
 
   if (role === "teacher") {
-    const cls = await prisma.class.findUnique({
-      where: { id: classId },
+    const cls = await prisma.class.findFirst({
+      where: { id: classId, schoolId },
       select: { supervisorId: true },
     });
     if (cls?.supervisorId !== userId) {
       throw new Error("Only the class supervisor can manage CA records for this class.");
     }
-    return userId;
+    return { userId, schoolId };
   }
 
   throw new Error("Unauthorized");
@@ -67,24 +67,20 @@ export type CAConfigInput = {
 };
 
 export async function upsertCAConfig(data: CAConfigInput) {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (role !== "admin") throw new Error("Only admins can configure CA weights.");
-
-  if (data.classworkWeight + data.examWeight !== 100) {
-    throw new Error("Classwork weight and exam weight must sum to 100.");
-  }
+  const { schoolId } = await requireRole(["admin"]);
+  const parsed = parseActionInput(caConfigSchema, data);
 
   const config = await prisma.cAConfig.upsert({
-    where: { academicYear: data.academicYear },
+    where: { schoolId_academicYear: { schoolId, academicYear: parsed.academicYear } },
     create: {
-      academicYear:    data.academicYear,
-      classworkWeight: data.classworkWeight,
-      examWeight:      data.examWeight,
+      schoolId,
+      academicYear:    parsed.academicYear,
+      classworkWeight: parsed.classworkWeight,
+      examWeight:      parsed.examWeight,
     },
     update: {
-      classworkWeight: data.classworkWeight,
-      examWeight:      data.examWeight,
+      classworkWeight: parsed.classworkWeight,
+      examWeight:      parsed.examWeight,
     },
   });
 
@@ -94,11 +90,15 @@ export async function upsertCAConfig(data: CAConfigInput) {
 }
 
 export async function getCAConfig(academicYear: string) {
-  return prisma.cAConfig.findUnique({ where: { academicYear } });
+  const { schoolId } = await requireRole(["admin", "teacher"]);
+  return prisma.cAConfig.findUnique({
+    where: { schoolId_academicYear: { schoolId, academicYear } },
+  });
 }
 
 export async function getAllCAConfigs() {
-  return prisma.cAConfig.findMany({ orderBy: { academicYear: "desc" } });
+  const { schoolId } = await requireRole(["admin", "teacher"]);
+  return prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -136,38 +136,40 @@ async function computeCA(
 }
 
 export async function createCA(data: CAInput) {
-  const teacherId = await requireCAAccess(data.classId);
+  const parsed = parseActionInput(caRecordSchema, data);
+  const { userId: teacherId, schoolId } = await requireCAAccess(parsed.classId);
 
   // Get active config
   const config = await prisma.cAConfig.findUnique({
-    where: { academicYear: data.academicYear },
+    where: { schoolId_academicYear: { schoolId, academicYear: parsed.academicYear } },
   });
   if (!config) {
     throw new Error(
-      `No CA configuration found for ${data.academicYear}. Ask your admin to set it up.`
+      `No CA configuration found for ${parsed.academicYear}. Ask your admin to set it up.`
     );
   }
 
   const { totalScore, grade, gradePoint } = await computeCA(
-    data.classworkScore,
-    data.examScore,
+    parsed.classworkScore,
+    parsed.examScore,
     config.classworkWeight,
     config.examWeight
   );
 
   const ca = await prisma.continuousAssessment.create({
     data: {
-      classworkScore: data.classworkScore,
-      examScore:      data.examScore,
+      classworkScore: parsed.classworkScore,
+      schoolId,
+      examScore:      parsed.examScore,
       totalScore,
       grade,
       gradePoint,
-      remarks:     data.remarks ?? "",
-      term:        data.term,
-      academicYear: data.academicYear,
-      studentId:   data.studentId,
-      subjectId:   data.subjectId,
-      classId:     data.classId,
+      remarks:     parsed.remarks ?? "",
+      term:        parsed.term,
+      academicYear: parsed.academicYear,
+      studentId:   parsed.studentId,
+      subjectId:   parsed.subjectId,
+      classId:     parsed.classId,
       teacherId,
       configId:    config.id,
     },
@@ -180,29 +182,30 @@ export async function createCA(data: CAInput) {
 
 export async function updateCA(data: CAInput) {
   if (!data.id) throw new Error("CA ID required for update.");
-  const teacherId = await requireCAAccess(data.classId);
+  const parsed = parseActionInput(caRecordSchema, data);
+  const { userId: teacherId, schoolId } = await requireCAAccess(parsed.classId);
 
   const config = await prisma.cAConfig.findUnique({
-    where: { academicYear: data.academicYear },
+    where: { schoolId_academicYear: { schoolId, academicYear: parsed.academicYear } },
   });
-  if (!config) throw new Error(`No CA configuration found for ${data.academicYear}.`);
+  if (!config) throw new Error(`No CA configuration found for ${parsed.academicYear}.`);
 
   const { totalScore, grade, gradePoint } = await computeCA(
-    data.classworkScore,
-    data.examScore,
+    parsed.classworkScore,
+    parsed.examScore,
     config.classworkWeight,
     config.examWeight
   );
 
   await prisma.continuousAssessment.update({
-    where: { id: data.id },
+    where: { id: data.id, schoolId },
     data: {
-      classworkScore: data.classworkScore,
-      examScore:      data.examScore,
+      classworkScore: parsed.classworkScore,
+      examScore:      parsed.examScore,
       totalScore,
       grade,
       gradePoint,
-      remarks:  data.remarks ?? "",
+      remarks:  parsed.remarks ?? "",
       teacherId,
       configId: config.id,
     },
@@ -218,9 +221,9 @@ export async function deleteCA(id: number) {
     select: { classId: true },
   });
   if (!ca) throw new Error("CA record not found.");
-  await requireCAAccess(ca.classId);
+  const { schoolId } = await requireCAAccess(ca.classId);
 
-  await prisma.continuousAssessment.delete({ where: { id } });
+  await prisma.continuousAssessment.delete({ where: { id, schoolId } });
   revalidatePath("/list/ca");
 }
 
@@ -242,10 +245,10 @@ export async function bulkUpsertCA(
   term:          Term,
   academicYear: string
 ) {
-  const teacherId = await requireCAAccess(classId);
+  const { userId: teacherId, schoolId } = await requireCAAccess(classId);
 
   const config = await prisma.cAConfig.findUnique({
-    where: { academicYear },
+    where: { schoolId_academicYear: { schoolId, academicYear } },
   });
   if (!config) {
     throw new Error(`No CA configuration found for ${academicYear}. Ask your admin to set it up.`);
@@ -262,7 +265,8 @@ export async function bulkUpsertCA(
 
       return prisma.continuousAssessment.upsert({
         where: {
-          studentId_subjectId_classId_term_academicYear: {
+          schoolId_studentId_subjectId_classId_term_academicYear: {
+            schoolId,
             studentId:    row.studentId,
             subjectId,
             classId,
@@ -272,6 +276,7 @@ export async function bulkUpsertCA(
         },
         create: {
           classworkScore: row.classworkScore,
+          schoolId,
           examScore:      row.examScore,
           totalScore,
           grade,

@@ -2,7 +2,7 @@
 
 
 import prisma from "@/src/lib/prisma";
-import { currentUser } from "@clerk/nextjs/server";
+import { requirePageSession } from "@/src/lib/authz";
 import Announcements from "@/src/components/Announcements";
 import EventCalendar from "@/src/components/EventCalendar";
 import EventList from "@/src/components/EventList";
@@ -12,24 +12,27 @@ import type { CalendarLesson } from "@/src/components/BigCalendar";
 import Link from "next/link";
 import {
   CheckCircle2, XCircle, Clock, FileCheck,
-  TrendingUp, FileText, Award, AlertCircle, BookOpen,
+  TrendingUp, FileText, AlertCircle, BookOpen,
 } from "lucide-react";
 import { getGradeBandByGrade, computeAggregate, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
+import { notFound } from "next/navigation";
+import type { Term } from "@/src/generated/prisma";
 
 const StudentPage = async ({
   searchParams,
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-  const user = await currentUser();
+  const { userId, schoolId } = await requirePageSession(["student"]);
 
-  const student = await prisma.student.findUnique({
-    where: { id: user!.id },
+  const student = await prisma.student.findFirst({
+    where: { id: userId, schoolId },
     select: { id: true, name: true, surname: true, classId: true, class: { select: { name: true } } },
   });
+  if (!student) notFound();
 
   const lessons = await prisma.lesson.findMany({
-    where:   { classId: student?.classId },
+    where:   { schoolId, classId: student.classId },
     include: {
       subject: { select: { name: true } },
       teacher: { select: { name: true, surname: true } },
@@ -46,17 +49,23 @@ const StudentPage = async ({
   }));
 
   // ── Attendance stats ──────────────────────────────────────────────────────
-  const [totalA, presentA, absentA, lateA, excusedA] = await Promise.all([
-    prisma.attendance.count({ where: { studentId: user!.id } }),
-    prisma.attendance.count({ where: { studentId: user!.id, status: "PRESENT" } }),
-    prisma.attendance.count({ where: { studentId: user!.id, status: "ABSENT"  } }),
-    prisma.attendance.count({ where: { studentId: user!.id, status: "LATE"    } }),
-    prisma.attendance.count({ where: { studentId: user!.id, status: "EXCUSED" } }),
-  ]);
+  const attendanceGrouped = await prisma.attendance.groupBy({
+    by: ["status"],
+    where: { schoolId, studentId: userId },
+    _count: { _all: true },
+  });
+  const attendanceCounts = Object.fromEntries(
+    attendanceGrouped.map((row) => [row.status, row._count._all]),
+  ) as Record<string, number>;
+  const totalA = attendanceGrouped.reduce((sum, row) => sum + row._count._all, 0);
+  const presentA = attendanceCounts.PRESENT ?? 0;
+  const absentA = attendanceCounts.ABSENT ?? 0;
+  const lateA = attendanceCounts.LATE ?? 0;
+  const excusedA = attendanceCounts.EXCUSED ?? 0;
   const attendanceRate = totalA > 0 ? Math.round((presentA / totalA) * 100) : 0;
 
   const recentAttendance = await prisma.attendance.findMany({
-    where:   { studentId: user!.id },
+    where:   { schoolId, studentId: userId },
     orderBy: { date: "desc" },
     take:    7,
     select:  { status: true, date: true, lesson: { select: { subject: { select: { name: true } } } } },
@@ -64,7 +73,7 @@ const StudentPage = async ({
 
   // ── CA records — latest term with data ────────────────────────────────────
   const allCA = await prisma.continuousAssessment.findMany({
-    where:   { studentId: user!.id },
+    where:   { schoolId, studentId: userId },
     include: { subject: { select: { name: true } } },
     orderBy: [{ academicYear: "desc" }, { term: "desc" }],
   });
@@ -89,11 +98,12 @@ const StudentPage = async ({
 
   // Class position
   let myPosition = 0;
-  if (latestCA && student?.classId) {
+  if (latestCA && student.classId) {
     const classmatesCA = await prisma.continuousAssessment.findMany({
       where: {
+        schoolId,
         classId:      student.classId,
-        term:         latestCA.term as any,
+        term:         latestCA.term as Term,
         academicYear: latestCA.year,
       },
       select: { studentId: true, gradePoint: true },
@@ -106,7 +116,7 @@ const StudentPage = async ({
     const sorted = Object.entries(gpMap)
       .map(([sid, gps]) => ({ sid, agg: computeAggregate(gps) }))
       .sort((a, b) => a.agg - b.agg);
-    myPosition = sorted.findIndex((s) => s.sid === user!.id) + 1;
+    myPosition = sorted.findIndex((s) => s.sid === userId) + 1;
   }
 
   // Best and weakest subject
@@ -114,7 +124,7 @@ const StudentPage = async ({
   const bestSubject  = sortedByGP[0] ?? null;
   const weakSubject  = sortedByGP[sortedByGP.length - 1] ?? null;
 
-  const studentName = student?.name ?? user?.firstName ?? "Student";
+  const studentName = student.name;
 
   return (
     <div className="p-4 flex gap-4 flex-col xl:flex-row">
@@ -125,7 +135,7 @@ const StudentPage = async ({
         <WelcomeBanner
           role="student"
           name={studentName}
-          subtitle={`Class ${student?.class?.name ?? ""} · ${attendanceRate}% attendance rate`}
+          subtitle={`Class ${student.class?.name ?? ""} · ${attendanceRate}% attendance rate`}
           tag="Term 2 · 2025/26"
         />
 
@@ -146,7 +156,7 @@ const StudentPage = async ({
                 </div>
               </div>
               <Link
-                href={`/list/report-cards/${user!.id}?term=${latestCA.term}&year=${latestCA.year}&classId=${student?.classId}`}
+                href={`/list/report-cards/${userId}?term=${latestCA.term}&year=${latestCA.year}&classId=${student.classId}`}
                 className="flex items-center gap-1.5 px-3 py-2 bg-violet-600 text-white rounded-xl text-xs font-bold hover:bg-violet-700 transition-colors"
               >
                 <FileText size={12} /> View Report Card
@@ -313,7 +323,7 @@ const StudentPage = async ({
           <div className="mb-4">
             <h1 className="text-xl font-nunito font-extrabold text-gray-800">My Schedule</h1>
             <p className="text-sm text-gray-400 mt-0.5">
-              Class {student?.class?.name ?? ""} — weekly timetable
+              Class {student.class?.name ?? ""} — weekly timetable
             </p>
           </div>
           <BigCalendar lessons={calendarLessons} viewAs="student" />

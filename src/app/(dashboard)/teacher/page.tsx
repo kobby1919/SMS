@@ -1,7 +1,7 @@
 // src/app/(dashboard)/teacher/page.tsx
 
 import prisma from "@/src/lib/prisma";
-import { currentUser } from "@clerk/nextjs/server";
+import { requirePageSession } from "@/src/lib/authz";
 import Announcements from "@/src/components/Announcements";
 import EventCalendar from "@/src/components/EventCalendar";
 import EventList from "@/src/components/EventList";
@@ -16,15 +16,15 @@ const TeacherPage = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-  const user = await currentUser();
+  const { userId, schoolId } = await requirePageSession(["teacher"]);
 
-  const teacher = await prisma.teacher.findUnique({
-    where: { id: user!.id },
+  const teacher = await prisma.teacher.findFirst({
+    where: { id: userId, schoolId },
     include: { classes: { select: { id: true, name: true } } },
   });
 
   const lessons = await prisma.lesson.findMany({
-    where:   { teacherId: user!.id },
+    where:   { schoolId, teacherId: userId },
     include: {
       subject: { select: { name: true } },
       class:   { select: { name: true } },
@@ -44,7 +44,7 @@ const TeacherPage = async ({
     className: l.class.name,
   }));
 
-  const teacherFirstName = teacher?.name ?? user?.firstName ?? "Teacher";
+  const teacherFirstName = teacher?.name ?? "Teacher";
   const teacherFullName  = teacher ? `${teacher.name} ${teacher.surname}` : teacherFirstName;
 
   return (
@@ -111,9 +111,9 @@ const TeacherPage = async ({
       </div>
 
       <div className="w-full xl:w-1/3 flex flex-col gap-4">
-        <CAQuickCard teacherId={user!.id} />
+        <CAQuickCard teacherId={userId} schoolId={schoolId} />
         {/* ✅ Upcoming exams — new addition */}
-        <UpcomingExams teacherId={user!.id} />
+        <UpcomingExams teacherId={userId} />
         <EventCalendar />
         <EventList dateParam={searchParams.date} />
         <Announcements />

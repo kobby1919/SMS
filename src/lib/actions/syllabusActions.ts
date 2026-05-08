@@ -3,25 +3,22 @@
 // src/lib/actions/syllabusActions.ts
 
 import prisma from "@/src/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { requireRole } from "@/src/lib/authz";
 import { revalidatePath } from "next/cache";
 import type { Term, SyllabusStatus } from "@/src/generated/prisma";
+import { parseActionInput } from "@/src/lib/validation/parse";
+import { syllabusCreateSchema } from "@/src/lib/validation/syllabus";
 
 // ─── Auth helpers ─────────────────────────────────────────────────────────────
 
-async function requireAdmin(): Promise<string> {
-  const { userId, sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (!userId || role !== "admin") throw new Error("Only admins can perform this action.");
-  return userId;
+async function requireAdmin(): Promise<{ userId: string; schoolId: string }> {
+  const { userId, schoolId } = await requireRole(["admin"]);
+  return { userId, schoolId };
 }
 
-async function requireAdminOrTeacher(): Promise<{ userId: string; role: string }> {
-  const { userId, sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (!userId || (role !== "admin" && role !== "teacher"))
-    throw new Error("Unauthorized.");
-  return { userId, role };
+async function requireAdminOrTeacher(): Promise<{ userId: string; role: string; schoolId: string }> {
+  const { userId, role, schoolId } = await requireRole(["admin", "teacher"]);
+  return { userId, role, schoolId };
 }
 
 // ─── SYLLABUS CRUD ────────────────────────────────────────────────────────────
@@ -35,16 +32,17 @@ export type SyllabusInput = {
 };
 
 export async function createSyllabus(data: SyllabusInput) {
-  await requireAdmin();
+  const { schoolId } = await requireAdmin();
+  const parsed = parseActionInput(syllabusCreateSchema, data);
 
-  // Check for duplicate
   const existing = await prisma.syllabus.findUnique({
     where: {
-      subjectId_gradeId_term_academicYear: {
-        subjectId:    data.subjectId,
-        gradeId:      data.gradeId,
-        term:         data.term,
-        academicYear: data.academicYear,
+      schoolId_subjectId_gradeId_term_academicYear: {
+        schoolId,
+        subjectId:    parsed.subjectId,
+        gradeId:      parsed.gradeId,
+        term:         parsed.term,
+        academicYear: parsed.academicYear,
       },
     },
   });
@@ -56,11 +54,12 @@ export async function createSyllabus(data: SyllabusInput) {
 
   const syllabus = await prisma.syllabus.create({
     data: {
-      subjectId:    data.subjectId,
-      gradeId:      data.gradeId,
-      term:         data.term,
-      academicYear: data.academicYear,
-      description:  data.description ?? "",
+      subjectId:    parsed.subjectId,
+      schoolId,
+      gradeId:      parsed.gradeId,
+      term:         parsed.term,
+      academicYear: parsed.academicYear,
+      description:  parsed.description ?? "",
       status:       "DRAFT",
     },
   });
@@ -73,21 +72,36 @@ export async function updateSyllabus(
   id: number,
   data: { description?: string; status?: SyllabusStatus }
 ) {
-  await requireAdmin();
+  const { schoolId } = await requireAdmin();
+  const syllabus = await prisma.syllabus.findFirst({
+    where: { id, schoolId },
+    select: { id: true },
+  });
+  if (!syllabus) throw new Error("Syllabus not found.");
   await prisma.syllabus.update({ where: { id }, data });
   revalidatePath("/list/syllabus");
   revalidatePath(`/list/syllabus/${id}`);
 }
 
 export async function deleteSyllabus(id: number) {
-  await requireAdmin();
+  const { schoolId } = await requireAdmin();
+  const syllabus = await prisma.syllabus.findFirst({
+    where: { id, schoolId },
+    select: { id: true },
+  });
+  if (!syllabus) throw new Error("Syllabus not found.");
   // Cascade deletes topics + progress via schema onDelete: Cascade
   await prisma.syllabus.delete({ where: { id } });
   revalidatePath("/list/syllabus");
 }
 
 export async function publishSyllabus(id: number) {
-  await requireAdmin();
+  const { schoolId } = await requireAdmin();
+  const syllabus = await prisma.syllabus.findFirst({
+    where: { id, schoolId },
+    select: { id: true },
+  });
+  if (!syllabus) throw new Error("Syllabus not found.");
   // Must have at least one topic to publish
   const count = await prisma.syllabusTopic.count({ where: { syllabusId: id } });
   if (count === 0) throw new Error("Add at least one topic before publishing.");
@@ -97,7 +111,12 @@ export async function publishSyllabus(id: number) {
 }
 
 export async function unpublishSyllabus(id: number) {
-  await requireAdmin();
+  const { schoolId } = await requireAdmin();
+  const syllabus = await prisma.syllabus.findFirst({
+    where: { id, schoolId },
+    select: { id: true },
+  });
+  if (!syllabus) throw new Error("Syllabus not found.");
   await prisma.syllabus.update({ where: { id }, data: { status: "DRAFT" } });
   revalidatePath("/list/syllabus");
   revalidatePath(`/list/syllabus/${id}`);
@@ -119,10 +138,15 @@ export type TopicInput = {
 };
 
 export async function upsertSyllabusTopic(data: TopicInput) {
-  await requireAdmin();
+  const { schoolId } = await requireAdmin();
 
   if (!data.title.trim()) throw new Error("Topic title is required.");
   if (data.weekNumber < 1) throw new Error("Week number must be 1 or greater.");
+  const syllabus = await prisma.syllabus.findFirst({
+    where: { id: data.syllabusId, schoolId },
+    select: { id: true },
+  });
+  if (!syllabus) throw new Error("Syllabus not found.");
 
   const payload = {
     syllabusId:        data.syllabusId,
@@ -137,6 +161,15 @@ export async function upsertSyllabusTopic(data: TopicInput) {
   };
 
   if (data.id) {
+    const topic = await prisma.syllabusTopic.findFirst({
+      where: {
+        id: data.id,
+        syllabusId: data.syllabusId,
+        syllabus: { is: { schoolId } },
+      },
+      select: { id: true },
+    });
+    if (!topic) throw new Error("Topic not found.");
     await prisma.syllabusTopic.update({ where: { id: data.id }, data: payload });
   } else {
     await prisma.syllabusTopic.create({ data: payload });
@@ -147,7 +180,16 @@ export async function upsertSyllabusTopic(data: TopicInput) {
 }
 
 export async function deleteSyllabusTopic(topicId: number, syllabusId: number) {
-  await requireAdmin();
+  const { schoolId } = await requireAdmin();
+  const topic = await prisma.syllabusTopic.findFirst({
+    where: {
+      id: topicId,
+      syllabusId,
+      syllabus: { is: { schoolId } },
+    },
+    select: { id: true },
+  });
+  if (!topic) throw new Error("Topic not found.");
   await prisma.syllabusTopic.delete({ where: { id: topicId } });
   revalidatePath(`/list/syllabus/${syllabusId}`);
   revalidatePath(`/list/syllabus/${syllabusId}/edit`);
@@ -157,7 +199,23 @@ export async function reorderTopics(
   syllabusId: number,
   orderedIds: number[]   // topic ids in the new order
 ) {
-  await requireAdmin();
+  const { schoolId } = await requireAdmin();
+  const syllabus = await prisma.syllabus.findFirst({
+    where: { id: syllabusId, schoolId },
+    select: { id: true },
+  });
+  if (!syllabus) throw new Error("Syllabus not found.");
+  const topics = await prisma.syllabusTopic.findMany({
+    where: {
+      id: { in: orderedIds },
+      syllabusId,
+      syllabus: { is: { schoolId } },
+    },
+    select: { id: true },
+  });
+  if (topics.length !== orderedIds.length) {
+    throw new Error("One or more topics were not found.");
+  }
   await Promise.all(
     orderedIds.map((id, idx) =>
       prisma.syllabusTopic.update({ where: { id }, data: { order: idx + 1 } })
@@ -173,11 +231,24 @@ export async function markTopicCovered(
   classId:         number,
   notes?:          string
 ) {
-  const { userId } = await requireAdminOrTeacher();
+  const { userId, schoolId } = await requireAdminOrTeacher();
+  const [topic, cls] = await Promise.all([
+    prisma.syllabusTopic.findFirst({
+      where: { id: syllabusTopicId, syllabus: { is: { schoolId } } },
+      select: { syllabusId: true },
+    }),
+    prisma.class.findFirst({
+      where: { id: classId, schoolId },
+      select: { id: true },
+    }),
+  ]);
+  if (!topic) throw new Error("Topic not found.");
+  if (!cls) throw new Error("Class not found.");
 
   await prisma.syllabusTopicProgress.upsert({
-    where: { syllabusTopicId_classId: { syllabusTopicId, classId } },
+    where: { schoolId_syllabusTopicId_classId: { schoolId, syllabusTopicId, classId } },
     create: {
+      schoolId,
       syllabusTopicId,
       classId,
       teacherId:   userId,
@@ -191,27 +262,28 @@ export async function markTopicCovered(
     },
   });
 
-  // Find the syllabus id for revalidation
-  const topic = await prisma.syllabusTopic.findUnique({
-    where:  { id: syllabusTopicId },
-    select: { syllabusId: true },
-  });
-  if (topic) revalidatePath(`/list/syllabus/${topic.syllabusId}`);
+  revalidatePath(`/list/syllabus/${topic.syllabusId}`);
 }
 
 export async function unmarkTopicCovered(
   syllabusTopicId: number,
   classId:         number
 ) {
-  await requireAdminOrTeacher();
-
-  await prisma.syllabusTopicProgress.deleteMany({
-    where: { syllabusTopicId, classId },
-  });
-
-  const topic = await prisma.syllabusTopic.findUnique({
-    where:  { id: syllabusTopicId },
+  const { schoolId } = await requireAdminOrTeacher();
+  const topic = await prisma.syllabusTopic.findFirst({
+    where: { id: syllabusTopicId, syllabus: { is: { schoolId } } },
     select: { syllabusId: true },
   });
-  if (topic) revalidatePath(`/list/syllabus/${topic.syllabusId}`);
+  if (!topic) throw new Error("Topic not found.");
+  const cls = await prisma.class.findFirst({
+    where: { id: classId, schoolId },
+    select: { id: true },
+  });
+  if (!cls) throw new Error("Class not found.");
+
+  await prisma.syllabusTopicProgress.deleteMany({
+    where: { schoolId, syllabusTopicId, classId },
+  });
+
+  revalidatePath(`/list/syllabus/${topic.syllabusId}`);
 }

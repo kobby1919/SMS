@@ -1,8 +1,7 @@
 // src/app/(dashboard)/list/syllabus/new/page.tsx
 
 
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import { BookMarked, ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -11,14 +10,12 @@ import SyllabusCreateForm from "@/src/components/SyllabusCreateForm";
 export const dynamic = "force-dynamic";
 
 const NewSyllabusPage = async () => {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (role !== "admin") redirect("/list/syllabus");
+  const { schoolId } = await requirePageSession(["admin"]);
 
   const [subjects, grades, configs] = await Promise.all([
-    prisma.subject.findMany({ orderBy: { name: "asc" } }),
-    prisma.grade.findMany({ orderBy: { order: "asc" } }),
-    prisma.cAConfig.findMany({ orderBy: { academicYear: "desc" } }),
+    prisma.subject.findMany({ where: { schoolId }, orderBy: { name: "asc" } }),
+    prisma.grade.findMany({ where: { schoolId }, orderBy: { order: "asc" } }),
+    prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } }),
   ]);
 
   const academicYears = configs.length > 0

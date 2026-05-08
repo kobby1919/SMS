@@ -1,10 +1,10 @@
 // src/app/(dashboard)/list/finance/bills/page.tsx
 
 
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
+import Image from "next/image";
 import {
   FileText, ChevronRight, Search,
 } from "lucide-react";
@@ -14,33 +14,44 @@ import {
 } from "@/src/lib/constants/finance";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import Pagination from "@/src/components/pagination";
+import { Prisma } from "@/src/generated/prisma";
+import type { BillStatus, Term } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
 
 const TERM_LABELS: Record<string, string> = {
   TERM_1: "Term 1", TERM_2: "Term 2", TERM_3: "Term 3",
 };
+const BILL_STATUSES = ["UNPAID", "PARTIAL", "PAID", "OVERPAID", "WAIVED"] as const;
+const TERMS = ["TERM_1", "TERM_2", "TERM_3"] as const;
+
+function parseBillStatus(value: string | undefined): BillStatus | undefined {
+  return BILL_STATUSES.includes(value as BillStatus) ? (value as BillStatus) : undefined;
+}
+
+function parseTerm(value: string | undefined): Term | undefined {
+  return TERMS.includes(value as Term) ? (value as Term) : undefined;
+}
 
 const BillsPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (role !== "admin" && role !== "bursar") redirect("/");
+  const { schoolId } = await requirePageSession(["admin", "bursar"]);
 
   const sp              = await searchParams;
   const page            = sp.page ? parseInt(sp.page) : 1;
-  const filterStatus    = sp.status      as string | undefined;
+  const filterStatus    = parseBillStatus(sp.status);
   const filterClass     = sp.classId     ? parseInt(sp.classId)     : undefined;
   const filterStructure = sp.structureId ? parseInt(sp.structureId) : undefined;
   const filterYear      = sp.year        as string | undefined;
-  const filterTerm      = sp.term        as string | undefined;
+  const filterTerm      = parseTerm(sp.term);
   const search          = sp.search      as string | undefined;
 
   // Build query
-  const where: any = {};
+  const where: Prisma.StudentBillWhereInput = { schoolId };
+  const studentWhere: Prisma.StudentWhereInput = {};
   if (filterStatus)    where.status         = filterStatus;
   if (filterStructure) where.feeStructureId = filterStructure;
   if (filterYear || filterTerm) {
@@ -49,16 +60,16 @@ const BillsPage = async ({
     if (filterTerm) where.feeStructure.term         = filterTerm;
   }
   if (filterClass) {
-    where.student = { classId: filterClass };
+    studentWhere.classId = filterClass;
   }
   if (search) {
-    where.student = {
-      ...where.student,
-      OR: [
-        { name:    { contains: search, mode: "insensitive" } },
-        { surname: { contains: search, mode: "insensitive" } },
-      ],
-    };
+    studentWhere.OR = [
+      { name:    { contains: search, mode: "insensitive" } },
+      { surname: { contains: search, mode: "insensitive" } },
+    ];
+  }
+  if (Object.keys(studentWhere).length > 0) {
+    where.student = { is: studentWhere };
   }
 
   const [bills, count, classes, structures] = await Promise.all([
@@ -76,10 +87,6 @@ const BillsPage = async ({
         feeStructure: {
           select: { title: true, term: true, academicYear: true },
         },
-        payments: {
-          where:   { status: "CONFIRMED" },
-          select:  { amount: true },
-        },
       },
       orderBy: [
         { status: "asc" },
@@ -89,9 +96,9 @@ const BillsPage = async ({
       skip: ITEM_PER_PAGE * (page - 1),
     }),
     prisma.studentBill.count({ where }),
-    prisma.class.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.class.findMany({ where: { schoolId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
     prisma.feeStructure.findMany({
-      where:   { status: "PUBLISHED" },
+      where:   { schoolId, status: "PUBLISHED" },
       orderBy: { createdAt: "desc" },
       select:  { id: true, title: true },
     }),
@@ -210,8 +217,6 @@ const BillsPage = async ({
           <div className="divide-y divide-gray-50">
             {bills.map((bill) => {
               const style = BILL_STATUS_STYLES[bill.status];
-              const paidSoFar = bill.payments.reduce((s, p) => s + Number(p.amount), 0);
-
               return (
                 <Link
                   key={bill.id}
@@ -221,7 +226,15 @@ const BillsPage = async ({
                   {/* Avatar */}
                   <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-sm font-black text-indigo-600 shrink-0">
                     {bill.student.img
-                      ? <img src={bill.student.img} alt="" className="w-full h-full object-cover rounded-xl" />
+                      ? (
+                        <Image
+                          src={bill.student.img}
+                          alt=""
+                          width={40}
+                          height={40}
+                          className="w-full h-full object-cover rounded-xl"
+                        />
+                      )
                       : `${bill.student.name[0]}${bill.student.surname[0]}`
                     }
                   </div>
@@ -244,7 +257,7 @@ const BillsPage = async ({
 
                   <div className="hidden sm:flex flex-col items-end gap-0.5 shrink-0">
                     <p className="text-xs text-gray-400">Paid</p>
-                    <p className="text-sm font-black text-emerald-700">{formatGHS(paidSoFar)}</p>
+                    <p className="text-sm font-black text-emerald-700">{formatGHS(bill.amountPaid)}</p>
                   </div>
 
                   <div className="flex flex-col items-end gap-0.5 shrink-0">

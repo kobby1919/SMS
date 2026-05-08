@@ -1,8 +1,7 @@
 // src/app/(dashboard)/list/finance/fee-structures/new/page.tsx
 
 
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
 import { ArrowLeft, FileText } from "lucide-react";
@@ -11,13 +10,11 @@ import FeeStructureCreateForm from "@/src/components/FeeStructureCreateForm";
 export const dynamic = "force-dynamic";
 
 const NewFeeStructurePage = async () => {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (role !== "admin" && role !== "bursar") redirect("/");
+  const { schoolId } = await requirePageSession(["admin", "bursar"]);
 
   const [grades, configs] = await Promise.all([
-    prisma.grade.findMany({ orderBy: { order: "asc" } }),
-    prisma.cAConfig.findMany({ orderBy: { academicYear: "desc" } }),
+    prisma.grade.findMany({ where: { schoolId }, orderBy: { order: "asc" } }),
+    prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } }),
   ]);
 
   const academicYears = configs.length > 0

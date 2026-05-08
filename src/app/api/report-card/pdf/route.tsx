@@ -2,7 +2,7 @@
 
 
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { getAuthzContext } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import { getGradeLabel } from "@/src/lib/actions/caActions";
 import { computeAggregate, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
@@ -15,6 +15,7 @@ import {
   StyleSheet,
 } from "@react-pdf/renderer";
 import React from "react";
+import type { Term } from "@/src/generated/prisma";
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const S = StyleSheet.create({
@@ -354,9 +355,9 @@ function ReportCardPDF(p: PDFProps) {
 // ─── Route handler ────────────────────────────────────────────────────────────
 export async function GET(req: NextRequest) {
   try {
-    const { userId, sessionClaims } = await auth();
-    const role = (sessionClaims?.metadata as { role?: string })?.role;
-    if (!userId) return new NextResponse("Unauthorized", { status: 401 });
+    const ctx = await getAuthzContext();
+    if (!ctx) return new NextResponse("Unauthorized", { status: 401 });
+    const { userId, role, schoolId } = ctx;
 
     const sp           = req.nextUrl.searchParams;
     const studentId    = sp.get("studentId")  ?? "";
@@ -366,8 +367,8 @@ export async function GET(req: NextRequest) {
     if (!studentId) return new NextResponse("studentId required", { status: 400 });
 
     // Load student
-    const student = await prisma.student.findUnique({
-      where:   { id: studentId },
+    const student = await prisma.student.findFirst({
+      where:   { id: studentId, schoolId },
       include: {
         class: {
           include: {
@@ -387,12 +388,12 @@ export async function GET(req: NextRequest) {
     if (role === "parent" && student.parentId !== userId)
       return new NextResponse("Forbidden", { status: 403 });
     if (role === "teacher") {
-      const cls = await prisma.class.findUnique({ where: { id: student.classId }, select: { supervisorId: true } });
+      const cls = await prisma.class.findFirst({ where: { id: student.classId, schoolId }, select: { supervisorId: true } });
       if (cls?.supervisorId !== userId) return new NextResponse("Forbidden", { status: 403 });
     }
 
     // Config
-    const configs    = await prisma.cAConfig.findMany({ orderBy: { academicYear: "desc" } });
+    const configs    = await prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } });
     const activeYear = academicYear || configs[0]?.academicYear || "2024/25";
     const config     = configs.find((c) => c.academicYear === activeYear);
     const cwWeight   = config?.classworkWeight ?? 30;
@@ -400,14 +401,14 @@ export async function GET(req: NextRequest) {
 
     // CA records for this student
     const caRecords = await prisma.continuousAssessment.findMany({
-      where: { studentId, classId: student.classId, term: term as any, academicYear: activeYear },
+      where: { schoolId, studentId, classId: student.classId, term: term as Term, academicYear: activeYear },
       include: { subject: { select: { name: true } } },
       orderBy: { subject: { name: "asc" } },
     });
 
     // All class CA records (for positions)
     const classCA = await prisma.continuousAssessment.findMany({
-      where:  { classId: student.classId, term: term as any, academicYear: activeYear },
+      where:  { schoolId, classId: student.classId, term: term as Term, academicYear: activeYear },
       select: { studentId: true, subjectId: true, totalScore: true, gradePoint: true },
     });
 
@@ -427,7 +428,7 @@ export async function GET(req: NextRequest) {
     }
     const sorted          = Object.entries(gpMap).map(([sid, gps]) => ({ sid, agg: computeAggregate(gps) })).sort((a, b) => a.agg - b.agg);
     const overallPosition = sorted.findIndex((c) => c.sid === studentId) + 1;
-    const classSize       = await prisma.student.count({ where: { classId: student.classId } });
+    const classSize       = await prisma.student.count({ where: { schoolId, classId: student.classId } });
 
     // Build subject rows
     const subjectRows: SubjectRow[] = caRecords.map((ca) => ({

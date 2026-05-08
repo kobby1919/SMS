@@ -3,8 +3,8 @@
 // Accessible by: admin (all classes), teacher (supervised classes only)
 
 
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import CAEntryForm from "@/src/components/CAEntryForm";
 import CAClassSummary from "@/src/components/CAClassSummary";
@@ -17,12 +17,7 @@ const CAPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { userId, sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-
-  if (!userId || (role !== "admin" && role !== "teacher")) {
-    redirect("/");
-  }
+  const { userId, role, schoolId } = await requirePageSession(["admin", "teacher"]);
 
   const params = await searchParams;
   const selectedClassId = params.classId ? parseInt(params.classId) : null;
@@ -37,12 +32,13 @@ const CAPage = async ({
 
   if (role === "admin") {
     supervisedClasses = await prisma.class.findMany({
+      where: { schoolId },
       orderBy: { name: "asc" },
       include: { grade: { select: { level: true } } },
     });
   } else {
     supervisedClasses = await prisma.class.findMany({
-      where: { supervisorId: userId },
+      where: { schoolId, supervisorId: userId },
       orderBy: { name: "asc" },
       include: { grade: { select: { level: true } } },
     });
@@ -75,7 +71,7 @@ const CAPage = async ({
 
   // ── Students in this class ────────────────────────────────────────────────
   const students = await prisma.student.findMany({
-    where: { classId: activeClass.id },
+    where: { schoolId, classId: activeClass.id },
     orderBy: [{ surname: "asc" }, { name: "asc" }],
     select: { id: true, name: true, surname: true },
   });
@@ -84,7 +80,7 @@ const CAPage = async ({
   // A subject may have multiple lesson slots per week (e.g. Math on Mon & Wed).
   // We deduplicate by subjectId so each subject appears only once.
   const lessonsForClass = await prisma.lesson.findMany({
-    where: { classId: activeClass.id },
+    where: { schoolId, classId: activeClass.id },
     select: { subject: { select: { id: true, name: true } } },
     orderBy: { subject: { name: "asc" } },
   });
@@ -101,7 +97,7 @@ const CAPage = async ({
 
   // ── Existing CA records (pre-fill the entry form) ─────────────────────────
   const existingCA = await prisma.continuousAssessment.findMany({
-    where: { classId: activeClass.id },
+    where: { schoolId, classId: activeClass.id },
     select: {
       studentId: true,
       subjectId: true,
@@ -118,7 +114,7 @@ const CAPage = async ({
 
   // ── CA summary data (summary tab) ─────────────────────────────────────────
   const summaryData = await prisma.continuousAssessment.findMany({
-    where: { classId: activeClass.id },
+    where: { schoolId, classId: activeClass.id },
     include: {
       student: { select: { id: true, name: true, surname: true } },
       subject: { select: { id: true, name: true } },
@@ -128,6 +124,7 @@ const CAPage = async ({
 
   // ── Academic years from CA configs ────────────────────────────────────────
   const configs = await prisma.cAConfig.findMany({
+    where: { schoolId },
     orderBy: { academicYear: "desc" },
   });
   const academicYears =

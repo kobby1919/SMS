@@ -1,7 +1,7 @@
 // src/app/(dashboard)/list/finance/fee-structures/[id]/generate-bills/page.tsx
 
-import { auth } from "@clerk/nextjs/server";
 import { redirect, notFound } from "next/navigation";
+import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
 import { ArrowLeft, Users, FileText } from "lucide-react";
@@ -19,15 +19,13 @@ const GenerateBillsPage = async ({
 }: {
   params: Promise<{ id: string }>;
 }) => {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (role !== "admin" && role !== "bursar") redirect("/");
+  const { role, schoolId } = await requirePageSession(["admin", "bursar"]);
 
   const { id } = await params;
   const feeStructureId = parseInt(id);
 
-  const structure = await prisma.feeStructure.findUnique({
-    where:   { id: feeStructureId },
+  const structure = await prisma.feeStructure.findFirst({
+    where:   { id: feeStructureId, schoolId },
     include: {
       grade:    { select: { id: true, level: true } },
       feeItems: { orderBy: { isOptional: "asc" } },
@@ -39,7 +37,7 @@ const GenerateBillsPage = async ({
 
   // Classes at this grade level
   const classes = await prisma.class.findMany({
-    where:   { gradeId: structure.gradeId },
+    where:   { schoolId, gradeId: structure.gradeId },
     include: {
       students: { select: { id: true } },
       _count:   { select: { students: true } },

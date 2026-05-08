@@ -14,40 +14,15 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import prisma from "@/src/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { requireFinanceAccess } from "@/src/lib/authz";
+
+export { requireFinanceAccess };
 import { Prisma } from "@/src/generated/prisma";                 // ← fix 1: Prisma namespace (gives us Decimal + InputJsonValue)
 import type { AuditAction } from "@/src/generated/prisma";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type FinanceRole = "admin" | "bursar";
-
-export type AuthContext = {
-  userId: string;
-  role:   FinanceRole;
-};
-
-// ─── 1. Auth guard ────────────────────────────────────────────────────────────
-// Call at the top of every finance server action.
-// Throws if the caller is not admin or bursar.
-// Returns { userId, role } so callers can record who performed the action.
-
-export async function requireFinanceAccess(): Promise<AuthContext> {
-  const { userId, sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-
-  if (!userId) {
-    throw new Error("You must be signed in to perform this action.");
-  }
-
-  if (role !== "admin" && role !== "bursar") {
-    throw new Error("Only admin or bursar accounts can manage finance records.");
-  }
-
-  return { userId, role: role as FinanceRole };
-}
-
-// ─── 2. Receipt number generator ─────────────────────────────────────────────
+// ─── 1. Receipt number generator ─────────────────────────────────────────────
 // Atomically increments the ReceiptCounter for the current calendar year
 // and returns the next receipt number in format: RCP-YYYY-NNN (zero-padded to 3).
 //
@@ -60,20 +35,21 @@ export async function requireFinanceAccess(): Promise<AuthContext> {
 //   First payment of 2027  → RCP-2027-001  (counter reset automatically)
 
 export async function generateReceiptNumber(): Promise<string> {
+  const { schoolId } = await requireFinanceAccess();
   const year = new Date().getFullYear();
 
   // Upsert the counter row for this year, then increment atomically
   const counter = await prisma.$transaction(async (tx) => {
     // Ensure the row exists for this year
     await tx.receiptCounter.upsert({
-      where:  { year },
-      create: { year, lastCounter: 0 },
+      where:  { schoolId_year: { schoolId, year } },
+      create: { schoolId, year, lastCounter: 0 },
       update: {},                        // don't change it yet — increment below
     });
 
     // Increment and return the new value
     return tx.receiptCounter.update({
-      where: { year },
+      where: { schoolId_year: { schoolId, year } },
       data:  { lastCounter: { increment: 1 } },
     });
   });
@@ -93,6 +69,7 @@ export async function generateReceiptNumber(): Promise<string> {
 //             keep it lean (no nested relations), just the key fields.
 
 export async function writeAuditLog({
+  schoolId,
   action,
   performedBy,
   entityType,
@@ -100,6 +77,7 @@ export async function writeAuditLog({
   metadata,
   ipAddress,
 }: {
+  schoolId:      string;
   action:      AuditAction;
   performedBy: string;
   entityType:  string;
@@ -109,6 +87,7 @@ export async function writeAuditLog({
 }): Promise<void> {
   await prisma.financeAuditLog.create({
     data: {
+      schoolId,
       action,
       performedBy,
       entityType,
@@ -130,9 +109,9 @@ export async function writeAuditLog({
 //   otherwise                  → UNPAID
 //   WAIVED is set explicitly — this function never sets WAIVED.
 
-export async function recomputeBillStatus(billId: number): Promise<void> {
-  const bill = await prisma.studentBill.findUnique({
-    where:  { id: billId },
+export async function recomputeBillStatus(billId: number, schoolId: string): Promise<void> {
+  const bill = await prisma.studentBill.findFirst({
+    where:  { id: billId, schoolId },
     select: {
       totalAmount:    true,
       amountPaid:     true,
@@ -171,64 +150,3 @@ export async function recomputeBillStatus(billId: number): Promise<void> {
     },
   });
 }
-
-// ─── 5. Format currency helper ────────────────────────────────────────────────
-// Formats a Decimal or number as GH₵ currency string.
-// Used in server-rendered pages and PDF generators.
-// e.g. formatGHS(1200.5) → "GH₵ 1,200.50"
-
-export function formatGHS(amount: Prisma.Decimal | number | string): string {
-  const num = typeof amount === "object" ? amount.toNumber() : Number(amount);
-  return `GH₵ ${num.toLocaleString("en-GH", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
-}
-
-// ─── 6. Payment method labels ─────────────────────────────────────────────────
-// Human-readable labels for PaymentMethod enum values.
-
-export const PAYMENT_METHOD_LABELS: Record<string, string> = {
-  CASH:             "Cash",
-  MTN_MOMO:         "MTN Mobile Money",
-  VODAFONE_CASH:    "Vodafone Cash",
-  AIRTELTIGO_MONEY: "AirtelTigo Money",
-  BANK_TRANSFER:    "Bank Transfer",
-  CHEQUE:           "Cheque",
-  OTHER:            "Other",
-};
-
-// ─── 7. Fee category labels ───────────────────────────────────────────────────
-
-export const FEE_CATEGORY_LABELS: Record<string, string> = {
-  TUITION:   "Tuition",
-  LEVY:      "Levy",
-  EXAM:      "Exam Fee",
-  FEEDING:   "Feeding",
-  TRANSPORT: "Transport",
-  UNIFORM:   "Uniform",
-  LIBRARY:   "Library",
-  SPORTS:    "Sports",
-  OTHER:     "Other",
-};
-
-// ─── 8. Discount type labels ──────────────────────────────────────────────────
-
-export const DISCOUNT_TYPE_LABELS: Record<string, string> = {
-  SCHOLARSHIP: "Scholarship",
-  SIBLING:     "Sibling Discount",
-  STAFF_CHILD: "Staff Child",
-  BURSARY:     "Bursary",
-  OTHER:       "Other",
-};
-
-// ─── 9. Bill status colours (Tailwind classes) ────────────────────────────────
-// Used consistently across all finance pages and PDFs.
-
-export const BILL_STATUS_STYLES: Record<string, { bg: string; text: string; border: string; label: string }> = {
-  UNPAID:   { bg: "bg-rose-50",    text: "text-rose-700",    border: "border-rose-200",    label: "Unpaid"   },
-  PARTIAL:  { bg: "bg-amber-50",   text: "text-amber-700",   border: "border-amber-200",   label: "Partial"  },
-  PAID:     { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200", label: "Paid"     },
-  OVERPAID: { bg: "bg-blue-50",    text: "text-blue-700",    border: "border-blue-200",    label: "Overpaid" },
-  WAIVED:   { bg: "bg-gray-50",    text: "text-gray-600",    border: "border-gray-200",    label: "Waived"   },
-};

@@ -2,7 +2,7 @@
 
 import prisma from "@/src/lib/prisma";
 import { notFound } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
+import { requirePageSession } from "@/src/lib/authz";
 import Announcements from "@/src/components/Announcements";
 import BigCalendar from "@/src/components/BigCalendar";
 import Performance from "@/src/components/Performance";
@@ -19,13 +19,12 @@ const SingleTeacherPage = async ({
 }: {
   params: Promise<{ id: string }>;
 }) => {
-  const {id} = await params;
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const { id } = await params;
+  const { role, schoolId } = await requirePageSession();
 
   // Fetch teacher with all relations
-  const teacher = await prisma.teacher.findUnique({
-    where: { id: id },
+  const teacher = await prisma.teacher.findFirst({
+    where: { id, schoolId },
     include: {
       subjects: { select: { id: true, name: true } },
       lessons: {
@@ -60,8 +59,8 @@ const SingleTeacherPage = async ({
 
   // Attendance across all their lessons' attendance records
   const [totalAttendance, presentAttendance] = await Promise.all([
-    prisma.attendance.count({ where: { lesson: { teacherId: teacher.id } } }),
-    prisma.attendance.count({ where: { lesson: { teacherId: teacher.id }, present: true } }),
+    prisma.attendance.count({ where: { schoolId, lesson: { teacherId: teacher.id } } }),
+    prisma.attendance.count({ where: { schoolId, lesson: { teacherId: teacher.id }, present: true } }),
   ]);
   const attendancePct = totalAttendance > 0
     ? Math.round((presentAttendance / totalAttendance) * 100)

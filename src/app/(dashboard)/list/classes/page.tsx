@@ -1,6 +1,7 @@
 // src/app/(dashboard)/list/classes/page.tsx
 
 import Pagination from "@/src/components/pagination";
+import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
 import Image from "next/image";
 import { Users, GraduationCap, LayoutGrid } from "lucide-react";
@@ -8,20 +9,18 @@ import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
-import { auth } from "@clerk/nextjs/server";
 
 const ClassListPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const { role, schoolId } = await requirePageSession();
 
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
-  const query: Prisma.ClassWhereInput = {};
+  const query: Prisma.ClassWhereInput = { schoolId };
 
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {

@@ -1,8 +1,8 @@
 // src/app/(dashboard)/list/report-cards/[studentId]/page.tsx
 
 
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import { notFound } from "next/navigation";
 import { getGradeBandByGrade, computeAggregate, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
@@ -17,8 +17,7 @@ const ReportCardPage = async ({
   params:       Promise<{ studentId: string }>;
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { userId, sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const { userId, role, schoolId } = await requirePageSession();
   if (!userId) redirect("/sign-in");
 
   const { studentId } = await params;
@@ -28,8 +27,8 @@ const ReportCardPage = async ({
   const classIdParam  = sp.classId ? parseInt(sp.classId) : undefined;
 
   // ── Load student ──────────────────────────────────────────────────────────
-  const student = await prisma.student.findUnique({
-    where:   { id: studentId },
+  const student = await prisma.student.findFirst({
+    where:   { id: studentId, schoolId },
     include: {
       class:  { include: { grade: true, supervisor: { select: { id: true, name: true, surname: true } } } },
       grade:  true,
@@ -42,12 +41,12 @@ const ReportCardPage = async ({
   if (role === "student"  && userId !== studentId)            redirect("/");
   if (role === "parent"   && student.parent && userId !== student.parentId) redirect("/");
   if (role === "teacher") {
-    const cls = await prisma.class.findUnique({ where: { id: student.classId }, select: { supervisorId: true } });
+    const cls = await prisma.class.findFirst({ where: { id: student.classId, schoolId }, select: { supervisorId: true } });
     if (cls?.supervisorId !== userId) redirect("/");
   }
 
   // ── Academic year fallback ────────────────────────────────────────────────
-  const configs      = await prisma.cAConfig.findMany({ orderBy: { academicYear: "desc" } });
+  const configs      = await prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } });
   const activeYear   = academicYear || configs[0]?.academicYear || "2024/25";
   const config       = configs.find((c) => c.academicYear === activeYear);
   const cwWeight     = config?.classworkWeight ?? 30;
@@ -56,6 +55,7 @@ const ReportCardPage = async ({
   // ── CA records for this student this term ─────────────────────────────────
   const caRecords = await prisma.continuousAssessment.findMany({
     where: {
+      schoolId,
       studentId,
       classId:      student.classId,
       term,
@@ -69,7 +69,7 @@ const ReportCardPage = async ({
 
   // ── Subjects on timetable for this class ──────────────────────────────────
   const lessons = await prisma.lesson.findMany({
-    where:  { classId: student.classId },
+    where:  { schoolId, classId: student.classId },
     select: { subject: { select: { id: true, name: true } } },
   });
   const timetableSubjects = new Map<number, string>();
@@ -80,6 +80,7 @@ const ReportCardPage = async ({
   // ── All CA records for this class/term/year (to compute class positions) ──
   const classCARecords = await prisma.continuousAssessment.findMany({
     where: {
+      schoolId,
       classId:      student.classId,
       term,
       academicYear: activeYear,
@@ -116,7 +117,7 @@ const ReportCardPage = async ({
     .sort((a, b) => a.aggregate - b.aggregate);
 
   const overallPosition = classAggregates.findIndex((c) => c.studentId === studentId) + 1;
-  const classSize       = (await prisma.student.count({ where: { classId: student.classId } }));
+  const classSize       = (await prisma.student.count({ where: { schoolId, classId: student.classId } }));
 
   // ── Build subject rows ────────────────────────────────────────────────────
   const subjectRows = caRecords.map((ca) => {
@@ -149,9 +150,9 @@ const ReportCardPage = async ({
   const termStart = new Date(parseInt(activeYear.split("/")[0]), term === "TERM_1" ? 8 : term === "TERM_2" ? 0 : 4, 1);
   const termEnd   = new Date();
   const [presentCount, absentCount, lateCount] = await Promise.all([
-    prisma.attendance.count({ where: { studentId, status: "PRESENT", date: { gte: termStart, lte: termEnd } } }),
-    prisma.attendance.count({ where: { studentId, status: "ABSENT",  date: { gte: termStart, lte: termEnd } } }),
-    prisma.attendance.count({ where: { studentId, status: "LATE",    date: { gte: termStart, lte: termEnd } } }),
+    prisma.attendance.count({ where: { schoolId, studentId, status: "PRESENT", date: { gte: termStart, lte: termEnd } } }),
+    prisma.attendance.count({ where: { schoolId, studentId, status: "ABSENT",  date: { gte: termStart, lte: termEnd } } }),
+    prisma.attendance.count({ where: { schoolId, studentId, status: "LATE",    date: { gte: termStart, lte: termEnd } } }),
   ]);
 
   return (

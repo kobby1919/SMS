@@ -1,11 +1,11 @@
 import Pagination from "@/src/components/pagination";
+import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
 import { Filter, ArrowUpDown, Plus, BookOpen } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
-import { auth } from "@clerk/nextjs/server";
 
 const LessonListPage = async ({
   searchParams,
@@ -13,13 +13,12 @@ const LessonListPage = async ({
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
   // 1. Fetch Auth and Role
-  const { userId, sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const { userId, role, schoolId } = await requirePageSession();
   const currentUserId = userId;
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
-  const query: Prisma.LessonWhereInput = {};
+  const query: Prisma.LessonWhereInput = { schoolId };
 
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {

@@ -4,23 +4,43 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
 import { clerkClient } from "@clerk/nextjs/server";
 import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
+import { revalidateReferenceData } from "@/src/lib/cacheTags";
+import { parseBody } from "@/src/lib/validation/parse";
+import { studentCreateSchema } from "@/src/lib/validation/users";
 
 export async function POST(req: NextRequest) {
   try {
     const { schoolId } = await requireRole(["admin"]);
 
-    const formData  = await req.formData();
-    const username  = formData.get("username")  as string;
-    const email     = formData.get("email")     as string | null;
-    const password  = formData.get("password")  as string;
-    const name      = formData.get("name")      as string;
-    const surname   = formData.get("surname")   as string;
-    const phone     = formData.get("phone")     as string | null;
-    const address   = formData.get("address")   as string;
-    const bloodType = formData.get("bloodType") as string;
-    const sex       = formData.get("sex")       as "MALE" | "FEMALE";
-    const classId   = parseInt(formData.get("classId")  as string);
-    const parentId  = formData.get("parentId") as string;
+    const formData = await req.formData();
+    const parsed = parseBody(studentCreateSchema, {
+      username: formData.get("username"),
+      email: formData.get("email") || "",
+      password: formData.get("password"),
+      name: formData.get("name"),
+      surname: formData.get("surname"),
+      phone: formData.get("phone") || null,
+      address: formData.get("address"),
+      bloodType: formData.get("bloodType"),
+      sex: formData.get("sex"),
+      classId: formData.get("classId"),
+      parentId: formData.get("parentId"),
+    });
+    if (!parsed.ok) return parsed.response;
+
+    const {
+      username,
+      email,
+      password,
+      name,
+      surname,
+      phone,
+      address,
+      bloodType,
+      sex,
+      classId,
+      parentId,
+    } = parsed.data;
 
     // Get gradeId from class
     const cls = await prisma.class.findFirst({
@@ -64,6 +84,8 @@ export async function POST(req: NextRequest) {
         parentId,
       },
     });
+
+    revalidateReferenceData(schoolId, "students");
 
     return NextResponse.json(student, { status: 201 });
   } catch (e: unknown) {

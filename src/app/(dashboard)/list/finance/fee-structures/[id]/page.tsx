@@ -1,8 +1,8 @@
 // src/app/(dashboard)/list/finance/fee-structures/[id]/page.tsx
   
 
-import { auth } from "@clerk/nextjs/server";
 import { redirect, notFound } from "next/navigation";
+import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
 import {
@@ -24,15 +24,13 @@ const FeeStructureDetailPage = async ({
 }: {
   params: Promise<{ id: string }>;
 }) => {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (role !== "admin" && role !== "bursar") redirect("/");
+  const { role, schoolId } = await requirePageSession(["admin", "bursar"]);
 
   const { id } = await params;
   const structureId = parseInt(id);
 
-  const structure = await prisma.feeStructure.findUnique({
-    where:   { id: structureId },
+  const structure = await prisma.feeStructure.findFirst({
+    where:   { id: structureId, schoolId },
     include: {
       grade:    { select: { level: true } },
       feeItems: { orderBy: { createdAt: "asc" } },

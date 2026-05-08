@@ -3,7 +3,7 @@
  
 
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { getAuthzContext } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import { formatGHS, PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 import {
@@ -89,9 +89,8 @@ const S = StyleSheet.create({
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId, sessionClaims } = await auth();
-    const role = (sessionClaims?.metadata as { role?: string })?.role;
-    if (!userId || (role !== "admin" && role !== "bursar")) {
+    const ctx = await getAuthzContext();
+    if (!ctx || (ctx.role !== "admin" && ctx.role !== "bursar")) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 

@@ -5,7 +5,7 @@
 // subtopics, objectives, core competencies, and class progress summary.
 
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { getAuthzContext } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import { TERM_LABELS } from "@/src/lib/caGrades";
 import {
@@ -345,16 +345,17 @@ function SyllabusPDF({
 // ─── Route handler ────────────────────────────────────────────────────────────
 export async function GET(req: NextRequest) {
   try {
-    const { userId, sessionClaims } = await auth();
-    const role = (sessionClaims?.metadata as { role?: string })?.role;
-    if (!userId || (role !== "admin" && role !== "teacher"))
+    const ctx = await getAuthzContext();
+    if (!ctx || (ctx.role !== "admin" && ctx.role !== "teacher")) {
       return new NextResponse("Unauthorized", { status: 401 });
+    }
+    const { userId, role, schoolId } = ctx;
 
     const syllabusId = parseInt(req.nextUrl.searchParams.get("syllabusId") ?? "");
     if (isNaN(syllabusId)) return new NextResponse("syllabusId required", { status: 400 });
 
-    const syllabus = await prisma.syllabus.findUnique({
-      where:   { id: syllabusId },
+    const syllabus = await prisma.syllabus.findFirst({
+      where:   { id: syllabusId, schoolId },
       include: {
         subject: { select: { name: true } },
         grade:   { select: { level: true } },
@@ -373,8 +374,8 @@ export async function GET(req: NextRequest) {
 
     // For teachers: verify they teach this subject
     if (role === "teacher") {
-      const teacher = await prisma.teacher.findUnique({
-        where:  { id: userId },
+      const teacher = await prisma.teacher.findFirst({
+        where:  { id: userId, schoolId },
         select: { subjects: { select: { id: true } } },
       });
       const teachesSubject = teacher?.subjects.some((s) => s.id === syllabus.subjectId);
@@ -383,7 +384,7 @@ export async function GET(req: NextRequest) {
 
     // Grade classes for progress summary
     const gradeClasses = await prisma.class.findMany({
-      where:  { gradeId: syllabus.gradeId },
+      where:  { schoolId, gradeId: syllabus.gradeId },
       select: { id: true, name: true },
       orderBy: { name: "asc" },
     });

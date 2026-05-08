@@ -1,5 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
 import {
@@ -19,51 +18,67 @@ const BursarPage = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-  const { userId, sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (!userId || (role !== "admin" && role !== "bursar")) redirect("/sign-in");
+  const { schoolId } = await requirePageSession(["admin", "bursar"]);
 
   // ── Key stats ──────────────────────────────────────────────────────────────
-  const [
-    totalBills,
-    unpaidBills,
-    partialBills,
-    paidBills,
-    waivedBills,
-    totalStructures,
-    publishedStructures,
-  ] = await Promise.all([
-    prisma.studentBill.count(),
-    prisma.studentBill.count({ where: { status: "UNPAID"  } }),
-    prisma.studentBill.count({ where: { status: "PARTIAL" } }),
-    prisma.studentBill.count({ where: { status: "PAID"    } }),
-    prisma.studentBill.count({ where: { status: "WAIVED"  } }),
-    prisma.feeStructure.count(),
-    prisma.feeStructure.count({ where: { status: "PUBLISHED" } }),
+  const [billStatusCounts, structureStatusCounts] = await Promise.all([
+    prisma.studentBill.groupBy({
+      by: ["status"],
+      where: { schoolId },
+      _count: { _all: true },
+    }),
+    prisma.feeStructure.groupBy({
+      by: ["status"],
+      where: { schoolId },
+      _count: { _all: true },
+    }),
   ]);
+  const billCountByStatus = Object.fromEntries(
+    billStatusCounts.map((row) => [row.status, row._count._all]),
+  ) as Record<string, number>;
+  const structureCountByStatus = Object.fromEntries(
+    structureStatusCounts.map((row) => [row.status, row._count._all]),
+  ) as Record<string, number>;
+  const unpaidBills = billCountByStatus.UNPAID ?? 0;
+  const partialBills = billCountByStatus.PARTIAL ?? 0;
+  const paidBills = billCountByStatus.PAID ?? 0;
+  const waivedBills = billCountByStatus.WAIVED ?? 0;
+  const totalBills = billStatusCounts.reduce((sum, row) => sum + row._count._all, 0);
+  const publishedStructures = structureCountByStatus.PUBLISHED ?? 0;
+  const totalStructures = structureStatusCounts.reduce((sum, row) => sum + row._count._all, 0);
 
   // ── Total collected this calendar year ────────────────────────────────────
   const yearStart = new Date(new Date().getFullYear(), 0, 1);
   const collectedResult = await prisma.payment.aggregate({
     _sum:  { amount: true },
-    where: { status: "CONFIRMED", createdAt: { gte: yearStart } },
+    where: { schoolId, status: "CONFIRMED", createdAt: { gte: yearStart } },
   });
   const totalCollected = collectedResult._sum.amount ?? 0;
 
   // ── Total outstanding ─────────────────────────────────────────────────────
   const outstandingResult = await prisma.studentBill.aggregate({
     _sum:  { balance: true },
-    where: { status: { in: ["UNPAID", "PARTIAL"] } },
+    where: { schoolId, status: { in: ["UNPAID", "PARTIAL"] } },
   });
   const totalOutstanding = outstandingResult._sum.balance ?? 0;
 
   // ── Recent payments (last 5) ──────────────────────────────────────────────
   const recentPayments = await prisma.payment.findMany({
-    where:   { status: "CONFIRMED" },
-    include: {
+    where:   { schoolId, status: "CONFIRMED" },
+    select: {
+      id: true,
+      receiptNumber: true,
+      amount: true,
+      createdAt: true,
       studentBill: {
-        include: {
-          student: { select: { name: true, surname: true, class: { select: { name: true } } } },
+        select: {
+          student: {
+            select: {
+              name: true,
+              surname: true,
+              class: { select: { name: true } },
+            },
+          },
         },
       },
     },
@@ -73,8 +88,11 @@ const BursarPage = async ({
 
   // ── Bills needing attention ───────────────────────────────────────────────
   const urgentBills = await prisma.studentBill.findMany({
-    where:   { status: { in: ["UNPAID", "PARTIAL"] } },
-    include: {
+    where:   { schoolId, status: { in: ["UNPAID", "PARTIAL"] } },
+    select: {
+      id: true,
+      balance: true,
+      status: true,
       student:      { select: { name: true, surname: true, class: { select: { name: true } } } },
       feeStructure: { select: { title: true, term: true, academicYear: true } },
     },
@@ -84,8 +102,14 @@ const BursarPage = async ({
 
   // ── Draft fee structures ──────────────────────────────────────────────────
   const draftStructures = await prisma.feeStructure.findMany({
-    where:   { status: "DRAFT" },
-    include: { grade: { select: { level: true } } },
+    where:   { schoolId, status: "DRAFT" },
+    select: {
+      id: true,
+      title: true,
+      term: true,
+      academicYear: true,
+      grade: { select: { level: true } },
+    },
     orderBy: { createdAt: "desc" },
     take:    3,
   });

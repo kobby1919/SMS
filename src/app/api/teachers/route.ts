@@ -4,22 +4,44 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
 import { clerkClient } from "@clerk/nextjs/server";
 import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
+import { revalidateReferenceData } from "@/src/lib/cacheTags";
+import { parseBody } from "@/src/lib/validation/parse";
+import { teacherCreateSchema } from "@/src/lib/validation/users";
 
 export async function POST(req: NextRequest) {
   try {
     const { schoolId } = await requireRole(["admin"]);
 
-    const formData   = await req.formData();
-    const username   = formData.get("username")  as string;
-    const email      = formData.get("email")     as string;
-    const password   = formData.get("password")  as string;
-    const name       = formData.get("name")      as string;
-    const surname    = formData.get("surname")   as string;
-    const phone      = formData.get("phone")     as string | null;
-    const address    = formData.get("address")   as string;
-    const bloodType  = formData.get("bloodType") as string;
-    const sex        = formData.get("sex")       as "MALE" | "FEMALE";
-    const subjectIds = JSON.parse(formData.get("subjectIds") as string ?? "[]") as number[];
+    const formData = await req.formData();
+    const parsedSubjectIds = parseSubjectIds(formData.get("subjectIds"));
+    if (!parsedSubjectIds.ok) return parsedSubjectIds.response;
+
+    const parsed = parseBody(teacherCreateSchema, {
+      username: formData.get("username"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      name: formData.get("name"),
+      surname: formData.get("surname"),
+      phone: formData.get("phone") || null,
+      address: formData.get("address"),
+      bloodType: formData.get("bloodType"),
+      sex: formData.get("sex"),
+      subjectIds: parsedSubjectIds.data,
+    });
+    if (!parsed.ok) return parsed.response;
+
+    const {
+      username,
+      email,
+      password,
+      name,
+      surname,
+      phone,
+      address,
+      bloodType,
+      sex,
+      subjectIds,
+    } = parsed.data;
     const subjects = subjectIds.length
       ? await prisma.subject.findMany({
           where: { id: { in: subjectIds }, schoolId },
@@ -61,6 +83,9 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    revalidateReferenceData(schoolId, "teachers");
+    if (subjectIds.length) revalidateReferenceData(schoolId, "subjects");
+
     return NextResponse.json(teacher, { status: 201 });
   } catch (e: unknown) {
     if (isAuthorizationError(e)) return unauthorizedResponse(e);
@@ -86,4 +111,26 @@ function isClerkIdentifierExistsError(error: unknown) {
 
 function getErrorMessage(error: unknown, fallback: string) {
   return error instanceof Error ? error.message : fallback;
+}
+
+function parseSubjectIds(value: FormDataEntryValue | null) {
+  if (typeof value !== "string" || value.length === 0) {
+    return { ok: true as const, data: [] };
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+    return { ok: true as const, data: parsed };
+  } catch {
+    return {
+      ok: false as const,
+      response: NextResponse.json(
+        {
+          error: "Validation failed",
+          issues: { subjectIds: ["Invalid subject list."] },
+        },
+        { status: 400 },
+      ),
+    };
+  }
 }

@@ -3,7 +3,7 @@
 
 
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { getAuthzContext } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import {
   formatGHS,
@@ -539,11 +539,13 @@ function ReceiptPDF(p: ReceiptPDFProps) {
 // ─── Route handler ────────────────────────────────────────────────────────────
 export async function GET(req: NextRequest) {
   try {
-    const { userId, sessionClaims } = await auth();
-    const role = (sessionClaims?.metadata as { role?: string })?.role;
+    const ctx = await getAuthzContext();
+    const role = ctx?.role;
+    const userId = ctx?.userId;
+    const schoolId = ctx?.schoolId;
 
     const allowed = ["admin", "bursar", "parent", "student"];
-    if (!userId || !allowed.includes(role ?? "")) {
+    if (!ctx || !userId || !schoolId || !allowed.includes(role ?? "")) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
@@ -557,8 +559,8 @@ export async function GET(req: NextRequest) {
       return new NextResponse("receiptNumber required", { status: 400 });
 
     // Load bill with all relations
-    const bill = await prisma.studentBill.findUnique({
-      where: { id: billId },
+    const bill = await prisma.studentBill.findFirst({
+      where: { id: billId, schoolId },
       include: {
         student: {
           select: {
@@ -579,7 +581,7 @@ export async function GET(req: NextRequest) {
           orderBy: { createdAt: "asc" },
         },
         payments: {
-          where: { receiptNumber },
+          where: { schoolId, receiptNumber },
           include: { reversal: true },
         },
       },
@@ -608,8 +610,8 @@ export async function GET(req: NextRequest) {
     // Load who recorded the payment (bursar/admin username)
     let recordedByName = "Bursar";
     try {
-      const admin = await prisma.admin.findUnique({
-        where: { id: payment.recordedBy },
+      const admin = await prisma.admin.findFirst({
+        where: { id: payment.recordedBy, schoolId },
         select: { username: true },
       });
       if (admin) recordedByName = admin.username;

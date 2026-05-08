@@ -6,7 +6,7 @@
 
 import prisma from "@/src/lib/prisma";
 import { notFound } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
+import { requirePageSession } from "@/src/lib/authz";
 import Announcements from "@/src/components/Announcements";
 import BigCalendar from "@/src/components/BigCalendar";
 import Image from "next/image";
@@ -19,18 +19,18 @@ import {
   AlertCircle, ChevronRight, Star,
 } from "lucide-react";
 import { getGradeBandByGrade, computeAggregate, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
+import type { Term } from "@/src/generated/prisma";
 
 const SingleStudentPage = async ({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) => {
-  const { id }            = await params;
-  const { sessionClaims } = await auth();
-  const role              = (sessionClaims?.metadata as { role?: string })?.role;
+  const { id }   = await params;
+  const { role, schoolId } = await requirePageSession();
 
-  const student = await prisma.student.findUnique({
-    where:   { id },
+  const student = await prisma.student.findFirst({
+    where:   { id, schoolId },
     include: {
       class: {
         include: {
@@ -77,7 +77,7 @@ const SingleStudentPage = async ({
 
   // ── CA records — all terms ─────────────────────────────────────────────────
   const allCA = await prisma.continuousAssessment.findMany({
-    where:   { studentId: id },
+    where:   { schoolId, studentId: id },
     include: { subject: { select: { name: true } } },
     orderBy: [{ academicYear: "desc" }, { term: "desc" }],
   });
@@ -110,13 +110,14 @@ const SingleStudentPage = async ({
   if (latestGroup) {
     const classmatesCA = await prisma.continuousAssessment.findMany({
       where: {
+        schoolId,
         classId:      student.classId,
-        term:         latestGroup.term as any,
+        term:         latestGroup.term as Term,
         academicYear: latestGroup.year,
       },
       select: { studentId: true, gradePoint: true },
     });
-    classSize = await prisma.student.count({ where: { classId: student.classId } });
+    classSize = await prisma.student.count({ where: { schoolId, classId: student.classId } });
 
     const gpMap: Record<string, number[]> = {};
     for (const r of classmatesCA) {

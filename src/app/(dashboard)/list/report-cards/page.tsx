@@ -1,10 +1,9 @@
 // src/app/(dashboard)/list/report-cards/page.tsx
  
 
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import prisma from "@/src/lib/prisma";
-import { DEFAULT_SCHOOL_ID } from "@/src/lib/authz";
+import { requirePageSession } from "@/src/lib/authz";
 import Link from "next/link";
 import {
   FileText,
@@ -30,12 +29,7 @@ const ReportCardListPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { userId, sessionClaims } = await auth();
-  const metadata = sessionClaims?.metadata as { role?: string; schoolId?: string } | undefined;
-  const role = metadata?.role;
-  const schoolId = metadata?.schoolId ?? DEFAULT_SCHOOL_ID;
-
-  if (!userId) redirect("/");
+  const { userId, role, schoolId } = await requirePageSession();
 
   const params = await searchParams;
   const selectedClassId = params.classId ? parseInt(params.classId) : null;
@@ -50,7 +44,7 @@ const ReportCardListPage = async ({
   // 3. Handle Parent with Multiple Children
   if (role === "parent") {
     const children = await prisma.student.findMany({
-      where: { parentId: userId },
+      where: { schoolId, parentId: userId },
       select: {
         id: true,
         name: true,
@@ -127,11 +121,12 @@ const ReportCardListPage = async ({
   const supervisedClasses =
     role === "admin"
       ? await prisma.class.findMany({
+          where: { schoolId },
           orderBy: { name: "asc" },
           include: { grade: { select: { level: true } } },
         })
       : await prisma.class.findMany({
-          where: { supervisorId: userId },
+          where: { schoolId, supervisorId: userId },
           orderBy: { name: "asc" },
           include: { grade: { select: { level: true } } },
         });
@@ -201,7 +196,7 @@ const ReportCardListPage = async ({
 
   // ── Subjects for this class (from timetable) ──────────────────────────────
   const lessons = await prisma.lesson.findMany({
-    where: { classId: activeClass.id },
+    where: { schoolId, classId: activeClass.id },
     select: { subject: { select: { id: true, name: true } } },
   });
   const subjectMap = new Map<number, string>();

@@ -1,6 +1,7 @@
 // src/app/(dashboard)/list/subjects/page.tsx
 
 import Pagination from "@/src/components/pagination";
+import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
 import Image from "next/image";
 import { Users } from "lucide-react";
@@ -8,7 +9,6 @@ import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
-import { auth } from "@clerk/nextjs/server";  // ← replaces hardcoded role import
 
 // Dynamic color by index — no hardcoded subject names
 const SUBJECT_COLORS = [
@@ -30,13 +30,12 @@ const SubjectListPage = async ({
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
   // ── Auth ────────────────────────────────────────────────────────────────────
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const { role, schoolId } = await requirePageSession();
 
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
-  const query: Prisma.SubjectWhereInput = {};
+  const query: Prisma.SubjectWhereInput = { schoolId };
 
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
@@ -62,7 +61,7 @@ const SubjectListPage = async ({
       skip: ITEM_PER_PAGE * (p - 1),
     }),
     prisma.subject.count({ where: query }),
-    prisma.lesson.count(),
+    prisma.lesson.count({ where: { schoolId } }),
   ]);
 
   return (

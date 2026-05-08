@@ -2,7 +2,7 @@
 
 
 import prisma from "@/src/lib/prisma";
-import { currentUser } from "@clerk/nextjs/server";
+import { requirePageSession } from "@/src/lib/authz";
 import Announcements from "@/src/components/Announcements";
 import EventCalendar from "@/src/components/EventCalendar";
 import EventList from "@/src/components/EventList";
@@ -18,6 +18,7 @@ import {
   AlertCircle, Star, BookOpen,
 } from "lucide-react";
 import { getGradeBandByGrade, computeAggregate, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
+import type { Term } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -35,12 +36,13 @@ const ParentPage = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-  const user = await currentUser();
+  const { userId, schoolId } = await requirePageSession(["parent"]);
 
-  const parent = await prisma.parent.findUnique({
-    where: { id: user!.id },
+  const parent = await prisma.parent.findFirst({
+    where: { id: userId, schoolId },
     include: {
       students: {
+        where: { schoolId },
         include: { class: { select: { id: true, name: true } } },
         orderBy: { name: "asc" },
       },
@@ -50,7 +52,7 @@ const ParentPage = async ({
   const children  = parent?.students ?? [];
   const parentName = parent
     ? `${parent.name} ${parent.surname}`
-    : (user?.firstName ?? "Parent");
+    : "Parent";
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -61,7 +63,7 @@ const ParentPage = async ({
     children.map(async (child) => {
       // ── Timetable ────────────────────────────────────────────────────────
       const lessons = await prisma.lesson.findMany({
-        where:   { classId: child.classId },
+        where:   { schoolId, classId: child.classId },
         include: {
           subject: { select: { name: true } },
           teacher: { select: { name: true, surname: true } },
@@ -71,7 +73,7 @@ const ParentPage = async ({
 
       // ── Attendance ───────────────────────────────────────────────────────
       const todayAttendance = await prisma.attendance.findMany({
-        where:   { studentId: child.id, date: { gte: today, lte: todayEnd } },
+        where:   { schoolId, studentId: child.id, date: { gte: today, lte: todayEnd } },
         include: { lesson: { include: { subject: { select: { name: true } } } } },
         orderBy: { date: "asc" },
       });
@@ -79,13 +81,13 @@ const ParentPage = async ({
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       const history = await prisma.attendance.findMany({
-        where:   { studentId: child.id, date: { gte: thirtyDaysAgo } },
+        where:   { schoolId, studentId: child.id, date: { gte: thirtyDaysAgo } },
         include: { lesson: { include: { subject: { select: { name: true } } } } },
         orderBy: { date: "desc" },
       });
 
       const recentRecords = await prisma.attendance.findMany({
-        where:   { studentId: child.id },
+        where:   { schoolId, studentId: child.id },
         orderBy: { date: "desc" },
         take:    7,
         select:  { status: true },
@@ -109,7 +111,7 @@ const ParentPage = async ({
 
       // ── CA records — all terms, ordered oldest first ──────────────────────
       const allCA = await prisma.continuousAssessment.findMany({
-        where:   { studentId: child.id },
+        where:   { schoolId, studentId: child.id },
         include: { subject: { select: { name: true } } },
         orderBy: [{ academicYear: "asc" }, { term: "asc" }],
       });
@@ -151,8 +153,9 @@ const ParentPage = async ({
       if (latestGroup) {
         const classmatesCA = await prisma.continuousAssessment.findMany({
           where: {
+            schoolId,
             classId:      child.classId,
-            term:         latestGroup.term as any,
+            term:         latestGroup.term as Term,
             academicYear: latestGroup.year,
           },
           select: { studentId: true, gradePoint: true },
@@ -168,7 +171,7 @@ const ParentPage = async ({
         myPosition = sorted.findIndex((s) => s.sid === child.id) + 1;
       }
 
-      const classSize = await prisma.student.count({ where: { classId: child.classId } });
+      const classSize = await prisma.student.count({ where: { schoolId, classId: child.classId } });
 
       // Best / weakest subject in latest term
       const sortedByGP = latestGroup
@@ -569,7 +572,7 @@ const ParentPage = async ({
           {/* Timetable (unchanged) */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <h2 className="font-black text-gray-800 text-base mb-4">Class Timetables</h2>
-            <ParentTimetableTabs children={childrenSchedules} />
+            <ParentTimetableTabs schedules={childrenSchedules} />
           </div>
         </div>
 
