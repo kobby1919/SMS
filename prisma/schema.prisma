@@ -183,6 +183,7 @@ model Student {
   @@index([schoolId])
   @@index([schoolId, classId])
   @@index([parentId])
+  @@index([schoolId, parentId])
   @@index([schoolId, createdAt])
 }
 
@@ -310,6 +311,7 @@ model Lesson {
   @@index([schoolId, teacherId])
   @@index([schoolId, classId])
   @@index([teacherId, classId, day])
+  @@index([schoolId, teacherId, classId, day])
   @@index([schoolId, day])
 }
 
@@ -385,6 +387,7 @@ model Attendance {
   @@index([schoolId, date, status])
   @@index([studentId, date, status])
   @@index([schoolId, studentId, date])
+  @@index([schoolId, studentId, date, status])
 }
 
 model Event {
@@ -620,6 +623,8 @@ model StudentBill {
   @@index([schoolId, status])
   @@index([schoolId, feeStructureId])
   @@index([schoolId, studentId])
+  @@index([schoolId, status, studentId])
+  @@index([schoolId, status, feeStructureId])
   @@index([feeStructureId])
 }
 
