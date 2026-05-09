@@ -12,6 +12,8 @@ export const parentCreateSchema = z.object({
   address: nonEmptyStringSchema,
 });
 
+export const parentUpdateSchema = parentCreateSchema.omit({ username: true });
+
 export const studentCreateSchema = z.object({
   username: z.string().trim().min(3).max(20),
   email: z.string().email().optional().nullable().or(z.literal("")),
@@ -26,6 +28,12 @@ export const studentCreateSchema = z.object({
   parentId: nonEmptyStringSchema,
 });
 
+export const studentUpdateSchema = studentCreateSchema.omit({
+  username: true,
+  email: true,
+  password: true,
+});
+
 export const teacherCreateSchema = z.object({
   username: z.string().trim().min(3).max(20),
   email: z.string().email(),
@@ -36,5 +44,18 @@ export const teacherCreateSchema = z.object({
   address: nonEmptyStringSchema,
   bloodType: nonEmptyStringSchema,
   sex: userSexSchema,
-  subjectIds: z.array(positiveIntSchema).default([]),
+  subjectIds: z.preprocess((value) => {
+    if (typeof value !== "string") return value;
+    try {
+      return JSON.parse(value || "[]");
+    } catch {
+      return value;
+    }
+  }, z.array(positiveIntSchema).default([])),
+});
+
+export const teacherUpdateSchema = teacherCreateSchema.omit({
+  username: true,
+  email: true,
+  password: true,
 });

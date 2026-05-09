@@ -3,6 +3,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
 import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
+import { parseBody } from "@/src/lib/validation/parse";
+import { parentUpdateSchema } from "@/src/lib/validation/users";
 
 export async function PUT(
   req: NextRequest,
@@ -13,7 +15,9 @@ export async function PUT(
     const { id } = await params;
 
   const body = await req.json();
-  const { name, surname, email, phone, address } = body;
+  const parsed = parseBody(parentUpdateSchema, body);
+  if (!parsed.ok) return parsed.response;
+  const { name, surname, email, phone, address } = parsed.data;
   const existingParent = await prisma.parent.findFirst({
     where: { id, schoolId },
     select: { id: true },

@@ -5,6 +5,8 @@ import prisma from "@/src/lib/prisma";
 import { clerkClient } from "@clerk/nextjs/server";
 import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
 import { revalidateReferenceData } from "@/src/lib/cacheTags";
+import { parseBody } from "@/src/lib/validation/parse";
+import { teacherUpdateSchema } from "@/src/lib/validation/users";
 
 export async function PUT(
   req: NextRequest,
@@ -15,13 +17,17 @@ export async function PUT(
     const { id } = await params;
 
     const formData   = await req.formData();
-    const name       = formData.get("name")      as string;
-    const surname    = formData.get("surname")   as string;
-    const phone      = formData.get("phone")     as string | null;
-    const address    = formData.get("address")   as string;
-    const bloodType  = formData.get("bloodType") as string;
-    const sex        = formData.get("sex")       as "MALE" | "FEMALE";
-    const subjectIds = JSON.parse(formData.get("subjectIds") as string ?? "[]") as number[];
+    const parsed = parseBody(teacherUpdateSchema, {
+      name: formData.get("name"),
+      surname: formData.get("surname"),
+      phone: formData.get("phone"),
+      address: formData.get("address"),
+      bloodType: formData.get("bloodType"),
+      sex: formData.get("sex"),
+      subjectIds: formData.get("subjectIds") ?? "[]",
+    });
+    if (!parsed.ok) return parsed.response;
+    const { name, surname, phone, address, bloodType, sex, subjectIds } = parsed.data;
     const subjects = subjectIds.length
       ? await prisma.subject.findMany({
           where: { id: { in: subjectIds }, schoolId },
