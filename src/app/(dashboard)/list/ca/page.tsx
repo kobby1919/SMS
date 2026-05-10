@@ -1,11 +1,7 @@
 // src/app/(dashboard)/list/ca/page.tsx
 // Continuous Assessment management page
 // Accessible by: admin (all classes), teacher (supervised classes only)
-//
-// fix: scope CA subject list to lessons taught in each class
-//   Subjects shown in the CA entry form are now sourced exclusively from the
-//   Lesson table filtered by classId. This means only subjects actually on
-//   the timetable for a given class appear — not all subjects school-wide.
+
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -68,7 +64,7 @@ const CAPage = async ({
               : "No classes exist yet. Create classes first."}
           </p>
         </div>
-      </div>
+      </div>    
     );
   }
 
@@ -212,7 +208,7 @@ const CAPage = async ({
             <div className="divide-y divide-gray-50">
               {supervisedClasses.map((cls) => (
                 <a
-                  key={cls.id}
+                  key={cls.id} 
                   href={`/list/ca?classId=${cls.id}&view=${viewMode}`}
                   className={`flex items-center gap-3 px-4 py-3 transition-colors
                     ${cls.id === activeClass.id ? "bg-indigo-50" : "hover:bg-gray-50"}`}

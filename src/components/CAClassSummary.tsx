@@ -4,7 +4,7 @@
 // Shows a pivot-style summary: rows = students, cols = subjects
 // Displays grade, total score, and highlights positions for each subject.
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { getGradeBandByGrade, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
 import { Trophy, Medal, TrendingUp, ChevronDown } from "lucide-react";
 
@@ -59,11 +59,16 @@ const CAClassSummary = ({ className, students, subjects, caRecords }: Props) => 
   const [filterTerm, setFilterTerm]   = useState<string>("all");
   const [filterYear, setFilterYear]   = useState<string>("all");
 
-  // Derive unique terms and years from records
-  const terms = [...new Set(caRecords.map((r) => r.term))].sort();
-  const years  = [...new Set(caRecords.map((r) => r.academicYear))].sort().reverse();
+  
+  // 1. Memoize unique terms and years
+  const { terms, years } = useMemo(()=> {
+    return {
+      terms: [...new Set(caRecords.map((r)=>r.term))].sort(),
+      years: [...new Set(caRecords.map((r)=>r.academicYear))].sort().reverse(),
+    }
+  }, [caRecords]);
 
-  // Filtered records
+  // 2. Memoize all heavy calculations
   const filtered = caRecords.filter((r) => {
     const termMatch = filterTerm === "all" || r.term === filterTerm;
     const yearMatch = filterYear === "all" || r.academicYear === filterYear;
