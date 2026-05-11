@@ -5,7 +5,7 @@
 import { motion } from "framer-motion";
 
 type Props = {
-  role:      "admin" | "teacher" | "student" | "parent";
+  role:      "admin" | "teacher" | "student" | "parent" | "bursar";
   name:      string;       // first name or full name
   subtitle?: string;       // e.g. "Class 3A" or "3 children enrolled"
   tag?:      string;       // e.g. "Term 2 · 2025/26"
@@ -60,6 +60,18 @@ const ROLE_CONFIG = {
     initials:  "bg-violet-100 text-violet-700",
     tagBg:     "bg-white/80 text-violet-600 border border-violet-100",
     sub:       "text-violet-400",
+  },
+  bursar: {
+    greeting:  "Welcome back",
+    emoji:     "💰",
+    roleLabel: "Bursar",
+    gradient:  "from-[#f0fdf4] via-[#dcfce7] to-[#f0fdfa]",
+    accent:    "bg-teal-600 text-white",
+    dot:       "bg-teal-400",
+    ring:      "ring-teal-200",
+    initials:  "bg-teal-100 text-teal-700",
+    tagBg:     "bg-white/80 text-teal-600 border border-teal-100",
+    sub:       "text-teal-400",
   },
 };
 
