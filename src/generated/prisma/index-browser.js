@@ -24,12 +24,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 7.7.0
- * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
+ * Prisma Client JS version: 7.8.0
+ * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
  */
 Prisma.prismaVersion = {
-  client: "7.7.0",
-  engine: "75cbdc1eb7150937890ad5465d861175c6624711"
+  client: "7.8.0",
+  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -314,9 +314,116 @@ exports.Prisma.SyllabusTopicProgressScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.FeeStructureScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  academicYear: 'academicYear',
+  term: 'term',
+  status: 'status',
+  publishedAt: 'publishedAt',
+  gradeId: 'gradeId',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FeeItemScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  amount: 'amount',
+  category: 'category',
+  isOptional: 'isOptional',
+  description: 'description',
+  feeStructureId: 'feeStructureId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.StudentBillScalarFieldEnum = {
+  id: 'id',
+  totalAmount: 'totalAmount',
+  amountPaid: 'amountPaid',
+  discountAmount: 'discountAmount',
+  balance: 'balance',
+  status: 'status',
+  notes: 'notes',
+  studentId: 'studentId',
+  feeStructureId: 'feeStructureId',
+  generatedBy: 'generatedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BillLineItemScalarFieldEnum = {
+  id: 'id',
+  amount: 'amount',
+  amountPaid: 'amountPaid',
+  balance: 'balance',
+  isPaid: 'isPaid',
+  studentBillId: 'studentBillId',
+  feeItemId: 'feeItemId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PaymentScalarFieldEnum = {
+  id: 'id',
+  receiptNumber: 'receiptNumber',
+  amount: 'amount',
+  paymentMethod: 'paymentMethod',
+  paymentDate: 'paymentDate',
+  paidBy: 'paidBy',
+  referenceNo: 'referenceNo',
+  notes: 'notes',
+  status: 'status',
+  studentBillId: 'studentBillId',
+  recordedBy: 'recordedBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PaymentReversalScalarFieldEnum = {
+  id: 'id',
+  reason: 'reason',
+  reversedBy: 'reversedBy',
+  reversedAt: 'reversedAt',
+  paymentId: 'paymentId'
+};
+
+exports.Prisma.DiscountScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  description: 'description',
+  amount: 'amount',
+  percentage: 'percentage',
+  approvedBy: 'approvedBy',
+  studentBillId: 'studentBillId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ReceiptCounterScalarFieldEnum = {
+  id: 'id',
+  year: 'year',
+  lastCounter: 'lastCounter'
+};
+
+exports.Prisma.FinanceAuditLogScalarFieldEnum = {
+  id: 'id',
+  action: 'action',
+  performedBy: 'performedBy',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  metadata: 'metadata',
+  ipAddress: 'ipAddress',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -327,6 +434,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 exports.UserSex = exports.$Enums.UserSex = {
   MALE: 'MALE',
@@ -359,6 +472,66 @@ exports.SyllabusStatus = exports.$Enums.SyllabusStatus = {
   PUBLISHED: 'PUBLISHED'
 };
 
+exports.FeeStructureStatus = exports.$Enums.FeeStructureStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED'
+};
+
+exports.FeeCategory = exports.$Enums.FeeCategory = {
+  TUITION: 'TUITION',
+  LEVY: 'LEVY',
+  EXAM: 'EXAM',
+  FEEDING: 'FEEDING',
+  TRANSPORT: 'TRANSPORT',
+  UNIFORM: 'UNIFORM',
+  LIBRARY: 'LIBRARY',
+  SPORTS: 'SPORTS',
+  OTHER: 'OTHER'
+};
+
+exports.BillStatus = exports.$Enums.BillStatus = {
+  UNPAID: 'UNPAID',
+  PARTIAL: 'PARTIAL',
+  PAID: 'PAID',
+  OVERPAID: 'OVERPAID',
+  WAIVED: 'WAIVED'
+};
+
+exports.PaymentMethod = exports.$Enums.PaymentMethod = {
+  CASH: 'CASH',
+  MTN_MOMO: 'MTN_MOMO',
+  VODAFONE_CASH: 'VODAFONE_CASH',
+  AIRTELTIGO_MONEY: 'AIRTELTIGO_MONEY',
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  CHEQUE: 'CHEQUE',
+  OTHER: 'OTHER'
+};
+
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  CONFIRMED: 'CONFIRMED',
+  REVERSED: 'REVERSED'
+};
+
+exports.DiscountType = exports.$Enums.DiscountType = {
+  SCHOLARSHIP: 'SCHOLARSHIP',
+  SIBLING: 'SIBLING',
+  STAFF_CHILD: 'STAFF_CHILD',
+  BURSARY: 'BURSARY',
+  OTHER: 'OTHER'
+};
+
+exports.AuditAction = exports.$Enums.AuditAction = {
+  FEE_STRUCTURE_CREATED: 'FEE_STRUCTURE_CREATED',
+  FEE_STRUCTURE_PUBLISHED: 'FEE_STRUCTURE_PUBLISHED',
+  FEE_STRUCTURE_DELETED: 'FEE_STRUCTURE_DELETED',
+  BILL_GENERATED: 'BILL_GENERATED',
+  BILL_WAIVED: 'BILL_WAIVED',
+  PAYMENT_RECORDED: 'PAYMENT_RECORDED',
+  PAYMENT_REVERSED: 'PAYMENT_REVERSED',
+  DISCOUNT_APPLIED: 'DISCOUNT_APPLIED',
+  DISCOUNT_REMOVED: 'DISCOUNT_REMOVED'
+};
+
 exports.Prisma.ModelName = {
   Admin: 'Admin',
   Student: 'Student',
@@ -378,7 +551,16 @@ exports.Prisma.ModelName = {
   ContinuousAssessment: 'ContinuousAssessment',
   Syllabus: 'Syllabus',
   SyllabusTopic: 'SyllabusTopic',
-  SyllabusTopicProgress: 'SyllabusTopicProgress'
+  SyllabusTopicProgress: 'SyllabusTopicProgress',
+  FeeStructure: 'FeeStructure',
+  FeeItem: 'FeeItem',
+  StudentBill: 'StudentBill',
+  BillLineItem: 'BillLineItem',
+  Payment: 'Payment',
+  PaymentReversal: 'PaymentReversal',
+  Discount: 'Discount',
+  ReceiptCounter: 'ReceiptCounter',
+  FinanceAuditLog: 'FinanceAuditLog'
 };
 
 /**

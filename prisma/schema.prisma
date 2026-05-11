@@ -1,4 +1,3 @@
-// prisma/schema.prisma
 
 generator client {
   provider = "prisma-client-js"
@@ -42,7 +41,67 @@ enum SyllabusStatus {
   PUBLISHED
 }
 
-// ─── MODELS ──────────────────────────────────────────────────────────────────
+enum FeeCategory {
+  TUITION
+  LEVY
+  EXAM
+  FEEDING
+  TRANSPORT
+  UNIFORM
+  LIBRARY
+  SPORTS
+  OTHER
+}
+
+enum FeeStructureStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum BillStatus {
+  UNPAID
+  PARTIAL
+  PAID
+  OVERPAID
+  WAIVED
+}
+
+enum PaymentMethod {
+  CASH
+  MTN_MOMO
+  VODAFONE_CASH
+  AIRTELTIGO_MONEY
+  BANK_TRANSFER
+  CHEQUE
+  OTHER
+}
+
+enum PaymentStatus {
+  CONFIRMED
+  REVERSED
+}
+
+enum DiscountType {
+  SCHOLARSHIP
+  SIBLING
+  STAFF_CHILD
+  BURSARY
+  OTHER
+}
+
+enum AuditAction {
+  FEE_STRUCTURE_CREATED
+  FEE_STRUCTURE_PUBLISHED
+  FEE_STRUCTURE_DELETED
+  BILL_GENERATED
+  BILL_WAIVED
+  PAYMENT_RECORDED
+  PAYMENT_REVERSED
+  DISCOUNT_APPLIED
+  DISCOUNT_REMOVED
+}
+
+// ─── EXISTING MODELS ─────────────────────────────────────────────────────────
 
 model Admin {
   id       String @id
@@ -72,6 +131,7 @@ model Student {
   attendances           Attendance[]
   results               Result[]
   continuousAssessments ContinuousAssessment[]
+  bills                 StudentBill[]
 }
 
 model Teacher {
@@ -92,8 +152,8 @@ model Teacher {
   lessons  Lesson[]
   classes  Class[]   @relation("ClassTeacher")
 
-  continuousAssessments  ContinuousAssessment[]
-  syllabusTopicProgress  SyllabusTopicProgress[]
+  continuousAssessments ContinuousAssessment[]
+  syllabusTopicProgress SyllabusTopicProgress[]
 }
 
 model Parent {
@@ -114,9 +174,10 @@ model Grade {
   level String @unique
   order Int    @unique
 
-  students  Student[]
-  classes   Class[]
-  syllabi   Syllabus[]
+  students      Student[]
+  classes       Class[]
+  syllabi       Syllabus[]
+  feeStructures FeeStructure[]
 }
 
 model Class {
@@ -284,9 +345,6 @@ model ContinuousAssessment {
 
 // ─── SYLLABUS MODELS ─────────────────────────────────────────────────────────
 
-// One syllabus per subject per grade per term per academic year.
-// Admins create and publish. Teachers view and track progress.
-
 model Syllabus {
   id           Int            @id @default(autoincrement())
   description  String?
@@ -300,16 +358,13 @@ model Syllabus {
   gradeId Int
   grade   Grade @relation(fields: [gradeId], references: [id], onDelete: Cascade)
 
-  topics    SyllabusTopic[]
+  topics SyllabusTopic[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([subjectId, gradeId, term, academicYear])
 }
-
-// Each topic/unit inside a syllabus.
-// Subtopics, objectives, and coreCompetencies are stored as String arrays.
 
 model SyllabusTopic {
   id                Int      @id @default(autoincrement())
@@ -331,9 +386,6 @@ model SyllabusTopic {
   updatedAt DateTime @updatedAt
 }
 
-// Tracks which topics have been covered by which class.
-// One record per topic per class — teacher marks it when done.
-
 model SyllabusTopicProgress {
   id          Int      @id @default(autoincrement())
   coveredDate DateTime @default(now())
@@ -351,4 +403,189 @@ model SyllabusTopicProgress {
   createdAt DateTime @default(now())
 
   @@unique([syllabusTopicId, classId])
+}
+
+// ─── FINANCE MODELS ──────────────────────────────────────────────────────────
+
+// FeeStructure: master template of fees for a grade per term per year.
+// Created as DRAFT, items added, then PUBLISHED (locked after publish).
+// Bills are generated from a published structure — never from a draft.
+
+model FeeStructure {
+  id           Int                @id @default(autoincrement())
+  title        String             // e.g. "JHS 2 — Term 1 2025/26 Fees"
+  description  String?
+  academicYear String             // e.g. "2025/26"
+  term         Term
+  status       FeeStructureStatus @default(DRAFT)
+  publishedAt  DateTime?
+
+  gradeId Int
+  grade   Grade @relation(fields: [gradeId], references: [id])
+
+  feeItems FeeItem[]
+  bills    StudentBill[]
+
+  createdBy String   // bursar/admin userId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([gradeId, term, academicYear])
+}
+
+// FeeItem: a single fee line inside a FeeStructure.
+// isOptional = true means this line is not auto-included for every student
+// (e.g. bus fee). Bursar selects optional items per student at bill generation.
+// Amount is stored at creation and copied to BillLineItem at bill generation.
+// This means changing a FeeItem after bills are generated does NOT affect bills.
+
+model FeeItem {
+  id          Int         @id @default(autoincrement())
+  name        String      // e.g. "Tuition Fee"
+  amount      Decimal     @db.Decimal(10, 2)
+  category    FeeCategory
+  isOptional  Boolean     @default(false)
+  description String?
+
+  feeStructureId Int
+  feeStructure   FeeStructure @relation(fields: [feeStructureId], references: [id], onDelete: Cascade)
+
+  billLineItems BillLineItem[]
+
+  createdAt DateTime @default(now())
+}
+
+// StudentBill: one bill per student per fee structure.
+// Generated in bulk by bursar (Step 3 — not yet built).
+// balance is recomputed and stored every time a payment or discount is applied.
+// IMMUTABLE: bills are never deleted. Use status=WAIVED for full exemptions.
+
+model StudentBill {
+  id             Int        @id @default(autoincrement())
+  totalAmount    Decimal    @db.Decimal(10, 2)
+  amountPaid     Decimal    @db.Decimal(10, 2) @default(0)
+  discountAmount Decimal    @db.Decimal(10, 2) @default(0)
+  balance        Decimal    @db.Decimal(10, 2)
+  status         BillStatus @default(UNPAID)
+  notes          String?
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  feeStructureId Int
+  feeStructure   FeeStructure @relation(fields: [feeStructureId], references: [id])
+
+  lineItems BillLineItem[]
+  payments  Payment[]
+  discounts Discount[]
+
+  generatedBy String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([studentId, feeStructureId])
+}
+
+// BillLineItem: one row per FeeItem on a student's bill.
+// Allows tracking partial payment at the line-item level.
+// Amount is snapshotted from FeeItem.amount at generation time.
+
+model BillLineItem {
+  id         Int     @id @default(autoincrement())
+  amount     Decimal @db.Decimal(10, 2)
+  amountPaid Decimal @db.Decimal(10, 2) @default(0)
+  balance    Decimal @db.Decimal(10, 2)
+  isPaid     Boolean @default(false)
+
+  studentBillId Int
+  studentBill   StudentBill @relation(fields: [studentBillId], references: [id], onDelete: Cascade)
+
+  feeItemId Int
+  feeItem   FeeItem @relation(fields: [feeItemId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Payment: immutable record of money received.
+// Never edited or deleted — reverse with PaymentReversal instead.
+// receiptNumber: RCP-{YYYY}-{NNN}, counter resets each calendar year.
+// referenceNo: MoMo transaction ID, cheque number, bank ref etc.
+
+model Payment {
+  id            Int           @id @default(autoincrement())
+  receiptNumber String        @unique
+  amount        Decimal       @db.Decimal(10, 2)
+  paymentMethod PaymentMethod
+  paymentDate   DateTime      @default(now())
+  paidBy        String        // name of person who paid
+  referenceNo   String?
+  notes         String?
+  status        PaymentStatus @default(CONFIRMED)
+
+  studentBillId Int
+  studentBill   StudentBill @relation(fields: [studentBillId], references: [id])
+
+  recordedBy String
+  createdAt  DateTime @default(now())
+
+  reversal PaymentReversal?
+}
+
+// PaymentReversal: voids a confirmed payment.
+// Sets Payment.status to REVERSED and restores the bill balance.
+// Both records kept permanently for audit trail.
+
+model PaymentReversal {
+  id         Int      @id @default(autoincrement())
+  reason     String
+  reversedBy String
+  reversedAt DateTime @default(now())
+
+  paymentId Int     @unique
+  payment   Payment @relation(fields: [paymentId], references: [id])
+}
+
+// Discount: formal fee reduction on a student's bill.
+// Use amount for fixed reduction, percentage for proportional.
+// Never edit a discount — remove and re-apply if correction needed.
+
+model Discount {
+  id          Int          @id @default(autoincrement())
+  type        DiscountType
+  description String
+  amount      Decimal?     @db.Decimal(10, 2)
+  percentage  Decimal?     @db.Decimal(5, 2)
+  approvedBy  String
+
+  studentBillId Int
+  studentBill   StudentBill @relation(fields: [studentBillId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+// ReceiptCounter: tracks the receipt number counter per calendar year.
+// One row per year. Application layer atomically reads and increments.
+// e.g. { year: 2026, lastCounter: 47 } means next receipt = RCP-2026-048
+
+model ReceiptCounter {
+  id          Int @id @default(autoincrement())
+  year        Int @unique
+  lastCounter Int @default(0)
+}
+
+// FinanceAuditLog: immutable log of every finance action.
+// Written automatically by server actions — UI never writes here directly.
+// metadata is a JSON snapshot of the affected record at time of action,
+// making the audit self-contained even if records are later modified.
+
+model FinanceAuditLog {
+  id          Int         @id @default(autoincrement())
+  action      AuditAction
+  performedBy String
+  entityType  String
+  entityId    String
+  metadata    Json
+  ipAddress   String?
+  createdAt   DateTime    @default(now())
 }
