@@ -1,4 +1,8 @@
 import prisma from "@/src/lib/prisma";
+import {
+  getFlaggedAttendanceStudents,
+  normalizeAttendanceStatusCounts,
+} from "@/src/lib/services/attendance";
 
 const DAY_ENUM_MAP: Record<number, string> = {
   1: "MONDAY",
@@ -140,38 +144,6 @@ function aggregateMonthlyScores(
   }));
 }
 
-function computeFlaggedStudents(
-  students: {
-    id: string;
-    name: string;
-    surname: string;
-    class: { name: string };
-  }[],
-  attendanceByStudent: Map<string, { status: string }[]>,
-): { name: string; surname: string; className: string; streak: number }[] {
-  const flagged: { name: string; surname: string; className: string; streak: number }[] =
-    [];
-
-  for (const student of students) {
-    const recent = attendanceByStudent.get(student.id) ?? [];
-    let streak = 0;
-    for (const r of recent) {
-      if (r.status === "ABSENT") streak += 1;
-      else break;
-    }
-    if (streak >= 3) {
-      flagged.push({
-        name: student.name,
-        surname: student.surname,
-        className: student.class.name,
-        streak,
-      });
-    }
-  }
-
-  return flagged.sort((a, b) => b.streak - a.streak);
-}
-
 /** Batched dashboard queries for the admin home page (avoids N+1 per student/day). */
 export async function getAdminDashboardData(
   schoolId: string,
@@ -277,23 +249,7 @@ export async function getAdminDashboardData(
     }),
   ]);
 
-  const studentIds = allStudents.map((s) => s.id);
-  const recentAttendanceRows =
-    studentIds.length === 0
-      ? []
-      : await prisma.attendance.findMany({
-          where: {
-            schoolId,
-            studentId: { in: studentIds },
-            date: { gte: absenceWindowStart },
-          },
-          orderBy: [{ studentId: "asc" }, { date: "desc" }],
-          select: { studentId: true, status: true },
-        });
-
-  const statusCounts = Object.fromEntries(
-    todayAttendanceGrouped.map((g) => [g.status, g._count._all]),
-  ) as Record<string, number>;
+  const statusCounts = normalizeAttendanceStatusCounts(todayAttendanceGrouped);
   const todayPresent = statusCounts.PRESENT ?? 0;
   const todayAbsent = statusCounts.ABSENT ?? 0;
   const todayLate = statusCounts.LATE ?? 0;
@@ -304,16 +260,11 @@ export async function getAdminDashboardData(
 
   const financeData = aggregateMonthlyScores(yearlyScoreRows, monthNames);
 
-  const attendanceByStudent = new Map<string, { status: string }[]>();
-  for (const row of recentAttendanceRows) {
-    const list = attendanceByStudent.get(row.studentId) ?? [];
-    if (list.length < 5) {
-      list.push({ status: row.status });
-      attendanceByStudent.set(row.studentId, list);
-    }
-  }
-
-  const flagged = computeFlaggedStudents(allStudents, attendanceByStudent);
+  const flagged = await getFlaggedAttendanceStudents({
+    schoolId,
+    students: allStudents,
+    since: absenceWindowStart,
+  });
   const todayTotal = todayPresent + todayAbsent + todayLate + todayExcused;
   const todayRate =
     todayTotal > 0 ? Math.round((todayPresent / todayTotal) * 100) : 0;
