@@ -8,8 +8,10 @@ const DAY_ENUM_MAP: Record<number, string> = {
   5: "FRIDAY",
 };
 
+type CountType = "admin" | "teacher" | "student" | "parent";
+
 export type AdminDashboardData = {
-  counts: { type: string; count: number }[];
+  counts: { type: CountType; count: number }[];
   boys: number;
   girls: number;
   attendanceData: { name: string; present: number; absent: number }[];
@@ -96,6 +98,48 @@ function aggregateAttendanceByDay(
   });
 }
 
+function aggregateMonthlyScores(
+  rows: {
+    score: number;
+    exam: { startTime: Date } | null;
+    assignment: { dueDate: Date } | null;
+  }[],
+  monthNames: string[],
+): { name: string; income: number; expense: number }[] {
+  const buckets = monthNames.map((name) => ({
+    name,
+    examTotal: 0,
+    examCount: 0,
+    assignmentTotal: 0,
+    assignmentCount: 0,
+  }));
+
+  for (const row of rows) {
+    if (row.exam) {
+      const month = row.exam.startTime.getMonth();
+      buckets[month].examTotal += row.score;
+      buckets[month].examCount += 1;
+    }
+    if (row.assignment) {
+      const month = row.assignment.dueDate.getMonth();
+      buckets[month].assignmentTotal += row.score;
+      buckets[month].assignmentCount += 1;
+    }
+  }
+
+  return buckets.map((bucket) => ({
+    name: bucket.name,
+    income:
+      bucket.examCount > 0
+        ? Math.round(bucket.examTotal / bucket.examCount)
+        : 0,
+    expense:
+      bucket.assignmentCount > 0
+        ? Math.round(bucket.assignmentTotal / bucket.assignmentCount)
+        : 0,
+  }));
+}
+
 function computeFlaggedStudents(
   students: {
     id: string;
@@ -146,6 +190,10 @@ export async function getAdminDashboardData(
   const todayEnd = endOfDay(now);
   const weekStart = startOfDay(weekDays[0]?.date ?? now);
   const weekEnd = endOfDay(weekDays[weekDays.length - 1]?.date ?? now);
+  const yearStart = new Date(currentYear, 0, 1);
+  const yearEnd = new Date(currentYear, 11, 31, 23, 59, 59, 999);
+  const absenceWindowStart = startOfDay(new Date(now));
+  absenceWindowStart.setDate(absenceWindowStart.getDate() - 30);
 
   const [
     adminCount,
@@ -166,6 +214,7 @@ export async function getAdminDashboardData(
     caAvgResult,
     weekAttendanceRecords,
     allStudents,
+    yearlyScoreRows,
   ] = await Promise.all([
     prisma.admin.count({ where: tenantWhere }),
     prisma.teacher.count({ where: tenantWhere }),
@@ -212,6 +261,20 @@ export async function getAdminDashboardData(
         class: { select: { name: true } },
       },
     }),
+    prisma.result.findMany({
+      where: {
+        schoolId,
+        OR: [
+          { exam: { startTime: { gte: yearStart, lte: yearEnd } } },
+          { assignment: { dueDate: { gte: yearStart, lte: yearEnd } } },
+        ],
+      },
+      select: {
+        score: true,
+        exam: { select: { startTime: true } },
+        assignment: { select: { dueDate: true } },
+      },
+    }),
   ]);
 
   const studentIds = allStudents.map((s) => s.id);
@@ -219,7 +282,11 @@ export async function getAdminDashboardData(
     studentIds.length === 0
       ? []
       : await prisma.attendance.findMany({
-          where: { schoolId, studentId: { in: studentIds } },
+          where: {
+            schoolId,
+            studentId: { in: studentIds },
+            date: { gte: absenceWindowStart },
+          },
           orderBy: [{ studentId: "asc" }, { date: "desc" }],
           select: { studentId: true, status: true },
         });
@@ -235,34 +302,7 @@ export async function getAdminDashboardData(
   const caAvg = Math.round((caAvgResult._avg.totalScore ?? 0) * 10) / 10;
   const attendanceData = aggregateAttendanceByDay(weekAttendanceRecords, weekDays);
 
-  const months = Array.from({ length: 12 }, (_, i) => i);
-  const financeData = await Promise.all(
-    months.map(async (i) => {
-      const start = new Date(currentYear, i, 1);
-      const end = new Date(currentYear, i + 1, 0, 23, 59, 59);
-      const [examAvg, assignAvg] = await Promise.all([
-        prisma.result.aggregate({
-          _avg: { score: true },
-          where: {
-            schoolId,
-            exam: { startTime: { gte: start, lte: end } },
-          },
-        }),
-        prisma.result.aggregate({
-          _avg: { score: true },
-          where: {
-            schoolId,
-            assignment: { dueDate: { gte: start, lte: end } },
-          },
-        }),
-      ]);
-      return {
-        name: monthNames[i],
-        income: Math.round(examAvg._avg.score ?? 0),
-        expense: Math.round(assignAvg._avg.score ?? 0),
-      };
-    }),
-  );
+  const financeData = aggregateMonthlyScores(yearlyScoreRows, monthNames);
 
   const attendanceByStudent = new Map<string, { status: string }[]>();
   for (const row of recentAttendanceRows) {

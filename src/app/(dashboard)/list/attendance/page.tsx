@@ -30,14 +30,21 @@ const AttendanceListPage = async ({
   filterDateEnd.setHours(23, 59, 59, 999);
 
   // ── Today's school-wide stats ─────────────────────────────────────────────
-  const [todayPresent, todayAbsent, todayLate, todayExcused, totalStudents] =
-    await Promise.all([
-      prisma.attendance.count({ where: { schoolId, date: { gte: today, lte: todayEnd }, status: "PRESENT" } }),
-      prisma.attendance.count({ where: { schoolId, date: { gte: today, lte: todayEnd }, status: "ABSENT"  } }),
-      prisma.attendance.count({ where: { schoolId, date: { gte: today, lte: todayEnd }, status: "LATE"    } }),
-      prisma.attendance.count({ where: { schoolId, date: { gte: today, lte: todayEnd }, status: "EXCUSED" } }),
-      prisma.student.count({ where: { schoolId } }),
-    ]);
+  const [todayGrouped, totalStudents] = await Promise.all([
+    prisma.attendance.groupBy({
+      by: ["status"],
+      where: { schoolId, date: { gte: today, lte: todayEnd } },
+      _count: { _all: true },
+    }),
+    prisma.student.count({ where: { schoolId } }),
+  ]);
+  const todayStatusCounts = Object.fromEntries(
+    todayGrouped.map((row) => [row.status, row._count._all]),
+  ) as Record<string, number>;
+  const todayPresent = todayStatusCounts.PRESENT ?? 0;
+  const todayAbsent = todayStatusCounts.ABSENT ?? 0;
+  const todayLate = todayStatusCounts.LATE ?? 0;
+  const todayExcused = todayStatusCounts.EXCUSED ?? 0;
 
   const todayTotal = todayPresent + todayAbsent + todayLate + todayExcused;
   const todayRate  = todayTotal > 0 ? Math.round((todayPresent / todayTotal) * 100) : 0;
@@ -86,15 +93,32 @@ const AttendanceListPage = async ({
       class: { select: { name: true } },
     },
   });
+  const studentIds = allStudents.map((student) => student.id);
+  const absenceWindowStart = new Date(today);
+  absenceWindowStart.setDate(absenceWindowStart.getDate() - 30);
+  const recentAttendanceRows = studentIds.length
+    ? await prisma.attendance.findMany({
+        where: {
+          schoolId,
+          studentId: { in: studentIds },
+          date: { gte: absenceWindowStart },
+        },
+        orderBy: [{ studentId: "asc" }, { date: "desc" }],
+        select: { studentId: true, status: true },
+      })
+    : [];
+  const recentByStudent = new Map<string, { status: string }[]>();
+  for (const row of recentAttendanceRows) {
+    const recent = recentByStudent.get(row.studentId) ?? [];
+    if (recent.length < 5) {
+      recent.push({ status: row.status });
+      recentByStudent.set(row.studentId, recent);
+    }
+  }
 
   const flagged: { id: string; name: string; surname: string; className: string; streak: number }[] = [];
   for (const student of allStudents) {
-    const recent = await prisma.attendance.findMany({
-      where:   { schoolId, studentId: student.id },
-      orderBy: { date: "desc" },
-      take:    5,
-      select:  { status: true },
-    });
+    const recent = recentByStudent.get(student.id) ?? [];
     let streak = 0;
     for (const r of recent) {
       if (r.status === "ABSENT") streak++;
