@@ -9,10 +9,19 @@ import {
   attendanceSubmitSchema,
 } from "@/src/lib/validation/attendance";
 import { parseBody, parseSearchParams } from "@/src/lib/validation/parse";
+import { enforceRateLimit } from "@/src/lib/rate-limit";
 
 export async function GET(req: NextRequest) {
   try {
-    const { schoolId } = await requireRole(["admin", "teacher"]);
+    const { userId, schoolId } = await requireRole(["admin", "teacher"]);
+    const limited = enforceRateLimit(req, {
+      scope: "attendance:read",
+      actorId: userId,
+      limit: 120,
+      windowMs: 60_000,
+    });
+    if (limited) return limited;
+
     const parsed = parseSearchParams(attendanceGetQuerySchema, new URL(req.url).searchParams);
     if (!parsed.ok) return parsed.response;
 
@@ -41,7 +50,15 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { schoolId } = await requireRole(["admin", "teacher"]);
+    const { userId, schoolId } = await requireRole(["admin", "teacher"]);
+    const limited = enforceRateLimit(req, {
+      scope: "attendance:submit",
+      actorId: userId,
+      limit: 30,
+      windowMs: 60_000,
+    });
+    if (limited) return limited;
+
     const body = await req.json();
     const parsed = parseBody(attendanceSubmitSchema, body);
     if (!parsed.ok) return parsed.response;
@@ -95,7 +112,15 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const { schoolId } = await requireRole(["admin"]);
+    const { userId, schoolId } = await requireRole(["admin"]);
+    const limited = enforceRateLimit(req, {
+      scope: "attendance:delete",
+      actorId: userId,
+      limit: 20,
+      windowMs: 60_000,
+    });
+    if (limited) return limited;
+
     const parsed = parseSearchParams(attendanceDeleteQuerySchema, new URL(req.url).searchParams);
     if (!parsed.ok) return parsed.response;
 

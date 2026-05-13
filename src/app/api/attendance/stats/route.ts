@@ -3,16 +3,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
 import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
+import { enforceRateLimit } from "@/src/lib/rate-limit";
 
 export async function GET(req: NextRequest) {
   try {
-    const { schoolId } = await requireRole([
+    const { userId, schoolId } = await requireRole([
       "admin",
       "teacher",
       "student",
       "parent",
       "bursar",
     ]);
+    const limited = enforceRateLimit(req, {
+      scope: "attendance:stats",
+      actorId: userId,
+      limit: 120,
+      windowMs: 60_000,
+    });
+    if (limited) return limited;
 
     const { searchParams } = new URL(req.url);
     const studentId = searchParams.get("studentId");

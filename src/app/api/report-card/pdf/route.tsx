@@ -6,6 +6,7 @@ import { getAuthzContext } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import { getGradeLabel } from "@/src/lib/actions/caActions";
 import { computeAggregate, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
+import { enforceRateLimit } from "@/src/lib/rate-limit";
 import {
   renderToBuffer,
   Document,
@@ -358,6 +359,13 @@ export async function GET(req: NextRequest) {
     const ctx = await getAuthzContext();
     if (!ctx) return new NextResponse("Unauthorized", { status: 401 });
     const { userId, role, schoolId } = ctx;
+    const limited = enforceRateLimit(req, {
+      scope: "academic:report-card-pdf",
+      actorId: userId,
+      limit: 20,
+      windowMs: 10 * 60_000,
+    });
+    if (limited) return limited;
 
     const sp           = req.nextUrl.searchParams;
     const studentId    = sp.get("studentId")  ?? "";

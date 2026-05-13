@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthzContext } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import { TERM_LABELS } from "@/src/lib/caGrades";
+import { enforceRateLimit } from "@/src/lib/rate-limit";
 import {
   renderToBuffer,
   Document,
@@ -350,6 +351,13 @@ export async function GET(req: NextRequest) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
     const { userId, role, schoolId } = ctx;
+    const limited = enforceRateLimit(req, {
+      scope: "academic:syllabus-pdf",
+      actorId: userId,
+      limit: 20,
+      windowMs: 10 * 60_000,
+    });
+    if (limited) return limited;
 
     const syllabusId = parseInt(req.nextUrl.searchParams.get("syllabusId") ?? "");
     if (isNaN(syllabusId)) return new NextResponse("syllabusId required", { status: 400 });

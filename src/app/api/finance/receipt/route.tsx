@@ -10,6 +10,7 @@ import {
   PAYMENT_METHOD_LABELS,
   FEE_CATEGORY_LABELS,
 } from "@/src/lib/constants/finance";
+import { enforceRateLimit } from "@/src/lib/rate-limit";
 import {
   renderToBuffer,
   Document,
@@ -548,6 +549,13 @@ export async function GET(req: NextRequest) {
     if (!ctx || !userId || !schoolId || !allowed.includes(role ?? "")) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
+    const limited = enforceRateLimit(req, {
+      scope: "finance:receipt-pdf",
+      actorId: userId,
+      limit: 20,
+      windowMs: 10 * 60_000,
+    });
+    if (limited) return limited;
 
     const sp = req.nextUrl.searchParams;
     const billId = parseInt(sp.get("billId") ?? "");

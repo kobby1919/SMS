@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthzContext } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import { formatGHS, PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
+import { enforceRateLimit } from "@/src/lib/rate-limit";
 import {
   renderToBuffer, Document, Page, Text, View, StyleSheet,
 } from "@react-pdf/renderer";
@@ -93,6 +94,13 @@ export async function GET(req: NextRequest) {
     if (!ctx || (ctx.role !== "admin" && ctx.role !== "bursar")) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
+    const limited = enforceRateLimit(req, {
+      scope: "finance:daily-report",
+      actorId: ctx.userId,
+      limit: 10,
+      windowMs: 10 * 60_000,
+    });
+    if (limited) return limited;
 
     const dateStr = req.nextUrl.searchParams.get("date")
       ?? new Date().toISOString().split("T")[0];
