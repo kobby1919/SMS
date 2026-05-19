@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+@media (max-width: 640px) {
+  /* 1. Target the URL wrapper container to drop the rigid 1rem side margins */
+  .flex-1.flex.items-center.rounded-md.mx-4 {
+    margin-left: 0.5rem !important;
+    margin-right: 0.5rem !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    min-width: 0 !important; /* Permits the inner text to scale rather than block layout */
+  }
+
+  /* 2. Make the text string scale perfectly without clipping or wrapping */
+  .flex-1.flex.items-center.rounded-md.mx-4 span.text-xs {
+    font-size: 10px !important; /* Scales text neatly down for small devices */
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important; /* Gracefully truncates if viewport gets absurdly narrow */
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  /* 3. Drop the window traffic lights down slightly so they match the text proportion */
+  .flex.items-center.gap-1\.5 > div {
+    width: 8px !important;
+    height: 8px !important;
+  }
+}
+
+
 .react-calendar {
   width: 100% !important;
   border: none !important;
