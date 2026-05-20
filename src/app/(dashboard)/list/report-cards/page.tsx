@@ -1,10 +1,10 @@
 // src/app/(dashboard)/list/report-cards/page.tsx
-// Report card index — class supervisor or admin picks a class, term, year
-// and sees all students with a link to each individual report card.
+ 
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import prisma from "@/src/lib/prisma";
+import { DEFAULT_SCHOOL_ID } from "@/src/lib/authz";
 import Link from "next/link";
 import {
   FileText,
@@ -21,6 +21,7 @@ import {
   TERM_LABELS,
 } from "@/src/lib/caGrades";
 import ReportCardFilters from "@/src/components/ReportCardFilters";
+import type { Term } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +31,9 @@ const ReportCardListPage = async ({
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
   const { userId, sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const metadata = sessionClaims?.metadata as { role?: string; schoolId?: string } | undefined;
+  const role = metadata?.role;
+  const schoolId = metadata?.schoolId ?? DEFAULT_SCHOOL_ID;
 
   if (!userId) redirect("/");
 
@@ -158,6 +161,7 @@ const ReportCardListPage = async ({
 
   // ── Academic years from configs ───────────────────────────────────────────
   const configs = await prisma.cAConfig.findMany({
+    where: { schoolId },
     orderBy: { academicYear: "desc" },
   });
   const academicYears =
@@ -168,12 +172,12 @@ const ReportCardListPage = async ({
 
   // ── Config for this year ──────────────────────────────────────────────────
   const config = await prisma.cAConfig.findUnique({
-    where: { academicYear: activeYear },
+    where: { schoolId_academicYear: { schoolId, academicYear: activeYear } },
   });
 
   // ── Students in this class ────────────────────────────────────────────────
   const students = await prisma.student.findMany({
-    where: { classId: activeClass.id },
+    where: { schoolId, classId: activeClass.id },
     orderBy: [{ surname: "asc" }, { name: "asc" }],
     select: { id: true, name: true, surname: true, img: true, sex: true },
   });
@@ -182,7 +186,8 @@ const ReportCardListPage = async ({
   const caRecords = await prisma.continuousAssessment.findMany({
     where: {
       classId: activeClass.id,
-      term: selectedTerm as any,
+      schoolId,
+      term: selectedTerm as Term,
       academicYear: activeYear,
     },
     select: {
