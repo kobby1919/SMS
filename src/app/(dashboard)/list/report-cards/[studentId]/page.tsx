@@ -1,6 +1,5 @@
 // src/app/(dashboard)/list/report-cards/[studentId]/page.tsx
-// Individual student report card — printable, beautiful, data-rich.
-// Accessible by: admin, teacher (supervisor), student (own card), parent (child's card).
+
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
