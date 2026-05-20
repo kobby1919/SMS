@@ -1,6 +1,5 @@
 // src/app/(dashboard)/list/finance/bills/page.tsx
-// All student bills — filterable by class, status, term, year.
-// Bursar and admin only.
+
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
