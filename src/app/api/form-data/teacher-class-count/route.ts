@@ -7,8 +7,12 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
+import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
 
 export async function GET(req: NextRequest) {
+  try {
+    const { schoolId } = await requireRole(["admin"]);
+
   const { searchParams } = new URL(req.url);
   const teacherId       = searchParams.get("teacherId");
   const excludeClassId  = searchParams.get("excludeClassId");
@@ -21,6 +25,7 @@ export async function GET(req: NextRequest) {
   // Fetch all lessons for this teacher, excluding the current lesson being edited
   const lessons = await prisma.lesson.findMany({
     where: {
+      schoolId,
       teacherId,
       ...(excludeLessonId ? { NOT: { id: parseInt(excludeLessonId) } } : {}),
     },
@@ -38,4 +43,7 @@ export async function GET(req: NextRequest) {
   );
 
   return NextResponse.json({ count: uniqueClassIds.size });
+  } catch (error) {
+    return unauthorizedResponse(error);
+  }
 }
