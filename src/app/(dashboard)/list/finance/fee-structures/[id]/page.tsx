@@ -1,7 +1,5 @@
 // src/app/(dashboard)/list/finance/fee-structures/[id]/page.tsx
-// View and manage a single fee structure.
-// Draft: can add/edit/delete fee items and publish.
-// Published: read-only view + "Generate Bills" action (Step 3).
+  
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect, notFound } from "next/navigation";
