@@ -2,14 +2,13 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { clerkClient } from "@clerk/nextjs/server";
+import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
 
 export async function POST(req: NextRequest) {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (role !== "admin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   try {
+    const { schoolId } = await requireRole(["admin"]);
+
     const formData  = await req.formData();
     const username  = formData.get("username")  as string;
     const email     = formData.get("email")     as string | null;
@@ -24,11 +23,17 @@ export async function POST(req: NextRequest) {
     const parentId  = formData.get("parentId") as string;
 
     // Get gradeId from class
-    const cls = await prisma.class.findUnique({
-      where: { id: classId },
+    const cls = await prisma.class.findFirst({
+      where: { id: classId, schoolId },
       select: { gradeId: true },
     });
     if (!cls) return NextResponse.json({ error: "Class not found." }, { status: 404 });
+
+    const parent = await prisma.parent.findFirst({
+      where: { id: parentId, schoolId },
+      select: { id: true },
+    });
+    if (!parent) return NextResponse.json({ error: "Parent not found." }, { status: 404 });
 
     // 1. Create Clerk user
     const clerk = await clerkClient();
@@ -38,13 +43,14 @@ export async function POST(req: NextRequest) {
       password,
       firstName: name,
       lastName:  surname,
-      publicMetadata: { role: "student" },
+      publicMetadata: { role: "student", schoolId },
     });
 
     // 2. Save to DB
     const student = await prisma.student.create({
       data: {
         id:        clerkUser.id,
+        schoolId,
         username,
         name,
         surname,
@@ -60,10 +66,27 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(student, { status: 201 });
-  } catch (e: any) {
-    if (e?.errors?.[0]?.code === "form_identifier_exists") {
+  } catch (e: unknown) {
+    if (isAuthorizationError(e)) return unauthorizedResponse(e);
+    if (isClerkIdentifierExistsError(e)) {
       return NextResponse.json({ error: "Username already exists." }, { status: 409 });
     }
-    return NextResponse.json({ error: e?.message ?? "Failed to create student." }, { status: 500 });
+    return NextResponse.json({ error: getErrorMessage(e, "Failed to create student.") }, { status: 500 });
   }
+}
+
+function isAuthorizationError(error: unknown) {
+  return error instanceof Error && error.name === "AuthorizationError";
+}
+
+function isClerkIdentifierExistsError(error: unknown) {
+  return typeof error === "object" &&
+    error !== null &&
+    "errors" in error &&
+    Array.isArray((error as { errors?: unknown }).errors) &&
+    (error as { errors: Array<{ code?: string }> }).errors[0]?.code === "form_identifier_exists";
+}
+
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
 }
