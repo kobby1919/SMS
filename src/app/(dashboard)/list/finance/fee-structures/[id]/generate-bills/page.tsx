@@ -1,6 +1,4 @@
 // src/app/(dashboard)/list/finance/fee-structures/[id]/generate-bills/page.tsx
-// Bursar selects which classes to generate bills for, previews the impact,
-// then confirms. Two-step: preview first, confirm second.
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect, notFound } from "next/navigation";
