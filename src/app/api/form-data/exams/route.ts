@@ -1,12 +1,16 @@
 // src/app/api/form-data/exams/route.ts
-// GET /api/form-data/exams
-// Returns all exams with subject, class and date — used by ResultForm.
+
 
 import { NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
+import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
 
 export async function GET() {
+  try {
+    const { schoolId } = await requireRole(["admin", "teacher"]);
+
   const exams = await prisma.exam.findMany({
+    where: { schoolId },
     select: {
       id:        true,
       title:     true,
@@ -30,4 +34,7 @@ export async function GET() {
       date:        e.startTime.toISOString(),
     }))
   );
+  } catch (error) {
+    return unauthorizedResponse(error);
+  }
 }
