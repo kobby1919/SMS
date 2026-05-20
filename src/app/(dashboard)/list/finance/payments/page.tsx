@@ -1,7 +1,5 @@
 // src/app/(dashboard)/list/finance/payments/page.tsx
-// All payments — searchable by receipt number, student name, payer.
-// Shows daily collection summary at the top.
-// Bursar and admin only.
+ 
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
