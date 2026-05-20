@@ -1,6 +1,5 @@
 // src/app/(dashboard)/list/finance/bills/[id]/record-payment/page.tsx
-// Bursar records a payment against a student bill.
-// Shows current balance, accepts amount + method + payer + reference.
+ 
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect, notFound } from "next/navigation";
