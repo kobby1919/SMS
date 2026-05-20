@@ -2,16 +2,16 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { requireRole } from "@/src/lib/authz";
 import { AttendanceStatus } from "@/src/generated/prisma";
 
 // ─── GET: fetch attendance for a lesson on a date ─────────────────────────────
 export async function GET(req: NextRequest) {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (!["admin", "teacher"].includes(role!)) {
+  const authz = await requireRole(["admin", "teacher"]).catch(() => null);
+  if (!authz) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const { schoolId } = authz;
 
   const { searchParams } = new URL(req.url);
   const lessonId = searchParams.get("lessonId");
@@ -28,6 +28,7 @@ export async function GET(req: NextRequest) {
 
   const records = await prisma.attendance.findMany({
     where: {
+      schoolId,
       lessonId: parseInt(lessonId),
       date: { gte: dayStart, lte: dayEnd },
     },
@@ -42,11 +43,11 @@ export async function GET(req: NextRequest) {
 // ─── POST: submit attendance for a full class ─────────────────────────────────
 // Body: { lessonId, date, records: [{ studentId, status, note? }] }
 export async function POST(req: NextRequest) {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (!["admin", "teacher"].includes(role!)) {
+  const authz = await requireRole(["admin", "teacher"]).catch(() => null);
+  if (!authz) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const { schoolId } = authz;
 
   const body = await req.json();
   const { lessonId, date, records } = body;
@@ -63,7 +64,8 @@ export async function POST(req: NextRequest) {
     records.map(async (r: { studentId: string; status: AttendanceStatus; note?: string }) => {
       return prisma.attendance.upsert({
         where: {
-          studentId_lessonId_date: {
+          schoolId_studentId_lessonId_date: {
+            schoolId,
             studentId: r.studentId,
             lessonId:  parseInt(lessonId),
             date:      attendanceDate,
@@ -75,6 +77,7 @@ export async function POST(req: NextRequest) {
           note:    r.note ?? null,
         },
         create: {
+          schoolId,
           studentId: r.studentId,
           lessonId:  parseInt(lessonId),
           date:      attendanceDate,
@@ -91,16 +94,16 @@ export async function POST(req: NextRequest) {
 
 // ─── DELETE: remove an attendance record ──────────────────────────────────────
 export async function DELETE(req: NextRequest) {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (role !== "admin") {
+  const authz = await requireRole(["admin"]).catch(() => null);
+  if (!authz) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const { schoolId } = authz;
 
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
   if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
 
-  await prisma.attendance.delete({ where: { id: parseInt(id) } });
+  await prisma.attendance.deleteMany({ where: { id: parseInt(id), schoolId } });
   return NextResponse.json({ success: true });
 }
