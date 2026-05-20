@@ -2,21 +2,26 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  if (role !== "admin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const { schoolId } = await requireRole(["admin"]);
+    const { id } = await params;
 
   const body = await req.json();
   const { name, surname, email, phone, address } = body;
+  const existingParent = await prisma.parent.findFirst({
+    where: { id, schoolId },
+    select: { id: true },
+  });
+  if (!existingParent) return NextResponse.json({ error: "Parent not found." }, { status: 404 });
 
   const parent = await prisma.parent.update({
-    where: { id: params.id },
+    where: { id },
     data: {
       name,
       surname,
@@ -27,4 +32,7 @@ export async function PUT(
   });
 
   return NextResponse.json(parent);
+  } catch (error) {
+    return unauthorizedResponse(error);
+  }
 }
