@@ -1,6 +1,5 @@
 // src/app/(dashboard)/list/finance/bills/[id]/page.tsx
-// Individual student bill — shows line items, payment history,
-// and the Record Payment button (Step 4 will wire this up).
+
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect, notFound } from "next/navigation";
