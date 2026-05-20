@@ -1,12 +1,16 @@
 // src/app/api/form-data/assignments/route.ts
-// GET /api/form-data/assignments
-// Returns all assignments with subject, class and due date — used by ResultForm.
+ 
 
 import { NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
+import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
 
 export async function GET() {
+  try {
+    const { schoolId } = await requireRole(["admin", "teacher"]);
+
   const assignments = await prisma.assignment.findMany({
+    where: { schoolId },
     select: {
       id:      true,
       title:   true,
@@ -30,4 +34,7 @@ export async function GET() {
       date:        a.dueDate.toISOString(),
     }))
   );
+  } catch (error) {
+    return unauthorizedResponse(error);
+  }
 }
