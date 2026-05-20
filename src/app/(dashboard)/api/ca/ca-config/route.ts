@@ -1,9 +1,9 @@
 // src/app/api/ca/config/route.ts
-// Returns the CA config for a given academic year.
-// Falls back to { classworkWeight: 30, examWeight: 70 } if not found.
+
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
+import { requireRole } from "@/src/lib/authz";
 
 export async function GET(req: NextRequest) {
   const year = req.nextUrl.searchParams.get("year");
@@ -12,8 +12,9 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    const { schoolId } = await requireRole(["admin", "teacher"]);
     const config = await prisma.cAConfig.findUnique({
-      where: { academicYear: year },
+      where: { schoolId_academicYear: { schoolId, academicYear: year } },
       select: { classworkWeight: true, examWeight: true },
     });
 
