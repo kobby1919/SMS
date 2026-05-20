@@ -1,18 +1,13 @@
 import { NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
 
 export async function GET() {
-  // Optional: Security check to ensure only admins can fetch the parent list
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-
-  if (role !== "admin") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
+    const { schoolId } = await requireRole(["admin"]);
+
     const parents = await prisma.parent.findMany({
+      where: { schoolId },
       select: {
         id: true,
         name: true,
@@ -25,7 +20,6 @@ export async function GET() {
 
     return NextResponse.json(parents);
   } catch (error) {
-    console.error("Error fetching parents:", error);
-    return NextResponse.json({ error: "Failed to fetch parents" }, { status: 500 });
+    return unauthorizedResponse(error);
   }
 }
