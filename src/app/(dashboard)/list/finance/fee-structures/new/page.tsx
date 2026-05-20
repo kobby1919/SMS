@@ -1,6 +1,5 @@
 // src/app/(dashboard)/list/finance/fee-structures/new/page.tsx
-// Create a new fee structure. After creation redirects to the detail/edit page
-// so fee items can be added immediately.
+
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
