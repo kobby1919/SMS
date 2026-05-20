@@ -4,9 +4,14 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
+import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
 
 export async function GET() {
+  try {
+    const { schoolId } = await requireRole(["admin", "teacher"]);
+
   const teachers = await prisma.teacher.findMany({
+    where: { schoolId },
     select: {
       id:         true,
       name:       true,
@@ -16,4 +21,7 @@ export async function GET() {
     orderBy: [{ name: "asc" }, { surname: "asc" }],
   });
   return NextResponse.json(teachers);
+  } catch (error) {
+    return unauthorizedResponse(error);
+  }
 }
