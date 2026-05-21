@@ -14,7 +14,7 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "Jayline",
+  title: "EduJay",
   description: "Modern School Management System",
 };
 
