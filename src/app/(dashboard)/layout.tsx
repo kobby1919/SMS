@@ -3,6 +3,7 @@ import Navbar from "@/src/components/Navbar";
 import Image from "next/image";
 import Link from "next/link";
 
+
 export default function DashboardLayout({
   children,
 }: Readonly<{
@@ -18,7 +19,7 @@ export default function DashboardLayout({
         >
           <Image src="/school.svg" alt="logo" width={32} height={32} priority />
           <span className="hidden lg:block font-nunito font-extrabold text-lg tracking-tight text-gray-800">
-            Jayline
+            EduJay
           </span>
         </Link>
         <Menu />
