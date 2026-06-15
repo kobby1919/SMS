@@ -1,24 +1,16 @@
 "use client";
 
-import { SignIn, useUser } from "@clerk/nextjs";
+import { SignIn } from "@clerk/nextjs";
 import { GraduationCap, BookOpen, Users, Shield } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { Router } from "next/router";
-import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { AUTH_CALLBACK_PATH, MISSING_ROLE_QUERY } from "@/src/lib/auth/constants";
 
-export default function SignInPage() {
-  const { isLoaded, isSignedIn, user } = useUser();
-  const router = useRouter();
-  useEffect(() => {
-    const role = user?.publicMetadata.role;
-    if (role) {
-      router.push(`/${role}`);
-    }
-  }, [user, router]);
+export default function SignInView() {
+  const searchParams = useSearchParams();
+  const missingRole = searchParams.get("error") === MISSING_ROLE_QUERY;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f0f4ff] via-white to-[#f5f0ff] flex items-center justify-center p-4">
-      {/* Background blobs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-[#C3EBFA]/30 blur-3xl" />
         <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-[#CFCEFF]/30 blur-3xl" />
@@ -26,18 +18,16 @@ export default function SignInPage() {
       </div>
 
       <div className="relative w-full flex flex-col items-center">
-        {/* Branding */}
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#C3EBFA] to-[#CFCEFF] shadow-lg mb-4">
             <GraduationCap className="text-indigo-700" size={32} />
           </div>
           <h1 className="text-2xl font-extrabold text-gray-800 tracking-tight">
-            Jayline 
+            Jayline
           </h1>
           <p className="text-sm text-gray-500 mt-1">Academic</p>
         </div>
 
-        {/* Stats strip */}
         <div className="flex items-center justify-center gap-6 mb-6">
           {[
             { icon: <Users size={13} />, label: "42 Students" },
@@ -54,8 +44,27 @@ export default function SignInPage() {
           ))}
         </div>
 
-        {/* Clerk SignIn — styled via appearance prop */}
+        {missingRole && (
+          <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            <p className="font-semibold">Account is missing a role</p>
+            <p className="mt-1 text-amber-800/90">
+              In Clerk → Users → your account → Public metadata, set:
+            </p>
+            <pre className="mt-2 overflow-x-auto rounded-lg bg-white/80 px-3 py-2 text-xs font-mono text-gray-800">
+              {`{ "role": "admin", "schoolId": "default-school" }`}
+            </pre>
+            <p className="mt-2 text-xs text-amber-800/80">
+              Sign out, save metadata, then sign in again.
+            </p>
+          </div>
+        )}
+
         <SignIn
+          forceRedirectUrl={AUTH_CALLBACK_PATH}
+          fallbackRedirectUrl={AUTH_CALLBACK_PATH}
+          signUpFallbackRedirectUrl={AUTH_CALLBACK_PATH}
+          routing="path"
+          path="/sign-in"
           appearance={{
             layout: {
               logoPlacement: "none",
@@ -101,7 +110,6 @@ export default function SignInPage() {
           }}
         />
 
-        {/* Role badges */}
         <div className="flex flex-wrap justify-center gap-2 mt-5">
           {[
             { label: "Admin", color: "bg-violet-50 text-violet-600" },

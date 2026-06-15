@@ -2,16 +2,17 @@ import Menu from "@/src/components/Menu";
 import Navbar from "@/src/components/Navbar";
 import Image from "next/image";
 import Link from "next/link";
+import { requirePageSession } from "@/src/lib/authz";
 
-
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await requirePageSession();
+
   return (
     <div className="h-screen flex">
-      {/* SIDEBAR — fixed icon-only width on mobile so icons never disappear */}
       <div className="w-[56px] md:w-[64px] lg:w-[16%] xl:w-[14%] p-3 lg:p-4 border-r border-gray-100 bg-white flex flex-col gap-6 shrink-0">
         <Link
           href="/"
@@ -22,12 +23,11 @@ export default function DashboardLayout({
             EduJay
           </span>
         </Link>
-        <Menu />
+        <Menu role={session.role} />
       </div>
 
-      {/* MAIN */}
       <div className="flex-1 min-w-0 bg-[#F7F8FA] overflow-scroll">
-        <Navbar />
+        <Navbar role={session.role} />
         {children}
       </div>
     </div>
