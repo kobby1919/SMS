@@ -15,7 +15,7 @@ import type { CalendarLesson } from "@/src/components/BigCalendar";
 import {
   Mail, Phone, Droplets, Calendar,
   BookOpen, Users, Clock, Award,
-  FileText, TrendingUp, CheckCircle2,
+  FileText, TrendingUp,
   AlertCircle, ChevronRight, Star,
 } from "lucide-react";
 import { getGradeBandByGrade, computeAggregate, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
@@ -361,13 +361,13 @@ const SingleStudentPage = async ({
 
         {/* ── Attendance breakdown ── */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
             <h2 className="text-sm font-black text-gray-800">Attendance Record</h2>
             <Link href={`/list/attendance?studentId=${student.id}`} className="text-xs font-bold text-emerald-600 hover:text-emerald-700">
               Full history →
             </Link>
           </div>
-          <div className="grid grid-cols-4 gap-2 mb-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
             {[
               { label: "Present", value: presentCount, color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
               { label: "Absent",  value: absentCount,  color: "bg-rose-50 text-rose-700 border-rose-200"         },

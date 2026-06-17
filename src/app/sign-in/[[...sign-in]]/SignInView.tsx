@@ -1,9 +1,26 @@
 "use client";
 
-import { SignIn } from "@clerk/nextjs";
+import dynamic from "next/dynamic";
 import { GraduationCap, BookOpen, Users, Shield } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { AUTH_CALLBACK_PATH, MISSING_ROLE_QUERY } from "@/src/lib/auth/constants";
+
+const ClerkSignIn = dynamic(
+  () => import("@clerk/nextjs").then((mod) => mod.SignIn),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full max-w-md rounded-3xl border border-gray-100 bg-white p-8 shadow-xl">
+        <div className="mx-auto h-5 w-36 rounded-full bg-gray-100" />
+        <div className="mt-8 space-y-4">
+          <div className="h-12 rounded-xl bg-gray-100" />
+          <div className="h-12 rounded-xl bg-gray-100" />
+          <div className="h-12 rounded-xl bg-indigo-100" />
+        </div>
+      </div>
+    ),
+  }
+);
 
 export default function SignInView() {
   const searchParams = useSearchParams();
@@ -59,7 +76,7 @@ export default function SignInView() {
           </div>
         )}
 
-        <SignIn
+        <ClerkSignIn
           forceRedirectUrl={AUTH_CALLBACK_PATH}
           fallbackRedirectUrl={AUTH_CALLBACK_PATH}
           signUpFallbackRedirectUrl={AUTH_CALLBACK_PATH}

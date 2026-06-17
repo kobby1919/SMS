@@ -245,7 +245,7 @@ const StudentPage = async ({
 
         {/* ── ATTENDANCE CARD (unchanged from original) ── */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
             <div>
               <h2 className="font-black text-gray-800 text-base">My Attendance</h2>
               <p className="text-xs text-gray-400 mt-0.5">{totalA} total records</p>
@@ -255,7 +255,7 @@ const StudentPage = async ({
             </Link>
           </div>
 
-          <div className="grid grid-cols-4 gap-2 mb-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
             {[
               { label: "Present", value: presentA, icon: <CheckCircle2 size={13} />, color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
               { label: "Absent",  value: absentA,  icon: <XCircle      size={13} />, color: "bg-rose-50 text-rose-700 border-rose-200"         },

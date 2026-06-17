@@ -107,10 +107,9 @@ const AttendanceTaker = ({
   existingAttendance,
   dateStr,
   todayStr,
-  role,
 }: Props) => {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   // Build initial attendance state from existing records or default to PRESENT
   const buildInitialState = (): Record<string, AttendanceRecord> => {
@@ -331,7 +330,7 @@ const AttendanceTaker = ({
                 </div>
 
                 {/* Live stats bar */}
-                <div className="grid grid-cols-4 gap-2 mt-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4">
                   {(["PRESENT", "ABSENT", "LATE", "EXCUSED"] as const).map((status) => {
                     const cfg = STATUS_CONFIG[status];
                     const count = counts[status] ?? 0;
@@ -378,7 +377,7 @@ const AttendanceTaker = ({
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.02 }}
                       >
-                        <div className={`flex items-center gap-3 px-4 py-3 transition-all
+                        <div className={`flex flex-col gap-3 px-4 py-3 transition-all sm:flex-row sm:items-center
                           ${status === "ABSENT" ? "bg-rose-50/30" : status === "LATE" ? "bg-amber-50/30" : ""}`}
                         >
                           {/* Avatar */}
@@ -394,17 +393,19 @@ const AttendanceTaker = ({
                           </div>
 
                           {/* Name */}
-                          <div className="flex-1 min-w-0">
+                          <div className="flex-1 min-w-0 self-stretch sm:self-auto">
                             <p className="font-bold text-sm text-gray-800 truncate">
                               {student.name} {student.surname}
                             </p>
                             {record?.note && (
-                              <p className="text-[11px] text-gray-400 truncate italic">"{record.note}"</p>
+                              <p className="text-[11px] text-gray-400 truncate italic">
+                                &quot;{record.note}&quot;
+                              </p>
                             )}
                           </div>
 
                           {/* Status buttons */}
-                          <div className="flex gap-1.5 shrink-0">
+                          <div className="flex gap-1.5 shrink-0 self-stretch sm:self-auto justify-between sm:justify-start">
                             {(["PRESENT", "ABSENT", "LATE", "EXCUSED"] as const).map((s) => {
                               const c      = STATUS_CONFIG[s];
                               const active = status === s;
@@ -464,14 +465,14 @@ const AttendanceTaker = ({
               </div>
 
               {/* Submit button */}
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <p className="text-xs text-gray-400 font-medium">
                   {Object.values(attendance).filter((r) => r.status !== "PRESENT").length} exception{Object.values(attendance).filter((r) => r.status !== "PRESENT").length !== 1 ? "s" : ""} marked
                 </p>
                 <button
                   onClick={handleSubmit}
                   disabled={saving || students.length === 0}
-                  className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all shadow-sm
+                  className={`w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all shadow-sm
                     ${saved
                       ? "bg-emerald-500 text-white"
                       : "bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50"}`}

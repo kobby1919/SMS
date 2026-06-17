@@ -4,7 +4,7 @@
 // Batch CA entry form — class supervisor enters scores for all students
 // in their class for one subject in one go.
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useMemo, useTransition } from "react";
 import {
   CheckCircle2, AlertCircle, Loader2, ChevronDown,
   BookOpen, Users, TrendingUp, Save, RefreshCw,
@@ -33,6 +33,8 @@ type CARow = {
   remarks:        string;
 };
 
+type RowEdit = Partial<Pick<CARow, "classworkScore" | "examScore" | "remarks">>;
+
 type ExistingCA = {
   studentId:      string;
   classworkScore: number;
@@ -49,6 +51,17 @@ type Props = {
   existingCA?:  ExistingCA[]; // pre-loaded when editing
   onSuccess?:   () => void;
 };
+
+const buildRows = (students: Student[], existingCA: ExistingCA[]): CARow[] =>
+  students.map((student) => {
+    const existing = existingCA.find((entry) => entry.studentId === student.id);
+    return {
+      studentId:      student.id,
+      classworkScore: existing ? String(existing.classworkScore) : "",
+      examScore:      existing ? String(existing.examScore)      : "",
+      remarks:        existing ? existing.remarks                : "",
+    };
+  });
 
 // ─── Live score preview (weighted total + grade) ──────────────────────────────
 function ScorePreview({
@@ -76,8 +89,8 @@ const CAEntryForm = ({
   const [selectedTerm,      setSelectedTerm]      = useState<Term>("TERM_2");
   const [selectedYear,      setSelectedYear]      = useState(academicYears[0] ?? "2024/25");
   const [caConfig,          setCAConfig]          = useState<{ classworkWeight: number; examWeight: number } | null>(null);
-  const [configLoading,     setConfigLoading]     = useState(false);
-  const [rows,              setRows]              = useState<CARow[]>([]);
+  const [configLoading,     setConfigLoading]     = useState(true);
+  const [rowEdits,          setRowEdits]          = useState<Record<string, RowEdit>>({});
   const [apiError,          setApiError]          = useState<string | null>(null);
   const [success,           setSuccess]           = useState(false);
   const [isPending,         startTransition]      = useTransition();
@@ -85,7 +98,6 @@ const CAEntryForm = ({
   // Load CA config when year changes
   useEffect(() => {
     if (!selectedYear) return;
-    setConfigLoading(true);
     fetch(`/api/ca/config?year=${encodeURIComponent(selectedYear)}`)
       .then((r) => r.json())
       .then((data) => {
@@ -99,28 +111,23 @@ const CAEntryForm = ({
       .finally(() => setConfigLoading(false));
   }, [selectedYear]);
 
-  // Re-initialize rows when students, subject, or term changes
-  useEffect(() => {
-    const newRows: CARow[] = students.map((s) => {
-      const existing = existingCA.find(
-        (e) => e.studentId === s.id
-      );
-      return {
-        studentId:      s.id,
-        classworkScore: existing ? String(existing.classworkScore) : "",
-        examScore:      existing ? String(existing.examScore)      : "",
-        remarks:        existing ? existing.remarks                : "",
-      };
-    });
-    setRows(newRows);
-  }, [students, selectedSubjectId, selectedTerm, existingCA]);
+  const baseRows = useMemo(
+    () => buildRows(students, existingCA),
+    [students, existingCA]
+  );
+
+  const rows = useMemo(
+    () => baseRows.map((row) => ({ ...row, ...rowEdits[row.studentId] })),
+    [baseRows, rowEdits]
+  );
 
   const updateRow = (idx: number, field: keyof CARow, value: string) => {
-    setRows((prev) => {
-      const next = [...prev];
-      next[idx] = { ...next[idx], [field]: value };
-      return next;
-    });
+    const studentId = rows[idx]?.studentId;
+    if (!studentId) return;
+    setRowEdits((prev) => ({
+      ...prev,
+      [studentId]: { ...prev[studentId], [field]: value },
+    }));
   };
 
   const handleSubmit = () => {
@@ -175,8 +182,8 @@ const CAEntryForm = ({
         );
         setSuccess(true);
         setTimeout(() => { setSuccess(false); onSuccess?.(); }, 1800);
-      } catch (e: any) {
-        setApiError(e?.message ?? "Failed to save CA records.");
+      } catch (e: unknown) {
+        setApiError(e instanceof Error ? e.message : "Failed to save CA records.");
       }
     });
   };
@@ -251,7 +258,10 @@ const CAEntryForm = ({
           <div className="relative">
             <select
               value={selectedSubjectId}
-              onChange={(e) => setSelectedSubjectId(Number(e.target.value) || "")}
+              onChange={(e) => {
+                setSelectedSubjectId(Number(e.target.value) || "");
+                setRowEdits({});
+              }}
               className="w-full appearance-none ring-[1.5px] ring-gray-200 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 focus:ring-indigo-500 outline-none bg-white pr-8"
             >
               <option value="">Select subject…</option>
@@ -269,7 +279,10 @@ const CAEntryForm = ({
           <div className="relative">
             <select
               value={selectedTerm}
-              onChange={(e) => setSelectedTerm(e.target.value as Term)}
+              onChange={(e) => {
+                setSelectedTerm(e.target.value as Term);
+                setRowEdits({});
+              }}
               className="w-full appearance-none ring-[1.5px] ring-gray-200 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 focus:ring-indigo-500 outline-none bg-white pr-8"
             >
               {Object.entries(TERM_LABELS).map(([val, label]) => (
@@ -286,7 +299,10 @@ const CAEntryForm = ({
           <div className="relative">
             <select
               value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
+              onChange={(e) => {
+                setSelectedYear(e.target.value);
+                setConfigLoading(true);
+              }}
               className="w-full appearance-none ring-[1.5px] ring-gray-200 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 focus:ring-indigo-500 outline-none bg-white pr-8"
             >
               {academicYears.map((y) => (
@@ -333,8 +349,9 @@ const CAEntryForm = ({
         </div>
       ) : (
         <div className="border border-gray-100 rounded-2xl overflow-hidden">
+          <div className="w-full overflow-x-auto">
           {/* Table header */}
-          <div className="grid grid-cols-[2fr_1fr_1fr_1fr_2fr] gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
+          <div className="grid min-w-[720px] grid-cols-[2fr_1fr_1fr_1fr_2fr] gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
             <span className="text-xs font-black uppercase tracking-wider text-gray-400">Student</span>
             <span className="text-xs font-black uppercase tracking-wider text-gray-400">
               Classwork ({cwWeight}%)
@@ -347,7 +364,7 @@ const CAEntryForm = ({
           </div>
 
           {/* Rows */}
-          <div className="divide-y divide-gray-50 max-h-[420px] overflow-y-auto">
+          <div className="min-w-[720px] divide-y divide-gray-50 max-h-[420px] overflow-y-auto">
             {rows.map((row, idx) => {
               const student = students[idx];
               const cw = parseFloat(row.classworkScore);
@@ -420,6 +437,7 @@ const CAEntryForm = ({
               );
             })}
           </div>
+          </div>
         </div>
       )}
 
@@ -427,7 +445,16 @@ const CAEntryForm = ({
       <div className="flex items-center gap-3 pt-2">
         <button
           type="button"
-          onClick={() => setRows(rows.map((r) => ({ ...r, classworkScore: "", examScore: "", remarks: "" })))}
+          onClick={() =>
+            setRowEdits(
+              Object.fromEntries(
+                rows.map((row) => [
+                  row.studentId,
+                  { classworkScore: "", examScore: "", remarks: "" },
+                ])
+              )
+            )
+          }
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-100 text-gray-600 text-sm font-bold hover:bg-gray-200 transition-colors"
         >
           <RefreshCw size={13} /> Clear

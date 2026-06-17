@@ -8,7 +8,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Users, CheckCircle2, AlertCircle,
+  CheckCircle2, AlertCircle,
   Loader2, ArrowRight, ChevronRight,
 } from "lucide-react";
 import { generateBills } from "@/src/lib/actions/billActions";
@@ -87,8 +87,8 @@ const GenerateBillsForm = ({
         });
         setResult(res);
         setStep("done");
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to generate bills.");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to generate bills.");
         setStep("select");
       }
     });
@@ -143,12 +143,13 @@ const GenerateBillsForm = ({
 
         {/* Summary table */}
         <div className="rounded-2xl border border-gray-100 overflow-hidden">
-          <div className="grid grid-cols-4 gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
+          <div className="w-full overflow-x-auto">
+          <div className="grid min-w-[560px] grid-cols-4 gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
             {["Class", "Students", "Already Billed", "New Bills"].map((h) => (
               <p key={h} className="text-[10px] font-black uppercase tracking-wider text-gray-400">{h}</p>
             ))}
           </div>
-          <div className="divide-y divide-gray-50">
+          <div className="min-w-[560px] divide-y divide-gray-50">
             {selectedData.map((cls) => (
               <div key={cls.id} className="grid grid-cols-4 gap-2 px-4 py-3">
                 <p className="text-sm font-bold text-gray-800">{cls.name}</p>
@@ -159,7 +160,7 @@ const GenerateBillsForm = ({
             ))}
           </div>
           {/* Totals */}
-          <div className="grid grid-cols-4 gap-2 px-4 py-3 bg-indigo-50 border-t border-indigo-100">
+          <div className="grid min-w-[560px] grid-cols-4 gap-2 px-4 py-3 bg-indigo-50 border-t border-indigo-100">
             <p className="text-sm font-black text-indigo-900">Total</p>
             <p className="text-sm font-black text-indigo-900">
               {selectedData.reduce((s, c) => s + c.studentCount, 0)}
@@ -167,15 +168,16 @@ const GenerateBillsForm = ({
             <p className="text-sm font-black text-indigo-900">{totalSkipped}</p>
             <p className="text-sm font-black text-indigo-900">{totalNewBills}</p>
           </div>
+          </div>
         </div>
 
         {/* Financial summary */}
         <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-2xl">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between mb-2">
             <p className="text-sm font-bold text-indigo-800">Amount per student</p>
             <p className="text-sm font-black text-indigo-900">{formatGHS(perStudentTotal)}</p>
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-base font-black text-indigo-900">Total amount to be billed</p>
             <p className="text-xl font-black text-indigo-700">{formatGHS(grandTotal)}</p>
           </div>
@@ -311,7 +313,7 @@ const GenerateBillsForm = ({
             <div>
               <p className="text-sm font-black text-amber-800">Include optional fee items</p>
               <p className="text-xs text-amber-700 mt-0.5">
-                Adds optional fees (e.g. transport, feeding) to every student's bill in the
+                Adds optional fees (e.g. transport, feeding) to every student&apos;s bill in the
                 selected classes. This adds {formatGHS(optionalTotal)} per student.
               </p>
             </div>

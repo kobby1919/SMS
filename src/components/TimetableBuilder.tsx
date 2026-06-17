@@ -234,7 +234,7 @@ const SlotModal = ({
             <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">
               Period Presets
             </label>
-            <div className="grid grid-cols-4 gap-1.5">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
               {PERIOD_PRESETS.map((p) => (
                 <button
                   key={p.label}

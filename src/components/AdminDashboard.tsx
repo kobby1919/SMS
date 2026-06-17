@@ -134,7 +134,7 @@ const AdminDashboard = ({
               onClick={() => router.push("/list/attendance")}
               className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hover:shadow-md hover:border-emerald-100 transition-all group cursor-pointer"
             >
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-emerald-100 transition-colors">
                     <CalendarDays size={18} className="text-emerald-600" />
@@ -157,7 +157,7 @@ const AdminDashboard = ({
                   View All →
                 </span>
               </div>
-              <div className="grid grid-cols-4 gap-2 mb-4">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
                 {[
                   {
                     label: "Present",
@@ -303,7 +303,7 @@ const AdminDashboard = ({
                   </span>
                 </span>
               </div>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
                   {
                     label: "Total Slots",

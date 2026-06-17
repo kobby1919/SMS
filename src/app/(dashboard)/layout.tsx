@@ -12,8 +12,8 @@ export default async function DashboardLayout({
   const session = await requirePageSession();
 
   return (
-    <div className="h-screen flex">
-      <div className="w-[56px] md:w-[64px] lg:w-[16%] xl:w-[14%] p-3 lg:p-4 border-r border-gray-100 bg-white flex flex-col gap-6 shrink-0">
+    <div className="h-dvh min-h-dvh overflow-hidden flex bg-[#F7F8FA]">
+      <div className="w-14 md:w-16 lg:w-60 xl:w-64 p-3 lg:p-4 border-r border-gray-100 bg-white flex flex-col gap-6 shrink-0 overflow-y-auto overflow-x-hidden no-scrollbar">
         <Link
           href="/"
           className="flex items-center justify-center lg:justify-start gap-2"
@@ -26,7 +26,7 @@ export default async function DashboardLayout({
         <Menu role={session.role} />
       </div>
 
-      <div className="flex-1 min-w-0 bg-[#F7F8FA] overflow-scroll">
+      <div className="flex-1 min-w-0 h-full bg-[#F7F8FA] overflow-y-auto overflow-x-hidden">
         <Navbar role={session.role} />
         {children}
       </div>
