@@ -610,8 +610,8 @@ const TimetableBuilder = ({ classes, teachers, initialLessons }: Props) => {
 
       {/* Toolbar */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-          <div className="flex flex-wrap gap-2 items-center">
+        <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:items-center">
             <div className="flex items-center gap-1.5 text-gray-400">
               <Filter size={13} />
               <span className="text-xs font-bold uppercase tracking-wide">Filter</span>
@@ -620,7 +620,7 @@ const TimetableBuilder = ({ classes, teachers, initialLessons }: Props) => {
               <select
                 value={selectedClass}
                 onChange={(e) => setSelectedClass(e.target.value === "all" ? "all" : parseInt(e.target.value))}
-                className="pl-3 pr-7 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-300 appearance-none bg-white"
+                className="w-full sm:w-auto pl-3 pr-7 py-2 sm:py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-300 appearance-none bg-white"
               >
                 <option value="all">All Classes</option>
                 {classes.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -631,7 +631,7 @@ const TimetableBuilder = ({ classes, teachers, initialLessons }: Props) => {
               <select
                 value={selectedDay}
                 onChange={(e) => setSelectedDay(e.target.value)}
-                className="pl-3 pr-7 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-300 appearance-none bg-white"
+                className="w-full sm:w-auto pl-3 pr-7 py-2 sm:py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-300 appearance-none bg-white"
               >
                 <option value="all">All Days</option>
                 {DAYS.map((d) => <option key={d} value={d}>{DAY_FULL[d]}</option>)}
@@ -645,8 +645,11 @@ const TimetableBuilder = ({ classes, teachers, initialLessons }: Props) => {
               >Clear</button>
             )}
           </div>
-          <div className="flex items-center gap-2">
-            <div className="flex bg-gray-100 p-1 rounded-xl gap-1">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <p className="lg:hidden rounded-xl bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-600">
+              List view is used automatically on smaller screens.
+            </p>
+            <div className="hidden lg:flex bg-gray-100 p-1 rounded-xl gap-1">
               {(["grid", "list"] as const).map((v) => (
                 <button
                   key={v}
@@ -658,7 +661,7 @@ const TimetableBuilder = ({ classes, teachers, initialLessons }: Props) => {
             </div>
             <button
               onClick={() => openCreate()}
-              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition-all shadow-sm"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition-all shadow-sm"
             >
               <Plus size={13} />Add Slot
             </button>
@@ -674,7 +677,7 @@ const TimetableBuilder = ({ classes, teachers, initialLessons }: Props) => {
             key="grid"
             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+            className="hidden lg:block bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
           >
             <div className="w-full overflow-x-auto">
               <table className="w-full min-w-[700px]">
@@ -762,15 +765,91 @@ const TimetableBuilder = ({ classes, teachers, initialLessons }: Props) => {
         )}
 
         {/* LIST VIEW */}
-        {viewMode === "list" && (
+        {(viewMode === "list" || viewMode === "grid") && (
           <motion.div
             key="list"
             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+            className={`${viewMode === "grid" ? "lg:hidden" : ""} bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden`}
           >
-            <div className="w-full overflow-x-auto">
-              <table className="w-full min-w-full">
+            <div className="md:hidden">
+              {filtered.length === 0 ? (
+                <div className="flex flex-col items-center justify-center px-4 py-14 text-center">
+                  <Calendar size={32} className="text-gray-200 mb-3" />
+                  <p className="text-gray-400 font-semibold text-sm">No lessons match your filters</p>
+                  <button onClick={() => openCreate()} className="mt-3 text-xs text-indigo-500 font-bold hover:underline">
+                    + Add a lesson slot
+                  </button>
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-50">
+                  {filtered.map((lesson) => {
+                    const c = subjectColorMap[lesson.subject.id] ?? COLORS[0];
+                    return (
+                      <motion.div key={lesson.id} layout className="p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${c.dot}`} />
+                              <h3 className="font-black text-sm text-gray-800 truncate">
+                                {lesson.subject.name}
+                              </h3>
+                            </div>
+                            <div className="mt-2 flex flex-wrap gap-1.5">
+                              <span className={`text-[11px] font-bold px-2 py-1 rounded-lg ${c.bg} ${c.text}`}>
+                                {lesson.class.name}
+                              </span>
+                              <span className="text-[11px] font-bold px-2 py-1 rounded-lg bg-gray-100 text-gray-500">
+                                {DAY_FULL[lesson.day]}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex shrink-0 items-center gap-1.5">
+                            <button
+                              onClick={() => openEdit(lesson)}
+                              className="w-9 h-9 rounded-lg bg-amber-50 hover:bg-amber-100 flex items-center justify-center transition-colors"
+                              title="Edit lesson"
+                            >
+                              <Pencil size={14} className="text-amber-600" />
+                            </button>
+                            <button
+                              onClick={() => setDeleteTarget(lesson)}
+                              className="w-9 h-9 rounded-lg bg-rose-50 hover:bg-rose-100 flex items-center justify-center transition-colors"
+                              title="Delete lesson"
+                            >
+                              <Trash2 size={14} className="text-rose-500" />
+                            </button>
+                          </div>
+                        </div>
+                        <div className="mt-3 grid grid-cols-1 gap-2 text-xs text-gray-500">
+                          <div className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-2">
+                            <span className="font-bold text-gray-400">Time</span>
+                            <span className="font-mono font-bold text-gray-600">
+                              {formatTime(lesson.startTime)} - {formatTime(lesson.endTime)}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-2">
+                            <span className="font-bold text-gray-400">Duration</span>
+                            <span className="font-bold text-gray-600">
+                              {getDuration(lesson.startTime, lesson.endTime)}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-2">
+                            <span className="font-bold text-gray-400">Teacher</span>
+                            <span className="min-w-0 truncate text-right font-bold text-gray-600">
+                              {lesson.teacher.name} {lesson.teacher.surname}
+                            </span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            <div className="hidden md:block w-full overflow-x-auto">
+              <table className="w-full min-w-[780px]">
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50/60">
                     {["Subject", "Class", "Day", "Time", "Duration", "Teacher", "Actions"].map((h) => (
@@ -822,7 +901,7 @@ const TimetableBuilder = ({ classes, teachers, initialLessons }: Props) => {
                             </span>
                           </td>
                           <td className="px-4 py-3">
-                            <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center gap-1.5 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                               <button
                                 onClick={() => openEdit(lesson)}
                                 className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-amber-50 flex items-center justify-center transition-colors"
@@ -845,7 +924,7 @@ const TimetableBuilder = ({ classes, teachers, initialLessons }: Props) => {
               </table>
             </div>
             {filtered.length > 0 && (
-              <div className="px-4 py-3 border-t border-gray-100 flex items-center justify-between">
+              <div className="px-4 py-3 border-t border-gray-100 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-xs text-gray-400 font-medium">Showing {filtered.length} of {lessons.length} lessons</p>
                 <button onClick={() => openCreate()} className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-700">
                   <Plus size={12} />Add slot

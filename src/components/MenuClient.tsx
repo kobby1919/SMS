@@ -210,10 +210,10 @@ const MenuClient = ({ role }: { role: string }) => {
 
         return (
           <div key={section.title} className="flex flex-col gap-0.5 mb-2">
-            <span className="hidden lg:block text-[9px] font-black text-gray-300 uppercase tracking-[0.15em] mt-4 mb-1 px-3">
+            <span className="hidden md:block text-[9px] font-black text-gray-300 uppercase tracking-[0.15em] mt-4 mb-1 px-3">
               {section.title}
             </span>
-            <div className="lg:hidden border-t border-gray-100 my-2 mx-2" />
+            <div className="md:hidden border-t border-gray-100 my-2 mx-2" />
 
             {visibleItems.map((item) => {
               const Icon = item.icon;
@@ -229,8 +229,8 @@ const MenuClient = ({ role }: { role: string }) => {
                 <Link
                   href={item.href}
                   key={item.label + item.href}
-                  className={`flex items-center justify-center lg:justify-start gap-3
-                    py-2.5 px-0 lg:px-3 rounded-xl transition-all group
+                  className={`flex items-center justify-center md:justify-start gap-3
+                    py-2.5 px-0 md:px-3 rounded-xl transition-all group
                     ${
                       isActive
                         ? "bg-jayPurpleLight text-jayPurple font-semibold"
@@ -244,9 +244,9 @@ const MenuClient = ({ role }: { role: string }) => {
                       className={`transition-opacity ${isActive ? "opacity-100" : "opacity-60 group-hover:opacity-80"}`}
                     />
                   </span>
-                  <span className="hidden lg:block text-sm">{item.label}</span>
+                  <span className="hidden md:block min-w-0 truncate text-sm">{item.label}</span>
                   {isActive && (
-                    <span className="hidden lg:block ml-auto w-1.5 h-1.5 rounded-full bg-jayPurple" />
+                    <span className="hidden md:block ml-auto w-1.5 h-1.5 rounded-full bg-jayPurple shrink-0" />
                   )}
                 </Link>
               );

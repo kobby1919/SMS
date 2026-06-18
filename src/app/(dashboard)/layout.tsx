@@ -13,13 +13,13 @@ export default async function DashboardLayout({
 
   return (
     <div className="h-dvh min-h-dvh overflow-hidden flex bg-[#F7F8FA]">
-      <div className="w-14 md:w-16 lg:w-60 xl:w-64 p-3 lg:p-4 border-r border-gray-100 bg-white flex flex-col gap-6 shrink-0 overflow-y-auto overflow-x-hidden no-scrollbar">
+      <div className="w-14 md:w-56 lg:w-60 xl:w-64 p-3 lg:p-4 border-r border-gray-100 bg-white flex flex-col gap-6 shrink-0 overflow-y-auto overflow-x-hidden no-scrollbar">
         <Link
           href="/"
-          className="flex items-center justify-center lg:justify-start gap-2"
+          className="flex items-center justify-center md:justify-start gap-2"
         >
           <Image src="/school.svg" alt="logo" width={32} height={32} priority />
-          <span className="hidden lg:block font-nunito font-extrabold text-lg tracking-tight text-gray-800">
+          <span className="hidden md:block font-nunito font-extrabold text-lg tracking-tight text-gray-800">
             EduJay
           </span>
         </Link>
