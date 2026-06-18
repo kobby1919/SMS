@@ -121,8 +121,8 @@ export async function getCachedTimetableTeachers(schoolId: string) {
 
 export async function getCachedTimetableLessons(schoolId: string) {
   return unstable_cache(
-    () =>
-      prisma.lesson.findMany({
+    async () => {
+      const lessons = await prisma.lesson.findMany({
         where: { schoolId },
         include: {
           subject: { select: { id: true, name: true } },
@@ -130,7 +130,19 @@ export async function getCachedTimetableLessons(schoolId: string) {
           teacher: { select: { id: true, name: true, surname: true } },
         },
         orderBy: [{ day: "asc" }, { startTime: "asc" }],
-      }),
+      });
+
+      return lessons.map((lesson) => ({
+        id: lesson.id,
+        name: lesson.name,
+        day: lesson.day,
+        startTime: lesson.startTime.toISOString(),
+        endTime: lesson.endTime.toISOString(),
+        subject: lesson.subject,
+        class: lesson.class,
+        teacher: lesson.teacher,
+      }));
+    },
     ["reference-data", "timetable-lessons", schoolId],
     { revalidate: 60, tags: [referenceDataTag(schoolId, "timetable")] },
   )();
