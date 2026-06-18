@@ -7,7 +7,7 @@ import { requireRole } from "@/src/lib/authz";
 import { requireResourceAccess } from "@/src/lib/authz";
 import { assertSameSchool } from "@/src/lib/tenant";
 import { revalidatePath } from "next/cache";
-import { revalidateReferenceData } from "@/src/lib/cacheTags";
+import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   assignmentFormSchema,
@@ -36,6 +36,8 @@ export async function deleteLesson(id: number) {
   await prisma.lesson.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/lessons");
   revalidatePath("/admin/timetable");
+  revalidateReferenceData(schoolId, "timetable");
+  revalidateDashboard(schoolId);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -49,6 +51,7 @@ export async function createClass(data: {
   await prisma.class.create({ data: { ...data, schoolId } });
   revalidatePath("/list/classes");
   revalidateReferenceData(schoolId, "classes");
+  revalidateDashboard(schoolId);
 }
 
 export async function updateClass(id: number, data: {
@@ -62,6 +65,7 @@ export async function updateClass(id: number, data: {
   revalidatePath("/list/classes");
   revalidateReferenceData(schoolId, "classes");
   revalidateReferenceData(schoolId, "students");
+  revalidateDashboard(schoolId);
 }
 
 export async function deleteClass(id: number) {
@@ -71,6 +75,8 @@ export async function deleteClass(id: number) {
   revalidatePath("/admin/timetable");
   revalidateReferenceData(schoolId, "classes");
   revalidateReferenceData(schoolId, "students");
+  revalidateReferenceData(schoolId, "timetable");
+  revalidateDashboard(schoolId);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -89,6 +95,7 @@ export async function createSubject(data: { name: string; teacherIds?: string[] 
   });
   revalidatePath("/list/subjects");
   revalidateReferenceData(schoolId, "subjects");
+  revalidateDashboard(schoolId);
 }
 
 export async function updateSubject(id: number, data: { name?: string; teacherIds?: string[] }) {
@@ -106,6 +113,8 @@ export async function updateSubject(id: number, data: { name?: string; teacherId
   });
   revalidatePath("/list/subjects");
   revalidateReferenceData(schoolId, "subjects");
+  revalidateReferenceData(schoolId, "timetable");
+  revalidateDashboard(schoolId);
 }
 
 export async function deleteSubject(id: number) {
@@ -114,6 +123,8 @@ export async function deleteSubject(id: number) {
   revalidatePath("/list/subjects");
   revalidatePath("/admin/timetable");
   revalidateReferenceData(schoolId, "subjects");
+  revalidateReferenceData(schoolId, "timetable");
+  revalidateDashboard(schoolId);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -132,6 +143,8 @@ export async function deleteTeacher(id: string) {
   revalidatePath("/admin/timetable");
   revalidateReferenceData(schoolId, "teachers");
   revalidateReferenceData(schoolId, "subjects");
+  revalidateReferenceData(schoolId, "timetable");
+  revalidateDashboard(schoolId);
 }
 
 export async function deleteStudent(id: string) {
@@ -139,6 +152,7 @@ export async function deleteStudent(id: string) {
   await prisma.student.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/students");
   revalidateReferenceData(schoolId, "students");
+  revalidateDashboard(schoolId);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

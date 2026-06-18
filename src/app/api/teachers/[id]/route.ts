@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
 import { clerkClient } from "@clerk/nextjs/server";
 import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
-import { revalidateReferenceData } from "@/src/lib/cacheTags";
+import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
 import { parseBody } from "@/src/lib/validation/parse";
 import { teacherUpdateSchema } from "@/src/lib/validation/users";
 
@@ -68,6 +68,8 @@ export async function PUT(
 
     revalidateReferenceData(schoolId, "teachers");
     revalidateReferenceData(schoolId, "subjects");
+    revalidateReferenceData(schoolId, "timetable");
+    revalidateDashboard(schoolId);
 
     return NextResponse.json(teacher);
   } catch (e: unknown) {

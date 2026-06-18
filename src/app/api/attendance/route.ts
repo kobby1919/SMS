@@ -10,6 +10,7 @@ import {
 } from "@/src/lib/validation/attendance";
 import { parseBody, parseSearchParams } from "@/src/lib/validation/parse";
 import { enforceRateLimit } from "@/src/lib/rate-limit";
+import { revalidateDashboard } from "@/src/lib/cacheTags";
 
 export async function GET(req: NextRequest) {
   try {
@@ -104,6 +105,7 @@ export async function POST(req: NextRequest) {
       ),
     );
 
+    revalidateDashboard(schoolId);
     return NextResponse.json({ saved: results.length }, { status: 201 });
   } catch (error) {
     return unauthorizedResponse(error);
@@ -127,6 +129,7 @@ export async function DELETE(req: NextRequest) {
     await prisma.attendance.deleteMany({
       where: { id: parsed.data.id, schoolId },
     });
+    revalidateDashboard(schoolId);
     return NextResponse.json({ success: true });
   } catch (error) {
     return unauthorizedResponse(error);

@@ -1,4 +1,6 @@
 import prisma from "@/src/lib/prisma";
+import { unstable_cache } from "next/cache";
+import { dashboardTag } from "@/src/lib/cacheTags";
 import {
   getFlaggedAttendanceStudents,
   normalizeAttendanceStatusCounts,
@@ -62,7 +64,7 @@ function endOfDay(d: Date): Date {
 
 function buildWeekDays(now: Date): { label: string; date: Date }[] {
   const weekDays: { label: string; date: Date }[] = [];
-  let d = new Date(now);
+  const d = new Date(now);
   while (weekDays.length < 5) {
     const day = d.getDay();
     if (day !== 0 && day !== 6) {
@@ -307,4 +309,19 @@ export async function getAdminDashboardData(
       draft: totalSyllabi - publishedSyllabi,
     },
   };
+}
+
+export async function getCachedAdminDashboardData(
+  schoolId: string,
+): Promise<AdminDashboardData> {
+  const dayKey = new Date().toISOString().slice(0, 10);
+
+  return unstable_cache(
+    () => getAdminDashboardData(schoolId),
+    ["dashboard", "admin", schoolId, dayKey],
+    {
+      revalidate: 30,
+      tags: [dashboardTag(schoolId, "admin")],
+    },
+  )();
 }

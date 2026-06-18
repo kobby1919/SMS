@@ -10,6 +10,7 @@ import {
   timetableUpdateSchema,
 } from "@/src/lib/validation/timetable";
 import { parseBody, parseSearchParams } from "@/src/lib/validation/parse";
+import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
 
 export async function GET(req: NextRequest) {
   try {
@@ -90,6 +91,8 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    revalidateReferenceData(schoolId, "timetable");
+    revalidateDashboard(schoolId);
     return NextResponse.json(lesson, { status: 201 });
   } catch (error) {
     return unauthorizedResponse(error);
@@ -165,6 +168,8 @@ export async function PUT(req: NextRequest) {
       },
     });
 
+    revalidateReferenceData(schoolId, "timetable");
+    revalidateDashboard(schoolId);
     return NextResponse.json(lesson);
   } catch (error) {
     return unauthorizedResponse(error);
@@ -178,6 +183,8 @@ export async function DELETE(req: NextRequest) {
     if (!parsed.ok) return parsed.response;
 
     await prisma.lesson.deleteMany({ where: { id: parsed.data.id, schoolId } });
+    revalidateReferenceData(schoolId, "timetable");
+    revalidateDashboard(schoolId);
     return NextResponse.json({ success: true });
   } catch (error) {
     return unauthorizedResponse(error);

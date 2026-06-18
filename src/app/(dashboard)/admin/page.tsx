@@ -1,5 +1,5 @@
 import { requirePageSession } from "@/src/lib/authz";
-import { getAdminDashboardData } from "@/src/lib/queries/admin-dashboard";
+import { getCachedAdminDashboardData } from "@/src/lib/queries/admin-dashboard";
 import AdminDashboard from "@/src/components/AdminDashboard";
 import EventList from "@/src/components/EventList";
 import Announcements from "@/src/components/Announcements";
@@ -12,7 +12,7 @@ const AdminPage = async ({
   searchParams: { [key: string]: string | undefined };
 }) => {
   const { schoolId } = await requirePageSession(["admin"]);
-  const data = await getAdminDashboardData(schoolId);
+  const data = await getCachedAdminDashboardData(schoolId);
 
   return (
     <AdminDashboard

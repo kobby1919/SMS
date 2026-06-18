@@ -93,3 +93,45 @@ export async function getCachedTeachers(schoolId: string) {
     { revalidate: 60, tags: [referenceDataTag(schoolId, "teachers")] },
   )();
 }
+
+export async function getCachedTimetableTeachers(schoolId: string) {
+  return unstable_cache(
+    () =>
+      prisma.teacher.findMany({
+        where: { schoolId },
+        select: {
+          id: true,
+          name: true,
+          surname: true,
+          maxClasses: true,
+          subjects: { select: { id: true, name: true } },
+        },
+        orderBy: [{ name: "asc" }, { surname: "asc" }],
+      }),
+    ["reference-data", "timetable-teachers", schoolId],
+    {
+      revalidate: 60,
+      tags: [
+        referenceDataTag(schoolId, "teachers"),
+        referenceDataTag(schoolId, "subjects"),
+      ],
+    },
+  )();
+}
+
+export async function getCachedTimetableLessons(schoolId: string) {
+  return unstable_cache(
+    () =>
+      prisma.lesson.findMany({
+        where: { schoolId },
+        include: {
+          subject: { select: { id: true, name: true } },
+          class: { select: { id: true, name: true } },
+          teacher: { select: { id: true, name: true, surname: true } },
+        },
+        orderBy: [{ day: "asc" }, { startTime: "asc" }],
+      }),
+    ["reference-data", "timetable-lessons", schoolId],
+    { revalidate: 60, tags: [referenceDataTag(schoolId, "timetable")] },
+  )();
+}

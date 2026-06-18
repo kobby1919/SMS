@@ -1,40 +1,22 @@
 // src/app/(dashboard)/admin/timetable/page.tsx
 
-import prisma from "@/src/lib/prisma";
 import { requirePageSession } from "@/src/lib/authz";
-import { redirect } from "next/navigation";
 import TimetableBuilder from "@/src/components/TimetableBuilder";
 import type { TBClass, TBTeacher, TBLesson } from "@/src/components/TimetableBuilder";
 import { Calendar } from "lucide-react";
+import {
+  getCachedClasses,
+  getCachedTimetableLessons,
+  getCachedTimetableTeachers,
+} from "@/src/lib/referenceData";
 
 const TimetablePage = async () => {
   const { schoolId } = await requirePageSession(["admin"]);
 
   const [classes, teachers, lessons] = await Promise.all([
-    prisma.class.findMany({
-      where: { schoolId },
-      include: { grade: { select: { level: true, order: true } } },
-      orderBy: [{ grade: { order: "asc" } }, { name: "asc" }],
-    }),
-
-    prisma.teacher.findMany({
-      where: { schoolId },
-      select: {
-        id: true, name: true, surname: true, maxClasses: true,
-        subjects: { select: { id: true, name: true } },
-      },
-      orderBy: [{ name: "asc" }, { surname: "asc" }],
-    }),
-
-    prisma.lesson.findMany({
-      where: { schoolId },
-      include: {
-        subject: { select: { id: true, name: true } },
-        class:   { select: { id: true, name: true } },
-        teacher: { select: { id: true, name: true, surname: true } },
-      },
-      orderBy: [{ day: "asc" }, { startTime: "asc" }],
-    }),
+    getCachedClasses(schoolId),
+    getCachedTimetableTeachers(schoolId),
+    getCachedTimetableLessons(schoolId),
   ]);
 
   const serializedLessons: TBLesson[] = lessons.map((l) => ({

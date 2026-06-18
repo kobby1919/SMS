@@ -6,6 +6,7 @@
 import prisma from "@/src/lib/prisma";
 import { requireRole } from "@/src/lib/authz";
 import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/src/lib/cacheTags";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import { caConfigSchema, caRecordSchema } from "@/src/lib/validation/ca";
 import type { Term } from "@/src/generated/prisma";
@@ -86,6 +87,7 @@ export async function upsertCAConfig(data: CAConfigInput) {
 
   revalidatePath("/list/ca");
   revalidatePath("/admin");
+  revalidateDashboard(schoolId);
   return config;
 }
 
@@ -177,6 +179,7 @@ export async function createCA(data: CAInput) {
 
   revalidatePath("/list/ca");
   revalidatePath("/teacher");
+  revalidateDashboard(schoolId);
   return ca;
 }
 
@@ -213,6 +216,7 @@ export async function updateCA(data: CAInput) {
 
   revalidatePath("/list/ca");
   revalidatePath("/teacher");
+  revalidateDashboard(schoolId);
 }
 
 export async function deleteCA(id: number) {
@@ -225,6 +229,7 @@ export async function deleteCA(id: number) {
 
   await prisma.continuousAssessment.delete({ where: { id, schoolId } });
   revalidatePath("/list/ca");
+  revalidateDashboard(schoolId);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -306,5 +311,6 @@ export async function bulkUpsertCA(
 
   revalidatePath("/list/ca");
   revalidatePath("/teacher");
+  revalidateDashboard(schoolId);
   return results;
 }
