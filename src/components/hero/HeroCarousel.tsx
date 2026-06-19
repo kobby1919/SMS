@@ -53,66 +53,6 @@ const SIG_PATHS: SigPath[] = [
 const STROKE_GAP_MS = 40;
 
 // ─── AURORA MASSES ────────────────────────────────────────────────────────────
-function AuroraMasses(): React.ReactElement {
-  const m1  = useRef<HTMLDivElement>(null);
-  const m2  = useRef<HTMLDivElement>(null);
-  const m3  = useRef<HTMLDivElement>(null);
-  const raf = useRef<number | null>(null);
-
-  useEffect(() => {
-    const tick = (ts: number): void => {
-      const t = ts * 0.00018;
-      if (m1.current)
-        m1.current.style.transform = `translate(${-20 + Math.sin(t * 0.7) * 12}%, ${-20 + Math.cos(t * 0.5) * 12}%)`;
-      if (m2.current)
-        m2.current.style.transform = `translate(${40 + Math.cos(t * 0.6) * 14}%, ${30 + Math.sin(t * 0.4) * 14}%)`;
-      if (m3.current)
-        m3.current.style.transform = `translate(${20 + Math.sin(t * 0.35 + 1.2) * 16}%, ${10 + Math.cos(t * 0.45 + 0.8) * 18}%)`;
-      raf.current = requestAnimationFrame(tick);
-    };
-    raf.current = requestAnimationFrame(tick);
-    return () => { if (raf.current) cancelAnimationFrame(raf.current); };
-  }, []);
-
-  const base: React.CSSProperties = {
-    position: "absolute", top: 0, left: 0,
-    borderRadius: "50%", pointerEvents: "none",
-    zIndex: 0, willChange: "transform",
-  };
-
-  return (
-    <>
-      <div style={{ position: "absolute", inset: 0, zIndex: 0, background: "#080B18", pointerEvents: "none" }} />
-      <div ref={m1} style={{
-        ...base, width: "80vw", height: "80vw",
-        background: "radial-gradient(circle at 40% 40%, rgba(91,79,233,0.35) 0%, rgba(91,79,233,0.10) 40%, transparent 68%)",
-        filter: "blur(80px)",
-      }} />
-      <div ref={m2} style={{
-        ...base, width: "65vw", height: "65vw",
-        background: "radial-gradient(circle at 55% 55%, rgba(26,111,168,0.28) 0%, rgba(26,111,168,0.07) 45%, transparent 68%)",
-        filter: "blur(90px)",
-      }} />
-      <div ref={m3} style={{
-        ...base, width: "50vw", height: "50vw",
-        background: "radial-gradient(circle at 50% 50%, rgba(139,127,245,0.20) 0%, rgba(139,127,245,0.05) 50%, transparent 70%)",
-        filter: "blur(70px)",
-      }} />
-      <div style={{
-        position: "absolute", inset: 0, zIndex: 1, pointerEvents: "none",
-        background: "radial-gradient(ellipse 90% 90% at 50% 50%, transparent 40%, rgba(4,6,16,0.55) 72%, rgba(4,6,16,0.92) 100%)",
-      }} />
-      <div style={{
-        position: "absolute", inset: 0, zIndex: 1, opacity: 0.018, pointerEvents: "none",
-        backgroundImage: [
-          "repeating-linear-gradient(47deg,  rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.9) 1px, transparent 1px, transparent 38px)",
-          "repeating-linear-gradient(133deg, rgba(255,255,255,0.6) 0px, rgba(255,255,255,0.6) 1px, transparent 1px, transparent 62px)",
-        ].join(","),
-      }} />
-    </>
-  );
-}
-
 // ─── SIGNATURE REVEAL ─────────────────────────────────────────────────────────
 interface SignatureRevealProps {
   onComplete: () => void;
@@ -377,9 +317,20 @@ export default function HeroSection(): React.ReactElement {
           minHeight: "100svh",
           background: "#080B18",
           overflow: "hidden",
+          isolation: "isolate",
         }}
       >
-        <AuroraMasses />
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 0,
+            background:
+              "radial-gradient(ellipse 72% 80% at 22% 42%, rgba(32,44,92,0.6) 0%, rgba(16,19,28,0.76) 52%, #10131C 100%)",
+            pointerEvents: "none",
+          }}
+        />
 
         {/* Top accent line */}
         <div style={{
