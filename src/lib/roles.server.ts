@@ -6,6 +6,26 @@ import {
   type AppRole,
 } from "@/src/lib/roles";
 
+const CLERK_LOOKUP_TIMEOUT_MS = 5_000;
+
+async function getClerkUserWithTimeout(userId: string) {
+  const client = await clerkClient();
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      client.users.getUser(userId),
+      new Promise<never>((_, reject) => {
+        timeout = setTimeout(
+          () => reject(new Error("Clerk metadata lookup timed out.")),
+          CLERK_LOOKUP_TIMEOUT_MS,
+        );
+      }),
+    ]);
+  } finally {
+    if (timeout) clearTimeout(timeout);
+  }
+}
+
 function schoolIdFromSessionClaims(sessionClaims: unknown): string | undefined {
   if (!sessionClaims || typeof sessionClaims !== "object") return undefined;
 
@@ -45,6 +65,39 @@ export type ResolveSessionRoleOptions = {
   jwtOnly?: boolean;
 };
 
+export async function resolveSessionIdentity(
+  userId: string | null | undefined,
+  sessionClaims: unknown,
+): Promise<{ role?: AppRole; schoolId: string }> {
+  const roleFromClaims = roleFromSessionClaims(sessionClaims);
+  const schoolIdFromClaims = schoolIdFromSessionClaims(sessionClaims);
+
+  if ((roleFromClaims && schoolIdFromClaims) || !userId) {
+    return {
+      role: roleFromClaims,
+      schoolId: schoolIdFromClaims ?? DEFAULT_SCHOOL_ID,
+    };
+  }
+
+  try {
+    const user = await getClerkUserWithTimeout(userId);
+    const metadataSchoolId = user.publicMetadata?.schoolId;
+    return {
+      role: roleFromClaims ?? normalizeAppRole(user.publicMetadata?.role),
+      schoolId:
+        schoolIdFromClaims ??
+        (typeof metadataSchoolId === "string" && metadataSchoolId.length > 0
+          ? metadataSchoolId
+          : DEFAULT_SCHOOL_ID),
+    };
+  } catch {
+    return {
+      role: roleFromClaims,
+      schoolId: schoolIdFromClaims ?? DEFAULT_SCHOOL_ID,
+    };
+  }
+}
+
 /** Resolve role from JWT, falling back to Clerk publicMetadata when claims lag after sign-in. */
 export async function resolveSessionRole(
   userId: string | null | undefined,
@@ -57,8 +110,7 @@ export async function resolveSessionRole(
   if (options?.jwtOnly || !userId) return undefined;
 
   try {
-    const client = await clerkClient();
-    const user = await client.users.getUser(userId);
+    const user = await getClerkUserWithTimeout(userId);
     return normalizeAppRole(user.publicMetadata?.role);
   } catch {
     return undefined;
@@ -76,8 +128,7 @@ export async function resolveSessionSchoolId(
   if (!userId) return DEFAULT_SCHOOL_ID;
 
   try {
-    const client = await clerkClient();
-    const user = await client.users.getUser(userId);
+    const user = await getClerkUserWithTimeout(userId);
     const schoolId = user.publicMetadata?.schoolId;
     if (typeof schoolId === "string" && schoolId.length > 0) {
       return schoolId;

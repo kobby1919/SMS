@@ -6,9 +6,7 @@ import TableSearch from "@/src/components/TableSearch";
 import Image from "next/image";
 import { Users, GraduationCap, LayoutGrid } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
-import { Prisma } from "@/src/generated/prisma";
-import prisma from "@/src/lib/prisma";
-import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { getClassesPage } from "@/src/lib/services/classes";
 
 const ClassListPage = async ({
   searchParams,
@@ -18,39 +16,13 @@ const ClassListPage = async ({
   const { role, schoolId } = await requirePageSession();
 
   const { page, ...queryParams } = await searchParams;
-  const p = page ? parseInt(page) : 1;
+  const parsedPage = page ? parseInt(page) : 1;
+  const p = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
 
-  const query: Prisma.ClassWhereInput = { schoolId };
-
-  if (queryParams) {
-    for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined) {
-        switch (key) {
-          case "supervisorId":
-            query.supervisorId = value;
-            break;
-          case "search":
-            query.name = { contains: value, mode: "insensitive" };
-            break;
-        }
-      }
-    }
-  }
-
-  const [classes, count] = await Promise.all([
-    prisma.class.findMany({
-      where: query,
-      include: {
-        supervisor: { select: { name: true, surname: true } },
-        grade:      { select: { level: true } },
-        _count:     { select: { students: true } },
-      },
-      orderBy: [{ grade: { order: "asc" } }, { name: "asc" }],
-      take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1),
-    }),
-    prisma.class.count({ where: query }),
-  ]);
+  const { classes, count } = await getClassesPage(schoolId, p, {
+    search: queryParams.search,
+    supervisorId: queryParams.supervisorId,
+  });
 
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">

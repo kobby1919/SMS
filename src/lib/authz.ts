@@ -3,10 +3,7 @@ import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
 import { AUTH_CALLBACK_PATH, SIGN_IN_PATH } from "@/src/lib/auth/constants";
 import { dashboardPathForRole, isAppRole, type AppRole } from "@/src/lib/roles";
-import {
-  resolveSessionRole,
-  resolveSessionSchoolId,
-} from "@/src/lib/roles.server";
+import { resolveSessionIdentity } from "@/src/lib/roles.server";
 
 import { DEFAULT_SCHOOL_ID } from "@/src/lib/constants/tenant";
 
@@ -49,10 +46,7 @@ export async function getAuthzContext(): Promise<AuthzContext | null> {
   const { userId, sessionClaims } = await auth();
   if (!userId) return null;
 
-  const [role, schoolId] = await Promise.all([
-    resolveSessionRole(userId, sessionClaims),
-    resolveSessionSchoolId(userId, sessionClaims),
-  ]);
+  const { role, schoolId } = await resolveSessionIdentity(userId, sessionClaims);
 
   if (!role) return null;
 
