@@ -9,10 +9,13 @@ export const dynamic = "force-dynamic";
 const AdminPage = async ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
   const { schoolId } = await requirePageSession(["admin"]);
-  const data = await getCachedAdminDashboardData(schoolId);
+  const [data, params] = await Promise.all([
+    getCachedAdminDashboardData(schoolId),
+    searchParams,
+  ]);
 
   return (
     <AdminDashboard
@@ -21,7 +24,7 @@ const AdminPage = async ({
       girls={data.girls}
       attendanceData={data.attendanceData}
       financeData={data.financeData}
-      eventList={<EventList dateParam={searchParams.date} />}
+      eventList={<EventList dateParam={params.date} />}
       announcements={<Announcements />}
       timetableSnapshot={data.timetableSnapshot}
       attendanceSnapshot={data.attendanceSnapshot}
