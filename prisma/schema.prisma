@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -150,6 +149,8 @@ model Admin {
 
   schoolId String @default("default-school")
   school   School @relation(fields: [schoolId], references: [id])
+
+  @@index([schoolId])
 }
 
 model Student {
@@ -210,6 +211,9 @@ model Teacher {
 
   continuousAssessments ContinuousAssessment[]
   syllabusTopicProgress SyllabusTopicProgress[]
+
+  @@index([schoolId])
+  @@index([schoolId, createdAt])
 }
 
 model Parent {
@@ -226,6 +230,9 @@ model Parent {
   school   School @relation(fields: [schoolId], references: [id])
 
   students Student[]
+
+  @@index([schoolId])
+  @@index([schoolId, createdAt])
 }
 
 model Grade {
@@ -260,7 +267,7 @@ model Class {
   lessons               Lesson[]
   students              Student[]
   gradeId               Int
-  grade                 Grade          @relation(fields: [gradeId], references: [id])
+  grade                 Grade                   @relation(fields: [gradeId], references: [id])
   events                Event[]
   announcements         Announcement[]
   continuousAssessments ContinuousAssessment[]
@@ -327,6 +334,9 @@ model Exam {
   lessonId Int
   lesson   Lesson   @relation(fields: [lessonId], references: [id])
   results  Result[]
+
+  @@index([schoolId, startTime])
+  @@index([schoolId, lessonId])
 }
 
 model Assignment {
@@ -341,6 +351,9 @@ model Assignment {
   lessonId Int
   lesson   Lesson   @relation(fields: [lessonId], references: [id])
   results  Result[]
+
+  @@index([schoolId, dueDate])
+  @@index([schoolId, lessonId])
 }
 
 model Result {
@@ -361,6 +374,11 @@ model Result {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([schoolId, studentId])
+  @@index([schoolId, examId])
+  @@index([schoolId, assignmentId])
+  @@index([schoolId, createdAt])
 }
 
 model Attendance {
@@ -377,7 +395,7 @@ model Attendance {
   student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   lessonId Int
-  lesson   Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -402,6 +420,9 @@ model Event {
 
   classId Int?
   class   Class? @relation(fields: [classId], references: [id])
+
+  @@index([schoolId, startTime])
+  @@index([schoolId, classId])
 }
 
 model Announcement {
@@ -415,6 +436,9 @@ model Announcement {
 
   classId Int?
   class   Class? @relation(fields: [classId], references: [id])
+
+  @@index([schoolId, date])
+  @@index([schoolId, classId])
 }
 
 // ─── CA MODELS ───────────────────────────────────────────────────────────────
@@ -490,6 +514,8 @@ model Syllabus {
   updatedAt DateTime @updatedAt
 
   @@unique([schoolId, subjectId, gradeId, term, academicYear])
+  @@index([schoolId, status])
+  @@index([schoolId, gradeId, term, academicYear])
 }
 
 model SyllabusTopic {
@@ -542,9 +568,9 @@ model SyllabusTopicProgress {
 
 model FeeStructure {
   id           Int                @id @default(autoincrement())
-  title        String             // e.g. "JHS 2 — Term 1 2025/26 Fees"
+  title        String // e.g. "JHS 2 — Term 1 2025/26 Fees"
   description  String?
-  academicYear String             // e.g. "2025/26"
+  academicYear String // e.g. "2025/26"
   term         Term
   status       FeeStructureStatus @default(DRAFT)
   publishedAt  DateTime?
@@ -558,7 +584,7 @@ model FeeStructure {
   feeItems FeeItem[]
   bills    StudentBill[]
 
-  createdBy String   // bursar/admin userId
+  createdBy String // bursar/admin userId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -574,7 +600,7 @@ model FeeStructure {
 
 model FeeItem {
   id          Int         @id @default(autoincrement())
-  name        String      // e.g. "Tuition Fee"
+  name        String // e.g. "Tuition Fee"
   amount      Decimal     @db.Decimal(10, 2)
   category    FeeCategory
   isOptional  Boolean     @default(false)
@@ -596,8 +622,8 @@ model FeeItem {
 model StudentBill {
   id             Int        @id @default(autoincrement())
   totalAmount    Decimal    @db.Decimal(10, 2)
-  amountPaid     Decimal    @db.Decimal(10, 2) @default(0)
-  discountAmount Decimal    @db.Decimal(10, 2) @default(0)
+  amountPaid     Decimal    @default(0) @db.Decimal(10, 2)
+  discountAmount Decimal    @default(0) @db.Decimal(10, 2)
   balance        Decimal    @db.Decimal(10, 2)
   status         BillStatus @default(UNPAID)
   notes          String?
@@ -635,7 +661,7 @@ model StudentBill {
 model BillLineItem {
   id         Int     @id @default(autoincrement())
   amount     Decimal @db.Decimal(10, 2)
-  amountPaid Decimal @db.Decimal(10, 2) @default(0)
+  amountPaid Decimal @default(0) @db.Decimal(10, 2)
   balance    Decimal @db.Decimal(10, 2)
   isPaid     Boolean @default(false)
 
@@ -660,7 +686,7 @@ model Payment {
   amount        Decimal       @db.Decimal(10, 2)
   paymentMethod PaymentMethod
   paymentDate   DateTime      @default(now())
-  paidBy        String        // name of person who paid
+  paidBy        String // name of person who paid
   referenceNo   String?
   notes         String?
   status        PaymentStatus @default(CONFIRMED)
@@ -763,6 +789,16 @@ model FinanceAuditLog {
 // ─── WAITLIST ─────────────────────────────────────────────────────────────────
 // Standalone — no schoolId, no tenant scoping.
 // Collected before any school signs up, so there's nothing to scope to.
+
+// Shared rate-limit state. Tenant/user/IP scope is encoded in the key.
+model RateLimitBucket {
+  key       String   @id
+  count     Int
+  resetAt   DateTime
+  updatedAt DateTime @updatedAt
+
+  @@index([resetAt])
+}
 
 model WaitlistEntry {
   id         String       @id @default(cuid())

@@ -149,6 +149,8 @@ model Admin {
 
   schoolId String @default("default-school")
   school   School @relation(fields: [schoolId], references: [id])
+
+  @@index([schoolId])
 }
 
 model Student {
@@ -209,6 +211,9 @@ model Teacher {
 
   continuousAssessments ContinuousAssessment[]
   syllabusTopicProgress SyllabusTopicProgress[]
+
+  @@index([schoolId])
+  @@index([schoolId, createdAt])
 }
 
 model Parent {
@@ -225,6 +230,9 @@ model Parent {
   school   School @relation(fields: [schoolId], references: [id])
 
   students Student[]
+
+  @@index([schoolId])
+  @@index([schoolId, createdAt])
 }
 
 model Grade {
@@ -326,6 +334,9 @@ model Exam {
   lessonId Int
   lesson   Lesson   @relation(fields: [lessonId], references: [id])
   results  Result[]
+
+  @@index([schoolId, startTime])
+  @@index([schoolId, lessonId])
 }
 
 model Assignment {
@@ -340,6 +351,9 @@ model Assignment {
   lessonId Int
   lesson   Lesson   @relation(fields: [lessonId], references: [id])
   results  Result[]
+
+  @@index([schoolId, dueDate])
+  @@index([schoolId, lessonId])
 }
 
 model Result {
@@ -360,6 +374,11 @@ model Result {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([schoolId, studentId])
+  @@index([schoolId, examId])
+  @@index([schoolId, assignmentId])
+  @@index([schoolId, createdAt])
 }
 
 model Attendance {
@@ -401,6 +420,9 @@ model Event {
 
   classId Int?
   class   Class? @relation(fields: [classId], references: [id])
+
+  @@index([schoolId, startTime])
+  @@index([schoolId, classId])
 }
 
 model Announcement {
@@ -414,6 +436,9 @@ model Announcement {
 
   classId Int?
   class   Class? @relation(fields: [classId], references: [id])
+
+  @@index([schoolId, date])
+  @@index([schoolId, classId])
 }
 
 // ─── CA MODELS ───────────────────────────────────────────────────────────────
@@ -489,6 +514,8 @@ model Syllabus {
   updatedAt DateTime @updatedAt
 
   @@unique([schoolId, subjectId, gradeId, term, academicYear])
+  @@index([schoolId, status])
+  @@index([schoolId, gradeId, term, academicYear])
 }
 
 model SyllabusTopic {
@@ -762,6 +789,16 @@ model FinanceAuditLog {
 // ─── WAITLIST ─────────────────────────────────────────────────────────────────
 // Standalone — no schoolId, no tenant scoping.
 // Collected before any school signs up, so there's nothing to scope to.
+
+// Shared rate-limit state. Tenant/user/IP scope is encoded in the key.
+model RateLimitBucket {
+  key       String   @id
+  count     Int
+  resetAt   DateTime
+  updatedAt DateTime @updatedAt
+
+  @@index([resetAt])
+}
 
 model WaitlistEntry {
   id         String       @id @default(cuid())

@@ -454,6 +454,13 @@ exports.Prisma.FinanceAuditLogScalarFieldEnum = {
   schoolId: 'schoolId'
 };
 
+exports.Prisma.RateLimitBucketScalarFieldEnum = {
+  key: 'key',
+  count: 'count',
+  resetAt: 'resetAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.WaitlistEntryScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -616,6 +623,7 @@ exports.Prisma.ModelName = {
   Discount: 'Discount',
   ReceiptCounter: 'ReceiptCounter',
   FinanceAuditLog: 'FinanceAuditLog',
+  RateLimitBucket: 'RateLimitBucket',
   WaitlistEntry: 'WaitlistEntry'
 };
 
