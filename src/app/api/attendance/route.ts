@@ -1,7 +1,6 @@
 // src/app/api/attendance/route.ts
 
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/src/lib/prisma";
 import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
 import {
   attendanceDeleteQuerySchema,
@@ -11,11 +10,16 @@ import {
 import { parseBody, parseSearchParams } from "@/src/lib/validation/parse";
 import { enforceRateLimit } from "@/src/lib/rate-limit";
 import { revalidateDashboard } from "@/src/lib/cacheTags";
+import {
+  deleteAttendanceRecord,
+  getAttendanceRecords,
+  saveAttendance,
+} from "@/src/lib/services/attendance";
 
 export async function GET(req: NextRequest) {
   try {
     const { userId, schoolId } = await requireRole(["admin", "teacher"]);
-    const limited = enforceRateLimit(req, {
+    const limited = await enforceRateLimit(req, {
       scope: "attendance:read",
       actorId: userId,
       limit: 120,
@@ -26,21 +30,10 @@ export async function GET(req: NextRequest) {
     const parsed = parseSearchParams(attendanceGetQuerySchema, new URL(req.url).searchParams);
     if (!parsed.ok) return parsed.response;
 
-    const { lessonId, date } = parsed.data;
-    const dayStart = new Date(date);
-    dayStart.setHours(0, 0, 0, 0);
-    const dayEnd = new Date(date);
-    dayEnd.setHours(23, 59, 59, 999);
-
-    const records = await prisma.attendance.findMany({
-      where: {
-        schoolId,
-        lessonId,
-        date: { gte: dayStart, lte: dayEnd },
-      },
-      include: {
-        student: { select: { id: true, name: true, surname: true, img: true } },
-      },
+    const records = await getAttendanceRecords({
+      schoolId,
+      lessonId: parsed.data.lessonId,
+      date: new Date(parsed.data.date),
     });
 
     return NextResponse.json(records);
@@ -52,7 +45,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const { userId, schoolId } = await requireRole(["admin", "teacher"]);
-    const limited = enforceRateLimit(req, {
+    const limited = await enforceRateLimit(req, {
       scope: "attendance:submit",
       actorId: userId,
       limit: 30,
@@ -64,49 +57,15 @@ export async function POST(req: NextRequest) {
     const parsed = parseBody(attendanceSubmitSchema, body);
     if (!parsed.ok) return parsed.response;
 
-    const { lessonId, date, records } = parsed.data;
-    const attendanceDate = new Date(date);
-    attendanceDate.setHours(12, 0, 0, 0);
-
-    const lesson = await prisma.lesson.findFirst({
-      where: { id: lessonId, schoolId },
-      select: { id: true },
+    const saved = await saveAttendance({
+      schoolId,
+      lessonId: parsed.data.lessonId,
+      date: new Date(parsed.data.date),
+      records: parsed.data.records,
     });
-    if (!lesson) {
-      return NextResponse.json({ error: "Lesson not found." }, { status: 404 });
-    }
-
-    const results = await Promise.all(
-      records.map((r) =>
-        prisma.attendance.upsert({
-          where: {
-            schoolId_studentId_lessonId_date: {
-              schoolId,
-              studentId: r.studentId,
-              lessonId,
-              date: attendanceDate,
-            },
-          },
-          update: {
-            status: r.status,
-            present: r.status === "PRESENT",
-            note: r.note ?? null,
-          },
-          create: {
-            schoolId,
-            studentId: r.studentId,
-            lessonId,
-            date: attendanceDate,
-            status: r.status,
-            present: r.status === "PRESENT",
-            note: r.note ?? null,
-          },
-        }),
-      ),
-    );
 
     revalidateDashboard(schoolId);
-    return NextResponse.json({ saved: results.length }, { status: 201 });
+    return NextResponse.json({ saved }, { status: 201 });
   } catch (error) {
     return unauthorizedResponse(error);
   }
@@ -115,7 +74,7 @@ export async function POST(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     const { userId, schoolId } = await requireRole(["admin"]);
-    const limited = enforceRateLimit(req, {
+    const limited = await enforceRateLimit(req, {
       scope: "attendance:delete",
       actorId: userId,
       limit: 20,
@@ -126,9 +85,7 @@ export async function DELETE(req: NextRequest) {
     const parsed = parseSearchParams(attendanceDeleteQuerySchema, new URL(req.url).searchParams);
     if (!parsed.ok) return parsed.response;
 
-    await prisma.attendance.deleteMany({
-      where: { id: parsed.data.id, schoolId },
-    });
+    await deleteAttendanceRecord({ id: parsed.data.id, schoolId });
     revalidateDashboard(schoolId);
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -2,7 +2,6 @@
 
 import prisma from "@/src/lib/prisma";
 import { requirePageSession } from "@/src/lib/authz";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
   CheckCircle2, XCircle, Clock, FileCheck,
@@ -13,6 +12,7 @@ import {
   getAttendanceStatusCounts,
   getFlaggedAttendanceStudents,
 } from "@/src/lib/services/attendance";
+import type { AttendanceStatus, Prisma } from "@/src/generated/prisma";
 
 
 const AttendanceListPage = async ({
@@ -54,7 +54,7 @@ const AttendanceListPage = async ({
   });
 
   // ── Attendance records with filters ──────────────────────────────────────
-  const whereClause: any = {
+  const whereClause: Prisma.AttendanceWhereInput = {
     schoolId,
     date: { gte: filterDate, lte: filterDateEnd },
   };
@@ -62,7 +62,7 @@ const AttendanceListPage = async ({
     whereClause.student = { classId: parseInt(params.classId) };
   }
   if (params.status) {
-    whereClause.status = params.status;
+    whereClause.status = params.status as AttendanceStatus;
   }
 
   const records = await prisma.attendance.findMany({

@@ -21,3 +21,12 @@ export const attendanceSubmitSchema = z.object({
 export const attendanceDeleteQuerySchema = z.object({
   id: z.string().regex(/^\d+$/).transform(Number),
 });
+
+export const attendanceStatsQuerySchema = z
+  .object({
+    studentId: z.string().trim().min(1).optional(),
+    classId: positiveIntSchema.optional(),
+  })
+  .refine((value) => !(value.studentId && value.classId), {
+    message: "Choose either studentId or classId, not both.",
+  });
