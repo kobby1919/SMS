@@ -8,28 +8,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
 import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
+import { teacherClassCountQuerySchema } from "@/src/lib/validation/timetable";
+import { parseSearchParams } from "@/src/lib/validation/parse";
+import { enforceRateLimit } from "@/src/lib/rate-limit";
 
 export async function GET(req: NextRequest) {
   try {
-    const { schoolId } = await requireRole(["admin"]);
+    const { userId, schoolId } = await requireRole(["admin"]);
+    const limited = await enforceRateLimit(req, { scope: "form-data:teacher-class-count", actorId: userId, limit: 120, windowMs: 60_000 });
+    if (limited) return limited;
 
-  const { searchParams } = new URL(req.url);
-  const teacherId       = searchParams.get("teacherId");
-  const excludeClassId  = searchParams.get("excludeClassId");
-  const excludeLessonId = searchParams.get("excludeLessonId");
-
-  if (!teacherId) {
-    return NextResponse.json({ count: 0 });
-  }
+  const parsed = parseSearchParams(teacherClassCountQuerySchema, req.nextUrl.searchParams);
+  if (!parsed.ok) return parsed.response;
+  const { teacherId, excludeClassId, excludeLessonId } = parsed.data;
 
   // Fetch all lessons for this teacher, excluding the current lesson being edited
   const lessons = await prisma.lesson.findMany({
     where: {
       schoolId,
       teacherId,
-      ...(excludeLessonId ? { NOT: { id: parseInt(excludeLessonId) } } : {}),
+      ...(excludeLessonId ? { NOT: { id: excludeLessonId } } : {}),
     },
     select: { classId: true },
+    distinct: ["classId"],
   });
 
   // Count unique class IDs, optionally excluding the currently selected class
@@ -38,7 +39,7 @@ export async function GET(req: NextRequest) {
     lessons
       .map((l) => l.classId)
       .filter((id) =>
-        excludeClassId ? id !== parseInt(excludeClassId) : true
+        excludeClassId ? id !== excludeClassId : true
       )
   );
 

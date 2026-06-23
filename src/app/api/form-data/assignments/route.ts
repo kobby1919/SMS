@@ -1,13 +1,16 @@
 // src/app/api/form-data/assignments/route.ts
  
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
 import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
+import { enforceRateLimit } from "@/src/lib/rate-limit";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const { schoolId } = await requireRole(["admin", "teacher"]);
+    const { userId, schoolId } = await requireRole(["admin", "teacher"]);
+    const limited = await enforceRateLimit(req, { scope: "form-data:assignments", actorId: userId, limit: 120, windowMs: 60_000 });
+    if (limited) return limited;
 
   const assignments = await prisma.assignment.findMany({
     where: { schoolId },
