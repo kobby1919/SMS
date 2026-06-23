@@ -1,12 +1,13 @@
 // src/app/(dashboard)/list/finance/bills/[id]/page.tsx
 
 
-import { redirect, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
+import Image from "next/image";
 import {
-  ArrowLeft, FileText, CheckCircle2,
+  ArrowLeft, CheckCircle2,
   Clock, AlertCircle, Receipt, Users,
 } from "lucide-react";
 import {
@@ -28,7 +29,7 @@ const BillDetailPage = async ({
 }: {
   params: Promise<{ id: string }>;
 }) => {
-  const { role, schoolId } = await requirePageSession(["admin", "bursar"]);
+  const { schoolId } = await requirePageSession(["admin", "bursar"]);
 
   const { id } = await params;
   const billId = parseInt(id);
@@ -100,7 +101,7 @@ const BillDetailPage = async ({
             </Link>
             <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-base font-black text-indigo-600 bg-indigo-50 shrink-0 overflow-hidden">
               {bill.student.img
-                ? <img src={bill.student.img} alt="" className="w-full h-full object-cover" />
+                ? <Image unoptimized src={bill.student.img} alt="" width={44} height={44} className="w-full h-full object-cover" />
                 : `${bill.student.name[0]}${bill.student.surname[0]}`
               }
             </div>

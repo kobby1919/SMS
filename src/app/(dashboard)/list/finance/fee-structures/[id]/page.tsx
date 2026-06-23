@@ -1,13 +1,12 @@
 // src/app/(dashboard)/list/finance/fee-structures/[id]/page.tsx
   
 
-import { redirect, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
 import {
-  ArrowLeft, FileText, Lock, Clock,
-  CheckCircle2, AlertCircle, Users,
+  ArrowLeft, Lock, Clock, Users,
 } from "lucide-react";
 import { formatGHS, FEE_CATEGORY_LABELS } from "@/src/lib/constants/finance";
 import PublishFeeStructureButton from "@/src/components/PublishFeeStructureButton";
@@ -24,7 +23,7 @@ const FeeStructureDetailPage = async ({
 }: {
   params: Promise<{ id: string }>;
 }) => {
-  const { role, schoolId } = await requirePageSession(["admin", "bursar"]);
+  const { schoolId } = await requirePageSession(["admin", "bursar"]);
 
   const { id } = await params;
   const structureId = parseInt(id);
@@ -45,7 +44,6 @@ const FeeStructureDetailPage = async ({
   const optionalItems  = structure.feeItems.filter((i) => i.isOptional);
   const mandatoryTotal = mandatoryItems.reduce((sum, i) => sum + Number(i.amount), 0);
   const optionalTotal  = optionalItems.reduce((sum,  i) => sum + Number(i.amount), 0);
-  const grandTotal     = mandatoryTotal + optionalTotal;
 
   // Bill status breakdown if bills exist
   const billStats = {

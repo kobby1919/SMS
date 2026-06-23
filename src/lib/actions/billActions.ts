@@ -9,9 +9,16 @@ import {
 } from "@/src/lib/actions/financeActions";
 import { requireResourceAccess } from "@/src/lib/authz";
 import { parseActionInput } from "@/src/lib/validation/parse";
-import { billFiltersSchema, generateBillsSchema } from "@/src/lib/validation/finance";
+import {
+  billFiltersSchema,
+  billPreviewSchema,
+  generateBillsSchema,
+  waiveBillSchema,
+} from "@/src/lib/validation/finance";
 import { Prisma } from "@/src/generated/prisma";
 import type { BillStatus } from "@/src/generated/prisma";
+import { enforceActionRateLimit } from "@/src/lib/rate-limit";
+import { revalidateDashboard } from "@/src/lib/cacheTags";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -37,9 +44,10 @@ export async function previewBillGeneration(
   classIds:        number[]
 ): Promise<{ previews: BillPreview[]; mandatoryTotal: number; optionalTotal: number }> {
   const { schoolId } = await requireFinanceAccess();
+  const input = parseActionInput(billPreviewSchema, { feeStructureId, classIds });
 
   const structure = await prisma.feeStructure.findFirst({
-    where:   { id: feeStructureId, schoolId },
+    where:   { id: input.feeStructureId, schoolId },
     include: {
       feeItems: true,
       grade:    { select: { id: true } },
@@ -58,37 +66,38 @@ export async function previewBillGeneration(
     .filter((i) => i.isOptional)
     .reduce((sum, i) => sum + Number(i.amount), 0);
 
-  const previews: BillPreview[] = await Promise.all(
-    classIds.map(async (classId) => {
-      const cls = await prisma.class.findFirst({
-        where:  { id: classId, schoolId },
-        select: { name: true, students: { where: { schoolId }, select: { id: true } } },
-      });
-      if (!cls) throw new Error(`Class ${classId} not found.`);
+  const uniqueClassIds = [...new Set(input.classIds)];
+  const classes = await prisma.class.findMany({
+    where: { id: { in: uniqueClassIds }, schoolId },
+    select: { id: true, name: true, students: { select: { id: true } } },
+  });
+  if (classes.length !== uniqueClassIds.length) {
+    throw new Error("One or more selected classes were not found.");
+  }
 
-      const studentIds = cls.students.map((s) => s.id);
+  const studentIds = classes.flatMap((cls) => cls.students.map((student) => student.id));
+  const existingBills = await prisma.studentBill.findMany({
+    where: { schoolId, feeStructureId: input.feeStructureId, studentId: { in: studentIds } },
+    select: { studentId: true },
+  });
+  const billedStudentIds = new Set(existingBills.map((bill) => bill.studentId));
 
-      const existingBills = await prisma.studentBill.count({
-        where: {
-          schoolId,
-          feeStructureId,
-          studentId: { in: studentIds },
-        },
-      });
-
-      const newBillCount = studentIds.length - existingBills;
-
-      return {
-        classId,
-        className:      cls.name,
-        studentCount:   studentIds.length,
-        alreadyBilled:  existingBills,
-        newBillCount,
-        totalAmount:    mandatoryTotal,
-        grandTotal:     newBillCount * mandatoryTotal,
-      };
-    })
-  );
+  const previews: BillPreview[] = classes.map((cls) => {
+    const alreadyBilled = cls.students.reduce(
+      (count, student) => count + Number(billedStudentIds.has(student.id)),
+      0,
+    );
+    const newBillCount = cls.students.length - alreadyBilled;
+    return {
+      classId: cls.id,
+      className: cls.name,
+      studentCount: cls.students.length,
+      alreadyBilled,
+      newBillCount,
+      totalAmount: mandatoryTotal,
+      grandTotal: newBillCount * mandatoryTotal,
+    };
+  });
 
   return { previews, mandatoryTotal, optionalTotal };
 }
@@ -101,6 +110,11 @@ export async function generateBills(rawInput: GenerateBillsInput): Promise<{
 }> {
   const ctx = await requireFinanceAccess();
   const { userId, schoolId } = ctx;
+  await enforceActionRateLimit({
+    key: `finance:generate-bills:${schoolId}:${userId}`,
+    limit: 5,
+    windowMs: 10 * 60_000,
+  });
   const input = parseActionInput(generateBillsSchema, rawInput);
 
   const structure = requireResourceAccess(
@@ -131,59 +145,47 @@ export async function generateBills(rawInput: GenerateBillsInput): Promise<{
     (sum, i) => sum.add(new Prisma.Decimal(i.amount)), new Prisma.Decimal(0)
   );
 
-  let created = 0;
-  let skipped = 0;
-
   const students = await prisma.student.findMany({
     where:  { schoolId, classId: { in: input.classIds } },
     select: { id: true, classId: true },
   });
 
-  await prisma.$transaction(async (tx) => {
-    for (const student of students) {
-      const existing = await tx.studentBill.findUnique({
-        where: {
-          schoolId_studentId_feeStructureId: {
-            schoolId,
-            studentId:      student.id,
-            feeStructureId: input.feeStructureId,
-          },
-        },
-      });
+  const createdBills = await prisma.$transaction(async (tx) => {
+    const bills = await tx.studentBill.createManyAndReturn({
+      data: students.map((student) => ({
+        schoolId,
+        studentId: student.id,
+        feeStructureId: input.feeStructureId,
+        totalAmount: billTotal,
+        amountPaid: 0,
+        discountAmount: 0,
+        balance: billTotal,
+        status: "UNPAID" as const,
+        generatedBy: userId,
+      })),
+      skipDuplicates: true,
+      select: { id: true },
+    });
 
-      if (existing) {
-        skipped++;
-        continue;
-      }
-
-      const bill = await tx.studentBill.create({
-        data: {
-          schoolId,
-          studentId:      student.id,
-          feeStructureId: input.feeStructureId,
-          totalAmount:    billTotal,
-          amountPaid:     0,
-          discountAmount: 0,
-          balance:        billTotal,
-          status:         "UNPAID",
-          generatedBy:    userId,
-        },
-      });
-
+    if (bills.length > 0) {
       await tx.billLineItem.createMany({
-        data: itemsToInclude.map((item) => ({
-          studentBillId: bill.id,
-          feeItemId:     item.id,
-          amount:        new Prisma.Decimal(item.amount),
-          amountPaid:    0,
-          balance:       new Prisma.Decimal(item.amount),
-          isPaid:        false,
-        })),
+        data: bills.flatMap((bill) =>
+          itemsToInclude.map((item) => ({
+            studentBillId: bill.id,
+            feeItemId: item.id,
+            amount: new Prisma.Decimal(item.amount),
+            amountPaid: 0,
+            balance: new Prisma.Decimal(item.amount),
+            isPaid: false,
+          })),
+        ),
       });
-
-      created++;
     }
+
+    return bills;
   });
+  const created = createdBills.length;
+  const skipped = students.length - created;
 
   await writeAuditLog({
     schoolId,
@@ -205,6 +207,7 @@ export async function generateBills(rawInput: GenerateBillsInput): Promise<{
   revalidatePath("/list/finance/bills");
   revalidatePath(`/list/finance/fee-structures/${input.feeStructureId}`);
   revalidatePath("/bursar");
+  revalidateDashboard(schoolId);
 
   return { created, skipped };
 }
@@ -212,6 +215,7 @@ export async function generateBills(rawInput: GenerateBillsInput): Promise<{
 // ─── Waive a bill ─────────────────────────────────────────────────────────────
 
 export async function waiveBill(billId: number, reason: string) {
+  ({ billId, reason } = parseActionInput(waiveBillSchema, { billId, reason }));
   const ctx = await requireFinanceAccess();
   const { userId, schoolId } = ctx;
 
@@ -256,6 +260,7 @@ export async function waiveBill(billId: number, reason: string) {
 
   revalidatePath("/list/finance/bills");
   revalidatePath(`/list/finance/bills/${billId}`);
+  revalidateDashboard(schoolId);
 }
 
 // ─── Get bills (with filters) ─────────────────────────────────────────────────

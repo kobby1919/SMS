@@ -18,6 +18,8 @@ import {
 } from "@/src/lib/validation/finance";
 import { Prisma } from "@/src/generated/prisma";
 import type { PaymentMethod } from "@/src/generated/prisma";
+import { enforceActionRateLimit } from "@/src/lib/rate-limit";
+import { revalidateDashboard, revalidateDocument } from "@/src/lib/cacheTags";
 
 // ─── Record a payment ─────────────────────────────────────────────────────────
 
@@ -34,6 +36,11 @@ export type RecordPaymentInput = {
 export async function recordPayment(input: RecordPaymentInput) {
   const ctx = await requireFinanceAccess();
   const { userId, schoolId } = ctx;
+  await enforceActionRateLimit({
+    key: `finance:record-payment:${schoolId}:${userId}`,
+    limit: 30,
+    windowMs: 60_000,
+  });
   const data = parseActionInput(recordPaymentSchema, input);
 
   const bill = requireResourceAccess(
@@ -142,6 +149,12 @@ export async function recordPayment(input: RecordPaymentInput) {
   revalidatePath("/list/finance/bills");
   revalidatePath("/list/finance/payments");
   revalidatePath("/bursar");
+  revalidateDashboard(schoolId);
+  revalidateDocument(
+    schoolId,
+    "daily-finance",
+    payment.paymentDate.toISOString().slice(0, 10),
+  );
 
   return payment;
 }
@@ -151,6 +164,11 @@ export async function recordPayment(input: RecordPaymentInput) {
 export async function reversePayment(paymentId: number, reason: string) {
   const ctx = await requireFinanceAccess();
   const { userId, schoolId } = ctx;
+  await enforceActionRateLimit({
+    key: `finance:reverse-payment:${schoolId}:${userId}`,
+    limit: 10,
+    windowMs: 10 * 60_000,
+  });
   const data = parseActionInput(reversePaymentSchema, { paymentId, reason });
 
   const payment = requireResourceAccess(
@@ -243,6 +261,13 @@ export async function reversePayment(paymentId: number, reason: string) {
   revalidatePath(`/list/finance/bills/${billId}`);
   revalidatePath("/list/finance/payments");
   revalidatePath("/bursar");
+  revalidateDashboard(schoolId);
+  revalidateDocument(schoolId, "receipt", data.paymentId);
+  revalidateDocument(
+    schoolId,
+    "daily-finance",
+    payment.paymentDate.toISOString().slice(0, 10),
+  );
 }
 
 // ─── Get all payments ─────────────────────────────────────────────────────────

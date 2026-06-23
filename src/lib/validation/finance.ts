@@ -29,6 +29,11 @@ export const generateBillsSchema = z.object({
   includeOptionalItems: z.boolean().optional().default(false),
 });
 
+export const billPreviewSchema = z.object({
+  feeStructureId: positiveIntSchema,
+  classIds: z.array(positiveIntSchema).min(1),
+});
+
 export const billFiltersSchema = z.object({
   feeStructureId: positiveIntSchema.optional(),
   classId: positiveIntSchema.optional(),
@@ -52,4 +57,40 @@ export const feeStructureCreateSchema = z.object({
   academicYear: nonEmptyStringSchema,
   term: termSchema,
   gradeId: positiveIntSchema,
+});
+
+export const feeStructureUpdateSchema = z.object({
+  title: nonEmptyStringSchema.max(150).optional(),
+  description: z.string().trim().max(1000).optional().nullable(),
+}).refine((value) => Object.keys(value).length > 0, "Provide a field to update.");
+
+export const feeItemSchema = z.object({
+  name: nonEmptyStringSchema.max(150),
+  amount: z.coerce.number().positive(),
+  category: z.enum(["TUITION", "LEVY", "EXAM", "FEEDING", "TRANSPORT", "UNIFORM", "LIBRARY", "SPORTS", "OTHER"]),
+  isOptional: z.boolean(),
+  description: z.string().trim().max(1000).optional().nullable(),
+});
+
+export const feeItemUpdateSchema = feeItemSchema.partial().refine(
+  (value) => Object.keys(value).length > 0,
+  "Provide a fee item field to update.",
+);
+
+export const waiveBillSchema = z.object({
+  billId: positiveIntSchema,
+  reason: nonEmptyStringSchema.max(500),
+});
+
+export const dailyFinanceReportQuerySchema = z.object({
+  date: z
+    .string()
+    .trim()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD format")
+    .optional(),
+});
+
+export const receiptPdfQuerySchema = z.object({
+  billId: positiveIntSchema,
+  receiptNumber: nonEmptyStringSchema.max(100),
 });

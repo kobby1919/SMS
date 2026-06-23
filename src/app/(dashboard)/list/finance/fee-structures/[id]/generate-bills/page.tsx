@@ -4,7 +4,7 @@ import { redirect, notFound } from "next/navigation";
 import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
-import { ArrowLeft, Users, FileText } from "lucide-react";
+import { ArrowLeft, Users } from "lucide-react";
 import { formatGHS } from "@/src/lib/constants/finance";
 import GenerateBillsForm from "@/src/components/GenerateBillsForm";
 
@@ -19,7 +19,7 @@ const GenerateBillsPage = async ({
 }: {
   params: Promise<{ id: string }>;
 }) => {
-  const { role, schoolId } = await requirePageSession(["admin", "bursar"]);
+  const { schoolId } = await requirePageSession(["admin", "bursar"]);
 
   const { id } = await params;
   const feeStructureId = parseInt(id);
@@ -45,24 +45,25 @@ const GenerateBillsPage = async ({
     orderBy: { name: "asc" },
   });
 
-  // For each class, check how many students already have a bill for this structure
-  const classData = await Promise.all(
-    classes.map(async (cls) => {
-      const alreadyBilled = await prisma.studentBill.count({
-        where: {
-          feeStructureId,
-          studentId: { in: cls.students.map((s) => s.id) },
-        },
-      });
-      return {
-        id:           cls.id,
-        name:         cls.name,
-        studentCount: cls._count.students,
-        alreadyBilled,
-        newCount:     cls._count.students - alreadyBilled,
-      };
-    })
-  );
+  const studentIds = classes.flatMap((cls) => cls.students.map((student) => student.id));
+  const existingBills = await prisma.studentBill.findMany({
+    where: { schoolId, feeStructureId, studentId: { in: studentIds } },
+    select: { studentId: true },
+  });
+  const billedStudentIds = new Set(existingBills.map((bill) => bill.studentId));
+  const classData = classes.map((cls) => {
+    const alreadyBilled = cls.students.reduce(
+      (count, student) => count + Number(billedStudentIds.has(student.id)),
+      0,
+    );
+    return {
+      id: cls.id,
+      name: cls.name,
+      studentCount: cls._count.students,
+      alreadyBilled,
+      newCount: cls._count.students - alreadyBilled,
+    };
+  });
 
   const mandatoryItems = structure.feeItems.filter((i) => !i.isOptional);
   const optionalItems  = structure.feeItems.filter((i) => i.isOptional);

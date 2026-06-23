@@ -32,8 +32,8 @@ const PaymentReverseButton = ({ paymentId, receiptNumber, amount }: Props) => {
         setOpen(false);
         setReason("");
         router.refresh();
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to reverse payment.");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to reverse payment.");
       }
     });
   };

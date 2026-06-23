@@ -20,7 +20,7 @@ const RecordPaymentPage = async ({
 }: {
   params: Promise<{ id: string }>;
 }) => {
-  const { role, schoolId } = await requirePageSession(["admin", "bursar"]);
+  const { schoolId } = await requirePageSession(["admin", "bursar"]);
 
   const { id } = await params;
   const billId = parseInt(id);

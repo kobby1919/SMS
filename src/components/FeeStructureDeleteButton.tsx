@@ -27,8 +27,8 @@ const FeeStructureDeleteButton = ({ id, title }: Props) => {
         await deleteFeeStructure(id);
         setOpen(false);
         router.refresh();
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to delete. Please try again.");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to delete. Please try again.");
       }
     });
   };

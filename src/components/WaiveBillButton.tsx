@@ -28,8 +28,8 @@ const WaiveBillButton = ({ billId, studentName }: Props) => {
         await waiveBill(billId, reason.trim());
         setOpen(false);
         router.refresh();
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to waive bill.");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to waive bill.");
       }
     });
   };

@@ -15,6 +15,7 @@ import {
   deleteFeeItem,
 } from "@/src/lib/actions/feeStructureActions";
 import { FEE_CATEGORY_LABELS, formatGHS } from "@/src/lib/constants/finance";
+import type { FeeCategory } from "@/src/generated/prisma";
 
 type FeeItem = {
   id:          number;
@@ -91,7 +92,7 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
         const item = await addFeeItem(feeStructureId, {
           name:        form.name.trim(),
           amount:      Number(form.amount),
-          category:    form.category as any,
+          category:    form.category as FeeCategory,
           isOptional:  form.isOptional,
           description: form.description.trim() || undefined,
         });
@@ -106,7 +107,7 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
         setAdding(false);
         resetForm();
         showToast("Fee item added ✓");
-      } catch (e: any) { setError(e?.message ?? "Failed to add item."); }
+      } catch (e: unknown) { setError(e instanceof Error ? e.message : "Failed to add item."); }
     });
   };
 
@@ -123,7 +124,7 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
         await updateFeeItem(id, {
           name:        form.name.trim(),
           amount:      Number(form.amount),
-          category:    form.category as any,
+          category:    form.category as FeeCategory,
           isOptional:  form.isOptional,
           description: form.description.trim() || undefined,
         });
@@ -135,7 +136,7 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
         setEditingId(null);
         resetForm();
         showToast("Fee item updated ✓");
-      } catch (e: any) { setError(e?.message ?? "Failed to update item."); }
+      } catch (e: unknown) { setError(e instanceof Error ? e.message : "Failed to update item."); }
     });
   };
 
@@ -146,7 +147,7 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
         await deleteFeeItem(id);
         setItems((prev) => prev.filter((item) => item.id !== id));
         showToast("Item removed");
-      } catch (e: any) { setError(e?.message ?? "Failed to delete item."); }
+      } catch (e: unknown) { setError(e instanceof Error ? e.message : "Failed to delete item."); }
     });
   };
 
@@ -282,11 +283,7 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
 
       {/* Add form */}
       {adding && (
-        <FormFields
-          onSave={handleAdd}
-          onCancel={cancelEdit}
-          saveLabel="Add Item"
-        />
+        FormFields({ onSave: handleAdd, onCancel: cancelEdit, saveLabel: "Add Item" })
       )}
 
       {/* Items list */}
@@ -308,11 +305,11 @@ const FeeItemManager = ({ feeStructureId, isPublished, feeItems: initial }: Prop
           {items.map((item) => (
             <div key={item.id}>
               {editingId === item.id ? (
-                <FormFields
-                  onSave={() => handleUpdate(item.id)}
-                  onCancel={cancelEdit}
-                  saveLabel="Save Changes"
-                />
+                FormFields({
+                  onSave: () => handleUpdate(item.id),
+                  onCancel: cancelEdit,
+                  saveLabel: "Save Changes",
+                })
               ) : (
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center gap-4">
                   {/* Optional badge */}

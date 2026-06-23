@@ -8,9 +8,10 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   Receipt, Loader2, AlertCircle, CheckCircle2,
-  ChevronDown, Printer,
+  Printer,
 } from "lucide-react";
 import { recordPayment } from "@/src/lib/actions/paymentActions";
+import type { PaymentMethod } from "@/src/generated/prisma";
 import { PAYMENT_METHOD_LABELS, formatGHS } from "@/src/lib/constants/finance";
 
 type Props = {
@@ -67,7 +68,7 @@ const RecordPaymentForm = ({ billId, balance, defaultPayerName }: Props) => {
         const payment = await recordPayment({
           studentBillId: billId,
           amount:        amountNum,
-          paymentMethod: method as any,
+          paymentMethod: method as PaymentMethod,
           paymentDate,
           paidBy:        paidBy.trim(),
           referenceNo:   referenceNo.trim() || undefined,
@@ -80,8 +81,8 @@ const RecordPaymentForm = ({ billId, balance, defaultPayerName }: Props) => {
           method,
           paidBy:        paidBy.trim(),
         });
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to record payment. Please try again.");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to record payment. Please try again.");
       }
     });
   };

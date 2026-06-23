@@ -6,6 +6,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createFeeStructure } from "@/src/lib/actions/feeStructureActions";
+import type { Term } from "@/src/generated/prisma";
 import { AlertCircle, Loader2, ChevronDown } from "lucide-react";
 
 const TERM_LABELS: Record<string, string> = {
@@ -57,12 +58,12 @@ const FeeStructureCreateForm = ({ grades, academicYears }: Props) => {
           title:        title.trim(),
           description:  description.trim() || undefined,
           gradeId:      gradeId as number,
-          term:         term as any,
+          term:         term as Term,
           academicYear: academicYear.trim(),
         });
         router.push(`/list/finance/fee-structures/${structure.id}`);
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to create fee structure.");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to create fee structure.");
       }
     });
   };

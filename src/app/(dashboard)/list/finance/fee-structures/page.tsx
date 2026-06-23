@@ -1,16 +1,15 @@
 // src/app/(dashboard)/list/finance/fee-structures/page.tsx
 
 
-import { redirect } from "next/navigation";
 import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
 import {
-  FileText, Plus, Eye, Trash2,
-  CheckCircle2, Clock, Lock, ChevronRight,
+  FileText, Plus, Eye, Clock, Lock,
 } from "lucide-react";
 import { formatGHS } from "@/src/lib/constants/finance";
 import FeeStructureDeleteButton from "@/src/components/FeeStructureDeleteButton";
+import type { FeeStructureStatus, Prisma, Term } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -31,11 +30,11 @@ const FeeStructuresPage = async ({
   const filterYear   = sp.year   as string | undefined;
   const filterStatus = sp.status as string | undefined;
 
-  const where: any = { schoolId };
+  const where: Prisma.FeeStructureWhereInput = { schoolId };
   if (filterGrade)  where.gradeId      = filterGrade;
-  if (filterTerm)   where.term         = filterTerm;
+  if (filterTerm)   where.term         = filterTerm as Term;
   if (filterYear)   where.academicYear = filterYear;
-  if (filterStatus) where.status       = filterStatus;
+  if (filterStatus) where.status       = filterStatus as FeeStructureStatus;
 
   const [structures, grades] = await Promise.all([
     prisma.feeStructure.findMany({

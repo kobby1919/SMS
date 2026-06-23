@@ -13,13 +13,19 @@ import {
 } from "@/src/lib/actions/financeActions";
 import type { FeeCategory, Term } from "@/src/generated/prisma";
 import { parseActionInput } from "@/src/lib/validation/parse";
-import { feeStructureCreateSchema } from "@/src/lib/validation/finance";
+import {
+  feeItemSchema,
+  feeItemUpdateSchema,
+  feeStructureCreateSchema,
+  feeStructureUpdateSchema,
+} from "@/src/lib/validation/finance";
+import { positiveIntSchema } from "@/src/lib/validation/common";
 
 // ─── Fee Structure CRUD ───────────────────────────────────────────────────────
 
 export type FeeStructureInput = {
   title:        string;
-  description?: string;
+  description?: string | null;
   gradeId:      number;
   term:         Term;
   academicYear: string;
@@ -80,6 +86,8 @@ export async function updateFeeStructure(
   id:   number,
   data: Partial<Pick<FeeStructureInput, "title" | "description">>
 ) {
+  id = parseActionInput(positiveIntSchema, id);
+  data = parseActionInput(feeStructureUpdateSchema, data);
   const { schoolId } = await requireFinanceAccess();
 
   // Cannot edit a published structure
@@ -107,6 +115,7 @@ export async function updateFeeStructure(
 }
 
 export async function publishFeeStructure(id: number) {
+  id = parseActionInput(positiveIntSchema, id);
   const { userId, schoolId } = await requireFinanceAccess();
 
   const structure = await prisma.feeStructure.findFirst({
@@ -156,6 +165,7 @@ export async function publishFeeStructure(id: number) {
 }
 
 export async function deleteFeeStructure(id: number) {
+  id = parseActionInput(positiveIntSchema, id);
   const { userId, schoolId } = await requireFinanceAccess();
 
   const structure = await prisma.feeStructure.findFirst({
@@ -193,13 +203,15 @@ export type FeeItemInput = {
   amount:        number;
   category:      FeeCategory;
   isOptional:    boolean;
-  description?:  string;
+  description?:  string | null;
 };
 
 export async function addFeeItem(
   feeStructureId: number,
   data:           FeeItemInput
 ) {
+  feeStructureId = parseActionInput(positiveIntSchema, feeStructureId);
+  data = parseActionInput(feeItemSchema, data);
   const { schoolId } = await requireFinanceAccess();
 
   // Cannot add items to a published structure
@@ -233,6 +245,8 @@ export async function updateFeeItem(
   itemId: number,
   data:   Partial<FeeItemInput>
 ) {
+  itemId = parseActionInput(positiveIntSchema, itemId);
+  data = parseActionInput(feeItemUpdateSchema, data);
   const { schoolId } = await requireFinanceAccess();
 
   const item = await prisma.feeItem.findFirst({
@@ -263,6 +277,7 @@ export async function updateFeeItem(
 }
 
 export async function deleteFeeItem(itemId: number) {
+  itemId = parseActionInput(positiveIntSchema, itemId);
   const { schoolId } = await requireFinanceAccess();
 
   const item = await prisma.feeItem.findFirst({

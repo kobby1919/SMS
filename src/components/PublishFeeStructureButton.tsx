@@ -5,7 +5,7 @@
 // Once published, the structure is locked — this is clearly communicated.
 
 import { useState, useTransition } from "react";
-import { Globe, AlertTriangle, Loader2, X, Lock } from "lucide-react";
+import { Globe, Loader2, X, Lock } from "lucide-react";
 import { publishFeeStructure } from "@/src/lib/actions/feeStructureActions";
 import { useRouter } from "next/navigation";
 
@@ -30,8 +30,8 @@ const PublishFeeStructureButton = ({ id, hasItems, hasMandatory }: Props) => {
         await publishFeeStructure(id);
         setOpen(false);
         router.refresh();
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to publish. Please try again.");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to publish. Please try again.");
       }
     });
   };
