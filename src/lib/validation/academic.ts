@@ -1,5 +1,37 @@
 import { z } from "zod";
-import { isoDateStringSchema, nonEmptyStringSchema, positiveIntSchema } from "./common";
+import {
+  isoDateStringSchema,
+  nonEmptyStringSchema,
+  positiveIntSchema,
+  stringIdSchema,
+  termSchema,
+} from "./common";
+
+export const numericIdSchema = z.object({ id: positiveIntSchema });
+export const stringIdActionSchema = z.object({ id: stringIdSchema });
+
+export const classCreateSchema = z.object({
+  name: nonEmptyStringSchema.max(100),
+  capacity: z.coerce.number().int().positive().max(500),
+  gradeId: positiveIntSchema,
+  section: z.string().trim().max(20).optional(),
+  supervisorId: stringIdSchema.optional(),
+});
+
+export const classUpdateSchema = classCreateSchema.partial().refine(
+  (value) => Object.keys(value).length > 0,
+  "Provide at least one class field to update.",
+);
+
+export const subjectCreateSchema = z.object({
+  name: nonEmptyStringSchema.max(100),
+  teacherIds: z.array(stringIdSchema).max(100).optional(),
+});
+
+export const subjectUpdateSchema = subjectCreateSchema.partial().refine(
+  (value) => Object.keys(value).length > 0,
+  "Provide at least one subject field to update.",
+);
 
 export const examFormSchema = z.object({
   id: positiveIntSchema.optional(),
@@ -25,4 +57,14 @@ export const resultFormSchema = z.object({
   assignmentId: positiveIntSchema.nullable().optional(),
 }).refine((d) => d.examId || d.assignmentId, {
   message: "Select an exam or assignment",
+});
+
+export const reportCardPdfQuerySchema = z.object({
+  studentId: nonEmptyStringSchema,
+  term: termSchema.default("TERM_2"),
+  year: z.string().trim().max(20).optional().default(""),
+});
+
+export const syllabusPdfQuerySchema = z.object({
+  syllabusId: positiveIntSchema,
 });

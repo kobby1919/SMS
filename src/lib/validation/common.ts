@@ -34,6 +34,8 @@ export const paymentStatusSchema = z.enum(["CONFIRMED", "REVERSED"]);
 
 export const positiveIntSchema = z.coerce.number().int().positive();
 export const nonEmptyStringSchema = z.string().trim().min(1);
+export const stringIdSchema = z.string().trim().min(1).max(200);
+export const optionalStringIdSchema = stringIdSchema.optional();
 
 export const optionalIdQuerySchema = z.object({
   teacherId: z.string().trim().min(1).optional(),

@@ -1,42 +1,35 @@
-// src/app/api/parents/[id]/route.ts  — PUT (update)
-
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/src/lib/prisma";
 import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
 import { parseBody } from "@/src/lib/validation/parse";
 import { parentUpdateSchema } from "@/src/lib/validation/users";
+import { enforceRateLimit } from "@/src/lib/rate-limit";
+import {
+  updateParent,
+  UserManagementError,
+} from "@/src/lib/services/user-management";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { schoolId } = await requireRole(["admin"]);
+    const { userId, schoolId } = await requireRole(["admin"]);
+    const limited = await enforceRateLimit(req, {
+      scope: "users:update-parent",
+      actorId: userId,
+      limit: 40,
+      windowMs: 10 * 60_000,
+    });
+    if (limited) return limited;
+
     const { id } = await params;
-
-  const body = await req.json();
-  const parsed = parseBody(parentUpdateSchema, body);
-  if (!parsed.ok) return parsed.response;
-  const { name, surname, email, phone, address } = parsed.data;
-  const existingParent = await prisma.parent.findFirst({
-    where: { id, schoolId },
-    select: { id: true },
-  });
-  if (!existingParent) return NextResponse.json({ error: "Parent not found." }, { status: 404 });
-
-  const parent = await prisma.parent.update({
-    where: { id },
-    data: {
-      name,
-      surname,
-      email:   email   || null,
-      phone:   phone   || null,
-      address,
-    },
-  });
-
-  return NextResponse.json(parent);
+    const parsed = parseBody(parentUpdateSchema, await req.json());
+    if (!parsed.ok) return parsed.response;
+    return NextResponse.json(await updateParent(schoolId, id, parsed.data));
   } catch (error) {
+    if (error instanceof UserManagementError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     return unauthorizedResponse(error);
   }
 }
