@@ -11,6 +11,10 @@ import {
   FEE_CATEGORY_LABELS,
 } from "@/src/lib/constants/finance";
 import { enforceRateLimit } from "@/src/lib/rate-limit";
+import { receiptPdfQuerySchema } from "@/src/lib/validation/finance";
+import { parseSearchParams } from "@/src/lib/validation/parse";
+import { documentTag } from "@/src/lib/cacheTags";
+import { getCachedDocument } from "@/src/lib/services/document-cache";
 import {
   renderToBuffer,
   Document,
@@ -549,7 +553,7 @@ export async function GET(req: NextRequest) {
     if (!ctx || !userId || !schoolId || !allowed.includes(role ?? "")) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
-    const limited = enforceRateLimit(req, {
+    const limited = await enforceRateLimit(req, {
       scope: "finance:receipt-pdf",
       actorId: userId,
       limit: 20,
@@ -557,14 +561,9 @@ export async function GET(req: NextRequest) {
     });
     if (limited) return limited;
 
-    const sp = req.nextUrl.searchParams;
-    const billId = parseInt(sp.get("billId") ?? "");
-    const receiptNumber = sp.get("receiptNumber") ?? "";
-
-    if (isNaN(billId))
-      return new NextResponse("billId required", { status: 400 });
-    if (!receiptNumber)
-      return new NextResponse("receiptNumber required", { status: 400 });
+    const parsed = parseSearchParams(receiptPdfQuerySchema, req.nextUrl.searchParams);
+    if (!parsed.ok) return parsed.response;
+    const { billId, receiptNumber } = parsed.data;
 
     // Load bill with all relations
     const bill = await prisma.studentBill.findFirst({
@@ -627,7 +626,13 @@ export async function GET(req: NextRequest) {
       // recordedBy may not correspond to an Admin row — silently fall back
     }
 
-    const pdfBuffer = await renderToBuffer(
+    const pdfBuffer = await getCachedDocument({
+      keyParts: [ctx.schoolId, "receipt", payment.id],
+      tags: [
+        documentTag(ctx.schoolId, "receipt"),
+        documentTag(ctx.schoolId, "receipt", payment.id),
+      ],
+      generate: () => renderToBuffer(
       <ReceiptPDF
         receiptNumber={payment.receiptNumber}
         paymentAmount={Number(payment.amount)}
@@ -662,7 +667,8 @@ export async function GET(req: NextRequest) {
         }))}
         recordedBy={recordedByName}
       />,
-    );
+      ),
+    });
 
     const filename =
       `receipt-${payment.receiptNumber}-${bill.student.surname}.pdf`

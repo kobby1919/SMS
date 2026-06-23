@@ -9,6 +9,10 @@ import { getAuthzContext } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import { TERM_LABELS } from "@/src/lib/caGrades";
 import { enforceRateLimit } from "@/src/lib/rate-limit";
+import { syllabusPdfQuerySchema } from "@/src/lib/validation/academic";
+import { parseSearchParams } from "@/src/lib/validation/parse";
+import { documentTag } from "@/src/lib/cacheTags";
+import { getCachedDocument } from "@/src/lib/services/document-cache";
 import {
   renderToBuffer,
   Document,
@@ -227,7 +231,7 @@ function SyllabusPDF({
 
         {/* Topics */}
         <Text style={S.sectionHd}>TOPICS & CONTENT</Text>
-        {topics.map((topic, i) => (
+        {topics.map((topic) => (
           <View key={topic.id} style={S.topicCard} wrap={false}>
             {/* Topic header */}
             <View style={S.topicHeader}>
@@ -310,7 +314,7 @@ function SyllabusPDF({
                 <Text style={[S.progCovered, S.thText]}>COVERED</Text>
                 <Text style={[S.progPct,     S.thText]}>% COMPLETE</Text>
               </View>
-              {progressRows.map((row, i) => (
+              {progressRows.map((row) => (
                 <View key={row.className} style={S.progRow}>
                   <Text style={S.progClass}>{row.className}</Text>
                   <Text style={[S.progCovered, { color: row.covered > 0 ? "#059669" : "#9ca3af" }]}>
@@ -351,7 +355,7 @@ export async function GET(req: NextRequest) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
     const { userId, role, schoolId } = ctx;
-    const limited = enforceRateLimit(req, {
+    const limited = await enforceRateLimit(req, {
       scope: "academic:syllabus-pdf",
       actorId: userId,
       limit: 20,
@@ -359,8 +363,9 @@ export async function GET(req: NextRequest) {
     });
     if (limited) return limited;
 
-    const syllabusId = parseInt(req.nextUrl.searchParams.get("syllabusId") ?? "");
-    if (isNaN(syllabusId)) return new NextResponse("syllabusId required", { status: 400 });
+    const parsed = parseSearchParams(syllabusPdfQuerySchema, req.nextUrl.searchParams);
+    if (!parsed.ok) return parsed.response;
+    const { syllabusId } = parsed.data;
 
     const syllabus = await prisma.syllabus.findFirst({
       where:   { id: syllabusId, schoolId },
@@ -424,7 +429,13 @@ export async function GET(req: NextRequest) {
       coveredByClasses:  t.progress.map((p) => p.class.name),
     }));
 
-    const pdfBuffer = await renderToBuffer(
+    const pdfBuffer = await getCachedDocument({
+      keyParts: [ctx.schoolId, "syllabus", syllabus.id],
+      tags: [
+        documentTag(ctx.schoolId, "syllabus"),
+        documentTag(ctx.schoolId, "syllabus", syllabus.id),
+      ],
+      generate: () => renderToBuffer(
       <SyllabusPDF
         subjectName={syllabus.subject.name}
         gradeLevel={syllabus.grade.level}
@@ -435,12 +446,13 @@ export async function GET(req: NextRequest) {
         topics={topicData}
         progressRows={progressRows}
       />
-    );
+      ),
+    });
 
     const filename = `syllabus-${syllabus.subject.name}-${syllabus.grade.level}-${syllabus.term}-${syllabus.academicYear.replace("/", "-")}.pdf`
       .toLowerCase().replace(/\s+/g, "-");
 
-    return new NextResponse(pdfBuffer as any, {
+    return new NextResponse(new Uint8Array(pdfBuffer), {
       status: 200,
       headers: {
         "Content-Type":        "application/pdf",
@@ -449,8 +461,9 @@ export async function GET(req: NextRequest) {
       },
     });
 
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[syllabus/pdf]", err);
-    return new NextResponse(`PDF generation failed: ${err.message}`, { status: 500 });
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return new NextResponse(`PDF generation failed: ${message}`, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 import { revalidateTag } from "next/cache";
 
 export type DashboardResource = "admin";
+export type DocumentResource = "daily-finance" | "receipt" | "report-card" | "syllabus";
 
 export type ReferenceDataResource =
   | "classes"
@@ -33,4 +34,20 @@ export function revalidateDashboard(
   resource: DashboardResource = "admin",
 ) {
   revalidateTag(dashboardTag(schoolId, resource), "max");
+}
+
+export function documentTag(
+  schoolId: string,
+  resource: DocumentResource,
+  id?: string | number,
+) {
+  return `school:${schoolId}:document:${resource}${id === undefined ? "" : `:${id}`}`;
+}
+
+export function revalidateDocument(
+  schoolId: string,
+  resource: DocumentResource,
+  id?: string | number,
+) {
+  revalidateTag(documentTag(schoolId, resource, id), "max");
 }

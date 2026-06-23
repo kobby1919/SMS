@@ -7,6 +7,10 @@ import { getAuthzContext } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import { formatGHS, PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 import { enforceRateLimit } from "@/src/lib/rate-limit";
+import { dailyFinanceReportQuerySchema } from "@/src/lib/validation/finance";
+import { parseSearchParams } from "@/src/lib/validation/parse";
+import { documentTag } from "@/src/lib/cacheTags";
+import { getCachedDocument } from "@/src/lib/services/document-cache";
 import {
   renderToBuffer, Document, Page, Text, View, StyleSheet,
 } from "@react-pdf/renderer";
@@ -94,7 +98,7 @@ export async function GET(req: NextRequest) {
     if (!ctx || (ctx.role !== "admin" && ctx.role !== "bursar")) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
-    const limited = enforceRateLimit(req, {
+    const limited = await enforceRateLimit(req, {
       scope: "finance:daily-report",
       actorId: ctx.userId,
       limit: 10,
@@ -102,8 +106,9 @@ export async function GET(req: NextRequest) {
     });
     if (limited) return limited;
 
-    const dateStr = req.nextUrl.searchParams.get("date")
-      ?? new Date().toISOString().split("T")[0];
+    const parsed = parseSearchParams(dailyFinanceReportQuerySchema, req.nextUrl.searchParams);
+    if (!parsed.ok) return parsed.response;
+    const dateStr = parsed.data.date ?? new Date().toISOString().split("T")[0];
 
     const dayStart = new Date(dateStr); dayStart.setHours(0, 0, 0, 0);
     const dayEnd   = new Date(dateStr); dayEnd.setHours(23, 59, 59, 999);
@@ -111,6 +116,7 @@ export async function GET(req: NextRequest) {
     // All confirmed payments for the day
     const payments = await prisma.payment.findMany({
       where: {
+        schoolId: ctx.schoolId,
         status:      "CONFIRMED",
         paymentDate: { gte: dayStart, lte: dayEnd },
       },
@@ -148,11 +154,13 @@ export async function GET(req: NextRequest) {
       weekday: "long", day: "numeric", month: "long", year: "numeric",
     });
 
-    const TERM_LABELS: Record<string, string> = {
-      TERM_1: "Term 1", TERM_2: "Term 2", TERM_3: "Term 3",
-    };
-
-    const pdfBuffer = await renderToBuffer(
+    const pdfBuffer = await getCachedDocument({
+      keyParts: [ctx.schoolId, "daily-finance", dateStr],
+      tags: [
+        documentTag(ctx.schoolId, "daily-finance"),
+        documentTag(ctx.schoolId, "daily-finance", dateStr),
+      ],
+      generate: () => renderToBuffer(
       <Document title={`Daily Collection Report — ${dateLabel}`}>
         <Page size="A4" style={S.page}>
 
@@ -271,7 +279,8 @@ export async function GET(req: NextRequest) {
 
         </Page>
       </Document>
-    );
+      ),
+    });
 
     const filename = `daily-collection-${dateStr}.pdf`;
     const responseBuffer = new Uint8Array(pdfBuffer)
@@ -284,8 +293,9 @@ export async function GET(req: NextRequest) {
       },
     });
 
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[finance/reports/daily]", err);
-    return new NextResponse(`Report generation failed: ${err.message}`, { status: 500 });
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return new NextResponse(`Report generation failed: ${message}`, { status: 500 });
   }
 }

@@ -7,6 +7,10 @@ import prisma from "@/src/lib/prisma";
 import { getGradeLabel } from "@/src/lib/actions/caActions";
 import { computeAggregate, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
 import { enforceRateLimit } from "@/src/lib/rate-limit";
+import { reportCardPdfQuerySchema } from "@/src/lib/validation/academic";
+import { parseSearchParams } from "@/src/lib/validation/parse";
+import { documentTag } from "@/src/lib/cacheTags";
+import { getCachedDocument } from "@/src/lib/services/document-cache";
 import {
   renderToBuffer,
   Document,
@@ -16,7 +20,6 @@ import {
   StyleSheet,
 } from "@react-pdf/renderer";
 import React from "react";
-import type { Term } from "@/src/generated/prisma";
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const S = StyleSheet.create({
@@ -359,7 +362,7 @@ export async function GET(req: NextRequest) {
     const ctx = await getAuthzContext();
     if (!ctx) return new NextResponse("Unauthorized", { status: 401 });
     const { userId, role, schoolId } = ctx;
-    const limited = enforceRateLimit(req, {
+    const limited = await enforceRateLimit(req, {
       scope: "academic:report-card-pdf",
       actorId: userId,
       limit: 20,
@@ -367,12 +370,9 @@ export async function GET(req: NextRequest) {
     });
     if (limited) return limited;
 
-    const sp           = req.nextUrl.searchParams;
-    const studentId    = sp.get("studentId")  ?? "";
-    const term         = sp.get("term")        ?? "TERM_2";
-    const academicYear = sp.get("year")        ?? "";
-
-    if (!studentId) return new NextResponse("studentId required", { status: 400 });
+    const parsed = parseSearchParams(reportCardPdfQuerySchema, req.nextUrl.searchParams);
+    if (!parsed.ok) return parsed.response;
+    const { studentId, term, year: academicYear } = parsed.data;
 
     // Load student
     const student = await prisma.student.findFirst({
@@ -409,14 +409,14 @@ export async function GET(req: NextRequest) {
 
     // CA records for this student
     const caRecords = await prisma.continuousAssessment.findMany({
-      where: { schoolId, studentId, classId: student.classId, term: term as Term, academicYear: activeYear },
+      where: { schoolId, studentId, classId: student.classId, term, academicYear: activeYear },
       include: { subject: { select: { name: true } } },
       orderBy: { subject: { name: "asc" } },
     });
 
     // All class CA records (for positions)
     const classCA = await prisma.continuousAssessment.findMany({
-      where:  { schoolId, classId: student.classId, term: term as Term, academicYear: activeYear },
+      where:  { schoolId, classId: student.classId, term, academicYear: activeYear },
       select: { studentId: true, subjectId: true, totalScore: true, gradePoint: true },
     });
 
@@ -464,7 +464,13 @@ export async function GET(req: NextRequest) {
     const attendTotal   = student.attendances.length;
 
     // Generate PDF buffer
-    const pdfBuffer = await renderToBuffer(
+    const pdfBuffer = await getCachedDocument({
+      keyParts: [ctx.schoolId, "report-card", student.id, term, activeYear],
+      tags: [
+        documentTag(ctx.schoolId, "report-card"),
+        documentTag(ctx.schoolId, "report-card", student.id),
+      ],
+      generate: () => renderToBuffer(
       <ReportCardPDF
         studentName={student.name}
         studentSurname={student.surname}
@@ -491,7 +497,8 @@ export async function GET(req: NextRequest) {
         attendLate={attendLate}
         attendTotal={attendTotal}
       />
-    );
+      ),
+    });
 
     const filename = `report-card-${student.surname}-${student.name}-${term}-${activeYear.replace("/", "-")}.pdf`
       .toLowerCase().replace(/\s+/g, "-");
@@ -507,8 +514,9 @@ export async function GET(req: NextRequest) {
       },
     });
 
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[report-card/pdf]", err);
-    return new NextResponse(`PDF generation failed: ${err.message}`, { status: 500 });
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return new NextResponse(`PDF generation failed: ${message}`, { status: 500 });
   }
 }
