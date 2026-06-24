@@ -26,3 +26,9 @@ export const timetableGetQuerySchema = z.object({
 export const timetableDeleteQuerySchema = z.object({
   id: z.string().regex(/^\d+$/).transform(Number),
 });
+
+export const teacherClassCountQuerySchema = z.object({
+  teacherId: z.string().trim().min(1),
+  excludeClassId: positiveIntSchema.optional(),
+  excludeLessonId: positiveIntSchema.optional(),
+});
