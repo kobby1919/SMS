@@ -124,6 +124,12 @@ exports.Prisma.SchoolScalarFieldEnum = {
   id: 'id',
   name: 'name',
   slug: 'slug',
+  contactEmail: 'contactEmail',
+  phone: 'phone',
+  address: 'address',
+  onboardingStatus: 'onboardingStatus',
+  setupStep: 'setupStep',
+  setupCompletedAt: 'setupCompletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -468,6 +474,22 @@ exports.Prisma.WaitlistEntryScalarFieldEnum = {
   email: 'email',
   role: 'role',
   message: 'message',
+  status: 'status',
+  reviewedBy: 'reviewedBy',
+  reviewedAt: 'reviewedAt',
+  schoolId: 'schoolId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SchoolInviteScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  email: 'email',
+  role: 'role',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  acceptedAt: 'acceptedAt',
+  createdBy: 'createdBy',
   createdAt: 'createdAt'
 };
 
@@ -495,6 +517,14 @@ exports.Prisma.JsonNullValueFilter = {
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
 };
+exports.SchoolOnboardingStatus = exports.$Enums.SchoolOnboardingStatus = {
+  PENDING_SETUP: 'PENDING_SETUP',
+  PROFILE_DONE: 'PROFILE_DONE',
+  ACADEMIC_DONE: 'ACADEMIC_DONE',
+  USERS_DONE: 'USERS_DONE',
+  COMPLETED: 'COMPLETED'
+};
+
 exports.UserSex = exports.$Enums.UserSex = {
   MALE: 'MALE',
   FEMALE: 'FEMALE'
@@ -593,6 +623,17 @@ exports.WaitlistRole = exports.$Enums.WaitlistRole = {
   OTHER: 'OTHER'
 };
 
+exports.WaitlistStatus = exports.$Enums.WaitlistStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  SCHOOL_CREATED: 'SCHOOL_CREATED'
+};
+
+exports.SchoolInviteRole = exports.$Enums.SchoolInviteRole = {
+  ADMIN: 'ADMIN'
+};
+
 exports.Prisma.ModelName = {
   School: 'School',
   Admin: 'Admin',
@@ -624,7 +665,8 @@ exports.Prisma.ModelName = {
   ReceiptCounter: 'ReceiptCounter',
   FinanceAuditLog: 'FinanceAuditLog',
   RateLimitBucket: 'RateLimitBucket',
-  WaitlistEntry: 'WaitlistEntry'
+  WaitlistEntry: 'WaitlistEntry',
+  SchoolInvite: 'SchoolInvite'
 };
 
 /**

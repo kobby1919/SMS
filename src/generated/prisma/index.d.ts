@@ -168,6 +168,11 @@ export type RateLimitBucket = $Result.DefaultSelection<Prisma.$RateLimitBucketPa
  * 
  */
 export type WaitlistEntry = $Result.DefaultSelection<Prisma.$WaitlistEntryPayload>
+/**
+ * Model SchoolInvite
+ * 
+ */
+export type SchoolInvite = $Result.DefaultSelection<Prisma.$SchoolInvitePayload>
 
 /**
  * Enums
@@ -309,6 +314,34 @@ export const WaitlistRole: {
 
 export type WaitlistRole = (typeof WaitlistRole)[keyof typeof WaitlistRole]
 
+
+export const WaitlistStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  SCHOOL_CREATED: 'SCHOOL_CREATED'
+};
+
+export type WaitlistStatus = (typeof WaitlistStatus)[keyof typeof WaitlistStatus]
+
+
+export const SchoolOnboardingStatus: {
+  PENDING_SETUP: 'PENDING_SETUP',
+  PROFILE_DONE: 'PROFILE_DONE',
+  ACADEMIC_DONE: 'ACADEMIC_DONE',
+  USERS_DONE: 'USERS_DONE',
+  COMPLETED: 'COMPLETED'
+};
+
+export type SchoolOnboardingStatus = (typeof SchoolOnboardingStatus)[keyof typeof SchoolOnboardingStatus]
+
+
+export const SchoolInviteRole: {
+  ADMIN: 'ADMIN'
+};
+
+export type SchoolInviteRole = (typeof SchoolInviteRole)[keyof typeof SchoolInviteRole]
+
 }
 
 export type UserSex = $Enums.UserSex
@@ -362,6 +395,18 @@ export const AuditAction: typeof $Enums.AuditAction
 export type WaitlistRole = $Enums.WaitlistRole
 
 export const WaitlistRole: typeof $Enums.WaitlistRole
+
+export type WaitlistStatus = $Enums.WaitlistStatus
+
+export const WaitlistStatus: typeof $Enums.WaitlistStatus
+
+export type SchoolOnboardingStatus = $Enums.SchoolOnboardingStatus
+
+export const SchoolOnboardingStatus: typeof $Enums.SchoolOnboardingStatus
+
+export type SchoolInviteRole = $Enums.SchoolInviteRole
+
+export const SchoolInviteRole: typeof $Enums.SchoolInviteRole
 
 /**
  * ##  Prisma Client ʲˢ
@@ -793,6 +838,16 @@ export class PrismaClient<
     * ```
     */
   get waitlistEntry(): Prisma.WaitlistEntryDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.schoolInvite`: Exposes CRUD operations for the **SchoolInvite** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SchoolInvites
+    * const schoolInvites = await prisma.schoolInvite.findMany()
+    * ```
+    */
+  get schoolInvite(): Prisma.SchoolInviteDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1257,7 +1312,8 @@ export namespace Prisma {
     ReceiptCounter: 'ReceiptCounter',
     FinanceAuditLog: 'FinanceAuditLog',
     RateLimitBucket: 'RateLimitBucket',
-    WaitlistEntry: 'WaitlistEntry'
+    WaitlistEntry: 'WaitlistEntry',
+    SchoolInvite: 'SchoolInvite'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1273,7 +1329,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "result" | "attendance" | "event" | "announcement" | "cAConfig" | "continuousAssessment" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "rateLimitBucket" | "waitlistEntry"
+      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "result" | "attendance" | "event" | "announcement" | "cAConfig" | "continuousAssessment" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3571,6 +3627,80 @@ export namespace Prisma {
           }
         }
       }
+      SchoolInvite: {
+        payload: Prisma.$SchoolInvitePayload<ExtArgs>
+        fields: Prisma.SchoolInviteFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SchoolInviteFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolInvitePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SchoolInviteFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolInvitePayload>
+          }
+          findFirst: {
+            args: Prisma.SchoolInviteFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolInvitePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SchoolInviteFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolInvitePayload>
+          }
+          findMany: {
+            args: Prisma.SchoolInviteFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolInvitePayload>[]
+          }
+          create: {
+            args: Prisma.SchoolInviteCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolInvitePayload>
+          }
+          createMany: {
+            args: Prisma.SchoolInviteCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SchoolInviteCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolInvitePayload>[]
+          }
+          delete: {
+            args: Prisma.SchoolInviteDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolInvitePayload>
+          }
+          update: {
+            args: Prisma.SchoolInviteUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolInvitePayload>
+          }
+          deleteMany: {
+            args: Prisma.SchoolInviteDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SchoolInviteUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SchoolInviteUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolInvitePayload>[]
+          }
+          upsert: {
+            args: Prisma.SchoolInviteUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolInvitePayload>
+          }
+          aggregate: {
+            args: Prisma.SchoolInviteAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSchoolInvite>
+          }
+          groupBy: {
+            args: Prisma.SchoolInviteGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SchoolInviteGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SchoolInviteCountArgs<ExtArgs>
+            result: $Utils.Optional<SchoolInviteCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3710,6 +3840,7 @@ export namespace Prisma {
     financeAuditLog?: FinanceAuditLogOmit
     rateLimitBucket?: RateLimitBucketOmit
     waitlistEntry?: WaitlistEntryOmit
+    schoolInvite?: SchoolInviteOmit
   }
 
   /* Types for Logging */
@@ -3815,6 +3946,8 @@ export namespace Prisma {
     discounts: number
     receiptCounters: number
     financeAuditLogs: number
+    invites: number
+    waitlistEntries: number
   }
 
   export type SchoolCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3843,6 +3976,8 @@ export namespace Prisma {
     discounts?: boolean | SchoolCountOutputTypeCountDiscountsArgs
     receiptCounters?: boolean | SchoolCountOutputTypeCountReceiptCountersArgs
     financeAuditLogs?: boolean | SchoolCountOutputTypeCountFinanceAuditLogsArgs
+    invites?: boolean | SchoolCountOutputTypeCountInvitesArgs
+    waitlistEntries?: boolean | SchoolCountOutputTypeCountWaitlistEntriesArgs
   }
 
   // Custom InputTypes
@@ -4029,6 +4164,20 @@ export namespace Prisma {
    */
   export type SchoolCountOutputTypeCountFinanceAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: FinanceAuditLogWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountInvitesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SchoolInviteWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountWaitlistEntriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WaitlistEntryWhereInput
   }
 
 
@@ -4691,6 +4840,12 @@ export namespace Prisma {
     id: string | null
     name: string | null
     slug: string | null
+    contactEmail: string | null
+    phone: string | null
+    address: string | null
+    onboardingStatus: $Enums.SchoolOnboardingStatus | null
+    setupStep: string | null
+    setupCompletedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -4699,6 +4854,12 @@ export namespace Prisma {
     id: string | null
     name: string | null
     slug: string | null
+    contactEmail: string | null
+    phone: string | null
+    address: string | null
+    onboardingStatus: $Enums.SchoolOnboardingStatus | null
+    setupStep: string | null
+    setupCompletedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -4707,6 +4868,12 @@ export namespace Prisma {
     id: number
     name: number
     slug: number
+    contactEmail: number
+    phone: number
+    address: number
+    onboardingStatus: number
+    setupStep: number
+    setupCompletedAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -4717,6 +4884,12 @@ export namespace Prisma {
     id?: true
     name?: true
     slug?: true
+    contactEmail?: true
+    phone?: true
+    address?: true
+    onboardingStatus?: true
+    setupStep?: true
+    setupCompletedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -4725,6 +4898,12 @@ export namespace Prisma {
     id?: true
     name?: true
     slug?: true
+    contactEmail?: true
+    phone?: true
+    address?: true
+    onboardingStatus?: true
+    setupStep?: true
+    setupCompletedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -4733,6 +4912,12 @@ export namespace Prisma {
     id?: true
     name?: true
     slug?: true
+    contactEmail?: true
+    phone?: true
+    address?: true
+    onboardingStatus?: true
+    setupStep?: true
+    setupCompletedAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -4814,6 +4999,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail: string | null
+    phone: string | null
+    address: string | null
+    onboardingStatus: $Enums.SchoolOnboardingStatus
+    setupStep: string | null
+    setupCompletedAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: SchoolCountAggregateOutputType | null
@@ -4839,6 +5030,12 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     slug?: boolean
+    contactEmail?: boolean
+    phone?: boolean
+    address?: boolean
+    onboardingStatus?: boolean
+    setupStep?: boolean
+    setupCompletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     admins?: boolean | School$adminsArgs<ExtArgs>
@@ -4866,6 +5063,8 @@ export namespace Prisma {
     discounts?: boolean | School$discountsArgs<ExtArgs>
     receiptCounters?: boolean | School$receiptCountersArgs<ExtArgs>
     financeAuditLogs?: boolean | School$financeAuditLogsArgs<ExtArgs>
+    invites?: boolean | School$invitesArgs<ExtArgs>
+    waitlistEntries?: boolean | School$waitlistEntriesArgs<ExtArgs>
     _count?: boolean | SchoolCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["school"]>
 
@@ -4873,6 +5072,12 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     slug?: boolean
+    contactEmail?: boolean
+    phone?: boolean
+    address?: boolean
+    onboardingStatus?: boolean
+    setupStep?: boolean
+    setupCompletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["school"]>
@@ -4881,6 +5086,12 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     slug?: boolean
+    contactEmail?: boolean
+    phone?: boolean
+    address?: boolean
+    onboardingStatus?: boolean
+    setupStep?: boolean
+    setupCompletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["school"]>
@@ -4889,11 +5100,17 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     slug?: boolean
+    contactEmail?: boolean
+    phone?: boolean
+    address?: boolean
+    onboardingStatus?: boolean
+    setupStep?: boolean
+    setupCompletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type SchoolOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "createdAt" | "updatedAt", ExtArgs["result"]["school"]>
+  export type SchoolOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "contactEmail" | "phone" | "address" | "onboardingStatus" | "setupStep" | "setupCompletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["school"]>
   export type SchoolInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     admins?: boolean | School$adminsArgs<ExtArgs>
     students?: boolean | School$studentsArgs<ExtArgs>
@@ -4920,6 +5137,8 @@ export namespace Prisma {
     discounts?: boolean | School$discountsArgs<ExtArgs>
     receiptCounters?: boolean | School$receiptCountersArgs<ExtArgs>
     financeAuditLogs?: boolean | School$financeAuditLogsArgs<ExtArgs>
+    invites?: boolean | School$invitesArgs<ExtArgs>
+    waitlistEntries?: boolean | School$waitlistEntriesArgs<ExtArgs>
     _count?: boolean | SchoolCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type SchoolIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -4953,11 +5172,19 @@ export namespace Prisma {
       discounts: Prisma.$DiscountPayload<ExtArgs>[]
       receiptCounters: Prisma.$ReceiptCounterPayload<ExtArgs>[]
       financeAuditLogs: Prisma.$FinanceAuditLogPayload<ExtArgs>[]
+      invites: Prisma.$SchoolInvitePayload<ExtArgs>[]
+      waitlistEntries: Prisma.$WaitlistEntryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
       slug: string
+      contactEmail: string | null
+      phone: string | null
+      address: string | null
+      onboardingStatus: $Enums.SchoolOnboardingStatus
+      setupStep: string | null
+      setupCompletedAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["school"]>
@@ -5379,6 +5606,8 @@ export namespace Prisma {
     discounts<T extends School$discountsArgs<ExtArgs> = {}>(args?: Subset<T, School$discountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DiscountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     receiptCounters<T extends School$receiptCountersArgs<ExtArgs> = {}>(args?: Subset<T, School$receiptCountersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReceiptCounterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     financeAuditLogs<T extends School$financeAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$financeAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    invites<T extends School$invitesArgs<ExtArgs> = {}>(args?: Subset<T, School$invitesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    waitlistEntries<T extends School$waitlistEntriesArgs<ExtArgs> = {}>(args?: Subset<T, School$waitlistEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WaitlistEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5411,6 +5640,12 @@ export namespace Prisma {
     readonly id: FieldRef<"School", 'String'>
     readonly name: FieldRef<"School", 'String'>
     readonly slug: FieldRef<"School", 'String'>
+    readonly contactEmail: FieldRef<"School", 'String'>
+    readonly phone: FieldRef<"School", 'String'>
+    readonly address: FieldRef<"School", 'String'>
+    readonly onboardingStatus: FieldRef<"School", 'SchoolOnboardingStatus'>
+    readonly setupStep: FieldRef<"School", 'String'>
+    readonly setupCompletedAt: FieldRef<"School", 'DateTime'>
     readonly createdAt: FieldRef<"School", 'DateTime'>
     readonly updatedAt: FieldRef<"School", 'DateTime'>
   }
@@ -6403,6 +6638,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: FinanceAuditLogScalarFieldEnum | FinanceAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * School.invites
+   */
+  export type School$invitesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolInvite
+     */
+    select?: SchoolInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolInvite
+     */
+    omit?: SchoolInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolInviteInclude<ExtArgs> | null
+    where?: SchoolInviteWhereInput
+    orderBy?: SchoolInviteOrderByWithRelationInput | SchoolInviteOrderByWithRelationInput[]
+    cursor?: SchoolInviteWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SchoolInviteScalarFieldEnum | SchoolInviteScalarFieldEnum[]
+  }
+
+  /**
+   * School.waitlistEntries
+   */
+  export type School$waitlistEntriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WaitlistEntry
+     */
+    select?: WaitlistEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WaitlistEntry
+     */
+    omit?: WaitlistEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WaitlistEntryInclude<ExtArgs> | null
+    where?: WaitlistEntryWhereInput
+    orderBy?: WaitlistEntryOrderByWithRelationInput | WaitlistEntryOrderByWithRelationInput[]
+    cursor?: WaitlistEntryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WaitlistEntryScalarFieldEnum | WaitlistEntryScalarFieldEnum[]
   }
 
   /**
@@ -41093,6 +41376,10 @@ export namespace Prisma {
     email: string | null
     role: $Enums.WaitlistRole | null
     message: string | null
+    status: $Enums.WaitlistStatus | null
+    reviewedBy: string | null
+    reviewedAt: Date | null
+    schoolId: string | null
     createdAt: Date | null
   }
 
@@ -41103,6 +41390,10 @@ export namespace Prisma {
     email: string | null
     role: $Enums.WaitlistRole | null
     message: string | null
+    status: $Enums.WaitlistStatus | null
+    reviewedBy: string | null
+    reviewedAt: Date | null
+    schoolId: string | null
     createdAt: Date | null
   }
 
@@ -41113,6 +41404,10 @@ export namespace Prisma {
     email: number
     role: number
     message: number
+    status: number
+    reviewedBy: number
+    reviewedAt: number
+    schoolId: number
     createdAt: number
     _all: number
   }
@@ -41125,6 +41420,10 @@ export namespace Prisma {
     email?: true
     role?: true
     message?: true
+    status?: true
+    reviewedBy?: true
+    reviewedAt?: true
+    schoolId?: true
     createdAt?: true
   }
 
@@ -41135,6 +41434,10 @@ export namespace Prisma {
     email?: true
     role?: true
     message?: true
+    status?: true
+    reviewedBy?: true
+    reviewedAt?: true
+    schoolId?: true
     createdAt?: true
   }
 
@@ -41145,6 +41448,10 @@ export namespace Prisma {
     email?: true
     role?: true
     message?: true
+    status?: true
+    reviewedBy?: true
+    reviewedAt?: true
+    schoolId?: true
     createdAt?: true
     _all?: true
   }
@@ -41228,6 +41535,10 @@ export namespace Prisma {
     email: string
     role: $Enums.WaitlistRole
     message: string | null
+    status: $Enums.WaitlistStatus
+    reviewedBy: string | null
+    reviewedAt: Date | null
+    schoolId: string | null
     createdAt: Date
     _count: WaitlistEntryCountAggregateOutputType | null
     _min: WaitlistEntryMinAggregateOutputType | null
@@ -41255,7 +41566,12 @@ export namespace Prisma {
     email?: boolean
     role?: boolean
     message?: boolean
+    status?: boolean
+    reviewedBy?: boolean
+    reviewedAt?: boolean
+    schoolId?: boolean
     createdAt?: boolean
+    school?: boolean | WaitlistEntry$schoolArgs<ExtArgs>
   }, ExtArgs["result"]["waitlistEntry"]>
 
   export type WaitlistEntrySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -41265,7 +41581,12 @@ export namespace Prisma {
     email?: boolean
     role?: boolean
     message?: boolean
+    status?: boolean
+    reviewedBy?: boolean
+    reviewedAt?: boolean
+    schoolId?: boolean
     createdAt?: boolean
+    school?: boolean | WaitlistEntry$schoolArgs<ExtArgs>
   }, ExtArgs["result"]["waitlistEntry"]>
 
   export type WaitlistEntrySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -41275,7 +41596,12 @@ export namespace Prisma {
     email?: boolean
     role?: boolean
     message?: boolean
+    status?: boolean
+    reviewedBy?: boolean
+    reviewedAt?: boolean
+    schoolId?: boolean
     createdAt?: boolean
+    school?: boolean | WaitlistEntry$schoolArgs<ExtArgs>
   }, ExtArgs["result"]["waitlistEntry"]>
 
   export type WaitlistEntrySelectScalar = {
@@ -41285,14 +41611,29 @@ export namespace Prisma {
     email?: boolean
     role?: boolean
     message?: boolean
+    status?: boolean
+    reviewedBy?: boolean
+    reviewedAt?: boolean
+    schoolId?: boolean
     createdAt?: boolean
   }
 
-  export type WaitlistEntryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "schoolName" | "email" | "role" | "message" | "createdAt", ExtArgs["result"]["waitlistEntry"]>
+  export type WaitlistEntryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "schoolName" | "email" | "role" | "message" | "status" | "reviewedBy" | "reviewedAt" | "schoolId" | "createdAt", ExtArgs["result"]["waitlistEntry"]>
+  export type WaitlistEntryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | WaitlistEntry$schoolArgs<ExtArgs>
+  }
+  export type WaitlistEntryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | WaitlistEntry$schoolArgs<ExtArgs>
+  }
+  export type WaitlistEntryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | WaitlistEntry$schoolArgs<ExtArgs>
+  }
 
   export type $WaitlistEntryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "WaitlistEntry"
-    objects: {}
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs> | null
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
@@ -41300,6 +41641,10 @@ export namespace Prisma {
       email: string
       role: $Enums.WaitlistRole
       message: string | null
+      status: $Enums.WaitlistStatus
+      reviewedBy: string | null
+      reviewedAt: Date | null
+      schoolId: string | null
       createdAt: Date
     }, ExtArgs["result"]["waitlistEntry"]>
     composites: {}
@@ -41695,6 +42040,7 @@ export namespace Prisma {
    */
   export interface Prisma__WaitlistEntryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends WaitlistEntry$schoolArgs<ExtArgs> = {}>(args?: Subset<T, WaitlistEntry$schoolArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -41730,6 +42076,10 @@ export namespace Prisma {
     readonly email: FieldRef<"WaitlistEntry", 'String'>
     readonly role: FieldRef<"WaitlistEntry", 'WaitlistRole'>
     readonly message: FieldRef<"WaitlistEntry", 'String'>
+    readonly status: FieldRef<"WaitlistEntry", 'WaitlistStatus'>
+    readonly reviewedBy: FieldRef<"WaitlistEntry", 'String'>
+    readonly reviewedAt: FieldRef<"WaitlistEntry", 'DateTime'>
+    readonly schoolId: FieldRef<"WaitlistEntry", 'String'>
     readonly createdAt: FieldRef<"WaitlistEntry", 'DateTime'>
   }
     
@@ -41747,6 +42097,10 @@ export namespace Prisma {
      * Omit specific fields from the WaitlistEntry
      */
     omit?: WaitlistEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WaitlistEntryInclude<ExtArgs> | null
     /**
      * Filter, which WaitlistEntry to fetch.
      */
@@ -41766,6 +42120,10 @@ export namespace Prisma {
      */
     omit?: WaitlistEntryOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WaitlistEntryInclude<ExtArgs> | null
+    /**
      * Filter, which WaitlistEntry to fetch.
      */
     where: WaitlistEntryWhereUniqueInput
@@ -41783,6 +42141,10 @@ export namespace Prisma {
      * Omit specific fields from the WaitlistEntry
      */
     omit?: WaitlistEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WaitlistEntryInclude<ExtArgs> | null
     /**
      * Filter, which WaitlistEntry to fetch.
      */
@@ -41832,6 +42194,10 @@ export namespace Prisma {
      */
     omit?: WaitlistEntryOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WaitlistEntryInclude<ExtArgs> | null
+    /**
      * Filter, which WaitlistEntry to fetch.
      */
     where?: WaitlistEntryWhereInput
@@ -41879,6 +42245,10 @@ export namespace Prisma {
      * Omit specific fields from the WaitlistEntry
      */
     omit?: WaitlistEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WaitlistEntryInclude<ExtArgs> | null
     /**
      * Filter, which WaitlistEntries to fetch.
      */
@@ -41928,6 +42298,10 @@ export namespace Prisma {
      */
     omit?: WaitlistEntryOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WaitlistEntryInclude<ExtArgs> | null
+    /**
      * The data needed to create a WaitlistEntry.
      */
     data: XOR<WaitlistEntryCreateInput, WaitlistEntryUncheckedCreateInput>
@@ -41961,6 +42335,10 @@ export namespace Prisma {
      */
     data: WaitlistEntryCreateManyInput | WaitlistEntryCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WaitlistEntryIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -41975,6 +42353,10 @@ export namespace Prisma {
      * Omit specific fields from the WaitlistEntry
      */
     omit?: WaitlistEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WaitlistEntryInclude<ExtArgs> | null
     /**
      * The data needed to update a WaitlistEntry.
      */
@@ -42027,6 +42409,10 @@ export namespace Prisma {
      * Limit how many WaitlistEntries to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WaitlistEntryIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -42041,6 +42427,10 @@ export namespace Prisma {
      * Omit specific fields from the WaitlistEntry
      */
     omit?: WaitlistEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WaitlistEntryInclude<ExtArgs> | null
     /**
      * The filter to search for the WaitlistEntry to update in case it exists.
      */
@@ -42068,6 +42458,10 @@ export namespace Prisma {
      */
     omit?: WaitlistEntryOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WaitlistEntryInclude<ExtArgs> | null
+    /**
      * Filter which WaitlistEntry to delete.
      */
     where: WaitlistEntryWhereUniqueInput
@@ -42088,6 +42482,25 @@ export namespace Prisma {
   }
 
   /**
+   * WaitlistEntry.school
+   */
+  export type WaitlistEntry$schoolArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the School
+     */
+    select?: SchoolSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the School
+     */
+    omit?: SchoolOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolInclude<ExtArgs> | null
+    where?: SchoolWhereInput
+  }
+
+  /**
    * WaitlistEntry without action
    */
   export type WaitlistEntryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -42099,6 +42512,1125 @@ export namespace Prisma {
      * Omit specific fields from the WaitlistEntry
      */
     omit?: WaitlistEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WaitlistEntryInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SchoolInvite
+   */
+
+  export type AggregateSchoolInvite = {
+    _count: SchoolInviteCountAggregateOutputType | null
+    _min: SchoolInviteMinAggregateOutputType | null
+    _max: SchoolInviteMaxAggregateOutputType | null
+  }
+
+  export type SchoolInviteMinAggregateOutputType = {
+    id: string | null
+    schoolId: string | null
+    email: string | null
+    role: $Enums.SchoolInviteRole | null
+    tokenHash: string | null
+    expiresAt: Date | null
+    acceptedAt: Date | null
+    createdBy: string | null
+    createdAt: Date | null
+  }
+
+  export type SchoolInviteMaxAggregateOutputType = {
+    id: string | null
+    schoolId: string | null
+    email: string | null
+    role: $Enums.SchoolInviteRole | null
+    tokenHash: string | null
+    expiresAt: Date | null
+    acceptedAt: Date | null
+    createdBy: string | null
+    createdAt: Date | null
+  }
+
+  export type SchoolInviteCountAggregateOutputType = {
+    id: number
+    schoolId: number
+    email: number
+    role: number
+    tokenHash: number
+    expiresAt: number
+    acceptedAt: number
+    createdBy: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type SchoolInviteMinAggregateInputType = {
+    id?: true
+    schoolId?: true
+    email?: true
+    role?: true
+    tokenHash?: true
+    expiresAt?: true
+    acceptedAt?: true
+    createdBy?: true
+    createdAt?: true
+  }
+
+  export type SchoolInviteMaxAggregateInputType = {
+    id?: true
+    schoolId?: true
+    email?: true
+    role?: true
+    tokenHash?: true
+    expiresAt?: true
+    acceptedAt?: true
+    createdBy?: true
+    createdAt?: true
+  }
+
+  export type SchoolInviteCountAggregateInputType = {
+    id?: true
+    schoolId?: true
+    email?: true
+    role?: true
+    tokenHash?: true
+    expiresAt?: true
+    acceptedAt?: true
+    createdBy?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type SchoolInviteAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SchoolInvite to aggregate.
+     */
+    where?: SchoolInviteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SchoolInvites to fetch.
+     */
+    orderBy?: SchoolInviteOrderByWithRelationInput | SchoolInviteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SchoolInviteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SchoolInvites from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SchoolInvites.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SchoolInvites
+    **/
+    _count?: true | SchoolInviteCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SchoolInviteMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SchoolInviteMaxAggregateInputType
+  }
+
+  export type GetSchoolInviteAggregateType<T extends SchoolInviteAggregateArgs> = {
+        [P in keyof T & keyof AggregateSchoolInvite]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSchoolInvite[P]>
+      : GetScalarType<T[P], AggregateSchoolInvite[P]>
+  }
+
+
+
+
+  export type SchoolInviteGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SchoolInviteWhereInput
+    orderBy?: SchoolInviteOrderByWithAggregationInput | SchoolInviteOrderByWithAggregationInput[]
+    by: SchoolInviteScalarFieldEnum[] | SchoolInviteScalarFieldEnum
+    having?: SchoolInviteScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SchoolInviteCountAggregateInputType | true
+    _min?: SchoolInviteMinAggregateInputType
+    _max?: SchoolInviteMaxAggregateInputType
+  }
+
+  export type SchoolInviteGroupByOutputType = {
+    id: string
+    schoolId: string
+    email: string
+    role: $Enums.SchoolInviteRole
+    tokenHash: string
+    expiresAt: Date
+    acceptedAt: Date | null
+    createdBy: string
+    createdAt: Date
+    _count: SchoolInviteCountAggregateOutputType | null
+    _min: SchoolInviteMinAggregateOutputType | null
+    _max: SchoolInviteMaxAggregateOutputType | null
+  }
+
+  type GetSchoolInviteGroupByPayload<T extends SchoolInviteGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SchoolInviteGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SchoolInviteGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SchoolInviteGroupByOutputType[P]>
+            : GetScalarType<T[P], SchoolInviteGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SchoolInviteSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    email?: boolean
+    role?: boolean
+    tokenHash?: boolean
+    expiresAt?: boolean
+    acceptedAt?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["schoolInvite"]>
+
+  export type SchoolInviteSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    email?: boolean
+    role?: boolean
+    tokenHash?: boolean
+    expiresAt?: boolean
+    acceptedAt?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["schoolInvite"]>
+
+  export type SchoolInviteSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    email?: boolean
+    role?: boolean
+    tokenHash?: boolean
+    expiresAt?: boolean
+    acceptedAt?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["schoolInvite"]>
+
+  export type SchoolInviteSelectScalar = {
+    id?: boolean
+    schoolId?: boolean
+    email?: boolean
+    role?: boolean
+    tokenHash?: boolean
+    expiresAt?: boolean
+    acceptedAt?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+  }
+
+  export type SchoolInviteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "schoolId" | "email" | "role" | "tokenHash" | "expiresAt" | "acceptedAt" | "createdBy" | "createdAt", ExtArgs["result"]["schoolInvite"]>
+  export type SchoolInviteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }
+  export type SchoolInviteIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }
+  export type SchoolInviteIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }
+
+  export type $SchoolInvitePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SchoolInvite"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      schoolId: string
+      email: string
+      role: $Enums.SchoolInviteRole
+      tokenHash: string
+      expiresAt: Date
+      acceptedAt: Date | null
+      createdBy: string
+      createdAt: Date
+    }, ExtArgs["result"]["schoolInvite"]>
+    composites: {}
+  }
+
+  type SchoolInviteGetPayload<S extends boolean | null | undefined | SchoolInviteDefaultArgs> = $Result.GetResult<Prisma.$SchoolInvitePayload, S>
+
+  type SchoolInviteCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SchoolInviteFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SchoolInviteCountAggregateInputType | true
+    }
+
+  export interface SchoolInviteDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SchoolInvite'], meta: { name: 'SchoolInvite' } }
+    /**
+     * Find zero or one SchoolInvite that matches the filter.
+     * @param {SchoolInviteFindUniqueArgs} args - Arguments to find a SchoolInvite
+     * @example
+     * // Get one SchoolInvite
+     * const schoolInvite = await prisma.schoolInvite.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SchoolInviteFindUniqueArgs>(args: SelectSubset<T, SchoolInviteFindUniqueArgs<ExtArgs>>): Prisma__SchoolInviteClient<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SchoolInvite that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SchoolInviteFindUniqueOrThrowArgs} args - Arguments to find a SchoolInvite
+     * @example
+     * // Get one SchoolInvite
+     * const schoolInvite = await prisma.schoolInvite.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SchoolInviteFindUniqueOrThrowArgs>(args: SelectSubset<T, SchoolInviteFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SchoolInviteClient<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SchoolInvite that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolInviteFindFirstArgs} args - Arguments to find a SchoolInvite
+     * @example
+     * // Get one SchoolInvite
+     * const schoolInvite = await prisma.schoolInvite.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SchoolInviteFindFirstArgs>(args?: SelectSubset<T, SchoolInviteFindFirstArgs<ExtArgs>>): Prisma__SchoolInviteClient<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SchoolInvite that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolInviteFindFirstOrThrowArgs} args - Arguments to find a SchoolInvite
+     * @example
+     * // Get one SchoolInvite
+     * const schoolInvite = await prisma.schoolInvite.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SchoolInviteFindFirstOrThrowArgs>(args?: SelectSubset<T, SchoolInviteFindFirstOrThrowArgs<ExtArgs>>): Prisma__SchoolInviteClient<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SchoolInvites that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolInviteFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SchoolInvites
+     * const schoolInvites = await prisma.schoolInvite.findMany()
+     * 
+     * // Get first 10 SchoolInvites
+     * const schoolInvites = await prisma.schoolInvite.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const schoolInviteWithIdOnly = await prisma.schoolInvite.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SchoolInviteFindManyArgs>(args?: SelectSubset<T, SchoolInviteFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SchoolInvite.
+     * @param {SchoolInviteCreateArgs} args - Arguments to create a SchoolInvite.
+     * @example
+     * // Create one SchoolInvite
+     * const SchoolInvite = await prisma.schoolInvite.create({
+     *   data: {
+     *     // ... data to create a SchoolInvite
+     *   }
+     * })
+     * 
+     */
+    create<T extends SchoolInviteCreateArgs>(args: SelectSubset<T, SchoolInviteCreateArgs<ExtArgs>>): Prisma__SchoolInviteClient<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SchoolInvites.
+     * @param {SchoolInviteCreateManyArgs} args - Arguments to create many SchoolInvites.
+     * @example
+     * // Create many SchoolInvites
+     * const schoolInvite = await prisma.schoolInvite.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SchoolInviteCreateManyArgs>(args?: SelectSubset<T, SchoolInviteCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SchoolInvites and returns the data saved in the database.
+     * @param {SchoolInviteCreateManyAndReturnArgs} args - Arguments to create many SchoolInvites.
+     * @example
+     * // Create many SchoolInvites
+     * const schoolInvite = await prisma.schoolInvite.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SchoolInvites and only return the `id`
+     * const schoolInviteWithIdOnly = await prisma.schoolInvite.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SchoolInviteCreateManyAndReturnArgs>(args?: SelectSubset<T, SchoolInviteCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SchoolInvite.
+     * @param {SchoolInviteDeleteArgs} args - Arguments to delete one SchoolInvite.
+     * @example
+     * // Delete one SchoolInvite
+     * const SchoolInvite = await prisma.schoolInvite.delete({
+     *   where: {
+     *     // ... filter to delete one SchoolInvite
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SchoolInviteDeleteArgs>(args: SelectSubset<T, SchoolInviteDeleteArgs<ExtArgs>>): Prisma__SchoolInviteClient<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SchoolInvite.
+     * @param {SchoolInviteUpdateArgs} args - Arguments to update one SchoolInvite.
+     * @example
+     * // Update one SchoolInvite
+     * const schoolInvite = await prisma.schoolInvite.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SchoolInviteUpdateArgs>(args: SelectSubset<T, SchoolInviteUpdateArgs<ExtArgs>>): Prisma__SchoolInviteClient<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SchoolInvites.
+     * @param {SchoolInviteDeleteManyArgs} args - Arguments to filter SchoolInvites to delete.
+     * @example
+     * // Delete a few SchoolInvites
+     * const { count } = await prisma.schoolInvite.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SchoolInviteDeleteManyArgs>(args?: SelectSubset<T, SchoolInviteDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SchoolInvites.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolInviteUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SchoolInvites
+     * const schoolInvite = await prisma.schoolInvite.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SchoolInviteUpdateManyArgs>(args: SelectSubset<T, SchoolInviteUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SchoolInvites and returns the data updated in the database.
+     * @param {SchoolInviteUpdateManyAndReturnArgs} args - Arguments to update many SchoolInvites.
+     * @example
+     * // Update many SchoolInvites
+     * const schoolInvite = await prisma.schoolInvite.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SchoolInvites and only return the `id`
+     * const schoolInviteWithIdOnly = await prisma.schoolInvite.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SchoolInviteUpdateManyAndReturnArgs>(args: SelectSubset<T, SchoolInviteUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SchoolInvite.
+     * @param {SchoolInviteUpsertArgs} args - Arguments to update or create a SchoolInvite.
+     * @example
+     * // Update or create a SchoolInvite
+     * const schoolInvite = await prisma.schoolInvite.upsert({
+     *   create: {
+     *     // ... data to create a SchoolInvite
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SchoolInvite we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SchoolInviteUpsertArgs>(args: SelectSubset<T, SchoolInviteUpsertArgs<ExtArgs>>): Prisma__SchoolInviteClient<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SchoolInvites.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolInviteCountArgs} args - Arguments to filter SchoolInvites to count.
+     * @example
+     * // Count the number of SchoolInvites
+     * const count = await prisma.schoolInvite.count({
+     *   where: {
+     *     // ... the filter for the SchoolInvites we want to count
+     *   }
+     * })
+    **/
+    count<T extends SchoolInviteCountArgs>(
+      args?: Subset<T, SchoolInviteCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SchoolInviteCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SchoolInvite.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolInviteAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SchoolInviteAggregateArgs>(args: Subset<T, SchoolInviteAggregateArgs>): Prisma.PrismaPromise<GetSchoolInviteAggregateType<T>>
+
+    /**
+     * Group by SchoolInvite.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolInviteGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SchoolInviteGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SchoolInviteGroupByArgs['orderBy'] }
+        : { orderBy?: SchoolInviteGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SchoolInviteGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSchoolInviteGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SchoolInvite model
+   */
+  readonly fields: SchoolInviteFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SchoolInvite.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SchoolInviteClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SchoolInvite model
+   */
+  interface SchoolInviteFieldRefs {
+    readonly id: FieldRef<"SchoolInvite", 'String'>
+    readonly schoolId: FieldRef<"SchoolInvite", 'String'>
+    readonly email: FieldRef<"SchoolInvite", 'String'>
+    readonly role: FieldRef<"SchoolInvite", 'SchoolInviteRole'>
+    readonly tokenHash: FieldRef<"SchoolInvite", 'String'>
+    readonly expiresAt: FieldRef<"SchoolInvite", 'DateTime'>
+    readonly acceptedAt: FieldRef<"SchoolInvite", 'DateTime'>
+    readonly createdBy: FieldRef<"SchoolInvite", 'String'>
+    readonly createdAt: FieldRef<"SchoolInvite", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SchoolInvite findUnique
+   */
+  export type SchoolInviteFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolInvite
+     */
+    select?: SchoolInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolInvite
+     */
+    omit?: SchoolInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolInviteInclude<ExtArgs> | null
+    /**
+     * Filter, which SchoolInvite to fetch.
+     */
+    where: SchoolInviteWhereUniqueInput
+  }
+
+  /**
+   * SchoolInvite findUniqueOrThrow
+   */
+  export type SchoolInviteFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolInvite
+     */
+    select?: SchoolInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolInvite
+     */
+    omit?: SchoolInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolInviteInclude<ExtArgs> | null
+    /**
+     * Filter, which SchoolInvite to fetch.
+     */
+    where: SchoolInviteWhereUniqueInput
+  }
+
+  /**
+   * SchoolInvite findFirst
+   */
+  export type SchoolInviteFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolInvite
+     */
+    select?: SchoolInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolInvite
+     */
+    omit?: SchoolInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolInviteInclude<ExtArgs> | null
+    /**
+     * Filter, which SchoolInvite to fetch.
+     */
+    where?: SchoolInviteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SchoolInvites to fetch.
+     */
+    orderBy?: SchoolInviteOrderByWithRelationInput | SchoolInviteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SchoolInvites.
+     */
+    cursor?: SchoolInviteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SchoolInvites from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SchoolInvites.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SchoolInvites.
+     */
+    distinct?: SchoolInviteScalarFieldEnum | SchoolInviteScalarFieldEnum[]
+  }
+
+  /**
+   * SchoolInvite findFirstOrThrow
+   */
+  export type SchoolInviteFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolInvite
+     */
+    select?: SchoolInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolInvite
+     */
+    omit?: SchoolInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolInviteInclude<ExtArgs> | null
+    /**
+     * Filter, which SchoolInvite to fetch.
+     */
+    where?: SchoolInviteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SchoolInvites to fetch.
+     */
+    orderBy?: SchoolInviteOrderByWithRelationInput | SchoolInviteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SchoolInvites.
+     */
+    cursor?: SchoolInviteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SchoolInvites from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SchoolInvites.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SchoolInvites.
+     */
+    distinct?: SchoolInviteScalarFieldEnum | SchoolInviteScalarFieldEnum[]
+  }
+
+  /**
+   * SchoolInvite findMany
+   */
+  export type SchoolInviteFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolInvite
+     */
+    select?: SchoolInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolInvite
+     */
+    omit?: SchoolInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolInviteInclude<ExtArgs> | null
+    /**
+     * Filter, which SchoolInvites to fetch.
+     */
+    where?: SchoolInviteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SchoolInvites to fetch.
+     */
+    orderBy?: SchoolInviteOrderByWithRelationInput | SchoolInviteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SchoolInvites.
+     */
+    cursor?: SchoolInviteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SchoolInvites from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SchoolInvites.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SchoolInvites.
+     */
+    distinct?: SchoolInviteScalarFieldEnum | SchoolInviteScalarFieldEnum[]
+  }
+
+  /**
+   * SchoolInvite create
+   */
+  export type SchoolInviteCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolInvite
+     */
+    select?: SchoolInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolInvite
+     */
+    omit?: SchoolInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolInviteInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SchoolInvite.
+     */
+    data: XOR<SchoolInviteCreateInput, SchoolInviteUncheckedCreateInput>
+  }
+
+  /**
+   * SchoolInvite createMany
+   */
+  export type SchoolInviteCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SchoolInvites.
+     */
+    data: SchoolInviteCreateManyInput | SchoolInviteCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SchoolInvite createManyAndReturn
+   */
+  export type SchoolInviteCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolInvite
+     */
+    select?: SchoolInviteSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolInvite
+     */
+    omit?: SchoolInviteOmit<ExtArgs> | null
+    /**
+     * The data used to create many SchoolInvites.
+     */
+    data: SchoolInviteCreateManyInput | SchoolInviteCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolInviteIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SchoolInvite update
+   */
+  export type SchoolInviteUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolInvite
+     */
+    select?: SchoolInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolInvite
+     */
+    omit?: SchoolInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolInviteInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SchoolInvite.
+     */
+    data: XOR<SchoolInviteUpdateInput, SchoolInviteUncheckedUpdateInput>
+    /**
+     * Choose, which SchoolInvite to update.
+     */
+    where: SchoolInviteWhereUniqueInput
+  }
+
+  /**
+   * SchoolInvite updateMany
+   */
+  export type SchoolInviteUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SchoolInvites.
+     */
+    data: XOR<SchoolInviteUpdateManyMutationInput, SchoolInviteUncheckedUpdateManyInput>
+    /**
+     * Filter which SchoolInvites to update
+     */
+    where?: SchoolInviteWhereInput
+    /**
+     * Limit how many SchoolInvites to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SchoolInvite updateManyAndReturn
+   */
+  export type SchoolInviteUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolInvite
+     */
+    select?: SchoolInviteSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolInvite
+     */
+    omit?: SchoolInviteOmit<ExtArgs> | null
+    /**
+     * The data used to update SchoolInvites.
+     */
+    data: XOR<SchoolInviteUpdateManyMutationInput, SchoolInviteUncheckedUpdateManyInput>
+    /**
+     * Filter which SchoolInvites to update
+     */
+    where?: SchoolInviteWhereInput
+    /**
+     * Limit how many SchoolInvites to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolInviteIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SchoolInvite upsert
+   */
+  export type SchoolInviteUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolInvite
+     */
+    select?: SchoolInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolInvite
+     */
+    omit?: SchoolInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolInviteInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SchoolInvite to update in case it exists.
+     */
+    where: SchoolInviteWhereUniqueInput
+    /**
+     * In case the SchoolInvite found by the `where` argument doesn't exist, create a new SchoolInvite with this data.
+     */
+    create: XOR<SchoolInviteCreateInput, SchoolInviteUncheckedCreateInput>
+    /**
+     * In case the SchoolInvite was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SchoolInviteUpdateInput, SchoolInviteUncheckedUpdateInput>
+  }
+
+  /**
+   * SchoolInvite delete
+   */
+  export type SchoolInviteDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolInvite
+     */
+    select?: SchoolInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolInvite
+     */
+    omit?: SchoolInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolInviteInclude<ExtArgs> | null
+    /**
+     * Filter which SchoolInvite to delete.
+     */
+    where: SchoolInviteWhereUniqueInput
+  }
+
+  /**
+   * SchoolInvite deleteMany
+   */
+  export type SchoolInviteDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SchoolInvites to delete
+     */
+    where?: SchoolInviteWhereInput
+    /**
+     * Limit how many SchoolInvites to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SchoolInvite without action
+   */
+  export type SchoolInviteDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolInvite
+     */
+    select?: SchoolInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolInvite
+     */
+    omit?: SchoolInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolInviteInclude<ExtArgs> | null
   }
 
 
@@ -42120,6 +43652,12 @@ export namespace Prisma {
     id: 'id',
     name: 'name',
     slug: 'slug',
+    contactEmail: 'contactEmail',
+    phone: 'phone',
+    address: 'address',
+    onboardingStatus: 'onboardingStatus',
+    setupStep: 'setupStep',
+    setupCompletedAt: 'setupCompletedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -42554,10 +44092,29 @@ export namespace Prisma {
     email: 'email',
     role: 'role',
     message: 'message',
+    status: 'status',
+    reviewedBy: 'reviewedBy',
+    reviewedAt: 'reviewedAt',
+    schoolId: 'schoolId',
     createdAt: 'createdAt'
   };
 
   export type WaitlistEntryScalarFieldEnum = (typeof WaitlistEntryScalarFieldEnum)[keyof typeof WaitlistEntryScalarFieldEnum]
+
+
+  export const SchoolInviteScalarFieldEnum: {
+    id: 'id',
+    schoolId: 'schoolId',
+    email: 'email',
+    role: 'role',
+    tokenHash: 'tokenHash',
+    expiresAt: 'expiresAt',
+    acceptedAt: 'acceptedAt',
+    createdBy: 'createdBy',
+    createdAt: 'createdAt'
+  };
+
+  export type SchoolInviteScalarFieldEnum = (typeof SchoolInviteScalarFieldEnum)[keyof typeof SchoolInviteScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -42616,6 +44173,20 @@ export namespace Prisma {
    * Reference to a field of type 'String[]'
    */
   export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'SchoolOnboardingStatus'
+   */
+  export type EnumSchoolOnboardingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SchoolOnboardingStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'SchoolOnboardingStatus[]'
+   */
+  export type ListEnumSchoolOnboardingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SchoolOnboardingStatus[]'>
     
 
 
@@ -42876,6 +44447,34 @@ export namespace Prisma {
    */
   export type ListEnumWaitlistRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WaitlistRole[]'>
     
+
+
+  /**
+   * Reference to a field of type 'WaitlistStatus'
+   */
+  export type EnumWaitlistStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WaitlistStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'WaitlistStatus[]'
+   */
+  export type ListEnumWaitlistStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WaitlistStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'SchoolInviteRole'
+   */
+  export type EnumSchoolInviteRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SchoolInviteRole'>
+    
+
+
+  /**
+   * Reference to a field of type 'SchoolInviteRole[]'
+   */
+  export type ListEnumSchoolInviteRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SchoolInviteRole[]'>
+    
   /**
    * Deep Input Types
    */
@@ -42888,6 +44487,12 @@ export namespace Prisma {
     id?: StringFilter<"School"> | string
     name?: StringFilter<"School"> | string
     slug?: StringFilter<"School"> | string
+    contactEmail?: StringNullableFilter<"School"> | string | null
+    phone?: StringNullableFilter<"School"> | string | null
+    address?: StringNullableFilter<"School"> | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFilter<"School"> | $Enums.SchoolOnboardingStatus
+    setupStep?: StringNullableFilter<"School"> | string | null
+    setupCompletedAt?: DateTimeNullableFilter<"School"> | Date | string | null
     createdAt?: DateTimeFilter<"School"> | Date | string
     updatedAt?: DateTimeFilter<"School"> | Date | string
     admins?: AdminListRelationFilter
@@ -42915,12 +44520,20 @@ export namespace Prisma {
     discounts?: DiscountListRelationFilter
     receiptCounters?: ReceiptCounterListRelationFilter
     financeAuditLogs?: FinanceAuditLogListRelationFilter
+    invites?: SchoolInviteListRelationFilter
+    waitlistEntries?: WaitlistEntryListRelationFilter
   }
 
   export type SchoolOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
+    contactEmail?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    onboardingStatus?: SortOrder
+    setupStep?: SortOrderInput | SortOrder
+    setupCompletedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     admins?: AdminOrderByRelationAggregateInput
@@ -42948,6 +44561,8 @@ export namespace Prisma {
     discounts?: DiscountOrderByRelationAggregateInput
     receiptCounters?: ReceiptCounterOrderByRelationAggregateInput
     financeAuditLogs?: FinanceAuditLogOrderByRelationAggregateInput
+    invites?: SchoolInviteOrderByRelationAggregateInput
+    waitlistEntries?: WaitlistEntryOrderByRelationAggregateInput
   }
 
   export type SchoolWhereUniqueInput = Prisma.AtLeast<{
@@ -42957,6 +44572,12 @@ export namespace Prisma {
     OR?: SchoolWhereInput[]
     NOT?: SchoolWhereInput | SchoolWhereInput[]
     name?: StringFilter<"School"> | string
+    contactEmail?: StringNullableFilter<"School"> | string | null
+    phone?: StringNullableFilter<"School"> | string | null
+    address?: StringNullableFilter<"School"> | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFilter<"School"> | $Enums.SchoolOnboardingStatus
+    setupStep?: StringNullableFilter<"School"> | string | null
+    setupCompletedAt?: DateTimeNullableFilter<"School"> | Date | string | null
     createdAt?: DateTimeFilter<"School"> | Date | string
     updatedAt?: DateTimeFilter<"School"> | Date | string
     admins?: AdminListRelationFilter
@@ -42984,12 +44605,20 @@ export namespace Prisma {
     discounts?: DiscountListRelationFilter
     receiptCounters?: ReceiptCounterListRelationFilter
     financeAuditLogs?: FinanceAuditLogListRelationFilter
+    invites?: SchoolInviteListRelationFilter
+    waitlistEntries?: WaitlistEntryListRelationFilter
   }, "id" | "slug">
 
   export type SchoolOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
+    contactEmail?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    onboardingStatus?: SortOrder
+    setupStep?: SortOrderInput | SortOrder
+    setupCompletedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: SchoolCountOrderByAggregateInput
@@ -43004,6 +44633,12 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"School"> | string
     name?: StringWithAggregatesFilter<"School"> | string
     slug?: StringWithAggregatesFilter<"School"> | string
+    contactEmail?: StringNullableWithAggregatesFilter<"School"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"School"> | string | null
+    address?: StringNullableWithAggregatesFilter<"School"> | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusWithAggregatesFilter<"School"> | $Enums.SchoolOnboardingStatus
+    setupStep?: StringNullableWithAggregatesFilter<"School"> | string | null
+    setupCompletedAt?: DateTimeNullableWithAggregatesFilter<"School"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"School"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"School"> | Date | string
   }
@@ -45395,7 +47030,12 @@ export namespace Prisma {
     email?: StringFilter<"WaitlistEntry"> | string
     role?: EnumWaitlistRoleFilter<"WaitlistEntry"> | $Enums.WaitlistRole
     message?: StringNullableFilter<"WaitlistEntry"> | string | null
+    status?: EnumWaitlistStatusFilter<"WaitlistEntry"> | $Enums.WaitlistStatus
+    reviewedBy?: StringNullableFilter<"WaitlistEntry"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"WaitlistEntry"> | Date | string | null
+    schoolId?: StringNullableFilter<"WaitlistEntry"> | string | null
     createdAt?: DateTimeFilter<"WaitlistEntry"> | Date | string
+    school?: XOR<SchoolNullableScalarRelationFilter, SchoolWhereInput> | null
   }
 
   export type WaitlistEntryOrderByWithRelationInput = {
@@ -45405,7 +47045,12 @@ export namespace Prisma {
     email?: SortOrder
     role?: SortOrder
     message?: SortOrderInput | SortOrder
+    status?: SortOrder
+    reviewedBy?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    schoolId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    school?: SchoolOrderByWithRelationInput
   }
 
   export type WaitlistEntryWhereUniqueInput = Prisma.AtLeast<{
@@ -45418,7 +47063,12 @@ export namespace Prisma {
     schoolName?: StringFilter<"WaitlistEntry"> | string
     role?: EnumWaitlistRoleFilter<"WaitlistEntry"> | $Enums.WaitlistRole
     message?: StringNullableFilter<"WaitlistEntry"> | string | null
+    status?: EnumWaitlistStatusFilter<"WaitlistEntry"> | $Enums.WaitlistStatus
+    reviewedBy?: StringNullableFilter<"WaitlistEntry"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"WaitlistEntry"> | Date | string | null
+    schoolId?: StringNullableFilter<"WaitlistEntry"> | string | null
     createdAt?: DateTimeFilter<"WaitlistEntry"> | Date | string
+    school?: XOR<SchoolNullableScalarRelationFilter, SchoolWhereInput> | null
   }, "id" | "email">
 
   export type WaitlistEntryOrderByWithAggregationInput = {
@@ -45428,6 +47078,10 @@ export namespace Prisma {
     email?: SortOrder
     role?: SortOrder
     message?: SortOrderInput | SortOrder
+    status?: SortOrder
+    reviewedBy?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    schoolId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: WaitlistEntryCountOrderByAggregateInput
     _max?: WaitlistEntryMaxOrderByAggregateInput
@@ -45444,13 +47098,98 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"WaitlistEntry"> | string
     role?: EnumWaitlistRoleWithAggregatesFilter<"WaitlistEntry"> | $Enums.WaitlistRole
     message?: StringNullableWithAggregatesFilter<"WaitlistEntry"> | string | null
+    status?: EnumWaitlistStatusWithAggregatesFilter<"WaitlistEntry"> | $Enums.WaitlistStatus
+    reviewedBy?: StringNullableWithAggregatesFilter<"WaitlistEntry"> | string | null
+    reviewedAt?: DateTimeNullableWithAggregatesFilter<"WaitlistEntry"> | Date | string | null
+    schoolId?: StringNullableWithAggregatesFilter<"WaitlistEntry"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"WaitlistEntry"> | Date | string
+  }
+
+  export type SchoolInviteWhereInput = {
+    AND?: SchoolInviteWhereInput | SchoolInviteWhereInput[]
+    OR?: SchoolInviteWhereInput[]
+    NOT?: SchoolInviteWhereInput | SchoolInviteWhereInput[]
+    id?: StringFilter<"SchoolInvite"> | string
+    schoolId?: StringFilter<"SchoolInvite"> | string
+    email?: StringFilter<"SchoolInvite"> | string
+    role?: EnumSchoolInviteRoleFilter<"SchoolInvite"> | $Enums.SchoolInviteRole
+    tokenHash?: StringFilter<"SchoolInvite"> | string
+    expiresAt?: DateTimeFilter<"SchoolInvite"> | Date | string
+    acceptedAt?: DateTimeNullableFilter<"SchoolInvite"> | Date | string | null
+    createdBy?: StringFilter<"SchoolInvite"> | string
+    createdAt?: DateTimeFilter<"SchoolInvite"> | Date | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+  }
+
+  export type SchoolInviteOrderByWithRelationInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    email?: SortOrder
+    role?: SortOrder
+    tokenHash?: SortOrder
+    expiresAt?: SortOrder
+    acceptedAt?: SortOrderInput | SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+  }
+
+  export type SchoolInviteWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    tokenHash?: string
+    AND?: SchoolInviteWhereInput | SchoolInviteWhereInput[]
+    OR?: SchoolInviteWhereInput[]
+    NOT?: SchoolInviteWhereInput | SchoolInviteWhereInput[]
+    schoolId?: StringFilter<"SchoolInvite"> | string
+    email?: StringFilter<"SchoolInvite"> | string
+    role?: EnumSchoolInviteRoleFilter<"SchoolInvite"> | $Enums.SchoolInviteRole
+    expiresAt?: DateTimeFilter<"SchoolInvite"> | Date | string
+    acceptedAt?: DateTimeNullableFilter<"SchoolInvite"> | Date | string | null
+    createdBy?: StringFilter<"SchoolInvite"> | string
+    createdAt?: DateTimeFilter<"SchoolInvite"> | Date | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+  }, "id" | "tokenHash">
+
+  export type SchoolInviteOrderByWithAggregationInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    email?: SortOrder
+    role?: SortOrder
+    tokenHash?: SortOrder
+    expiresAt?: SortOrder
+    acceptedAt?: SortOrderInput | SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+    _count?: SchoolInviteCountOrderByAggregateInput
+    _max?: SchoolInviteMaxOrderByAggregateInput
+    _min?: SchoolInviteMinOrderByAggregateInput
+  }
+
+  export type SchoolInviteScalarWhereWithAggregatesInput = {
+    AND?: SchoolInviteScalarWhereWithAggregatesInput | SchoolInviteScalarWhereWithAggregatesInput[]
+    OR?: SchoolInviteScalarWhereWithAggregatesInput[]
+    NOT?: SchoolInviteScalarWhereWithAggregatesInput | SchoolInviteScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SchoolInvite"> | string
+    schoolId?: StringWithAggregatesFilter<"SchoolInvite"> | string
+    email?: StringWithAggregatesFilter<"SchoolInvite"> | string
+    role?: EnumSchoolInviteRoleWithAggregatesFilter<"SchoolInvite"> | $Enums.SchoolInviteRole
+    tokenHash?: StringWithAggregatesFilter<"SchoolInvite"> | string
+    expiresAt?: DateTimeWithAggregatesFilter<"SchoolInvite"> | Date | string
+    acceptedAt?: DateTimeNullableWithAggregatesFilter<"SchoolInvite"> | Date | string | null
+    createdBy?: StringWithAggregatesFilter<"SchoolInvite"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"SchoolInvite"> | Date | string
   }
 
   export type SchoolCreateInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -45478,12 +47217,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -45511,12 +47258,20 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -45544,12 +47299,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -45577,12 +47340,20 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateManyInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -45591,6 +47362,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -45599,6 +47376,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -47960,7 +49743,11 @@ export namespace Prisma {
     email: string
     role: $Enums.WaitlistRole
     message?: string | null
+    status?: $Enums.WaitlistStatus
+    reviewedBy?: string | null
+    reviewedAt?: Date | string | null
     createdAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutWaitlistEntriesInput
   }
 
   export type WaitlistEntryUncheckedCreateInput = {
@@ -47970,6 +49757,10 @@ export namespace Prisma {
     email: string
     role: $Enums.WaitlistRole
     message?: string | null
+    status?: $Enums.WaitlistStatus
+    reviewedBy?: string | null
+    reviewedAt?: Date | string | null
+    schoolId?: string | null
     createdAt?: Date | string
   }
 
@@ -47980,7 +49771,11 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumWaitlistRoleFieldUpdateOperationsInput | $Enums.WaitlistRole
     message?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumWaitlistStatusFieldUpdateOperationsInput | $Enums.WaitlistStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneWithoutWaitlistEntriesNestedInput
   }
 
   export type WaitlistEntryUncheckedUpdateInput = {
@@ -47990,6 +49785,10 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumWaitlistRoleFieldUpdateOperationsInput | $Enums.WaitlistRole
     message?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumWaitlistStatusFieldUpdateOperationsInput | $Enums.WaitlistStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    schoolId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -48000,6 +49799,10 @@ export namespace Prisma {
     email: string
     role: $Enums.WaitlistRole
     message?: string | null
+    status?: $Enums.WaitlistStatus
+    reviewedBy?: string | null
+    reviewedAt?: Date | string | null
+    schoolId?: string | null
     createdAt?: Date | string
   }
 
@@ -48010,6 +49813,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumWaitlistRoleFieldUpdateOperationsInput | $Enums.WaitlistRole
     message?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumWaitlistStatusFieldUpdateOperationsInput | $Enums.WaitlistStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -48020,6 +49826,93 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumWaitlistRoleFieldUpdateOperationsInput | $Enums.WaitlistRole
     message?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumWaitlistStatusFieldUpdateOperationsInput | $Enums.WaitlistStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    schoolId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SchoolInviteCreateInput = {
+    id?: string
+    email: string
+    role?: $Enums.SchoolInviteRole
+    tokenHash: string
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+    school: SchoolCreateNestedOneWithoutInvitesInput
+  }
+
+  export type SchoolInviteUncheckedCreateInput = {
+    id?: string
+    schoolId: string
+    email: string
+    role?: $Enums.SchoolInviteRole
+    tokenHash: string
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+  }
+
+  export type SchoolInviteUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumSchoolInviteRoleFieldUpdateOperationsInput | $Enums.SchoolInviteRole
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutInvitesNestedInput
+  }
+
+  export type SchoolInviteUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumSchoolInviteRoleFieldUpdateOperationsInput | $Enums.SchoolInviteRole
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SchoolInviteCreateManyInput = {
+    id?: string
+    schoolId: string
+    email: string
+    role?: $Enums.SchoolInviteRole
+    tokenHash: string
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+  }
+
+  export type SchoolInviteUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumSchoolInviteRoleFieldUpdateOperationsInput | $Enums.SchoolInviteRole
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SchoolInviteUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumSchoolInviteRoleFieldUpdateOperationsInput | $Enums.SchoolInviteRole
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -48036,6 +49929,39 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type EnumSchoolOnboardingStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SchoolOnboardingStatus | EnumSchoolOnboardingStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SchoolOnboardingStatus[] | ListEnumSchoolOnboardingStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SchoolOnboardingStatus[] | ListEnumSchoolOnboardingStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSchoolOnboardingStatusFilter<$PrismaModel> | $Enums.SchoolOnboardingStatus
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
@@ -48199,6 +50125,23 @@ export namespace Prisma {
     none?: FinanceAuditLogWhereInput
   }
 
+  export type SchoolInviteListRelationFilter = {
+    every?: SchoolInviteWhereInput
+    some?: SchoolInviteWhereInput
+    none?: SchoolInviteWhereInput
+  }
+
+  export type WaitlistEntryListRelationFilter = {
+    every?: WaitlistEntryWhereInput
+    some?: WaitlistEntryWhereInput
+    none?: WaitlistEntryWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
   export type AdminOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -48299,10 +50242,24 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type SchoolInviteOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type WaitlistEntryOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type SchoolCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
+    contactEmail?: SortOrder
+    phone?: SortOrder
+    address?: SortOrder
+    onboardingStatus?: SortOrder
+    setupStep?: SortOrder
+    setupCompletedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -48311,6 +50268,12 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
+    contactEmail?: SortOrder
+    phone?: SortOrder
+    address?: SortOrder
+    onboardingStatus?: SortOrder
+    setupStep?: SortOrder
+    setupCompletedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -48319,6 +50282,12 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
+    contactEmail?: SortOrder
+    phone?: SortOrder
+    address?: SortOrder
+    onboardingStatus?: SortOrder
+    setupStep?: SortOrder
+    setupCompletedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -48339,6 +50308,48 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type EnumSchoolOnboardingStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SchoolOnboardingStatus | EnumSchoolOnboardingStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SchoolOnboardingStatus[] | ListEnumSchoolOnboardingStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SchoolOnboardingStatus[] | ListEnumSchoolOnboardingStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSchoolOnboardingStatusWithAggregatesFilter<$PrismaModel> | $Enums.SchoolOnboardingStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSchoolOnboardingStatusFilter<$PrismaModel>
+    _max?: NestedEnumSchoolOnboardingStatusFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -48378,21 +50389,6 @@ export namespace Prisma {
     schoolId?: SortOrder
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type EnumUserSexFilter<$PrismaModel = never> = {
     equals?: $Enums.UserSex | EnumUserSexFieldRefInput<$PrismaModel>
     in?: $Enums.UserSex[] | ListEnumUserSexFieldRefInput<$PrismaModel>
@@ -48424,11 +50420,6 @@ export namespace Prisma {
   export type GradeScalarRelationFilter = {
     is?: GradeWhereInput
     isNot?: GradeWhereInput
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
   }
 
   export type StudentCountOrderByAggregateInput = {
@@ -48493,24 +50484,6 @@ export namespace Prisma {
   export type StudentSumOrderByAggregateInput = {
     classId?: SortOrder
     gradeId?: SortOrder
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type EnumUserSexWithAggregatesFilter<$PrismaModel = never> = {
@@ -49567,17 +51540,6 @@ export namespace Prisma {
     not?: NestedEnumFeeStructureStatusFilter<$PrismaModel> | $Enums.FeeStructureStatus
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type FeeItemListRelationFilter = {
     every?: FeeItemWhereInput
     some?: FeeItemWhereInput
@@ -49658,20 +51620,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumFeeStructureStatusFilter<$PrismaModel>
     _max?: NestedEnumFeeStructureStatusFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type DecimalFilter<$PrismaModel = never> = {
@@ -50353,6 +52301,18 @@ export namespace Prisma {
     not?: NestedEnumWaitlistRoleFilter<$PrismaModel> | $Enums.WaitlistRole
   }
 
+  export type EnumWaitlistStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.WaitlistStatus | EnumWaitlistStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.WaitlistStatus[] | ListEnumWaitlistStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WaitlistStatus[] | ListEnumWaitlistStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumWaitlistStatusFilter<$PrismaModel> | $Enums.WaitlistStatus
+  }
+
+  export type SchoolNullableScalarRelationFilter = {
+    is?: SchoolWhereInput | null
+    isNot?: SchoolWhereInput | null
+  }
+
   export type WaitlistEntryCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -50360,6 +52320,10 @@ export namespace Prisma {
     email?: SortOrder
     role?: SortOrder
     message?: SortOrder
+    status?: SortOrder
+    reviewedBy?: SortOrder
+    reviewedAt?: SortOrder
+    schoolId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -50370,6 +52334,10 @@ export namespace Prisma {
     email?: SortOrder
     role?: SortOrder
     message?: SortOrder
+    status?: SortOrder
+    reviewedBy?: SortOrder
+    reviewedAt?: SortOrder
+    schoolId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -50380,6 +52348,10 @@ export namespace Prisma {
     email?: SortOrder
     role?: SortOrder
     message?: SortOrder
+    status?: SortOrder
+    reviewedBy?: SortOrder
+    reviewedAt?: SortOrder
+    schoolId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -50391,6 +52363,69 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumWaitlistRoleFilter<$PrismaModel>
     _max?: NestedEnumWaitlistRoleFilter<$PrismaModel>
+  }
+
+  export type EnumWaitlistStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.WaitlistStatus | EnumWaitlistStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.WaitlistStatus[] | ListEnumWaitlistStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WaitlistStatus[] | ListEnumWaitlistStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumWaitlistStatusWithAggregatesFilter<$PrismaModel> | $Enums.WaitlistStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumWaitlistStatusFilter<$PrismaModel>
+    _max?: NestedEnumWaitlistStatusFilter<$PrismaModel>
+  }
+
+  export type EnumSchoolInviteRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.SchoolInviteRole | EnumSchoolInviteRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.SchoolInviteRole[] | ListEnumSchoolInviteRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SchoolInviteRole[] | ListEnumSchoolInviteRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumSchoolInviteRoleFilter<$PrismaModel> | $Enums.SchoolInviteRole
+  }
+
+  export type SchoolInviteCountOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    email?: SortOrder
+    role?: SortOrder
+    tokenHash?: SortOrder
+    expiresAt?: SortOrder
+    acceptedAt?: SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SchoolInviteMaxOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    email?: SortOrder
+    role?: SortOrder
+    tokenHash?: SortOrder
+    expiresAt?: SortOrder
+    acceptedAt?: SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SchoolInviteMinOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    email?: SortOrder
+    role?: SortOrder
+    tokenHash?: SortOrder
+    expiresAt?: SortOrder
+    acceptedAt?: SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EnumSchoolInviteRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SchoolInviteRole | EnumSchoolInviteRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.SchoolInviteRole[] | ListEnumSchoolInviteRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SchoolInviteRole[] | ListEnumSchoolInviteRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumSchoolInviteRoleWithAggregatesFilter<$PrismaModel> | $Enums.SchoolInviteRole
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSchoolInviteRoleFilter<$PrismaModel>
+    _max?: NestedEnumSchoolInviteRoleFilter<$PrismaModel>
   }
 
   export type AdminCreateNestedManyWithoutSchoolInput = {
@@ -50568,6 +52603,20 @@ export namespace Prisma {
     connect?: FinanceAuditLogWhereUniqueInput | FinanceAuditLogWhereUniqueInput[]
   }
 
+  export type SchoolInviteCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<SchoolInviteCreateWithoutSchoolInput, SchoolInviteUncheckedCreateWithoutSchoolInput> | SchoolInviteCreateWithoutSchoolInput[] | SchoolInviteUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: SchoolInviteCreateOrConnectWithoutSchoolInput | SchoolInviteCreateOrConnectWithoutSchoolInput[]
+    createMany?: SchoolInviteCreateManySchoolInputEnvelope
+    connect?: SchoolInviteWhereUniqueInput | SchoolInviteWhereUniqueInput[]
+  }
+
+  export type WaitlistEntryCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<WaitlistEntryCreateWithoutSchoolInput, WaitlistEntryUncheckedCreateWithoutSchoolInput> | WaitlistEntryCreateWithoutSchoolInput[] | WaitlistEntryUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: WaitlistEntryCreateOrConnectWithoutSchoolInput | WaitlistEntryCreateOrConnectWithoutSchoolInput[]
+    createMany?: WaitlistEntryCreateManySchoolInputEnvelope
+    connect?: WaitlistEntryWhereUniqueInput | WaitlistEntryWhereUniqueInput[]
+  }
+
   export type AdminUncheckedCreateNestedManyWithoutSchoolInput = {
     create?: XOR<AdminCreateWithoutSchoolInput, AdminUncheckedCreateWithoutSchoolInput> | AdminCreateWithoutSchoolInput[] | AdminUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: AdminCreateOrConnectWithoutSchoolInput | AdminCreateOrConnectWithoutSchoolInput[]
@@ -50743,8 +52792,34 @@ export namespace Prisma {
     connect?: FinanceAuditLogWhereUniqueInput | FinanceAuditLogWhereUniqueInput[]
   }
 
+  export type SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<SchoolInviteCreateWithoutSchoolInput, SchoolInviteUncheckedCreateWithoutSchoolInput> | SchoolInviteCreateWithoutSchoolInput[] | SchoolInviteUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: SchoolInviteCreateOrConnectWithoutSchoolInput | SchoolInviteCreateOrConnectWithoutSchoolInput[]
+    createMany?: SchoolInviteCreateManySchoolInputEnvelope
+    connect?: SchoolInviteWhereUniqueInput | SchoolInviteWhereUniqueInput[]
+  }
+
+  export type WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<WaitlistEntryCreateWithoutSchoolInput, WaitlistEntryUncheckedCreateWithoutSchoolInput> | WaitlistEntryCreateWithoutSchoolInput[] | WaitlistEntryUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: WaitlistEntryCreateOrConnectWithoutSchoolInput | WaitlistEntryCreateOrConnectWithoutSchoolInput[]
+    createMany?: WaitlistEntryCreateManySchoolInputEnvelope
+    connect?: WaitlistEntryWhereUniqueInput | WaitlistEntryWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
+  export type EnumSchoolOnboardingStatusFieldUpdateOperationsInput = {
+    set?: $Enums.SchoolOnboardingStatus
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
@@ -51101,6 +53176,34 @@ export namespace Prisma {
     deleteMany?: FinanceAuditLogScalarWhereInput | FinanceAuditLogScalarWhereInput[]
   }
 
+  export type SchoolInviteUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<SchoolInviteCreateWithoutSchoolInput, SchoolInviteUncheckedCreateWithoutSchoolInput> | SchoolInviteCreateWithoutSchoolInput[] | SchoolInviteUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: SchoolInviteCreateOrConnectWithoutSchoolInput | SchoolInviteCreateOrConnectWithoutSchoolInput[]
+    upsert?: SchoolInviteUpsertWithWhereUniqueWithoutSchoolInput | SchoolInviteUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: SchoolInviteCreateManySchoolInputEnvelope
+    set?: SchoolInviteWhereUniqueInput | SchoolInviteWhereUniqueInput[]
+    disconnect?: SchoolInviteWhereUniqueInput | SchoolInviteWhereUniqueInput[]
+    delete?: SchoolInviteWhereUniqueInput | SchoolInviteWhereUniqueInput[]
+    connect?: SchoolInviteWhereUniqueInput | SchoolInviteWhereUniqueInput[]
+    update?: SchoolInviteUpdateWithWhereUniqueWithoutSchoolInput | SchoolInviteUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: SchoolInviteUpdateManyWithWhereWithoutSchoolInput | SchoolInviteUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: SchoolInviteScalarWhereInput | SchoolInviteScalarWhereInput[]
+  }
+
+  export type WaitlistEntryUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<WaitlistEntryCreateWithoutSchoolInput, WaitlistEntryUncheckedCreateWithoutSchoolInput> | WaitlistEntryCreateWithoutSchoolInput[] | WaitlistEntryUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: WaitlistEntryCreateOrConnectWithoutSchoolInput | WaitlistEntryCreateOrConnectWithoutSchoolInput[]
+    upsert?: WaitlistEntryUpsertWithWhereUniqueWithoutSchoolInput | WaitlistEntryUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: WaitlistEntryCreateManySchoolInputEnvelope
+    set?: WaitlistEntryWhereUniqueInput | WaitlistEntryWhereUniqueInput[]
+    disconnect?: WaitlistEntryWhereUniqueInput | WaitlistEntryWhereUniqueInput[]
+    delete?: WaitlistEntryWhereUniqueInput | WaitlistEntryWhereUniqueInput[]
+    connect?: WaitlistEntryWhereUniqueInput | WaitlistEntryWhereUniqueInput[]
+    update?: WaitlistEntryUpdateWithWhereUniqueWithoutSchoolInput | WaitlistEntryUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: WaitlistEntryUpdateManyWithWhereWithoutSchoolInput | WaitlistEntryUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: WaitlistEntryScalarWhereInput | WaitlistEntryScalarWhereInput[]
+  }
+
   export type AdminUncheckedUpdateManyWithoutSchoolNestedInput = {
     create?: XOR<AdminCreateWithoutSchoolInput, AdminUncheckedCreateWithoutSchoolInput> | AdminCreateWithoutSchoolInput[] | AdminUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: AdminCreateOrConnectWithoutSchoolInput | AdminCreateOrConnectWithoutSchoolInput[]
@@ -51451,6 +53554,34 @@ export namespace Prisma {
     deleteMany?: FinanceAuditLogScalarWhereInput | FinanceAuditLogScalarWhereInput[]
   }
 
+  export type SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<SchoolInviteCreateWithoutSchoolInput, SchoolInviteUncheckedCreateWithoutSchoolInput> | SchoolInviteCreateWithoutSchoolInput[] | SchoolInviteUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: SchoolInviteCreateOrConnectWithoutSchoolInput | SchoolInviteCreateOrConnectWithoutSchoolInput[]
+    upsert?: SchoolInviteUpsertWithWhereUniqueWithoutSchoolInput | SchoolInviteUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: SchoolInviteCreateManySchoolInputEnvelope
+    set?: SchoolInviteWhereUniqueInput | SchoolInviteWhereUniqueInput[]
+    disconnect?: SchoolInviteWhereUniqueInput | SchoolInviteWhereUniqueInput[]
+    delete?: SchoolInviteWhereUniqueInput | SchoolInviteWhereUniqueInput[]
+    connect?: SchoolInviteWhereUniqueInput | SchoolInviteWhereUniqueInput[]
+    update?: SchoolInviteUpdateWithWhereUniqueWithoutSchoolInput | SchoolInviteUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: SchoolInviteUpdateManyWithWhereWithoutSchoolInput | SchoolInviteUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: SchoolInviteScalarWhereInput | SchoolInviteScalarWhereInput[]
+  }
+
+  export type WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<WaitlistEntryCreateWithoutSchoolInput, WaitlistEntryUncheckedCreateWithoutSchoolInput> | WaitlistEntryCreateWithoutSchoolInput[] | WaitlistEntryUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: WaitlistEntryCreateOrConnectWithoutSchoolInput | WaitlistEntryCreateOrConnectWithoutSchoolInput[]
+    upsert?: WaitlistEntryUpsertWithWhereUniqueWithoutSchoolInput | WaitlistEntryUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: WaitlistEntryCreateManySchoolInputEnvelope
+    set?: WaitlistEntryWhereUniqueInput | WaitlistEntryWhereUniqueInput[]
+    disconnect?: WaitlistEntryWhereUniqueInput | WaitlistEntryWhereUniqueInput[]
+    delete?: WaitlistEntryWhereUniqueInput | WaitlistEntryWhereUniqueInput[]
+    connect?: WaitlistEntryWhereUniqueInput | WaitlistEntryWhereUniqueInput[]
+    update?: WaitlistEntryUpdateWithWhereUniqueWithoutSchoolInput | WaitlistEntryUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: WaitlistEntryUpdateManyWithWhereWithoutSchoolInput | WaitlistEntryUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: WaitlistEntryScalarWhereInput | WaitlistEntryScalarWhereInput[]
+  }
+
   export type SchoolCreateNestedOneWithoutAdminsInput = {
     create?: XOR<SchoolCreateWithoutAdminsInput, SchoolUncheckedCreateWithoutAdminsInput>
     connectOrCreate?: SchoolCreateOrConnectWithoutAdminsInput
@@ -51543,10 +53674,6 @@ export namespace Prisma {
     connectOrCreate?: StudentBillCreateOrConnectWithoutStudentInput | StudentBillCreateOrConnectWithoutStudentInput[]
     createMany?: StudentBillCreateManyStudentInputEnvelope
     connect?: StudentBillWhereUniqueInput | StudentBillWhereUniqueInput[]
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type EnumUserSexFieldUpdateOperationsInput = {
@@ -53510,10 +55637,6 @@ export namespace Prisma {
     set?: $Enums.FeeStructureStatus
   }
 
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-  }
-
   export type SchoolUpdateOneRequiredWithoutFeeStructuresNestedInput = {
     create?: XOR<SchoolCreateWithoutFeeStructuresInput, SchoolUncheckedCreateWithoutFeeStructuresInput>
     connectOrCreate?: SchoolCreateOrConnectWithoutFeeStructuresInput
@@ -54022,8 +56145,46 @@ export namespace Prisma {
     update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutFinanceAuditLogsInput, SchoolUpdateWithoutFinanceAuditLogsInput>, SchoolUncheckedUpdateWithoutFinanceAuditLogsInput>
   }
 
+  export type SchoolCreateNestedOneWithoutWaitlistEntriesInput = {
+    create?: XOR<SchoolCreateWithoutWaitlistEntriesInput, SchoolUncheckedCreateWithoutWaitlistEntriesInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutWaitlistEntriesInput
+    connect?: SchoolWhereUniqueInput
+  }
+
   export type EnumWaitlistRoleFieldUpdateOperationsInput = {
     set?: $Enums.WaitlistRole
+  }
+
+  export type EnumWaitlistStatusFieldUpdateOperationsInput = {
+    set?: $Enums.WaitlistStatus
+  }
+
+  export type SchoolUpdateOneWithoutWaitlistEntriesNestedInput = {
+    create?: XOR<SchoolCreateWithoutWaitlistEntriesInput, SchoolUncheckedCreateWithoutWaitlistEntriesInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutWaitlistEntriesInput
+    upsert?: SchoolUpsertWithoutWaitlistEntriesInput
+    disconnect?: SchoolWhereInput | boolean
+    delete?: SchoolWhereInput | boolean
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutWaitlistEntriesInput, SchoolUpdateWithoutWaitlistEntriesInput>, SchoolUncheckedUpdateWithoutWaitlistEntriesInput>
+  }
+
+  export type SchoolCreateNestedOneWithoutInvitesInput = {
+    create?: XOR<SchoolCreateWithoutInvitesInput, SchoolUncheckedCreateWithoutInvitesInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutInvitesInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type EnumSchoolInviteRoleFieldUpdateOperationsInput = {
+    set?: $Enums.SchoolInviteRole
+  }
+
+  export type SchoolUpdateOneRequiredWithoutInvitesNestedInput = {
+    create?: XOR<SchoolCreateWithoutInvitesInput, SchoolUncheckedCreateWithoutInvitesInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutInvitesInput
+    upsert?: SchoolUpsertWithoutInvitesInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutInvitesInput, SchoolUpdateWithoutInvitesInput>, SchoolUncheckedUpdateWithoutInvitesInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -54038,6 +56199,38 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedEnumSchoolOnboardingStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SchoolOnboardingStatus | EnumSchoolOnboardingStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SchoolOnboardingStatus[] | ListEnumSchoolOnboardingStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SchoolOnboardingStatus[] | ListEnumSchoolOnboardingStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSchoolOnboardingStatusFilter<$PrismaModel> | $Enums.SchoolOnboardingStatus
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -54079,41 +56272,6 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type NestedEnumUserSexFilter<$PrismaModel = never> = {
-    equals?: $Enums.UserSex | EnumUserSexFieldRefInput<$PrismaModel>
-    in?: $Enums.UserSex[] | ListEnumUserSexFieldRefInput<$PrismaModel>
-    notIn?: $Enums.UserSex[] | ListEnumUserSexFieldRefInput<$PrismaModel>
-    not?: NestedEnumUserSexFilter<$PrismaModel> | $Enums.UserSex
-  }
-
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -54140,6 +56298,51 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumSchoolOnboardingStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SchoolOnboardingStatus | EnumSchoolOnboardingStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SchoolOnboardingStatus[] | ListEnumSchoolOnboardingStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SchoolOnboardingStatus[] | ListEnumSchoolOnboardingStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSchoolOnboardingStatusWithAggregatesFilter<$PrismaModel> | $Enums.SchoolOnboardingStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSchoolOnboardingStatusFilter<$PrismaModel>
+    _max?: NestedEnumSchoolOnboardingStatusFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumUserSexFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserSex | EnumUserSexFieldRefInput<$PrismaModel>
+    in?: $Enums.UserSex[] | ListEnumUserSexFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserSex[] | ListEnumUserSexFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserSexFilter<$PrismaModel> | $Enums.UserSex
   }
 
   export type NestedEnumUserSexWithAggregatesFilter<$PrismaModel = never> = {
@@ -54310,17 +56513,6 @@ export namespace Prisma {
     not?: NestedEnumFeeStructureStatusFilter<$PrismaModel> | $Enums.FeeStructureStatus
   }
 
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type NestedEnumFeeStructureStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.FeeStructureStatus | EnumFeeStructureStatusFieldRefInput<$PrismaModel>
     in?: $Enums.FeeStructureStatus[] | ListEnumFeeStructureStatusFieldRefInput<$PrismaModel>
@@ -54329,20 +56521,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumFeeStructureStatusFilter<$PrismaModel>
     _max?: NestedEnumFeeStructureStatusFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedDecimalFilter<$PrismaModel = never> = {
@@ -54531,6 +56709,13 @@ export namespace Prisma {
     not?: NestedEnumWaitlistRoleFilter<$PrismaModel> | $Enums.WaitlistRole
   }
 
+  export type NestedEnumWaitlistStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.WaitlistStatus | EnumWaitlistStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.WaitlistStatus[] | ListEnumWaitlistStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WaitlistStatus[] | ListEnumWaitlistStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumWaitlistStatusFilter<$PrismaModel> | $Enums.WaitlistStatus
+  }
+
   export type NestedEnumWaitlistRoleWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.WaitlistRole | EnumWaitlistRoleFieldRefInput<$PrismaModel>
     in?: $Enums.WaitlistRole[] | ListEnumWaitlistRoleFieldRefInput<$PrismaModel>
@@ -54539,6 +56724,33 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumWaitlistRoleFilter<$PrismaModel>
     _max?: NestedEnumWaitlistRoleFilter<$PrismaModel>
+  }
+
+  export type NestedEnumWaitlistStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.WaitlistStatus | EnumWaitlistStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.WaitlistStatus[] | ListEnumWaitlistStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WaitlistStatus[] | ListEnumWaitlistStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumWaitlistStatusWithAggregatesFilter<$PrismaModel> | $Enums.WaitlistStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumWaitlistStatusFilter<$PrismaModel>
+    _max?: NestedEnumWaitlistStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSchoolInviteRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.SchoolInviteRole | EnumSchoolInviteRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.SchoolInviteRole[] | ListEnumSchoolInviteRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SchoolInviteRole[] | ListEnumSchoolInviteRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumSchoolInviteRoleFilter<$PrismaModel> | $Enums.SchoolInviteRole
+  }
+
+  export type NestedEnumSchoolInviteRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SchoolInviteRole | EnumSchoolInviteRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.SchoolInviteRole[] | ListEnumSchoolInviteRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SchoolInviteRole[] | ListEnumSchoolInviteRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumSchoolInviteRoleWithAggregatesFilter<$PrismaModel> | $Enums.SchoolInviteRole
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSchoolInviteRoleFilter<$PrismaModel>
+    _max?: NestedEnumSchoolInviteRoleFilter<$PrismaModel>
   }
 
   export type AdminCreateWithoutSchoolInput = {
@@ -55368,6 +57580,74 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type SchoolInviteCreateWithoutSchoolInput = {
+    id?: string
+    email: string
+    role?: $Enums.SchoolInviteRole
+    tokenHash: string
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+  }
+
+  export type SchoolInviteUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    email: string
+    role?: $Enums.SchoolInviteRole
+    tokenHash: string
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+  }
+
+  export type SchoolInviteCreateOrConnectWithoutSchoolInput = {
+    where: SchoolInviteWhereUniqueInput
+    create: XOR<SchoolInviteCreateWithoutSchoolInput, SchoolInviteUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type SchoolInviteCreateManySchoolInputEnvelope = {
+    data: SchoolInviteCreateManySchoolInput | SchoolInviteCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type WaitlistEntryCreateWithoutSchoolInput = {
+    id?: string
+    name: string
+    schoolName: string
+    email: string
+    role: $Enums.WaitlistRole
+    message?: string | null
+    status?: $Enums.WaitlistStatus
+    reviewedBy?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type WaitlistEntryUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    name: string
+    schoolName: string
+    email: string
+    role: $Enums.WaitlistRole
+    message?: string | null
+    status?: $Enums.WaitlistStatus
+    reviewedBy?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type WaitlistEntryCreateOrConnectWithoutSchoolInput = {
+    where: WaitlistEntryWhereUniqueInput
+    create: XOR<WaitlistEntryCreateWithoutSchoolInput, WaitlistEntryUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type WaitlistEntryCreateManySchoolInputEnvelope = {
+    data: WaitlistEntryCreateManySchoolInput | WaitlistEntryCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AdminUpsertWithWhereUniqueWithoutSchoolInput = {
     where: AdminWhereUniqueInput
     update: XOR<AdminUpdateWithoutSchoolInput, AdminUncheckedUpdateWithoutSchoolInput>
@@ -56131,10 +58411,80 @@ export namespace Prisma {
     schoolId?: StringFilter<"FinanceAuditLog"> | string
   }
 
+  export type SchoolInviteUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: SchoolInviteWhereUniqueInput
+    update: XOR<SchoolInviteUpdateWithoutSchoolInput, SchoolInviteUncheckedUpdateWithoutSchoolInput>
+    create: XOR<SchoolInviteCreateWithoutSchoolInput, SchoolInviteUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type SchoolInviteUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: SchoolInviteWhereUniqueInput
+    data: XOR<SchoolInviteUpdateWithoutSchoolInput, SchoolInviteUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type SchoolInviteUpdateManyWithWhereWithoutSchoolInput = {
+    where: SchoolInviteScalarWhereInput
+    data: XOR<SchoolInviteUpdateManyMutationInput, SchoolInviteUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type SchoolInviteScalarWhereInput = {
+    AND?: SchoolInviteScalarWhereInput | SchoolInviteScalarWhereInput[]
+    OR?: SchoolInviteScalarWhereInput[]
+    NOT?: SchoolInviteScalarWhereInput | SchoolInviteScalarWhereInput[]
+    id?: StringFilter<"SchoolInvite"> | string
+    schoolId?: StringFilter<"SchoolInvite"> | string
+    email?: StringFilter<"SchoolInvite"> | string
+    role?: EnumSchoolInviteRoleFilter<"SchoolInvite"> | $Enums.SchoolInviteRole
+    tokenHash?: StringFilter<"SchoolInvite"> | string
+    expiresAt?: DateTimeFilter<"SchoolInvite"> | Date | string
+    acceptedAt?: DateTimeNullableFilter<"SchoolInvite"> | Date | string | null
+    createdBy?: StringFilter<"SchoolInvite"> | string
+    createdAt?: DateTimeFilter<"SchoolInvite"> | Date | string
+  }
+
+  export type WaitlistEntryUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: WaitlistEntryWhereUniqueInput
+    update: XOR<WaitlistEntryUpdateWithoutSchoolInput, WaitlistEntryUncheckedUpdateWithoutSchoolInput>
+    create: XOR<WaitlistEntryCreateWithoutSchoolInput, WaitlistEntryUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type WaitlistEntryUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: WaitlistEntryWhereUniqueInput
+    data: XOR<WaitlistEntryUpdateWithoutSchoolInput, WaitlistEntryUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type WaitlistEntryUpdateManyWithWhereWithoutSchoolInput = {
+    where: WaitlistEntryScalarWhereInput
+    data: XOR<WaitlistEntryUpdateManyMutationInput, WaitlistEntryUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type WaitlistEntryScalarWhereInput = {
+    AND?: WaitlistEntryScalarWhereInput | WaitlistEntryScalarWhereInput[]
+    OR?: WaitlistEntryScalarWhereInput[]
+    NOT?: WaitlistEntryScalarWhereInput | WaitlistEntryScalarWhereInput[]
+    id?: StringFilter<"WaitlistEntry"> | string
+    name?: StringFilter<"WaitlistEntry"> | string
+    schoolName?: StringFilter<"WaitlistEntry"> | string
+    email?: StringFilter<"WaitlistEntry"> | string
+    role?: EnumWaitlistRoleFilter<"WaitlistEntry"> | $Enums.WaitlistRole
+    message?: StringNullableFilter<"WaitlistEntry"> | string | null
+    status?: EnumWaitlistStatusFilter<"WaitlistEntry"> | $Enums.WaitlistStatus
+    reviewedBy?: StringNullableFilter<"WaitlistEntry"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"WaitlistEntry"> | Date | string | null
+    schoolId?: StringNullableFilter<"WaitlistEntry"> | string | null
+    createdAt?: DateTimeFilter<"WaitlistEntry"> | Date | string
+  }
+
   export type SchoolCreateWithoutAdminsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     students?: StudentCreateNestedManyWithoutSchoolInput
@@ -56161,12 +58511,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAdminsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
@@ -56193,6 +58551,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAdminsInput = {
@@ -56215,6 +58575,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     students?: StudentUpdateManyWithoutSchoolNestedInput
@@ -56241,12 +58607,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAdminsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
@@ -56273,12 +58647,20 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutStudentsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -56305,12 +58687,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutStudentsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -56337,6 +58727,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutStudentsInput = {
@@ -56600,6 +58992,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -56626,12 +59024,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutStudentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -56658,6 +59064,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ParentUpsertWithoutStudentsInput = {
@@ -56833,6 +59241,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -56859,12 +59273,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutTeachersInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -56891,6 +59313,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutTeachersInput = {
@@ -57087,6 +59511,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -57113,12 +59543,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutTeachersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -57145,6 +59583,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SubjectUpsertWithWhereUniqueWithoutTeachersInput = {
@@ -57231,6 +59671,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -57257,12 +59703,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutParentsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -57289,6 +59743,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutParentsInput = {
@@ -57363,6 +59819,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -57389,12 +59851,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutParentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -57421,6 +59891,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithWhereUniqueWithoutParentInput = {
@@ -57443,6 +59915,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -57469,12 +59947,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutGradesInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -57501,6 +59987,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutGradesInput = {
@@ -57690,6 +60178,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -57716,12 +60210,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutGradesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -57748,6 +60250,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithWhereUniqueWithoutGradeInput = {
@@ -57818,6 +60322,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -57844,12 +60354,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutClassesInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -57876,6 +60394,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutClassesInput = {
@@ -58184,6 +60704,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -58210,12 +60736,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutClassesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -58242,6 +60776,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TeacherUpsertWithoutClassesInput = {
@@ -58425,6 +60961,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -58451,12 +60993,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutSubjectsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -58483,6 +61033,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutSubjectsInput = {
@@ -58669,6 +61221,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -58695,12 +61253,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutSubjectsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -58727,6 +61293,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TeacherUpsertWithWhereUniqueWithoutSubjectsInput = {
@@ -58797,6 +61365,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -58823,12 +61397,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutLessonsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -58855,6 +61437,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutLessonsInput = {
@@ -59065,6 +61649,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -59091,12 +61681,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutLessonsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -59123,6 +61721,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SubjectUpsertWithoutLessonsInput = {
@@ -59296,6 +61896,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -59322,12 +61928,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutExamsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -59354,6 +61968,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutExamsInput = {
@@ -59437,6 +62053,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -59463,12 +62085,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutExamsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -59495,6 +62125,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type LessonUpsertWithoutExamsInput = {
@@ -59555,6 +62187,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -59581,12 +62219,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAssignmentsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -59613,6 +62259,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAssignmentsInput = {
@@ -59696,6 +62344,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -59722,12 +62376,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAssignmentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -59754,6 +62416,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type LessonUpsertWithoutAssignmentsInput = {
@@ -59814,6 +62478,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -59840,12 +62510,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutResultsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -59872,6 +62550,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutResultsInput = {
@@ -59985,6 +62665,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -60011,12 +62697,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutResultsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -60043,6 +62737,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ExamUpsertWithoutResultsInput = {
@@ -60158,6 +62854,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -60184,12 +62886,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAttendancesInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -60216,6 +62926,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAttendancesInput = {
@@ -60317,6 +63029,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -60343,12 +63061,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAttendancesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -60375,6 +63101,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithoutAttendancesInput = {
@@ -60472,6 +63200,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -60498,12 +63232,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutEventsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -60530,6 +63272,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutEventsInput = {
@@ -60586,6 +63330,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -60612,12 +63362,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -60644,6 +63402,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ClassUpsertWithoutEventsInput = {
@@ -60690,6 +63450,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -60716,12 +63482,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAnnouncementsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -60748,6 +63522,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAnnouncementsInput = {
@@ -60804,6 +63580,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -60830,12 +63612,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAnnouncementsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -60862,6 +63652,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ClassUpsertWithoutAnnouncementsInput = {
@@ -60908,6 +63700,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -60934,12 +63732,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutCaConfigsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -60966,6 +63772,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutCaConfigsInput = {
@@ -60988,6 +63796,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -61014,12 +63828,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutCaConfigsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -61046,12 +63868,20 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutContinuousAssessmentsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -61078,12 +63908,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutContinuousAssessmentsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -61110,6 +63948,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutContinuousAssessmentsInput = {
@@ -61280,6 +64120,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -61306,12 +64152,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutContinuousAssessmentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -61338,6 +64192,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithoutContinuousAssessmentsInput = {
@@ -61516,6 +64372,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -61542,12 +64404,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutSyllabiInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -61574,6 +64444,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutSyllabiInput = {
@@ -61681,6 +64553,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -61707,12 +64585,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutSyllabiInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -61739,6 +64625,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SubjectUpsertWithoutSyllabiInput = {
@@ -61948,6 +64836,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -61974,12 +64868,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutSyllabusTopicProgressInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -62006,6 +64908,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutSyllabusTopicProgressInput = {
@@ -62141,6 +65045,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -62167,12 +65077,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutSyllabusTopicProgressInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -62199,6 +65117,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SyllabusTopicUpsertWithoutProgressInput = {
@@ -62336,6 +65256,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -62362,12 +65288,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutFeeStructuresInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -62394,6 +65328,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutFeeStructuresInput = {
@@ -62516,6 +65452,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -62542,12 +65484,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutFeeStructuresInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -62574,6 +65524,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type GradeUpsertWithoutFeeStructuresInput = {
@@ -62796,6 +65748,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -62822,12 +65780,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutStudentBillsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -62854,6 +65820,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutStudentBillsInput = {
@@ -63062,6 +66030,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -63088,12 +66062,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutStudentBillsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -63120,6 +66102,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithoutBillsInput = {
@@ -63413,6 +66397,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -63439,12 +66429,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutPaymentsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -63471,6 +66469,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutPaymentsInput = {
@@ -63553,6 +66553,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -63579,12 +66585,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutPaymentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -63611,6 +66625,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentBillUpsertWithoutPaymentsInput = {
@@ -63689,6 +66705,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -63715,12 +66737,20 @@ export namespace Prisma {
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutPaymentReversalsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -63747,6 +66777,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutPaymentReversalsInput = {
@@ -63805,6 +66837,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -63831,12 +66869,20 @@ export namespace Prisma {
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutPaymentReversalsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -63863,6 +66909,8 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type PaymentUpsertWithoutReversalInput = {
@@ -63911,6 +66959,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -63937,12 +66991,20 @@ export namespace Prisma {
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutDiscountsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -63969,6 +67031,8 @@ export namespace Prisma {
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutDiscountsInput = {
@@ -64031,6 +67095,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -64057,12 +67127,20 @@ export namespace Prisma {
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutDiscountsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -64089,6 +67167,8 @@ export namespace Prisma {
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentBillUpsertWithoutDiscountsInput = {
@@ -64141,6 +67221,12 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -64167,12 +67253,20 @@ export namespace Prisma {
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutReceiptCountersInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -64199,6 +67293,8 @@ export namespace Prisma {
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutReceiptCountersInput = {
@@ -64221,6 +67317,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -64247,12 +67349,20 @@ export namespace Prisma {
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutReceiptCountersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -64279,12 +67389,20 @@ export namespace Prisma {
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutFinanceAuditLogsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminCreateNestedManyWithoutSchoolInput
@@ -64311,12 +67429,20 @@ export namespace Prisma {
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutFinanceAuditLogsInput = {
     id: string
     name: string
     slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
@@ -64343,6 +67469,8 @@ export namespace Prisma {
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutFinanceAuditLogsInput = {
@@ -64365,6 +67493,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUpdateManyWithoutSchoolNestedInput
@@ -64391,12 +67525,20 @@ export namespace Prisma {
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutFinanceAuditLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
@@ -64423,6 +67565,360 @@ export namespace Prisma {
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolCreateWithoutWaitlistEntriesInput = {
+    id: string
+    name: string
+    slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutWaitlistEntriesInput = {
+    id: string
+    name: string
+    slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutWaitlistEntriesInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutWaitlistEntriesInput, SchoolUncheckedCreateWithoutWaitlistEntriesInput>
+  }
+
+  export type SchoolUpsertWithoutWaitlistEntriesInput = {
+    update: XOR<SchoolUpdateWithoutWaitlistEntriesInput, SchoolUncheckedUpdateWithoutWaitlistEntriesInput>
+    create: XOR<SchoolCreateWithoutWaitlistEntriesInput, SchoolUncheckedCreateWithoutWaitlistEntriesInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutWaitlistEntriesInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutWaitlistEntriesInput, SchoolUncheckedUpdateWithoutWaitlistEntriesInput>
+  }
+
+  export type SchoolUpdateWithoutWaitlistEntriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutWaitlistEntriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolCreateWithoutInvitesInput = {
+    id: string
+    name: string
+    slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutInvitesInput = {
+    id: string
+    name: string
+    slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutInvitesInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutInvitesInput, SchoolUncheckedCreateWithoutInvitesInput>
+  }
+
+  export type SchoolUpsertWithoutInvitesInput = {
+    update: XOR<SchoolUpdateWithoutInvitesInput, SchoolUncheckedUpdateWithoutInvitesInput>
+    create: XOR<SchoolCreateWithoutInvitesInput, SchoolUncheckedCreateWithoutInvitesInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutInvitesInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutInvitesInput, SchoolUncheckedUpdateWithoutInvitesInput>
+  }
+
+  export type SchoolUpdateWithoutInvitesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutInvitesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type AdminCreateManySchoolInput = {
@@ -64685,6 +68181,30 @@ export namespace Prisma {
     entityId: string
     metadata: JsonNullValueInput | InputJsonValue
     ipAddress?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SchoolInviteCreateManySchoolInput = {
+    id?: string
+    email: string
+    role?: $Enums.SchoolInviteRole
+    tokenHash: string
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+  }
+
+  export type WaitlistEntryCreateManySchoolInput = {
+    id?: string
+    name: string
+    schoolName: string
+    email: string
+    role: $Enums.WaitlistRole
+    message?: string | null
+    status?: $Enums.WaitlistStatus
+    reviewedBy?: string | null
+    reviewedAt?: Date | string | null
     createdAt?: Date | string
   }
 
@@ -65525,6 +69045,78 @@ export namespace Prisma {
     entityId?: StringFieldUpdateOperationsInput | string
     metadata?: JsonNullValueInput | InputJsonValue
     ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SchoolInviteUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumSchoolInviteRoleFieldUpdateOperationsInput | $Enums.SchoolInviteRole
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SchoolInviteUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumSchoolInviteRoleFieldUpdateOperationsInput | $Enums.SchoolInviteRole
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SchoolInviteUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumSchoolInviteRoleFieldUpdateOperationsInput | $Enums.SchoolInviteRole
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WaitlistEntryUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    schoolName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumWaitlistRoleFieldUpdateOperationsInput | $Enums.WaitlistRole
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumWaitlistStatusFieldUpdateOperationsInput | $Enums.WaitlistStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WaitlistEntryUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    schoolName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumWaitlistRoleFieldUpdateOperationsInput | $Enums.WaitlistRole
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumWaitlistStatusFieldUpdateOperationsInput | $Enums.WaitlistStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WaitlistEntryUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    schoolName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumWaitlistRoleFieldUpdateOperationsInput | $Enums.WaitlistRole
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumWaitlistStatusFieldUpdateOperationsInput | $Enums.WaitlistStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
