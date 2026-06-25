@@ -28,6 +28,26 @@ EMAIL_FROM="Edujay <onboarding@yourdomain.com>"
 NEXT_PUBLIC_APP_URL="https://your-edujay-domain.com"
 ```
 
+## Production Redis
+
+Edujay can use Redis for shared rate limiting across all deployed app instances.
+This protects sign-in, webhooks, finance exports, attendance submission, and
+form-data APIs without putting that fast-changing traffic on the main database.
+
+The app supports Upstash Redis over REST and safely falls back to PostgreSQL in
+local development when these values are not set:
+
+```bash
+UPSTASH_REDIS_REST_URL="https://your-redis.upstash.io"
+UPSTASH_REDIS_REST_TOKEN="..."
+```
+
+For finance background job processing, also configure a strong secret:
+
+```bash
+FINANCE_WORKER_SECRET="generate-a-long-random-secret"
+```
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

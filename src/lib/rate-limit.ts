@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
+import { isRedisConfigured, redisCommand } from "@/src/lib/redis";
 
 type RateLimitOptions = {
   key: string;
@@ -33,7 +34,7 @@ export function rateLimitKey(req: NextRequest, scope: string, actorId?: string) 
 }
 
 /** Atomic PostgreSQL bucket shared by every application instance. */
-export async function checkRateLimit({ key, limit, windowMs }: RateLimitOptions) {
+async function checkPostgresRateLimit({ key, limit, windowMs }: RateLimitOptions) {
   const nextReset = new Date(Date.now() + windowMs);
   const rows = await prisma.$queryRawUnsafe<RateLimitRow[]>(
     `INSERT INTO "RateLimitBucket" ("key", "count", "resetAt", "updatedAt")
@@ -61,6 +62,43 @@ export async function checkRateLimit({ key, limit, windowMs }: RateLimitOptions)
     remaining: Math.max(limit - row.count, 0),
     resetAt,
   };
+}
+
+async function checkRedisRateLimit({ key, limit, windowMs }: RateLimitOptions) {
+  const redisKey = `rate-limit:${key}`;
+  const count = await redisCommand<number>(["INCR", redisKey]);
+
+  if (count === null) return null;
+
+  let ttl = await redisCommand<number>(["PTTL", redisKey]);
+  if (count === 1 || ttl === null || ttl < 0) {
+    await redisCommand<number>(["PEXPIRE", redisKey, windowMs]);
+    ttl = windowMs;
+  }
+
+  const resetAt = Date.now() + Math.max(ttl, 1);
+
+  return {
+    allowed: count <= limit,
+    remaining: Math.max(limit - count, 0),
+    resetAt,
+  };
+}
+
+export async function checkRateLimit(options: RateLimitOptions) {
+  if (isRedisConfigured()) {
+    try {
+      const redisResult = await checkRedisRateLimit(options);
+      if (redisResult) return redisResult;
+    } catch (error) {
+      console.warn(
+        "Redis rate limit failed; falling back to PostgreSQL.",
+        error instanceof Error ? error.message : error,
+      );
+    }
+  }
+
+  return checkPostgresRateLimit(options);
 }
 
 export function rateLimitResponse(resetAt: number) {
