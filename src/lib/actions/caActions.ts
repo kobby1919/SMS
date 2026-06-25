@@ -6,9 +6,15 @@
 import prisma from "@/src/lib/prisma";
 import { requireRole } from "@/src/lib/authz";
 import { revalidatePath } from "next/cache";
-import { revalidateDashboard } from "@/src/lib/cacheTags";
+import { revalidateDashboard, revalidateDocument } from "@/src/lib/cacheTags";
 import { parseActionInput } from "@/src/lib/validation/parse";
-import { caConfigSchema, caRecordSchema } from "@/src/lib/validation/ca";
+import {
+  caBulkEntrySchema,
+  caConfigSchema,
+  caRecordSchema,
+  caRecordUpdateSchema,
+} from "@/src/lib/validation/ca";
+import { nonEmptyStringSchema, positiveIntSchema } from "@/src/lib/validation/common";
 import type { Term } from "@/src/generated/prisma";
 
 // ─── Ghana BECE Grading System ────────────────────────────────────────────────
@@ -88,10 +94,12 @@ export async function upsertCAConfig(data: CAConfigInput) {
   revalidatePath("/list/ca");
   revalidatePath("/admin");
   revalidateDashboard(schoolId);
+  revalidateDocument(schoolId, "report-card");
   return config;
 }
 
 export async function getCAConfig(academicYear: string) {
+  academicYear = parseActionInput(nonEmptyStringSchema, academicYear);
   const { schoolId } = await requireRole(["admin", "teacher"]);
   return prisma.cAConfig.findUnique({
     where: { schoolId_academicYear: { schoolId, academicYear } },
@@ -180,12 +188,13 @@ export async function createCA(data: CAInput) {
   revalidatePath("/list/ca");
   revalidatePath("/teacher");
   revalidateDashboard(schoolId);
+  revalidateDocument(schoolId, "report-card", parsed.studentId);
   return ca;
 }
 
 export async function updateCA(data: CAInput) {
   if (!data.id) throw new Error("CA ID required for update.");
-  const parsed = parseActionInput(caRecordSchema, data);
+  const parsed = parseActionInput(caRecordUpdateSchema, data);
   const { userId: teacherId, schoolId } = await requireCAAccess(parsed.classId);
 
   const config = await prisma.cAConfig.findUnique({
@@ -217,12 +226,14 @@ export async function updateCA(data: CAInput) {
   revalidatePath("/list/ca");
   revalidatePath("/teacher");
   revalidateDashboard(schoolId);
+  revalidateDocument(schoolId, "report-card", parsed.studentId);
 }
 
 export async function deleteCA(id: number) {
+  id = parseActionInput(positiveIntSchema, id);
   const ca = await prisma.continuousAssessment.findUnique({
     where: { id },
-    select: { classId: true },
+    select: { classId: true, studentId: true },
   });
   if (!ca) throw new Error("CA record not found.");
   const { schoolId } = await requireCAAccess(ca.classId);
@@ -230,6 +241,7 @@ export async function deleteCA(id: number) {
   await prisma.continuousAssessment.delete({ where: { id, schoolId } });
   revalidatePath("/list/ca");
   revalidateDashboard(schoolId);
+  revalidateDocument(schoolId, "report-card", ca.studentId);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -250,6 +262,18 @@ export async function bulkUpsertCA(
   term:          Term,
   academicYear: string
 ) {
+  const parsed = parseActionInput(caBulkEntrySchema, {
+    rows,
+    subjectId,
+    classId,
+    term,
+    academicYear,
+  });
+  rows = parsed.rows;
+  subjectId = parsed.subjectId;
+  classId = parsed.classId;
+  term = parsed.term;
+  academicYear = parsed.academicYear;
   const { userId: teacherId, schoolId } = await requireCAAccess(classId);
 
   const config = await prisma.cAConfig.findUnique({
@@ -312,5 +336,8 @@ export async function bulkUpsertCA(
   revalidatePath("/list/ca");
   revalidatePath("/teacher");
   revalidateDashboard(schoolId);
+  for (const studentId of new Set(parsed.rows.map((row) => row.studentId))) {
+    revalidateDocument(schoolId, "report-card", studentId);
+  }
   return results;
 }

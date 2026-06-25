@@ -30,3 +30,16 @@ export const caBulkUpsertSchema = z.object({
   academicYear: nonEmptyStringSchema,
   records: z.array(caRecordSchema).min(1),
 });
+
+export const caBulkEntrySchema = z.object({
+  rows: z.array(z.object({
+    studentId: nonEmptyStringSchema,
+    classworkScore: z.coerce.number().min(0).max(100),
+    examScore: z.coerce.number().min(0).max(100),
+    remarks: z.string().trim().max(500).optional(),
+  })).min(1).max(500),
+  subjectId: positiveIntSchema,
+  classId: positiveIntSchema,
+  term: termSchema,
+  academicYear: nonEmptyStringSchema,
+});

@@ -1,7 +1,6 @@
 // src/app/(dashboard)/admin/ca-config/page.tsx
 // Admin page to configure CA weights per academic year
 
-import { redirect } from "next/navigation";
 import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import CAConfigForm from "@/src/components/CAConfigForm";
@@ -10,7 +9,7 @@ import { Settings2, Info } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 const CAConfigPage = async () => {
-  const { role, schoolId } = await requirePageSession(["admin"]);
+  const { schoolId } = await requirePageSession(["admin"]);
 
   const configs = await prisma.cAConfig.findMany({
     where: { schoolId },

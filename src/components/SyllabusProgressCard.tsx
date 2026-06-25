@@ -51,8 +51,8 @@ const SyllabusProgressCard = ({
           await markTopicCovered(topicId, classId, notes[classId] ?? "");
           setCoveredIds((prev) => [...prev, classId]);
         }
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to update progress.");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to update progress.");
       }
     });
   };
@@ -62,14 +62,14 @@ const SyllabusProgressCard = ({
       try {
         await markTopicCovered(topicId, classId, notes[classId] ?? "");
         setShowNotes((prev) => ({ ...prev, [classId]: false }));
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to save note.");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to save note.");
       }
     });
   };
 
   return (
-    <div className="border-t border-gray-100 pt-4">
+    <div className="border-t border-gray-100 pt-4" aria-label={`Progress for ${topicTitle}`}>
       <p className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-3">
         Mark as Covered — Your Classes
       </p>

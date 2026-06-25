@@ -145,7 +145,7 @@ const SyllabusViewPage = async ({
               )}
             </div>
           ) : (
-            syllabus.topics.map((topic, idx) => {
+            syllabus.topics.map((topic) => {
               const coveredClasses  = topic.progress.map((p) => p.class.name).join(", ");
               const coveredClassIds = new Set(topic.progress.map((p) => p.classId));
 

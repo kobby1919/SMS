@@ -3,7 +3,6 @@
 // Accessible by: admin (all classes), teacher (supervised classes only)
 
 
-import { redirect } from "next/navigation";
 import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import CAEntryForm from "@/src/components/CAEntryForm";

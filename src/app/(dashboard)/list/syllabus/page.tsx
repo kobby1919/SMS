@@ -1,16 +1,16 @@
 // src/app/(dashboard)/list/syllabus/page.tsx
 
 
-import { redirect } from "next/navigation";
 import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
 import {
-  BookMarked, Plus, Edit, Trash2, Eye,
+  BookMarked, Plus, Edit, Eye,
   CheckCircle2, Clock, Filter,
 } from "lucide-react";
 import { TERM_LABELS } from "@/src/lib/caGrades";
 import SyllabusDeleteButton from "@/src/components/SyllabusDeleteButton";
+import type { Prisma, SyllabusStatus, Term } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -38,12 +38,12 @@ const SyllabusListPage = async ({
     teacherSubjectIds = teacher?.subjects.map((s) => s.id) ?? [];
   }
 
-  const where: any = { schoolId };
+  const where: Prisma.SyllabusWhereInput = { schoolId };
   if (filterSubject)             where.subjectId = filterSubject;
   if (filterGrade)               where.gradeId   = filterGrade;
-  if (filterTerm)                where.term      = filterTerm;
+  if (filterTerm)                where.term      = filterTerm as Term;
   if (filterYear)                where.academicYear = filterYear;
-  if (filterStatus)              where.status    = filterStatus;
+  if (filterStatus)              where.status    = filterStatus as SyllabusStatus;
   if (teacherSubjectIds)         where.subjectId = { in: teacherSubjectIds };
 
   const syllabi = await prisma.syllabus.findMany({

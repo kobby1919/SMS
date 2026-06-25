@@ -30,3 +30,19 @@ export const syllabusProgressSchema = z.object({
   classId: positiveIntSchema,
   notes: z.string().trim().optional().nullable(),
 });
+
+export const syllabusUpdateSchema = z.object({
+  id: positiveIntSchema,
+  description: z.string().trim().max(2000).optional(),
+  status: z.enum(["DRAFT", "PUBLISHED"]).optional(),
+});
+
+export const syllabusTopicDeleteSchema = z.object({
+  topicId: positiveIntSchema,
+  syllabusId: positiveIntSchema,
+});
+
+export const syllabusTopicOrderSchema = z.object({
+  syllabusId: positiveIntSchema,
+  orderedIds: z.array(positiveIntSchema).min(1).max(100),
+});

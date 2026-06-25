@@ -60,8 +60,8 @@ const CAConfigForm = ({ existingConfigs }: Props) => {
         setAcademicYear("");
         setClassworkWeight(30);
         setExamWeight(70);
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to save configuration.");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to save configuration.");
       }
     });
   };

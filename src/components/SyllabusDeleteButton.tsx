@@ -26,8 +26,8 @@ const SyllabusDeleteButton = ({ id, name }: Props) => {
         await deleteSyllabus(id);
         setOpen(false);
         router.refresh();
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to delete. Please try again.");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to delete. Please try again.");
       }
     });
   };
@@ -68,7 +68,7 @@ const SyllabusDeleteButton = ({ id, name }: Props) => {
               <p className="text-sm text-gray-500 leading-relaxed mb-1">
                 You are about to permanently delete:
               </p>
-              <p className="text-sm font-black text-gray-800 mb-4">"{name}"</p>
+              <p className="text-sm font-black text-gray-800 mb-4">&quot;{name}&quot;</p>
               <p className="text-xs text-gray-400 mb-6">
                 This will also delete all <strong>topics</strong> and <strong>progress records</strong> associated with this syllabus. This action cannot be undone.
               </p>

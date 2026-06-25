@@ -7,7 +7,16 @@ import { requireRole } from "@/src/lib/authz";
 import { revalidatePath } from "next/cache";
 import type { Term, SyllabusStatus } from "@/src/generated/prisma";
 import { parseActionInput } from "@/src/lib/validation/parse";
-import { syllabusCreateSchema } from "@/src/lib/validation/syllabus";
+import { revalidateDashboard, revalidateDocument } from "@/src/lib/cacheTags";
+import {
+  syllabusCreateSchema,
+  syllabusProgressSchema,
+  syllabusTopicDeleteSchema,
+  syllabusTopicOrderSchema,
+  syllabusTopicUpsertSchema,
+  syllabusUpdateSchema,
+} from "@/src/lib/validation/syllabus";
+import { positiveIntSchema } from "@/src/lib/validation/common";
 
 // ─── Auth helpers ─────────────────────────────────────────────────────────────
 
@@ -65,6 +74,7 @@ export async function createSyllabus(data: SyllabusInput) {
   });
 
   revalidatePath("/list/syllabus");
+  revalidateSyllabusDocument(schoolId, syllabus.id);
   return syllabus;
 }
 
@@ -72,6 +82,9 @@ export async function updateSyllabus(
   id: number,
   data: { description?: string; status?: SyllabusStatus }
 ) {
+  const parsed = parseActionInput(syllabusUpdateSchema, { id, ...data });
+  id = parsed.id;
+  data = { description: parsed.description, status: parsed.status };
   const { schoolId } = await requireAdmin();
   const syllabus = await prisma.syllabus.findFirst({
     where: { id, schoolId },
@@ -81,9 +94,16 @@ export async function updateSyllabus(
   await prisma.syllabus.update({ where: { id }, data });
   revalidatePath("/list/syllabus");
   revalidatePath(`/list/syllabus/${id}`);
+  revalidateDashboard(schoolId);
+  revalidateSyllabusDocument(schoolId, id);
+}
+
+function revalidateSyllabusDocument(schoolId: string, syllabusId: number) {
+  revalidateDocument(schoolId, "syllabus", syllabusId);
 }
 
 export async function deleteSyllabus(id: number) {
+  id = parseActionInput(positiveIntSchema, id);
   const { schoolId } = await requireAdmin();
   const syllabus = await prisma.syllabus.findFirst({
     where: { id, schoolId },
@@ -93,9 +113,12 @@ export async function deleteSyllabus(id: number) {
   // Cascade deletes topics + progress via schema onDelete: Cascade
   await prisma.syllabus.delete({ where: { id } });
   revalidatePath("/list/syllabus");
+  revalidateDashboard(schoolId);
+  revalidateSyllabusDocument(schoolId, id);
 }
 
 export async function publishSyllabus(id: number) {
+  id = parseActionInput(positiveIntSchema, id);
   const { schoolId } = await requireAdmin();
   const syllabus = await prisma.syllabus.findFirst({
     where: { id, schoolId },
@@ -108,9 +131,12 @@ export async function publishSyllabus(id: number) {
   await prisma.syllabus.update({ where: { id }, data: { status: "PUBLISHED" } });
   revalidatePath("/list/syllabus");
   revalidatePath(`/list/syllabus/${id}`);
+  revalidateDashboard(schoolId);
+  revalidateSyllabusDocument(schoolId, id);
 }
 
 export async function unpublishSyllabus(id: number) {
+  id = parseActionInput(positiveIntSchema, id);
   const { schoolId } = await requireAdmin();
   const syllabus = await prisma.syllabus.findFirst({
     where: { id, schoolId },
@@ -120,6 +146,8 @@ export async function unpublishSyllabus(id: number) {
   await prisma.syllabus.update({ where: { id }, data: { status: "DRAFT" } });
   revalidatePath("/list/syllabus");
   revalidatePath(`/list/syllabus/${id}`);
+  revalidateDashboard(schoolId);
+  revalidateSyllabusDocument(schoolId, id);
 }
 
 // ─── TOPIC CRUD ───────────────────────────────────────────────────────────────
@@ -134,10 +162,11 @@ export type TopicInput = {
   subtopics:          string[];
   objectives:         string[];
   coreCompetencies:   string[];
-  teachingResources?: string;
+  teachingResources?: string | null;
 };
 
 export async function upsertSyllabusTopic(data: TopicInput) {
+  data = parseActionInput(syllabusTopicUpsertSchema, data);
   const { schoolId } = await requireAdmin();
 
   if (!data.title.trim()) throw new Error("Topic title is required.");
@@ -177,9 +206,11 @@ export async function upsertSyllabusTopic(data: TopicInput) {
 
   revalidatePath(`/list/syllabus/${data.syllabusId}`);
   revalidatePath(`/list/syllabus/${data.syllabusId}/edit`);
+  revalidateSyllabusDocument(schoolId, data.syllabusId);
 }
 
 export async function deleteSyllabusTopic(topicId: number, syllabusId: number) {
+  ({ topicId, syllabusId } = parseActionInput(syllabusTopicDeleteSchema, { topicId, syllabusId }));
   const { schoolId } = await requireAdmin();
   const topic = await prisma.syllabusTopic.findFirst({
     where: {
@@ -193,12 +224,14 @@ export async function deleteSyllabusTopic(topicId: number, syllabusId: number) {
   await prisma.syllabusTopic.delete({ where: { id: topicId } });
   revalidatePath(`/list/syllabus/${syllabusId}`);
   revalidatePath(`/list/syllabus/${syllabusId}/edit`);
+  revalidateSyllabusDocument(schoolId, syllabusId);
 }
 
 export async function reorderTopics(
   syllabusId: number,
   orderedIds: number[]   // topic ids in the new order
 ) {
+  ({ syllabusId, orderedIds } = parseActionInput(syllabusTopicOrderSchema, { syllabusId, orderedIds }));
   const { schoolId } = await requireAdmin();
   const syllabus = await prisma.syllabus.findFirst({
     where: { id: syllabusId, schoolId },
@@ -216,12 +249,13 @@ export async function reorderTopics(
   if (topics.length !== orderedIds.length) {
     throw new Error("One or more topics were not found.");
   }
-  await Promise.all(
+  await prisma.$transaction(
     orderedIds.map((id, idx) =>
       prisma.syllabusTopic.update({ where: { id }, data: { order: idx + 1 } })
     )
   );
   revalidatePath(`/list/syllabus/${syllabusId}/edit`);
+  revalidateSyllabusDocument(schoolId, syllabusId);
 }
 
 // ─── PROGRESS (teacher) ───────────────────────────────────────────────────────
@@ -229,8 +263,9 @@ export async function reorderTopics(
 export async function markTopicCovered(
   syllabusTopicId: number,
   classId:         number,
-  notes?:          string
+  notes?:          string | null
 ) {
+  ({ syllabusTopicId, classId, notes } = parseActionInput(syllabusProgressSchema, { syllabusTopicId, classId, notes }));
   const { userId, schoolId } = await requireAdminOrTeacher();
   const [topic, cls] = await Promise.all([
     prisma.syllabusTopic.findFirst({
@@ -263,12 +298,14 @@ export async function markTopicCovered(
   });
 
   revalidatePath(`/list/syllabus/${topic.syllabusId}`);
+  revalidateSyllabusDocument(schoolId, topic.syllabusId);
 }
 
 export async function unmarkTopicCovered(
   syllabusTopicId: number,
   classId:         number
 ) {
+  ({ syllabusTopicId, classId } = parseActionInput(syllabusProgressSchema, { syllabusTopicId, classId }));
   const { schoolId } = await requireAdminOrTeacher();
   const topic = await prisma.syllabusTopic.findFirst({
     where: { id: syllabusTopicId, syllabus: { is: { schoolId } } },
@@ -286,4 +323,5 @@ export async function unmarkTopicCovered(
   });
 
   revalidatePath(`/list/syllabus/${topic.syllabusId}`);
+  revalidateSyllabusDocument(schoolId, topic.syllabusId);
 }

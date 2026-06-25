@@ -121,7 +121,7 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
   };
 
   // ── Update local state for a topic field ──────────────────────────────────
-  const updateLocal = (idx: number, field: keyof Topic, value: any) => {
+  const updateLocal = <K extends keyof Topic>(idx: number, field: K, value: Topic[K]) => {
     setTopics((prev) => {
       const next = [...prev];
       next[idx] = { ...next[idx], [field]: value };
@@ -151,8 +151,8 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
         });
         showToast("Topic saved ✓");
         setEditing(null);
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to save topic.");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to save topic.");
       }
     });
   };
@@ -166,8 +166,8 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
         setTopics((prev) => prev.filter((_, i) => i !== idx));
         if (editing === idx) setEditing(null);
         showToast("Topic deleted");
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to delete topic.");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to delete topic.");
       }
     });
   };
@@ -202,8 +202,8 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
           setStatus("PUBLISHED");
           showToast("Syllabus Published ✓");
         }
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to update status.");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to update status.");
       }
     });
   };
@@ -264,7 +264,7 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
       {topics.length === 0 && (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
           <p className="text-sm font-bold text-gray-400 mb-2">No topics yet</p>
-          <p className="text-xs text-gray-300 mb-4">Click "Add Topic" to get started.</p>
+          <p className="text-xs text-gray-300 mb-4">Click &quot;Add Topic&quot; to get started.</p>
           <button
             type="button"
             onClick={addTopic}

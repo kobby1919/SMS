@@ -7,12 +7,36 @@ import { useRouter } from "next/navigation";
 import { createSyllabus } from "@/src/lib/actions/syllabusActions";
 import { TERM_LABELS } from "@/src/lib/caGrades";
 import { AlertCircle, Loader2, BookMarked, ChevronDown } from "lucide-react";
+import type { Term } from "@/src/generated/prisma";
 
 type Props = {
   subjects:      { id: number; name: string }[];
   grades:        { id: number; level: string }[];
   academicYears: string[];
 };
+
+const SelectField = ({
+  label, value, onChange, children,
+}: {
+  label: string;
+  value: string | number;
+  onChange: (value: string) => void;
+  children: React.ReactNode;
+}) => (
+  <div className="flex flex-col gap-1.5">
+    <label className="text-xs font-black uppercase tracking-wider text-gray-500">{label}</label>
+    <div className="relative">
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="w-full appearance-none ring-[1.5px] ring-gray-200 px-3 py-3 rounded-xl text-sm font-semibold text-gray-700 focus:ring-violet-500 outline-none bg-white pr-8"
+      >
+        {children}
+      </select>
+      <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+    </div>
+  </div>
+);
 
 const SyllabusCreateForm = ({ subjects, grades, academicYears }: Props) => {
   const router = useRouter();
@@ -36,39 +60,16 @@ const SyllabusCreateForm = ({ subjects, grades, academicYears }: Props) => {
         const s = await createSyllabus({
           subjectId:    subjectId as number,
           gradeId:      gradeId   as number,
-          term:         term      as any,
+          term:         term as Term,
           academicYear,
           description,
         });
         router.push(`/list/syllabus/${s.id}/edit`);
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to create syllabus.");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to create syllabus.");
       }
     });
   };
-
-  const Select = ({
-    label, value, onChange, children,
-  }: {
-    label: string;
-    value: string | number;
-    onChange: (v: string) => void;
-    children: React.ReactNode;
-  }) => (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-black uppercase tracking-wider text-gray-500">{label}</label>
-      <div className="relative">
-        <select
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full appearance-none ring-[1.5px] ring-gray-200 px-3 py-3 rounded-xl text-sm font-semibold text-gray-700 focus:ring-violet-500 outline-none bg-white pr-8"
-        >
-          {children}
-        </select>
-        <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-      </div>
-    </div>
-  );
 
   return (
     <div className="flex flex-col gap-5">
@@ -88,23 +89,23 @@ const SyllabusCreateForm = ({ subjects, grades, academicYears }: Props) => {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Select label="Subject" value={subjectId} onChange={(v) => setSubjectId(Number(v) || "")}>
+        <SelectField label="Subject" value={subjectId} onChange={(v) => setSubjectId(Number(v) || "")}>
           <option value="">Select subject…</option>
           {subjects.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-        </Select>
+        </SelectField>
 
-        <Select label="Grade Level" value={gradeId} onChange={(v) => setGradeId(Number(v) || "")}>
+        <SelectField label="Grade Level" value={gradeId} onChange={(v) => setGradeId(Number(v) || "")}>
           <option value="">Select grade…</option>
           {grades.map((g) => <option key={g.id} value={g.id}>{g.level}</option>)}
-        </Select>
+        </SelectField>
 
-        <Select label="Term" value={term} onChange={setTerm}>
+        <SelectField label="Term" value={term} onChange={setTerm}>
           {Object.entries(TERM_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-        </Select>
+        </SelectField>
 
-        <Select label="Academic Year" value={academicYear} onChange={setAcademicYear}>
+        <SelectField label="Academic Year" value={academicYear} onChange={setAcademicYear}>
           {academicYears.map((y) => <option key={y} value={y}>{y}</option>)}
-        </Select>
+        </SelectField>
       </div>
 
       <div className="flex flex-col gap-1.5">
