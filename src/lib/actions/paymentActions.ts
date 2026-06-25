@@ -36,6 +36,7 @@ export type RecordPaymentInput = {
   paymentDate:    string;
   paidBy:         string;
   referenceNo?:   string;
+  idempotencyKey?: string;
   notes?:         string;
 };
 
@@ -48,6 +49,17 @@ export async function recordPayment(input: RecordPaymentInput) {
     windowMs: 60_000,
   });
   const data = parseActionInput(recordPaymentSchema, input);
+  const idempotencyKey = data.idempotencyKey?.trim() || null;
+
+  if (idempotencyKey) {
+    const existingPayment = await prisma.payment.findFirst({
+      where: { schoolId, idempotencyKey },
+    });
+
+    if (existingPayment) {
+      return existingPayment;
+    }
+  }
 
   const bill = requireResourceAccess(
     await prisma.studentBill.findFirst({
@@ -72,6 +84,8 @@ export async function recordPayment(input: RecordPaymentInput) {
 
   const receiptNumber = await generateReceiptNumber();
 
+  let reusedIdempotentPayment = false;
+
   const payment = await prisma.$transaction(async (tx) => {
     // 1. Create the Payment record
     const pmt = await tx.payment.create({
@@ -83,6 +97,7 @@ export async function recordPayment(input: RecordPaymentInput) {
         paymentDate:    data.paymentDate ? new Date(data.paymentDate) : new Date(),
         paidBy:         data.paidBy.trim(),
         referenceNo:    data.referenceNo?.trim() ?? null,
+        idempotencyKey,
         notes:          data.notes?.trim() ?? null,
         status:         "CONFIRMED",
         studentBillId: data.studentBillId,
@@ -126,7 +141,30 @@ export async function recordPayment(input: RecordPaymentInput) {
     }
 
     return pmt;
+  }).catch(async (error: unknown) => {
+    if (
+      idempotencyKey &&
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "P2002"
+    ) {
+      const existingPayment = await prisma.payment.findFirst({
+        where: { schoolId, idempotencyKey },
+      });
+
+      if (existingPayment) {
+        reusedIdempotentPayment = true;
+        return existingPayment;
+      }
+    }
+
+    throw error;
   });
+
+  if (reusedIdempotentPayment) {
+    return payment;
+  }
 
   await recomputeBillStatus(data.studentBillId, schoolId);
 

@@ -768,6 +768,9 @@ model Payment {
   paymentDate   DateTime      @default(now())
   paidBy        String // name of person who paid
   referenceNo   String?
+  externalProvider  PaymentProvider?
+  externalReference String?
+  idempotencyKey    String?
   notes         String?
   status        PaymentStatus @default(CONFIRMED)
 
@@ -784,9 +787,12 @@ model Payment {
   webhookEvents PaymentWebhookEvent[]
 
   @@unique([schoolId, receiptNumber])
+  @@unique([schoolId, externalProvider, externalReference])
+  @@unique([schoolId, idempotencyKey])
   @@index([schoolId, paymentDate])
   @@index([schoolId, status])
   @@index([schoolId, paymentDate, status])
+  @@index([schoolId, externalProvider])
   @@index([studentBillId])
 }
 

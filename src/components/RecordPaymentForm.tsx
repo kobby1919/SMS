@@ -30,6 +30,7 @@ type SuccessData = {
 const RecordPaymentForm = ({ billId, balance, defaultPayerName }: Props) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [idempotencyKey, setIdempotencyKey] = useState(() => crypto.randomUUID());
 
   // Form state
   const [amount,        setAmount]        = useState(balance.toFixed(2));
@@ -72,6 +73,7 @@ const RecordPaymentForm = ({ billId, balance, defaultPayerName }: Props) => {
           paymentDate,
           paidBy:        paidBy.trim(),
           referenceNo:   referenceNo.trim() || undefined,
+          idempotencyKey,
           notes:         notes.trim() || undefined,
         });
 
@@ -81,6 +83,7 @@ const RecordPaymentForm = ({ billId, balance, defaultPayerName }: Props) => {
           method,
           paidBy:        paidBy.trim(),
         });
+        setIdempotencyKey(crypto.randomUUID());
       } catch (e: unknown) {
         setError(e instanceof Error ? e.message : "Failed to record payment. Please try again.");
       }

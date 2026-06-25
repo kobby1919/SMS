@@ -14,6 +14,7 @@ export const recordPaymentSchema = z.object({
   paymentMethod: paymentMethodSchema,
   paidBy: nonEmptyStringSchema,
   referenceNo: z.string().trim().optional().nullable(),
+  idempotencyKey: z.string().trim().min(8).max(120).optional().nullable(),
   notes: z.string().trim().optional().nullable(),
   paymentDate: z.string().trim().optional(),
 });

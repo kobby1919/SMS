@@ -35114,6 +35114,9 @@ export namespace Prisma {
     paymentDate: Date | null
     paidBy: string | null
     referenceNo: string | null
+    externalProvider: $Enums.PaymentProvider | null
+    externalReference: string | null
+    idempotencyKey: string | null
     notes: string | null
     status: $Enums.PaymentStatus | null
     schoolId: string | null
@@ -35130,6 +35133,9 @@ export namespace Prisma {
     paymentDate: Date | null
     paidBy: string | null
     referenceNo: string | null
+    externalProvider: $Enums.PaymentProvider | null
+    externalReference: string | null
+    idempotencyKey: string | null
     notes: string | null
     status: $Enums.PaymentStatus | null
     schoolId: string | null
@@ -35146,6 +35152,9 @@ export namespace Prisma {
     paymentDate: number
     paidBy: number
     referenceNo: number
+    externalProvider: number
+    externalReference: number
+    idempotencyKey: number
     notes: number
     status: number
     schoolId: number
@@ -35176,6 +35185,9 @@ export namespace Prisma {
     paymentDate?: true
     paidBy?: true
     referenceNo?: true
+    externalProvider?: true
+    externalReference?: true
+    idempotencyKey?: true
     notes?: true
     status?: true
     schoolId?: true
@@ -35192,6 +35204,9 @@ export namespace Prisma {
     paymentDate?: true
     paidBy?: true
     referenceNo?: true
+    externalProvider?: true
+    externalReference?: true
+    idempotencyKey?: true
     notes?: true
     status?: true
     schoolId?: true
@@ -35208,6 +35223,9 @@ export namespace Prisma {
     paymentDate?: true
     paidBy?: true
     referenceNo?: true
+    externalProvider?: true
+    externalReference?: true
+    idempotencyKey?: true
     notes?: true
     status?: true
     schoolId?: true
@@ -35311,6 +35329,9 @@ export namespace Prisma {
     paymentDate: Date
     paidBy: string
     referenceNo: string | null
+    externalProvider: $Enums.PaymentProvider | null
+    externalReference: string | null
+    idempotencyKey: string | null
     notes: string | null
     status: $Enums.PaymentStatus
     schoolId: string
@@ -35346,6 +35367,9 @@ export namespace Prisma {
     paymentDate?: boolean
     paidBy?: boolean
     referenceNo?: boolean
+    externalProvider?: boolean
+    externalReference?: boolean
+    idempotencyKey?: boolean
     notes?: boolean
     status?: boolean
     schoolId?: boolean
@@ -35367,6 +35391,9 @@ export namespace Prisma {
     paymentDate?: boolean
     paidBy?: boolean
     referenceNo?: boolean
+    externalProvider?: boolean
+    externalReference?: boolean
+    idempotencyKey?: boolean
     notes?: boolean
     status?: boolean
     schoolId?: boolean
@@ -35385,6 +35412,9 @@ export namespace Prisma {
     paymentDate?: boolean
     paidBy?: boolean
     referenceNo?: boolean
+    externalProvider?: boolean
+    externalReference?: boolean
+    idempotencyKey?: boolean
     notes?: boolean
     status?: boolean
     schoolId?: boolean
@@ -35403,6 +35433,9 @@ export namespace Prisma {
     paymentDate?: boolean
     paidBy?: boolean
     referenceNo?: boolean
+    externalProvider?: boolean
+    externalReference?: boolean
+    idempotencyKey?: boolean
     notes?: boolean
     status?: boolean
     schoolId?: boolean
@@ -35411,7 +35444,7 @@ export namespace Prisma {
     createdAt?: boolean
   }
 
-  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "receiptNumber" | "amount" | "paymentMethod" | "paymentDate" | "paidBy" | "referenceNo" | "notes" | "status" | "schoolId" | "studentBillId" | "recordedBy" | "createdAt", ExtArgs["result"]["payment"]>
+  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "receiptNumber" | "amount" | "paymentMethod" | "paymentDate" | "paidBy" | "referenceNo" | "externalProvider" | "externalReference" | "idempotencyKey" | "notes" | "status" | "schoolId" | "studentBillId" | "recordedBy" | "createdAt", ExtArgs["result"]["payment"]>
   export type PaymentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     studentBill?: boolean | StudentBillDefaultArgs<ExtArgs>
@@ -35444,6 +35477,9 @@ export namespace Prisma {
       paymentDate: Date
       paidBy: string
       referenceNo: string | null
+      externalProvider: $Enums.PaymentProvider | null
+      externalReference: string | null
+      idempotencyKey: string | null
       notes: string | null
       status: $Enums.PaymentStatus
       schoolId: string
@@ -35884,6 +35920,9 @@ export namespace Prisma {
     readonly paymentDate: FieldRef<"Payment", 'DateTime'>
     readonly paidBy: FieldRef<"Payment", 'String'>
     readonly referenceNo: FieldRef<"Payment", 'String'>
+    readonly externalProvider: FieldRef<"Payment", 'PaymentProvider'>
+    readonly externalReference: FieldRef<"Payment", 'String'>
+    readonly idempotencyKey: FieldRef<"Payment", 'String'>
     readonly notes: FieldRef<"Payment", 'String'>
     readonly status: FieldRef<"Payment", 'PaymentStatus'>
     readonly schoolId: FieldRef<"Payment", 'String'>
@@ -48215,6 +48254,9 @@ export namespace Prisma {
     paymentDate: 'paymentDate',
     paidBy: 'paidBy',
     referenceNo: 'referenceNo',
+    externalProvider: 'externalProvider',
+    externalReference: 'externalReference',
+    idempotencyKey: 'idempotencyKey',
     notes: 'notes',
     status: 'status',
     schoolId: 'schoolId',
@@ -48640,6 +48682,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'PaymentProvider'
+   */
+  export type EnumPaymentProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentProvider'>
+    
+
+
+  /**
+   * Reference to a field of type 'PaymentProvider[]'
+   */
+  export type ListEnumPaymentProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentProvider[]'>
+    
+
+
+  /**
    * Reference to a field of type 'PaymentStatus'
    */
   export type EnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus'>
@@ -48720,20 +48776,6 @@ export namespace Prisma {
    * Reference to a field of type 'JobStatus[]'
    */
   export type ListEnumJobStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JobStatus[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'PaymentProvider'
-   */
-  export type EnumPaymentProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentProvider'>
-    
-
-
-  /**
-   * Reference to a field of type 'PaymentProvider[]'
-   */
-  export type ListEnumPaymentProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentProvider[]'>
     
 
 
@@ -50947,6 +50989,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFilter<"Payment"> | Date | string
     paidBy?: StringFilter<"Payment"> | string
     referenceNo?: StringNullableFilter<"Payment"> | string | null
+    externalProvider?: EnumPaymentProviderNullableFilter<"Payment"> | $Enums.PaymentProvider | null
+    externalReference?: StringNullableFilter<"Payment"> | string | null
+    idempotencyKey?: StringNullableFilter<"Payment"> | string | null
     notes?: StringNullableFilter<"Payment"> | string | null
     status?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
     schoolId?: StringFilter<"Payment"> | string
@@ -50967,6 +51012,9 @@ export namespace Prisma {
     paymentDate?: SortOrder
     paidBy?: SortOrder
     referenceNo?: SortOrderInput | SortOrder
+    externalProvider?: SortOrderInput | SortOrder
+    externalReference?: SortOrderInput | SortOrder
+    idempotencyKey?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
     status?: SortOrder
     schoolId?: SortOrder
@@ -50982,6 +51030,8 @@ export namespace Prisma {
   export type PaymentWhereUniqueInput = Prisma.AtLeast<{
     id?: number
     schoolId_receiptNumber?: PaymentSchoolIdReceiptNumberCompoundUniqueInput
+    schoolId_externalProvider_externalReference?: PaymentSchoolIdExternalProviderExternalReferenceCompoundUniqueInput
+    schoolId_idempotencyKey?: PaymentSchoolIdIdempotencyKeyCompoundUniqueInput
     AND?: PaymentWhereInput | PaymentWhereInput[]
     OR?: PaymentWhereInput[]
     NOT?: PaymentWhereInput | PaymentWhereInput[]
@@ -50991,6 +51041,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFilter<"Payment"> | Date | string
     paidBy?: StringFilter<"Payment"> | string
     referenceNo?: StringNullableFilter<"Payment"> | string | null
+    externalProvider?: EnumPaymentProviderNullableFilter<"Payment"> | $Enums.PaymentProvider | null
+    externalReference?: StringNullableFilter<"Payment"> | string | null
+    idempotencyKey?: StringNullableFilter<"Payment"> | string | null
     notes?: StringNullableFilter<"Payment"> | string | null
     status?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
     schoolId?: StringFilter<"Payment"> | string
@@ -51001,7 +51054,7 @@ export namespace Prisma {
     studentBill?: XOR<StudentBillScalarRelationFilter, StudentBillWhereInput>
     reversal?: XOR<PaymentReversalNullableScalarRelationFilter, PaymentReversalWhereInput> | null
     webhookEvents?: PaymentWebhookEventListRelationFilter
-  }, "id" | "schoolId_receiptNumber">
+  }, "id" | "schoolId_receiptNumber" | "schoolId_externalProvider_externalReference" | "schoolId_idempotencyKey">
 
   export type PaymentOrderByWithAggregationInput = {
     id?: SortOrder
@@ -51011,6 +51064,9 @@ export namespace Prisma {
     paymentDate?: SortOrder
     paidBy?: SortOrder
     referenceNo?: SortOrderInput | SortOrder
+    externalProvider?: SortOrderInput | SortOrder
+    externalReference?: SortOrderInput | SortOrder
+    idempotencyKey?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
     status?: SortOrder
     schoolId?: SortOrder
@@ -51035,6 +51091,9 @@ export namespace Prisma {
     paymentDate?: DateTimeWithAggregatesFilter<"Payment"> | Date | string
     paidBy?: StringWithAggregatesFilter<"Payment"> | string
     referenceNo?: StringNullableWithAggregatesFilter<"Payment"> | string | null
+    externalProvider?: EnumPaymentProviderNullableWithAggregatesFilter<"Payment"> | $Enums.PaymentProvider | null
+    externalReference?: StringNullableWithAggregatesFilter<"Payment"> | string | null
+    idempotencyKey?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     notes?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     status?: EnumPaymentStatusWithAggregatesFilter<"Payment"> | $Enums.PaymentStatus
     schoolId?: StringWithAggregatesFilter<"Payment"> | string
@@ -53982,6 +54041,9 @@ export namespace Prisma {
     paymentDate?: Date | string
     paidBy: string
     referenceNo?: string | null
+    externalProvider?: $Enums.PaymentProvider | null
+    externalReference?: string | null
+    idempotencyKey?: string | null
     notes?: string | null
     status?: $Enums.PaymentStatus
     recordedBy: string
@@ -54000,6 +54062,9 @@ export namespace Prisma {
     paymentDate?: Date | string
     paidBy: string
     referenceNo?: string | null
+    externalProvider?: $Enums.PaymentProvider | null
+    externalReference?: string | null
+    idempotencyKey?: string | null
     notes?: string | null
     status?: $Enums.PaymentStatus
     schoolId?: string
@@ -54017,6 +54082,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paidBy?: StringFieldUpdateOperationsInput | string
     referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    externalProvider?: NullableEnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider | null
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     recordedBy?: StringFieldUpdateOperationsInput | string
@@ -54035,6 +54103,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paidBy?: StringFieldUpdateOperationsInput | string
     referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    externalProvider?: NullableEnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider | null
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -54053,6 +54124,9 @@ export namespace Prisma {
     paymentDate?: Date | string
     paidBy: string
     referenceNo?: string | null
+    externalProvider?: $Enums.PaymentProvider | null
+    externalReference?: string | null
+    idempotencyKey?: string | null
     notes?: string | null
     status?: $Enums.PaymentStatus
     schoolId?: string
@@ -54068,6 +54142,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paidBy?: StringFieldUpdateOperationsInput | string
     referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    externalProvider?: NullableEnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider | null
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     recordedBy?: StringFieldUpdateOperationsInput | string
@@ -54082,6 +54159,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paidBy?: StringFieldUpdateOperationsInput | string
     referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    externalProvider?: NullableEnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider | null
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -56913,6 +56993,13 @@ export namespace Prisma {
     not?: NestedEnumPaymentMethodFilter<$PrismaModel> | $Enums.PaymentMethod
   }
 
+  export type EnumPaymentProviderNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentProvider | EnumPaymentProviderFieldRefInput<$PrismaModel> | null
+    in?: $Enums.PaymentProvider[] | ListEnumPaymentProviderFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.PaymentProvider[] | ListEnumPaymentProviderFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumPaymentProviderNullableFilter<$PrismaModel> | $Enums.PaymentProvider | null
+  }
+
   export type EnumPaymentStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.PaymentStatus | EnumPaymentStatusFieldRefInput<$PrismaModel>
     in?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
@@ -56930,6 +57017,17 @@ export namespace Prisma {
     receiptNumber: string
   }
 
+  export type PaymentSchoolIdExternalProviderExternalReferenceCompoundUniqueInput = {
+    schoolId: string
+    externalProvider: $Enums.PaymentProvider
+    externalReference: string
+  }
+
+  export type PaymentSchoolIdIdempotencyKeyCompoundUniqueInput = {
+    schoolId: string
+    idempotencyKey: string
+  }
+
   export type PaymentCountOrderByAggregateInput = {
     id?: SortOrder
     receiptNumber?: SortOrder
@@ -56938,6 +57036,9 @@ export namespace Prisma {
     paymentDate?: SortOrder
     paidBy?: SortOrder
     referenceNo?: SortOrder
+    externalProvider?: SortOrder
+    externalReference?: SortOrder
+    idempotencyKey?: SortOrder
     notes?: SortOrder
     status?: SortOrder
     schoolId?: SortOrder
@@ -56960,6 +57061,9 @@ export namespace Prisma {
     paymentDate?: SortOrder
     paidBy?: SortOrder
     referenceNo?: SortOrder
+    externalProvider?: SortOrder
+    externalReference?: SortOrder
+    idempotencyKey?: SortOrder
     notes?: SortOrder
     status?: SortOrder
     schoolId?: SortOrder
@@ -56976,6 +57080,9 @@ export namespace Prisma {
     paymentDate?: SortOrder
     paidBy?: SortOrder
     referenceNo?: SortOrder
+    externalProvider?: SortOrder
+    externalReference?: SortOrder
+    idempotencyKey?: SortOrder
     notes?: SortOrder
     status?: SortOrder
     schoolId?: SortOrder
@@ -56998,6 +57105,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPaymentMethodFilter<$PrismaModel>
     _max?: NestedEnumPaymentMethodFilter<$PrismaModel>
+  }
+
+  export type EnumPaymentProviderNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentProvider | EnumPaymentProviderFieldRefInput<$PrismaModel> | null
+    in?: $Enums.PaymentProvider[] | ListEnumPaymentProviderFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.PaymentProvider[] | ListEnumPaymentProviderFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumPaymentProviderNullableWithAggregatesFilter<$PrismaModel> | $Enums.PaymentProvider | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumPaymentProviderNullableFilter<$PrismaModel>
+    _max?: NestedEnumPaymentProviderNullableFilter<$PrismaModel>
   }
 
   export type EnumPaymentStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -61431,6 +61548,10 @@ export namespace Prisma {
     set?: $Enums.PaymentMethod
   }
 
+  export type NullableEnumPaymentProviderFieldUpdateOperationsInput = {
+    set?: $Enums.PaymentProvider | null
+  }
+
   export type EnumPaymentStatusFieldUpdateOperationsInput = {
     set?: $Enums.PaymentStatus
   }
@@ -62127,6 +62248,13 @@ export namespace Prisma {
     not?: NestedEnumPaymentMethodFilter<$PrismaModel> | $Enums.PaymentMethod
   }
 
+  export type NestedEnumPaymentProviderNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentProvider | EnumPaymentProviderFieldRefInput<$PrismaModel> | null
+    in?: $Enums.PaymentProvider[] | ListEnumPaymentProviderFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.PaymentProvider[] | ListEnumPaymentProviderFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumPaymentProviderNullableFilter<$PrismaModel> | $Enums.PaymentProvider | null
+  }
+
   export type NestedEnumPaymentStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.PaymentStatus | EnumPaymentStatusFieldRefInput<$PrismaModel>
     in?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
@@ -62142,6 +62270,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPaymentMethodFilter<$PrismaModel>
     _max?: NestedEnumPaymentMethodFilter<$PrismaModel>
+  }
+
+  export type NestedEnumPaymentProviderNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentProvider | EnumPaymentProviderFieldRefInput<$PrismaModel> | null
+    in?: $Enums.PaymentProvider[] | ListEnumPaymentProviderFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.PaymentProvider[] | ListEnumPaymentProviderFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumPaymentProviderNullableWithAggregatesFilter<$PrismaModel> | $Enums.PaymentProvider | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumPaymentProviderNullableFilter<$PrismaModel>
+    _max?: NestedEnumPaymentProviderNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumPaymentStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -63059,6 +63197,9 @@ export namespace Prisma {
     paymentDate?: Date | string
     paidBy: string
     referenceNo?: string | null
+    externalProvider?: $Enums.PaymentProvider | null
+    externalReference?: string | null
+    idempotencyKey?: string | null
     notes?: string | null
     status?: $Enums.PaymentStatus
     recordedBy: string
@@ -63076,6 +63217,9 @@ export namespace Prisma {
     paymentDate?: Date | string
     paidBy: string
     referenceNo?: string | null
+    externalProvider?: $Enums.PaymentProvider | null
+    externalReference?: string | null
+    idempotencyKey?: string | null
     notes?: string | null
     status?: $Enums.PaymentStatus
     studentBillId: number
@@ -64029,6 +64173,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFilter<"Payment"> | Date | string
     paidBy?: StringFilter<"Payment"> | string
     referenceNo?: StringNullableFilter<"Payment"> | string | null
+    externalProvider?: EnumPaymentProviderNullableFilter<"Payment"> | $Enums.PaymentProvider | null
+    externalReference?: StringNullableFilter<"Payment"> | string | null
+    idempotencyKey?: StringNullableFilter<"Payment"> | string | null
     notes?: StringNullableFilter<"Payment"> | string | null
     status?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
     schoolId?: StringFilter<"Payment"> | string
@@ -72109,6 +72256,9 @@ export namespace Prisma {
     paymentDate?: Date | string
     paidBy: string
     referenceNo?: string | null
+    externalProvider?: $Enums.PaymentProvider | null
+    externalReference?: string | null
+    idempotencyKey?: string | null
     notes?: string | null
     status?: $Enums.PaymentStatus
     recordedBy: string
@@ -72126,6 +72276,9 @@ export namespace Prisma {
     paymentDate?: Date | string
     paidBy: string
     referenceNo?: string | null
+    externalProvider?: $Enums.PaymentProvider | null
+    externalReference?: string | null
+    idempotencyKey?: string | null
     notes?: string | null
     status?: $Enums.PaymentStatus
     schoolId?: string
@@ -73040,6 +73193,9 @@ export namespace Prisma {
     paymentDate?: Date | string
     paidBy: string
     referenceNo?: string | null
+    externalProvider?: $Enums.PaymentProvider | null
+    externalReference?: string | null
+    idempotencyKey?: string | null
     notes?: string | null
     status?: $Enums.PaymentStatus
     recordedBy: string
@@ -73057,6 +73213,9 @@ export namespace Prisma {
     paymentDate?: Date | string
     paidBy: string
     referenceNo?: string | null
+    externalProvider?: $Enums.PaymentProvider | null
+    externalReference?: string | null
+    idempotencyKey?: string | null
     notes?: string | null
     status?: $Enums.PaymentStatus
     schoolId?: string
@@ -73188,6 +73347,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paidBy?: StringFieldUpdateOperationsInput | string
     referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    externalProvider?: NullableEnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider | null
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     recordedBy?: StringFieldUpdateOperationsInput | string
@@ -73205,6 +73367,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paidBy?: StringFieldUpdateOperationsInput | string
     referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    externalProvider?: NullableEnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider | null
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -74168,6 +74333,9 @@ export namespace Prisma {
     paymentDate?: Date | string
     paidBy: string
     referenceNo?: string | null
+    externalProvider?: $Enums.PaymentProvider | null
+    externalReference?: string | null
+    idempotencyKey?: string | null
     notes?: string | null
     status?: $Enums.PaymentStatus
     recordedBy: string
@@ -74185,6 +74353,9 @@ export namespace Prisma {
     paymentDate?: Date | string
     paidBy: string
     referenceNo?: string | null
+    externalProvider?: $Enums.PaymentProvider | null
+    externalReference?: string | null
+    idempotencyKey?: string | null
     notes?: string | null
     status?: $Enums.PaymentStatus
     schoolId?: string
@@ -74316,6 +74487,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paidBy?: StringFieldUpdateOperationsInput | string
     referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    externalProvider?: NullableEnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider | null
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     recordedBy?: StringFieldUpdateOperationsInput | string
@@ -74333,6 +74507,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paidBy?: StringFieldUpdateOperationsInput | string
     referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    externalProvider?: NullableEnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider | null
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -75138,6 +75315,9 @@ export namespace Prisma {
     paymentDate?: Date | string
     paidBy: string
     referenceNo?: string | null
+    externalProvider?: $Enums.PaymentProvider | null
+    externalReference?: string | null
+    idempotencyKey?: string | null
     notes?: string | null
     status?: $Enums.PaymentStatus
     studentBillId: number
@@ -75947,6 +76127,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paidBy?: StringFieldUpdateOperationsInput | string
     referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    externalProvider?: NullableEnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider | null
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     recordedBy?: StringFieldUpdateOperationsInput | string
@@ -75964,6 +76147,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paidBy?: StringFieldUpdateOperationsInput | string
     referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    externalProvider?: NullableEnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider | null
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     studentBillId?: IntFieldUpdateOperationsInput | number
@@ -75981,6 +76167,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paidBy?: StringFieldUpdateOperationsInput | string
     referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    externalProvider?: NullableEnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider | null
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     studentBillId?: IntFieldUpdateOperationsInput | number
@@ -78053,6 +78242,9 @@ export namespace Prisma {
     paymentDate?: Date | string
     paidBy: string
     referenceNo?: string | null
+    externalProvider?: $Enums.PaymentProvider | null
+    externalReference?: string | null
+    idempotencyKey?: string | null
     notes?: string | null
     status?: $Enums.PaymentStatus
     schoolId?: string
@@ -78110,6 +78302,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paidBy?: StringFieldUpdateOperationsInput | string
     referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    externalProvider?: NullableEnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider | null
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     recordedBy?: StringFieldUpdateOperationsInput | string
@@ -78127,6 +78322,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paidBy?: StringFieldUpdateOperationsInput | string
     referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    externalProvider?: NullableEnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider | null
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -78144,6 +78342,9 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paidBy?: StringFieldUpdateOperationsInput | string
     referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    externalProvider?: NullableEnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider | null
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     schoolId?: StringFieldUpdateOperationsInput | string

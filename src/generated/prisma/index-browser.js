@@ -413,6 +413,9 @@ exports.Prisma.PaymentScalarFieldEnum = {
   paymentDate: 'paymentDate',
   paidBy: 'paidBy',
   referenceNo: 'referenceNo',
+  externalProvider: 'externalProvider',
+  externalReference: 'externalReference',
+  idempotencyKey: 'idempotencyKey',
   notes: 'notes',
   status: 'status',
   schoolId: 'schoolId',
@@ -640,6 +643,13 @@ exports.PaymentMethod = exports.$Enums.PaymentMethod = {
   OTHER: 'OTHER'
 };
 
+exports.PaymentProvider = exports.$Enums.PaymentProvider = {
+  PAYSTACK: 'PAYSTACK',
+  STRIPE: 'STRIPE',
+  MANUAL: 'MANUAL',
+  OTHER: 'OTHER'
+};
+
 exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   CONFIRMED: 'CONFIRMED',
   REVERSED: 'REVERSED'
@@ -681,13 +691,6 @@ exports.JobStatus = exports.$Enums.JobStatus = {
   COMPLETED: 'COMPLETED',
   FAILED: 'FAILED',
   CANCELLED: 'CANCELLED'
-};
-
-exports.PaymentProvider = exports.$Enums.PaymentProvider = {
-  PAYSTACK: 'PAYSTACK',
-  STRIPE: 'STRIPE',
-  MANUAL: 'MANUAL',
-  OTHER: 'OTHER'
 };
 
 exports.WebhookEventStatus = exports.$Enums.WebhookEventStatus = {
