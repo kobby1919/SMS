@@ -7,6 +7,7 @@ type RouteAccessMap = { [key: string]: string[] };
 export const routeAccessMap: RouteAccessMap = {
   // ── Role dashboards ───────────────────────────────────────────────────────
   "/platform(.*)":                ["platform_admin"],
+  "/onboarding/setup(.*)":        ["admin"],
   "/admin(.*)":                   ["admin"],
   "/student(.*)":                 ["student"],
   "/teacher(.*)":                 ["teacher"],

@@ -25,6 +25,11 @@ const ClerkSignIn = dynamic(
 export default function SignInView() {
   const searchParams = useSearchParams();
   const missingRole = searchParams.get("error") === MISSING_ROLE_QUERY;
+  const invalidInvite = searchParams.get("error") === "invalid_invite";
+  const inviteToken = searchParams.get("invite");
+  const callbackUrl = inviteToken
+    ? `${AUTH_CALLBACK_PATH}?invite=${encodeURIComponent(inviteToken)}`
+    : AUTH_CALLBACK_PATH;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f0f4ff] via-white to-[#f5f0ff] flex items-center justify-center p-4">
@@ -76,10 +81,19 @@ export default function SignInView() {
           </div>
         )}
 
+        {invalidInvite && (
+          <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+            <p className="font-semibold">Invitation could not be accepted</p>
+            <p className="mt-1 text-rose-800/90">
+              The invite may be expired, already used, or linked to a different email address.
+            </p>
+          </div>
+        )}
+
         <ClerkSignIn
-          forceRedirectUrl={AUTH_CALLBACK_PATH}
-          fallbackRedirectUrl={AUTH_CALLBACK_PATH}
-          signUpFallbackRedirectUrl={AUTH_CALLBACK_PATH}
+          forceRedirectUrl={callbackUrl}
+          fallbackRedirectUrl={callbackUrl}
+          signUpFallbackRedirectUrl={callbackUrl}
           routing="path"
           path="/sign-in"
           appearance={{

@@ -10,5 +10,5 @@ export async function GET(req: NextRequest) {
     windowMs: 60_000,
   });
   if (limited) return limited;
-  return completePostSignIn();
+  return completePostSignIn(req.nextUrl.searchParams.get("invite"));
 }

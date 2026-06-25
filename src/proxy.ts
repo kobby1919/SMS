@@ -20,6 +20,7 @@ const isPublicRoute = createRouteMatcher([
   "/features(.*)",
   "/pricing(.*)",
   "/waitlist(.*)",
+  "/onboarding/accept(.*)",
   "/howItWorks(.*)",
   "/about(.*)",
   "/auth/callback",
@@ -34,6 +35,10 @@ export default clerkMiddleware(async (auth, req) => {
   if (isPublicRoute(req)) {
     if (isAuthCallbackPath(pathname)) {
       return NextResponse.next();
+    }
+
+    if (userId && role === "admin" && pathname.startsWith("/sign-in")) {
+      return NextResponse.redirect(new URL(AUTH_CALLBACK_PATH, req.url));
     }
 
     if (userId && role && pathname.startsWith("/sign-in")) {

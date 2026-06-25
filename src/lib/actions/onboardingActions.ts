@@ -4,12 +4,15 @@ import { revalidatePath } from "next/cache";
 import { requireRole } from "@/src/lib/authz";
 import {
   approveWaitlistEntry,
+  completeSchoolOnboarding,
   rejectWaitlistEntry,
+  updateSchoolProfileSetup,
   type CreatedSchoolInvite,
 } from "@/src/lib/services/onboarding";
 import {
   approveWaitlistEntrySchema,
   rejectWaitlistEntrySchema,
+  schoolProfileSetupSchema,
 } from "@/src/lib/validation/onboarding";
 import { parseActionInput } from "@/src/lib/validation/parse";
 
@@ -47,6 +50,38 @@ export async function rejectWaitlistEntryAction(
     return {
       ok: false,
       message: error instanceof Error ? error.message : "Could not reject onboarding request.",
+    };
+  }
+}
+
+export async function updateSchoolProfileSetupAction(
+  input: unknown,
+): Promise<OnboardingActionResult> {
+  try {
+    const context = await requireRole(["admin"]);
+    const data = parseActionInput(schoolProfileSetupSchema, input);
+    await updateSchoolProfileSetup(data, context);
+    revalidatePath("/onboarding/setup");
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Could not save school profile.",
+    };
+  }
+}
+
+export async function completeSchoolOnboardingAction(): Promise<OnboardingActionResult> {
+  try {
+    const context = await requireRole(["admin"]);
+    await completeSchoolOnboarding(context);
+    revalidatePath("/onboarding/setup");
+    revalidatePath("/admin");
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Could not complete setup.",
     };
   }
 }

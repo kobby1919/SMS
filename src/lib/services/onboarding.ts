@@ -1,4 +1,5 @@
 import { createHash, randomBytes } from "crypto";
+import { clerkClient } from "@clerk/nextjs/server";
 import prisma from "@/src/lib/prisma";
 import type { AuthzContext } from "@/src/lib/authz";
 import type { AppRole } from "@/src/lib/roles";
@@ -60,6 +61,104 @@ export async function listWaitlistEntriesForReview() {
       },
     },
   });
+}
+
+export async function getSchoolOnboardingState(schoolId: string) {
+  return prisma.school.findUnique({
+    where: { id: schoolId },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      contactEmail: true,
+      phone: true,
+      address: true,
+      onboardingStatus: true,
+      setupStep: true,
+      setupCompletedAt: true,
+      _count: {
+        select: {
+          grades: true,
+          classes: true,
+          subjects: true,
+          teachers: true,
+          students: true,
+        },
+      },
+    },
+  });
+}
+
+export async function updateSchoolProfileSetup(
+  input: {
+    name: string;
+    contactEmail?: string;
+    phone?: string;
+    address?: string;
+  },
+  context: AuthzContext,
+) {
+  return prisma.school.update({
+    where: { id: context.schoolId },
+    data: {
+      name: input.name,
+      contactEmail: input.contactEmail || null,
+      phone: input.phone || null,
+      address: input.address || null,
+      onboardingStatus: "PROFILE_DONE",
+      setupStep: "academic",
+    },
+  });
+}
+
+export async function completeSchoolOnboarding(context: AuthzContext) {
+  const school = await getSchoolOnboardingState(context.schoolId);
+
+  if (!school) {
+    throw new Error("School not found.");
+  }
+
+  if (school._count.grades === 0 || school._count.classes === 0 || school._count.subjects === 0) {
+    throw new Error("Add at least one grade, class, and subject before finishing setup.");
+  }
+
+  return prisma.school.update({
+    where: { id: context.schoolId },
+    data: {
+      onboardingStatus: "COMPLETED",
+      setupStep: null,
+      setupCompletedAt: new Date(),
+    },
+  });
+}
+
+export async function getInvitePreview(token: string) {
+  const invite = await prisma.schoolInvite.findUnique({
+    where: { tokenHash: hashInviteToken(token) },
+    select: {
+      id: true,
+      email: true,
+      expiresAt: true,
+      acceptedAt: true,
+      school: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+    },
+  });
+
+  if (!invite) return null;
+
+  return {
+    email: invite.email,
+    schoolName: invite.school.name,
+    schoolSlug: invite.school.slug,
+    expiresAt: invite.expiresAt,
+    accepted: Boolean(invite.acceptedAt),
+    expired: invite.expiresAt.getTime() < Date.now(),
+  };
 }
 
 export async function approveWaitlistEntry(
@@ -171,4 +270,74 @@ export async function rejectWaitlistEntry(
 
 export function inviteRoleToAppRole(role: "ADMIN"): AppRole {
   return role.toLowerCase() as AppRole;
+}
+
+function clerkPrimaryEmail(user: Awaited<ReturnType<Awaited<ReturnType<typeof clerkClient>>["users"]["getUser"]>>) {
+  const primaryEmail = user.emailAddresses.find(
+    (email) => email.id === user.primaryEmailAddressId,
+  );
+
+  return primaryEmail?.emailAddress.toLowerCase();
+}
+
+export async function acceptSchoolInviteForUser(
+  input: { token: string; userId: string },
+): Promise<{ role: AppRole; schoolId: string }> {
+  const tokenHash = hashInviteToken(input.token);
+  const invite = await prisma.schoolInvite.findUnique({
+    where: { tokenHash },
+    include: {
+      school: {
+        select: { id: true },
+      },
+    },
+  });
+
+  if (!invite || invite.acceptedAt) {
+    throw new Error("This invitation is invalid or has already been used.");
+  }
+
+  if (invite.expiresAt.getTime() < Date.now()) {
+    throw new Error("This invitation has expired.");
+  }
+
+  const client = await clerkClient();
+  const user = await client.users.getUser(input.userId);
+  const signedInEmail = clerkPrimaryEmail(user);
+
+  if (!signedInEmail || signedInEmail !== invite.email.toLowerCase()) {
+    throw new Error("Please sign in with the email address that received this invitation.");
+  }
+
+  const role = inviteRoleToAppRole(invite.role);
+
+  await prisma.$transaction(async (tx) => {
+    await tx.admin.upsert({
+      where: { id: input.userId },
+      update: {
+        username: invite.email.toLowerCase(),
+        schoolId: invite.schoolId,
+      },
+      create: {
+        id: input.userId,
+        username: invite.email.toLowerCase(),
+        schoolId: invite.schoolId,
+      },
+    });
+
+    await tx.schoolInvite.update({
+      where: { id: invite.id },
+      data: { acceptedAt: new Date() },
+    });
+  });
+
+  await client.users.updateUserMetadata(input.userId, {
+    publicMetadata: {
+      ...user.publicMetadata,
+      role,
+      schoolId: invite.schoolId,
+    },
+  });
+
+  return { role, schoolId: invite.schoolId };
 }
