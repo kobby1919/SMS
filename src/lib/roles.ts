@@ -1,6 +1,19 @@
-export type AppRole = "admin" | "teacher" | "student" | "parent" | "bursar";
+export type AppRole =
+  | "platform_admin"
+  | "admin"
+  | "teacher"
+  | "student"
+  | "parent"
+  | "bursar";
 
-const APP_ROLES: AppRole[] = ["admin", "teacher", "student", "parent", "bursar"];
+const APP_ROLES: AppRole[] = [
+  "platform_admin",
+  "admin",
+  "teacher",
+  "student",
+  "parent",
+  "bursar",
+];
 
 export function isAppRole(role: string | undefined): role is AppRole {
   return APP_ROLES.includes(role as AppRole);
@@ -48,5 +61,6 @@ export function roleFromSessionClaims(sessionClaims: unknown): AppRole | undefin
 }
 
 export function dashboardPathForRole(role: AppRole): string {
+  if (role === "platform_admin") return "/platform/onboarding";
   return `/${role}`;
 }
