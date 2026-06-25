@@ -11,6 +11,7 @@ export type StorePaymentWebhookInput = {
   payload: Record<string, unknown>;
   signature?: string | null;
   schoolId?: string | null;
+  verified?: boolean;
 };
 
 export function verifyHmacSignature(input: {
@@ -48,20 +49,22 @@ export async function storePaymentWebhookEvent(input: StorePaymentWebhookInput) 
       payload: input.payload as Prisma.InputJsonValue,
       signature: input.signature ?? null,
       schoolId: input.schoolId ?? null,
-      status: "RECEIVED",
+      status: input.verified ? "VERIFIED" : "RECEIVED",
     },
   });
 
-  await enqueueFinanceJob({
-    schoolId: input.schoolId ?? "default-school",
-    type: "PROCESS_PAYMENT_WEBHOOK",
-    payload: {
-      webhookEventId: event.id,
-      provider: input.provider,
-      eventType: input.eventType,
-    },
-    idempotencyKey: `webhook:${input.provider}:${input.providerEventId}`,
-  });
+  if (input.schoolId && event.status !== "PROCESSED") {
+    await enqueueFinanceJob({
+      schoolId: input.schoolId,
+      type: "PROCESS_PAYMENT_WEBHOOK",
+      payload: {
+        webhookEventId: event.id,
+        provider: input.provider,
+        eventType: input.eventType,
+      },
+      idempotencyKey: `webhook:${input.provider}:${input.providerEventId}`,
+    });
+  }
 
   return event;
 }
