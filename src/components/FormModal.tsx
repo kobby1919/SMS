@@ -57,41 +57,41 @@ const forms: Record<
   string,
   (
     type: "create" | "update",
-    data: any,
+    data: unknown,
     onSuccess: () => void,
   ) => React.ReactNode
 > = {
   teacher: (type, data, onSuccess) => (
-    <TeacherForm type={type} data={data} onSuccess={onSuccess} />
+    <TeacherForm type={type} data={data as React.ComponentProps<typeof TeacherForm>["data"]} onSuccess={onSuccess} />
   ),
   student: (type, data, onSuccess) => (
-    <StudentForm type={type} data={data} onSuccess={onSuccess} />
+    <StudentForm type={type} data={data as React.ComponentProps<typeof StudentForm>["data"]} onSuccess={onSuccess} />
   ),
   lesson: (type, data, onSuccess) => (
-    <LessonForm type={type} data={data} onSuccess={onSuccess} />
+    <LessonForm type={type} data={data as React.ComponentProps<typeof LessonForm>["data"]} onSuccess={onSuccess} />
   ),
   class: (type, data, onSuccess) => (
-    <ClassForm type={type} data={data} onSuccess={onSuccess} />
+    <ClassForm type={type} data={data as React.ComponentProps<typeof ClassForm>["data"]} onSuccess={onSuccess} />
   ),
   subject: (type, data, onSuccess) => (
-    <SubjectForm type={type} data={data} onSuccess={onSuccess} />
+    <SubjectForm type={type} data={data as React.ComponentProps<typeof SubjectForm>["data"]} onSuccess={onSuccess} />
   ),
   parent: (type, data, onSuccess) => (
-    <ParentForm type={type} data={data} onSuccess={onSuccess} />
+    <ParentForm type={type} data={data as React.ComponentProps<typeof ParentForm>["data"]} onSuccess={onSuccess} />
   ),
   exam: (type, data, onSuccess) => (
-    <ExamForm type={type} data={data} onSuccess={onSuccess} />
+    <ExamForm type={type} data={data as React.ComponentProps<typeof ExamForm>["data"]} onSuccess={onSuccess} />
   ),
   result: (type, data, onSuccess) => (
-    <ResultForm type={type} data={data} onSuccess={onSuccess} />
+    <ResultForm type={type} data={data as React.ComponentProps<typeof ResultForm>["data"]} onSuccess={onSuccess} />
   ),
   assignment: (type, data, onSuccess) => (
-    <AssignmentForm type={type} data={data} onSuccess={onSuccess} />
+    <AssignmentForm type={type} data={data as React.ComponentProps<typeof AssignmentForm>["data"]} onSuccess={onSuccess} />
   ),
 };
 
 // ─── Delete action registry ───────────────────────────────────────────────────
-const deleteActions: Partial<Record<string, (id: any) => Promise<void>>> = {
+const deleteActions: Partial<Record<string, (id: number | string) => Promise<void>>> = {
   lesson: (id) => deleteLesson(Number(id)),
   class: (id) => deleteClass(Number(id)),
   subject: (id) => deleteSubject(Number(id)),
@@ -129,7 +129,7 @@ type TableName =
 type Props = {
   table: TableName;
   type: "create" | "update" | "delete";
-  data?: any;
+  data?: unknown;
   id?: number | string;
 };
 
@@ -165,8 +165,8 @@ const FormModal = ({ table, type, data, id }: Props) => {
       try {
         await action(id);
         close();
-      } catch (e: any) {
-        setDeleteError(e?.message ?? "Failed to delete. Please try again.");
+      } catch (e: unknown) {
+        setDeleteError(e instanceof Error ? e.message : "Failed to delete. Please try again.");
       }
     });
   };
@@ -268,7 +268,7 @@ const FormModal = ({ table, type, data, id }: Props) => {
               <X size={20} />
             </button>
             <div className="p-8 max-h-[90vh] overflow-y-auto">
-              <Form />
+              {Form()}
             </div>
           </div>
         </div>

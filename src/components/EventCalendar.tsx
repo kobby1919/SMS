@@ -14,10 +14,13 @@ const EventCalendar = () => {
   const [selected, setSelected] = useState(0);
 
   useEffect(() => {
-    const today = new Date();
-    setCurrent({ month: today.getMonth(), year: today.getFullYear() });
-    setSelected(today.getDate());
-    setMounted(true);
+    const frame = requestAnimationFrame(() => {
+      const today = new Date();
+      setCurrent({ month: today.getMonth(), year: today.getFullYear() });
+      setSelected(today.getDate());
+      setMounted(true);
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   if (!mounted) return <div className="bg-white p-5 rounded-2xl shadow-sm h-[320px]" />;

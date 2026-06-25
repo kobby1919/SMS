@@ -4,7 +4,7 @@
 // Used on student and parent pages to show attendance history
 
 import { useState } from "react";
-import { CheckCircle2, XCircle, Clock, FileCheck, TrendingUp } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, FileCheck } from "lucide-react";
 
 type AttendanceEntry = {
   date:        string;
@@ -33,7 +33,6 @@ const AttendanceHistory = ({ history, studentName }: Props) => {
   const present = history.filter((h) => h.status === "PRESENT").length;
   const absent  = history.filter((h) => h.status === "ABSENT").length;
   const late    = history.filter((h) => h.status === "LATE").length;
-  const excused = history.filter((h) => h.status === "EXCUSED").length;
   const rate    = total > 0 ? Math.round((present / total) * 100) : 0;
 
   const filtered = filter === "all"
@@ -51,7 +50,7 @@ const AttendanceHistory = ({ history, studentName }: Props) => {
   }, {} as Record<string, AttendanceEntry[]>);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4" aria-label={`Attendance history for ${studentName}`}>
 
       {/* Stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
@@ -128,7 +127,7 @@ const AttendanceHistory = ({ history, studentName }: Props) => {
                       </span>
                       {entry.note && (
                         <span className="text-[10px] text-gray-400 italic hidden sm:block">
-                          "{entry.note}"
+                          &quot;{entry.note}&quot;
                         </span>
                       )}
                     </div>

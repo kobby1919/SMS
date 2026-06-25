@@ -1,9 +1,10 @@
 "use client";
 
 import { GraduationCap, Presentation, Users, Briefcase, MoreHorizontal, TrendingUp } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
-const iconMap: Record<string, React.ElementType> = {
+const iconMap: Record<string, LucideIcon> = {
   student: GraduationCap,
   teacher: Presentation,
   parent:  Users,

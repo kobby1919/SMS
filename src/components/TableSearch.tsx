@@ -1,7 +1,6 @@
 "use client";
 import { Search, X } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const TableSearch = () => {
   // const [value, setValue] = useState("");
