@@ -83,8 +83,8 @@ export default function AboutValues() {
           </h2>
           <p className="text-base text-gray-500 leading-relaxed"
             style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
-            These aren't statements on a wall. They're the decisions we make every day
-            when we're building EduJay.
+            These aren&apos;t statements on a wall. They&apos;re the decisions we make every day
+            when we&apos;re building EduJay.
           </p>
         </motion.div>
 

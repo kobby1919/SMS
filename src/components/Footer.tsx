@@ -87,7 +87,7 @@ export default function Footer() {
             {/* Large decorative quote mark */}
             <div className="text-6xl leading-none select-none"
               style={{ color: "#8B7FF522", fontFamily: "Georgia, serif", lineHeight: 0.7 }}>
-              "
+              &quot;
             </div>
             <p className="text-xl lg:text-2xl font-medium max-w-2xl leading-relaxed"
               style={{ color: "rgba(255,255,255,0.75)", fontFamily: "'Clash Display', sans-serif", fontWeight: 500 }}>
@@ -134,7 +134,7 @@ export default function Footer() {
             <p className="text-sm leading-relaxed max-w-xs"
               style={{ color: "rgba(255,255,255,0.4)", fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
               The all-in-one school management platform built for Ghanaian schools.
-              From Nursery to JHS — we've got you covered.
+              From Nursery to JHS — we&apos;ve got you covered.
             </p>
 
             {/* Contact */}

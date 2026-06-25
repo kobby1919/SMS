@@ -129,7 +129,7 @@ export default function PricingFAQ() {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <p className="text-sm text-gray-400 mb-3" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-            Have a question that's not here?
+            Have a question that&apos;s not here?
           </p>
           <a href="/contact"
             className="inline-flex items-center gap-2 text-sm font-semibold transition-all duration-200 hover:gap-3"

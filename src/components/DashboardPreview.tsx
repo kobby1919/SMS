@@ -1,8 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { Variants } from "framer-motion";
-import type { ReactNode } from "react";
 import Image from "next/image";
 
 const callouts = [
@@ -209,7 +207,7 @@ export default function DashboardPreview() {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <p className="text-sm text-gray-400" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-            Your real dashboard will look just like this — populated with your school's data.
+            Your real dashboard will look just like this — populated with your school&apos;s data.
           </p>
           <a
             href="/sign-up"

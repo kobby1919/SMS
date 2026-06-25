@@ -115,10 +115,10 @@ export default function AboutTeam() {
           <div>
             <div className="text-base font-extrabold text-gray-900 mb-1"
               style={{ fontFamily: "'Sora', sans-serif" }}>
-              We're growing 🇬🇭
+              We&apos;re growing 🇬🇭
             </div>
             <p className="text-sm text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-              Passionate about education and technology in Ghana? We'd love to hear from you.
+              Passionate about education and technology in Ghana? We&apos;d love to hear from you.
             </p>
           </div>
           <a href="/contact"

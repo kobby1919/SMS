@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function AboutHero() {
   return (
@@ -27,8 +28,8 @@ export default function AboutHero() {
         >
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 mb-5">
-            <a href="/" className="text-xs text-white/30 hover:text-white/60 transition-colors duration-200"
-              style={{ fontFamily: "'DM Sans', sans-serif" }}>Home</a>
+            <Link href="/" className="text-xs text-white/30 hover:text-white/60 transition-colors duration-200"
+              style={{ fontFamily: "'DM Sans', sans-serif" }}>Home</Link>
             <span className="text-white/20 text-xs">/</span>
             <span className="text-xs" style={{ color: "#8B7FF5", fontFamily: "'DM Sans', sans-serif" }}>About</span>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 const navLinks = [
   { label: "Features",     href: "/features" },
@@ -65,7 +66,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16 sm:h-[72px]">
 
             {/* Logo */}
-            <a href="/" className="flex items-center gap-2.5 group shrink-0">
+            <Link href="/" className="flex items-center gap-2.5 group shrink-0">
               <div
                 className="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm transition-transform duration-300 group-hover:scale-105"
                 style={{ background: "linear-gradient(135deg, #5B4FE9 0%, #8B7FF5 100%)" }}
@@ -89,7 +90,7 @@ export default function Navbar() {
               >
                 Edu<span style={{ color: "#8B7FF5" }}>Jay</span>
               </span>
-            </a>
+            </Link>
 
             {/* Desktop Nav Links */}
             <div className="hidden md:flex items-center gap-1">
@@ -111,7 +112,7 @@ export default function Navbar() {
 
             {/* Desktop CTA */}
             <div className="hidden md:flex items-center gap-3">
-              <a
+              <Link
                 href="/sign-in"
                 className={`text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200 ${
                   isLight
@@ -121,8 +122,8 @@ export default function Navbar() {
                 style={{ fontFamily: "'DM Sans', sans-serif" }}
               >
                 Sign In
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/sign-up"
                 className="text-sm font-semibold px-5 py-2.5 rounded-xl text-white shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
                 style={{
@@ -131,7 +132,7 @@ export default function Navbar() {
                 }}
               >
                 Get Started Free
-              </a>
+              </Link>
             </div>
 
             {/* Mobile Hamburger */}
@@ -205,7 +206,7 @@ export default function Navbar() {
             ))}
 
             <div className="mt-3 pt-3 flex flex-col gap-2" style={{ borderTop: "1px solid rgba(0,0,0,0.06)" }}>
-              <a
+              <Link
                 href="/sign-in"
                 className="nav-item-enter px-4 py-3 text-sm font-medium text-gray-600 hover:text-[#5B4FE9] hover:bg-[#5B4FE9]/5 rounded-lg text-center transition-colors duration-200"
                 style={{
@@ -214,7 +215,7 @@ export default function Navbar() {
                 }}
               >
                 Sign In
-              </a>
+              </Link>
               <a
                 href="/sign-up"
                 className="nav-item-enter px-4 py-3 text-sm font-semibold text-white rounded-xl text-center shadow-md transition-all duration-300 hover:shadow-lg hover:shadow-[#5B4FE9]/20"

@@ -369,7 +369,7 @@ export function BursarVisual({ color = "#A855F7" }: { color?: string }) {
   );
 }
 
-export function RolesVisual({ color = "#F59E0B" }: { color?: string }) {
+export function RolesVisual() {
   const roles = [
     { label: "Admin",   desc: "Full school control",        icon: "🛡️", color: "#8B7FF5", perms: ["Manage all users", "View all reports", "Configure system"] },
     { label: "Teacher", desc: "Class & grade management",   icon: "📚", color: "#10B981", perms: ["Mark attendance", "Enter CA scores", "View timetable"] },

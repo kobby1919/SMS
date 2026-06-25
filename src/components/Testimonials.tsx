@@ -104,7 +104,7 @@ export default function Testimonials() {
               {/* Quote mark */}
               <div className="text-5xl leading-none font-serif select-none"
                 style={{ color: `${t.color}33`, fontFamily: "Georgia, serif", lineHeight: 0.8 }}>
-                "
+                &quot;
               </div>
 
               {/* Quote */}

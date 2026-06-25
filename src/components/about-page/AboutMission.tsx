@@ -47,7 +47,7 @@ export default function AboutMission() {
                 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
                 Across Ghana, school administrators are still managing attendance in notebooks,
                 computing grades in Excel, and chasing fees with paper receipts. It works —
-                until it doesn't. A missed absence alert, a calculation error at term end,
+                until it doesn&apos;t. A missed absence alert, a calculation error at term end,
                 a misplaced receipt. Small failures with real consequences.
               </p>
               <p className="text-base text-gray-500 leading-relaxed"
@@ -59,7 +59,7 @@ export default function AboutMission() {
               <p className="text-base text-gray-500 leading-relaxed"
                 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
                 EduJay is not a global product adapted for Ghana. It is built here, from scratch,
-                with Ghana's school structure, curriculum, and workflows at its core.
+                with Ghana&apos;s school structure, curriculum, and workflows at its core.
               </p>
             </div>
           </motion.div>

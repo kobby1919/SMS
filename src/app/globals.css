@@ -1,3 +1,7 @@
+/* ── FONT IMPORTS ──────────────────────────────────────────────────────────── */
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=cabinet-grotesk@400,500,600,700,800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,27 +13,26 @@
     margin-right: 0.5rem !important;
     padding-left: 0.5rem !important;
     padding-right: 0.5rem !important;
-    min-width: 0 !important; /* Permits the inner text to scale rather than block layout */
+    min-width: 0 !important;
   }
 
   /* 2. Make the text string scale perfectly without clipping or wrapping */
   .flex-1.flex.items-center.rounded-md.mx-4 span.text-xs {
-    font-size: 10px !important; /* Scales text neatly down for small devices */
+    font-size: 10px !important;
     white-space: nowrap !important;
     overflow: hidden !important;
-    text-overflow: ellipsis !important; /* Gracefully truncates if viewport gets absurdly narrow */
+    text-overflow: ellipsis !important;
     display: block !important;
     width: 100% !important;
     text-align: center !important;
   }
 
-  /* 3. Drop the window traffic lights down slightly so they match the text proportion */
+  /* 3. Drop the window traffic lights down slightly */
   .flex.items-center.gap-1\.5 > div {
     width: 8px !important;
     height: 8px !important;
   }
 }
-
 
 .react-calendar {
   width: 100% !important;
@@ -48,105 +51,3 @@
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-/* 
-.rbc-btn-group:first-child {
-  display: none !important;
-}
-
-.rbc-toolbar-label {
-  text-align: right !important;
-  padding: 0px 20px !important;
-}
-
-.rbc-btn-group:last-child {
-  font-size: 13px;
-}
-
-.rbc-btn-group:last-child button {
-  border: none !important;
-  background-color: #f1f0ff !important;
-  margin-left: 2px !important;
-}
-
-.rbc-toolbar button.rbc-active {
-  background-color: #dbdafe !important;
-  box-shadow: none !important;
-}
-
-.rbc-time-view {
-  border-color: #eee !important;
-}
-
-.rbc-time-header {
-  display: none !important;
-}
-
-.rbc-time-content {
-  border: none !important;
-}
-
-.rbc-time-gutter.rbc-time-column {
-  font-size: 12px !important;
-}
-
-.rbc-time-gutter.rbc-time-column .rbc-timeslot-group {
-  padding: 0px 20px !important;
-}
-
-.rbc-timeslot-group {
-  background-color: #f7fdff !important;
-}
-
-.rbc-day-slot {
-  font-size: 14px !important;
-}
-
-.rbc-event {
-  border: none !important;
-  color: black !important;
-  padding: 10px !important;
-  margin: 10px !important;
-  width: 99% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-}
-
-.rbc-event:nth-child(1) {
-  background-color: #e2f8ff !important;
-}
-
-.rbc-event:nth-child(2) {
-  background-color: #fefce8 !important;
-}
-
-.rbc-event:nth-child(3) {
-  background-color: #fdf2fb !important;
-}
-
-.rbc-event:nth-child(4) {
-  background-color: #e2f8ff !important;
-}
-
-.rbc-event:nth-child(6) {
-  background-color: #fefce8 !important;
-}
-
-.rbc-event:nth-child(7) {
-  background-color: #f2f1ff !important;
-}
-
-.rbc-event:nth-child(8) {
-  background-color: #fdf2fb !important;
-}
-
-.rbc-event-label {
-  color: gray !important;
-  margin-bottom: 4px !important;
-  display: block !important;
-}
-
-.rbc-event-content {
-  display: block !important;
-  font-weight: 600 !important;
-} */
