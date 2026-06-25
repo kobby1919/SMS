@@ -2,7 +2,7 @@
 
 // src/components/ParentForm.tsx
 
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState, useTransition } from "react";
@@ -26,7 +26,7 @@ const updateSchema = createSchema.partial().extend({
 });
 
 type CreateInputs = z.infer<typeof createSchema>;
-type UpdateInputs = z.infer<typeof updateSchema>;
+type ParentFormData = Partial<CreateInputs> & { id: string };
 
 // ─── Component ────────────────────────────────────────────────────────────────
 const ParentForm = ({
@@ -35,7 +35,7 @@ const ParentForm = ({
   onSuccess,
 }: {
   type: "create" | "update";
-  data?: any;
+  data?: ParentFormData;
   onSuccess?: () => void;
 }) => {
   const [apiError,  setApiError]  = useState<string | null>(null);
@@ -49,7 +49,7 @@ const ParentForm = ({
     handleSubmit,
     formState: { errors },
   } = useForm<CreateInputs>({
-    resolver: zodResolver(schema) as any,
+    resolver: zodResolver(schema) as Resolver<CreateInputs>,
     defaultValues: data
       ? {
           username: data.username ?? "",

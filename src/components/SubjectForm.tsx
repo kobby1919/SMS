@@ -14,13 +14,14 @@ const schema = z.object({
 });
 
 type Inputs  = z.infer<typeof schema>;
+type SubjectFormData = Partial<Inputs> & { id: number; teachers?: Teacher[] };
 type Teacher = { id: string; name: string; surname: string };
 
 const SubjectForm = ({
   type, data, onSuccess,
 }: {
   type: "create" | "update";
-  data?: any;
+  data?: SubjectFormData;
   onSuccess?: () => void;
 }) => {
   const [teachers,    setTeachers]    = useState<Teacher[]>([]);
@@ -62,12 +63,13 @@ const SubjectForm = ({
       if (type === "create") {
         await createSubject({ name: formData.name, teacherIds: selected });
       } else {
+        if (!data) throw new Error("Subject data is required for an update.");
         await updateSubject(data.id, { name: formData.name, teacherIds: selected });
       }
       setSuccess(true);
       setTimeout(() => { setSuccess(false); onSuccess?.(); }, 1200);
-    } catch (e: any) {
-      setApiError(e?.message ?? "Something went wrong.");
+    } catch (e: unknown) {
+      setApiError(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
       setSubmitting(false);
     }

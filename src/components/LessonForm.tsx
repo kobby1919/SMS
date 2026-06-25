@@ -24,6 +24,16 @@ type Inputs = z.infer<typeof schema>;
 type Subject = { id: number; name: string };
 type Class   = { id: number; name: string; grade: { level: string } };
 type Teacher = { id: string; name: string; surname: string; maxClasses: number };
+type LessonFormData = Partial<{
+  id: number;
+  name: string;
+  day: Inputs["day"];
+  startTime: string | Date;
+  endTime: string | Date;
+  subjectId: number;
+  classId: number;
+  teacherId: string;
+}>;
 
 // ─── Period presets ───────────────────────────────────────────────────────────
 const PERIOD_PRESETS = [
@@ -71,10 +81,9 @@ const LessonForm = ({
   onSuccess,
 }: {
   type: "create" | "update";
-  data?: any;
+  data?: LessonFormData;
   onSuccess?: () => void;
 }) => {
-  const [allSubjects,      setAllSubjects]      = useState<Subject[]>([]);
   const [teacherSubjects,  setTeacherSubjects]  = useState<Subject[]>([]);
   const [subjectsLoading,  setSubjectsLoading]  = useState(false);
   const [classes,          setClasses]          = useState<Class[]>([]);
@@ -140,7 +149,7 @@ const LessonForm = ({
       }
     };
     load();
-  }, []);
+  }, [data?.teacherId]);
 
   // ── When teacher changes: reload their subjects + reset subject field ──────
   useEffect(() => {
@@ -164,7 +173,7 @@ const LessonForm = ({
       })
       .catch(() => {})
       .finally(() => setSubjectsLoading(false));
-  }, [teacherId]);
+  }, [data?.teacherId, setValue, teacherId, type]);
 
   // ── Check teacher class count when teacher or class changes ───────────────
   useEffect(() => {
@@ -173,7 +182,7 @@ const LessonForm = ({
       .then((r) => r.json())
       .then((json) => setTeacherClassCount(json.count ?? 0))
       .catch(() => {});
-  }, [teacherId, classId]);
+  }, [classId, data?.id, teacherId]);
 
   const applyPreset = (start: string, end: string) => {
     setValue("startTime", start);

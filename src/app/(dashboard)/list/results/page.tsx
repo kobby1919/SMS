@@ -6,12 +6,12 @@
 import Pagination from "@/src/components/pagination";
 import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
-import { Filter, ArrowUpDown, ScrollText, TrendingUp, Award, CheckCircle2 } from "lucide-react";
-import FormModal from "@/src/components/FormModal";
+import { ScrollText, TrendingUp, Award, CheckCircle2 } from "lucide-react";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
-import { getGradeBandByGrade, TERM_LABELS, ordinal } from "@/src/lib/caGrades";
+import { getGradeBandByGrade, TERM_LABELS } from "@/src/lib/caGrades";
 import Link from "next/link";
+import type { Prisma, Term } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +27,7 @@ const ResultListPage = async ({
   const p = page ? parseInt(page) : 1;
 
   // ── Build CA query ────────────────────────────────────────────────────────
-  const where: any = { schoolId };
+  const where: Prisma.ContinuousAssessmentWhereInput = { schoolId };
 
   if (queryParams.search) {
     where.OR = [
@@ -38,7 +38,7 @@ const ResultListPage = async ({
   }
 
   if (queryParams.studentId) where.studentId = queryParams.studentId;
-  if (queryParams.term)       where.term       = queryParams.term;
+  if (queryParams.term)       where.term       = queryParams.term as Term;
   if (queryParams.year)       where.academicYear = queryParams.year;
 
   // Role scoping

@@ -41,12 +41,7 @@ const StudentListPage = async ({
     }
   }
 
-  // Get start of current month for "new this month"
-  const startOfMonth = new Date();
-  startOfMonth.setDate(1);
-  startOfMonth.setHours(0, 0, 0, 0);
-
-  const [students, count, totalClasses, newThisMonth] = await Promise.all([
+  const [students, count, totalClasses, boys, girls] = await Promise.all([
     prisma.student.findMany({
       where: query,
       include: {
@@ -60,9 +55,8 @@ const StudentListPage = async ({
     }),
     prisma.student.count({ where: query }),
     prisma.class.count({ where: { schoolId } }),
-    prisma.student.count({
-      where: { schoolId, createdAt: { gte: startOfMonth } },
-    }),
+    prisma.student.count({ where: { ...query, sex: "MALE" } }),
+    prisma.student.count({ where: { ...query, sex: "FEMALE" } }),
   ]);
 
   return (
@@ -97,8 +91,8 @@ const StudentListPage = async ({
         {[
           { label: "Total Students",  value: count,         icon: <Users size={16} />,    color: "bg-indigo-50 text-indigo-600"   },
           { label: "Active Classes",  value: totalClasses,  icon: <BookOpen size={16} />, color: "bg-amber-50 text-amber-600"    },
-          { label: "Boys",  value: await prisma.student.count({ where: { ...query, sex: "MALE" } }),   icon: <Users size={16} />, color: "bg-emerald-50 text-emerald-600" },
-          { label: "Girls", value: await prisma.student.count({ where: { ...query, sex: "FEMALE" } }), icon: <Plus size={16} />,  color: "bg-violet-50 text-violet-600"  },
+          { label: "Boys",  value: boys,  icon: <Users size={16} />, color: "bg-emerald-50 text-emerald-600" },
+          { label: "Girls", value: girls, icon: <Plus size={16} />,  color: "bg-violet-50 text-violet-600"  },
         ].map((stat) => (
           <div key={stat.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>

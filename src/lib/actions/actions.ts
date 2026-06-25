@@ -11,8 +11,14 @@ import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTag
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   assignmentFormSchema,
+  classCreateSchema,
+  classUpdateSchema,
   examFormSchema,
+  numericIdSchema,
   resultFormSchema,
+  stringIdActionSchema,
+  subjectCreateSchema,
+  subjectUpdateSchema,
 } from "@/src/lib/validation/academic";
 
 // ─── Auth guards ──────────────────────────────────────────────────────────────
@@ -32,6 +38,7 @@ async function getLessonInSchool(lessonId: number, schoolId: string) {
 // LESSON
 // ═══════════════════════════════════════════════════════════════════════════════
 export async function deleteLesson(id: number) {
+  ({ id } = parseActionInput(numericIdSchema, { id }));
   const { schoolId } = await requireAdmin();
   await prisma.lesson.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/lessons");
@@ -47,6 +54,7 @@ export async function createClass(data: {
   name: string; capacity: number; gradeId: number;
   section?: string; supervisorId?: string;
 }) {
+  data = parseActionInput(classCreateSchema, data);
   const { schoolId } = await requireAdmin();
   await prisma.class.create({ data: { ...data, schoolId } });
   revalidatePath("/list/classes");
@@ -58,6 +66,8 @@ export async function updateClass(id: number, data: {
   name?: string; capacity?: number; gradeId?: number;
   section?: string; supervisorId?: string | null;
 }) {
+  ({ id } = parseActionInput(numericIdSchema, { id }));
+  data = parseActionInput(classUpdateSchema, data);
   const { schoolId } = await requireAdmin();
   const existing = await prisma.class.findFirst({ where: { id, schoolId } });
   assertSameSchool(existing, schoolId);
@@ -69,6 +79,7 @@ export async function updateClass(id: number, data: {
 }
 
 export async function deleteClass(id: number) {
+  ({ id } = parseActionInput(numericIdSchema, { id }));
   const { schoolId } = await requireAdmin();
   await prisma.class.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/classes");
@@ -83,6 +94,7 @@ export async function deleteClass(id: number) {
 // SUBJECT
 // ═══════════════════════════════════════════════════════════════════════════════
 export async function createSubject(data: { name: string; teacherIds?: string[] }) {
+  data = parseActionInput(subjectCreateSchema, data);
   const { schoolId } = await requireAdmin();
   await prisma.subject.create({
     data: {
@@ -99,6 +111,8 @@ export async function createSubject(data: { name: string; teacherIds?: string[] 
 }
 
 export async function updateSubject(id: number, data: { name?: string; teacherIds?: string[] }) {
+  ({ id } = parseActionInput(numericIdSchema, { id }));
+  data = parseActionInput(subjectUpdateSchema, data);
   const { schoolId } = await requireAdmin();
   const existing = await prisma.subject.findFirst({ where: { id, schoolId } });
   assertSameSchool(existing, schoolId);
@@ -118,6 +132,7 @@ export async function updateSubject(id: number, data: { name?: string; teacherId
 }
 
 export async function deleteSubject(id: number) {
+  ({ id } = parseActionInput(numericIdSchema, { id }));
   const { schoolId } = await requireAdmin();
   await prisma.subject.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/subjects");
@@ -131,12 +146,14 @@ export async function deleteSubject(id: number) {
 // PARENT / TEACHER / STUDENT
 // ═══════════════════════════════════════════════════════════════════════════════
 export async function deleteParent(id: string) {
+  ({ id } = parseActionInput(stringIdActionSchema, { id }));
   const { schoolId } = await requireAdmin();
   await prisma.parent.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/parents");
 }
 
 export async function deleteTeacher(id: string) {
+  ({ id } = parseActionInput(stringIdActionSchema, { id }));
   const { schoolId } = await requireAdmin();
   await prisma.teacher.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/teachers");
@@ -148,6 +165,7 @@ export async function deleteTeacher(id: string) {
 }
 
 export async function deleteStudent(id: string) {
+  ({ id } = parseActionInput(stringIdActionSchema, { id }));
   const { schoolId } = await requireAdmin();
   await prisma.student.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/students");
@@ -205,6 +223,7 @@ export async function createExam(data: ExamFormData): Promise<void> {
 
   revalidatePath("/list/exams");
   revalidatePath("/list/announcements");
+  revalidateDashboard(ctx.schoolId);
 }
 
 export async function updateExam(data: ExamFormData): Promise<void> {
@@ -260,12 +279,15 @@ export async function updateExam(data: ExamFormData): Promise<void> {
 
   revalidatePath("/list/exams");
   revalidatePath("/list/announcements");
+  revalidateDashboard(ctx.schoolId);
 }
 
 export async function deleteExam(id: number): Promise<void> {
+  ({ id } = parseActionInput(numericIdSchema, { id }));
   const { schoolId } = await requireAdminOrTeacher();
   await prisma.exam.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/exams");
+  revalidateDashboard(schoolId);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -317,22 +339,24 @@ export async function createAssignment(data: AssignmentFormData): Promise<void> 
 
   revalidatePath("/list/assignments");
   revalidatePath("/list/announcements");
+  revalidateDashboard(ctx.schoolId);
 }
 
 export async function updateAssignment(data: AssignmentFormData): Promise<void> {
   if (!data.id) throw new Error("Assignment ID required for update.");
+  const parsed = parseActionInput(assignmentFormSchema, data);
   const ctx = await requireAdminOrTeacher();
   const existing = await prisma.assignment.findFirst({ where: { id: data.id, schoolId: ctx.schoolId } });
   requireResourceAccess(existing, ctx);
-  await getLessonInSchool(data.lessonId, ctx.schoolId);
+  await getLessonInSchool(parsed.lessonId, ctx.schoolId);
 
   const assignment = await prisma.assignment.update({
     where: { id: data.id },
     data: {
-      title:     data.title,
-      lessonId:  data.lessonId,
-      startDate: new Date(data.startDate),
-      dueDate:   new Date(data.dueDate),
+      title:     parsed.title,
+      lessonId:  parsed.lessonId,
+      startDate: new Date(parsed.startDate),
+      dueDate:   new Date(parsed.dueDate),
     },
     include: {
       lesson: {
@@ -370,12 +394,15 @@ export async function updateAssignment(data: AssignmentFormData): Promise<void> 
 
   revalidatePath("/list/assignments");
   revalidatePath("/list/announcements");
+  revalidateDashboard(ctx.schoolId);
 }
 
 export async function deleteAssignment(id: number): Promise<void> {
+  ({ id } = parseActionInput(numericIdSchema, { id }));
   const { schoolId } = await requireAdminOrTeacher();
   await prisma.assignment.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/assignments");
+  revalidateDashboard(schoolId);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -408,28 +435,33 @@ export async function createResult(data: ResultFormData): Promise<void> {
     },
   });
   revalidatePath("/list/results");
+  revalidateDashboard(ctx.schoolId);
 }
 
 export async function updateResult(data: ResultFormData): Promise<void> {
   const ctx = await requireAdminOrTeacher();
   if (!data.id) throw new Error("Result ID required for update.");
+  const parsed = parseActionInput(resultFormSchema, data);
   const existing = await prisma.result.findFirst({ where: { id: data.id, schoolId: ctx.schoolId } });
   requireResourceAccess(existing, ctx);
 
   await prisma.result.update({
     where: { id: data.id },
     data: {
-      score:        data.score,
-      studentId:    data.studentId,
-      examId:       data.examId       ?? null,
-      assignmentId: data.assignmentId ?? null,
+      score:        parsed.score,
+      studentId:    parsed.studentId,
+      examId:       parsed.examId       ?? null,
+      assignmentId: parsed.assignmentId ?? null,
     },
   });
   revalidatePath("/list/results");
+  revalidateDashboard(ctx.schoolId);
 }
 
 export async function deleteResult(id: number): Promise<void> {
+  ({ id } = parseActionInput(numericIdSchema, { id }));
   const { schoolId } = await requireAdminOrTeacher();
   await prisma.result.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/results");
+  revalidateDashboard(schoolId);
 }

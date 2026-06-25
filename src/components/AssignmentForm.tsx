@@ -31,18 +31,26 @@ type Lesson = {
   className:   string;
   teacherName: string;
 };
+type AssignmentFormData = Partial<{
+  id: number;
+  title: string;
+  lessonId: number;
+  lesson: { id: number };
+  startDate: string | Date;
+  dueDate: string | Date;
+}>;
 
 const DAY_ORDER: Record<string, number> = {
   MONDAY: 1, TUESDAY: 2, WEDNESDAY: 3, THURSDAY: 4, FRIDAY: 5,
 };
 
-const toDateInput = (val: any): string => {
+const toDateInput = (val: string | Date | null | undefined): string => {
   if (!val) return "";
   try { return new Date(val).toISOString().split("T")[0]; }
   catch { return ""; }
 };
 
-const extractLessonId = (data: any): string => {
+const extractLessonId = (data?: AssignmentFormData): string => {
   if (!data) return "";
   if (data.lessonId) return String(data.lessonId);
   if (data.lesson?.id) return String(data.lesson.id);
@@ -55,7 +63,7 @@ const AssignmentForm = ({
   onSuccess,
 }: {
   type:       "create" | "update";
-  data?:      any;
+  data?:      AssignmentFormData;
   onSuccess?: () => void;
 }) => {
   const [lessons,    setLessons]    = useState<Lesson[]>([]);
@@ -161,8 +169,8 @@ const AssignmentForm = ({
       else                   await updateAssignment(payload);
       setSuccess(true);
       setTimeout(() => { setSuccess(false); onSuccess?.(); }, 1200);
-    } catch (e: any) {
-      setApiError(e?.message ?? "Something went wrong.");
+    } catch (e: unknown) {
+      setApiError(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
       setSubmitting(false);
     }

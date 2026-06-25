@@ -111,14 +111,6 @@ const ExamListPage = async ({
 
   const totalCount = activeTab === "upcoming" ? upcomingCount : pastCount;
 
-  // Classes for filter (admin/teacher only)
-  const classes = role === "admin" || role === "teacher"
-    ? await prisma.class.findMany({
-        select:  { id: true, name: true },
-        orderBy: { name: "asc" },
-      })
-    : [];
-
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
 

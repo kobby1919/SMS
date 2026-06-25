@@ -3,7 +3,7 @@
 // src/components/StudentForm.tsx
 
 import { useEffect, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import InputField from "./InputField";
@@ -27,7 +27,7 @@ const createSchema = z.object({
   sex:       z.enum(["MALE", "FEMALE"]),
   classId:   z.coerce.number().min(1, "Class is required"),
   parentId:  z.string().min(1, "Parent is required"),
-  img:       z.any().optional(),
+  img:       z.custom<FileList>().optional(),
 });
 
 const updateSchema = z.object({
@@ -40,10 +40,11 @@ const updateSchema = z.object({
   sex:       z.enum(["MALE", "FEMALE"]),
   classId:   z.coerce.number().min(1, "Class is required"),
   parentId:  z.string().min(1, "Parent is required"),
-  img:       z.any().optional(),
+  img:       z.custom<FileList>().optional(),
 });
 
 type CreateInputs = z.infer<typeof createSchema>;
+type StudentFormData = Partial<CreateInputs> & { id: string };
 
 // ─── Component ────────────────────────────────────────────────────────────────
 const StudentForm = ({
@@ -52,7 +53,7 @@ const StudentForm = ({
   onSuccess,
 }: {
   type:       "create" | "update";
-  data?:      any;
+  data?:      StudentFormData;
   onSuccess?: () => void;
 }) => {
   const [classes,   setClasses]   = useState<ClassOption[]>([]);
@@ -69,7 +70,7 @@ const StudentForm = ({
     handleSubmit,
     formState: { errors },
   } = useForm<CreateInputs>({
-    resolver: zodResolver(schema) as any,
+    resolver: zodResolver(schema) as Resolver<CreateInputs>,
     defaultValues: data
       ? {
           name:      data.name      ?? "",
@@ -78,7 +79,7 @@ const StudentForm = ({
           address:   data.address   ?? "",
           bloodType: data.bloodType ?? "",
           sex:       data.sex       ?? "MALE",
-          classId:   data.classId   ?? "",
+          classId:   data.classId,
           parentId:  data.parentId  ?? "",
         }
       : { sex: "MALE" },
@@ -133,7 +134,7 @@ const StudentForm = ({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit as any)} className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit(onSubmit as SubmitHandler<CreateInputs>)} className="flex flex-col gap-6">
       <h1 className="text-2xl font-black text-gray-800 tracking-tight">
         {type === "create" ? "Enrol New Student" : "Update Student"}
       </h1>

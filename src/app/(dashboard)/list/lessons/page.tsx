@@ -1,7 +1,7 @@
 import Pagination from "@/src/components/pagination";
 import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
-import { Filter, ArrowUpDown, Plus, BookOpen } from "lucide-react";
+import { Filter, ArrowUpDown, BookOpen } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
@@ -13,8 +13,7 @@ const LessonListPage = async ({
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
   // 1. Fetch Auth and Role
-  const { userId, role, schoolId } = await requirePageSession();
-  const currentUserId = userId;
+  const { role, schoolId } = await requirePageSession();
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 

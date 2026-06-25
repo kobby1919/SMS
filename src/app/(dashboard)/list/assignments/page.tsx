@@ -14,6 +14,7 @@ import {
 import FormModal from "@/src/components/FormModal";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import type { Prisma } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +47,7 @@ const AssignmentListPage = async ({
   const activeTab = tab === "past" ? "past" : "upcoming";
   const now = new Date();
 
-  const lessonQuery: any = {};
+  const lessonQuery: Prisma.LessonWhereInput = {};
 
   if (queryParams.search) {
     lessonQuery.subject = {
@@ -76,6 +77,7 @@ const AssignmentListPage = async ({
     ...baseWhere,
     dueDate: activeTab === "upcoming" ? { gte: now } : { lt: now },
   };
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 86400000);
 
   const [assignments, upcomingCount, pastCount, overdueCount] =
     await Promise.all([
@@ -105,7 +107,7 @@ const AssignmentListPage = async ({
       prisma.assignment.count({
         where: {
           ...baseWhere,
-          dueDate: { lt: now, gte: new Date(Date.now() - 30 * 86400000) },
+          dueDate: { lt: now, gte: thirtyDaysAgo },
         },
       }),
     ]);

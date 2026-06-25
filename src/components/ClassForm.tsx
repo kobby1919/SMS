@@ -3,7 +3,7 @@
 // src/components/ClassForm.tsx
 
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
@@ -21,6 +21,7 @@ type Inputs = z.infer<typeof schema>;
 
 type Grade = { id: number; level: string; order: number };
 type Teacher = { id: string; name: string; surname: string };
+type ClassFormData = Partial<Inputs> & { id: number };
 
 const ClassForm = ({
   type,
@@ -28,7 +29,7 @@ const ClassForm = ({
   onSuccess,
 }: {
   type: "create" | "update";
-  data?: any;
+  data?: ClassFormData;
   onSuccess?: () => void;
 }) => {
   const [grades, setGrades] = useState<Grade[]>([]);
@@ -43,12 +44,12 @@ const ClassForm = ({
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>({
-    resolver: zodResolver(schema) as any,
+    resolver: zodResolver(schema) as Resolver<Inputs>,
     defaultValues: data
       ? {
           name: data.name ?? "",
           capacity: data.capacity ?? 30,
-          gradeId: data.gradeId ?? "",
+          gradeId: data.gradeId,
           section: data.section ?? "",
           supervisorId: data.supervisorId ?? "",
         }
@@ -88,6 +89,7 @@ const ClassForm = ({
       if (type === "create") {
         await createClass(payload);
       } else {
+        if (!data) throw new Error("Class data is required for an update.");
         await updateClass(data.id, payload);
       }
       setSuccess(true);
@@ -95,8 +97,8 @@ const ClassForm = ({
         setSuccess(false);
         onSuccess?.();
       }, 1200);
-    } catch (e: any) {
-      setApiError(e?.message ?? "Something went wrong.");
+    } catch (e: unknown) {
+      setApiError(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
       setSubmitting(false);
     }
@@ -112,7 +114,7 @@ const ClassForm = ({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit(onSubmit as SubmitHandler<Inputs>)} className="flex flex-col gap-6">
       <h1 className="text-2xl font-black text-gray-800 tracking-tight">
         {type === "create" ? "Add New Class" : "Update Class"}
       </h1>

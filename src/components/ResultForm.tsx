@@ -3,7 +3,7 @@
 // src/components/ResultForm.tsx
 
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { AlertCircle, CheckCircle2, Loader2, TrendingUp } from "lucide-react";
@@ -28,6 +28,14 @@ type ExamOption = {
   id: number; title: string; type: "exam" | "assignment";
   subjectName: string; className: string; date: string;
 };
+type AssessmentPayload = Omit<ExamOption, "type">;
+type ResultFormData = Partial<{
+  id: number;
+  studentId: string;
+  examId: number;
+  assignmentId: number;
+  score: number;
+}>;
 
 // ─── Grade band ───────────────────────────────────────────────────────────────
 const getGrade = (score: number) => {
@@ -45,7 +53,7 @@ const ResultForm = ({
   onSuccess,
 }: {
   type:       "create" | "update";
-  data?:      any;
+  data?:      ResultFormData;
   onSuccess?: () => void;
 }) => {
   const [students,    setStudents]    = useState<Student[]>([]);
@@ -67,12 +75,12 @@ const ResultForm = ({
     watch,
     formState: { errors },
   } = useForm<Inputs>({
-    resolver: zodResolver(schema) as any,
+    resolver: zodResolver(schema) as Resolver<Inputs>,
     defaultValues: {
       studentId:      data?.studentId     ?? "",
       assessmentId:   initId,
       assessmentType: initType,
-      score:          data?.score         ?? (undefined as any),
+      score:          data?.score,
     },
   });
 
@@ -96,8 +104,8 @@ const ResultForm = ({
         ]);
         setStudents(stus);
         setAssessments([
-          ...exams.map((e: any)   => ({ ...e, type: "exam"       as const })),
-          ...assigns.map((a: any) => ({ ...a, type: "assignment" as const })),
+          ...(exams as AssessmentPayload[]).map((exam) => ({ ...exam, type: "exam" as const })),
+          ...(assigns as AssessmentPayload[]).map((assignment) => ({ ...assignment, type: "assignment" as const })),
         ]);
       } catch {
         setApiError("Failed to load form data. Please refresh.");
@@ -140,8 +148,8 @@ const ResultForm = ({
 
       setSuccess(true);
       setTimeout(() => { setSuccess(false); onSuccess?.(); }, 1200);
-    } catch (e: any) {
-      setApiError(e?.message ?? "Something went wrong.");
+    } catch (e: unknown) {
+      setApiError(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
       setSubmitting(false);
     }

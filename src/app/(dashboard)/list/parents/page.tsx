@@ -13,7 +13,7 @@ const ParentListPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { userId, role, schoolId } = await requirePageSession();
+  const { role, schoolId } = await requirePageSession();
 
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;

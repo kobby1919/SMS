@@ -31,6 +31,14 @@ type Lesson = {
   className:   string;
   teacherName: string;
 };
+type ExamFormData = Partial<{
+  id: number;
+  title: string;
+  lessonId: number;
+  lesson: { id: number };
+  startTime: string | Date;
+  endTime: string | Date;
+}>;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const DAY_ORDER: Record<string, number> = {
@@ -40,10 +48,10 @@ const DAY_ORDER: Record<string, number> = {
 const toISO = (date: string, time: string): string =>
   new Date(`${date}T${time}:00`).toISOString();
 
-const fromDate = (iso: string) =>
+const fromDate = (iso: string | Date) =>
   new Date(iso).toISOString().split("T")[0];
 
-const fromTime = (iso: string) => {
+const fromTime = (iso: string | Date) => {
   const d = new Date(iso);
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 };
@@ -55,7 +63,7 @@ const ExamForm = ({
   onSuccess,
 }: {
   type:       "create" | "update";
-  data?:      any;
+  data?:      ExamFormData;
   onSuccess?: () => void;
 }) => {
   const [lessons,    setLessons]    = useState<Lesson[]>([]);
@@ -128,8 +136,8 @@ const ExamForm = ({
 
       setSuccess(true);
       setTimeout(() => { setSuccess(false); onSuccess?.(); }, 1200);
-    } catch (e: any) {
-      setApiError(e?.message ?? "Something went wrong.");
+    } catch (e: unknown) {
+      setApiError(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
       setSubmitting(false);
     }
