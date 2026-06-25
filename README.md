@@ -16,6 +16,18 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Onboarding Email Delivery
+
+School onboarding invites are sent through a provider-ready email service. In local
+development, invites are logged to the server console when no provider key is set.
+For production email delivery, configure:
+
+```bash
+RESEND_API_KEY=...
+EMAIL_FROM="Edujay <onboarding@yourdomain.com>"
+NEXT_PUBLIC_APP_URL="https://your-edujay-domain.com"
+```
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

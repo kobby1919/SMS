@@ -55,7 +55,13 @@ export default function OnboardingRequestsClient({
       if (result.invite) {
         const url = `${window.location.origin}${result.invite.invitePath}`;
         setInviteUrl(url);
-        setBanner(`School created for ${result.invite.schoolName}. Send this invite to the first admin.`);
+        const delivery =
+          result.emailProvider === "resend"
+            ? "The invite email was sent."
+            : "Email delivery is in console mode, so copy or send the invite manually.";
+        setBanner(
+          `School created for ${result.invite.schoolName}. ${result.emailWarning ?? delivery}`,
+        );
         return;
       }
 

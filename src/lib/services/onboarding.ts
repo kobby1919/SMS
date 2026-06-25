@@ -10,6 +10,7 @@ export type CreatedSchoolInvite = {
   schoolId: string;
   schoolName: string;
   inviteId: string;
+  email: string;
   inviteToken: string;
   invitePath: string;
   expiresAt: Date;
@@ -235,6 +236,7 @@ export async function approveWaitlistEntry(
     schoolId: result.school.id,
     schoolName: result.school.name,
     inviteId: result.invite.id,
+    email: request.email.toLowerCase(),
     inviteToken,
     invitePath: `/onboarding/accept?token=${encodeURIComponent(inviteToken)}`,
     expiresAt: result.invite.expiresAt,

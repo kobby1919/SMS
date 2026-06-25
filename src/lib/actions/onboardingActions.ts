@@ -15,9 +15,13 @@ import {
   schoolProfileSetupSchema,
 } from "@/src/lib/validation/onboarding";
 import { parseActionInput } from "@/src/lib/validation/parse";
+import {
+  appBaseUrl,
+  sendFirstAdminInviteEmail,
+} from "@/src/lib/services/notifications";
 
 export type OnboardingActionResult =
-  | { ok: true; invite?: CreatedSchoolInvite }
+  | { ok: true; invite?: CreatedSchoolInvite; emailProvider?: string; emailWarning?: string }
   | { ok: false; message: string };
 
 export async function approveWaitlistEntryAction(
@@ -27,8 +31,20 @@ export async function approveWaitlistEntryAction(
     const context = await requireRole(["platform_admin"]);
     const data = parseActionInput(approveWaitlistEntrySchema, input);
     const invite = await approveWaitlistEntry(data, context);
+    const inviteUrl = `${appBaseUrl()}${invite.invitePath}`;
+    const email = await sendFirstAdminInviteEmail({
+      to: invite.email,
+      schoolName: invite.schoolName,
+      inviteUrl,
+      expiresAt: invite.expiresAt,
+    });
     revalidatePath("/platform/onboarding");
-    return { ok: true, invite };
+    return {
+      ok: true,
+      invite,
+      emailProvider: email.provider,
+      emailWarning: email.ok ? undefined : email.message,
+    };
   } catch (error) {
     return {
       ok: false,
