@@ -34,12 +34,12 @@ export async function enqueueFinanceJob(input: EnqueueFinanceJobInput) {
   return prisma.financeJob.create({ data });
 }
 
-export async function claimNextFinanceJob(workerId: string) {
+export async function claimNextFinanceJob(workerId: string, types?: FinanceJobType[]) {
   const job = await prisma.financeJob.findFirst({
     where: {
       status: "PENDING",
       runAfter: { lte: new Date() },
-      attempts: { lt: 3 },
+      type: types?.length ? { in: types } : undefined,
     },
     orderBy: [{ runAfter: "asc" }, { createdAt: "asc" }],
   });
