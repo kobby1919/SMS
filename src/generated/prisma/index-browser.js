@@ -461,6 +461,40 @@ exports.Prisma.FinanceAuditLogScalarFieldEnum = {
   schoolId: 'schoolId'
 };
 
+exports.Prisma.FinanceJobScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  status: 'status',
+  payload: 'payload',
+  idempotencyKey: 'idempotencyKey',
+  attempts: 'attempts',
+  maxAttempts: 'maxAttempts',
+  runAfter: 'runAfter',
+  lockedAt: 'lockedAt',
+  lockedBy: 'lockedBy',
+  lastError: 'lastError',
+  completedAt: 'completedAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId'
+};
+
+exports.Prisma.PaymentWebhookEventScalarFieldEnum = {
+  id: 'id',
+  provider: 'provider',
+  providerEventId: 'providerEventId',
+  eventType: 'eventType',
+  status: 'status',
+  payload: 'payload',
+  signature: 'signature',
+  receivedAt: 'receivedAt',
+  processedAt: 'processedAt',
+  lastError: 'lastError',
+  schoolId: 'schoolId',
+  paymentId: 'paymentId'
+};
+
 exports.Prisma.RateLimitBucketScalarFieldEnum = {
   key: 'key',
   count: 'count',
@@ -631,6 +665,40 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   DISCOUNT_REMOVED: 'DISCOUNT_REMOVED'
 };
 
+exports.FinanceJobType = exports.$Enums.FinanceJobType = {
+  GENERATE_BILLS: 'GENERATE_BILLS',
+  GENERATE_RECEIPT_PDF: 'GENERATE_RECEIPT_PDF',
+  GENERATE_DAILY_REPORT: 'GENERATE_DAILY_REPORT',
+  SEND_PAYMENT_RECEIPT: 'SEND_PAYMENT_RECEIPT',
+  SEND_PAYMENT_REMINDER: 'SEND_PAYMENT_REMINDER',
+  RECOMPUTE_FINANCE_SUMMARY: 'RECOMPUTE_FINANCE_SUMMARY',
+  PROCESS_PAYMENT_WEBHOOK: 'PROCESS_PAYMENT_WEBHOOK'
+};
+
+exports.JobStatus = exports.$Enums.JobStatus = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.PaymentProvider = exports.$Enums.PaymentProvider = {
+  PAYSTACK: 'PAYSTACK',
+  STRIPE: 'STRIPE',
+  MANUAL: 'MANUAL',
+  OTHER: 'OTHER'
+};
+
+exports.WebhookEventStatus = exports.$Enums.WebhookEventStatus = {
+  RECEIVED: 'RECEIVED',
+  VERIFIED: 'VERIFIED',
+  PROCESSING: 'PROCESSING',
+  PROCESSED: 'PROCESSED',
+  FAILED: 'FAILED',
+  IGNORED: 'IGNORED'
+};
+
 exports.WaitlistRole = exports.$Enums.WaitlistRole = {
   HEADMASTER: 'HEADMASTER',
   ADMINISTRATOR: 'ADMINISTRATOR',
@@ -694,6 +762,8 @@ exports.Prisma.ModelName = {
   Discount: 'Discount',
   ReceiptCounter: 'ReceiptCounter',
   FinanceAuditLog: 'FinanceAuditLog',
+  FinanceJob: 'FinanceJob',
+  PaymentWebhookEvent: 'PaymentWebhookEvent',
   RateLimitBucket: 'RateLimitBucket',
   WaitlistEntry: 'WaitlistEntry',
   SchoolInvite: 'SchoolInvite',

@@ -141,6 +141,40 @@ enum OnboardingAuditAction {
   ONBOARDING_COMPLETED
 }
 
+enum FinanceJobType {
+  GENERATE_BILLS
+  GENERATE_RECEIPT_PDF
+  GENERATE_DAILY_REPORT
+  SEND_PAYMENT_RECEIPT
+  SEND_PAYMENT_REMINDER
+  RECOMPUTE_FINANCE_SUMMARY
+  PROCESS_PAYMENT_WEBHOOK
+}
+
+enum JobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum PaymentProvider {
+  PAYSTACK
+  STRIPE
+  MANUAL
+  OTHER
+}
+
+enum WebhookEventStatus {
+  RECEIVED
+  VERIFIED
+  PROCESSING
+  PROCESSED
+  FAILED
+  IGNORED
+}
+
 // ─── EXISTING MODELS ─────────────────────────────────────────────────────────
 
 model School {
@@ -185,6 +219,8 @@ model School {
   invites               SchoolInvite[]
   waitlistEntries        WaitlistEntry[]
   onboardingAuditLogs    OnboardingAuditLog[]
+  financeJobs            FinanceJob[]
+  paymentWebhookEvents   PaymentWebhookEvent[]
 }
 
 model Admin {
@@ -744,7 +780,8 @@ model Payment {
   recordedBy String
   createdAt  DateTime @default(now())
 
-  reversal PaymentReversal?
+  reversal      PaymentReversal?
+  webhookEvents PaymentWebhookEvent[]
 
   @@unique([schoolId, receiptNumber])
   @@index([schoolId, paymentDate])
@@ -835,6 +872,53 @@ model FinanceAuditLog {
 // Collected before any school signs up, so there's nothing to scope to.
 
 // Shared rate-limit state. Tenant/user/IP scope is encoded in the key.
+model FinanceJob {
+  id             String         @id @default(cuid())
+  type           FinanceJobType
+  status         JobStatus      @default(PENDING)
+  payload        Json
+  idempotencyKey String?        @unique
+  attempts       Int            @default(0)
+  maxAttempts    Int            @default(3)
+  runAfter       DateTime       @default(now())
+  lockedAt       DateTime?
+  lockedBy       String?
+  lastError      String?
+  completedAt    DateTime?
+  createdBy      String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  @@index([schoolId, status, runAfter])
+  @@index([type, status])
+}
+
+model PaymentWebhookEvent {
+  id              String             @id @default(cuid())
+  provider        PaymentProvider
+  providerEventId String
+  eventType       String
+  status          WebhookEventStatus @default(RECEIVED)
+  payload         Json
+  signature       String?
+  receivedAt      DateTime           @default(now())
+  processedAt     DateTime?
+  lastError       String?
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id])
+
+  paymentId Int?
+  payment   Payment? @relation(fields: [paymentId], references: [id])
+
+  @@unique([provider, providerEventId])
+  @@index([schoolId, status, receivedAt])
+  @@index([provider, status])
+}
+
 model RateLimitBucket {
   key       String   @id
   count     Int

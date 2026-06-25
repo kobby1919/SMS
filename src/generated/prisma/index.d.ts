@@ -159,6 +159,16 @@ export type ReceiptCounter = $Result.DefaultSelection<Prisma.$ReceiptCounterPayl
  */
 export type FinanceAuditLog = $Result.DefaultSelection<Prisma.$FinanceAuditLogPayload>
 /**
+ * Model FinanceJob
+ * 
+ */
+export type FinanceJob = $Result.DefaultSelection<Prisma.$FinanceJobPayload>
+/**
+ * Model PaymentWebhookEvent
+ * 
+ */
+export type PaymentWebhookEvent = $Result.DefaultSelection<Prisma.$PaymentWebhookEventPayload>
+/**
  * Model RateLimitBucket
  * 
  */
@@ -365,6 +375,52 @@ export const OnboardingAuditAction: {
 
 export type OnboardingAuditAction = (typeof OnboardingAuditAction)[keyof typeof OnboardingAuditAction]
 
+
+export const FinanceJobType: {
+  GENERATE_BILLS: 'GENERATE_BILLS',
+  GENERATE_RECEIPT_PDF: 'GENERATE_RECEIPT_PDF',
+  GENERATE_DAILY_REPORT: 'GENERATE_DAILY_REPORT',
+  SEND_PAYMENT_RECEIPT: 'SEND_PAYMENT_RECEIPT',
+  SEND_PAYMENT_REMINDER: 'SEND_PAYMENT_REMINDER',
+  RECOMPUTE_FINANCE_SUMMARY: 'RECOMPUTE_FINANCE_SUMMARY',
+  PROCESS_PAYMENT_WEBHOOK: 'PROCESS_PAYMENT_WEBHOOK'
+};
+
+export type FinanceJobType = (typeof FinanceJobType)[keyof typeof FinanceJobType]
+
+
+export const JobStatus: {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+};
+
+export type JobStatus = (typeof JobStatus)[keyof typeof JobStatus]
+
+
+export const PaymentProvider: {
+  PAYSTACK: 'PAYSTACK',
+  STRIPE: 'STRIPE',
+  MANUAL: 'MANUAL',
+  OTHER: 'OTHER'
+};
+
+export type PaymentProvider = (typeof PaymentProvider)[keyof typeof PaymentProvider]
+
+
+export const WebhookEventStatus: {
+  RECEIVED: 'RECEIVED',
+  VERIFIED: 'VERIFIED',
+  PROCESSING: 'PROCESSING',
+  PROCESSED: 'PROCESSED',
+  FAILED: 'FAILED',
+  IGNORED: 'IGNORED'
+};
+
+export type WebhookEventStatus = (typeof WebhookEventStatus)[keyof typeof WebhookEventStatus]
+
 }
 
 export type UserSex = $Enums.UserSex
@@ -434,6 +490,22 @@ export const SchoolInviteRole: typeof $Enums.SchoolInviteRole
 export type OnboardingAuditAction = $Enums.OnboardingAuditAction
 
 export const OnboardingAuditAction: typeof $Enums.OnboardingAuditAction
+
+export type FinanceJobType = $Enums.FinanceJobType
+
+export const FinanceJobType: typeof $Enums.FinanceJobType
+
+export type JobStatus = $Enums.JobStatus
+
+export const JobStatus: typeof $Enums.JobStatus
+
+export type PaymentProvider = $Enums.PaymentProvider
+
+export const PaymentProvider: typeof $Enums.PaymentProvider
+
+export type WebhookEventStatus = $Enums.WebhookEventStatus
+
+export const WebhookEventStatus: typeof $Enums.WebhookEventStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -845,6 +917,26 @@ export class PrismaClient<
     * ```
     */
   get financeAuditLog(): Prisma.FinanceAuditLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.financeJob`: Exposes CRUD operations for the **FinanceJob** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more FinanceJobs
+    * const financeJobs = await prisma.financeJob.findMany()
+    * ```
+    */
+  get financeJob(): Prisma.FinanceJobDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.paymentWebhookEvent`: Exposes CRUD operations for the **PaymentWebhookEvent** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PaymentWebhookEvents
+    * const paymentWebhookEvents = await prisma.paymentWebhookEvent.findMany()
+    * ```
+    */
+  get paymentWebhookEvent(): Prisma.PaymentWebhookEventDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.rateLimitBucket`: Exposes CRUD operations for the **RateLimitBucket** model.
@@ -1348,6 +1440,8 @@ export namespace Prisma {
     Discount: 'Discount',
     ReceiptCounter: 'ReceiptCounter',
     FinanceAuditLog: 'FinanceAuditLog',
+    FinanceJob: 'FinanceJob',
+    PaymentWebhookEvent: 'PaymentWebhookEvent',
     RateLimitBucket: 'RateLimitBucket',
     WaitlistEntry: 'WaitlistEntry',
     SchoolInvite: 'SchoolInvite',
@@ -1367,7 +1461,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "result" | "attendance" | "event" | "announcement" | "cAConfig" | "continuousAssessment" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
+      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "result" | "attendance" | "event" | "announcement" | "cAConfig" | "continuousAssessment" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3517,6 +3611,154 @@ export namespace Prisma {
           }
         }
       }
+      FinanceJob: {
+        payload: Prisma.$FinanceJobPayload<ExtArgs>
+        fields: Prisma.FinanceJobFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FinanceJobFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceJobPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FinanceJobFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceJobPayload>
+          }
+          findFirst: {
+            args: Prisma.FinanceJobFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceJobPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FinanceJobFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceJobPayload>
+          }
+          findMany: {
+            args: Prisma.FinanceJobFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceJobPayload>[]
+          }
+          create: {
+            args: Prisma.FinanceJobCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceJobPayload>
+          }
+          createMany: {
+            args: Prisma.FinanceJobCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FinanceJobCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceJobPayload>[]
+          }
+          delete: {
+            args: Prisma.FinanceJobDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceJobPayload>
+          }
+          update: {
+            args: Prisma.FinanceJobUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceJobPayload>
+          }
+          deleteMany: {
+            args: Prisma.FinanceJobDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FinanceJobUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.FinanceJobUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceJobPayload>[]
+          }
+          upsert: {
+            args: Prisma.FinanceJobUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceJobPayload>
+          }
+          aggregate: {
+            args: Prisma.FinanceJobAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFinanceJob>
+          }
+          groupBy: {
+            args: Prisma.FinanceJobGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FinanceJobGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FinanceJobCountArgs<ExtArgs>
+            result: $Utils.Optional<FinanceJobCountAggregateOutputType> | number
+          }
+        }
+      }
+      PaymentWebhookEvent: {
+        payload: Prisma.$PaymentWebhookEventPayload<ExtArgs>
+        fields: Prisma.PaymentWebhookEventFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PaymentWebhookEventFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentWebhookEventPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PaymentWebhookEventFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentWebhookEventPayload>
+          }
+          findFirst: {
+            args: Prisma.PaymentWebhookEventFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentWebhookEventPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PaymentWebhookEventFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentWebhookEventPayload>
+          }
+          findMany: {
+            args: Prisma.PaymentWebhookEventFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentWebhookEventPayload>[]
+          }
+          create: {
+            args: Prisma.PaymentWebhookEventCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentWebhookEventPayload>
+          }
+          createMany: {
+            args: Prisma.PaymentWebhookEventCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PaymentWebhookEventCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentWebhookEventPayload>[]
+          }
+          delete: {
+            args: Prisma.PaymentWebhookEventDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentWebhookEventPayload>
+          }
+          update: {
+            args: Prisma.PaymentWebhookEventUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentWebhookEventPayload>
+          }
+          deleteMany: {
+            args: Prisma.PaymentWebhookEventDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PaymentWebhookEventUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PaymentWebhookEventUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentWebhookEventPayload>[]
+          }
+          upsert: {
+            args: Prisma.PaymentWebhookEventUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentWebhookEventPayload>
+          }
+          aggregate: {
+            args: Prisma.PaymentWebhookEventAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePaymentWebhookEvent>
+          }
+          groupBy: {
+            args: Prisma.PaymentWebhookEventGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PaymentWebhookEventGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PaymentWebhookEventCountArgs<ExtArgs>
+            result: $Utils.Optional<PaymentWebhookEventCountAggregateOutputType> | number
+          }
+        }
+      }
       RateLimitBucket: {
         payload: Prisma.$RateLimitBucketPayload<ExtArgs>
         fields: Prisma.RateLimitBucketFieldRefs
@@ -3950,6 +4192,8 @@ export namespace Prisma {
     discount?: DiscountOmit
     receiptCounter?: ReceiptCounterOmit
     financeAuditLog?: FinanceAuditLogOmit
+    financeJob?: FinanceJobOmit
+    paymentWebhookEvent?: PaymentWebhookEventOmit
     rateLimitBucket?: RateLimitBucketOmit
     waitlistEntry?: WaitlistEntryOmit
     schoolInvite?: SchoolInviteOmit
@@ -4062,6 +4306,8 @@ export namespace Prisma {
     invites: number
     waitlistEntries: number
     onboardingAuditLogs: number
+    financeJobs: number
+    paymentWebhookEvents: number
   }
 
   export type SchoolCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4093,6 +4339,8 @@ export namespace Prisma {
     invites?: boolean | SchoolCountOutputTypeCountInvitesArgs
     waitlistEntries?: boolean | SchoolCountOutputTypeCountWaitlistEntriesArgs
     onboardingAuditLogs?: boolean | SchoolCountOutputTypeCountOnboardingAuditLogsArgs
+    financeJobs?: boolean | SchoolCountOutputTypeCountFinanceJobsArgs
+    paymentWebhookEvents?: boolean | SchoolCountOutputTypeCountPaymentWebhookEventsArgs
   }
 
   // Custom InputTypes
@@ -4300,6 +4548,20 @@ export namespace Prisma {
    */
   export type SchoolCountOutputTypeCountOnboardingAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: OnboardingAuditLogWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountFinanceJobsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FinanceJobWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountPaymentWebhookEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PaymentWebhookEventWhereInput
   }
 
 
@@ -4945,6 +5207,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type PaymentCountOutputType
+   */
+
+  export type PaymentCountOutputType = {
+    webhookEvents: number
+  }
+
+  export type PaymentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    webhookEvents?: boolean | PaymentCountOutputTypeCountWebhookEventsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * PaymentCountOutputType without action
+   */
+  export type PaymentCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentCountOutputType
+     */
+    select?: PaymentCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * PaymentCountOutputType without action
+   */
+  export type PaymentCountOutputTypeCountWebhookEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PaymentWebhookEventWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -5196,6 +5489,8 @@ export namespace Prisma {
     invites?: boolean | School$invitesArgs<ExtArgs>
     waitlistEntries?: boolean | School$waitlistEntriesArgs<ExtArgs>
     onboardingAuditLogs?: boolean | School$onboardingAuditLogsArgs<ExtArgs>
+    financeJobs?: boolean | School$financeJobsArgs<ExtArgs>
+    paymentWebhookEvents?: boolean | School$paymentWebhookEventsArgs<ExtArgs>
     _count?: boolean | SchoolCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["school"]>
 
@@ -5274,6 +5569,8 @@ export namespace Prisma {
     invites?: boolean | School$invitesArgs<ExtArgs>
     waitlistEntries?: boolean | School$waitlistEntriesArgs<ExtArgs>
     onboardingAuditLogs?: boolean | School$onboardingAuditLogsArgs<ExtArgs>
+    financeJobs?: boolean | School$financeJobsArgs<ExtArgs>
+    paymentWebhookEvents?: boolean | School$paymentWebhookEventsArgs<ExtArgs>
     _count?: boolean | SchoolCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type SchoolIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -5310,6 +5607,8 @@ export namespace Prisma {
       invites: Prisma.$SchoolInvitePayload<ExtArgs>[]
       waitlistEntries: Prisma.$WaitlistEntryPayload<ExtArgs>[]
       onboardingAuditLogs: Prisma.$OnboardingAuditLogPayload<ExtArgs>[]
+      financeJobs: Prisma.$FinanceJobPayload<ExtArgs>[]
+      paymentWebhookEvents: Prisma.$PaymentWebhookEventPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5746,6 +6045,8 @@ export namespace Prisma {
     invites<T extends School$invitesArgs<ExtArgs> = {}>(args?: Subset<T, School$invitesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     waitlistEntries<T extends School$waitlistEntriesArgs<ExtArgs> = {}>(args?: Subset<T, School$waitlistEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WaitlistEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     onboardingAuditLogs<T extends School$onboardingAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$onboardingAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OnboardingAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    financeJobs<T extends School$financeJobsArgs<ExtArgs> = {}>(args?: Subset<T, School$financeJobsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    paymentWebhookEvents<T extends School$paymentWebhookEventsArgs<ExtArgs> = {}>(args?: Subset<T, School$paymentWebhookEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6849,6 +7150,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: OnboardingAuditLogScalarFieldEnum | OnboardingAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * School.financeJobs
+   */
+  export type School$financeJobsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceJob
+     */
+    select?: FinanceJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceJob
+     */
+    omit?: FinanceJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceJobInclude<ExtArgs> | null
+    where?: FinanceJobWhereInput
+    orderBy?: FinanceJobOrderByWithRelationInput | FinanceJobOrderByWithRelationInput[]
+    cursor?: FinanceJobWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FinanceJobScalarFieldEnum | FinanceJobScalarFieldEnum[]
+  }
+
+  /**
+   * School.paymentWebhookEvents
+   */
+  export type School$paymentWebhookEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentWebhookEvent
+     */
+    select?: PaymentWebhookEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentWebhookEvent
+     */
+    omit?: PaymentWebhookEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentWebhookEventInclude<ExtArgs> | null
+    where?: PaymentWebhookEventWhereInput
+    orderBy?: PaymentWebhookEventOrderByWithRelationInput | PaymentWebhookEventOrderByWithRelationInput[]
+    cursor?: PaymentWebhookEventWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PaymentWebhookEventScalarFieldEnum | PaymentWebhookEventScalarFieldEnum[]
   }
 
   /**
@@ -35006,6 +35355,8 @@ export namespace Prisma {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     studentBill?: boolean | StudentBillDefaultArgs<ExtArgs>
     reversal?: boolean | Payment$reversalArgs<ExtArgs>
+    webhookEvents?: boolean | Payment$webhookEventsArgs<ExtArgs>
+    _count?: boolean | PaymentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["payment"]>
 
   export type PaymentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -35065,6 +35416,8 @@ export namespace Prisma {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     studentBill?: boolean | StudentBillDefaultArgs<ExtArgs>
     reversal?: boolean | Payment$reversalArgs<ExtArgs>
+    webhookEvents?: boolean | Payment$webhookEventsArgs<ExtArgs>
+    _count?: boolean | PaymentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type PaymentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
@@ -35081,6 +35434,7 @@ export namespace Prisma {
       school: Prisma.$SchoolPayload<ExtArgs>
       studentBill: Prisma.$StudentBillPayload<ExtArgs>
       reversal: Prisma.$PaymentReversalPayload<ExtArgs> | null
+      webhookEvents: Prisma.$PaymentWebhookEventPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -35493,6 +35847,7 @@ export namespace Prisma {
     school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     studentBill<T extends StudentBillDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StudentBillDefaultArgs<ExtArgs>>): Prisma__StudentBillClient<$Result.GetResult<Prisma.$StudentBillPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     reversal<T extends Payment$reversalArgs<ExtArgs> = {}>(args?: Subset<T, Payment$reversalArgs<ExtArgs>>): Prisma__PaymentReversalClient<$Result.GetResult<Prisma.$PaymentReversalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    webhookEvents<T extends Payment$webhookEventsArgs<ExtArgs> = {}>(args?: Subset<T, Payment$webhookEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -35952,6 +36307,30 @@ export namespace Prisma {
      */
     include?: PaymentReversalInclude<ExtArgs> | null
     where?: PaymentReversalWhereInput
+  }
+
+  /**
+   * Payment.webhookEvents
+   */
+  export type Payment$webhookEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentWebhookEvent
+     */
+    select?: PaymentWebhookEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentWebhookEvent
+     */
+    omit?: PaymentWebhookEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentWebhookEventInclude<ExtArgs> | null
+    where?: PaymentWebhookEventWhereInput
+    orderBy?: PaymentWebhookEventOrderByWithRelationInput | PaymentWebhookEventOrderByWithRelationInput[]
+    cursor?: PaymentWebhookEventWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PaymentWebhookEventScalarFieldEnum | PaymentWebhookEventScalarFieldEnum[]
   }
 
   /**
@@ -40498,6 +40877,2476 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: FinanceAuditLogInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model FinanceJob
+   */
+
+  export type AggregateFinanceJob = {
+    _count: FinanceJobCountAggregateOutputType | null
+    _avg: FinanceJobAvgAggregateOutputType | null
+    _sum: FinanceJobSumAggregateOutputType | null
+    _min: FinanceJobMinAggregateOutputType | null
+    _max: FinanceJobMaxAggregateOutputType | null
+  }
+
+  export type FinanceJobAvgAggregateOutputType = {
+    attempts: number | null
+    maxAttempts: number | null
+  }
+
+  export type FinanceJobSumAggregateOutputType = {
+    attempts: number | null
+    maxAttempts: number | null
+  }
+
+  export type FinanceJobMinAggregateOutputType = {
+    id: string | null
+    type: $Enums.FinanceJobType | null
+    status: $Enums.JobStatus | null
+    idempotencyKey: string | null
+    attempts: number | null
+    maxAttempts: number | null
+    runAfter: Date | null
+    lockedAt: Date | null
+    lockedBy: string | null
+    lastError: string | null
+    completedAt: Date | null
+    createdBy: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+  }
+
+  export type FinanceJobMaxAggregateOutputType = {
+    id: string | null
+    type: $Enums.FinanceJobType | null
+    status: $Enums.JobStatus | null
+    idempotencyKey: string | null
+    attempts: number | null
+    maxAttempts: number | null
+    runAfter: Date | null
+    lockedAt: Date | null
+    lockedBy: string | null
+    lastError: string | null
+    completedAt: Date | null
+    createdBy: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+  }
+
+  export type FinanceJobCountAggregateOutputType = {
+    id: number
+    type: number
+    status: number
+    payload: number
+    idempotencyKey: number
+    attempts: number
+    maxAttempts: number
+    runAfter: number
+    lockedAt: number
+    lockedBy: number
+    lastError: number
+    completedAt: number
+    createdBy: number
+    createdAt: number
+    updatedAt: number
+    schoolId: number
+    _all: number
+  }
+
+
+  export type FinanceJobAvgAggregateInputType = {
+    attempts?: true
+    maxAttempts?: true
+  }
+
+  export type FinanceJobSumAggregateInputType = {
+    attempts?: true
+    maxAttempts?: true
+  }
+
+  export type FinanceJobMinAggregateInputType = {
+    id?: true
+    type?: true
+    status?: true
+    idempotencyKey?: true
+    attempts?: true
+    maxAttempts?: true
+    runAfter?: true
+    lockedAt?: true
+    lockedBy?: true
+    lastError?: true
+    completedAt?: true
+    createdBy?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+  }
+
+  export type FinanceJobMaxAggregateInputType = {
+    id?: true
+    type?: true
+    status?: true
+    idempotencyKey?: true
+    attempts?: true
+    maxAttempts?: true
+    runAfter?: true
+    lockedAt?: true
+    lockedBy?: true
+    lastError?: true
+    completedAt?: true
+    createdBy?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+  }
+
+  export type FinanceJobCountAggregateInputType = {
+    id?: true
+    type?: true
+    status?: true
+    payload?: true
+    idempotencyKey?: true
+    attempts?: true
+    maxAttempts?: true
+    runAfter?: true
+    lockedAt?: true
+    lockedBy?: true
+    lastError?: true
+    completedAt?: true
+    createdBy?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    _all?: true
+  }
+
+  export type FinanceJobAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FinanceJob to aggregate.
+     */
+    where?: FinanceJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FinanceJobs to fetch.
+     */
+    orderBy?: FinanceJobOrderByWithRelationInput | FinanceJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FinanceJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FinanceJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FinanceJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned FinanceJobs
+    **/
+    _count?: true | FinanceJobCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: FinanceJobAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: FinanceJobSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FinanceJobMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FinanceJobMaxAggregateInputType
+  }
+
+  export type GetFinanceJobAggregateType<T extends FinanceJobAggregateArgs> = {
+        [P in keyof T & keyof AggregateFinanceJob]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFinanceJob[P]>
+      : GetScalarType<T[P], AggregateFinanceJob[P]>
+  }
+
+
+
+
+  export type FinanceJobGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FinanceJobWhereInput
+    orderBy?: FinanceJobOrderByWithAggregationInput | FinanceJobOrderByWithAggregationInput[]
+    by: FinanceJobScalarFieldEnum[] | FinanceJobScalarFieldEnum
+    having?: FinanceJobScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FinanceJobCountAggregateInputType | true
+    _avg?: FinanceJobAvgAggregateInputType
+    _sum?: FinanceJobSumAggregateInputType
+    _min?: FinanceJobMinAggregateInputType
+    _max?: FinanceJobMaxAggregateInputType
+  }
+
+  export type FinanceJobGroupByOutputType = {
+    id: string
+    type: $Enums.FinanceJobType
+    status: $Enums.JobStatus
+    payload: JsonValue
+    idempotencyKey: string | null
+    attempts: number
+    maxAttempts: number
+    runAfter: Date
+    lockedAt: Date | null
+    lockedBy: string | null
+    lastError: string | null
+    completedAt: Date | null
+    createdBy: string | null
+    createdAt: Date
+    updatedAt: Date
+    schoolId: string
+    _count: FinanceJobCountAggregateOutputType | null
+    _avg: FinanceJobAvgAggregateOutputType | null
+    _sum: FinanceJobSumAggregateOutputType | null
+    _min: FinanceJobMinAggregateOutputType | null
+    _max: FinanceJobMaxAggregateOutputType | null
+  }
+
+  type GetFinanceJobGroupByPayload<T extends FinanceJobGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FinanceJobGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FinanceJobGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FinanceJobGroupByOutputType[P]>
+            : GetScalarType<T[P], FinanceJobGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FinanceJobSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    status?: boolean
+    payload?: boolean
+    idempotencyKey?: boolean
+    attempts?: boolean
+    maxAttempts?: boolean
+    runAfter?: boolean
+    lockedAt?: boolean
+    lockedBy?: boolean
+    lastError?: boolean
+    completedAt?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["financeJob"]>
+
+  export type FinanceJobSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    status?: boolean
+    payload?: boolean
+    idempotencyKey?: boolean
+    attempts?: boolean
+    maxAttempts?: boolean
+    runAfter?: boolean
+    lockedAt?: boolean
+    lockedBy?: boolean
+    lastError?: boolean
+    completedAt?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["financeJob"]>
+
+  export type FinanceJobSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    status?: boolean
+    payload?: boolean
+    idempotencyKey?: boolean
+    attempts?: boolean
+    maxAttempts?: boolean
+    runAfter?: boolean
+    lockedAt?: boolean
+    lockedBy?: boolean
+    lastError?: boolean
+    completedAt?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["financeJob"]>
+
+  export type FinanceJobSelectScalar = {
+    id?: boolean
+    type?: boolean
+    status?: boolean
+    payload?: boolean
+    idempotencyKey?: boolean
+    attempts?: boolean
+    maxAttempts?: boolean
+    runAfter?: boolean
+    lockedAt?: boolean
+    lockedBy?: boolean
+    lastError?: boolean
+    completedAt?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+  }
+
+  export type FinanceJobOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "status" | "payload" | "idempotencyKey" | "attempts" | "maxAttempts" | "runAfter" | "lockedAt" | "lockedBy" | "lastError" | "completedAt" | "createdBy" | "createdAt" | "updatedAt" | "schoolId", ExtArgs["result"]["financeJob"]>
+  export type FinanceJobInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }
+  export type FinanceJobIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }
+  export type FinanceJobIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }
+
+  export type $FinanceJobPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "FinanceJob"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      type: $Enums.FinanceJobType
+      status: $Enums.JobStatus
+      payload: Prisma.JsonValue
+      idempotencyKey: string | null
+      attempts: number
+      maxAttempts: number
+      runAfter: Date
+      lockedAt: Date | null
+      lockedBy: string | null
+      lastError: string | null
+      completedAt: Date | null
+      createdBy: string | null
+      createdAt: Date
+      updatedAt: Date
+      schoolId: string
+    }, ExtArgs["result"]["financeJob"]>
+    composites: {}
+  }
+
+  type FinanceJobGetPayload<S extends boolean | null | undefined | FinanceJobDefaultArgs> = $Result.GetResult<Prisma.$FinanceJobPayload, S>
+
+  type FinanceJobCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<FinanceJobFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FinanceJobCountAggregateInputType | true
+    }
+
+  export interface FinanceJobDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FinanceJob'], meta: { name: 'FinanceJob' } }
+    /**
+     * Find zero or one FinanceJob that matches the filter.
+     * @param {FinanceJobFindUniqueArgs} args - Arguments to find a FinanceJob
+     * @example
+     * // Get one FinanceJob
+     * const financeJob = await prisma.financeJob.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FinanceJobFindUniqueArgs>(args: SelectSubset<T, FinanceJobFindUniqueArgs<ExtArgs>>): Prisma__FinanceJobClient<$Result.GetResult<Prisma.$FinanceJobPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one FinanceJob that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {FinanceJobFindUniqueOrThrowArgs} args - Arguments to find a FinanceJob
+     * @example
+     * // Get one FinanceJob
+     * const financeJob = await prisma.financeJob.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FinanceJobFindUniqueOrThrowArgs>(args: SelectSubset<T, FinanceJobFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FinanceJobClient<$Result.GetResult<Prisma.$FinanceJobPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FinanceJob that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FinanceJobFindFirstArgs} args - Arguments to find a FinanceJob
+     * @example
+     * // Get one FinanceJob
+     * const financeJob = await prisma.financeJob.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FinanceJobFindFirstArgs>(args?: SelectSubset<T, FinanceJobFindFirstArgs<ExtArgs>>): Prisma__FinanceJobClient<$Result.GetResult<Prisma.$FinanceJobPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FinanceJob that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FinanceJobFindFirstOrThrowArgs} args - Arguments to find a FinanceJob
+     * @example
+     * // Get one FinanceJob
+     * const financeJob = await prisma.financeJob.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FinanceJobFindFirstOrThrowArgs>(args?: SelectSubset<T, FinanceJobFindFirstOrThrowArgs<ExtArgs>>): Prisma__FinanceJobClient<$Result.GetResult<Prisma.$FinanceJobPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more FinanceJobs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FinanceJobFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all FinanceJobs
+     * const financeJobs = await prisma.financeJob.findMany()
+     * 
+     * // Get first 10 FinanceJobs
+     * const financeJobs = await prisma.financeJob.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const financeJobWithIdOnly = await prisma.financeJob.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FinanceJobFindManyArgs>(args?: SelectSubset<T, FinanceJobFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a FinanceJob.
+     * @param {FinanceJobCreateArgs} args - Arguments to create a FinanceJob.
+     * @example
+     * // Create one FinanceJob
+     * const FinanceJob = await prisma.financeJob.create({
+     *   data: {
+     *     // ... data to create a FinanceJob
+     *   }
+     * })
+     * 
+     */
+    create<T extends FinanceJobCreateArgs>(args: SelectSubset<T, FinanceJobCreateArgs<ExtArgs>>): Prisma__FinanceJobClient<$Result.GetResult<Prisma.$FinanceJobPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many FinanceJobs.
+     * @param {FinanceJobCreateManyArgs} args - Arguments to create many FinanceJobs.
+     * @example
+     * // Create many FinanceJobs
+     * const financeJob = await prisma.financeJob.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FinanceJobCreateManyArgs>(args?: SelectSubset<T, FinanceJobCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many FinanceJobs and returns the data saved in the database.
+     * @param {FinanceJobCreateManyAndReturnArgs} args - Arguments to create many FinanceJobs.
+     * @example
+     * // Create many FinanceJobs
+     * const financeJob = await prisma.financeJob.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many FinanceJobs and only return the `id`
+     * const financeJobWithIdOnly = await prisma.financeJob.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FinanceJobCreateManyAndReturnArgs>(args?: SelectSubset<T, FinanceJobCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceJobPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a FinanceJob.
+     * @param {FinanceJobDeleteArgs} args - Arguments to delete one FinanceJob.
+     * @example
+     * // Delete one FinanceJob
+     * const FinanceJob = await prisma.financeJob.delete({
+     *   where: {
+     *     // ... filter to delete one FinanceJob
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FinanceJobDeleteArgs>(args: SelectSubset<T, FinanceJobDeleteArgs<ExtArgs>>): Prisma__FinanceJobClient<$Result.GetResult<Prisma.$FinanceJobPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one FinanceJob.
+     * @param {FinanceJobUpdateArgs} args - Arguments to update one FinanceJob.
+     * @example
+     * // Update one FinanceJob
+     * const financeJob = await prisma.financeJob.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FinanceJobUpdateArgs>(args: SelectSubset<T, FinanceJobUpdateArgs<ExtArgs>>): Prisma__FinanceJobClient<$Result.GetResult<Prisma.$FinanceJobPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more FinanceJobs.
+     * @param {FinanceJobDeleteManyArgs} args - Arguments to filter FinanceJobs to delete.
+     * @example
+     * // Delete a few FinanceJobs
+     * const { count } = await prisma.financeJob.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FinanceJobDeleteManyArgs>(args?: SelectSubset<T, FinanceJobDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FinanceJobs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FinanceJobUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many FinanceJobs
+     * const financeJob = await prisma.financeJob.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FinanceJobUpdateManyArgs>(args: SelectSubset<T, FinanceJobUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FinanceJobs and returns the data updated in the database.
+     * @param {FinanceJobUpdateManyAndReturnArgs} args - Arguments to update many FinanceJobs.
+     * @example
+     * // Update many FinanceJobs
+     * const financeJob = await prisma.financeJob.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more FinanceJobs and only return the `id`
+     * const financeJobWithIdOnly = await prisma.financeJob.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends FinanceJobUpdateManyAndReturnArgs>(args: SelectSubset<T, FinanceJobUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceJobPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one FinanceJob.
+     * @param {FinanceJobUpsertArgs} args - Arguments to update or create a FinanceJob.
+     * @example
+     * // Update or create a FinanceJob
+     * const financeJob = await prisma.financeJob.upsert({
+     *   create: {
+     *     // ... data to create a FinanceJob
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the FinanceJob we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FinanceJobUpsertArgs>(args: SelectSubset<T, FinanceJobUpsertArgs<ExtArgs>>): Prisma__FinanceJobClient<$Result.GetResult<Prisma.$FinanceJobPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of FinanceJobs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FinanceJobCountArgs} args - Arguments to filter FinanceJobs to count.
+     * @example
+     * // Count the number of FinanceJobs
+     * const count = await prisma.financeJob.count({
+     *   where: {
+     *     // ... the filter for the FinanceJobs we want to count
+     *   }
+     * })
+    **/
+    count<T extends FinanceJobCountArgs>(
+      args?: Subset<T, FinanceJobCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FinanceJobCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a FinanceJob.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FinanceJobAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FinanceJobAggregateArgs>(args: Subset<T, FinanceJobAggregateArgs>): Prisma.PrismaPromise<GetFinanceJobAggregateType<T>>
+
+    /**
+     * Group by FinanceJob.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FinanceJobGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FinanceJobGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FinanceJobGroupByArgs['orderBy'] }
+        : { orderBy?: FinanceJobGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FinanceJobGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFinanceJobGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the FinanceJob model
+   */
+  readonly fields: FinanceJobFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for FinanceJob.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FinanceJobClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the FinanceJob model
+   */
+  interface FinanceJobFieldRefs {
+    readonly id: FieldRef<"FinanceJob", 'String'>
+    readonly type: FieldRef<"FinanceJob", 'FinanceJobType'>
+    readonly status: FieldRef<"FinanceJob", 'JobStatus'>
+    readonly payload: FieldRef<"FinanceJob", 'Json'>
+    readonly idempotencyKey: FieldRef<"FinanceJob", 'String'>
+    readonly attempts: FieldRef<"FinanceJob", 'Int'>
+    readonly maxAttempts: FieldRef<"FinanceJob", 'Int'>
+    readonly runAfter: FieldRef<"FinanceJob", 'DateTime'>
+    readonly lockedAt: FieldRef<"FinanceJob", 'DateTime'>
+    readonly lockedBy: FieldRef<"FinanceJob", 'String'>
+    readonly lastError: FieldRef<"FinanceJob", 'String'>
+    readonly completedAt: FieldRef<"FinanceJob", 'DateTime'>
+    readonly createdBy: FieldRef<"FinanceJob", 'String'>
+    readonly createdAt: FieldRef<"FinanceJob", 'DateTime'>
+    readonly updatedAt: FieldRef<"FinanceJob", 'DateTime'>
+    readonly schoolId: FieldRef<"FinanceJob", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * FinanceJob findUnique
+   */
+  export type FinanceJobFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceJob
+     */
+    select?: FinanceJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceJob
+     */
+    omit?: FinanceJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceJobInclude<ExtArgs> | null
+    /**
+     * Filter, which FinanceJob to fetch.
+     */
+    where: FinanceJobWhereUniqueInput
+  }
+
+  /**
+   * FinanceJob findUniqueOrThrow
+   */
+  export type FinanceJobFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceJob
+     */
+    select?: FinanceJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceJob
+     */
+    omit?: FinanceJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceJobInclude<ExtArgs> | null
+    /**
+     * Filter, which FinanceJob to fetch.
+     */
+    where: FinanceJobWhereUniqueInput
+  }
+
+  /**
+   * FinanceJob findFirst
+   */
+  export type FinanceJobFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceJob
+     */
+    select?: FinanceJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceJob
+     */
+    omit?: FinanceJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceJobInclude<ExtArgs> | null
+    /**
+     * Filter, which FinanceJob to fetch.
+     */
+    where?: FinanceJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FinanceJobs to fetch.
+     */
+    orderBy?: FinanceJobOrderByWithRelationInput | FinanceJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FinanceJobs.
+     */
+    cursor?: FinanceJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FinanceJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FinanceJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FinanceJobs.
+     */
+    distinct?: FinanceJobScalarFieldEnum | FinanceJobScalarFieldEnum[]
+  }
+
+  /**
+   * FinanceJob findFirstOrThrow
+   */
+  export type FinanceJobFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceJob
+     */
+    select?: FinanceJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceJob
+     */
+    omit?: FinanceJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceJobInclude<ExtArgs> | null
+    /**
+     * Filter, which FinanceJob to fetch.
+     */
+    where?: FinanceJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FinanceJobs to fetch.
+     */
+    orderBy?: FinanceJobOrderByWithRelationInput | FinanceJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FinanceJobs.
+     */
+    cursor?: FinanceJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FinanceJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FinanceJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FinanceJobs.
+     */
+    distinct?: FinanceJobScalarFieldEnum | FinanceJobScalarFieldEnum[]
+  }
+
+  /**
+   * FinanceJob findMany
+   */
+  export type FinanceJobFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceJob
+     */
+    select?: FinanceJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceJob
+     */
+    omit?: FinanceJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceJobInclude<ExtArgs> | null
+    /**
+     * Filter, which FinanceJobs to fetch.
+     */
+    where?: FinanceJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FinanceJobs to fetch.
+     */
+    orderBy?: FinanceJobOrderByWithRelationInput | FinanceJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing FinanceJobs.
+     */
+    cursor?: FinanceJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FinanceJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FinanceJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FinanceJobs.
+     */
+    distinct?: FinanceJobScalarFieldEnum | FinanceJobScalarFieldEnum[]
+  }
+
+  /**
+   * FinanceJob create
+   */
+  export type FinanceJobCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceJob
+     */
+    select?: FinanceJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceJob
+     */
+    omit?: FinanceJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceJobInclude<ExtArgs> | null
+    /**
+     * The data needed to create a FinanceJob.
+     */
+    data: XOR<FinanceJobCreateInput, FinanceJobUncheckedCreateInput>
+  }
+
+  /**
+   * FinanceJob createMany
+   */
+  export type FinanceJobCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many FinanceJobs.
+     */
+    data: FinanceJobCreateManyInput | FinanceJobCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * FinanceJob createManyAndReturn
+   */
+  export type FinanceJobCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceJob
+     */
+    select?: FinanceJobSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceJob
+     */
+    omit?: FinanceJobOmit<ExtArgs> | null
+    /**
+     * The data used to create many FinanceJobs.
+     */
+    data: FinanceJobCreateManyInput | FinanceJobCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceJobIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FinanceJob update
+   */
+  export type FinanceJobUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceJob
+     */
+    select?: FinanceJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceJob
+     */
+    omit?: FinanceJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceJobInclude<ExtArgs> | null
+    /**
+     * The data needed to update a FinanceJob.
+     */
+    data: XOR<FinanceJobUpdateInput, FinanceJobUncheckedUpdateInput>
+    /**
+     * Choose, which FinanceJob to update.
+     */
+    where: FinanceJobWhereUniqueInput
+  }
+
+  /**
+   * FinanceJob updateMany
+   */
+  export type FinanceJobUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update FinanceJobs.
+     */
+    data: XOR<FinanceJobUpdateManyMutationInput, FinanceJobUncheckedUpdateManyInput>
+    /**
+     * Filter which FinanceJobs to update
+     */
+    where?: FinanceJobWhereInput
+    /**
+     * Limit how many FinanceJobs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * FinanceJob updateManyAndReturn
+   */
+  export type FinanceJobUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceJob
+     */
+    select?: FinanceJobSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceJob
+     */
+    omit?: FinanceJobOmit<ExtArgs> | null
+    /**
+     * The data used to update FinanceJobs.
+     */
+    data: XOR<FinanceJobUpdateManyMutationInput, FinanceJobUncheckedUpdateManyInput>
+    /**
+     * Filter which FinanceJobs to update
+     */
+    where?: FinanceJobWhereInput
+    /**
+     * Limit how many FinanceJobs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceJobIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FinanceJob upsert
+   */
+  export type FinanceJobUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceJob
+     */
+    select?: FinanceJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceJob
+     */
+    omit?: FinanceJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceJobInclude<ExtArgs> | null
+    /**
+     * The filter to search for the FinanceJob to update in case it exists.
+     */
+    where: FinanceJobWhereUniqueInput
+    /**
+     * In case the FinanceJob found by the `where` argument doesn't exist, create a new FinanceJob with this data.
+     */
+    create: XOR<FinanceJobCreateInput, FinanceJobUncheckedCreateInput>
+    /**
+     * In case the FinanceJob was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FinanceJobUpdateInput, FinanceJobUncheckedUpdateInput>
+  }
+
+  /**
+   * FinanceJob delete
+   */
+  export type FinanceJobDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceJob
+     */
+    select?: FinanceJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceJob
+     */
+    omit?: FinanceJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceJobInclude<ExtArgs> | null
+    /**
+     * Filter which FinanceJob to delete.
+     */
+    where: FinanceJobWhereUniqueInput
+  }
+
+  /**
+   * FinanceJob deleteMany
+   */
+  export type FinanceJobDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FinanceJobs to delete
+     */
+    where?: FinanceJobWhereInput
+    /**
+     * Limit how many FinanceJobs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * FinanceJob without action
+   */
+  export type FinanceJobDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceJob
+     */
+    select?: FinanceJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceJob
+     */
+    omit?: FinanceJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceJobInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model PaymentWebhookEvent
+   */
+
+  export type AggregatePaymentWebhookEvent = {
+    _count: PaymentWebhookEventCountAggregateOutputType | null
+    _avg: PaymentWebhookEventAvgAggregateOutputType | null
+    _sum: PaymentWebhookEventSumAggregateOutputType | null
+    _min: PaymentWebhookEventMinAggregateOutputType | null
+    _max: PaymentWebhookEventMaxAggregateOutputType | null
+  }
+
+  export type PaymentWebhookEventAvgAggregateOutputType = {
+    paymentId: number | null
+  }
+
+  export type PaymentWebhookEventSumAggregateOutputType = {
+    paymentId: number | null
+  }
+
+  export type PaymentWebhookEventMinAggregateOutputType = {
+    id: string | null
+    provider: $Enums.PaymentProvider | null
+    providerEventId: string | null
+    eventType: string | null
+    status: $Enums.WebhookEventStatus | null
+    signature: string | null
+    receivedAt: Date | null
+    processedAt: Date | null
+    lastError: string | null
+    schoolId: string | null
+    paymentId: number | null
+  }
+
+  export type PaymentWebhookEventMaxAggregateOutputType = {
+    id: string | null
+    provider: $Enums.PaymentProvider | null
+    providerEventId: string | null
+    eventType: string | null
+    status: $Enums.WebhookEventStatus | null
+    signature: string | null
+    receivedAt: Date | null
+    processedAt: Date | null
+    lastError: string | null
+    schoolId: string | null
+    paymentId: number | null
+  }
+
+  export type PaymentWebhookEventCountAggregateOutputType = {
+    id: number
+    provider: number
+    providerEventId: number
+    eventType: number
+    status: number
+    payload: number
+    signature: number
+    receivedAt: number
+    processedAt: number
+    lastError: number
+    schoolId: number
+    paymentId: number
+    _all: number
+  }
+
+
+  export type PaymentWebhookEventAvgAggregateInputType = {
+    paymentId?: true
+  }
+
+  export type PaymentWebhookEventSumAggregateInputType = {
+    paymentId?: true
+  }
+
+  export type PaymentWebhookEventMinAggregateInputType = {
+    id?: true
+    provider?: true
+    providerEventId?: true
+    eventType?: true
+    status?: true
+    signature?: true
+    receivedAt?: true
+    processedAt?: true
+    lastError?: true
+    schoolId?: true
+    paymentId?: true
+  }
+
+  export type PaymentWebhookEventMaxAggregateInputType = {
+    id?: true
+    provider?: true
+    providerEventId?: true
+    eventType?: true
+    status?: true
+    signature?: true
+    receivedAt?: true
+    processedAt?: true
+    lastError?: true
+    schoolId?: true
+    paymentId?: true
+  }
+
+  export type PaymentWebhookEventCountAggregateInputType = {
+    id?: true
+    provider?: true
+    providerEventId?: true
+    eventType?: true
+    status?: true
+    payload?: true
+    signature?: true
+    receivedAt?: true
+    processedAt?: true
+    lastError?: true
+    schoolId?: true
+    paymentId?: true
+    _all?: true
+  }
+
+  export type PaymentWebhookEventAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PaymentWebhookEvent to aggregate.
+     */
+    where?: PaymentWebhookEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PaymentWebhookEvents to fetch.
+     */
+    orderBy?: PaymentWebhookEventOrderByWithRelationInput | PaymentWebhookEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PaymentWebhookEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PaymentWebhookEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PaymentWebhookEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PaymentWebhookEvents
+    **/
+    _count?: true | PaymentWebhookEventCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PaymentWebhookEventAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PaymentWebhookEventSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PaymentWebhookEventMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PaymentWebhookEventMaxAggregateInputType
+  }
+
+  export type GetPaymentWebhookEventAggregateType<T extends PaymentWebhookEventAggregateArgs> = {
+        [P in keyof T & keyof AggregatePaymentWebhookEvent]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePaymentWebhookEvent[P]>
+      : GetScalarType<T[P], AggregatePaymentWebhookEvent[P]>
+  }
+
+
+
+
+  export type PaymentWebhookEventGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PaymentWebhookEventWhereInput
+    orderBy?: PaymentWebhookEventOrderByWithAggregationInput | PaymentWebhookEventOrderByWithAggregationInput[]
+    by: PaymentWebhookEventScalarFieldEnum[] | PaymentWebhookEventScalarFieldEnum
+    having?: PaymentWebhookEventScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PaymentWebhookEventCountAggregateInputType | true
+    _avg?: PaymentWebhookEventAvgAggregateInputType
+    _sum?: PaymentWebhookEventSumAggregateInputType
+    _min?: PaymentWebhookEventMinAggregateInputType
+    _max?: PaymentWebhookEventMaxAggregateInputType
+  }
+
+  export type PaymentWebhookEventGroupByOutputType = {
+    id: string
+    provider: $Enums.PaymentProvider
+    providerEventId: string
+    eventType: string
+    status: $Enums.WebhookEventStatus
+    payload: JsonValue
+    signature: string | null
+    receivedAt: Date
+    processedAt: Date | null
+    lastError: string | null
+    schoolId: string | null
+    paymentId: number | null
+    _count: PaymentWebhookEventCountAggregateOutputType | null
+    _avg: PaymentWebhookEventAvgAggregateOutputType | null
+    _sum: PaymentWebhookEventSumAggregateOutputType | null
+    _min: PaymentWebhookEventMinAggregateOutputType | null
+    _max: PaymentWebhookEventMaxAggregateOutputType | null
+  }
+
+  type GetPaymentWebhookEventGroupByPayload<T extends PaymentWebhookEventGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PaymentWebhookEventGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PaymentWebhookEventGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PaymentWebhookEventGroupByOutputType[P]>
+            : GetScalarType<T[P], PaymentWebhookEventGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PaymentWebhookEventSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    provider?: boolean
+    providerEventId?: boolean
+    eventType?: boolean
+    status?: boolean
+    payload?: boolean
+    signature?: boolean
+    receivedAt?: boolean
+    processedAt?: boolean
+    lastError?: boolean
+    schoolId?: boolean
+    paymentId?: boolean
+    school?: boolean | PaymentWebhookEvent$schoolArgs<ExtArgs>
+    payment?: boolean | PaymentWebhookEvent$paymentArgs<ExtArgs>
+  }, ExtArgs["result"]["paymentWebhookEvent"]>
+
+  export type PaymentWebhookEventSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    provider?: boolean
+    providerEventId?: boolean
+    eventType?: boolean
+    status?: boolean
+    payload?: boolean
+    signature?: boolean
+    receivedAt?: boolean
+    processedAt?: boolean
+    lastError?: boolean
+    schoolId?: boolean
+    paymentId?: boolean
+    school?: boolean | PaymentWebhookEvent$schoolArgs<ExtArgs>
+    payment?: boolean | PaymentWebhookEvent$paymentArgs<ExtArgs>
+  }, ExtArgs["result"]["paymentWebhookEvent"]>
+
+  export type PaymentWebhookEventSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    provider?: boolean
+    providerEventId?: boolean
+    eventType?: boolean
+    status?: boolean
+    payload?: boolean
+    signature?: boolean
+    receivedAt?: boolean
+    processedAt?: boolean
+    lastError?: boolean
+    schoolId?: boolean
+    paymentId?: boolean
+    school?: boolean | PaymentWebhookEvent$schoolArgs<ExtArgs>
+    payment?: boolean | PaymentWebhookEvent$paymentArgs<ExtArgs>
+  }, ExtArgs["result"]["paymentWebhookEvent"]>
+
+  export type PaymentWebhookEventSelectScalar = {
+    id?: boolean
+    provider?: boolean
+    providerEventId?: boolean
+    eventType?: boolean
+    status?: boolean
+    payload?: boolean
+    signature?: boolean
+    receivedAt?: boolean
+    processedAt?: boolean
+    lastError?: boolean
+    schoolId?: boolean
+    paymentId?: boolean
+  }
+
+  export type PaymentWebhookEventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "provider" | "providerEventId" | "eventType" | "status" | "payload" | "signature" | "receivedAt" | "processedAt" | "lastError" | "schoolId" | "paymentId", ExtArgs["result"]["paymentWebhookEvent"]>
+  export type PaymentWebhookEventInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | PaymentWebhookEvent$schoolArgs<ExtArgs>
+    payment?: boolean | PaymentWebhookEvent$paymentArgs<ExtArgs>
+  }
+  export type PaymentWebhookEventIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | PaymentWebhookEvent$schoolArgs<ExtArgs>
+    payment?: boolean | PaymentWebhookEvent$paymentArgs<ExtArgs>
+  }
+  export type PaymentWebhookEventIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | PaymentWebhookEvent$schoolArgs<ExtArgs>
+    payment?: boolean | PaymentWebhookEvent$paymentArgs<ExtArgs>
+  }
+
+  export type $PaymentWebhookEventPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PaymentWebhookEvent"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs> | null
+      payment: Prisma.$PaymentPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      provider: $Enums.PaymentProvider
+      providerEventId: string
+      eventType: string
+      status: $Enums.WebhookEventStatus
+      payload: Prisma.JsonValue
+      signature: string | null
+      receivedAt: Date
+      processedAt: Date | null
+      lastError: string | null
+      schoolId: string | null
+      paymentId: number | null
+    }, ExtArgs["result"]["paymentWebhookEvent"]>
+    composites: {}
+  }
+
+  type PaymentWebhookEventGetPayload<S extends boolean | null | undefined | PaymentWebhookEventDefaultArgs> = $Result.GetResult<Prisma.$PaymentWebhookEventPayload, S>
+
+  type PaymentWebhookEventCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PaymentWebhookEventFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PaymentWebhookEventCountAggregateInputType | true
+    }
+
+  export interface PaymentWebhookEventDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PaymentWebhookEvent'], meta: { name: 'PaymentWebhookEvent' } }
+    /**
+     * Find zero or one PaymentWebhookEvent that matches the filter.
+     * @param {PaymentWebhookEventFindUniqueArgs} args - Arguments to find a PaymentWebhookEvent
+     * @example
+     * // Get one PaymentWebhookEvent
+     * const paymentWebhookEvent = await prisma.paymentWebhookEvent.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PaymentWebhookEventFindUniqueArgs>(args: SelectSubset<T, PaymentWebhookEventFindUniqueArgs<ExtArgs>>): Prisma__PaymentWebhookEventClient<$Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PaymentWebhookEvent that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PaymentWebhookEventFindUniqueOrThrowArgs} args - Arguments to find a PaymentWebhookEvent
+     * @example
+     * // Get one PaymentWebhookEvent
+     * const paymentWebhookEvent = await prisma.paymentWebhookEvent.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PaymentWebhookEventFindUniqueOrThrowArgs>(args: SelectSubset<T, PaymentWebhookEventFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PaymentWebhookEventClient<$Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PaymentWebhookEvent that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentWebhookEventFindFirstArgs} args - Arguments to find a PaymentWebhookEvent
+     * @example
+     * // Get one PaymentWebhookEvent
+     * const paymentWebhookEvent = await prisma.paymentWebhookEvent.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PaymentWebhookEventFindFirstArgs>(args?: SelectSubset<T, PaymentWebhookEventFindFirstArgs<ExtArgs>>): Prisma__PaymentWebhookEventClient<$Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PaymentWebhookEvent that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentWebhookEventFindFirstOrThrowArgs} args - Arguments to find a PaymentWebhookEvent
+     * @example
+     * // Get one PaymentWebhookEvent
+     * const paymentWebhookEvent = await prisma.paymentWebhookEvent.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PaymentWebhookEventFindFirstOrThrowArgs>(args?: SelectSubset<T, PaymentWebhookEventFindFirstOrThrowArgs<ExtArgs>>): Prisma__PaymentWebhookEventClient<$Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PaymentWebhookEvents that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentWebhookEventFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PaymentWebhookEvents
+     * const paymentWebhookEvents = await prisma.paymentWebhookEvent.findMany()
+     * 
+     * // Get first 10 PaymentWebhookEvents
+     * const paymentWebhookEvents = await prisma.paymentWebhookEvent.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const paymentWebhookEventWithIdOnly = await prisma.paymentWebhookEvent.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PaymentWebhookEventFindManyArgs>(args?: SelectSubset<T, PaymentWebhookEventFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PaymentWebhookEvent.
+     * @param {PaymentWebhookEventCreateArgs} args - Arguments to create a PaymentWebhookEvent.
+     * @example
+     * // Create one PaymentWebhookEvent
+     * const PaymentWebhookEvent = await prisma.paymentWebhookEvent.create({
+     *   data: {
+     *     // ... data to create a PaymentWebhookEvent
+     *   }
+     * })
+     * 
+     */
+    create<T extends PaymentWebhookEventCreateArgs>(args: SelectSubset<T, PaymentWebhookEventCreateArgs<ExtArgs>>): Prisma__PaymentWebhookEventClient<$Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PaymentWebhookEvents.
+     * @param {PaymentWebhookEventCreateManyArgs} args - Arguments to create many PaymentWebhookEvents.
+     * @example
+     * // Create many PaymentWebhookEvents
+     * const paymentWebhookEvent = await prisma.paymentWebhookEvent.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PaymentWebhookEventCreateManyArgs>(args?: SelectSubset<T, PaymentWebhookEventCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PaymentWebhookEvents and returns the data saved in the database.
+     * @param {PaymentWebhookEventCreateManyAndReturnArgs} args - Arguments to create many PaymentWebhookEvents.
+     * @example
+     * // Create many PaymentWebhookEvents
+     * const paymentWebhookEvent = await prisma.paymentWebhookEvent.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PaymentWebhookEvents and only return the `id`
+     * const paymentWebhookEventWithIdOnly = await prisma.paymentWebhookEvent.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PaymentWebhookEventCreateManyAndReturnArgs>(args?: SelectSubset<T, PaymentWebhookEventCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PaymentWebhookEvent.
+     * @param {PaymentWebhookEventDeleteArgs} args - Arguments to delete one PaymentWebhookEvent.
+     * @example
+     * // Delete one PaymentWebhookEvent
+     * const PaymentWebhookEvent = await prisma.paymentWebhookEvent.delete({
+     *   where: {
+     *     // ... filter to delete one PaymentWebhookEvent
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PaymentWebhookEventDeleteArgs>(args: SelectSubset<T, PaymentWebhookEventDeleteArgs<ExtArgs>>): Prisma__PaymentWebhookEventClient<$Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PaymentWebhookEvent.
+     * @param {PaymentWebhookEventUpdateArgs} args - Arguments to update one PaymentWebhookEvent.
+     * @example
+     * // Update one PaymentWebhookEvent
+     * const paymentWebhookEvent = await prisma.paymentWebhookEvent.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PaymentWebhookEventUpdateArgs>(args: SelectSubset<T, PaymentWebhookEventUpdateArgs<ExtArgs>>): Prisma__PaymentWebhookEventClient<$Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PaymentWebhookEvents.
+     * @param {PaymentWebhookEventDeleteManyArgs} args - Arguments to filter PaymentWebhookEvents to delete.
+     * @example
+     * // Delete a few PaymentWebhookEvents
+     * const { count } = await prisma.paymentWebhookEvent.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PaymentWebhookEventDeleteManyArgs>(args?: SelectSubset<T, PaymentWebhookEventDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PaymentWebhookEvents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentWebhookEventUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PaymentWebhookEvents
+     * const paymentWebhookEvent = await prisma.paymentWebhookEvent.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PaymentWebhookEventUpdateManyArgs>(args: SelectSubset<T, PaymentWebhookEventUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PaymentWebhookEvents and returns the data updated in the database.
+     * @param {PaymentWebhookEventUpdateManyAndReturnArgs} args - Arguments to update many PaymentWebhookEvents.
+     * @example
+     * // Update many PaymentWebhookEvents
+     * const paymentWebhookEvent = await prisma.paymentWebhookEvent.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PaymentWebhookEvents and only return the `id`
+     * const paymentWebhookEventWithIdOnly = await prisma.paymentWebhookEvent.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PaymentWebhookEventUpdateManyAndReturnArgs>(args: SelectSubset<T, PaymentWebhookEventUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PaymentWebhookEvent.
+     * @param {PaymentWebhookEventUpsertArgs} args - Arguments to update or create a PaymentWebhookEvent.
+     * @example
+     * // Update or create a PaymentWebhookEvent
+     * const paymentWebhookEvent = await prisma.paymentWebhookEvent.upsert({
+     *   create: {
+     *     // ... data to create a PaymentWebhookEvent
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PaymentWebhookEvent we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PaymentWebhookEventUpsertArgs>(args: SelectSubset<T, PaymentWebhookEventUpsertArgs<ExtArgs>>): Prisma__PaymentWebhookEventClient<$Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PaymentWebhookEvents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentWebhookEventCountArgs} args - Arguments to filter PaymentWebhookEvents to count.
+     * @example
+     * // Count the number of PaymentWebhookEvents
+     * const count = await prisma.paymentWebhookEvent.count({
+     *   where: {
+     *     // ... the filter for the PaymentWebhookEvents we want to count
+     *   }
+     * })
+    **/
+    count<T extends PaymentWebhookEventCountArgs>(
+      args?: Subset<T, PaymentWebhookEventCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PaymentWebhookEventCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PaymentWebhookEvent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentWebhookEventAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PaymentWebhookEventAggregateArgs>(args: Subset<T, PaymentWebhookEventAggregateArgs>): Prisma.PrismaPromise<GetPaymentWebhookEventAggregateType<T>>
+
+    /**
+     * Group by PaymentWebhookEvent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentWebhookEventGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PaymentWebhookEventGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PaymentWebhookEventGroupByArgs['orderBy'] }
+        : { orderBy?: PaymentWebhookEventGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PaymentWebhookEventGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPaymentWebhookEventGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PaymentWebhookEvent model
+   */
+  readonly fields: PaymentWebhookEventFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PaymentWebhookEvent.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PaymentWebhookEventClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends PaymentWebhookEvent$schoolArgs<ExtArgs> = {}>(args?: Subset<T, PaymentWebhookEvent$schoolArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    payment<T extends PaymentWebhookEvent$paymentArgs<ExtArgs> = {}>(args?: Subset<T, PaymentWebhookEvent$paymentArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PaymentWebhookEvent model
+   */
+  interface PaymentWebhookEventFieldRefs {
+    readonly id: FieldRef<"PaymentWebhookEvent", 'String'>
+    readonly provider: FieldRef<"PaymentWebhookEvent", 'PaymentProvider'>
+    readonly providerEventId: FieldRef<"PaymentWebhookEvent", 'String'>
+    readonly eventType: FieldRef<"PaymentWebhookEvent", 'String'>
+    readonly status: FieldRef<"PaymentWebhookEvent", 'WebhookEventStatus'>
+    readonly payload: FieldRef<"PaymentWebhookEvent", 'Json'>
+    readonly signature: FieldRef<"PaymentWebhookEvent", 'String'>
+    readonly receivedAt: FieldRef<"PaymentWebhookEvent", 'DateTime'>
+    readonly processedAt: FieldRef<"PaymentWebhookEvent", 'DateTime'>
+    readonly lastError: FieldRef<"PaymentWebhookEvent", 'String'>
+    readonly schoolId: FieldRef<"PaymentWebhookEvent", 'String'>
+    readonly paymentId: FieldRef<"PaymentWebhookEvent", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PaymentWebhookEvent findUnique
+   */
+  export type PaymentWebhookEventFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentWebhookEvent
+     */
+    select?: PaymentWebhookEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentWebhookEvent
+     */
+    omit?: PaymentWebhookEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentWebhookEventInclude<ExtArgs> | null
+    /**
+     * Filter, which PaymentWebhookEvent to fetch.
+     */
+    where: PaymentWebhookEventWhereUniqueInput
+  }
+
+  /**
+   * PaymentWebhookEvent findUniqueOrThrow
+   */
+  export type PaymentWebhookEventFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentWebhookEvent
+     */
+    select?: PaymentWebhookEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentWebhookEvent
+     */
+    omit?: PaymentWebhookEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentWebhookEventInclude<ExtArgs> | null
+    /**
+     * Filter, which PaymentWebhookEvent to fetch.
+     */
+    where: PaymentWebhookEventWhereUniqueInput
+  }
+
+  /**
+   * PaymentWebhookEvent findFirst
+   */
+  export type PaymentWebhookEventFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentWebhookEvent
+     */
+    select?: PaymentWebhookEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentWebhookEvent
+     */
+    omit?: PaymentWebhookEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentWebhookEventInclude<ExtArgs> | null
+    /**
+     * Filter, which PaymentWebhookEvent to fetch.
+     */
+    where?: PaymentWebhookEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PaymentWebhookEvents to fetch.
+     */
+    orderBy?: PaymentWebhookEventOrderByWithRelationInput | PaymentWebhookEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PaymentWebhookEvents.
+     */
+    cursor?: PaymentWebhookEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PaymentWebhookEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PaymentWebhookEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PaymentWebhookEvents.
+     */
+    distinct?: PaymentWebhookEventScalarFieldEnum | PaymentWebhookEventScalarFieldEnum[]
+  }
+
+  /**
+   * PaymentWebhookEvent findFirstOrThrow
+   */
+  export type PaymentWebhookEventFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentWebhookEvent
+     */
+    select?: PaymentWebhookEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentWebhookEvent
+     */
+    omit?: PaymentWebhookEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentWebhookEventInclude<ExtArgs> | null
+    /**
+     * Filter, which PaymentWebhookEvent to fetch.
+     */
+    where?: PaymentWebhookEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PaymentWebhookEvents to fetch.
+     */
+    orderBy?: PaymentWebhookEventOrderByWithRelationInput | PaymentWebhookEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PaymentWebhookEvents.
+     */
+    cursor?: PaymentWebhookEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PaymentWebhookEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PaymentWebhookEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PaymentWebhookEvents.
+     */
+    distinct?: PaymentWebhookEventScalarFieldEnum | PaymentWebhookEventScalarFieldEnum[]
+  }
+
+  /**
+   * PaymentWebhookEvent findMany
+   */
+  export type PaymentWebhookEventFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentWebhookEvent
+     */
+    select?: PaymentWebhookEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentWebhookEvent
+     */
+    omit?: PaymentWebhookEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentWebhookEventInclude<ExtArgs> | null
+    /**
+     * Filter, which PaymentWebhookEvents to fetch.
+     */
+    where?: PaymentWebhookEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PaymentWebhookEvents to fetch.
+     */
+    orderBy?: PaymentWebhookEventOrderByWithRelationInput | PaymentWebhookEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PaymentWebhookEvents.
+     */
+    cursor?: PaymentWebhookEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PaymentWebhookEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PaymentWebhookEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PaymentWebhookEvents.
+     */
+    distinct?: PaymentWebhookEventScalarFieldEnum | PaymentWebhookEventScalarFieldEnum[]
+  }
+
+  /**
+   * PaymentWebhookEvent create
+   */
+  export type PaymentWebhookEventCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentWebhookEvent
+     */
+    select?: PaymentWebhookEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentWebhookEvent
+     */
+    omit?: PaymentWebhookEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentWebhookEventInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PaymentWebhookEvent.
+     */
+    data: XOR<PaymentWebhookEventCreateInput, PaymentWebhookEventUncheckedCreateInput>
+  }
+
+  /**
+   * PaymentWebhookEvent createMany
+   */
+  export type PaymentWebhookEventCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PaymentWebhookEvents.
+     */
+    data: PaymentWebhookEventCreateManyInput | PaymentWebhookEventCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PaymentWebhookEvent createManyAndReturn
+   */
+  export type PaymentWebhookEventCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentWebhookEvent
+     */
+    select?: PaymentWebhookEventSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentWebhookEvent
+     */
+    omit?: PaymentWebhookEventOmit<ExtArgs> | null
+    /**
+     * The data used to create many PaymentWebhookEvents.
+     */
+    data: PaymentWebhookEventCreateManyInput | PaymentWebhookEventCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentWebhookEventIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PaymentWebhookEvent update
+   */
+  export type PaymentWebhookEventUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentWebhookEvent
+     */
+    select?: PaymentWebhookEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentWebhookEvent
+     */
+    omit?: PaymentWebhookEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentWebhookEventInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PaymentWebhookEvent.
+     */
+    data: XOR<PaymentWebhookEventUpdateInput, PaymentWebhookEventUncheckedUpdateInput>
+    /**
+     * Choose, which PaymentWebhookEvent to update.
+     */
+    where: PaymentWebhookEventWhereUniqueInput
+  }
+
+  /**
+   * PaymentWebhookEvent updateMany
+   */
+  export type PaymentWebhookEventUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PaymentWebhookEvents.
+     */
+    data: XOR<PaymentWebhookEventUpdateManyMutationInput, PaymentWebhookEventUncheckedUpdateManyInput>
+    /**
+     * Filter which PaymentWebhookEvents to update
+     */
+    where?: PaymentWebhookEventWhereInput
+    /**
+     * Limit how many PaymentWebhookEvents to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PaymentWebhookEvent updateManyAndReturn
+   */
+  export type PaymentWebhookEventUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentWebhookEvent
+     */
+    select?: PaymentWebhookEventSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentWebhookEvent
+     */
+    omit?: PaymentWebhookEventOmit<ExtArgs> | null
+    /**
+     * The data used to update PaymentWebhookEvents.
+     */
+    data: XOR<PaymentWebhookEventUpdateManyMutationInput, PaymentWebhookEventUncheckedUpdateManyInput>
+    /**
+     * Filter which PaymentWebhookEvents to update
+     */
+    where?: PaymentWebhookEventWhereInput
+    /**
+     * Limit how many PaymentWebhookEvents to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentWebhookEventIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PaymentWebhookEvent upsert
+   */
+  export type PaymentWebhookEventUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentWebhookEvent
+     */
+    select?: PaymentWebhookEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentWebhookEvent
+     */
+    omit?: PaymentWebhookEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentWebhookEventInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PaymentWebhookEvent to update in case it exists.
+     */
+    where: PaymentWebhookEventWhereUniqueInput
+    /**
+     * In case the PaymentWebhookEvent found by the `where` argument doesn't exist, create a new PaymentWebhookEvent with this data.
+     */
+    create: XOR<PaymentWebhookEventCreateInput, PaymentWebhookEventUncheckedCreateInput>
+    /**
+     * In case the PaymentWebhookEvent was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PaymentWebhookEventUpdateInput, PaymentWebhookEventUncheckedUpdateInput>
+  }
+
+  /**
+   * PaymentWebhookEvent delete
+   */
+  export type PaymentWebhookEventDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentWebhookEvent
+     */
+    select?: PaymentWebhookEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentWebhookEvent
+     */
+    omit?: PaymentWebhookEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentWebhookEventInclude<ExtArgs> | null
+    /**
+     * Filter which PaymentWebhookEvent to delete.
+     */
+    where: PaymentWebhookEventWhereUniqueInput
+  }
+
+  /**
+   * PaymentWebhookEvent deleteMany
+   */
+  export type PaymentWebhookEventDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PaymentWebhookEvents to delete
+     */
+    where?: PaymentWebhookEventWhereInput
+    /**
+     * Limit how many PaymentWebhookEvents to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PaymentWebhookEvent.school
+   */
+  export type PaymentWebhookEvent$schoolArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the School
+     */
+    select?: SchoolSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the School
+     */
+    omit?: SchoolOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolInclude<ExtArgs> | null
+    where?: SchoolWhereInput
+  }
+
+  /**
+   * PaymentWebhookEvent.payment
+   */
+  export type PaymentWebhookEvent$paymentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    where?: PaymentWhereInput
+  }
+
+  /**
+   * PaymentWebhookEvent without action
+   */
+  export type PaymentWebhookEventDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentWebhookEvent
+     */
+    select?: PaymentWebhookEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentWebhookEvent
+     */
+    omit?: PaymentWebhookEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentWebhookEventInclude<ExtArgs> | null
   }
 
 
@@ -45429,6 +48278,46 @@ export namespace Prisma {
   export type FinanceAuditLogScalarFieldEnum = (typeof FinanceAuditLogScalarFieldEnum)[keyof typeof FinanceAuditLogScalarFieldEnum]
 
 
+  export const FinanceJobScalarFieldEnum: {
+    id: 'id',
+    type: 'type',
+    status: 'status',
+    payload: 'payload',
+    idempotencyKey: 'idempotencyKey',
+    attempts: 'attempts',
+    maxAttempts: 'maxAttempts',
+    runAfter: 'runAfter',
+    lockedAt: 'lockedAt',
+    lockedBy: 'lockedBy',
+    lastError: 'lastError',
+    completedAt: 'completedAt',
+    createdBy: 'createdBy',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    schoolId: 'schoolId'
+  };
+
+  export type FinanceJobScalarFieldEnum = (typeof FinanceJobScalarFieldEnum)[keyof typeof FinanceJobScalarFieldEnum]
+
+
+  export const PaymentWebhookEventScalarFieldEnum: {
+    id: 'id',
+    provider: 'provider',
+    providerEventId: 'providerEventId',
+    eventType: 'eventType',
+    status: 'status',
+    payload: 'payload',
+    signature: 'signature',
+    receivedAt: 'receivedAt',
+    processedAt: 'processedAt',
+    lastError: 'lastError',
+    schoolId: 'schoolId',
+    paymentId: 'paymentId'
+  };
+
+  export type PaymentWebhookEventScalarFieldEnum = (typeof PaymentWebhookEventScalarFieldEnum)[keyof typeof PaymentWebhookEventScalarFieldEnum]
+
+
   export const RateLimitBucketScalarFieldEnum: {
     key: 'key',
     count: 'count',
@@ -45807,6 +48696,62 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'FinanceJobType'
+   */
+  export type EnumFinanceJobTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FinanceJobType'>
+    
+
+
+  /**
+   * Reference to a field of type 'FinanceJobType[]'
+   */
+  export type ListEnumFinanceJobTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FinanceJobType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'JobStatus'
+   */
+  export type EnumJobStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JobStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'JobStatus[]'
+   */
+  export type ListEnumJobStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JobStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'PaymentProvider'
+   */
+  export type EnumPaymentProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentProvider'>
+    
+
+
+  /**
+   * Reference to a field of type 'PaymentProvider[]'
+   */
+  export type ListEnumPaymentProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentProvider[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'WebhookEventStatus'
+   */
+  export type EnumWebhookEventStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WebhookEventStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'WebhookEventStatus[]'
+   */
+  export type ListEnumWebhookEventStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WebhookEventStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'WaitlistRole'
    */
   export type EnumWaitlistRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WaitlistRole'>
@@ -45909,6 +48854,8 @@ export namespace Prisma {
     invites?: SchoolInviteListRelationFilter
     waitlistEntries?: WaitlistEntryListRelationFilter
     onboardingAuditLogs?: OnboardingAuditLogListRelationFilter
+    financeJobs?: FinanceJobListRelationFilter
+    paymentWebhookEvents?: PaymentWebhookEventListRelationFilter
   }
 
   export type SchoolOrderByWithRelationInput = {
@@ -45952,6 +48899,8 @@ export namespace Prisma {
     invites?: SchoolInviteOrderByRelationAggregateInput
     waitlistEntries?: WaitlistEntryOrderByRelationAggregateInput
     onboardingAuditLogs?: OnboardingAuditLogOrderByRelationAggregateInput
+    financeJobs?: FinanceJobOrderByRelationAggregateInput
+    paymentWebhookEvents?: PaymentWebhookEventOrderByRelationAggregateInput
   }
 
   export type SchoolWhereUniqueInput = Prisma.AtLeast<{
@@ -45998,6 +48947,8 @@ export namespace Prisma {
     invites?: SchoolInviteListRelationFilter
     waitlistEntries?: WaitlistEntryListRelationFilter
     onboardingAuditLogs?: OnboardingAuditLogListRelationFilter
+    financeJobs?: FinanceJobListRelationFilter
+    paymentWebhookEvents?: PaymentWebhookEventListRelationFilter
   }, "id" | "slug">
 
   export type SchoolOrderByWithAggregationInput = {
@@ -48005,6 +50956,7 @@ export namespace Prisma {
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     studentBill?: XOR<StudentBillScalarRelationFilter, StudentBillWhereInput>
     reversal?: XOR<PaymentReversalNullableScalarRelationFilter, PaymentReversalWhereInput> | null
+    webhookEvents?: PaymentWebhookEventListRelationFilter
   }
 
   export type PaymentOrderByWithRelationInput = {
@@ -48024,6 +50976,7 @@ export namespace Prisma {
     school?: SchoolOrderByWithRelationInput
     studentBill?: StudentBillOrderByWithRelationInput
     reversal?: PaymentReversalOrderByWithRelationInput
+    webhookEvents?: PaymentWebhookEventOrderByRelationAggregateInput
   }
 
   export type PaymentWhereUniqueInput = Prisma.AtLeast<{
@@ -48047,6 +51000,7 @@ export namespace Prisma {
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     studentBill?: XOR<StudentBillScalarRelationFilter, StudentBillWhereInput>
     reversal?: XOR<PaymentReversalNullableScalarRelationFilter, PaymentReversalWhereInput> | null
+    webhookEvents?: PaymentWebhookEventListRelationFilter
   }, "id" | "schoolId_receiptNumber">
 
   export type PaymentOrderByWithAggregationInput = {
@@ -48362,6 +51316,214 @@ export namespace Prisma {
     ipAddress?: StringNullableWithAggregatesFilter<"FinanceAuditLog"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"FinanceAuditLog"> | Date | string
     schoolId?: StringWithAggregatesFilter<"FinanceAuditLog"> | string
+  }
+
+  export type FinanceJobWhereInput = {
+    AND?: FinanceJobWhereInput | FinanceJobWhereInput[]
+    OR?: FinanceJobWhereInput[]
+    NOT?: FinanceJobWhereInput | FinanceJobWhereInput[]
+    id?: StringFilter<"FinanceJob"> | string
+    type?: EnumFinanceJobTypeFilter<"FinanceJob"> | $Enums.FinanceJobType
+    status?: EnumJobStatusFilter<"FinanceJob"> | $Enums.JobStatus
+    payload?: JsonFilter<"FinanceJob">
+    idempotencyKey?: StringNullableFilter<"FinanceJob"> | string | null
+    attempts?: IntFilter<"FinanceJob"> | number
+    maxAttempts?: IntFilter<"FinanceJob"> | number
+    runAfter?: DateTimeFilter<"FinanceJob"> | Date | string
+    lockedAt?: DateTimeNullableFilter<"FinanceJob"> | Date | string | null
+    lockedBy?: StringNullableFilter<"FinanceJob"> | string | null
+    lastError?: StringNullableFilter<"FinanceJob"> | string | null
+    completedAt?: DateTimeNullableFilter<"FinanceJob"> | Date | string | null
+    createdBy?: StringNullableFilter<"FinanceJob"> | string | null
+    createdAt?: DateTimeFilter<"FinanceJob"> | Date | string
+    updatedAt?: DateTimeFilter<"FinanceJob"> | Date | string
+    schoolId?: StringFilter<"FinanceJob"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+  }
+
+  export type FinanceJobOrderByWithRelationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    status?: SortOrder
+    payload?: SortOrder
+    idempotencyKey?: SortOrderInput | SortOrder
+    attempts?: SortOrder
+    maxAttempts?: SortOrder
+    runAfter?: SortOrder
+    lockedAt?: SortOrderInput | SortOrder
+    lockedBy?: SortOrderInput | SortOrder
+    lastError?: SortOrderInput | SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    createdBy?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+  }
+
+  export type FinanceJobWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    idempotencyKey?: string
+    AND?: FinanceJobWhereInput | FinanceJobWhereInput[]
+    OR?: FinanceJobWhereInput[]
+    NOT?: FinanceJobWhereInput | FinanceJobWhereInput[]
+    type?: EnumFinanceJobTypeFilter<"FinanceJob"> | $Enums.FinanceJobType
+    status?: EnumJobStatusFilter<"FinanceJob"> | $Enums.JobStatus
+    payload?: JsonFilter<"FinanceJob">
+    attempts?: IntFilter<"FinanceJob"> | number
+    maxAttempts?: IntFilter<"FinanceJob"> | number
+    runAfter?: DateTimeFilter<"FinanceJob"> | Date | string
+    lockedAt?: DateTimeNullableFilter<"FinanceJob"> | Date | string | null
+    lockedBy?: StringNullableFilter<"FinanceJob"> | string | null
+    lastError?: StringNullableFilter<"FinanceJob"> | string | null
+    completedAt?: DateTimeNullableFilter<"FinanceJob"> | Date | string | null
+    createdBy?: StringNullableFilter<"FinanceJob"> | string | null
+    createdAt?: DateTimeFilter<"FinanceJob"> | Date | string
+    updatedAt?: DateTimeFilter<"FinanceJob"> | Date | string
+    schoolId?: StringFilter<"FinanceJob"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+  }, "id" | "idempotencyKey">
+
+  export type FinanceJobOrderByWithAggregationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    status?: SortOrder
+    payload?: SortOrder
+    idempotencyKey?: SortOrderInput | SortOrder
+    attempts?: SortOrder
+    maxAttempts?: SortOrder
+    runAfter?: SortOrder
+    lockedAt?: SortOrderInput | SortOrder
+    lockedBy?: SortOrderInput | SortOrder
+    lastError?: SortOrderInput | SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    createdBy?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    _count?: FinanceJobCountOrderByAggregateInput
+    _avg?: FinanceJobAvgOrderByAggregateInput
+    _max?: FinanceJobMaxOrderByAggregateInput
+    _min?: FinanceJobMinOrderByAggregateInput
+    _sum?: FinanceJobSumOrderByAggregateInput
+  }
+
+  export type FinanceJobScalarWhereWithAggregatesInput = {
+    AND?: FinanceJobScalarWhereWithAggregatesInput | FinanceJobScalarWhereWithAggregatesInput[]
+    OR?: FinanceJobScalarWhereWithAggregatesInput[]
+    NOT?: FinanceJobScalarWhereWithAggregatesInput | FinanceJobScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"FinanceJob"> | string
+    type?: EnumFinanceJobTypeWithAggregatesFilter<"FinanceJob"> | $Enums.FinanceJobType
+    status?: EnumJobStatusWithAggregatesFilter<"FinanceJob"> | $Enums.JobStatus
+    payload?: JsonWithAggregatesFilter<"FinanceJob">
+    idempotencyKey?: StringNullableWithAggregatesFilter<"FinanceJob"> | string | null
+    attempts?: IntWithAggregatesFilter<"FinanceJob"> | number
+    maxAttempts?: IntWithAggregatesFilter<"FinanceJob"> | number
+    runAfter?: DateTimeWithAggregatesFilter<"FinanceJob"> | Date | string
+    lockedAt?: DateTimeNullableWithAggregatesFilter<"FinanceJob"> | Date | string | null
+    lockedBy?: StringNullableWithAggregatesFilter<"FinanceJob"> | string | null
+    lastError?: StringNullableWithAggregatesFilter<"FinanceJob"> | string | null
+    completedAt?: DateTimeNullableWithAggregatesFilter<"FinanceJob"> | Date | string | null
+    createdBy?: StringNullableWithAggregatesFilter<"FinanceJob"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"FinanceJob"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"FinanceJob"> | Date | string
+    schoolId?: StringWithAggregatesFilter<"FinanceJob"> | string
+  }
+
+  export type PaymentWebhookEventWhereInput = {
+    AND?: PaymentWebhookEventWhereInput | PaymentWebhookEventWhereInput[]
+    OR?: PaymentWebhookEventWhereInput[]
+    NOT?: PaymentWebhookEventWhereInput | PaymentWebhookEventWhereInput[]
+    id?: StringFilter<"PaymentWebhookEvent"> | string
+    provider?: EnumPaymentProviderFilter<"PaymentWebhookEvent"> | $Enums.PaymentProvider
+    providerEventId?: StringFilter<"PaymentWebhookEvent"> | string
+    eventType?: StringFilter<"PaymentWebhookEvent"> | string
+    status?: EnumWebhookEventStatusFilter<"PaymentWebhookEvent"> | $Enums.WebhookEventStatus
+    payload?: JsonFilter<"PaymentWebhookEvent">
+    signature?: StringNullableFilter<"PaymentWebhookEvent"> | string | null
+    receivedAt?: DateTimeFilter<"PaymentWebhookEvent"> | Date | string
+    processedAt?: DateTimeNullableFilter<"PaymentWebhookEvent"> | Date | string | null
+    lastError?: StringNullableFilter<"PaymentWebhookEvent"> | string | null
+    schoolId?: StringNullableFilter<"PaymentWebhookEvent"> | string | null
+    paymentId?: IntNullableFilter<"PaymentWebhookEvent"> | number | null
+    school?: XOR<SchoolNullableScalarRelationFilter, SchoolWhereInput> | null
+    payment?: XOR<PaymentNullableScalarRelationFilter, PaymentWhereInput> | null
+  }
+
+  export type PaymentWebhookEventOrderByWithRelationInput = {
+    id?: SortOrder
+    provider?: SortOrder
+    providerEventId?: SortOrder
+    eventType?: SortOrder
+    status?: SortOrder
+    payload?: SortOrder
+    signature?: SortOrderInput | SortOrder
+    receivedAt?: SortOrder
+    processedAt?: SortOrderInput | SortOrder
+    lastError?: SortOrderInput | SortOrder
+    schoolId?: SortOrderInput | SortOrder
+    paymentId?: SortOrderInput | SortOrder
+    school?: SchoolOrderByWithRelationInput
+    payment?: PaymentOrderByWithRelationInput
+  }
+
+  export type PaymentWebhookEventWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    provider_providerEventId?: PaymentWebhookEventProviderProviderEventIdCompoundUniqueInput
+    AND?: PaymentWebhookEventWhereInput | PaymentWebhookEventWhereInput[]
+    OR?: PaymentWebhookEventWhereInput[]
+    NOT?: PaymentWebhookEventWhereInput | PaymentWebhookEventWhereInput[]
+    provider?: EnumPaymentProviderFilter<"PaymentWebhookEvent"> | $Enums.PaymentProvider
+    providerEventId?: StringFilter<"PaymentWebhookEvent"> | string
+    eventType?: StringFilter<"PaymentWebhookEvent"> | string
+    status?: EnumWebhookEventStatusFilter<"PaymentWebhookEvent"> | $Enums.WebhookEventStatus
+    payload?: JsonFilter<"PaymentWebhookEvent">
+    signature?: StringNullableFilter<"PaymentWebhookEvent"> | string | null
+    receivedAt?: DateTimeFilter<"PaymentWebhookEvent"> | Date | string
+    processedAt?: DateTimeNullableFilter<"PaymentWebhookEvent"> | Date | string | null
+    lastError?: StringNullableFilter<"PaymentWebhookEvent"> | string | null
+    schoolId?: StringNullableFilter<"PaymentWebhookEvent"> | string | null
+    paymentId?: IntNullableFilter<"PaymentWebhookEvent"> | number | null
+    school?: XOR<SchoolNullableScalarRelationFilter, SchoolWhereInput> | null
+    payment?: XOR<PaymentNullableScalarRelationFilter, PaymentWhereInput> | null
+  }, "id" | "provider_providerEventId">
+
+  export type PaymentWebhookEventOrderByWithAggregationInput = {
+    id?: SortOrder
+    provider?: SortOrder
+    providerEventId?: SortOrder
+    eventType?: SortOrder
+    status?: SortOrder
+    payload?: SortOrder
+    signature?: SortOrderInput | SortOrder
+    receivedAt?: SortOrder
+    processedAt?: SortOrderInput | SortOrder
+    lastError?: SortOrderInput | SortOrder
+    schoolId?: SortOrderInput | SortOrder
+    paymentId?: SortOrderInput | SortOrder
+    _count?: PaymentWebhookEventCountOrderByAggregateInput
+    _avg?: PaymentWebhookEventAvgOrderByAggregateInput
+    _max?: PaymentWebhookEventMaxOrderByAggregateInput
+    _min?: PaymentWebhookEventMinOrderByAggregateInput
+    _sum?: PaymentWebhookEventSumOrderByAggregateInput
+  }
+
+  export type PaymentWebhookEventScalarWhereWithAggregatesInput = {
+    AND?: PaymentWebhookEventScalarWhereWithAggregatesInput | PaymentWebhookEventScalarWhereWithAggregatesInput[]
+    OR?: PaymentWebhookEventScalarWhereWithAggregatesInput[]
+    NOT?: PaymentWebhookEventScalarWhereWithAggregatesInput | PaymentWebhookEventScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PaymentWebhookEvent"> | string
+    provider?: EnumPaymentProviderWithAggregatesFilter<"PaymentWebhookEvent"> | $Enums.PaymentProvider
+    providerEventId?: StringWithAggregatesFilter<"PaymentWebhookEvent"> | string
+    eventType?: StringWithAggregatesFilter<"PaymentWebhookEvent"> | string
+    status?: EnumWebhookEventStatusWithAggregatesFilter<"PaymentWebhookEvent"> | $Enums.WebhookEventStatus
+    payload?: JsonWithAggregatesFilter<"PaymentWebhookEvent">
+    signature?: StringNullableWithAggregatesFilter<"PaymentWebhookEvent"> | string | null
+    receivedAt?: DateTimeWithAggregatesFilter<"PaymentWebhookEvent"> | Date | string
+    processedAt?: DateTimeNullableWithAggregatesFilter<"PaymentWebhookEvent"> | Date | string | null
+    lastError?: StringNullableWithAggregatesFilter<"PaymentWebhookEvent"> | string | null
+    schoolId?: StringNullableWithAggregatesFilter<"PaymentWebhookEvent"> | string | null
+    paymentId?: IntNullableWithAggregatesFilter<"PaymentWebhookEvent"> | number | null
   }
 
   export type RateLimitBucketWhereInput = {
@@ -48701,6 +51863,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateInput = {
@@ -48744,6 +51908,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUpdateInput = {
@@ -48787,6 +51953,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateInput = {
@@ -48830,6 +51998,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateManyInput = {
@@ -50819,6 +53989,7 @@ export namespace Prisma {
     school?: SchoolCreateNestedOneWithoutPaymentsInput
     studentBill: StudentBillCreateNestedOneWithoutPaymentsInput
     reversal?: PaymentReversalCreateNestedOneWithoutPaymentInput
+    webhookEvents?: PaymentWebhookEventCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentUncheckedCreateInput = {
@@ -50836,6 +54007,7 @@ export namespace Prisma {
     recordedBy: string
     createdAt?: Date | string
     reversal?: PaymentReversalUncheckedCreateNestedOneWithoutPaymentInput
+    webhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentUpdateInput = {
@@ -50852,6 +54024,7 @@ export namespace Prisma {
     school?: SchoolUpdateOneRequiredWithoutPaymentsNestedInput
     studentBill?: StudentBillUpdateOneRequiredWithoutPaymentsNestedInput
     reversal?: PaymentReversalUpdateOneWithoutPaymentNestedInput
+    webhookEvents?: PaymentWebhookEventUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentUncheckedUpdateInput = {
@@ -50869,6 +54042,7 @@ export namespace Prisma {
     recordedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reversal?: PaymentReversalUncheckedUpdateOneWithoutPaymentNestedInput
+    webhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentCreateManyInput = {
@@ -51176,6 +54350,241 @@ export namespace Prisma {
     ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type FinanceJobCreateInput = {
+    id?: string
+    type: $Enums.FinanceJobType
+    status?: $Enums.JobStatus
+    payload: JsonNullValueInput | InputJsonValue
+    idempotencyKey?: string | null
+    attempts?: number
+    maxAttempts?: number
+    runAfter?: Date | string
+    lockedAt?: Date | string | null
+    lockedBy?: string | null
+    lastError?: string | null
+    completedAt?: Date | string | null
+    createdBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutFinanceJobsInput
+  }
+
+  export type FinanceJobUncheckedCreateInput = {
+    id?: string
+    type: $Enums.FinanceJobType
+    status?: $Enums.JobStatus
+    payload: JsonNullValueInput | InputJsonValue
+    idempotencyKey?: string | null
+    attempts?: number
+    maxAttempts?: number
+    runAfter?: Date | string
+    lockedAt?: Date | string | null
+    lockedBy?: string | null
+    lastError?: string | null
+    completedAt?: Date | string | null
+    createdBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+  }
+
+  export type FinanceJobUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFinanceJobTypeFieldUpdateOperationsInput | $Enums.FinanceJobType
+    status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    maxAttempts?: IntFieldUpdateOperationsInput | number
+    runAfter?: DateTimeFieldUpdateOperationsInput | Date | string
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lockedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutFinanceJobsNestedInput
+  }
+
+  export type FinanceJobUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFinanceJobTypeFieldUpdateOperationsInput | $Enums.FinanceJobType
+    status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    maxAttempts?: IntFieldUpdateOperationsInput | number
+    runAfter?: DateTimeFieldUpdateOperationsInput | Date | string
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lockedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type FinanceJobCreateManyInput = {
+    id?: string
+    type: $Enums.FinanceJobType
+    status?: $Enums.JobStatus
+    payload: JsonNullValueInput | InputJsonValue
+    idempotencyKey?: string | null
+    attempts?: number
+    maxAttempts?: number
+    runAfter?: Date | string
+    lockedAt?: Date | string | null
+    lockedBy?: string | null
+    lastError?: string | null
+    completedAt?: Date | string | null
+    createdBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+  }
+
+  export type FinanceJobUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFinanceJobTypeFieldUpdateOperationsInput | $Enums.FinanceJobType
+    status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    maxAttempts?: IntFieldUpdateOperationsInput | number
+    runAfter?: DateTimeFieldUpdateOperationsInput | Date | string
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lockedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FinanceJobUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFinanceJobTypeFieldUpdateOperationsInput | $Enums.FinanceJobType
+    status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    maxAttempts?: IntFieldUpdateOperationsInput | number
+    runAfter?: DateTimeFieldUpdateOperationsInput | Date | string
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lockedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PaymentWebhookEventCreateInput = {
+    id?: string
+    provider: $Enums.PaymentProvider
+    providerEventId: string
+    eventType: string
+    status?: $Enums.WebhookEventStatus
+    payload: JsonNullValueInput | InputJsonValue
+    signature?: string | null
+    receivedAt?: Date | string
+    processedAt?: Date | string | null
+    lastError?: string | null
+    school?: SchoolCreateNestedOneWithoutPaymentWebhookEventsInput
+    payment?: PaymentCreateNestedOneWithoutWebhookEventsInput
+  }
+
+  export type PaymentWebhookEventUncheckedCreateInput = {
+    id?: string
+    provider: $Enums.PaymentProvider
+    providerEventId: string
+    eventType: string
+    status?: $Enums.WebhookEventStatus
+    payload: JsonNullValueInput | InputJsonValue
+    signature?: string | null
+    receivedAt?: Date | string
+    processedAt?: Date | string | null
+    lastError?: string | null
+    schoolId?: string | null
+    paymentId?: number | null
+  }
+
+  export type PaymentWebhookEventUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    providerEventId?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    status?: EnumWebhookEventStatusFieldUpdateOperationsInput | $Enums.WebhookEventStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    signature?: NullableStringFieldUpdateOperationsInput | string | null
+    receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    school?: SchoolUpdateOneWithoutPaymentWebhookEventsNestedInput
+    payment?: PaymentUpdateOneWithoutWebhookEventsNestedInput
+  }
+
+  export type PaymentWebhookEventUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    providerEventId?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    status?: EnumWebhookEventStatusFieldUpdateOperationsInput | $Enums.WebhookEventStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    signature?: NullableStringFieldUpdateOperationsInput | string | null
+    receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type PaymentWebhookEventCreateManyInput = {
+    id?: string
+    provider: $Enums.PaymentProvider
+    providerEventId: string
+    eventType: string
+    status?: $Enums.WebhookEventStatus
+    payload: JsonNullValueInput | InputJsonValue
+    signature?: string | null
+    receivedAt?: Date | string
+    processedAt?: Date | string | null
+    lastError?: string | null
+    schoolId?: string | null
+    paymentId?: number | null
+  }
+
+  export type PaymentWebhookEventUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    providerEventId?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    status?: EnumWebhookEventStatusFieldUpdateOperationsInput | $Enums.WebhookEventStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    signature?: NullableStringFieldUpdateOperationsInput | string | null
+    receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type PaymentWebhookEventUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    providerEventId?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    status?: EnumWebhookEventStatusFieldUpdateOperationsInput | $Enums.WebhookEventStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    signature?: NullableStringFieldUpdateOperationsInput | string | null
+    receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type RateLimitBucketCreateInput = {
@@ -51728,6 +55137,18 @@ export namespace Prisma {
     none?: OnboardingAuditLogWhereInput
   }
 
+  export type FinanceJobListRelationFilter = {
+    every?: FinanceJobWhereInput
+    some?: FinanceJobWhereInput
+    none?: FinanceJobWhereInput
+  }
+
+  export type PaymentWebhookEventListRelationFilter = {
+    every?: PaymentWebhookEventWhereInput
+    some?: PaymentWebhookEventWhereInput
+    none?: PaymentWebhookEventWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -51842,6 +55263,14 @@ export namespace Prisma {
   }
 
   export type OnboardingAuditLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FinanceJobOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PaymentWebhookEventOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -53863,6 +57292,205 @@ export namespace Prisma {
     _max?: NestedJsonFilter<$PrismaModel>
   }
 
+  export type EnumFinanceJobTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.FinanceJobType | EnumFinanceJobTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FinanceJobType[] | ListEnumFinanceJobTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FinanceJobType[] | ListEnumFinanceJobTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFinanceJobTypeFilter<$PrismaModel> | $Enums.FinanceJobType
+  }
+
+  export type EnumJobStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobStatus | EnumJobStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobStatus[] | ListEnumJobStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobStatus[] | ListEnumJobStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobStatusFilter<$PrismaModel> | $Enums.JobStatus
+  }
+
+  export type FinanceJobCountOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    status?: SortOrder
+    payload?: SortOrder
+    idempotencyKey?: SortOrder
+    attempts?: SortOrder
+    maxAttempts?: SortOrder
+    runAfter?: SortOrder
+    lockedAt?: SortOrder
+    lockedBy?: SortOrder
+    lastError?: SortOrder
+    completedAt?: SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+  }
+
+  export type FinanceJobAvgOrderByAggregateInput = {
+    attempts?: SortOrder
+    maxAttempts?: SortOrder
+  }
+
+  export type FinanceJobMaxOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    status?: SortOrder
+    idempotencyKey?: SortOrder
+    attempts?: SortOrder
+    maxAttempts?: SortOrder
+    runAfter?: SortOrder
+    lockedAt?: SortOrder
+    lockedBy?: SortOrder
+    lastError?: SortOrder
+    completedAt?: SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+  }
+
+  export type FinanceJobMinOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    status?: SortOrder
+    idempotencyKey?: SortOrder
+    attempts?: SortOrder
+    maxAttempts?: SortOrder
+    runAfter?: SortOrder
+    lockedAt?: SortOrder
+    lockedBy?: SortOrder
+    lastError?: SortOrder
+    completedAt?: SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+  }
+
+  export type FinanceJobSumOrderByAggregateInput = {
+    attempts?: SortOrder
+    maxAttempts?: SortOrder
+  }
+
+  export type EnumFinanceJobTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FinanceJobType | EnumFinanceJobTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FinanceJobType[] | ListEnumFinanceJobTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FinanceJobType[] | ListEnumFinanceJobTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFinanceJobTypeWithAggregatesFilter<$PrismaModel> | $Enums.FinanceJobType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFinanceJobTypeFilter<$PrismaModel>
+    _max?: NestedEnumFinanceJobTypeFilter<$PrismaModel>
+  }
+
+  export type EnumJobStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobStatus | EnumJobStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobStatus[] | ListEnumJobStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobStatus[] | ListEnumJobStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobStatusWithAggregatesFilter<$PrismaModel> | $Enums.JobStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumJobStatusFilter<$PrismaModel>
+    _max?: NestedEnumJobStatusFilter<$PrismaModel>
+  }
+
+  export type EnumPaymentProviderFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentProvider | EnumPaymentProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentProvider[] | ListEnumPaymentProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentProvider[] | ListEnumPaymentProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentProviderFilter<$PrismaModel> | $Enums.PaymentProvider
+  }
+
+  export type EnumWebhookEventStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.WebhookEventStatus | EnumWebhookEventStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.WebhookEventStatus[] | ListEnumWebhookEventStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WebhookEventStatus[] | ListEnumWebhookEventStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumWebhookEventStatusFilter<$PrismaModel> | $Enums.WebhookEventStatus
+  }
+
+  export type SchoolNullableScalarRelationFilter = {
+    is?: SchoolWhereInput | null
+    isNot?: SchoolWhereInput | null
+  }
+
+  export type PaymentNullableScalarRelationFilter = {
+    is?: PaymentWhereInput | null
+    isNot?: PaymentWhereInput | null
+  }
+
+  export type PaymentWebhookEventProviderProviderEventIdCompoundUniqueInput = {
+    provider: $Enums.PaymentProvider
+    providerEventId: string
+  }
+
+  export type PaymentWebhookEventCountOrderByAggregateInput = {
+    id?: SortOrder
+    provider?: SortOrder
+    providerEventId?: SortOrder
+    eventType?: SortOrder
+    status?: SortOrder
+    payload?: SortOrder
+    signature?: SortOrder
+    receivedAt?: SortOrder
+    processedAt?: SortOrder
+    lastError?: SortOrder
+    schoolId?: SortOrder
+    paymentId?: SortOrder
+  }
+
+  export type PaymentWebhookEventAvgOrderByAggregateInput = {
+    paymentId?: SortOrder
+  }
+
+  export type PaymentWebhookEventMaxOrderByAggregateInput = {
+    id?: SortOrder
+    provider?: SortOrder
+    providerEventId?: SortOrder
+    eventType?: SortOrder
+    status?: SortOrder
+    signature?: SortOrder
+    receivedAt?: SortOrder
+    processedAt?: SortOrder
+    lastError?: SortOrder
+    schoolId?: SortOrder
+    paymentId?: SortOrder
+  }
+
+  export type PaymentWebhookEventMinOrderByAggregateInput = {
+    id?: SortOrder
+    provider?: SortOrder
+    providerEventId?: SortOrder
+    eventType?: SortOrder
+    status?: SortOrder
+    signature?: SortOrder
+    receivedAt?: SortOrder
+    processedAt?: SortOrder
+    lastError?: SortOrder
+    schoolId?: SortOrder
+    paymentId?: SortOrder
+  }
+
+  export type PaymentWebhookEventSumOrderByAggregateInput = {
+    paymentId?: SortOrder
+  }
+
+  export type EnumPaymentProviderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentProvider | EnumPaymentProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentProvider[] | ListEnumPaymentProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentProvider[] | ListEnumPaymentProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentProviderWithAggregatesFilter<$PrismaModel> | $Enums.PaymentProvider
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPaymentProviderFilter<$PrismaModel>
+    _max?: NestedEnumPaymentProviderFilter<$PrismaModel>
+  }
+
+  export type EnumWebhookEventStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.WebhookEventStatus | EnumWebhookEventStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.WebhookEventStatus[] | ListEnumWebhookEventStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WebhookEventStatus[] | ListEnumWebhookEventStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumWebhookEventStatusWithAggregatesFilter<$PrismaModel> | $Enums.WebhookEventStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumWebhookEventStatusFilter<$PrismaModel>
+    _max?: NestedEnumWebhookEventStatusFilter<$PrismaModel>
+  }
+
   export type RateLimitBucketCountOrderByAggregateInput = {
     key?: SortOrder
     count?: SortOrder
@@ -53904,11 +57532,6 @@ export namespace Prisma {
     in?: $Enums.WaitlistStatus[] | ListEnumWaitlistStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.WaitlistStatus[] | ListEnumWaitlistStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumWaitlistStatusFilter<$PrismaModel> | $Enums.WaitlistStatus
-  }
-
-  export type SchoolNullableScalarRelationFilter = {
-    is?: SchoolWhereInput | null
-    isNot?: SchoolWhereInput | null
   }
 
   export type WaitlistEntryCountOrderByAggregateInput = {
@@ -54287,6 +57910,20 @@ export namespace Prisma {
     connect?: OnboardingAuditLogWhereUniqueInput | OnboardingAuditLogWhereUniqueInput[]
   }
 
+  export type FinanceJobCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<FinanceJobCreateWithoutSchoolInput, FinanceJobUncheckedCreateWithoutSchoolInput> | FinanceJobCreateWithoutSchoolInput[] | FinanceJobUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: FinanceJobCreateOrConnectWithoutSchoolInput | FinanceJobCreateOrConnectWithoutSchoolInput[]
+    createMany?: FinanceJobCreateManySchoolInputEnvelope
+    connect?: FinanceJobWhereUniqueInput | FinanceJobWhereUniqueInput[]
+  }
+
+  export type PaymentWebhookEventCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<PaymentWebhookEventCreateWithoutSchoolInput, PaymentWebhookEventUncheckedCreateWithoutSchoolInput> | PaymentWebhookEventCreateWithoutSchoolInput[] | PaymentWebhookEventUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: PaymentWebhookEventCreateOrConnectWithoutSchoolInput | PaymentWebhookEventCreateOrConnectWithoutSchoolInput[]
+    createMany?: PaymentWebhookEventCreateManySchoolInputEnvelope
+    connect?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+  }
+
   export type AdminUncheckedCreateNestedManyWithoutSchoolInput = {
     create?: XOR<AdminCreateWithoutSchoolInput, AdminUncheckedCreateWithoutSchoolInput> | AdminCreateWithoutSchoolInput[] | AdminUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: AdminCreateOrConnectWithoutSchoolInput | AdminCreateOrConnectWithoutSchoolInput[]
@@ -54481,6 +58118,20 @@ export namespace Prisma {
     connectOrCreate?: OnboardingAuditLogCreateOrConnectWithoutSchoolInput | OnboardingAuditLogCreateOrConnectWithoutSchoolInput[]
     createMany?: OnboardingAuditLogCreateManySchoolInputEnvelope
     connect?: OnboardingAuditLogWhereUniqueInput | OnboardingAuditLogWhereUniqueInput[]
+  }
+
+  export type FinanceJobUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<FinanceJobCreateWithoutSchoolInput, FinanceJobUncheckedCreateWithoutSchoolInput> | FinanceJobCreateWithoutSchoolInput[] | FinanceJobUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: FinanceJobCreateOrConnectWithoutSchoolInput | FinanceJobCreateOrConnectWithoutSchoolInput[]
+    createMany?: FinanceJobCreateManySchoolInputEnvelope
+    connect?: FinanceJobWhereUniqueInput | FinanceJobWhereUniqueInput[]
+  }
+
+  export type PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<PaymentWebhookEventCreateWithoutSchoolInput, PaymentWebhookEventUncheckedCreateWithoutSchoolInput> | PaymentWebhookEventCreateWithoutSchoolInput[] | PaymentWebhookEventUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: PaymentWebhookEventCreateOrConnectWithoutSchoolInput | PaymentWebhookEventCreateOrConnectWithoutSchoolInput[]
+    createMany?: PaymentWebhookEventCreateManySchoolInputEnvelope
+    connect?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -54895,6 +58546,34 @@ export namespace Prisma {
     deleteMany?: OnboardingAuditLogScalarWhereInput | OnboardingAuditLogScalarWhereInput[]
   }
 
+  export type FinanceJobUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<FinanceJobCreateWithoutSchoolInput, FinanceJobUncheckedCreateWithoutSchoolInput> | FinanceJobCreateWithoutSchoolInput[] | FinanceJobUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: FinanceJobCreateOrConnectWithoutSchoolInput | FinanceJobCreateOrConnectWithoutSchoolInput[]
+    upsert?: FinanceJobUpsertWithWhereUniqueWithoutSchoolInput | FinanceJobUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: FinanceJobCreateManySchoolInputEnvelope
+    set?: FinanceJobWhereUniqueInput | FinanceJobWhereUniqueInput[]
+    disconnect?: FinanceJobWhereUniqueInput | FinanceJobWhereUniqueInput[]
+    delete?: FinanceJobWhereUniqueInput | FinanceJobWhereUniqueInput[]
+    connect?: FinanceJobWhereUniqueInput | FinanceJobWhereUniqueInput[]
+    update?: FinanceJobUpdateWithWhereUniqueWithoutSchoolInput | FinanceJobUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: FinanceJobUpdateManyWithWhereWithoutSchoolInput | FinanceJobUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: FinanceJobScalarWhereInput | FinanceJobScalarWhereInput[]
+  }
+
+  export type PaymentWebhookEventUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<PaymentWebhookEventCreateWithoutSchoolInput, PaymentWebhookEventUncheckedCreateWithoutSchoolInput> | PaymentWebhookEventCreateWithoutSchoolInput[] | PaymentWebhookEventUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: PaymentWebhookEventCreateOrConnectWithoutSchoolInput | PaymentWebhookEventCreateOrConnectWithoutSchoolInput[]
+    upsert?: PaymentWebhookEventUpsertWithWhereUniqueWithoutSchoolInput | PaymentWebhookEventUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: PaymentWebhookEventCreateManySchoolInputEnvelope
+    set?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+    disconnect?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+    delete?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+    connect?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+    update?: PaymentWebhookEventUpdateWithWhereUniqueWithoutSchoolInput | PaymentWebhookEventUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: PaymentWebhookEventUpdateManyWithWhereWithoutSchoolInput | PaymentWebhookEventUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: PaymentWebhookEventScalarWhereInput | PaymentWebhookEventScalarWhereInput[]
+  }
+
   export type AdminUncheckedUpdateManyWithoutSchoolNestedInput = {
     create?: XOR<AdminCreateWithoutSchoolInput, AdminUncheckedCreateWithoutSchoolInput> | AdminCreateWithoutSchoolInput[] | AdminUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: AdminCreateOrConnectWithoutSchoolInput | AdminCreateOrConnectWithoutSchoolInput[]
@@ -55285,6 +58964,34 @@ export namespace Prisma {
     update?: OnboardingAuditLogUpdateWithWhereUniqueWithoutSchoolInput | OnboardingAuditLogUpdateWithWhereUniqueWithoutSchoolInput[]
     updateMany?: OnboardingAuditLogUpdateManyWithWhereWithoutSchoolInput | OnboardingAuditLogUpdateManyWithWhereWithoutSchoolInput[]
     deleteMany?: OnboardingAuditLogScalarWhereInput | OnboardingAuditLogScalarWhereInput[]
+  }
+
+  export type FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<FinanceJobCreateWithoutSchoolInput, FinanceJobUncheckedCreateWithoutSchoolInput> | FinanceJobCreateWithoutSchoolInput[] | FinanceJobUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: FinanceJobCreateOrConnectWithoutSchoolInput | FinanceJobCreateOrConnectWithoutSchoolInput[]
+    upsert?: FinanceJobUpsertWithWhereUniqueWithoutSchoolInput | FinanceJobUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: FinanceJobCreateManySchoolInputEnvelope
+    set?: FinanceJobWhereUniqueInput | FinanceJobWhereUniqueInput[]
+    disconnect?: FinanceJobWhereUniqueInput | FinanceJobWhereUniqueInput[]
+    delete?: FinanceJobWhereUniqueInput | FinanceJobWhereUniqueInput[]
+    connect?: FinanceJobWhereUniqueInput | FinanceJobWhereUniqueInput[]
+    update?: FinanceJobUpdateWithWhereUniqueWithoutSchoolInput | FinanceJobUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: FinanceJobUpdateManyWithWhereWithoutSchoolInput | FinanceJobUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: FinanceJobScalarWhereInput | FinanceJobScalarWhereInput[]
+  }
+
+  export type PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<PaymentWebhookEventCreateWithoutSchoolInput, PaymentWebhookEventUncheckedCreateWithoutSchoolInput> | PaymentWebhookEventCreateWithoutSchoolInput[] | PaymentWebhookEventUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: PaymentWebhookEventCreateOrConnectWithoutSchoolInput | PaymentWebhookEventCreateOrConnectWithoutSchoolInput[]
+    upsert?: PaymentWebhookEventUpsertWithWhereUniqueWithoutSchoolInput | PaymentWebhookEventUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: PaymentWebhookEventCreateManySchoolInputEnvelope
+    set?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+    disconnect?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+    delete?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+    connect?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+    update?: PaymentWebhookEventUpdateWithWhereUniqueWithoutSchoolInput | PaymentWebhookEventUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: PaymentWebhookEventUpdateManyWithWhereWithoutSchoolInput | PaymentWebhookEventUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: PaymentWebhookEventScalarWhereInput | PaymentWebhookEventScalarWhereInput[]
   }
 
   export type SchoolCreateNestedOneWithoutAdminsInput = {
@@ -57700,10 +61407,24 @@ export namespace Prisma {
     connect?: PaymentReversalWhereUniqueInput
   }
 
+  export type PaymentWebhookEventCreateNestedManyWithoutPaymentInput = {
+    create?: XOR<PaymentWebhookEventCreateWithoutPaymentInput, PaymentWebhookEventUncheckedCreateWithoutPaymentInput> | PaymentWebhookEventCreateWithoutPaymentInput[] | PaymentWebhookEventUncheckedCreateWithoutPaymentInput[]
+    connectOrCreate?: PaymentWebhookEventCreateOrConnectWithoutPaymentInput | PaymentWebhookEventCreateOrConnectWithoutPaymentInput[]
+    createMany?: PaymentWebhookEventCreateManyPaymentInputEnvelope
+    connect?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+  }
+
   export type PaymentReversalUncheckedCreateNestedOneWithoutPaymentInput = {
     create?: XOR<PaymentReversalCreateWithoutPaymentInput, PaymentReversalUncheckedCreateWithoutPaymentInput>
     connectOrCreate?: PaymentReversalCreateOrConnectWithoutPaymentInput
     connect?: PaymentReversalWhereUniqueInput
+  }
+
+  export type PaymentWebhookEventUncheckedCreateNestedManyWithoutPaymentInput = {
+    create?: XOR<PaymentWebhookEventCreateWithoutPaymentInput, PaymentWebhookEventUncheckedCreateWithoutPaymentInput> | PaymentWebhookEventCreateWithoutPaymentInput[] | PaymentWebhookEventUncheckedCreateWithoutPaymentInput[]
+    connectOrCreate?: PaymentWebhookEventCreateOrConnectWithoutPaymentInput | PaymentWebhookEventCreateOrConnectWithoutPaymentInput[]
+    createMany?: PaymentWebhookEventCreateManyPaymentInputEnvelope
+    connect?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
   }
 
   export type EnumPaymentMethodFieldUpdateOperationsInput = {
@@ -57740,6 +61461,20 @@ export namespace Prisma {
     update?: XOR<XOR<PaymentReversalUpdateToOneWithWhereWithoutPaymentInput, PaymentReversalUpdateWithoutPaymentInput>, PaymentReversalUncheckedUpdateWithoutPaymentInput>
   }
 
+  export type PaymentWebhookEventUpdateManyWithoutPaymentNestedInput = {
+    create?: XOR<PaymentWebhookEventCreateWithoutPaymentInput, PaymentWebhookEventUncheckedCreateWithoutPaymentInput> | PaymentWebhookEventCreateWithoutPaymentInput[] | PaymentWebhookEventUncheckedCreateWithoutPaymentInput[]
+    connectOrCreate?: PaymentWebhookEventCreateOrConnectWithoutPaymentInput | PaymentWebhookEventCreateOrConnectWithoutPaymentInput[]
+    upsert?: PaymentWebhookEventUpsertWithWhereUniqueWithoutPaymentInput | PaymentWebhookEventUpsertWithWhereUniqueWithoutPaymentInput[]
+    createMany?: PaymentWebhookEventCreateManyPaymentInputEnvelope
+    set?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+    disconnect?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+    delete?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+    connect?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+    update?: PaymentWebhookEventUpdateWithWhereUniqueWithoutPaymentInput | PaymentWebhookEventUpdateWithWhereUniqueWithoutPaymentInput[]
+    updateMany?: PaymentWebhookEventUpdateManyWithWhereWithoutPaymentInput | PaymentWebhookEventUpdateManyWithWhereWithoutPaymentInput[]
+    deleteMany?: PaymentWebhookEventScalarWhereInput | PaymentWebhookEventScalarWhereInput[]
+  }
+
   export type PaymentReversalUncheckedUpdateOneWithoutPaymentNestedInput = {
     create?: XOR<PaymentReversalCreateWithoutPaymentInput, PaymentReversalUncheckedCreateWithoutPaymentInput>
     connectOrCreate?: PaymentReversalCreateOrConnectWithoutPaymentInput
@@ -57748,6 +61483,20 @@ export namespace Prisma {
     delete?: PaymentReversalWhereInput | boolean
     connect?: PaymentReversalWhereUniqueInput
     update?: XOR<XOR<PaymentReversalUpdateToOneWithWhereWithoutPaymentInput, PaymentReversalUpdateWithoutPaymentInput>, PaymentReversalUncheckedUpdateWithoutPaymentInput>
+  }
+
+  export type PaymentWebhookEventUncheckedUpdateManyWithoutPaymentNestedInput = {
+    create?: XOR<PaymentWebhookEventCreateWithoutPaymentInput, PaymentWebhookEventUncheckedCreateWithoutPaymentInput> | PaymentWebhookEventCreateWithoutPaymentInput[] | PaymentWebhookEventUncheckedCreateWithoutPaymentInput[]
+    connectOrCreate?: PaymentWebhookEventCreateOrConnectWithoutPaymentInput | PaymentWebhookEventCreateOrConnectWithoutPaymentInput[]
+    upsert?: PaymentWebhookEventUpsertWithWhereUniqueWithoutPaymentInput | PaymentWebhookEventUpsertWithWhereUniqueWithoutPaymentInput[]
+    createMany?: PaymentWebhookEventCreateManyPaymentInputEnvelope
+    set?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+    disconnect?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+    delete?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+    connect?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+    update?: PaymentWebhookEventUpdateWithWhereUniqueWithoutPaymentInput | PaymentWebhookEventUpdateWithWhereUniqueWithoutPaymentInput[]
+    updateMany?: PaymentWebhookEventUpdateManyWithWhereWithoutPaymentInput | PaymentWebhookEventUpdateManyWithWhereWithoutPaymentInput[]
+    deleteMany?: PaymentWebhookEventScalarWhereInput | PaymentWebhookEventScalarWhereInput[]
   }
 
   export type SchoolCreateNestedOneWithoutPaymentReversalsInput = {
@@ -57848,6 +61597,68 @@ export namespace Prisma {
     upsert?: SchoolUpsertWithoutFinanceAuditLogsInput
     connect?: SchoolWhereUniqueInput
     update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutFinanceAuditLogsInput, SchoolUpdateWithoutFinanceAuditLogsInput>, SchoolUncheckedUpdateWithoutFinanceAuditLogsInput>
+  }
+
+  export type SchoolCreateNestedOneWithoutFinanceJobsInput = {
+    create?: XOR<SchoolCreateWithoutFinanceJobsInput, SchoolUncheckedCreateWithoutFinanceJobsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutFinanceJobsInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type EnumFinanceJobTypeFieldUpdateOperationsInput = {
+    set?: $Enums.FinanceJobType
+  }
+
+  export type EnumJobStatusFieldUpdateOperationsInput = {
+    set?: $Enums.JobStatus
+  }
+
+  export type SchoolUpdateOneRequiredWithoutFinanceJobsNestedInput = {
+    create?: XOR<SchoolCreateWithoutFinanceJobsInput, SchoolUncheckedCreateWithoutFinanceJobsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutFinanceJobsInput
+    upsert?: SchoolUpsertWithoutFinanceJobsInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutFinanceJobsInput, SchoolUpdateWithoutFinanceJobsInput>, SchoolUncheckedUpdateWithoutFinanceJobsInput>
+  }
+
+  export type SchoolCreateNestedOneWithoutPaymentWebhookEventsInput = {
+    create?: XOR<SchoolCreateWithoutPaymentWebhookEventsInput, SchoolUncheckedCreateWithoutPaymentWebhookEventsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutPaymentWebhookEventsInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type PaymentCreateNestedOneWithoutWebhookEventsInput = {
+    create?: XOR<PaymentCreateWithoutWebhookEventsInput, PaymentUncheckedCreateWithoutWebhookEventsInput>
+    connectOrCreate?: PaymentCreateOrConnectWithoutWebhookEventsInput
+    connect?: PaymentWhereUniqueInput
+  }
+
+  export type EnumPaymentProviderFieldUpdateOperationsInput = {
+    set?: $Enums.PaymentProvider
+  }
+
+  export type EnumWebhookEventStatusFieldUpdateOperationsInput = {
+    set?: $Enums.WebhookEventStatus
+  }
+
+  export type SchoolUpdateOneWithoutPaymentWebhookEventsNestedInput = {
+    create?: XOR<SchoolCreateWithoutPaymentWebhookEventsInput, SchoolUncheckedCreateWithoutPaymentWebhookEventsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutPaymentWebhookEventsInput
+    upsert?: SchoolUpsertWithoutPaymentWebhookEventsInput
+    disconnect?: SchoolWhereInput | boolean
+    delete?: SchoolWhereInput | boolean
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutPaymentWebhookEventsInput, SchoolUpdateWithoutPaymentWebhookEventsInput>, SchoolUncheckedUpdateWithoutPaymentWebhookEventsInput>
+  }
+
+  export type PaymentUpdateOneWithoutWebhookEventsNestedInput = {
+    create?: XOR<PaymentCreateWithoutWebhookEventsInput, PaymentUncheckedCreateWithoutWebhookEventsInput>
+    connectOrCreate?: PaymentCreateOrConnectWithoutWebhookEventsInput
+    upsert?: PaymentUpsertWithoutWebhookEventsInput
+    disconnect?: PaymentWhereInput | boolean
+    delete?: PaymentWhereInput | boolean
+    connect?: PaymentWhereUniqueInput
+    update?: XOR<XOR<PaymentUpdateToOneWithWhereWithoutWebhookEventsInput, PaymentUpdateWithoutWebhookEventsInput>, PaymentUncheckedUpdateWithoutWebhookEventsInput>
   }
 
   export type SchoolCreateNestedOneWithoutWaitlistEntriesInput = {
@@ -58425,6 +62236,74 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedEnumFinanceJobTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.FinanceJobType | EnumFinanceJobTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FinanceJobType[] | ListEnumFinanceJobTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FinanceJobType[] | ListEnumFinanceJobTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFinanceJobTypeFilter<$PrismaModel> | $Enums.FinanceJobType
+  }
+
+  export type NestedEnumJobStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobStatus | EnumJobStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobStatus[] | ListEnumJobStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobStatus[] | ListEnumJobStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobStatusFilter<$PrismaModel> | $Enums.JobStatus
+  }
+
+  export type NestedEnumFinanceJobTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FinanceJobType | EnumFinanceJobTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FinanceJobType[] | ListEnumFinanceJobTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FinanceJobType[] | ListEnumFinanceJobTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFinanceJobTypeWithAggregatesFilter<$PrismaModel> | $Enums.FinanceJobType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFinanceJobTypeFilter<$PrismaModel>
+    _max?: NestedEnumFinanceJobTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumJobStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobStatus | EnumJobStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobStatus[] | ListEnumJobStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobStatus[] | ListEnumJobStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobStatusWithAggregatesFilter<$PrismaModel> | $Enums.JobStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumJobStatusFilter<$PrismaModel>
+    _max?: NestedEnumJobStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumPaymentProviderFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentProvider | EnumPaymentProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentProvider[] | ListEnumPaymentProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentProvider[] | ListEnumPaymentProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentProviderFilter<$PrismaModel> | $Enums.PaymentProvider
+  }
+
+  export type NestedEnumWebhookEventStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.WebhookEventStatus | EnumWebhookEventStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.WebhookEventStatus[] | ListEnumWebhookEventStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WebhookEventStatus[] | ListEnumWebhookEventStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumWebhookEventStatusFilter<$PrismaModel> | $Enums.WebhookEventStatus
+  }
+
+  export type NestedEnumPaymentProviderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentProvider | EnumPaymentProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentProvider[] | ListEnumPaymentProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentProvider[] | ListEnumPaymentProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentProviderWithAggregatesFilter<$PrismaModel> | $Enums.PaymentProvider
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPaymentProviderFilter<$PrismaModel>
+    _max?: NestedEnumPaymentProviderFilter<$PrismaModel>
+  }
+
+  export type NestedEnumWebhookEventStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.WebhookEventStatus | EnumWebhookEventStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.WebhookEventStatus[] | ListEnumWebhookEventStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WebhookEventStatus[] | ListEnumWebhookEventStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumWebhookEventStatusWithAggregatesFilter<$PrismaModel> | $Enums.WebhookEventStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumWebhookEventStatusFilter<$PrismaModel>
+    _max?: NestedEnumWebhookEventStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumWaitlistRoleFilter<$PrismaModel = never> = {
@@ -59186,6 +63065,7 @@ export namespace Prisma {
     createdAt?: Date | string
     studentBill: StudentBillCreateNestedOneWithoutPaymentsInput
     reversal?: PaymentReversalCreateNestedOneWithoutPaymentInput
+    webhookEvents?: PaymentWebhookEventCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentUncheckedCreateWithoutSchoolInput = {
@@ -59202,6 +63082,7 @@ export namespace Prisma {
     recordedBy: string
     createdAt?: Date | string
     reversal?: PaymentReversalUncheckedCreateNestedOneWithoutPaymentInput
+    webhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentCreateOrConnectWithoutSchoolInput = {
@@ -59422,6 +63303,90 @@ export namespace Prisma {
 
   export type OnboardingAuditLogCreateManySchoolInputEnvelope = {
     data: OnboardingAuditLogCreateManySchoolInput | OnboardingAuditLogCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FinanceJobCreateWithoutSchoolInput = {
+    id?: string
+    type: $Enums.FinanceJobType
+    status?: $Enums.JobStatus
+    payload: JsonNullValueInput | InputJsonValue
+    idempotencyKey?: string | null
+    attempts?: number
+    maxAttempts?: number
+    runAfter?: Date | string
+    lockedAt?: Date | string | null
+    lockedBy?: string | null
+    lastError?: string | null
+    completedAt?: Date | string | null
+    createdBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FinanceJobUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    type: $Enums.FinanceJobType
+    status?: $Enums.JobStatus
+    payload: JsonNullValueInput | InputJsonValue
+    idempotencyKey?: string | null
+    attempts?: number
+    maxAttempts?: number
+    runAfter?: Date | string
+    lockedAt?: Date | string | null
+    lockedBy?: string | null
+    lastError?: string | null
+    completedAt?: Date | string | null
+    createdBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FinanceJobCreateOrConnectWithoutSchoolInput = {
+    where: FinanceJobWhereUniqueInput
+    create: XOR<FinanceJobCreateWithoutSchoolInput, FinanceJobUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type FinanceJobCreateManySchoolInputEnvelope = {
+    data: FinanceJobCreateManySchoolInput | FinanceJobCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PaymentWebhookEventCreateWithoutSchoolInput = {
+    id?: string
+    provider: $Enums.PaymentProvider
+    providerEventId: string
+    eventType: string
+    status?: $Enums.WebhookEventStatus
+    payload: JsonNullValueInput | InputJsonValue
+    signature?: string | null
+    receivedAt?: Date | string
+    processedAt?: Date | string | null
+    lastError?: string | null
+    payment?: PaymentCreateNestedOneWithoutWebhookEventsInput
+  }
+
+  export type PaymentWebhookEventUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    provider: $Enums.PaymentProvider
+    providerEventId: string
+    eventType: string
+    status?: $Enums.WebhookEventStatus
+    payload: JsonNullValueInput | InputJsonValue
+    signature?: string | null
+    receivedAt?: Date | string
+    processedAt?: Date | string | null
+    lastError?: string | null
+    paymentId?: number | null
+  }
+
+  export type PaymentWebhookEventCreateOrConnectWithoutSchoolInput = {
+    where: PaymentWebhookEventWhereUniqueInput
+    create: XOR<PaymentWebhookEventCreateWithoutSchoolInput, PaymentWebhookEventUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type PaymentWebhookEventCreateManySchoolInputEnvelope = {
+    data: PaymentWebhookEventCreateManySchoolInput | PaymentWebhookEventCreateManySchoolInput[]
     skipDuplicates?: boolean
   }
 
@@ -60285,6 +64250,78 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"OnboardingAuditLog"> | Date | string
   }
 
+  export type FinanceJobUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: FinanceJobWhereUniqueInput
+    update: XOR<FinanceJobUpdateWithoutSchoolInput, FinanceJobUncheckedUpdateWithoutSchoolInput>
+    create: XOR<FinanceJobCreateWithoutSchoolInput, FinanceJobUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type FinanceJobUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: FinanceJobWhereUniqueInput
+    data: XOR<FinanceJobUpdateWithoutSchoolInput, FinanceJobUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type FinanceJobUpdateManyWithWhereWithoutSchoolInput = {
+    where: FinanceJobScalarWhereInput
+    data: XOR<FinanceJobUpdateManyMutationInput, FinanceJobUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type FinanceJobScalarWhereInput = {
+    AND?: FinanceJobScalarWhereInput | FinanceJobScalarWhereInput[]
+    OR?: FinanceJobScalarWhereInput[]
+    NOT?: FinanceJobScalarWhereInput | FinanceJobScalarWhereInput[]
+    id?: StringFilter<"FinanceJob"> | string
+    type?: EnumFinanceJobTypeFilter<"FinanceJob"> | $Enums.FinanceJobType
+    status?: EnumJobStatusFilter<"FinanceJob"> | $Enums.JobStatus
+    payload?: JsonFilter<"FinanceJob">
+    idempotencyKey?: StringNullableFilter<"FinanceJob"> | string | null
+    attempts?: IntFilter<"FinanceJob"> | number
+    maxAttempts?: IntFilter<"FinanceJob"> | number
+    runAfter?: DateTimeFilter<"FinanceJob"> | Date | string
+    lockedAt?: DateTimeNullableFilter<"FinanceJob"> | Date | string | null
+    lockedBy?: StringNullableFilter<"FinanceJob"> | string | null
+    lastError?: StringNullableFilter<"FinanceJob"> | string | null
+    completedAt?: DateTimeNullableFilter<"FinanceJob"> | Date | string | null
+    createdBy?: StringNullableFilter<"FinanceJob"> | string | null
+    createdAt?: DateTimeFilter<"FinanceJob"> | Date | string
+    updatedAt?: DateTimeFilter<"FinanceJob"> | Date | string
+    schoolId?: StringFilter<"FinanceJob"> | string
+  }
+
+  export type PaymentWebhookEventUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: PaymentWebhookEventWhereUniqueInput
+    update: XOR<PaymentWebhookEventUpdateWithoutSchoolInput, PaymentWebhookEventUncheckedUpdateWithoutSchoolInput>
+    create: XOR<PaymentWebhookEventCreateWithoutSchoolInput, PaymentWebhookEventUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type PaymentWebhookEventUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: PaymentWebhookEventWhereUniqueInput
+    data: XOR<PaymentWebhookEventUpdateWithoutSchoolInput, PaymentWebhookEventUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type PaymentWebhookEventUpdateManyWithWhereWithoutSchoolInput = {
+    where: PaymentWebhookEventScalarWhereInput
+    data: XOR<PaymentWebhookEventUpdateManyMutationInput, PaymentWebhookEventUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type PaymentWebhookEventScalarWhereInput = {
+    AND?: PaymentWebhookEventScalarWhereInput | PaymentWebhookEventScalarWhereInput[]
+    OR?: PaymentWebhookEventScalarWhereInput[]
+    NOT?: PaymentWebhookEventScalarWhereInput | PaymentWebhookEventScalarWhereInput[]
+    id?: StringFilter<"PaymentWebhookEvent"> | string
+    provider?: EnumPaymentProviderFilter<"PaymentWebhookEvent"> | $Enums.PaymentProvider
+    providerEventId?: StringFilter<"PaymentWebhookEvent"> | string
+    eventType?: StringFilter<"PaymentWebhookEvent"> | string
+    status?: EnumWebhookEventStatusFilter<"PaymentWebhookEvent"> | $Enums.WebhookEventStatus
+    payload?: JsonFilter<"PaymentWebhookEvent">
+    signature?: StringNullableFilter<"PaymentWebhookEvent"> | string | null
+    receivedAt?: DateTimeFilter<"PaymentWebhookEvent"> | Date | string
+    processedAt?: DateTimeNullableFilter<"PaymentWebhookEvent"> | Date | string | null
+    lastError?: StringNullableFilter<"PaymentWebhookEvent"> | string | null
+    schoolId?: StringNullableFilter<"PaymentWebhookEvent"> | string | null
+    paymentId?: IntNullableFilter<"PaymentWebhookEvent"> | number | null
+  }
+
   export type SchoolCreateWithoutAdminsInput = {
     id: string
     name: string
@@ -60325,6 +64362,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAdminsInput = {
@@ -60367,6 +64406,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAdminsInput = {
@@ -60425,6 +64466,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAdminsInput = {
@@ -60467,6 +64510,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutStudentsInput = {
@@ -60509,6 +64554,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutStudentsInput = {
@@ -60551,6 +64598,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutStudentsInput = {
@@ -60850,6 +64899,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutStudentsInput = {
@@ -60892,6 +64943,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ParentUpsertWithoutStudentsInput = {
@@ -61103,6 +65156,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutTeachersInput = {
@@ -61145,6 +65200,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutTeachersInput = {
@@ -61377,6 +65434,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutTeachersInput = {
@@ -61419,6 +65478,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SubjectUpsertWithWhereUniqueWithoutTeachersInput = {
@@ -61541,6 +65602,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutParentsInput = {
@@ -61583,6 +65646,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutParentsInput = {
@@ -61693,6 +65758,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutParentsInput = {
@@ -61735,6 +65802,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithWhereUniqueWithoutParentInput = {
@@ -61793,6 +65862,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutGradesInput = {
@@ -61835,6 +65906,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutGradesInput = {
@@ -62060,6 +66133,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutGradesInput = {
@@ -62102,6 +66177,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithWhereUniqueWithoutGradeInput = {
@@ -62208,6 +66285,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutClassesInput = {
@@ -62250,6 +66329,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutClassesInput = {
@@ -62594,6 +66675,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutClassesInput = {
@@ -62636,6 +66719,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TeacherUpsertWithoutClassesInput = {
@@ -62855,6 +66940,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutSubjectsInput = {
@@ -62897,6 +66984,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutSubjectsInput = {
@@ -63119,6 +67208,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutSubjectsInput = {
@@ -63161,6 +67252,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TeacherUpsertWithWhereUniqueWithoutSubjectsInput = {
@@ -63267,6 +67360,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutLessonsInput = {
@@ -63309,6 +67404,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutLessonsInput = {
@@ -63555,6 +67652,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutLessonsInput = {
@@ -63597,6 +67696,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SubjectUpsertWithoutLessonsInput = {
@@ -63806,6 +67907,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutExamsInput = {
@@ -63848,6 +67951,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutExamsInput = {
@@ -63967,6 +68072,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutExamsInput = {
@@ -64009,6 +68116,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type LessonUpsertWithoutExamsInput = {
@@ -64105,6 +68214,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAssignmentsInput = {
@@ -64147,6 +68258,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAssignmentsInput = {
@@ -64266,6 +68379,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAssignmentsInput = {
@@ -64308,6 +68423,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type LessonUpsertWithoutAssignmentsInput = {
@@ -64404,6 +68521,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutResultsInput = {
@@ -64446,6 +68565,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutResultsInput = {
@@ -64595,6 +68716,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutResultsInput = {
@@ -64637,6 +68760,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ExamUpsertWithoutResultsInput = {
@@ -64788,6 +68913,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAttendancesInput = {
@@ -64830,6 +68957,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAttendancesInput = {
@@ -64967,6 +69096,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAttendancesInput = {
@@ -65009,6 +69140,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithoutAttendancesInput = {
@@ -65142,6 +69275,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutEventsInput = {
@@ -65184,6 +69319,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutEventsInput = {
@@ -65276,6 +69413,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutEventsInput = {
@@ -65318,6 +69457,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ClassUpsertWithoutEventsInput = {
@@ -65400,6 +69541,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAnnouncementsInput = {
@@ -65442,6 +69585,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAnnouncementsInput = {
@@ -65534,6 +69679,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAnnouncementsInput = {
@@ -65576,6 +69723,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ClassUpsertWithoutAnnouncementsInput = {
@@ -65658,6 +69807,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutCaConfigsInput = {
@@ -65700,6 +69851,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutCaConfigsInput = {
@@ -65758,6 +69911,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutCaConfigsInput = {
@@ -65800,6 +69955,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutContinuousAssessmentsInput = {
@@ -65842,6 +69999,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutContinuousAssessmentsInput = {
@@ -65884,6 +70043,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutContinuousAssessmentsInput = {
@@ -66090,6 +70251,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutContinuousAssessmentsInput = {
@@ -66132,6 +70295,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithoutContinuousAssessmentsInput = {
@@ -66346,6 +70511,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutSyllabiInput = {
@@ -66388,6 +70555,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutSyllabiInput = {
@@ -66531,6 +70700,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutSyllabiInput = {
@@ -66573,6 +70744,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SubjectUpsertWithoutSyllabiInput = {
@@ -66818,6 +70991,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutSyllabusTopicProgressInput = {
@@ -66860,6 +71035,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutSyllabusTopicProgressInput = {
@@ -67031,6 +71208,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutSyllabusTopicProgressInput = {
@@ -67073,6 +71252,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SyllabusTopicUpsertWithoutProgressInput = {
@@ -67246,6 +71427,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutFeeStructuresInput = {
@@ -67288,6 +71471,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutFeeStructuresInput = {
@@ -67446,6 +71631,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutFeeStructuresInput = {
@@ -67488,6 +71675,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type GradeUpsertWithoutFeeStructuresInput = {
@@ -67746,6 +71935,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutStudentBillsInput = {
@@ -67788,6 +71979,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutStudentBillsInput = {
@@ -67922,6 +72115,7 @@ export namespace Prisma {
     createdAt?: Date | string
     school?: SchoolCreateNestedOneWithoutPaymentsInput
     reversal?: PaymentReversalCreateNestedOneWithoutPaymentInput
+    webhookEvents?: PaymentWebhookEventCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentUncheckedCreateWithoutStudentBillInput = {
@@ -67938,6 +72132,7 @@ export namespace Prisma {
     recordedBy: string
     createdAt?: Date | string
     reversal?: PaymentReversalUncheckedCreateNestedOneWithoutPaymentInput
+    webhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentCreateOrConnectWithoutStudentBillInput = {
@@ -68032,6 +72227,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutStudentBillsInput = {
@@ -68074,6 +72271,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithoutBillsInput = {
@@ -68403,6 +72602,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutPaymentsInput = {
@@ -68445,6 +72646,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutPaymentsInput = {
@@ -68512,6 +72715,44 @@ export namespace Prisma {
     create: XOR<PaymentReversalCreateWithoutPaymentInput, PaymentReversalUncheckedCreateWithoutPaymentInput>
   }
 
+  export type PaymentWebhookEventCreateWithoutPaymentInput = {
+    id?: string
+    provider: $Enums.PaymentProvider
+    providerEventId: string
+    eventType: string
+    status?: $Enums.WebhookEventStatus
+    payload: JsonNullValueInput | InputJsonValue
+    signature?: string | null
+    receivedAt?: Date | string
+    processedAt?: Date | string | null
+    lastError?: string | null
+    school?: SchoolCreateNestedOneWithoutPaymentWebhookEventsInput
+  }
+
+  export type PaymentWebhookEventUncheckedCreateWithoutPaymentInput = {
+    id?: string
+    provider: $Enums.PaymentProvider
+    providerEventId: string
+    eventType: string
+    status?: $Enums.WebhookEventStatus
+    payload: JsonNullValueInput | InputJsonValue
+    signature?: string | null
+    receivedAt?: Date | string
+    processedAt?: Date | string | null
+    lastError?: string | null
+    schoolId?: string | null
+  }
+
+  export type PaymentWebhookEventCreateOrConnectWithoutPaymentInput = {
+    where: PaymentWebhookEventWhereUniqueInput
+    create: XOR<PaymentWebhookEventCreateWithoutPaymentInput, PaymentWebhookEventUncheckedCreateWithoutPaymentInput>
+  }
+
+  export type PaymentWebhookEventCreateManyPaymentInputEnvelope = {
+    data: PaymentWebhookEventCreateManyPaymentInput | PaymentWebhookEventCreateManyPaymentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SchoolUpsertWithoutPaymentsInput = {
     update: XOR<SchoolUpdateWithoutPaymentsInput, SchoolUncheckedUpdateWithoutPaymentsInput>
     create: XOR<SchoolCreateWithoutPaymentsInput, SchoolUncheckedCreateWithoutPaymentsInput>
@@ -68563,6 +72804,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutPaymentsInput = {
@@ -68605,6 +72848,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentBillUpsertWithoutPaymentsInput = {
@@ -68679,6 +72924,22 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
   }
 
+  export type PaymentWebhookEventUpsertWithWhereUniqueWithoutPaymentInput = {
+    where: PaymentWebhookEventWhereUniqueInput
+    update: XOR<PaymentWebhookEventUpdateWithoutPaymentInput, PaymentWebhookEventUncheckedUpdateWithoutPaymentInput>
+    create: XOR<PaymentWebhookEventCreateWithoutPaymentInput, PaymentWebhookEventUncheckedCreateWithoutPaymentInput>
+  }
+
+  export type PaymentWebhookEventUpdateWithWhereUniqueWithoutPaymentInput = {
+    where: PaymentWebhookEventWhereUniqueInput
+    data: XOR<PaymentWebhookEventUpdateWithoutPaymentInput, PaymentWebhookEventUncheckedUpdateWithoutPaymentInput>
+  }
+
+  export type PaymentWebhookEventUpdateManyWithWhereWithoutPaymentInput = {
+    where: PaymentWebhookEventScalarWhereInput
+    data: XOR<PaymentWebhookEventUpdateManyMutationInput, PaymentWebhookEventUncheckedUpdateManyWithoutPaymentInput>
+  }
+
   export type SchoolCreateWithoutPaymentReversalsInput = {
     id: string
     name: string
@@ -68719,6 +72980,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutPaymentReversalsInput = {
@@ -68761,6 +73024,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutPaymentReversalsInput = {
@@ -68781,6 +73046,7 @@ export namespace Prisma {
     createdAt?: Date | string
     school?: SchoolCreateNestedOneWithoutPaymentsInput
     studentBill: StudentBillCreateNestedOneWithoutPaymentsInput
+    webhookEvents?: PaymentWebhookEventCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentUncheckedCreateWithoutReversalInput = {
@@ -68797,6 +73063,7 @@ export namespace Prisma {
     studentBillId: number
     recordedBy: string
     createdAt?: Date | string
+    webhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentCreateOrConnectWithoutReversalInput = {
@@ -68855,6 +73122,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutPaymentReversalsInput = {
@@ -68897,6 +73166,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type PaymentUpsertWithoutReversalInput = {
@@ -68923,6 +73194,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutPaymentsNestedInput
     studentBill?: StudentBillUpdateOneRequiredWithoutPaymentsNestedInput
+    webhookEvents?: PaymentWebhookEventUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentUncheckedUpdateWithoutReversalInput = {
@@ -68939,6 +73211,7 @@ export namespace Prisma {
     studentBillId?: IntFieldUpdateOperationsInput | number
     recordedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    webhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutPaymentNestedInput
   }
 
   export type SchoolCreateWithoutDiscountsInput = {
@@ -68981,6 +73254,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutDiscountsInput = {
@@ -69023,6 +73298,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutDiscountsInput = {
@@ -69121,6 +73398,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutDiscountsInput = {
@@ -69163,6 +73442,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentBillUpsertWithoutDiscountsInput = {
@@ -69251,6 +73532,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutReceiptCountersInput = {
@@ -69293,6 +73576,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutReceiptCountersInput = {
@@ -69351,6 +73636,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutReceiptCountersInput = {
@@ -69393,6 +73680,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutFinanceAuditLogsInput = {
@@ -69435,6 +73724,8 @@ export namespace Prisma {
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutFinanceAuditLogsInput = {
@@ -69477,6 +73768,8 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutFinanceAuditLogsInput = {
@@ -69535,6 +73828,8 @@ export namespace Prisma {
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutFinanceAuditLogsInput = {
@@ -69577,6 +73872,474 @@ export namespace Prisma {
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolCreateWithoutFinanceJobsInput = {
+    id: string
+    name: string
+    slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutFinanceJobsInput = {
+    id: string
+    name: string
+    slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutFinanceJobsInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutFinanceJobsInput, SchoolUncheckedCreateWithoutFinanceJobsInput>
+  }
+
+  export type SchoolUpsertWithoutFinanceJobsInput = {
+    update: XOR<SchoolUpdateWithoutFinanceJobsInput, SchoolUncheckedUpdateWithoutFinanceJobsInput>
+    create: XOR<SchoolCreateWithoutFinanceJobsInput, SchoolUncheckedCreateWithoutFinanceJobsInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutFinanceJobsInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutFinanceJobsInput, SchoolUncheckedUpdateWithoutFinanceJobsInput>
+  }
+
+  export type SchoolUpdateWithoutFinanceJobsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutFinanceJobsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolCreateWithoutPaymentWebhookEventsInput = {
+    id: string
+    name: string
+    slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutPaymentWebhookEventsInput = {
+    id: string
+    name: string
+    slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutPaymentWebhookEventsInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutPaymentWebhookEventsInput, SchoolUncheckedCreateWithoutPaymentWebhookEventsInput>
+  }
+
+  export type PaymentCreateWithoutWebhookEventsInput = {
+    receiptNumber: string
+    amount: Decimal | DecimalJsLike | number | string
+    paymentMethod: $Enums.PaymentMethod
+    paymentDate?: Date | string
+    paidBy: string
+    referenceNo?: string | null
+    notes?: string | null
+    status?: $Enums.PaymentStatus
+    recordedBy: string
+    createdAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutPaymentsInput
+    studentBill: StudentBillCreateNestedOneWithoutPaymentsInput
+    reversal?: PaymentReversalCreateNestedOneWithoutPaymentInput
+  }
+
+  export type PaymentUncheckedCreateWithoutWebhookEventsInput = {
+    id?: number
+    receiptNumber: string
+    amount: Decimal | DecimalJsLike | number | string
+    paymentMethod: $Enums.PaymentMethod
+    paymentDate?: Date | string
+    paidBy: string
+    referenceNo?: string | null
+    notes?: string | null
+    status?: $Enums.PaymentStatus
+    schoolId?: string
+    studentBillId: number
+    recordedBy: string
+    createdAt?: Date | string
+    reversal?: PaymentReversalUncheckedCreateNestedOneWithoutPaymentInput
+  }
+
+  export type PaymentCreateOrConnectWithoutWebhookEventsInput = {
+    where: PaymentWhereUniqueInput
+    create: XOR<PaymentCreateWithoutWebhookEventsInput, PaymentUncheckedCreateWithoutWebhookEventsInput>
+  }
+
+  export type SchoolUpsertWithoutPaymentWebhookEventsInput = {
+    update: XOR<SchoolUpdateWithoutPaymentWebhookEventsInput, SchoolUncheckedUpdateWithoutPaymentWebhookEventsInput>
+    create: XOR<SchoolCreateWithoutPaymentWebhookEventsInput, SchoolUncheckedCreateWithoutPaymentWebhookEventsInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutPaymentWebhookEventsInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutPaymentWebhookEventsInput, SchoolUncheckedUpdateWithoutPaymentWebhookEventsInput>
+  }
+
+  export type SchoolUpdateWithoutPaymentWebhookEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutPaymentWebhookEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type PaymentUpsertWithoutWebhookEventsInput = {
+    update: XOR<PaymentUpdateWithoutWebhookEventsInput, PaymentUncheckedUpdateWithoutWebhookEventsInput>
+    create: XOR<PaymentCreateWithoutWebhookEventsInput, PaymentUncheckedCreateWithoutWebhookEventsInput>
+    where?: PaymentWhereInput
+  }
+
+  export type PaymentUpdateToOneWithWhereWithoutWebhookEventsInput = {
+    where?: PaymentWhereInput
+    data: XOR<PaymentUpdateWithoutWebhookEventsInput, PaymentUncheckedUpdateWithoutWebhookEventsInput>
+  }
+
+  export type PaymentUpdateWithoutWebhookEventsInput = {
+    receiptNumber?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    paidBy?: StringFieldUpdateOperationsInput | string
+    referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    recordedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutPaymentsNestedInput
+    studentBill?: StudentBillUpdateOneRequiredWithoutPaymentsNestedInput
+    reversal?: PaymentReversalUpdateOneWithoutPaymentNestedInput
+  }
+
+  export type PaymentUncheckedUpdateWithoutWebhookEventsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    receiptNumber?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    paidBy?: StringFieldUpdateOperationsInput | string
+    referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    schoolId?: StringFieldUpdateOperationsInput | string
+    studentBillId?: IntFieldUpdateOperationsInput | number
+    recordedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reversal?: PaymentReversalUncheckedUpdateOneWithoutPaymentNestedInput
   }
 
   export type SchoolCreateWithoutWaitlistEntriesInput = {
@@ -69619,6 +74382,8 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutWaitlistEntriesInput = {
@@ -69661,6 +74426,8 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutWaitlistEntriesInput = {
@@ -69719,6 +74486,8 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutWaitlistEntriesInput = {
@@ -69761,6 +74530,8 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutInvitesInput = {
@@ -69803,6 +74574,8 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutInvitesInput = {
@@ -69845,6 +74618,8 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutInvitesInput = {
@@ -69903,6 +74678,8 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutInvitesInput = {
@@ -69945,6 +74722,8 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
     onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutOnboardingAuditLogsInput = {
@@ -69987,6 +74766,8 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutOnboardingAuditLogsInput = {
@@ -70029,6 +74810,8 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutOnboardingAuditLogsInput = {
@@ -70087,6 +74870,8 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutOnboardingAuditLogsInput = {
@@ -70129,6 +74914,8 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type AdminCreateManySchoolInput = {
@@ -70429,6 +75216,38 @@ export namespace Prisma {
     performedBy: string
     metadata: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
+  }
+
+  export type FinanceJobCreateManySchoolInput = {
+    id?: string
+    type: $Enums.FinanceJobType
+    status?: $Enums.JobStatus
+    payload: JsonNullValueInput | InputJsonValue
+    idempotencyKey?: string | null
+    attempts?: number
+    maxAttempts?: number
+    runAfter?: Date | string
+    lockedAt?: Date | string | null
+    lockedBy?: string | null
+    lastError?: string | null
+    completedAt?: Date | string | null
+    createdBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PaymentWebhookEventCreateManySchoolInput = {
+    id?: string
+    provider: $Enums.PaymentProvider
+    providerEventId: string
+    eventType: string
+    status?: $Enums.WebhookEventStatus
+    payload: JsonNullValueInput | InputJsonValue
+    signature?: string | null
+    receivedAt?: Date | string
+    processedAt?: Date | string | null
+    lastError?: string | null
+    paymentId?: number | null
   }
 
   export type AdminUpdateWithoutSchoolInput = {
@@ -71134,6 +75953,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     studentBill?: StudentBillUpdateOneRequiredWithoutPaymentsNestedInput
     reversal?: PaymentReversalUpdateOneWithoutPaymentNestedInput
+    webhookEvents?: PaymentWebhookEventUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentUncheckedUpdateWithoutSchoolInput = {
@@ -71150,6 +75970,7 @@ export namespace Prisma {
     recordedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reversal?: PaymentReversalUncheckedUpdateOneWithoutPaymentNestedInput
+    webhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentUncheckedUpdateManyWithoutSchoolInput = {
@@ -71379,6 +76200,102 @@ export namespace Prisma {
     performedBy?: StringFieldUpdateOperationsInput | string
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FinanceJobUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFinanceJobTypeFieldUpdateOperationsInput | $Enums.FinanceJobType
+    status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    maxAttempts?: IntFieldUpdateOperationsInput | number
+    runAfter?: DateTimeFieldUpdateOperationsInput | Date | string
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lockedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FinanceJobUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFinanceJobTypeFieldUpdateOperationsInput | $Enums.FinanceJobType
+    status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    maxAttempts?: IntFieldUpdateOperationsInput | number
+    runAfter?: DateTimeFieldUpdateOperationsInput | Date | string
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lockedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FinanceJobUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFinanceJobTypeFieldUpdateOperationsInput | $Enums.FinanceJobType
+    status?: EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    maxAttempts?: IntFieldUpdateOperationsInput | number
+    runAfter?: DateTimeFieldUpdateOperationsInput | Date | string
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lockedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentWebhookEventUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    providerEventId?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    status?: EnumWebhookEventStatusFieldUpdateOperationsInput | $Enums.WebhookEventStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    signature?: NullableStringFieldUpdateOperationsInput | string | null
+    receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    payment?: PaymentUpdateOneWithoutWebhookEventsNestedInput
+  }
+
+  export type PaymentWebhookEventUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    providerEventId?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    status?: EnumWebhookEventStatusFieldUpdateOperationsInput | $Enums.WebhookEventStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    signature?: NullableStringFieldUpdateOperationsInput | string | null
+    receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type PaymentWebhookEventUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    providerEventId?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    status?: EnumWebhookEventStatusFieldUpdateOperationsInput | $Enums.WebhookEventStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    signature?: NullableStringFieldUpdateOperationsInput | string | null
+    receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type AttendanceCreateManyStudentInput = {
@@ -73199,6 +78116,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutPaymentsNestedInput
     reversal?: PaymentReversalUpdateOneWithoutPaymentNestedInput
+    webhookEvents?: PaymentWebhookEventUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentUncheckedUpdateWithoutStudentBillInput = {
@@ -73215,6 +78133,7 @@ export namespace Prisma {
     recordedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reversal?: PaymentReversalUncheckedUpdateOneWithoutPaymentNestedInput
+    webhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentUncheckedUpdateManyWithoutStudentBillInput = {
@@ -73262,6 +78181,62 @@ export namespace Prisma {
     approvedBy?: StringFieldUpdateOperationsInput | string
     schoolId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentWebhookEventCreateManyPaymentInput = {
+    id?: string
+    provider: $Enums.PaymentProvider
+    providerEventId: string
+    eventType: string
+    status?: $Enums.WebhookEventStatus
+    payload: JsonNullValueInput | InputJsonValue
+    signature?: string | null
+    receivedAt?: Date | string
+    processedAt?: Date | string | null
+    lastError?: string | null
+    schoolId?: string | null
+  }
+
+  export type PaymentWebhookEventUpdateWithoutPaymentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    providerEventId?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    status?: EnumWebhookEventStatusFieldUpdateOperationsInput | $Enums.WebhookEventStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    signature?: NullableStringFieldUpdateOperationsInput | string | null
+    receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    school?: SchoolUpdateOneWithoutPaymentWebhookEventsNestedInput
+  }
+
+  export type PaymentWebhookEventUncheckedUpdateWithoutPaymentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    providerEventId?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    status?: EnumWebhookEventStatusFieldUpdateOperationsInput | $Enums.WebhookEventStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    signature?: NullableStringFieldUpdateOperationsInput | string | null
+    receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type PaymentWebhookEventUncheckedUpdateManyWithoutPaymentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    providerEventId?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    status?: EnumWebhookEventStatusFieldUpdateOperationsInput | $Enums.WebhookEventStatus
+    payload?: JsonNullValueInput | InputJsonValue
+    signature?: NullableStringFieldUpdateOperationsInput | string | null
+    receivedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 
