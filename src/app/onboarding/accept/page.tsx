@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getInvitePreview } from "@/src/lib/services/onboarding";
+import { getInviteAvailability } from "@/src/lib/services/onboarding-policy";
 
 type AcceptInvitePageProps = {
   searchParams: Promise<{ token?: string }>;
@@ -10,7 +11,8 @@ export default async function AcceptInvitePage({
 }: AcceptInvitePageProps) {
   const { token } = await searchParams;
   const invite = token ? await getInvitePreview(token) : null;
-  const isUsable = invite && !invite.accepted && !invite.expired;
+  const availability = getInviteAvailability(invite);
+  const isUsable = Boolean(invite && availability.usable);
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#080B18] px-4 py-16">
@@ -19,7 +21,7 @@ export default async function AcceptInvitePage({
           E
         </div>
 
-        {isUsable ? (
+        {invite && isUsable ? (
           <>
             <p className="text-sm font-semibold text-blue-200">School admin invite</p>
             <h1 className="mt-2 text-2xl font-black tracking-tight">

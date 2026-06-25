@@ -126,6 +126,21 @@ enum SchoolInviteRole {
   ADMIN
 }
 
+enum OnboardingAuditAction {
+  WAITLIST_APPROVED
+  WAITLIST_REJECTED
+  SCHOOL_CREATED
+  INVITE_CREATED
+  INVITE_SENT
+  INVITE_RESENT
+  INVITE_REVOKED
+  INVITE_ACCEPTED
+  PROFILE_UPDATED
+  DEFAULT_ACADEMICS_CREATED
+  IMPORT_RECORDED
+  ONBOARDING_COMPLETED
+}
+
 // ─── EXISTING MODELS ─────────────────────────────────────────────────────────
 
 model School {
@@ -135,6 +150,7 @@ model School {
   contactEmail     String?
   phone            String?
   address          String?
+  logoUrl          String?
   onboardingStatus SchoolOnboardingStatus @default(PENDING_SETUP)
   setupStep        String?
   setupCompletedAt DateTime?
@@ -168,6 +184,7 @@ model School {
   financeAuditLogs      FinanceAuditLog[]
   invites               SchoolInvite[]
   waitlistEntries       WaitlistEntry[]
+  onboardingAuditLogs   OnboardingAuditLog[]
 }
 
 model Admin {
@@ -854,11 +871,31 @@ model SchoolInvite {
   tokenHash  String           @unique
   expiresAt  DateTime
   acceptedAt DateTime?
+  revokedAt  DateTime?
+  revokedBy  String?
+  lastSentAt DateTime?
   createdBy  String
   createdAt  DateTime         @default(now())
 
   school School @relation(fields: [schoolId], references: [id])
 
   @@index([schoolId, email])
+  @@index([schoolId, revokedAt])
   @@index([expiresAt])
+}
+
+model OnboardingAuditLog {
+  id          Int                   @id @default(autoincrement())
+  schoolId    String?
+  waitlistId  String?
+  inviteId    String?
+  action      OnboardingAuditAction
+  performedBy String
+  metadata    Json
+  createdAt   DateTime              @default(now())
+
+  school School? @relation(fields: [schoolId], references: [id])
+
+  @@index([schoolId, createdAt])
+  @@index([action, createdAt])
 }

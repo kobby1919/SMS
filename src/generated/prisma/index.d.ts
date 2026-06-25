@@ -173,6 +173,11 @@ export type WaitlistEntry = $Result.DefaultSelection<Prisma.$WaitlistEntryPayloa
  * 
  */
 export type SchoolInvite = $Result.DefaultSelection<Prisma.$SchoolInvitePayload>
+/**
+ * Model OnboardingAuditLog
+ * 
+ */
+export type OnboardingAuditLog = $Result.DefaultSelection<Prisma.$OnboardingAuditLogPayload>
 
 /**
  * Enums
@@ -342,6 +347,24 @@ export const SchoolInviteRole: {
 
 export type SchoolInviteRole = (typeof SchoolInviteRole)[keyof typeof SchoolInviteRole]
 
+
+export const OnboardingAuditAction: {
+  WAITLIST_APPROVED: 'WAITLIST_APPROVED',
+  WAITLIST_REJECTED: 'WAITLIST_REJECTED',
+  SCHOOL_CREATED: 'SCHOOL_CREATED',
+  INVITE_CREATED: 'INVITE_CREATED',
+  INVITE_SENT: 'INVITE_SENT',
+  INVITE_RESENT: 'INVITE_RESENT',
+  INVITE_REVOKED: 'INVITE_REVOKED',
+  INVITE_ACCEPTED: 'INVITE_ACCEPTED',
+  PROFILE_UPDATED: 'PROFILE_UPDATED',
+  DEFAULT_ACADEMICS_CREATED: 'DEFAULT_ACADEMICS_CREATED',
+  IMPORT_RECORDED: 'IMPORT_RECORDED',
+  ONBOARDING_COMPLETED: 'ONBOARDING_COMPLETED'
+};
+
+export type OnboardingAuditAction = (typeof OnboardingAuditAction)[keyof typeof OnboardingAuditAction]
+
 }
 
 export type UserSex = $Enums.UserSex
@@ -407,6 +430,10 @@ export const SchoolOnboardingStatus: typeof $Enums.SchoolOnboardingStatus
 export type SchoolInviteRole = $Enums.SchoolInviteRole
 
 export const SchoolInviteRole: typeof $Enums.SchoolInviteRole
+
+export type OnboardingAuditAction = $Enums.OnboardingAuditAction
+
+export const OnboardingAuditAction: typeof $Enums.OnboardingAuditAction
 
 /**
  * ##  Prisma Client ʲˢ
@@ -848,6 +875,16 @@ export class PrismaClient<
     * ```
     */
   get schoolInvite(): Prisma.SchoolInviteDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.onboardingAuditLog`: Exposes CRUD operations for the **OnboardingAuditLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more OnboardingAuditLogs
+    * const onboardingAuditLogs = await prisma.onboardingAuditLog.findMany()
+    * ```
+    */
+  get onboardingAuditLog(): Prisma.OnboardingAuditLogDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1313,7 +1350,8 @@ export namespace Prisma {
     FinanceAuditLog: 'FinanceAuditLog',
     RateLimitBucket: 'RateLimitBucket',
     WaitlistEntry: 'WaitlistEntry',
-    SchoolInvite: 'SchoolInvite'
+    SchoolInvite: 'SchoolInvite',
+    OnboardingAuditLog: 'OnboardingAuditLog'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1329,7 +1367,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "result" | "attendance" | "event" | "announcement" | "cAConfig" | "continuousAssessment" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite"
+      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "result" | "attendance" | "event" | "announcement" | "cAConfig" | "continuousAssessment" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3701,6 +3739,80 @@ export namespace Prisma {
           }
         }
       }
+      OnboardingAuditLog: {
+        payload: Prisma.$OnboardingAuditLogPayload<ExtArgs>
+        fields: Prisma.OnboardingAuditLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.OnboardingAuditLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OnboardingAuditLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.OnboardingAuditLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OnboardingAuditLogPayload>
+          }
+          findFirst: {
+            args: Prisma.OnboardingAuditLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OnboardingAuditLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.OnboardingAuditLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OnboardingAuditLogPayload>
+          }
+          findMany: {
+            args: Prisma.OnboardingAuditLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OnboardingAuditLogPayload>[]
+          }
+          create: {
+            args: Prisma.OnboardingAuditLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OnboardingAuditLogPayload>
+          }
+          createMany: {
+            args: Prisma.OnboardingAuditLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.OnboardingAuditLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OnboardingAuditLogPayload>[]
+          }
+          delete: {
+            args: Prisma.OnboardingAuditLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OnboardingAuditLogPayload>
+          }
+          update: {
+            args: Prisma.OnboardingAuditLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OnboardingAuditLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.OnboardingAuditLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.OnboardingAuditLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.OnboardingAuditLogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OnboardingAuditLogPayload>[]
+          }
+          upsert: {
+            args: Prisma.OnboardingAuditLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OnboardingAuditLogPayload>
+          }
+          aggregate: {
+            args: Prisma.OnboardingAuditLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateOnboardingAuditLog>
+          }
+          groupBy: {
+            args: Prisma.OnboardingAuditLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<OnboardingAuditLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.OnboardingAuditLogCountArgs<ExtArgs>
+            result: $Utils.Optional<OnboardingAuditLogCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3841,6 +3953,7 @@ export namespace Prisma {
     rateLimitBucket?: RateLimitBucketOmit
     waitlistEntry?: WaitlistEntryOmit
     schoolInvite?: SchoolInviteOmit
+    onboardingAuditLog?: OnboardingAuditLogOmit
   }
 
   /* Types for Logging */
@@ -3948,6 +4061,7 @@ export namespace Prisma {
     financeAuditLogs: number
     invites: number
     waitlistEntries: number
+    onboardingAuditLogs: number
   }
 
   export type SchoolCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3978,6 +4092,7 @@ export namespace Prisma {
     financeAuditLogs?: boolean | SchoolCountOutputTypeCountFinanceAuditLogsArgs
     invites?: boolean | SchoolCountOutputTypeCountInvitesArgs
     waitlistEntries?: boolean | SchoolCountOutputTypeCountWaitlistEntriesArgs
+    onboardingAuditLogs?: boolean | SchoolCountOutputTypeCountOnboardingAuditLogsArgs
   }
 
   // Custom InputTypes
@@ -4178,6 +4293,13 @@ export namespace Prisma {
    */
   export type SchoolCountOutputTypeCountWaitlistEntriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: WaitlistEntryWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountOnboardingAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OnboardingAuditLogWhereInput
   }
 
 
@@ -4843,6 +4965,7 @@ export namespace Prisma {
     contactEmail: string | null
     phone: string | null
     address: string | null
+    logoUrl: string | null
     onboardingStatus: $Enums.SchoolOnboardingStatus | null
     setupStep: string | null
     setupCompletedAt: Date | null
@@ -4857,6 +4980,7 @@ export namespace Prisma {
     contactEmail: string | null
     phone: string | null
     address: string | null
+    logoUrl: string | null
     onboardingStatus: $Enums.SchoolOnboardingStatus | null
     setupStep: string | null
     setupCompletedAt: Date | null
@@ -4871,6 +4995,7 @@ export namespace Prisma {
     contactEmail: number
     phone: number
     address: number
+    logoUrl: number
     onboardingStatus: number
     setupStep: number
     setupCompletedAt: number
@@ -4887,6 +5012,7 @@ export namespace Prisma {
     contactEmail?: true
     phone?: true
     address?: true
+    logoUrl?: true
     onboardingStatus?: true
     setupStep?: true
     setupCompletedAt?: true
@@ -4901,6 +5027,7 @@ export namespace Prisma {
     contactEmail?: true
     phone?: true
     address?: true
+    logoUrl?: true
     onboardingStatus?: true
     setupStep?: true
     setupCompletedAt?: true
@@ -4915,6 +5042,7 @@ export namespace Prisma {
     contactEmail?: true
     phone?: true
     address?: true
+    logoUrl?: true
     onboardingStatus?: true
     setupStep?: true
     setupCompletedAt?: true
@@ -5002,6 +5130,7 @@ export namespace Prisma {
     contactEmail: string | null
     phone: string | null
     address: string | null
+    logoUrl: string | null
     onboardingStatus: $Enums.SchoolOnboardingStatus
     setupStep: string | null
     setupCompletedAt: Date | null
@@ -5033,6 +5162,7 @@ export namespace Prisma {
     contactEmail?: boolean
     phone?: boolean
     address?: boolean
+    logoUrl?: boolean
     onboardingStatus?: boolean
     setupStep?: boolean
     setupCompletedAt?: boolean
@@ -5065,6 +5195,7 @@ export namespace Prisma {
     financeAuditLogs?: boolean | School$financeAuditLogsArgs<ExtArgs>
     invites?: boolean | School$invitesArgs<ExtArgs>
     waitlistEntries?: boolean | School$waitlistEntriesArgs<ExtArgs>
+    onboardingAuditLogs?: boolean | School$onboardingAuditLogsArgs<ExtArgs>
     _count?: boolean | SchoolCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["school"]>
 
@@ -5075,6 +5206,7 @@ export namespace Prisma {
     contactEmail?: boolean
     phone?: boolean
     address?: boolean
+    logoUrl?: boolean
     onboardingStatus?: boolean
     setupStep?: boolean
     setupCompletedAt?: boolean
@@ -5089,6 +5221,7 @@ export namespace Prisma {
     contactEmail?: boolean
     phone?: boolean
     address?: boolean
+    logoUrl?: boolean
     onboardingStatus?: boolean
     setupStep?: boolean
     setupCompletedAt?: boolean
@@ -5103,6 +5236,7 @@ export namespace Prisma {
     contactEmail?: boolean
     phone?: boolean
     address?: boolean
+    logoUrl?: boolean
     onboardingStatus?: boolean
     setupStep?: boolean
     setupCompletedAt?: boolean
@@ -5110,7 +5244,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type SchoolOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "contactEmail" | "phone" | "address" | "onboardingStatus" | "setupStep" | "setupCompletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["school"]>
+  export type SchoolOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "contactEmail" | "phone" | "address" | "logoUrl" | "onboardingStatus" | "setupStep" | "setupCompletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["school"]>
   export type SchoolInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     admins?: boolean | School$adminsArgs<ExtArgs>
     students?: boolean | School$studentsArgs<ExtArgs>
@@ -5139,6 +5273,7 @@ export namespace Prisma {
     financeAuditLogs?: boolean | School$financeAuditLogsArgs<ExtArgs>
     invites?: boolean | School$invitesArgs<ExtArgs>
     waitlistEntries?: boolean | School$waitlistEntriesArgs<ExtArgs>
+    onboardingAuditLogs?: boolean | School$onboardingAuditLogsArgs<ExtArgs>
     _count?: boolean | SchoolCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type SchoolIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -5174,6 +5309,7 @@ export namespace Prisma {
       financeAuditLogs: Prisma.$FinanceAuditLogPayload<ExtArgs>[]
       invites: Prisma.$SchoolInvitePayload<ExtArgs>[]
       waitlistEntries: Prisma.$WaitlistEntryPayload<ExtArgs>[]
+      onboardingAuditLogs: Prisma.$OnboardingAuditLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5182,6 +5318,7 @@ export namespace Prisma {
       contactEmail: string | null
       phone: string | null
       address: string | null
+      logoUrl: string | null
       onboardingStatus: $Enums.SchoolOnboardingStatus
       setupStep: string | null
       setupCompletedAt: Date | null
@@ -5608,6 +5745,7 @@ export namespace Prisma {
     financeAuditLogs<T extends School$financeAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$financeAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     invites<T extends School$invitesArgs<ExtArgs> = {}>(args?: Subset<T, School$invitesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     waitlistEntries<T extends School$waitlistEntriesArgs<ExtArgs> = {}>(args?: Subset<T, School$waitlistEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WaitlistEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    onboardingAuditLogs<T extends School$onboardingAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$onboardingAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OnboardingAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5643,6 +5781,7 @@ export namespace Prisma {
     readonly contactEmail: FieldRef<"School", 'String'>
     readonly phone: FieldRef<"School", 'String'>
     readonly address: FieldRef<"School", 'String'>
+    readonly logoUrl: FieldRef<"School", 'String'>
     readonly onboardingStatus: FieldRef<"School", 'SchoolOnboardingStatus'>
     readonly setupStep: FieldRef<"School", 'String'>
     readonly setupCompletedAt: FieldRef<"School", 'DateTime'>
@@ -6686,6 +6825,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: WaitlistEntryScalarFieldEnum | WaitlistEntryScalarFieldEnum[]
+  }
+
+  /**
+   * School.onboardingAuditLogs
+   */
+  export type School$onboardingAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OnboardingAuditLog
+     */
+    select?: OnboardingAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OnboardingAuditLog
+     */
+    omit?: OnboardingAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OnboardingAuditLogInclude<ExtArgs> | null
+    where?: OnboardingAuditLogWhereInput
+    orderBy?: OnboardingAuditLogOrderByWithRelationInput | OnboardingAuditLogOrderByWithRelationInput[]
+    cursor?: OnboardingAuditLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OnboardingAuditLogScalarFieldEnum | OnboardingAuditLogScalarFieldEnum[]
   }
 
   /**
@@ -42537,6 +42700,9 @@ export namespace Prisma {
     tokenHash: string | null
     expiresAt: Date | null
     acceptedAt: Date | null
+    revokedAt: Date | null
+    revokedBy: string | null
+    lastSentAt: Date | null
     createdBy: string | null
     createdAt: Date | null
   }
@@ -42549,6 +42715,9 @@ export namespace Prisma {
     tokenHash: string | null
     expiresAt: Date | null
     acceptedAt: Date | null
+    revokedAt: Date | null
+    revokedBy: string | null
+    lastSentAt: Date | null
     createdBy: string | null
     createdAt: Date | null
   }
@@ -42561,6 +42730,9 @@ export namespace Prisma {
     tokenHash: number
     expiresAt: number
     acceptedAt: number
+    revokedAt: number
+    revokedBy: number
+    lastSentAt: number
     createdBy: number
     createdAt: number
     _all: number
@@ -42575,6 +42747,9 @@ export namespace Prisma {
     tokenHash?: true
     expiresAt?: true
     acceptedAt?: true
+    revokedAt?: true
+    revokedBy?: true
+    lastSentAt?: true
     createdBy?: true
     createdAt?: true
   }
@@ -42587,6 +42762,9 @@ export namespace Prisma {
     tokenHash?: true
     expiresAt?: true
     acceptedAt?: true
+    revokedAt?: true
+    revokedBy?: true
+    lastSentAt?: true
     createdBy?: true
     createdAt?: true
   }
@@ -42599,6 +42777,9 @@ export namespace Prisma {
     tokenHash?: true
     expiresAt?: true
     acceptedAt?: true
+    revokedAt?: true
+    revokedBy?: true
+    lastSentAt?: true
     createdBy?: true
     createdAt?: true
     _all?: true
@@ -42684,6 +42865,9 @@ export namespace Prisma {
     tokenHash: string
     expiresAt: Date
     acceptedAt: Date | null
+    revokedAt: Date | null
+    revokedBy: string | null
+    lastSentAt: Date | null
     createdBy: string
     createdAt: Date
     _count: SchoolInviteCountAggregateOutputType | null
@@ -42713,6 +42897,9 @@ export namespace Prisma {
     tokenHash?: boolean
     expiresAt?: boolean
     acceptedAt?: boolean
+    revokedAt?: boolean
+    revokedBy?: boolean
+    lastSentAt?: boolean
     createdBy?: boolean
     createdAt?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
@@ -42726,6 +42913,9 @@ export namespace Prisma {
     tokenHash?: boolean
     expiresAt?: boolean
     acceptedAt?: boolean
+    revokedAt?: boolean
+    revokedBy?: boolean
+    lastSentAt?: boolean
     createdBy?: boolean
     createdAt?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
@@ -42739,6 +42929,9 @@ export namespace Prisma {
     tokenHash?: boolean
     expiresAt?: boolean
     acceptedAt?: boolean
+    revokedAt?: boolean
+    revokedBy?: boolean
+    lastSentAt?: boolean
     createdBy?: boolean
     createdAt?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
@@ -42752,11 +42945,14 @@ export namespace Prisma {
     tokenHash?: boolean
     expiresAt?: boolean
     acceptedAt?: boolean
+    revokedAt?: boolean
+    revokedBy?: boolean
+    lastSentAt?: boolean
     createdBy?: boolean
     createdAt?: boolean
   }
 
-  export type SchoolInviteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "schoolId" | "email" | "role" | "tokenHash" | "expiresAt" | "acceptedAt" | "createdBy" | "createdAt", ExtArgs["result"]["schoolInvite"]>
+  export type SchoolInviteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "schoolId" | "email" | "role" | "tokenHash" | "expiresAt" | "acceptedAt" | "revokedAt" | "revokedBy" | "lastSentAt" | "createdBy" | "createdAt", ExtArgs["result"]["schoolInvite"]>
   export type SchoolInviteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
   }
@@ -42780,6 +42976,9 @@ export namespace Prisma {
       tokenHash: string
       expiresAt: Date
       acceptedAt: Date | null
+      revokedAt: Date | null
+      revokedBy: string | null
+      lastSentAt: Date | null
       createdBy: string
       createdAt: Date
     }, ExtArgs["result"]["schoolInvite"]>
@@ -43213,6 +43412,9 @@ export namespace Prisma {
     readonly tokenHash: FieldRef<"SchoolInvite", 'String'>
     readonly expiresAt: FieldRef<"SchoolInvite", 'DateTime'>
     readonly acceptedAt: FieldRef<"SchoolInvite", 'DateTime'>
+    readonly revokedAt: FieldRef<"SchoolInvite", 'DateTime'>
+    readonly revokedBy: FieldRef<"SchoolInvite", 'String'>
+    readonly lastSentAt: FieldRef<"SchoolInvite", 'DateTime'>
     readonly createdBy: FieldRef<"SchoolInvite", 'String'>
     readonly createdAt: FieldRef<"SchoolInvite", 'DateTime'>
   }
@@ -43635,6 +43837,1157 @@ export namespace Prisma {
 
 
   /**
+   * Model OnboardingAuditLog
+   */
+
+  export type AggregateOnboardingAuditLog = {
+    _count: OnboardingAuditLogCountAggregateOutputType | null
+    _avg: OnboardingAuditLogAvgAggregateOutputType | null
+    _sum: OnboardingAuditLogSumAggregateOutputType | null
+    _min: OnboardingAuditLogMinAggregateOutputType | null
+    _max: OnboardingAuditLogMaxAggregateOutputType | null
+  }
+
+  export type OnboardingAuditLogAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type OnboardingAuditLogSumAggregateOutputType = {
+    id: number | null
+  }
+
+  export type OnboardingAuditLogMinAggregateOutputType = {
+    id: number | null
+    schoolId: string | null
+    waitlistId: string | null
+    inviteId: string | null
+    action: $Enums.OnboardingAuditAction | null
+    performedBy: string | null
+    createdAt: Date | null
+  }
+
+  export type OnboardingAuditLogMaxAggregateOutputType = {
+    id: number | null
+    schoolId: string | null
+    waitlistId: string | null
+    inviteId: string | null
+    action: $Enums.OnboardingAuditAction | null
+    performedBy: string | null
+    createdAt: Date | null
+  }
+
+  export type OnboardingAuditLogCountAggregateOutputType = {
+    id: number
+    schoolId: number
+    waitlistId: number
+    inviteId: number
+    action: number
+    performedBy: number
+    metadata: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type OnboardingAuditLogAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type OnboardingAuditLogSumAggregateInputType = {
+    id?: true
+  }
+
+  export type OnboardingAuditLogMinAggregateInputType = {
+    id?: true
+    schoolId?: true
+    waitlistId?: true
+    inviteId?: true
+    action?: true
+    performedBy?: true
+    createdAt?: true
+  }
+
+  export type OnboardingAuditLogMaxAggregateInputType = {
+    id?: true
+    schoolId?: true
+    waitlistId?: true
+    inviteId?: true
+    action?: true
+    performedBy?: true
+    createdAt?: true
+  }
+
+  export type OnboardingAuditLogCountAggregateInputType = {
+    id?: true
+    schoolId?: true
+    waitlistId?: true
+    inviteId?: true
+    action?: true
+    performedBy?: true
+    metadata?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type OnboardingAuditLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OnboardingAuditLog to aggregate.
+     */
+    where?: OnboardingAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OnboardingAuditLogs to fetch.
+     */
+    orderBy?: OnboardingAuditLogOrderByWithRelationInput | OnboardingAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: OnboardingAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OnboardingAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OnboardingAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned OnboardingAuditLogs
+    **/
+    _count?: true | OnboardingAuditLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: OnboardingAuditLogAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: OnboardingAuditLogSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: OnboardingAuditLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: OnboardingAuditLogMaxAggregateInputType
+  }
+
+  export type GetOnboardingAuditLogAggregateType<T extends OnboardingAuditLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateOnboardingAuditLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateOnboardingAuditLog[P]>
+      : GetScalarType<T[P], AggregateOnboardingAuditLog[P]>
+  }
+
+
+
+
+  export type OnboardingAuditLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OnboardingAuditLogWhereInput
+    orderBy?: OnboardingAuditLogOrderByWithAggregationInput | OnboardingAuditLogOrderByWithAggregationInput[]
+    by: OnboardingAuditLogScalarFieldEnum[] | OnboardingAuditLogScalarFieldEnum
+    having?: OnboardingAuditLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: OnboardingAuditLogCountAggregateInputType | true
+    _avg?: OnboardingAuditLogAvgAggregateInputType
+    _sum?: OnboardingAuditLogSumAggregateInputType
+    _min?: OnboardingAuditLogMinAggregateInputType
+    _max?: OnboardingAuditLogMaxAggregateInputType
+  }
+
+  export type OnboardingAuditLogGroupByOutputType = {
+    id: number
+    schoolId: string | null
+    waitlistId: string | null
+    inviteId: string | null
+    action: $Enums.OnboardingAuditAction
+    performedBy: string
+    metadata: JsonValue
+    createdAt: Date
+    _count: OnboardingAuditLogCountAggregateOutputType | null
+    _avg: OnboardingAuditLogAvgAggregateOutputType | null
+    _sum: OnboardingAuditLogSumAggregateOutputType | null
+    _min: OnboardingAuditLogMinAggregateOutputType | null
+    _max: OnboardingAuditLogMaxAggregateOutputType | null
+  }
+
+  type GetOnboardingAuditLogGroupByPayload<T extends OnboardingAuditLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<OnboardingAuditLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof OnboardingAuditLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], OnboardingAuditLogGroupByOutputType[P]>
+            : GetScalarType<T[P], OnboardingAuditLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type OnboardingAuditLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    waitlistId?: boolean
+    inviteId?: boolean
+    action?: boolean
+    performedBy?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    school?: boolean | OnboardingAuditLog$schoolArgs<ExtArgs>
+  }, ExtArgs["result"]["onboardingAuditLog"]>
+
+  export type OnboardingAuditLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    waitlistId?: boolean
+    inviteId?: boolean
+    action?: boolean
+    performedBy?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    school?: boolean | OnboardingAuditLog$schoolArgs<ExtArgs>
+  }, ExtArgs["result"]["onboardingAuditLog"]>
+
+  export type OnboardingAuditLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    waitlistId?: boolean
+    inviteId?: boolean
+    action?: boolean
+    performedBy?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    school?: boolean | OnboardingAuditLog$schoolArgs<ExtArgs>
+  }, ExtArgs["result"]["onboardingAuditLog"]>
+
+  export type OnboardingAuditLogSelectScalar = {
+    id?: boolean
+    schoolId?: boolean
+    waitlistId?: boolean
+    inviteId?: boolean
+    action?: boolean
+    performedBy?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+  }
+
+  export type OnboardingAuditLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "schoolId" | "waitlistId" | "inviteId" | "action" | "performedBy" | "metadata" | "createdAt", ExtArgs["result"]["onboardingAuditLog"]>
+  export type OnboardingAuditLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | OnboardingAuditLog$schoolArgs<ExtArgs>
+  }
+  export type OnboardingAuditLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | OnboardingAuditLog$schoolArgs<ExtArgs>
+  }
+  export type OnboardingAuditLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | OnboardingAuditLog$schoolArgs<ExtArgs>
+  }
+
+  export type $OnboardingAuditLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "OnboardingAuditLog"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      schoolId: string | null
+      waitlistId: string | null
+      inviteId: string | null
+      action: $Enums.OnboardingAuditAction
+      performedBy: string
+      metadata: Prisma.JsonValue
+      createdAt: Date
+    }, ExtArgs["result"]["onboardingAuditLog"]>
+    composites: {}
+  }
+
+  type OnboardingAuditLogGetPayload<S extends boolean | null | undefined | OnboardingAuditLogDefaultArgs> = $Result.GetResult<Prisma.$OnboardingAuditLogPayload, S>
+
+  type OnboardingAuditLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<OnboardingAuditLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: OnboardingAuditLogCountAggregateInputType | true
+    }
+
+  export interface OnboardingAuditLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['OnboardingAuditLog'], meta: { name: 'OnboardingAuditLog' } }
+    /**
+     * Find zero or one OnboardingAuditLog that matches the filter.
+     * @param {OnboardingAuditLogFindUniqueArgs} args - Arguments to find a OnboardingAuditLog
+     * @example
+     * // Get one OnboardingAuditLog
+     * const onboardingAuditLog = await prisma.onboardingAuditLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends OnboardingAuditLogFindUniqueArgs>(args: SelectSubset<T, OnboardingAuditLogFindUniqueArgs<ExtArgs>>): Prisma__OnboardingAuditLogClient<$Result.GetResult<Prisma.$OnboardingAuditLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one OnboardingAuditLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {OnboardingAuditLogFindUniqueOrThrowArgs} args - Arguments to find a OnboardingAuditLog
+     * @example
+     * // Get one OnboardingAuditLog
+     * const onboardingAuditLog = await prisma.onboardingAuditLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends OnboardingAuditLogFindUniqueOrThrowArgs>(args: SelectSubset<T, OnboardingAuditLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__OnboardingAuditLogClient<$Result.GetResult<Prisma.$OnboardingAuditLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OnboardingAuditLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OnboardingAuditLogFindFirstArgs} args - Arguments to find a OnboardingAuditLog
+     * @example
+     * // Get one OnboardingAuditLog
+     * const onboardingAuditLog = await prisma.onboardingAuditLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends OnboardingAuditLogFindFirstArgs>(args?: SelectSubset<T, OnboardingAuditLogFindFirstArgs<ExtArgs>>): Prisma__OnboardingAuditLogClient<$Result.GetResult<Prisma.$OnboardingAuditLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OnboardingAuditLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OnboardingAuditLogFindFirstOrThrowArgs} args - Arguments to find a OnboardingAuditLog
+     * @example
+     * // Get one OnboardingAuditLog
+     * const onboardingAuditLog = await prisma.onboardingAuditLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends OnboardingAuditLogFindFirstOrThrowArgs>(args?: SelectSubset<T, OnboardingAuditLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__OnboardingAuditLogClient<$Result.GetResult<Prisma.$OnboardingAuditLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more OnboardingAuditLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OnboardingAuditLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all OnboardingAuditLogs
+     * const onboardingAuditLogs = await prisma.onboardingAuditLog.findMany()
+     * 
+     * // Get first 10 OnboardingAuditLogs
+     * const onboardingAuditLogs = await prisma.onboardingAuditLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const onboardingAuditLogWithIdOnly = await prisma.onboardingAuditLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends OnboardingAuditLogFindManyArgs>(args?: SelectSubset<T, OnboardingAuditLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OnboardingAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a OnboardingAuditLog.
+     * @param {OnboardingAuditLogCreateArgs} args - Arguments to create a OnboardingAuditLog.
+     * @example
+     * // Create one OnboardingAuditLog
+     * const OnboardingAuditLog = await prisma.onboardingAuditLog.create({
+     *   data: {
+     *     // ... data to create a OnboardingAuditLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends OnboardingAuditLogCreateArgs>(args: SelectSubset<T, OnboardingAuditLogCreateArgs<ExtArgs>>): Prisma__OnboardingAuditLogClient<$Result.GetResult<Prisma.$OnboardingAuditLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many OnboardingAuditLogs.
+     * @param {OnboardingAuditLogCreateManyArgs} args - Arguments to create many OnboardingAuditLogs.
+     * @example
+     * // Create many OnboardingAuditLogs
+     * const onboardingAuditLog = await prisma.onboardingAuditLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends OnboardingAuditLogCreateManyArgs>(args?: SelectSubset<T, OnboardingAuditLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many OnboardingAuditLogs and returns the data saved in the database.
+     * @param {OnboardingAuditLogCreateManyAndReturnArgs} args - Arguments to create many OnboardingAuditLogs.
+     * @example
+     * // Create many OnboardingAuditLogs
+     * const onboardingAuditLog = await prisma.onboardingAuditLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many OnboardingAuditLogs and only return the `id`
+     * const onboardingAuditLogWithIdOnly = await prisma.onboardingAuditLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends OnboardingAuditLogCreateManyAndReturnArgs>(args?: SelectSubset<T, OnboardingAuditLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OnboardingAuditLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a OnboardingAuditLog.
+     * @param {OnboardingAuditLogDeleteArgs} args - Arguments to delete one OnboardingAuditLog.
+     * @example
+     * // Delete one OnboardingAuditLog
+     * const OnboardingAuditLog = await prisma.onboardingAuditLog.delete({
+     *   where: {
+     *     // ... filter to delete one OnboardingAuditLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends OnboardingAuditLogDeleteArgs>(args: SelectSubset<T, OnboardingAuditLogDeleteArgs<ExtArgs>>): Prisma__OnboardingAuditLogClient<$Result.GetResult<Prisma.$OnboardingAuditLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one OnboardingAuditLog.
+     * @param {OnboardingAuditLogUpdateArgs} args - Arguments to update one OnboardingAuditLog.
+     * @example
+     * // Update one OnboardingAuditLog
+     * const onboardingAuditLog = await prisma.onboardingAuditLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends OnboardingAuditLogUpdateArgs>(args: SelectSubset<T, OnboardingAuditLogUpdateArgs<ExtArgs>>): Prisma__OnboardingAuditLogClient<$Result.GetResult<Prisma.$OnboardingAuditLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more OnboardingAuditLogs.
+     * @param {OnboardingAuditLogDeleteManyArgs} args - Arguments to filter OnboardingAuditLogs to delete.
+     * @example
+     * // Delete a few OnboardingAuditLogs
+     * const { count } = await prisma.onboardingAuditLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends OnboardingAuditLogDeleteManyArgs>(args?: SelectSubset<T, OnboardingAuditLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OnboardingAuditLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OnboardingAuditLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many OnboardingAuditLogs
+     * const onboardingAuditLog = await prisma.onboardingAuditLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends OnboardingAuditLogUpdateManyArgs>(args: SelectSubset<T, OnboardingAuditLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OnboardingAuditLogs and returns the data updated in the database.
+     * @param {OnboardingAuditLogUpdateManyAndReturnArgs} args - Arguments to update many OnboardingAuditLogs.
+     * @example
+     * // Update many OnboardingAuditLogs
+     * const onboardingAuditLog = await prisma.onboardingAuditLog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more OnboardingAuditLogs and only return the `id`
+     * const onboardingAuditLogWithIdOnly = await prisma.onboardingAuditLog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends OnboardingAuditLogUpdateManyAndReturnArgs>(args: SelectSubset<T, OnboardingAuditLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OnboardingAuditLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one OnboardingAuditLog.
+     * @param {OnboardingAuditLogUpsertArgs} args - Arguments to update or create a OnboardingAuditLog.
+     * @example
+     * // Update or create a OnboardingAuditLog
+     * const onboardingAuditLog = await prisma.onboardingAuditLog.upsert({
+     *   create: {
+     *     // ... data to create a OnboardingAuditLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the OnboardingAuditLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends OnboardingAuditLogUpsertArgs>(args: SelectSubset<T, OnboardingAuditLogUpsertArgs<ExtArgs>>): Prisma__OnboardingAuditLogClient<$Result.GetResult<Prisma.$OnboardingAuditLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of OnboardingAuditLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OnboardingAuditLogCountArgs} args - Arguments to filter OnboardingAuditLogs to count.
+     * @example
+     * // Count the number of OnboardingAuditLogs
+     * const count = await prisma.onboardingAuditLog.count({
+     *   where: {
+     *     // ... the filter for the OnboardingAuditLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends OnboardingAuditLogCountArgs>(
+      args?: Subset<T, OnboardingAuditLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], OnboardingAuditLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a OnboardingAuditLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OnboardingAuditLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends OnboardingAuditLogAggregateArgs>(args: Subset<T, OnboardingAuditLogAggregateArgs>): Prisma.PrismaPromise<GetOnboardingAuditLogAggregateType<T>>
+
+    /**
+     * Group by OnboardingAuditLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OnboardingAuditLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends OnboardingAuditLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: OnboardingAuditLogGroupByArgs['orderBy'] }
+        : { orderBy?: OnboardingAuditLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, OnboardingAuditLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetOnboardingAuditLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the OnboardingAuditLog model
+   */
+  readonly fields: OnboardingAuditLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for OnboardingAuditLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__OnboardingAuditLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends OnboardingAuditLog$schoolArgs<ExtArgs> = {}>(args?: Subset<T, OnboardingAuditLog$schoolArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the OnboardingAuditLog model
+   */
+  interface OnboardingAuditLogFieldRefs {
+    readonly id: FieldRef<"OnboardingAuditLog", 'Int'>
+    readonly schoolId: FieldRef<"OnboardingAuditLog", 'String'>
+    readonly waitlistId: FieldRef<"OnboardingAuditLog", 'String'>
+    readonly inviteId: FieldRef<"OnboardingAuditLog", 'String'>
+    readonly action: FieldRef<"OnboardingAuditLog", 'OnboardingAuditAction'>
+    readonly performedBy: FieldRef<"OnboardingAuditLog", 'String'>
+    readonly metadata: FieldRef<"OnboardingAuditLog", 'Json'>
+    readonly createdAt: FieldRef<"OnboardingAuditLog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * OnboardingAuditLog findUnique
+   */
+  export type OnboardingAuditLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OnboardingAuditLog
+     */
+    select?: OnboardingAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OnboardingAuditLog
+     */
+    omit?: OnboardingAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OnboardingAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which OnboardingAuditLog to fetch.
+     */
+    where: OnboardingAuditLogWhereUniqueInput
+  }
+
+  /**
+   * OnboardingAuditLog findUniqueOrThrow
+   */
+  export type OnboardingAuditLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OnboardingAuditLog
+     */
+    select?: OnboardingAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OnboardingAuditLog
+     */
+    omit?: OnboardingAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OnboardingAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which OnboardingAuditLog to fetch.
+     */
+    where: OnboardingAuditLogWhereUniqueInput
+  }
+
+  /**
+   * OnboardingAuditLog findFirst
+   */
+  export type OnboardingAuditLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OnboardingAuditLog
+     */
+    select?: OnboardingAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OnboardingAuditLog
+     */
+    omit?: OnboardingAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OnboardingAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which OnboardingAuditLog to fetch.
+     */
+    where?: OnboardingAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OnboardingAuditLogs to fetch.
+     */
+    orderBy?: OnboardingAuditLogOrderByWithRelationInput | OnboardingAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OnboardingAuditLogs.
+     */
+    cursor?: OnboardingAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OnboardingAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OnboardingAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OnboardingAuditLogs.
+     */
+    distinct?: OnboardingAuditLogScalarFieldEnum | OnboardingAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * OnboardingAuditLog findFirstOrThrow
+   */
+  export type OnboardingAuditLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OnboardingAuditLog
+     */
+    select?: OnboardingAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OnboardingAuditLog
+     */
+    omit?: OnboardingAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OnboardingAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which OnboardingAuditLog to fetch.
+     */
+    where?: OnboardingAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OnboardingAuditLogs to fetch.
+     */
+    orderBy?: OnboardingAuditLogOrderByWithRelationInput | OnboardingAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OnboardingAuditLogs.
+     */
+    cursor?: OnboardingAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OnboardingAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OnboardingAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OnboardingAuditLogs.
+     */
+    distinct?: OnboardingAuditLogScalarFieldEnum | OnboardingAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * OnboardingAuditLog findMany
+   */
+  export type OnboardingAuditLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OnboardingAuditLog
+     */
+    select?: OnboardingAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OnboardingAuditLog
+     */
+    omit?: OnboardingAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OnboardingAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which OnboardingAuditLogs to fetch.
+     */
+    where?: OnboardingAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OnboardingAuditLogs to fetch.
+     */
+    orderBy?: OnboardingAuditLogOrderByWithRelationInput | OnboardingAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing OnboardingAuditLogs.
+     */
+    cursor?: OnboardingAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OnboardingAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OnboardingAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OnboardingAuditLogs.
+     */
+    distinct?: OnboardingAuditLogScalarFieldEnum | OnboardingAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * OnboardingAuditLog create
+   */
+  export type OnboardingAuditLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OnboardingAuditLog
+     */
+    select?: OnboardingAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OnboardingAuditLog
+     */
+    omit?: OnboardingAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OnboardingAuditLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a OnboardingAuditLog.
+     */
+    data: XOR<OnboardingAuditLogCreateInput, OnboardingAuditLogUncheckedCreateInput>
+  }
+
+  /**
+   * OnboardingAuditLog createMany
+   */
+  export type OnboardingAuditLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many OnboardingAuditLogs.
+     */
+    data: OnboardingAuditLogCreateManyInput | OnboardingAuditLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * OnboardingAuditLog createManyAndReturn
+   */
+  export type OnboardingAuditLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OnboardingAuditLog
+     */
+    select?: OnboardingAuditLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OnboardingAuditLog
+     */
+    omit?: OnboardingAuditLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many OnboardingAuditLogs.
+     */
+    data: OnboardingAuditLogCreateManyInput | OnboardingAuditLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OnboardingAuditLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * OnboardingAuditLog update
+   */
+  export type OnboardingAuditLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OnboardingAuditLog
+     */
+    select?: OnboardingAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OnboardingAuditLog
+     */
+    omit?: OnboardingAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OnboardingAuditLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a OnboardingAuditLog.
+     */
+    data: XOR<OnboardingAuditLogUpdateInput, OnboardingAuditLogUncheckedUpdateInput>
+    /**
+     * Choose, which OnboardingAuditLog to update.
+     */
+    where: OnboardingAuditLogWhereUniqueInput
+  }
+
+  /**
+   * OnboardingAuditLog updateMany
+   */
+  export type OnboardingAuditLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update OnboardingAuditLogs.
+     */
+    data: XOR<OnboardingAuditLogUpdateManyMutationInput, OnboardingAuditLogUncheckedUpdateManyInput>
+    /**
+     * Filter which OnboardingAuditLogs to update
+     */
+    where?: OnboardingAuditLogWhereInput
+    /**
+     * Limit how many OnboardingAuditLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * OnboardingAuditLog updateManyAndReturn
+   */
+  export type OnboardingAuditLogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OnboardingAuditLog
+     */
+    select?: OnboardingAuditLogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OnboardingAuditLog
+     */
+    omit?: OnboardingAuditLogOmit<ExtArgs> | null
+    /**
+     * The data used to update OnboardingAuditLogs.
+     */
+    data: XOR<OnboardingAuditLogUpdateManyMutationInput, OnboardingAuditLogUncheckedUpdateManyInput>
+    /**
+     * Filter which OnboardingAuditLogs to update
+     */
+    where?: OnboardingAuditLogWhereInput
+    /**
+     * Limit how many OnboardingAuditLogs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OnboardingAuditLogIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * OnboardingAuditLog upsert
+   */
+  export type OnboardingAuditLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OnboardingAuditLog
+     */
+    select?: OnboardingAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OnboardingAuditLog
+     */
+    omit?: OnboardingAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OnboardingAuditLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the OnboardingAuditLog to update in case it exists.
+     */
+    where: OnboardingAuditLogWhereUniqueInput
+    /**
+     * In case the OnboardingAuditLog found by the `where` argument doesn't exist, create a new OnboardingAuditLog with this data.
+     */
+    create: XOR<OnboardingAuditLogCreateInput, OnboardingAuditLogUncheckedCreateInput>
+    /**
+     * In case the OnboardingAuditLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<OnboardingAuditLogUpdateInput, OnboardingAuditLogUncheckedUpdateInput>
+  }
+
+  /**
+   * OnboardingAuditLog delete
+   */
+  export type OnboardingAuditLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OnboardingAuditLog
+     */
+    select?: OnboardingAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OnboardingAuditLog
+     */
+    omit?: OnboardingAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OnboardingAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter which OnboardingAuditLog to delete.
+     */
+    where: OnboardingAuditLogWhereUniqueInput
+  }
+
+  /**
+   * OnboardingAuditLog deleteMany
+   */
+  export type OnboardingAuditLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OnboardingAuditLogs to delete
+     */
+    where?: OnboardingAuditLogWhereInput
+    /**
+     * Limit how many OnboardingAuditLogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * OnboardingAuditLog.school
+   */
+  export type OnboardingAuditLog$schoolArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the School
+     */
+    select?: SchoolSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the School
+     */
+    omit?: SchoolOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolInclude<ExtArgs> | null
+    where?: SchoolWhereInput
+  }
+
+  /**
+   * OnboardingAuditLog without action
+   */
+  export type OnboardingAuditLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OnboardingAuditLog
+     */
+    select?: OnboardingAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OnboardingAuditLog
+     */
+    omit?: OnboardingAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OnboardingAuditLogInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -43655,6 +45008,7 @@ export namespace Prisma {
     contactEmail: 'contactEmail',
     phone: 'phone',
     address: 'address',
+    logoUrl: 'logoUrl',
     onboardingStatus: 'onboardingStatus',
     setupStep: 'setupStep',
     setupCompletedAt: 'setupCompletedAt',
@@ -44110,11 +45464,28 @@ export namespace Prisma {
     tokenHash: 'tokenHash',
     expiresAt: 'expiresAt',
     acceptedAt: 'acceptedAt',
+    revokedAt: 'revokedAt',
+    revokedBy: 'revokedBy',
+    lastSentAt: 'lastSentAt',
     createdBy: 'createdBy',
     createdAt: 'createdAt'
   };
 
   export type SchoolInviteScalarFieldEnum = (typeof SchoolInviteScalarFieldEnum)[keyof typeof SchoolInviteScalarFieldEnum]
+
+
+  export const OnboardingAuditLogScalarFieldEnum: {
+    id: 'id',
+    schoolId: 'schoolId',
+    waitlistId: 'waitlistId',
+    inviteId: 'inviteId',
+    action: 'action',
+    performedBy: 'performedBy',
+    metadata: 'metadata',
+    createdAt: 'createdAt'
+  };
+
+  export type OnboardingAuditLogScalarFieldEnum = (typeof OnboardingAuditLogScalarFieldEnum)[keyof typeof OnboardingAuditLogScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -44475,6 +45846,20 @@ export namespace Prisma {
    */
   export type ListEnumSchoolInviteRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SchoolInviteRole[]'>
     
+
+
+  /**
+   * Reference to a field of type 'OnboardingAuditAction'
+   */
+  export type EnumOnboardingAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OnboardingAuditAction'>
+    
+
+
+  /**
+   * Reference to a field of type 'OnboardingAuditAction[]'
+   */
+  export type ListEnumOnboardingAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OnboardingAuditAction[]'>
+    
   /**
    * Deep Input Types
    */
@@ -44490,6 +45875,7 @@ export namespace Prisma {
     contactEmail?: StringNullableFilter<"School"> | string | null
     phone?: StringNullableFilter<"School"> | string | null
     address?: StringNullableFilter<"School"> | string | null
+    logoUrl?: StringNullableFilter<"School"> | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFilter<"School"> | $Enums.SchoolOnboardingStatus
     setupStep?: StringNullableFilter<"School"> | string | null
     setupCompletedAt?: DateTimeNullableFilter<"School"> | Date | string | null
@@ -44522,6 +45908,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogListRelationFilter
     invites?: SchoolInviteListRelationFilter
     waitlistEntries?: WaitlistEntryListRelationFilter
+    onboardingAuditLogs?: OnboardingAuditLogListRelationFilter
   }
 
   export type SchoolOrderByWithRelationInput = {
@@ -44531,6 +45918,7 @@ export namespace Prisma {
     contactEmail?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     address?: SortOrderInput | SortOrder
+    logoUrl?: SortOrderInput | SortOrder
     onboardingStatus?: SortOrder
     setupStep?: SortOrderInput | SortOrder
     setupCompletedAt?: SortOrderInput | SortOrder
@@ -44563,6 +45951,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogOrderByRelationAggregateInput
     invites?: SchoolInviteOrderByRelationAggregateInput
     waitlistEntries?: WaitlistEntryOrderByRelationAggregateInput
+    onboardingAuditLogs?: OnboardingAuditLogOrderByRelationAggregateInput
   }
 
   export type SchoolWhereUniqueInput = Prisma.AtLeast<{
@@ -44575,6 +45964,7 @@ export namespace Prisma {
     contactEmail?: StringNullableFilter<"School"> | string | null
     phone?: StringNullableFilter<"School"> | string | null
     address?: StringNullableFilter<"School"> | string | null
+    logoUrl?: StringNullableFilter<"School"> | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFilter<"School"> | $Enums.SchoolOnboardingStatus
     setupStep?: StringNullableFilter<"School"> | string | null
     setupCompletedAt?: DateTimeNullableFilter<"School"> | Date | string | null
@@ -44607,6 +45997,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogListRelationFilter
     invites?: SchoolInviteListRelationFilter
     waitlistEntries?: WaitlistEntryListRelationFilter
+    onboardingAuditLogs?: OnboardingAuditLogListRelationFilter
   }, "id" | "slug">
 
   export type SchoolOrderByWithAggregationInput = {
@@ -44616,6 +46007,7 @@ export namespace Prisma {
     contactEmail?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     address?: SortOrderInput | SortOrder
+    logoUrl?: SortOrderInput | SortOrder
     onboardingStatus?: SortOrder
     setupStep?: SortOrderInput | SortOrder
     setupCompletedAt?: SortOrderInput | SortOrder
@@ -44636,6 +46028,7 @@ export namespace Prisma {
     contactEmail?: StringNullableWithAggregatesFilter<"School"> | string | null
     phone?: StringNullableWithAggregatesFilter<"School"> | string | null
     address?: StringNullableWithAggregatesFilter<"School"> | string | null
+    logoUrl?: StringNullableWithAggregatesFilter<"School"> | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusWithAggregatesFilter<"School"> | $Enums.SchoolOnboardingStatus
     setupStep?: StringNullableWithAggregatesFilter<"School"> | string | null
     setupCompletedAt?: DateTimeNullableWithAggregatesFilter<"School"> | Date | string | null
@@ -47116,6 +48509,9 @@ export namespace Prisma {
     tokenHash?: StringFilter<"SchoolInvite"> | string
     expiresAt?: DateTimeFilter<"SchoolInvite"> | Date | string
     acceptedAt?: DateTimeNullableFilter<"SchoolInvite"> | Date | string | null
+    revokedAt?: DateTimeNullableFilter<"SchoolInvite"> | Date | string | null
+    revokedBy?: StringNullableFilter<"SchoolInvite"> | string | null
+    lastSentAt?: DateTimeNullableFilter<"SchoolInvite"> | Date | string | null
     createdBy?: StringFilter<"SchoolInvite"> | string
     createdAt?: DateTimeFilter<"SchoolInvite"> | Date | string
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
@@ -47129,6 +48525,9 @@ export namespace Prisma {
     tokenHash?: SortOrder
     expiresAt?: SortOrder
     acceptedAt?: SortOrderInput | SortOrder
+    revokedAt?: SortOrderInput | SortOrder
+    revokedBy?: SortOrderInput | SortOrder
+    lastSentAt?: SortOrderInput | SortOrder
     createdBy?: SortOrder
     createdAt?: SortOrder
     school?: SchoolOrderByWithRelationInput
@@ -47145,6 +48544,9 @@ export namespace Prisma {
     role?: EnumSchoolInviteRoleFilter<"SchoolInvite"> | $Enums.SchoolInviteRole
     expiresAt?: DateTimeFilter<"SchoolInvite"> | Date | string
     acceptedAt?: DateTimeNullableFilter<"SchoolInvite"> | Date | string | null
+    revokedAt?: DateTimeNullableFilter<"SchoolInvite"> | Date | string | null
+    revokedBy?: StringNullableFilter<"SchoolInvite"> | string | null
+    lastSentAt?: DateTimeNullableFilter<"SchoolInvite"> | Date | string | null
     createdBy?: StringFilter<"SchoolInvite"> | string
     createdAt?: DateTimeFilter<"SchoolInvite"> | Date | string
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
@@ -47158,6 +48560,9 @@ export namespace Prisma {
     tokenHash?: SortOrder
     expiresAt?: SortOrder
     acceptedAt?: SortOrderInput | SortOrder
+    revokedAt?: SortOrderInput | SortOrder
+    revokedBy?: SortOrderInput | SortOrder
+    lastSentAt?: SortOrderInput | SortOrder
     createdBy?: SortOrder
     createdAt?: SortOrder
     _count?: SchoolInviteCountOrderByAggregateInput
@@ -47176,8 +48581,83 @@ export namespace Prisma {
     tokenHash?: StringWithAggregatesFilter<"SchoolInvite"> | string
     expiresAt?: DateTimeWithAggregatesFilter<"SchoolInvite"> | Date | string
     acceptedAt?: DateTimeNullableWithAggregatesFilter<"SchoolInvite"> | Date | string | null
+    revokedAt?: DateTimeNullableWithAggregatesFilter<"SchoolInvite"> | Date | string | null
+    revokedBy?: StringNullableWithAggregatesFilter<"SchoolInvite"> | string | null
+    lastSentAt?: DateTimeNullableWithAggregatesFilter<"SchoolInvite"> | Date | string | null
     createdBy?: StringWithAggregatesFilter<"SchoolInvite"> | string
     createdAt?: DateTimeWithAggregatesFilter<"SchoolInvite"> | Date | string
+  }
+
+  export type OnboardingAuditLogWhereInput = {
+    AND?: OnboardingAuditLogWhereInput | OnboardingAuditLogWhereInput[]
+    OR?: OnboardingAuditLogWhereInput[]
+    NOT?: OnboardingAuditLogWhereInput | OnboardingAuditLogWhereInput[]
+    id?: IntFilter<"OnboardingAuditLog"> | number
+    schoolId?: StringNullableFilter<"OnboardingAuditLog"> | string | null
+    waitlistId?: StringNullableFilter<"OnboardingAuditLog"> | string | null
+    inviteId?: StringNullableFilter<"OnboardingAuditLog"> | string | null
+    action?: EnumOnboardingAuditActionFilter<"OnboardingAuditLog"> | $Enums.OnboardingAuditAction
+    performedBy?: StringFilter<"OnboardingAuditLog"> | string
+    metadata?: JsonFilter<"OnboardingAuditLog">
+    createdAt?: DateTimeFilter<"OnboardingAuditLog"> | Date | string
+    school?: XOR<SchoolNullableScalarRelationFilter, SchoolWhereInput> | null
+  }
+
+  export type OnboardingAuditLogOrderByWithRelationInput = {
+    id?: SortOrder
+    schoolId?: SortOrderInput | SortOrder
+    waitlistId?: SortOrderInput | SortOrder
+    inviteId?: SortOrderInput | SortOrder
+    action?: SortOrder
+    performedBy?: SortOrder
+    metadata?: SortOrder
+    createdAt?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+  }
+
+  export type OnboardingAuditLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: OnboardingAuditLogWhereInput | OnboardingAuditLogWhereInput[]
+    OR?: OnboardingAuditLogWhereInput[]
+    NOT?: OnboardingAuditLogWhereInput | OnboardingAuditLogWhereInput[]
+    schoolId?: StringNullableFilter<"OnboardingAuditLog"> | string | null
+    waitlistId?: StringNullableFilter<"OnboardingAuditLog"> | string | null
+    inviteId?: StringNullableFilter<"OnboardingAuditLog"> | string | null
+    action?: EnumOnboardingAuditActionFilter<"OnboardingAuditLog"> | $Enums.OnboardingAuditAction
+    performedBy?: StringFilter<"OnboardingAuditLog"> | string
+    metadata?: JsonFilter<"OnboardingAuditLog">
+    createdAt?: DateTimeFilter<"OnboardingAuditLog"> | Date | string
+    school?: XOR<SchoolNullableScalarRelationFilter, SchoolWhereInput> | null
+  }, "id">
+
+  export type OnboardingAuditLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    schoolId?: SortOrderInput | SortOrder
+    waitlistId?: SortOrderInput | SortOrder
+    inviteId?: SortOrderInput | SortOrder
+    action?: SortOrder
+    performedBy?: SortOrder
+    metadata?: SortOrder
+    createdAt?: SortOrder
+    _count?: OnboardingAuditLogCountOrderByAggregateInput
+    _avg?: OnboardingAuditLogAvgOrderByAggregateInput
+    _max?: OnboardingAuditLogMaxOrderByAggregateInput
+    _min?: OnboardingAuditLogMinOrderByAggregateInput
+    _sum?: OnboardingAuditLogSumOrderByAggregateInput
+  }
+
+  export type OnboardingAuditLogScalarWhereWithAggregatesInput = {
+    AND?: OnboardingAuditLogScalarWhereWithAggregatesInput | OnboardingAuditLogScalarWhereWithAggregatesInput[]
+    OR?: OnboardingAuditLogScalarWhereWithAggregatesInput[]
+    NOT?: OnboardingAuditLogScalarWhereWithAggregatesInput | OnboardingAuditLogScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"OnboardingAuditLog"> | number
+    schoolId?: StringNullableWithAggregatesFilter<"OnboardingAuditLog"> | string | null
+    waitlistId?: StringNullableWithAggregatesFilter<"OnboardingAuditLog"> | string | null
+    inviteId?: StringNullableWithAggregatesFilter<"OnboardingAuditLog"> | string | null
+    action?: EnumOnboardingAuditActionWithAggregatesFilter<"OnboardingAuditLog"> | $Enums.OnboardingAuditAction
+    performedBy?: StringWithAggregatesFilter<"OnboardingAuditLog"> | string
+    metadata?: JsonWithAggregatesFilter<"OnboardingAuditLog">
+    createdAt?: DateTimeWithAggregatesFilter<"OnboardingAuditLog"> | Date | string
   }
 
   export type SchoolCreateInput = {
@@ -47187,6 +48667,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -47219,6 +48700,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateInput = {
@@ -47228,6 +48710,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -47260,6 +48743,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUpdateInput = {
@@ -47269,6 +48753,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -47301,6 +48786,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateInput = {
@@ -47310,6 +48796,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -47342,6 +48829,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateManyInput = {
@@ -47351,6 +48839,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -47365,6 +48854,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -47379,6 +48869,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -49840,6 +51331,9 @@ export namespace Prisma {
     tokenHash: string
     expiresAt: Date | string
     acceptedAt?: Date | string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
     createdBy: string
     createdAt?: Date | string
     school: SchoolCreateNestedOneWithoutInvitesInput
@@ -49853,6 +51347,9 @@ export namespace Prisma {
     tokenHash: string
     expiresAt: Date | string
     acceptedAt?: Date | string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
     createdBy: string
     createdAt?: Date | string
   }
@@ -49864,6 +51361,9 @@ export namespace Prisma {
     tokenHash?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutInvitesNestedInput
@@ -49877,6 +51377,9 @@ export namespace Prisma {
     tokenHash?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -49889,6 +51392,9 @@ export namespace Prisma {
     tokenHash: string
     expiresAt: Date | string
     acceptedAt?: Date | string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
     createdBy: string
     createdAt?: Date | string
   }
@@ -49900,6 +51406,9 @@ export namespace Prisma {
     tokenHash?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -49912,7 +51421,83 @@ export namespace Prisma {
     tokenHash?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OnboardingAuditLogCreateInput = {
+    waitlistId?: string | null
+    inviteId?: string | null
+    action: $Enums.OnboardingAuditAction
+    performedBy: string
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutOnboardingAuditLogsInput
+  }
+
+  export type OnboardingAuditLogUncheckedCreateInput = {
+    id?: number
+    schoolId?: string | null
+    waitlistId?: string | null
+    inviteId?: string | null
+    action: $Enums.OnboardingAuditAction
+    performedBy: string
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type OnboardingAuditLogUpdateInput = {
+    waitlistId?: NullableStringFieldUpdateOperationsInput | string | null
+    inviteId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumOnboardingAuditActionFieldUpdateOperationsInput | $Enums.OnboardingAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneWithoutOnboardingAuditLogsNestedInput
+  }
+
+  export type OnboardingAuditLogUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    schoolId?: NullableStringFieldUpdateOperationsInput | string | null
+    waitlistId?: NullableStringFieldUpdateOperationsInput | string | null
+    inviteId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumOnboardingAuditActionFieldUpdateOperationsInput | $Enums.OnboardingAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OnboardingAuditLogCreateManyInput = {
+    id?: number
+    schoolId?: string | null
+    waitlistId?: string | null
+    inviteId?: string | null
+    action: $Enums.OnboardingAuditAction
+    performedBy: string
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type OnboardingAuditLogUpdateManyMutationInput = {
+    waitlistId?: NullableStringFieldUpdateOperationsInput | string | null
+    inviteId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumOnboardingAuditActionFieldUpdateOperationsInput | $Enums.OnboardingAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OnboardingAuditLogUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    schoolId?: NullableStringFieldUpdateOperationsInput | string | null
+    waitlistId?: NullableStringFieldUpdateOperationsInput | string | null
+    inviteId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumOnboardingAuditActionFieldUpdateOperationsInput | $Enums.OnboardingAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -50137,6 +51722,12 @@ export namespace Prisma {
     none?: WaitlistEntryWhereInput
   }
 
+  export type OnboardingAuditLogListRelationFilter = {
+    every?: OnboardingAuditLogWhereInput
+    some?: OnboardingAuditLogWhereInput
+    none?: OnboardingAuditLogWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -50250,6 +51841,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type OnboardingAuditLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type SchoolCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -50257,6 +51852,7 @@ export namespace Prisma {
     contactEmail?: SortOrder
     phone?: SortOrder
     address?: SortOrder
+    logoUrl?: SortOrder
     onboardingStatus?: SortOrder
     setupStep?: SortOrder
     setupCompletedAt?: SortOrder
@@ -50271,6 +51867,7 @@ export namespace Prisma {
     contactEmail?: SortOrder
     phone?: SortOrder
     address?: SortOrder
+    logoUrl?: SortOrder
     onboardingStatus?: SortOrder
     setupStep?: SortOrder
     setupCompletedAt?: SortOrder
@@ -50285,6 +51882,7 @@ export namespace Prisma {
     contactEmail?: SortOrder
     phone?: SortOrder
     address?: SortOrder
+    logoUrl?: SortOrder
     onboardingStatus?: SortOrder
     setupStep?: SortOrder
     setupCompletedAt?: SortOrder
@@ -52390,6 +53988,9 @@ export namespace Prisma {
     tokenHash?: SortOrder
     expiresAt?: SortOrder
     acceptedAt?: SortOrder
+    revokedAt?: SortOrder
+    revokedBy?: SortOrder
+    lastSentAt?: SortOrder
     createdBy?: SortOrder
     createdAt?: SortOrder
   }
@@ -52402,6 +54003,9 @@ export namespace Prisma {
     tokenHash?: SortOrder
     expiresAt?: SortOrder
     acceptedAt?: SortOrder
+    revokedAt?: SortOrder
+    revokedBy?: SortOrder
+    lastSentAt?: SortOrder
     createdBy?: SortOrder
     createdAt?: SortOrder
   }
@@ -52414,6 +54018,9 @@ export namespace Prisma {
     tokenHash?: SortOrder
     expiresAt?: SortOrder
     acceptedAt?: SortOrder
+    revokedAt?: SortOrder
+    revokedBy?: SortOrder
+    lastSentAt?: SortOrder
     createdBy?: SortOrder
     createdAt?: SortOrder
   }
@@ -52426,6 +54033,62 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumSchoolInviteRoleFilter<$PrismaModel>
     _max?: NestedEnumSchoolInviteRoleFilter<$PrismaModel>
+  }
+
+  export type EnumOnboardingAuditActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.OnboardingAuditAction | EnumOnboardingAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.OnboardingAuditAction[] | ListEnumOnboardingAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OnboardingAuditAction[] | ListEnumOnboardingAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumOnboardingAuditActionFilter<$PrismaModel> | $Enums.OnboardingAuditAction
+  }
+
+  export type OnboardingAuditLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    waitlistId?: SortOrder
+    inviteId?: SortOrder
+    action?: SortOrder
+    performedBy?: SortOrder
+    metadata?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type OnboardingAuditLogAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type OnboardingAuditLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    waitlistId?: SortOrder
+    inviteId?: SortOrder
+    action?: SortOrder
+    performedBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type OnboardingAuditLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    waitlistId?: SortOrder
+    inviteId?: SortOrder
+    action?: SortOrder
+    performedBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type OnboardingAuditLogSumOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type EnumOnboardingAuditActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OnboardingAuditAction | EnumOnboardingAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.OnboardingAuditAction[] | ListEnumOnboardingAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OnboardingAuditAction[] | ListEnumOnboardingAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumOnboardingAuditActionWithAggregatesFilter<$PrismaModel> | $Enums.OnboardingAuditAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOnboardingAuditActionFilter<$PrismaModel>
+    _max?: NestedEnumOnboardingAuditActionFilter<$PrismaModel>
   }
 
   export type AdminCreateNestedManyWithoutSchoolInput = {
@@ -52617,6 +54280,13 @@ export namespace Prisma {
     connect?: WaitlistEntryWhereUniqueInput | WaitlistEntryWhereUniqueInput[]
   }
 
+  export type OnboardingAuditLogCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<OnboardingAuditLogCreateWithoutSchoolInput, OnboardingAuditLogUncheckedCreateWithoutSchoolInput> | OnboardingAuditLogCreateWithoutSchoolInput[] | OnboardingAuditLogUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: OnboardingAuditLogCreateOrConnectWithoutSchoolInput | OnboardingAuditLogCreateOrConnectWithoutSchoolInput[]
+    createMany?: OnboardingAuditLogCreateManySchoolInputEnvelope
+    connect?: OnboardingAuditLogWhereUniqueInput | OnboardingAuditLogWhereUniqueInput[]
+  }
+
   export type AdminUncheckedCreateNestedManyWithoutSchoolInput = {
     create?: XOR<AdminCreateWithoutSchoolInput, AdminUncheckedCreateWithoutSchoolInput> | AdminCreateWithoutSchoolInput[] | AdminUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: AdminCreateOrConnectWithoutSchoolInput | AdminCreateOrConnectWithoutSchoolInput[]
@@ -52804,6 +54474,13 @@ export namespace Prisma {
     connectOrCreate?: WaitlistEntryCreateOrConnectWithoutSchoolInput | WaitlistEntryCreateOrConnectWithoutSchoolInput[]
     createMany?: WaitlistEntryCreateManySchoolInputEnvelope
     connect?: WaitlistEntryWhereUniqueInput | WaitlistEntryWhereUniqueInput[]
+  }
+
+  export type OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<OnboardingAuditLogCreateWithoutSchoolInput, OnboardingAuditLogUncheckedCreateWithoutSchoolInput> | OnboardingAuditLogCreateWithoutSchoolInput[] | OnboardingAuditLogUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: OnboardingAuditLogCreateOrConnectWithoutSchoolInput | OnboardingAuditLogCreateOrConnectWithoutSchoolInput[]
+    createMany?: OnboardingAuditLogCreateManySchoolInputEnvelope
+    connect?: OnboardingAuditLogWhereUniqueInput | OnboardingAuditLogWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -53204,6 +54881,20 @@ export namespace Prisma {
     deleteMany?: WaitlistEntryScalarWhereInput | WaitlistEntryScalarWhereInput[]
   }
 
+  export type OnboardingAuditLogUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<OnboardingAuditLogCreateWithoutSchoolInput, OnboardingAuditLogUncheckedCreateWithoutSchoolInput> | OnboardingAuditLogCreateWithoutSchoolInput[] | OnboardingAuditLogUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: OnboardingAuditLogCreateOrConnectWithoutSchoolInput | OnboardingAuditLogCreateOrConnectWithoutSchoolInput[]
+    upsert?: OnboardingAuditLogUpsertWithWhereUniqueWithoutSchoolInput | OnboardingAuditLogUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: OnboardingAuditLogCreateManySchoolInputEnvelope
+    set?: OnboardingAuditLogWhereUniqueInput | OnboardingAuditLogWhereUniqueInput[]
+    disconnect?: OnboardingAuditLogWhereUniqueInput | OnboardingAuditLogWhereUniqueInput[]
+    delete?: OnboardingAuditLogWhereUniqueInput | OnboardingAuditLogWhereUniqueInput[]
+    connect?: OnboardingAuditLogWhereUniqueInput | OnboardingAuditLogWhereUniqueInput[]
+    update?: OnboardingAuditLogUpdateWithWhereUniqueWithoutSchoolInput | OnboardingAuditLogUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: OnboardingAuditLogUpdateManyWithWhereWithoutSchoolInput | OnboardingAuditLogUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: OnboardingAuditLogScalarWhereInput | OnboardingAuditLogScalarWhereInput[]
+  }
+
   export type AdminUncheckedUpdateManyWithoutSchoolNestedInput = {
     create?: XOR<AdminCreateWithoutSchoolInput, AdminUncheckedCreateWithoutSchoolInput> | AdminCreateWithoutSchoolInput[] | AdminUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: AdminCreateOrConnectWithoutSchoolInput | AdminCreateOrConnectWithoutSchoolInput[]
@@ -53580,6 +55271,20 @@ export namespace Prisma {
     update?: WaitlistEntryUpdateWithWhereUniqueWithoutSchoolInput | WaitlistEntryUpdateWithWhereUniqueWithoutSchoolInput[]
     updateMany?: WaitlistEntryUpdateManyWithWhereWithoutSchoolInput | WaitlistEntryUpdateManyWithWhereWithoutSchoolInput[]
     deleteMany?: WaitlistEntryScalarWhereInput | WaitlistEntryScalarWhereInput[]
+  }
+
+  export type OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<OnboardingAuditLogCreateWithoutSchoolInput, OnboardingAuditLogUncheckedCreateWithoutSchoolInput> | OnboardingAuditLogCreateWithoutSchoolInput[] | OnboardingAuditLogUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: OnboardingAuditLogCreateOrConnectWithoutSchoolInput | OnboardingAuditLogCreateOrConnectWithoutSchoolInput[]
+    upsert?: OnboardingAuditLogUpsertWithWhereUniqueWithoutSchoolInput | OnboardingAuditLogUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: OnboardingAuditLogCreateManySchoolInputEnvelope
+    set?: OnboardingAuditLogWhereUniqueInput | OnboardingAuditLogWhereUniqueInput[]
+    disconnect?: OnboardingAuditLogWhereUniqueInput | OnboardingAuditLogWhereUniqueInput[]
+    delete?: OnboardingAuditLogWhereUniqueInput | OnboardingAuditLogWhereUniqueInput[]
+    connect?: OnboardingAuditLogWhereUniqueInput | OnboardingAuditLogWhereUniqueInput[]
+    update?: OnboardingAuditLogUpdateWithWhereUniqueWithoutSchoolInput | OnboardingAuditLogUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: OnboardingAuditLogUpdateManyWithWhereWithoutSchoolInput | OnboardingAuditLogUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: OnboardingAuditLogScalarWhereInput | OnboardingAuditLogScalarWhereInput[]
   }
 
   export type SchoolCreateNestedOneWithoutAdminsInput = {
@@ -56187,6 +57892,26 @@ export namespace Prisma {
     update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutInvitesInput, SchoolUpdateWithoutInvitesInput>, SchoolUncheckedUpdateWithoutInvitesInput>
   }
 
+  export type SchoolCreateNestedOneWithoutOnboardingAuditLogsInput = {
+    create?: XOR<SchoolCreateWithoutOnboardingAuditLogsInput, SchoolUncheckedCreateWithoutOnboardingAuditLogsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutOnboardingAuditLogsInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type EnumOnboardingAuditActionFieldUpdateOperationsInput = {
+    set?: $Enums.OnboardingAuditAction
+  }
+
+  export type SchoolUpdateOneWithoutOnboardingAuditLogsNestedInput = {
+    create?: XOR<SchoolCreateWithoutOnboardingAuditLogsInput, SchoolUncheckedCreateWithoutOnboardingAuditLogsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutOnboardingAuditLogsInput
+    upsert?: SchoolUpsertWithoutOnboardingAuditLogsInput
+    disconnect?: SchoolWhereInput | boolean
+    delete?: SchoolWhereInput | boolean
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutOnboardingAuditLogsInput, SchoolUpdateWithoutOnboardingAuditLogsInput>, SchoolUncheckedUpdateWithoutOnboardingAuditLogsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -56751,6 +58476,23 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumSchoolInviteRoleFilter<$PrismaModel>
     _max?: NestedEnumSchoolInviteRoleFilter<$PrismaModel>
+  }
+
+  export type NestedEnumOnboardingAuditActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.OnboardingAuditAction | EnumOnboardingAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.OnboardingAuditAction[] | ListEnumOnboardingAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OnboardingAuditAction[] | ListEnumOnboardingAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumOnboardingAuditActionFilter<$PrismaModel> | $Enums.OnboardingAuditAction
+  }
+
+  export type NestedEnumOnboardingAuditActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OnboardingAuditAction | EnumOnboardingAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.OnboardingAuditAction[] | ListEnumOnboardingAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OnboardingAuditAction[] | ListEnumOnboardingAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumOnboardingAuditActionWithAggregatesFilter<$PrismaModel> | $Enums.OnboardingAuditAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOnboardingAuditActionFilter<$PrismaModel>
+    _max?: NestedEnumOnboardingAuditActionFilter<$PrismaModel>
   }
 
   export type AdminCreateWithoutSchoolInput = {
@@ -57587,6 +59329,9 @@ export namespace Prisma {
     tokenHash: string
     expiresAt: Date | string
     acceptedAt?: Date | string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
     createdBy: string
     createdAt?: Date | string
   }
@@ -57598,6 +59343,9 @@ export namespace Prisma {
     tokenHash: string
     expiresAt: Date | string
     acceptedAt?: Date | string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
     createdBy: string
     createdAt?: Date | string
   }
@@ -57645,6 +59393,35 @@ export namespace Prisma {
 
   export type WaitlistEntryCreateManySchoolInputEnvelope = {
     data: WaitlistEntryCreateManySchoolInput | WaitlistEntryCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OnboardingAuditLogCreateWithoutSchoolInput = {
+    waitlistId?: string | null
+    inviteId?: string | null
+    action: $Enums.OnboardingAuditAction
+    performedBy: string
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type OnboardingAuditLogUncheckedCreateWithoutSchoolInput = {
+    id?: number
+    waitlistId?: string | null
+    inviteId?: string | null
+    action: $Enums.OnboardingAuditAction
+    performedBy: string
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type OnboardingAuditLogCreateOrConnectWithoutSchoolInput = {
+    where: OnboardingAuditLogWhereUniqueInput
+    create: XOR<OnboardingAuditLogCreateWithoutSchoolInput, OnboardingAuditLogUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type OnboardingAuditLogCreateManySchoolInputEnvelope = {
+    data: OnboardingAuditLogCreateManySchoolInput | OnboardingAuditLogCreateManySchoolInput[]
     skipDuplicates?: boolean
   }
 
@@ -58438,6 +60215,9 @@ export namespace Prisma {
     tokenHash?: StringFilter<"SchoolInvite"> | string
     expiresAt?: DateTimeFilter<"SchoolInvite"> | Date | string
     acceptedAt?: DateTimeNullableFilter<"SchoolInvite"> | Date | string | null
+    revokedAt?: DateTimeNullableFilter<"SchoolInvite"> | Date | string | null
+    revokedBy?: StringNullableFilter<"SchoolInvite"> | string | null
+    lastSentAt?: DateTimeNullableFilter<"SchoolInvite"> | Date | string | null
     createdBy?: StringFilter<"SchoolInvite"> | string
     createdAt?: DateTimeFilter<"SchoolInvite"> | Date | string
   }
@@ -58475,6 +60255,36 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"WaitlistEntry"> | Date | string
   }
 
+  export type OnboardingAuditLogUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: OnboardingAuditLogWhereUniqueInput
+    update: XOR<OnboardingAuditLogUpdateWithoutSchoolInput, OnboardingAuditLogUncheckedUpdateWithoutSchoolInput>
+    create: XOR<OnboardingAuditLogCreateWithoutSchoolInput, OnboardingAuditLogUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type OnboardingAuditLogUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: OnboardingAuditLogWhereUniqueInput
+    data: XOR<OnboardingAuditLogUpdateWithoutSchoolInput, OnboardingAuditLogUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type OnboardingAuditLogUpdateManyWithWhereWithoutSchoolInput = {
+    where: OnboardingAuditLogScalarWhereInput
+    data: XOR<OnboardingAuditLogUpdateManyMutationInput, OnboardingAuditLogUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type OnboardingAuditLogScalarWhereInput = {
+    AND?: OnboardingAuditLogScalarWhereInput | OnboardingAuditLogScalarWhereInput[]
+    OR?: OnboardingAuditLogScalarWhereInput[]
+    NOT?: OnboardingAuditLogScalarWhereInput | OnboardingAuditLogScalarWhereInput[]
+    id?: IntFilter<"OnboardingAuditLog"> | number
+    schoolId?: StringNullableFilter<"OnboardingAuditLog"> | string | null
+    waitlistId?: StringNullableFilter<"OnboardingAuditLog"> | string | null
+    inviteId?: StringNullableFilter<"OnboardingAuditLog"> | string | null
+    action?: EnumOnboardingAuditActionFilter<"OnboardingAuditLog"> | $Enums.OnboardingAuditAction
+    performedBy?: StringFilter<"OnboardingAuditLog"> | string
+    metadata?: JsonFilter<"OnboardingAuditLog">
+    createdAt?: DateTimeFilter<"OnboardingAuditLog"> | Date | string
+  }
+
   export type SchoolCreateWithoutAdminsInput = {
     id: string
     name: string
@@ -58482,6 +60292,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -58513,6 +60324,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAdminsInput = {
@@ -58522,6 +60334,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -58553,6 +60366,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAdminsInput = {
@@ -58578,6 +60392,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -58609,6 +60424,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAdminsInput = {
@@ -58618,6 +60434,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -58649,6 +60466,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutStudentsInput = {
@@ -58658,6 +60476,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -58689,6 +60508,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutStudentsInput = {
@@ -58698,6 +60518,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -58729,6 +60550,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutStudentsInput = {
@@ -58995,6 +60817,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -59026,6 +60849,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutStudentsInput = {
@@ -59035,6 +60859,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -59066,6 +60891,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ParentUpsertWithoutStudentsInput = {
@@ -59244,6 +61070,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -59275,6 +61102,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutTeachersInput = {
@@ -59284,6 +61112,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -59315,6 +61144,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutTeachersInput = {
@@ -59514,6 +61344,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -59545,6 +61376,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutTeachersInput = {
@@ -59554,6 +61386,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -59585,6 +61418,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SubjectUpsertWithWhereUniqueWithoutTeachersInput = {
@@ -59674,6 +61508,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -59705,6 +61540,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutParentsInput = {
@@ -59714,6 +61550,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -59745,6 +61582,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutParentsInput = {
@@ -59822,6 +61660,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -59853,6 +61692,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutParentsInput = {
@@ -59862,6 +61702,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -59893,6 +61734,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithWhereUniqueWithoutParentInput = {
@@ -59918,6 +61760,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -59949,6 +61792,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutGradesInput = {
@@ -59958,6 +61802,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -59989,6 +61834,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutGradesInput = {
@@ -60181,6 +62027,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -60212,6 +62059,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutGradesInput = {
@@ -60221,6 +62069,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -60252,6 +62101,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithWhereUniqueWithoutGradeInput = {
@@ -60325,6 +62175,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -60356,6 +62207,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutClassesInput = {
@@ -60365,6 +62217,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -60396,6 +62249,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutClassesInput = {
@@ -60707,6 +62561,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -60738,6 +62593,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutClassesInput = {
@@ -60747,6 +62603,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -60778,6 +62635,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TeacherUpsertWithoutClassesInput = {
@@ -60964,6 +62822,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -60995,6 +62854,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutSubjectsInput = {
@@ -61004,6 +62864,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -61035,6 +62896,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutSubjectsInput = {
@@ -61224,6 +63086,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -61255,6 +63118,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutSubjectsInput = {
@@ -61264,6 +63128,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -61295,6 +63160,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TeacherUpsertWithWhereUniqueWithoutSubjectsInput = {
@@ -61368,6 +63234,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -61399,6 +63266,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutLessonsInput = {
@@ -61408,6 +63276,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -61439,6 +63308,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutLessonsInput = {
@@ -61652,6 +63522,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -61683,6 +63554,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutLessonsInput = {
@@ -61692,6 +63564,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -61723,6 +63596,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SubjectUpsertWithoutLessonsInput = {
@@ -61899,6 +63773,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -61930,6 +63805,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutExamsInput = {
@@ -61939,6 +63815,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -61970,6 +63847,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutExamsInput = {
@@ -62056,6 +63934,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -62087,6 +63966,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutExamsInput = {
@@ -62096,6 +63976,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -62127,6 +64008,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type LessonUpsertWithoutExamsInput = {
@@ -62190,6 +64072,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -62221,6 +64104,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAssignmentsInput = {
@@ -62230,6 +64114,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -62261,6 +64146,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAssignmentsInput = {
@@ -62347,6 +64233,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -62378,6 +64265,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAssignmentsInput = {
@@ -62387,6 +64275,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -62418,6 +64307,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type LessonUpsertWithoutAssignmentsInput = {
@@ -62481,6 +64371,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -62512,6 +64403,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutResultsInput = {
@@ -62521,6 +64413,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -62552,6 +64445,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutResultsInput = {
@@ -62668,6 +64562,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -62699,6 +64594,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutResultsInput = {
@@ -62708,6 +64604,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -62739,6 +64636,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ExamUpsertWithoutResultsInput = {
@@ -62857,6 +64755,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -62888,6 +64787,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAttendancesInput = {
@@ -62897,6 +64797,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -62928,6 +64829,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAttendancesInput = {
@@ -63032,6 +64934,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -63063,6 +64966,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAttendancesInput = {
@@ -63072,6 +64976,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -63103,6 +65008,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithoutAttendancesInput = {
@@ -63203,6 +65109,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -63234,6 +65141,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutEventsInput = {
@@ -63243,6 +65151,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -63274,6 +65183,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutEventsInput = {
@@ -63333,6 +65243,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -63364,6 +65275,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutEventsInput = {
@@ -63373,6 +65285,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -63404,6 +65317,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ClassUpsertWithoutEventsInput = {
@@ -63453,6 +65367,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -63484,6 +65399,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAnnouncementsInput = {
@@ -63493,6 +65409,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -63524,6 +65441,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAnnouncementsInput = {
@@ -63583,6 +65501,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -63614,6 +65533,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAnnouncementsInput = {
@@ -63623,6 +65543,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -63654,6 +65575,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ClassUpsertWithoutAnnouncementsInput = {
@@ -63703,6 +65625,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -63734,6 +65657,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutCaConfigsInput = {
@@ -63743,6 +65667,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -63774,6 +65699,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutCaConfigsInput = {
@@ -63799,6 +65725,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -63830,6 +65757,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutCaConfigsInput = {
@@ -63839,6 +65767,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -63870,6 +65799,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutContinuousAssessmentsInput = {
@@ -63879,6 +65809,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -63910,6 +65841,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutContinuousAssessmentsInput = {
@@ -63919,6 +65851,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -63950,6 +65883,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutContinuousAssessmentsInput = {
@@ -64123,6 +66057,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -64154,6 +66089,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutContinuousAssessmentsInput = {
@@ -64163,6 +66099,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -64194,6 +66131,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithoutContinuousAssessmentsInput = {
@@ -64375,6 +66313,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -64406,6 +66345,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutSyllabiInput = {
@@ -64415,6 +66355,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -64446,6 +66387,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutSyllabiInput = {
@@ -64556,6 +66498,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -64587,6 +66530,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutSyllabiInput = {
@@ -64596,6 +66540,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -64627,6 +66572,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SubjectUpsertWithoutSyllabiInput = {
@@ -64839,6 +66785,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -64870,6 +66817,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutSyllabusTopicProgressInput = {
@@ -64879,6 +66827,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -64910,6 +66859,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutSyllabusTopicProgressInput = {
@@ -65048,6 +66998,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -65079,6 +67030,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutSyllabusTopicProgressInput = {
@@ -65088,6 +67040,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -65119,6 +67072,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SyllabusTopicUpsertWithoutProgressInput = {
@@ -65259,6 +67213,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -65290,6 +67245,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutFeeStructuresInput = {
@@ -65299,6 +67255,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -65330,6 +67287,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutFeeStructuresInput = {
@@ -65455,6 +67413,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -65486,6 +67445,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutFeeStructuresInput = {
@@ -65495,6 +67455,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -65526,6 +67487,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type GradeUpsertWithoutFeeStructuresInput = {
@@ -65751,6 +67713,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -65782,6 +67745,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutStudentBillsInput = {
@@ -65791,6 +67755,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -65822,6 +67787,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutStudentBillsInput = {
@@ -66033,6 +67999,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -66064,6 +68031,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutStudentBillsInput = {
@@ -66073,6 +68041,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -66104,6 +68073,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithoutBillsInput = {
@@ -66400,6 +68370,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -66431,6 +68402,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutPaymentsInput = {
@@ -66440,6 +68412,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -66471,6 +68444,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutPaymentsInput = {
@@ -66556,6 +68530,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -66587,6 +68562,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutPaymentsInput = {
@@ -66596,6 +68572,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -66627,6 +68604,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentBillUpsertWithoutPaymentsInput = {
@@ -66708,6 +68686,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -66739,6 +68718,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutPaymentReversalsInput = {
@@ -66748,6 +68728,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -66779,6 +68760,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutPaymentReversalsInput = {
@@ -66840,6 +68822,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -66871,6 +68854,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutPaymentReversalsInput = {
@@ -66880,6 +68864,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -66911,6 +68896,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type PaymentUpsertWithoutReversalInput = {
@@ -66962,6 +68948,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -66993,6 +68980,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutDiscountsInput = {
@@ -67002,6 +68990,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -67033,6 +69022,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutDiscountsInput = {
@@ -67098,6 +69088,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -67129,6 +69120,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutDiscountsInput = {
@@ -67138,6 +69130,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -67169,6 +69162,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentBillUpsertWithoutDiscountsInput = {
@@ -67224,6 +69218,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -67255,6 +69250,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutReceiptCountersInput = {
@@ -67264,6 +69260,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -67295,6 +69292,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutReceiptCountersInput = {
@@ -67320,6 +69318,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -67351,6 +69350,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutReceiptCountersInput = {
@@ -67360,6 +69360,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -67391,6 +69392,7 @@ export namespace Prisma {
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutFinanceAuditLogsInput = {
@@ -67400,6 +69402,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -67431,6 +69434,7 @@ export namespace Prisma {
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutFinanceAuditLogsInput = {
@@ -67440,6 +69444,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -67471,6 +69476,7 @@ export namespace Prisma {
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutFinanceAuditLogsInput = {
@@ -67496,6 +69502,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -67527,6 +69534,7 @@ export namespace Prisma {
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutFinanceAuditLogsInput = {
@@ -67536,6 +69544,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -67567,6 +69576,7 @@ export namespace Prisma {
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutWaitlistEntriesInput = {
@@ -67576,6 +69586,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -67607,6 +69618,7 @@ export namespace Prisma {
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutWaitlistEntriesInput = {
@@ -67616,6 +69628,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -67647,6 +69660,7 @@ export namespace Prisma {
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutWaitlistEntriesInput = {
@@ -67672,6 +69686,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -67703,6 +69718,7 @@ export namespace Prisma {
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutWaitlistEntriesInput = {
@@ -67712,6 +69728,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -67743,6 +69760,7 @@ export namespace Prisma {
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutInvitesInput = {
@@ -67752,6 +69770,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -67783,6 +69802,7 @@ export namespace Prisma {
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutInvitesInput = {
@@ -67792,6 +69812,7 @@ export namespace Prisma {
     contactEmail?: string | null
     phone?: string | null
     address?: string | null
+    logoUrl?: string | null
     onboardingStatus?: $Enums.SchoolOnboardingStatus
     setupStep?: string | null
     setupCompletedAt?: Date | string | null
@@ -67823,6 +69844,7 @@ export namespace Prisma {
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutInvitesInput = {
@@ -67848,6 +69870,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -67879,6 +69902,7 @@ export namespace Prisma {
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutInvitesInput = {
@@ -67888,6 +69912,7 @@ export namespace Prisma {
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
     setupStep?: NullableStringFieldUpdateOperationsInput | string | null
     setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -67918,6 +69943,191 @@ export namespace Prisma {
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolCreateWithoutOnboardingAuditLogsInput = {
+    id: string
+    name: string
+    slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutOnboardingAuditLogsInput = {
+    id: string
+    name: string
+    slug: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutOnboardingAuditLogsInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutOnboardingAuditLogsInput, SchoolUncheckedCreateWithoutOnboardingAuditLogsInput>
+  }
+
+  export type SchoolUpsertWithoutOnboardingAuditLogsInput = {
+    update: XOR<SchoolUpdateWithoutOnboardingAuditLogsInput, SchoolUncheckedUpdateWithoutOnboardingAuditLogsInput>
+    create: XOR<SchoolCreateWithoutOnboardingAuditLogsInput, SchoolUncheckedCreateWithoutOnboardingAuditLogsInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutOnboardingAuditLogsInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutOnboardingAuditLogsInput, SchoolUncheckedUpdateWithoutOnboardingAuditLogsInput>
+  }
+
+  export type SchoolUpdateWithoutOnboardingAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutOnboardingAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
@@ -68191,6 +70401,9 @@ export namespace Prisma {
     tokenHash: string
     expiresAt: Date | string
     acceptedAt?: Date | string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
     createdBy: string
     createdAt?: Date | string
   }
@@ -68205,6 +70418,16 @@ export namespace Prisma {
     status?: $Enums.WaitlistStatus
     reviewedBy?: string | null
     reviewedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type OnboardingAuditLogCreateManySchoolInput = {
+    id?: number
+    waitlistId?: string | null
+    inviteId?: string | null
+    action: $Enums.OnboardingAuditAction
+    performedBy: string
+    metadata: JsonNullValueInput | InputJsonValue
     createdAt?: Date | string
   }
 
@@ -69055,6 +71278,9 @@ export namespace Prisma {
     tokenHash?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -69066,6 +71292,9 @@ export namespace Prisma {
     tokenHash?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -69077,6 +71306,9 @@ export namespace Prisma {
     tokenHash?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -69117,6 +71349,35 @@ export namespace Prisma {
     status?: EnumWaitlistStatusFieldUpdateOperationsInput | $Enums.WaitlistStatus
     reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OnboardingAuditLogUpdateWithoutSchoolInput = {
+    waitlistId?: NullableStringFieldUpdateOperationsInput | string | null
+    inviteId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumOnboardingAuditActionFieldUpdateOperationsInput | $Enums.OnboardingAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OnboardingAuditLogUncheckedUpdateWithoutSchoolInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    waitlistId?: NullableStringFieldUpdateOperationsInput | string | null
+    inviteId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumOnboardingAuditActionFieldUpdateOperationsInput | $Enums.OnboardingAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OnboardingAuditLogUncheckedUpdateManyWithoutSchoolInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    waitlistId?: NullableStringFieldUpdateOperationsInput | string | null
+    inviteId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumOnboardingAuditActionFieldUpdateOperationsInput | $Enums.OnboardingAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

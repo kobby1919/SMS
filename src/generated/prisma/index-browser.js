@@ -127,6 +127,7 @@ exports.Prisma.SchoolScalarFieldEnum = {
   contactEmail: 'contactEmail',
   phone: 'phone',
   address: 'address',
+  logoUrl: 'logoUrl',
   onboardingStatus: 'onboardingStatus',
   setupStep: 'setupStep',
   setupCompletedAt: 'setupCompletedAt',
@@ -489,7 +490,21 @@ exports.Prisma.SchoolInviteScalarFieldEnum = {
   tokenHash: 'tokenHash',
   expiresAt: 'expiresAt',
   acceptedAt: 'acceptedAt',
+  revokedAt: 'revokedAt',
+  revokedBy: 'revokedBy',
+  lastSentAt: 'lastSentAt',
   createdBy: 'createdBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.OnboardingAuditLogScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  waitlistId: 'waitlistId',
+  inviteId: 'inviteId',
+  action: 'action',
+  performedBy: 'performedBy',
+  metadata: 'metadata',
   createdAt: 'createdAt'
 };
 
@@ -634,6 +649,21 @@ exports.SchoolInviteRole = exports.$Enums.SchoolInviteRole = {
   ADMIN: 'ADMIN'
 };
 
+exports.OnboardingAuditAction = exports.$Enums.OnboardingAuditAction = {
+  WAITLIST_APPROVED: 'WAITLIST_APPROVED',
+  WAITLIST_REJECTED: 'WAITLIST_REJECTED',
+  SCHOOL_CREATED: 'SCHOOL_CREATED',
+  INVITE_CREATED: 'INVITE_CREATED',
+  INVITE_SENT: 'INVITE_SENT',
+  INVITE_RESENT: 'INVITE_RESENT',
+  INVITE_REVOKED: 'INVITE_REVOKED',
+  INVITE_ACCEPTED: 'INVITE_ACCEPTED',
+  PROFILE_UPDATED: 'PROFILE_UPDATED',
+  DEFAULT_ACADEMICS_CREATED: 'DEFAULT_ACADEMICS_CREATED',
+  IMPORT_RECORDED: 'IMPORT_RECORDED',
+  ONBOARDING_COMPLETED: 'ONBOARDING_COMPLETED'
+};
+
 exports.Prisma.ModelName = {
   School: 'School',
   Admin: 'Admin',
@@ -666,7 +696,8 @@ exports.Prisma.ModelName = {
   FinanceAuditLog: 'FinanceAuditLog',
   RateLimitBucket: 'RateLimitBucket',
   WaitlistEntry: 'WaitlistEntry',
-  SchoolInvite: 'SchoolInvite'
+  SchoolInvite: 'SchoolInvite',
+  OnboardingAuditLog: 'OnboardingAuditLog'
 };
 
 /**

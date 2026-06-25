@@ -14,8 +14,20 @@ export const schoolProfileSetupSchema = z.object({
   contactEmail: z.string().trim().email().optional().or(z.literal("")),
   phone: z.string().trim().max(30).optional().or(z.literal("")),
   address: z.string().trim().max(250).optional().or(z.literal("")),
+  logoUrl: z.string().trim().url().optional().or(z.literal("")),
+});
+
+export const inviteIdSchema = z.object({
+  inviteId: z.string().trim().min(1),
+});
+
+export const onboardingImportSchema = z.object({
+  importType: z.enum(["teachers", "students"]),
+  fileName: z.string().trim().min(1).max(200),
+  rowCount: z.coerce.number().int().min(0).max(20000),
 });
 
 export type ApproveWaitlistEntryInput = z.infer<typeof approveWaitlistEntrySchema>;
 export type RejectWaitlistEntryInput = z.infer<typeof rejectWaitlistEntrySchema>;
 export type SchoolProfileSetupInput = z.infer<typeof schoolProfileSetupSchema>;
+export type OnboardingImportInput = z.infer<typeof onboardingImportSchema>;

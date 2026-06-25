@@ -6,7 +6,8 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:onboarding": "node --test tests/onboarding-policy.test.mjs"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.39.2",

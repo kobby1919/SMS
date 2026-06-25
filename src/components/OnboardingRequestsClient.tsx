@@ -4,6 +4,8 @@ import { useState, useTransition } from "react";
 import {
   approveWaitlistEntryAction,
   rejectWaitlistEntryAction,
+  resendSchoolInviteAction,
+  revokeSchoolInviteAction,
   type OnboardingActionResult,
 } from "@/src/lib/actions/onboardingActions";
 
@@ -22,6 +24,14 @@ type WaitlistEntryForReview = {
     name: string;
     slug: string;
     onboardingStatus: string;
+    invites: {
+      id: string;
+      email: string;
+      expiresAt: Date;
+      acceptedAt: Date | null;
+      revokedAt: Date | null;
+      lastSentAt: Date | null;
+    }[];
   } | null;
 };
 
@@ -106,6 +116,7 @@ export default function OnboardingRequestsClient({
         ) : (
           entries.map((entry) => {
             const locked = isPending || entry.status === "SCHOOL_CREATED";
+            const latestInvite = entry.school?.invites[0];
             return (
               <div
                 key={entry.id}
@@ -126,6 +137,18 @@ export default function OnboardingRequestsClient({
                       Tenant: {entry.school.slug}
                     </p>
                   )}
+                  {latestInvite && (
+                    <div className="mt-2 flex flex-wrap gap-2 text-[11px] font-semibold">
+                      <span className="rounded-full bg-blue-50 px-2 py-1 text-blue-700">
+                        Invite {inviteStatus(latestInvite)}
+                      </span>
+                      {latestInvite.lastSentAt && (
+                        <span className="rounded-full bg-gray-100 px-2 py-1 text-gray-500">
+                          Sent {new Date(latestInvite.lastSentAt).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="col-span-3 hidden md:block">
@@ -142,33 +165,64 @@ export default function OnboardingRequestsClient({
                 </div>
 
                 <div className="col-span-3 flex flex-col items-end gap-2 sm:flex-row sm:justify-end">
-                  <button
-                    type="button"
-                    disabled={locked || entry.status === "REJECTED"}
-                    onClick={() =>
-                      runAction(entry.id, () =>
-                        approveWaitlistEntryAction({
-                          waitlistEntryId: entry.id,
-                          expiresInDays: 7,
-                        }),
-                      )
-                    }
-                    className="rounded-md bg-gray-900 px-3 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    {pendingId === entry.id ? "Working..." : "Approve"}
-                  </button>
-                  <button
-                    type="button"
-                    disabled={locked || entry.status === "REJECTED"}
-                    onClick={() =>
-                      runAction(entry.id, () =>
-                        rejectWaitlistEntryAction({ waitlistEntryId: entry.id }),
-                      )
-                    }
-                    className="rounded-md border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-600 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    Reject
-                  </button>
+                  {latestInvite ? (
+                    <>
+                      <button
+                        type="button"
+                        disabled={isPending || Boolean(latestInvite.acceptedAt || latestInvite.revokedAt)}
+                        onClick={() =>
+                          runAction(entry.id, () =>
+                            resendSchoolInviteAction({ inviteId: latestInvite.id }),
+                          )
+                        }
+                        className="rounded-md bg-gray-900 px-3 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        Resend
+                      </button>
+                      <button
+                        type="button"
+                        disabled={isPending || Boolean(latestInvite.acceptedAt || latestInvite.revokedAt)}
+                        onClick={() =>
+                          runAction(entry.id, () =>
+                            revokeSchoolInviteAction({ inviteId: latestInvite.id }),
+                          )
+                        }
+                        className="rounded-md border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-600 disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        Revoke
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        disabled={locked || entry.status === "REJECTED"}
+                        onClick={() =>
+                          runAction(entry.id, () =>
+                            approveWaitlistEntryAction({
+                              waitlistEntryId: entry.id,
+                              expiresInDays: 7,
+                            }),
+                          )
+                        }
+                        className="rounded-md bg-gray-900 px-3 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        {pendingId === entry.id ? "Working..." : "Approve"}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={locked || entry.status === "REJECTED"}
+                        onClick={() =>
+                          runAction(entry.id, () =>
+                            rejectWaitlistEntryAction({ waitlistEntryId: entry.id }),
+                          )
+                        }
+                        className="rounded-md border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-600 disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        Reject
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             );
@@ -177,4 +231,15 @@ export default function OnboardingRequestsClient({
       </div>
     </div>
   );
+}
+
+function inviteStatus(invite: {
+  expiresAt: Date;
+  acceptedAt: Date | null;
+  revokedAt: Date | null;
+}) {
+  if (invite.acceptedAt) return "accepted";
+  if (invite.revokedAt) return "revoked";
+  if (new Date(invite.expiresAt).getTime() < Date.now()) return "expired";
+  return "active";
 }

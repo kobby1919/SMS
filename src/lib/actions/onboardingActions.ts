@@ -5,12 +5,19 @@ import { requireRole } from "@/src/lib/authz";
 import {
   approveWaitlistEntry,
   completeSchoolOnboarding,
+  createDefaultAcademicSetup,
+  recordInviteSent,
+  recordOnboardingImport,
   rejectWaitlistEntry,
+  resendSchoolInvite,
+  revokeSchoolInvite,
   updateSchoolProfileSetup,
   type CreatedSchoolInvite,
 } from "@/src/lib/services/onboarding";
 import {
   approveWaitlistEntrySchema,
+  inviteIdSchema,
+  onboardingImportSchema,
   rejectWaitlistEntrySchema,
   schoolProfileSetupSchema,
 } from "@/src/lib/validation/onboarding";
@@ -38,6 +45,11 @@ export async function approveWaitlistEntryAction(
       inviteUrl,
       expiresAt: invite.expiresAt,
     });
+    await recordInviteSent({
+      inviteId: invite.inviteId,
+      provider: email.provider,
+      warning: email.ok ? undefined : email.message,
+    }, context);
     revalidatePath("/platform/onboarding");
     return {
       ok: true,
@@ -49,6 +61,40 @@ export async function approveWaitlistEntryAction(
     return {
       ok: false,
       message: error instanceof Error ? error.message : "Could not approve onboarding request.",
+    };
+  }
+}
+
+export async function resendSchoolInviteAction(
+  input: unknown,
+): Promise<OnboardingActionResult> {
+  try {
+    const context = await requireRole(["platform_admin"]);
+    const data = parseActionInput(inviteIdSchema, input);
+    const invite = await resendSchoolInvite(data, context);
+    revalidatePath("/platform/onboarding");
+    return { ok: true, invite };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Could not resend invite.",
+    };
+  }
+}
+
+export async function revokeSchoolInviteAction(
+  input: unknown,
+): Promise<OnboardingActionResult> {
+  try {
+    const context = await requireRole(["platform_admin"]);
+    const data = parseActionInput(inviteIdSchema, input);
+    await revokeSchoolInvite(data, context);
+    revalidatePath("/platform/onboarding");
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Could not revoke invite.",
     };
   }
 }
@@ -98,6 +144,37 @@ export async function completeSchoolOnboardingAction(): Promise<OnboardingAction
     return {
       ok: false,
       message: error instanceof Error ? error.message : "Could not complete setup.",
+    };
+  }
+}
+
+export async function createDefaultAcademicSetupAction(): Promise<OnboardingActionResult> {
+  try {
+    const context = await requireRole(["admin"]);
+    await createDefaultAcademicSetup(context);
+    revalidatePath("/onboarding/setup");
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Could not create default academics.",
+    };
+  }
+}
+
+export async function recordOnboardingImportAction(
+  input: unknown,
+): Promise<OnboardingActionResult> {
+  try {
+    const context = await requireRole(["admin"]);
+    const data = parseActionInput(onboardingImportSchema, input);
+    await recordOnboardingImport(data, context);
+    revalidatePath("/onboarding/setup");
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Could not record import.",
     };
   }
 }

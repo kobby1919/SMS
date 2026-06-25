@@ -3,8 +3,32 @@ import { clerkClient } from "@clerk/nextjs/server";
 import prisma from "@/src/lib/prisma";
 import type { AuthzContext } from "@/src/lib/authz";
 import type { AppRole } from "@/src/lib/roles";
+import { appBaseUrl, sendFirstAdminInviteEmail } from "@/src/lib/services/notifications";
+import type { OnboardingAuditAction, Prisma } from "@/src/generated/prisma";
 
 const INVITE_TOKEN_BYTES = 32;
+
+const DEFAULT_GRADES = [
+  { level: "Basic 1", order: 1 },
+  { level: "Basic 2", order: 2 },
+  { level: "Basic 3", order: 3 },
+  { level: "Basic 4", order: 4 },
+  { level: "Basic 5", order: 5 },
+  { level: "Basic 6", order: 6 },
+  { level: "JHS 1", order: 7 },
+  { level: "JHS 2", order: 8 },
+  { level: "JHS 3", order: 9 },
+];
+
+const DEFAULT_SUBJECTS = [
+  "English Language",
+  "Mathematics",
+  "Science",
+  "Social Studies",
+  "Computing",
+  "Creative Arts",
+  "Religious and Moral Education",
+];
 
 export type CreatedSchoolInvite = {
   schoolId: string;
@@ -18,6 +42,26 @@ export type CreatedSchoolInvite = {
 
 export function hashInviteToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
+}
+
+async function writeOnboardingAudit(input: {
+  action: OnboardingAuditAction;
+  performedBy: string;
+  schoolId?: string | null;
+  waitlistId?: string | null;
+  inviteId?: string | null;
+  metadata?: Record<string, unknown>;
+}) {
+  await prisma.onboardingAuditLog.create({
+    data: {
+      action: input.action,
+      performedBy: input.performedBy,
+      schoolId: input.schoolId ?? null,
+      waitlistId: input.waitlistId ?? null,
+      inviteId: input.inviteId ?? null,
+      metadata: (input.metadata ?? {}) as Prisma.InputJsonValue,
+    },
+  });
 }
 
 function createInviteToken(): string {
@@ -58,6 +102,18 @@ export async function listWaitlistEntriesForReview() {
           name: true,
           slug: true,
           onboardingStatus: true,
+          invites: {
+            orderBy: { createdAt: "desc" },
+            take: 1,
+            select: {
+              id: true,
+              email: true,
+              expiresAt: true,
+              acceptedAt: true,
+              revokedAt: true,
+              lastSentAt: true,
+            },
+          },
         },
       },
     },
@@ -74,9 +130,21 @@ export async function getSchoolOnboardingState(schoolId: string) {
       contactEmail: true,
       phone: true,
       address: true,
+      logoUrl: true,
       onboardingStatus: true,
       setupStep: true,
       setupCompletedAt: true,
+      onboardingAuditLogs: {
+        orderBy: { createdAt: "desc" },
+        take: 8,
+        select: {
+          id: true,
+          action: true,
+          performedBy: true,
+          metadata: true,
+          createdAt: true,
+        },
+      },
       _count: {
         select: {
           grades: true,
@@ -96,20 +164,31 @@ export async function updateSchoolProfileSetup(
     contactEmail?: string;
     phone?: string;
     address?: string;
+    logoUrl?: string;
   },
   context: AuthzContext,
 ) {
-  return prisma.school.update({
+  const school = await prisma.school.update({
     where: { id: context.schoolId },
     data: {
       name: input.name,
       contactEmail: input.contactEmail || null,
       phone: input.phone || null,
       address: input.address || null,
+      logoUrl: input.logoUrl || null,
       onboardingStatus: "PROFILE_DONE",
       setupStep: "academic",
     },
   });
+
+  await writeOnboardingAudit({
+    action: "PROFILE_UPDATED",
+    performedBy: context.userId,
+    schoolId: context.schoolId,
+    metadata: { name: input.name },
+  });
+
+  return school;
 }
 
 export async function completeSchoolOnboarding(context: AuthzContext) {
@@ -123,13 +202,121 @@ export async function completeSchoolOnboarding(context: AuthzContext) {
     throw new Error("Add at least one grade, class, and subject before finishing setup.");
   }
 
-  return prisma.school.update({
+  const updated = await prisma.school.update({
     where: { id: context.schoolId },
     data: {
       onboardingStatus: "COMPLETED",
       setupStep: null,
       setupCompletedAt: new Date(),
     },
+  });
+
+  await writeOnboardingAudit({
+    action: "ONBOARDING_COMPLETED",
+    performedBy: context.userId,
+    schoolId: context.schoolId,
+    metadata: {
+      grades: school._count.grades,
+      classes: school._count.classes,
+      subjects: school._count.subjects,
+    },
+  });
+
+  return updated;
+}
+
+export async function createDefaultAcademicSetup(context: AuthzContext) {
+  const existing = await getSchoolOnboardingState(context.schoolId);
+  if (!existing) {
+    throw new Error("School not found.");
+  }
+
+  await prisma.$transaction(async (tx) => {
+    for (const grade of DEFAULT_GRADES) {
+      await tx.grade.upsert({
+        where: {
+          schoolId_level: {
+            schoolId: context.schoolId,
+            level: grade.level,
+          },
+        },
+        update: { order: grade.order },
+        create: {
+          schoolId: context.schoolId,
+          level: grade.level,
+          order: grade.order,
+        },
+      });
+    }
+
+    for (const subject of DEFAULT_SUBJECTS) {
+      await tx.subject.upsert({
+        where: {
+          schoolId_name: {
+            schoolId: context.schoolId,
+            name: subject,
+          },
+        },
+        update: {},
+        create: {
+          schoolId: context.schoolId,
+          name: subject,
+        },
+      });
+    }
+
+    const grades = await tx.grade.findMany({
+      where: { schoolId: context.schoolId },
+      select: { id: true, level: true },
+    });
+
+    for (const grade of grades) {
+      await tx.class.upsert({
+        where: {
+          schoolId_name: {
+            schoolId: context.schoolId,
+            name: `${grade.level} A`,
+          },
+        },
+        update: { gradeId: grade.id },
+        create: {
+          schoolId: context.schoolId,
+          name: `${grade.level} A`,
+          capacity: 40,
+          gradeId: grade.id,
+        },
+      });
+    }
+
+    await tx.school.update({
+      where: { id: context.schoolId },
+      data: {
+        onboardingStatus: "ACADEMIC_DONE",
+        setupStep: "users",
+      },
+    });
+  });
+
+  await writeOnboardingAudit({
+    action: "DEFAULT_ACADEMICS_CREATED",
+    performedBy: context.userId,
+    schoolId: context.schoolId,
+    metadata: {
+      grades: DEFAULT_GRADES.length,
+      subjects: DEFAULT_SUBJECTS.length,
+    },
+  });
+}
+
+export async function recordOnboardingImport(
+  input: { importType: "teachers" | "students"; fileName: string; rowCount: number },
+  context: AuthzContext,
+) {
+  await writeOnboardingAudit({
+    action: "IMPORT_RECORDED",
+    performedBy: context.userId,
+    schoolId: context.schoolId,
+    metadata: input,
   });
 }
 
@@ -141,6 +328,7 @@ export async function getInvitePreview(token: string) {
       email: true,
       expiresAt: true,
       acceptedAt: true,
+      revokedAt: true,
       school: {
         select: {
           name: true,
@@ -158,6 +346,7 @@ export async function getInvitePreview(token: string) {
     schoolSlug: invite.school.slug,
     expiresAt: invite.expiresAt,
     accepted: Boolean(invite.acceptedAt),
+    revoked: Boolean(invite.revokedAt),
     expired: invite.expiresAt.getTime() < Date.now(),
   };
 }
@@ -229,6 +418,33 @@ export async function approveWaitlistEntry(
       },
     });
 
+    await tx.onboardingAuditLog.createMany({
+      data: [
+        {
+          action: "WAITLIST_APPROVED",
+          performedBy: context.userId,
+          schoolId: school.id,
+          waitlistId: request.id,
+          metadata: { email: request.email, schoolName: request.schoolName },
+        },
+        {
+          action: "SCHOOL_CREATED",
+          performedBy: context.userId,
+          schoolId: school.id,
+          waitlistId: request.id,
+          metadata: { slug },
+        },
+        {
+          action: "INVITE_CREATED",
+          performedBy: context.userId,
+          schoolId: school.id,
+          waitlistId: request.id,
+          inviteId: invite.id,
+          metadata: { email: request.email, expiresAt },
+        },
+      ],
+    });
+
     return { school, invite };
   });
 
@@ -260,12 +476,156 @@ export async function rejectWaitlistEntry(
     throw new Error("A request with a created school cannot be rejected.");
   }
 
-  return prisma.waitlistEntry.update({
+  const rejected = await prisma.waitlistEntry.update({
     where: { id: request.id },
     data: {
       status: "REJECTED",
       reviewedBy: context.userId,
       reviewedAt: new Date(),
+    },
+  });
+
+  await writeOnboardingAudit({
+    action: "WAITLIST_REJECTED",
+    performedBy: context.userId,
+    waitlistId: request.id,
+    metadata: { status: request.status },
+  });
+
+  return rejected;
+}
+
+export async function resendSchoolInvite(
+  input: { inviteId: string },
+  context: AuthzContext,
+): Promise<CreatedSchoolInvite> {
+  const invite = await prisma.schoolInvite.findUnique({
+    where: { id: input.inviteId },
+    include: { school: { select: { id: true, name: true } } },
+  });
+
+  if (!invite) {
+    throw new Error("Invite not found.");
+  }
+
+  if (invite.acceptedAt) {
+    throw new Error("Accepted invites cannot be resent.");
+  }
+
+  if (invite.revokedAt) {
+    throw new Error("Revoked invites cannot be resent.");
+  }
+
+  if (invite.expiresAt.getTime() < Date.now()) {
+    throw new Error("Expired invites cannot be resent. Create a fresh onboarding request or invite.");
+  }
+
+  const inviteToken = createInviteToken();
+  const tokenHash = hashInviteToken(inviteToken);
+  const invitePath = `/onboarding/accept?token=${encodeURIComponent(inviteToken)}`;
+  const inviteUrl = `${appBaseUrl()}${invitePath}`;
+
+  await sendFirstAdminInviteEmail({
+    to: invite.email,
+    schoolName: invite.school.name,
+    inviteUrl,
+    expiresAt: invite.expiresAt,
+  });
+
+  await prisma.schoolInvite.update({
+    where: { id: invite.id },
+    data: {
+      tokenHash,
+      lastSentAt: new Date(),
+    },
+  });
+
+  await writeOnboardingAudit({
+    action: "INVITE_RESENT",
+    performedBy: context.userId,
+    schoolId: invite.schoolId,
+    inviteId: invite.id,
+    metadata: { email: invite.email, rotatedToken: true },
+  });
+
+  return {
+    schoolId: invite.schoolId,
+    schoolName: invite.school.name,
+    inviteId: invite.id,
+    email: invite.email,
+    inviteToken,
+    invitePath,
+    expiresAt: invite.expiresAt,
+  };
+}
+
+export async function revokeSchoolInvite(
+  input: { inviteId: string },
+  context: AuthzContext,
+) {
+  const invite = await prisma.schoolInvite.findUnique({
+    where: { id: input.inviteId },
+    select: {
+      id: true,
+      schoolId: true,
+      email: true,
+      acceptedAt: true,
+      revokedAt: true,
+    },
+  });
+
+  if (!invite) {
+    throw new Error("Invite not found.");
+  }
+
+  if (invite.acceptedAt) {
+    throw new Error("Accepted invites cannot be revoked.");
+  }
+
+  if (invite.revokedAt) {
+    throw new Error("Invite is already revoked.");
+  }
+
+  await prisma.schoolInvite.update({
+    where: { id: invite.id },
+    data: {
+      revokedAt: new Date(),
+      revokedBy: context.userId,
+    },
+  });
+
+  await writeOnboardingAudit({
+    action: "INVITE_REVOKED",
+    performedBy: context.userId,
+    schoolId: invite.schoolId,
+    inviteId: invite.id,
+    metadata: { email: invite.email },
+  });
+}
+
+export async function recordInviteSent(
+  input: { inviteId: string; provider: string; warning?: string },
+  context: AuthzContext,
+) {
+  const invite = await prisma.schoolInvite.update({
+    where: { id: input.inviteId },
+    data: { lastSentAt: new Date() },
+    select: {
+      id: true,
+      schoolId: true,
+      email: true,
+    },
+  });
+
+  await writeOnboardingAudit({
+    action: "INVITE_SENT",
+    performedBy: context.userId,
+    schoolId: invite.schoolId,
+    inviteId: invite.id,
+    metadata: {
+      email: invite.email,
+      provider: input.provider,
+      warning: input.warning,
     },
   });
 }
@@ -295,7 +655,7 @@ export async function acceptSchoolInviteForUser(
     },
   });
 
-  if (!invite || invite.acceptedAt) {
+  if (!invite || invite.acceptedAt || invite.revokedAt) {
     throw new Error("This invitation is invalid or has already been used.");
   }
 
@@ -330,6 +690,16 @@ export async function acceptSchoolInviteForUser(
     await tx.schoolInvite.update({
       where: { id: invite.id },
       data: { acceptedAt: new Date() },
+    });
+
+    await tx.onboardingAuditLog.create({
+      data: {
+        action: "INVITE_ACCEPTED",
+        performedBy: input.userId,
+        schoolId: invite.schoolId,
+        inviteId: invite.id,
+        metadata: { email: invite.email },
+      },
     });
   });
 
