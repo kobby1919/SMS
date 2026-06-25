@@ -20,6 +20,10 @@ import {
   feeStructureUpdateSchema,
 } from "@/src/lib/validation/finance";
 import { positiveIntSchema } from "@/src/lib/validation/common";
+import {
+  assertCanPublishFeeStructure,
+  assertDraftFeeStructure,
+} from "@/src/lib/services/finance-policy";
 
 // ─── Fee Structure CRUD ───────────────────────────────────────────────────────
 
@@ -95,12 +99,7 @@ export async function updateFeeStructure(
     where: { id, schoolId },
   });
   if (!existing) throw new Error("Fee structure not found.");
-  if (existing.status === "PUBLISHED") {
-    throw new Error(
-      "This fee structure is published and cannot be edited. " +
-      "Unpublish it first if changes are needed (note: this will affect generated bills)."
-    );
-  }
+  assertDraftFeeStructure(existing.status);
 
   await prisma.feeStructure.update({
     where: { id },
@@ -123,23 +122,11 @@ export async function publishFeeStructure(id: number) {
     include: { feeItems: true },
   });
   if (!structure) throw new Error("Fee structure not found.");
-  if (structure.status === "PUBLISHED") throw new Error("Already published.");
-
-  // Must have at least one fee item before publishing
-  if (structure.feeItems.length === 0) {
-    throw new Error(
-      "Add at least one fee item before publishing this structure."
-    );
-  }
-
-  // Must have at least one non-optional (mandatory) fee item
-  const hasMandatory = structure.feeItems.some((item) => !item.isOptional);
-  if (!hasMandatory) {
-    throw new Error(
-      "At least one fee item must be non-optional (mandatory). " +
-      "A structure with only optional items cannot be published."
-    );
-  }
+  assertCanPublishFeeStructure({
+    status: structure.status,
+    feeItemCount: structure.feeItems.length,
+    mandatoryFeeItemCount: structure.feeItems.filter((item) => !item.isOptional).length,
+  });
 
   await prisma.feeStructure.update({
     where: { id },
@@ -219,9 +206,7 @@ export async function addFeeItem(
     where: { id: feeStructureId, schoolId },
   });
   if (!structure) throw new Error("Fee structure not found.");
-  if (structure.status === "PUBLISHED") {
-    throw new Error("Cannot add items to a published fee structure.");
-  }
+  assertDraftFeeStructure(structure.status);
 
   if (!data.name.trim())   throw new Error("Item name is required.");
   if (data.amount <= 0)    throw new Error("Amount must be greater than zero.");
@@ -254,9 +239,7 @@ export async function updateFeeItem(
     include: { feeStructure: true },
   });
   if (!item) throw new Error("Fee item not found.");
-  if (item.feeStructure.status === "PUBLISHED") {
-    throw new Error("Cannot edit items on a published fee structure.");
-  }
+  assertDraftFeeStructure(item.feeStructure.status);
 
   if (data.amount !== undefined && data.amount <= 0) {
     throw new Error("Amount must be greater than zero.");
@@ -285,9 +268,7 @@ export async function deleteFeeItem(itemId: number) {
     include: { feeStructure: true },
   });
   if (!item) throw new Error("Fee item not found.");
-  if (item.feeStructure.status === "PUBLISHED") {
-    throw new Error("Cannot delete items from a published fee structure.");
-  }
+  assertDraftFeeStructure(item.feeStructure.status);
 
   await prisma.feeItem.delete({ where: { id: itemId } });
   revalidatePath(`/list/finance/fee-structures/${item.feeStructureId}`);

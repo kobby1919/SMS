@@ -21,6 +21,11 @@ import type { PaymentMethod } from "@/src/generated/prisma";
 import { enforceActionRateLimit } from "@/src/lib/rate-limit";
 import { revalidateDashboard, revalidateDocument } from "@/src/lib/cacheTags";
 import { enqueueFinanceJob } from "@/src/lib/services/finance-queue";
+import {
+  assertCanRecordPayment,
+  assertCanReversePayment,
+  assertPaymentWithinAllowedOverpay,
+} from "@/src/lib/services/finance-policy";
 
 // ─── Record a payment ─────────────────────────────────────────────────────────
 
@@ -55,20 +60,15 @@ export async function recordPayment(input: RecordPaymentInput) {
     ctx,
     "Bill not found.",
   );
-  if (bill.status === "WAIVED") throw new Error("Cannot record a payment on a waived bill.");
-  if (bill.status === "PAID") throw new Error("This bill is already fully paid.");
+  assertCanRecordPayment(bill.status);
 
   const currentBalance = new Prisma.Decimal(bill.balance);
   const paymentAmount = new Prisma.Decimal(data.amount);
 
-  // Prevent extreme overpayment (150% threshold)
-  if (paymentAmount.gt(currentBalance.mul(1.5))) {
-    throw new Error(
-      `Payment amount (GH₵ ${paymentAmount.toFixed(2)}) is more than 150% of the ` +
-      `outstanding balance (GH₵ ${currentBalance.toFixed(2)}). ` +
-      `Please verify the amount before proceeding.`
-    );
-  }
+  assertPaymentWithinAllowedOverpay({
+    amount: paymentAmount,
+    currentBalance,
+  });
 
   const receiptNumber = await generateReceiptNumber();
 
@@ -229,8 +229,10 @@ export async function reversePayment(paymentId: number, reason: string) {
     ctx,
     "Payment not found.",
   );
-  if (payment.reversal)   throw new Error("This payment has already been reversed.");
-  if (payment.status === "REVERSED") throw new Error("This payment is already reversed.");
+  assertCanReversePayment({
+    status: payment.status,
+    hasReversal: Boolean(payment.reversal),
+  });
 
   const billId = payment.studentBillId;
   const amountToReverse = new Prisma.Decimal(payment.amount);

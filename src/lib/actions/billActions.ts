@@ -20,6 +20,10 @@ import type { BillStatus } from "@/src/generated/prisma";
 import { enforceActionRateLimit } from "@/src/lib/rate-limit";
 import { revalidateDashboard } from "@/src/lib/cacheTags";
 import { enqueueFinanceJob } from "@/src/lib/services/finance-queue";
+import {
+  assertCanGenerateBills,
+  assertCanWaiveBill,
+} from "@/src/lib/services/finance-policy";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -55,9 +59,7 @@ export async function previewBillGeneration(
     },
   });
   if (!structure) throw new Error("Fee structure not found.");
-  if (structure.status !== "PUBLISHED") {
-    throw new Error("Bills can only be generated from a published fee structure.");
-  }
+  assertCanGenerateBills(structure.status);
 
   const mandatoryTotal = structure.feeItems
     .filter((i) => !i.isOptional)
@@ -126,9 +128,7 @@ export async function generateBills(rawInput: GenerateBillsInput): Promise<{
     ctx,
     "Fee structure not found.",
   );
-  if (structure.status !== "PUBLISHED") {
-    throw new Error("Bills can only be generated from a published fee structure.");
-  }
+  assertCanGenerateBills(structure.status);
   if (input.classIds.length === 0) {
     throw new Error("Select at least one class to generate bills for.");
   }
@@ -254,12 +254,7 @@ export async function waiveBill(billId: number, reason: string) {
     ctx,
     "Bill not found.",
   );
-  if (bill.status === "PAID") {
-    throw new Error("Cannot waive a bill that has already been paid.");
-  }
-  if (bill.status === "WAIVED") {
-    throw new Error("This bill is already waived.");
-  }
+  assertCanWaiveBill(bill.status);
 
   await prisma.studentBill.update({
     where: { id: billId },
