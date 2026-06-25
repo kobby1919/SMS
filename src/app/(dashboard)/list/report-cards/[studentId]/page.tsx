@@ -5,8 +5,9 @@ import { redirect } from "next/navigation";
 import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import { notFound } from "next/navigation";
-import { getGradeBandByGrade, computeAggregate, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
+import { getGradeBandByGrade, computeAggregate } from "@/src/lib/caGrades";
 import ReportCardView from "@/src/components/ReportCardView";
+import type { Term } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -22,9 +23,8 @@ const ReportCardPage = async ({
 
   const { studentId } = await params;
   const sp            = await searchParams;
-  const term          = (sp.term ?? "TERM_2") as any;
+  const term          = (sp.term ?? "TERM_2") as Term;
   const academicYear  = sp.year ?? "";
-  const classIdParam  = sp.classId ? parseInt(sp.classId) : undefined;
 
   // ── Load student ──────────────────────────────────────────────────────────
   const student = await prisma.student.findFirst({

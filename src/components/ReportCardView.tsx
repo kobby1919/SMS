@@ -3,6 +3,7 @@
 // src/components/ReportCardView.tsx
 
 import { useState } from "react";
+import Image from "next/image";
 import {
   Download,
   ArrowLeft,
@@ -165,8 +166,8 @@ function DownloadButton({
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (e: any) {
-      setError(e?.message ?? "Download failed. Please try again.");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Download failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -314,9 +315,12 @@ const ReportCardView = ({
             <div className="flex items-start gap-4">
               <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center text-xl font-black text-indigo-600 shrink-0 overflow-hidden">
                 {student.img ? (
-                  <img
+                  <Image
+                    unoptimized
                     src={student.img}
                     alt=""
+                    width={64}
+                    height={64}
                     className="w-full h-full object-cover rounded-2xl"
                   />
                 ) : (

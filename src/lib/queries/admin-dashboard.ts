@@ -315,13 +315,9 @@ export async function getCachedAdminDashboardData(
   schoolId: string,
 ): Promise<AdminDashboardData> {
   const dayKey = new Date().toISOString().slice(0, 10);
-
   return unstable_cache(
     () => getAdminDashboardData(schoolId),
     ["dashboard", "admin", schoolId, dayKey],
-    {
-      revalidate: 30,
-      tags: [dashboardTag(schoolId, "admin")],
-    },
+    { revalidate: 30, tags: [dashboardTag(schoolId, "admin")] },
   )();
 }

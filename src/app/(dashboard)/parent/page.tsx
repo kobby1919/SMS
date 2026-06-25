@@ -1,7 +1,6 @@
 // src/app/(dashboard)/parent/page.tsx
 
 
-import prisma from "@/src/lib/prisma";
 import { requirePageSession } from "@/src/lib/authz";
 import Announcements from "@/src/components/Announcements";
 import EventCalendar from "@/src/components/EventCalendar";
@@ -9,7 +8,6 @@ import EventList from "@/src/components/EventList";
 import ParentTimetableTabs from "@/src/components/ParentTimetableTabs";
 import WelcomeBanner from "@/src/components/WelcomeBanner";
 import type { ChildSchedule } from "@/src/components/ParentTimetableTabs";
-import type { CalendarLesson } from "@/src/components/BigCalendar";
 import Link from "next/link";
 import {
   CheckCircle2, XCircle, Clock, FileCheck,
@@ -17,19 +15,10 @@ import {
   CalendarDays, ShieldAlert, FileText, Award,
   AlertCircle, Star, BookOpen,
 } from "lucide-react";
-import { getGradeBandByGrade, computeAggregate, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
-import type { Term } from "@/src/generated/prisma";
+import { getGradeBandByGrade, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
+import { getParentDashboardData } from "@/src/lib/services/parent-dashboard";
 
 export const dynamic = "force-dynamic";
-
-const getStreak = (records: { status: string }[]): number => {
-  let streak = 0;
-  for (const r of records) {
-    if (r.status === "ABSENT") streak++;
-    else break;
-  }
-  return streak;
-};
 
 const ParentPage = async ({
   searchParams,
@@ -38,159 +27,11 @@ const ParentPage = async ({
 }) => {
   const { userId, schoolId } = await requirePageSession(["parent"]);
 
-  const parent = await prisma.parent.findFirst({
-    where: { id: userId, schoolId },
-    include: {
-      students: {
-        where: { schoolId },
-        include: { class: { select: { id: true, name: true } } },
-        orderBy: { name: "asc" },
-      },
-    },
-  });
-
-  const children  = parent?.students ?? [];
+  const { parent, childrenData } = await getParentDashboardData(userId, schoolId);
+  const children = parent?.students ?? [];
   const parentName = parent
     ? `${parent.name} ${parent.surname}`
     : "Parent";
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const todayEnd = new Date();
-  todayEnd.setHours(23, 59, 59, 999);
-
-  const childrenData = await Promise.all(
-    children.map(async (child) => {
-      // ── Timetable ────────────────────────────────────────────────────────
-      const lessons = await prisma.lesson.findMany({
-        where:   { schoolId, classId: child.classId },
-        include: {
-          subject: { select: { name: true } },
-          teacher: { select: { name: true, surname: true } },
-        },
-        orderBy: [{ day: "asc" }, { startTime: "asc" }],
-      });
-
-      // ── Attendance ───────────────────────────────────────────────────────
-      const todayAttendance = await prisma.attendance.findMany({
-        where:   { schoolId, studentId: child.id, date: { gte: today, lte: todayEnd } },
-        include: { lesson: { include: { subject: { select: { name: true } } } } },
-        orderBy: { date: "asc" },
-      });
-
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      const history = await prisma.attendance.findMany({
-        where:   { schoolId, studentId: child.id, date: { gte: thirtyDaysAgo } },
-        include: { lesson: { include: { subject: { select: { name: true } } } } },
-        orderBy: { date: "desc" },
-      });
-
-      const recentRecords = await prisma.attendance.findMany({
-        where:   { schoolId, studentId: child.id },
-        orderBy: { date: "desc" },
-        take:    7,
-        select:  { status: true },
-      });
-      const streak = getStreak(recentRecords);
-
-      const total   = history.length;
-      const present = history.filter((h) => h.status === "PRESENT").length;
-      const absent  = history.filter((h) => h.status === "ABSENT").length;
-      const late    = history.filter((h) => h.status === "LATE").length;
-      const excused = history.filter((h) => h.status === "EXCUSED").length;
-      const rate    = total > 0 ? Math.round((present / total) * 100) : 0;
-
-      const calendarLessons: CalendarLesson[] = lessons.map((l) => ({
-        title:     l.subject.name,
-        day:       l.day,
-        startTime: l.startTime,
-        endTime:   l.endTime,
-        teacher:   `${l.teacher.name} ${l.teacher.surname}`,
-      }));
-
-      // ── CA records — all terms, ordered oldest first ──────────────────────
-      const allCA = await prisma.continuousAssessment.findMany({
-        where:   { schoolId, studentId: child.id },
-        include: { subject: { select: { name: true } } },
-        orderBy: [{ academicYear: "asc" }, { term: "asc" }],
-      });
-
-      // Group into term buckets
-      const groupMap = new Map<string, typeof allCA>();
-      for (const r of allCA) {
-        const key = `${r.academicYear}__${r.term}`;
-        if (!groupMap.has(key)) groupMap.set(key, []);
-        groupMap.get(key)!.push(r);
-      }
-
-      const termGroups = Array.from(groupMap.entries()).map(([key, records]) => {
-        const [year, term] = key.split("__");
-        const scores       = records.map((r) => r.totalScore);
-        const gps          = records.map((r) => r.gradePoint);
-        const avg          = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
-        return {
-          term, year, records,
-          avgScore:  Math.round(avg * 10) / 10,
-          aggregate: computeAggregate(gps),
-        };
-      });
-
-      const latestGroup = termGroups[termGroups.length - 1] ?? null;
-      const prevGroup   = termGroups[termGroups.length - 2] ?? null;
-
-      // Trend vs previous term
-      const trendDiff = prevGroup && latestGroup
-        ? Math.round((latestGroup.avgScore - prevGroup.avgScore) * 10) / 10
-        : 0;
-      const trend = !prevGroup || !latestGroup ? "neutral"
-        : trendDiff > 2  ? "up"
-        : trendDiff < -2 ? "down"
-        : "neutral";
-
-      // Class position for latest term
-      let myPosition = 0;
-      if (latestGroup) {
-        const classmatesCA = await prisma.continuousAssessment.findMany({
-          where: {
-            schoolId,
-            classId:      child.classId,
-            term:         latestGroup.term as Term,
-            academicYear: latestGroup.year,
-          },
-          select: { studentId: true, gradePoint: true },
-        });
-        const gpMap: Record<string, number[]> = {};
-        for (const r of classmatesCA) {
-          if (!gpMap[r.studentId]) gpMap[r.studentId] = [];
-          gpMap[r.studentId].push(r.gradePoint);
-        }
-        const sorted = Object.entries(gpMap)
-          .map(([sid, gps]) => ({ sid, agg: computeAggregate(gps) }))
-          .sort((a, b) => a.agg - b.agg);
-        myPosition = sorted.findIndex((s) => s.sid === child.id) + 1;
-      }
-
-      const classSize = await prisma.student.count({ where: { schoolId, classId: child.classId } });
-
-      // Best / weakest subject in latest term
-      const sortedByGP = latestGroup
-        ? [...latestGroup.records].sort((a, b) => a.gradePoint - b.gradePoint)
-        : [];
-      const bestSubject = sortedByGP[0] ?? null;
-      const weakSubject = sortedByGP[sortedByGP.length - 1] ?? null;
-
-      return {
-        id: child.id, name: child.name, surname: child.surname,
-        className: child.class.name, classId: child.classId,
-        lessons: calendarLessons,
-        streak, isFlagged: streak >= 3,
-        todayAttendance, history,
-        stats: { total, present, absent, late, excused, rate },
-        ca: { latestGroup, prevGroup, termGroups, trend, trendDiff, myPosition, classSize, bestSubject, weakSubject },
-      };
-    })
-  );
 
   const childrenSchedules: ChildSchedule[] = childrenData.map((c) => ({
     id: c.id, name: c.name, surname: c.surname,
@@ -203,15 +44,15 @@ const ParentPage = async ({
   return (
     <div className="p-4 flex flex-col gap-5">
 
-      {/* ── WELCOME BANNER ── */}
+      {/* â”€â”€ WELCOME BANNER â”€â”€ */}
       <WelcomeBanner
         role="parent"
         name={parentName}
-        subtitle={`${childCount} child${childCount !== 1 ? "ren" : ""} enrolled · monitoring attendance & schedule`}
-        tag="Term 2 · 2025/26"
+        subtitle={`${childCount} child${childCount !== 1 ? "ren" : ""} enrolled Â· monitoring attendance & schedule`}
+        tag="Term 2 Â· 2025/26"
       />
 
-      {/* ── Flagged alert ── */}
+      {/* â”€â”€ Flagged alert â”€â”€ */}
       {anyFlagged && (
         <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex items-start gap-3">
           <ShieldAlert size={20} className="text-rose-500 shrink-0 mt-0.5" />
@@ -261,7 +102,7 @@ const ParentPage = async ({
                 </div>
               </div>
 
-              {/* ── CA PERFORMANCE CARD ── */}
+              {/* â”€â”€ CA PERFORMANCE CARD â”€â”€ */}
               {child.ca.latestGroup ? (
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                   {/* Card header */}
@@ -273,7 +114,7 @@ const ParentPage = async ({
                       <div>
                         <p className="text-sm font-black text-gray-800">Academic Performance</p>
                         <p className="text-[10px] text-gray-400 font-medium">
-                          {TERM_LABELS[child.ca.latestGroup.term]} · {child.ca.latestGroup.year}
+                          {TERM_LABELS[child.ca.latestGroup.term]} Â· {child.ca.latestGroup.year}
                         </p>
                       </div>
                     </div>
@@ -323,7 +164,7 @@ const ParentPage = async ({
                       <p className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-0.5">Position</p>
                       <p className={`text-2xl font-black leading-none
                         ${child.ca.myPosition <= 3 ? "text-amber-600" : "text-gray-800"}`}>
-                        {child.ca.myPosition > 0 ? ordinal(child.ca.myPosition) : "—"}
+                        {child.ca.myPosition > 0 ? ordinal(child.ca.myPosition) : "â€”"}
                       </p>
                       <p className="text-[10px] text-gray-400 font-semibold mt-0.5">
                         of {child.ca.classSize} students
@@ -364,20 +205,20 @@ const ParentPage = async ({
                       <div className="flex items-start gap-2 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
                         <Star size={12} className="text-emerald-600 shrink-0 mt-0.5" />
                         <div>
-                          <p className="text-[10px] font-black text-emerald-700">🌟 Excelling In</p>
+                          <p className="text-[10px] font-black text-emerald-700">ðŸŒŸ Excelling In</p>
                           <p className="text-xs font-bold text-emerald-800">{child.ca.bestSubject.subject.name}</p>
                           <p className="text-[10px] text-emerald-600">
-                            {child.ca.bestSubject.grade} · {child.ca.bestSubject.totalScore.toFixed(1)}%
+                            {child.ca.bestSubject.grade} Â· {child.ca.bestSubject.totalScore.toFixed(1)}%
                           </p>
                         </div>
                       </div>
                       <div className="flex items-start gap-2 p-3 bg-amber-50 rounded-xl border border-amber-100">
                         <AlertCircle size={12} className="text-amber-500 shrink-0 mt-0.5" />
                         <div>
-                          <p className="text-[10px] font-black text-amber-700">📚 Needs Support</p>
+                          <p className="text-[10px] font-black text-amber-700">ðŸ“š Needs Support</p>
                           <p className="text-xs font-bold text-amber-800">{child.ca.weakSubject.subject.name}</p>
                           <p className="text-[10px] text-amber-600">
-                            {child.ca.weakSubject.grade} · {child.ca.weakSubject.totalScore.toFixed(1)}%
+                            {child.ca.weakSubject.grade} Â· {child.ca.weakSubject.totalScore.toFixed(1)}%
                           </p>
                         </div>
                       </div>
@@ -428,7 +269,7 @@ const ParentPage = async ({
                 </div>
               )}
 
-              {/* ── ATTENDANCE STATS (unchanged) ── */}
+              {/* â”€â”€ ATTENDANCE STATS (unchanged) â”€â”€ */}
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 {[
                   { label: "Present", value: child.stats.present, icon: <CheckCircle2 size={14} />, color: "bg-emerald-50 text-emerald-700" },
@@ -462,7 +303,7 @@ const ParentPage = async ({
                   />
                 </div>
                 <p className="text-[10px] text-gray-400 font-medium mt-1.5">
-                  {child.stats.rate >= 80 ? "✅ Good attendance — keep it up!" : child.stats.rate >= 60 ? "⚠️ Attendance needs improvement" : "❌ Poor attendance — please contact the school"}
+                  {child.stats.rate >= 80 ? "âœ… Good attendance â€” keep it up!" : child.stats.rate >= 60 ? "âš ï¸ Attendance needs improvement" : "âŒ Poor attendance â€” please contact the school"}
                 </p>
               </div>
 
@@ -474,7 +315,7 @@ const ParentPage = async ({
                     <h3 className="font-black text-gray-800 text-sm">Today&apos;s Attendance</h3>
                   </div>
                   <Link href="/list/attendance" className="text-xs font-bold text-indigo-500 hover:text-indigo-700 transition-colors">
-                    Full history →
+                    Full history â†’
                   </Link>
                 </div>
                 {child.todayAttendance.length === 0 ? (
@@ -512,7 +353,7 @@ const ParentPage = async ({
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                   <div className="px-4 py-3 border-b border-gray-100">
                     <h3 className="font-black text-gray-800 text-sm">Recent History</h3>
-                    <p className="text-[11px] text-gray-400 mt-0.5">Last 30 days · {child.history.length} records</p>
+                    <p className="text-[11px] text-gray-400 mt-0.5">Last 30 days Â· {child.history.length} records</p>
                   </div>
                   <div className="divide-y divide-gray-50">
                     {child.history.slice(0, 7).map((record) => {
@@ -537,7 +378,7 @@ const ParentPage = async ({
                   {child.history.length > 7 && (
                     <div className="px-4 py-3 border-t border-gray-100 text-center">
                       <Link href="/list/attendance" className="text-xs font-bold text-indigo-500 hover:text-indigo-700">
-                        View all {child.history.length} records →
+                        View all {child.history.length} records â†’
                       </Link>
                     </div>
                   )}

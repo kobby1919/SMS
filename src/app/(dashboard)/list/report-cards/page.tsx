@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import prisma from "@/src/lib/prisma";
 import { requirePageSession } from "@/src/lib/authz";
 import Link from "next/link";
+import Image from "next/image";
 import {
   FileText,
   AlertTriangle,
@@ -83,9 +84,12 @@ const ReportCardListPage = async ({
             >
               <div className="w-20 h-20 rounded-2xl bg-jayPurpleLight flex items-center justify-center overflow-hidden">
                 {child.img ? (
-                  <img
+                  <Image
+                    unoptimized
                     src={child.img}
                     alt=""
+                    width={80}
+                    height={80}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -390,9 +394,12 @@ const ReportCardListPage = async ({
                   {/* Avatar */}
                   <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-sm font-black text-indigo-600 shrink-0">
                     {s.img ? (
-                      <img
+                      <Image
+                        unoptimized
                         src={s.img}
                         alt=""
+                        width={40}
+                        height={40}
                         className="w-full h-full object-cover rounded-xl"
                       />
                     ) : (
