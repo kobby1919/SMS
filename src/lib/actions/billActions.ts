@@ -19,6 +19,7 @@ import { Prisma } from "@/src/generated/prisma";
 import type { BillStatus } from "@/src/generated/prisma";
 import { enforceActionRateLimit } from "@/src/lib/rate-limit";
 import { revalidateDashboard } from "@/src/lib/cacheTags";
+import { enqueueFinanceJob } from "@/src/lib/services/finance-queue";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -204,6 +205,32 @@ export async function generateBills(rawInput: GenerateBillsInput): Promise<{
     },
   });
 
+  await Promise.all([
+    enqueueFinanceJob({
+      schoolId,
+      type: "RECOMPUTE_FINANCE_SUMMARY",
+      payload: {
+        reason: "BILL_GENERATED",
+        feeStructureId: input.feeStructureId,
+        created,
+        skipped,
+      },
+      idempotencyKey: `finance-summary:${schoolId}:fee-structure:${input.feeStructureId}:bills`,
+      createdBy: userId,
+    }),
+    enqueueFinanceJob({
+      schoolId,
+      type: "SEND_PAYMENT_REMINDER",
+      payload: {
+        feeStructureId: input.feeStructureId,
+        classIds: input.classIds,
+      },
+      idempotencyKey: `payment-reminders:${schoolId}:fee-structure:${input.feeStructureId}`,
+      createdBy: userId,
+      runAfter: new Date(Date.now() + 15 * 60_000),
+    }),
+  ]);
+
   revalidatePath("/list/finance/bills");
   revalidatePath(`/list/finance/fee-structures/${input.feeStructureId}`);
   revalidatePath("/bursar");
@@ -256,6 +283,17 @@ export async function waiveBill(billId: number, reason: string) {
       reason,
       originalAmount: Number(bill.totalAmount),
     },
+  });
+
+  await enqueueFinanceJob({
+    schoolId,
+    type: "RECOMPUTE_FINANCE_SUMMARY",
+    payload: {
+      reason: "BILL_WAIVED",
+      billId,
+    },
+    idempotencyKey: `finance-summary:${schoolId}:bill-waived:${billId}`,
+    createdBy: userId,
   });
 
   revalidatePath("/list/finance/bills");

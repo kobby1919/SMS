@@ -20,6 +20,7 @@ import { Prisma } from "@/src/generated/prisma";
 import type { PaymentMethod } from "@/src/generated/prisma";
 import { enforceActionRateLimit } from "@/src/lib/rate-limit";
 import { revalidateDashboard, revalidateDocument } from "@/src/lib/cacheTags";
+import { enqueueFinanceJob } from "@/src/lib/services/finance-queue";
 
 // ─── Record a payment ─────────────────────────────────────────────────────────
 
@@ -145,6 +146,47 @@ export async function recordPayment(input: RecordPaymentInput) {
     },
   });
 
+  await Promise.all([
+    enqueueFinanceJob({
+      schoolId,
+      type: "GENERATE_RECEIPT_PDF",
+      payload: { paymentId: payment.id, receiptNumber },
+      idempotencyKey: `receipt-pdf:${schoolId}:${payment.id}`,
+      createdBy: userId,
+    }),
+    enqueueFinanceJob({
+      schoolId,
+      type: "SEND_PAYMENT_RECEIPT",
+      payload: {
+        paymentId: payment.id,
+        studentBillId: data.studentBillId,
+        receiptNumber,
+      },
+      idempotencyKey: `payment-receipt:${schoolId}:${payment.id}`,
+      createdBy: userId,
+    }),
+    enqueueFinanceJob({
+      schoolId,
+      type: "RECOMPUTE_FINANCE_SUMMARY",
+      payload: {
+        reason: "PAYMENT_RECORDED",
+        paymentId: payment.id,
+        studentBillId: data.studentBillId,
+      },
+      idempotencyKey: `finance-summary:${schoolId}:payment:${payment.id}`,
+      createdBy: userId,
+    }),
+    enqueueFinanceJob({
+      schoolId,
+      type: "GENERATE_DAILY_REPORT",
+      payload: {
+        date: payment.paymentDate.toISOString().slice(0, 10),
+      },
+      idempotencyKey: `daily-report:${schoolId}:${payment.paymentDate.toISOString().slice(0, 10)}`,
+      createdBy: userId,
+    }),
+  ]);
+
   revalidatePath(`/list/finance/bills/${data.studentBillId}`);
   revalidatePath("/list/finance/bills");
   revalidatePath("/list/finance/payments");
@@ -257,6 +299,29 @@ export async function reversePayment(paymentId: number, reason: string) {
       studentBillId: billId,
     },
   });
+
+  await Promise.all([
+    enqueueFinanceJob({
+      schoolId,
+      type: "RECOMPUTE_FINANCE_SUMMARY",
+      payload: {
+        reason: "PAYMENT_REVERSED",
+        paymentId: data.paymentId,
+        studentBillId: billId,
+      },
+      idempotencyKey: `finance-summary:${schoolId}:payment-reversal:${data.paymentId}`,
+      createdBy: userId,
+    }),
+    enqueueFinanceJob({
+      schoolId,
+      type: "GENERATE_DAILY_REPORT",
+      payload: {
+        date: payment.paymentDate.toISOString().slice(0, 10),
+      },
+      idempotencyKey: `daily-report:${schoolId}:${payment.paymentDate.toISOString().slice(0, 10)}`,
+      createdBy: userId,
+    }),
+  ]);
 
   revalidatePath(`/list/finance/bills/${billId}`);
   revalidatePath("/list/finance/payments");
