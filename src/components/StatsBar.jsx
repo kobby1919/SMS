@@ -167,7 +167,7 @@ export default function StatsBar() {
               className="text-xs text-gray-400"
               style={{ fontFamily: "'DM Sans', sans-serif" }}
             >
-              Join schools already using EduJay
+              Join schools already using Edujay
             </p>
             <a
               href="/sign-up"

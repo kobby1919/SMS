@@ -20,7 +20,7 @@ export default async function DashboardLayout({
         >
           <Image src="/school.svg" alt="logo" width={32} height={32} priority />
           <span className="hidden md:block font-nunito font-extrabold text-lg tracking-tight text-gray-800">
-            EduJay
+            Edujay
           </span>
         </Link>
         <Menu role={session.role} />

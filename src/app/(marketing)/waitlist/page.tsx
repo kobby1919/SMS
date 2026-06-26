@@ -331,7 +331,7 @@ export default function WaitlistPage() {
                   color:      "rgba(255,255,255,0.42)",
                   lineHeight: 1.7,
                 }}>
-                  Be among the first schools in Ghana to get access to EduJay.
+                  Be among the first schools in Ghana to get access to Edujay.
                 </p>
               </div>
 

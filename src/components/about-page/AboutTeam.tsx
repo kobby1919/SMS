@@ -6,28 +6,28 @@ const team = [
   {
     name: "Jay Mensah",
     role: "Founder & CEO",
-    bio: "Former school administrator turned developer. Built EduJay after spending two years watching Ghanaian schools manage everything manually.",
+    bio: "Former school administrator turned developer. Built Edujay after spending two years watching Ghanaian schools manage everything manually.",
     initials: "JM",
     color: "#8B7FF5",
   },
   {
     name: "Ama Boateng",
     role: "Head of Product",
-    bio: "Spent 6 years teaching in Accra public schools. Every EduJay feature goes through her — if a teacher wouldn't use it, it doesn't ship.",
+    bio: "Spent 6 years teaching in Accra public schools. Every Edujay feature goes through her — if a teacher wouldn't use it, it doesn't ship.",
     initials: "AB",
     color: "#10B981",
   },
   {
     name: "Kweku Asante",
     role: "Lead Engineer",
-    bio: "Full-stack developer with a passion for building resilient systems. Responsible for EduJay's infrastructure, performance, and reliability.",
+    bio: "Full-stack developer with a passion for building resilient systems. Responsible for Edujay's infrastructure, performance, and reliability.",
     initials: "KA",
     color: "#F59E0B",
   },
   {
     name: "Efua Darko",
     role: "Head of Customer Success",
-    bio: "Works directly with schools during onboarding and beyond. The reason schools describe EduJay support as 'the best they've ever experienced'.",
+    bio: "Works directly with schools during onboarding and beyond. The reason schools describe Edujay support as 'the best they've ever experienced'.",
     initials: "ED",
     color: "#FB7185",
   },
@@ -59,7 +59,7 @@ export default function AboutTeam() {
           <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-4"
             style={{ fontFamily: "'Clash Display', sans-serif" }}>
             The people
-            <span style={{ background: "linear-gradient(135deg, #8B7FF5 0%, #10B981 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}> behind EduJay.</span>
+            <span style={{ background: "linear-gradient(135deg, #8B7FF5 0%, #10B981 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}> behind Edujay.</span>
           </h2>
           <p className="text-base text-gray-500 leading-relaxed"
             style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>

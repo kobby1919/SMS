@@ -12,7 +12,7 @@ const values = [
       </svg>
     ),
     title: "Reliability first",
-    description: "Schools depend on EduJay every single day. Attendance must save. Grades must compute correctly. Results must print. We treat reliability as a non-negotiable — not a feature.",
+    description: "Schools depend on Edujay every single day. Attendance must save. Grades must compute correctly. Results must print. We treat reliability as a non-negotiable — not a feature.",
     color: "#8B7FF5",
   },
   {
@@ -36,7 +36,7 @@ const values = [
       </svg>
     ),
     title: "Built around people",
-    description: "Teachers, bursars, parents, students — EduJay is shaped by how real people in Ghanaian schools actually work, not by assumptions made in a boardroom far removed from the classroom.",
+    description: "Teachers, bursars, parents, students — Edujay is shaped by how real people in Ghanaian schools actually work, not by assumptions made in a boardroom far removed from the classroom.",
     color: "#F59E0B",
   },
   {
@@ -48,7 +48,7 @@ const values = [
       </svg>
     ),
     title: "Local by design",
-    description: "Ghana's school system has its own structure, its own rhythms, its own terminology. EduJay speaks that language — from Nursery to JHS 3, Term 1 to Term 3, GH₵ to cedis.",
+    description: "Ghana's school system has its own structure, its own rhythms, its own terminology. Edujay speaks that language — from Nursery to JHS 3, Term 1 to Term 3, GH₵ to cedis.",
     color: "#FB7185",
   },
 ];
@@ -84,7 +84,7 @@ export default function AboutValues() {
           <p className="text-base text-gray-500 leading-relaxed"
             style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
             These aren&apos;t statements on a wall. They&apos;re the decisions we make every day
-            when we&apos;re building EduJay.
+            when we&apos;re building Edujay.
           </p>
         </motion.div>
 

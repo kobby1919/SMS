@@ -44,7 +44,7 @@ export default function CTABanner() {
           {/* Subtext */}
           <p className="text-base lg:text-lg text-gray-500 leading-relaxed mb-10 max-w-xl mx-auto"
             style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
-            Join schools across Ghana already running smarter with EduJay.
+            Join schools across Ghana already running smarter with Edujay.
             Set up in minutes. No IT team needed.
           </p>
 

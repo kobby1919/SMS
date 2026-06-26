@@ -32,10 +32,10 @@ const steps: Step[] = [
     color: "#8B7FF5",
     heading: "Set up your",
     headingAccent: "school.",
-    description: "Start by creating your school profile. Enter your school name, academic year, current term, and region. Then add your classes — from Nursery all the way to JHS 3 — and set up your subjects. EduJay structures itself around your school, not the other way around.",
+    description: "Start by creating your school profile. Enter your school name, academic year, current term, and region. Then add your classes — from Nursery all the way to JHS 3 — and set up your subjects. Edujay structures itself around your school, not the other way around.",
     details: [
       { heading: "Takes under 10 minutes", text: "The entire school setup — profile, classes, and subjects — is designed to be completed in a single session. No back-and-forth, no waiting." },
-      { heading: "Ghana's school structure built in", text: "Nursery, KG, Class 1–6, JHS 1–3 with optional A/B sections. EduJay already knows how Ghanaian schools are structured." },
+      { heading: "Ghana's school structure built in", text: "Nursery, KG, Class 1–6, JHS 1–3 with optional A/B sections. Edujay already knows how Ghanaian schools are structured." },
       { heading: "Academic year & term configuration", text: "Set your academic year and active term once. Every module — attendance, grading, results, fees — automatically aligns to it." },
       { heading: "Subjects assigned per class", text: "Assign subjects to classes and they flow through to timetables, CA scoring, and results automatically." },
     ],
@@ -51,7 +51,7 @@ const steps: Step[] = [
     color: "#10B981",
     heading: "Add your",
     headingAccent: "people.",
-    description: "Invite your teachers, enroll students, and link parents — all from one place. Every person gets a secure login through Clerk, and their view of EduJay is shaped entirely by their role. A teacher sees their classes. A parent sees their child. An admin sees everything.",
+    description: "Invite your teachers, enroll students, and link parents — all from one place. Every person gets a secure login through Clerk, and their view of Edujay is shaped entirely by their role. A teacher sees their classes. A parent sees their child. An admin sees everything.",
     details: [
       { heading: "Teachers onboard in seconds", text: "Enter a teacher's name and email, assign their classes and subjects, and send an invite. They log in and everything is waiting for them." },
       { heading: "Students enrolled per class", text: "Add students individually or import in bulk. Each student is linked to their class, and their record follows them through every term." },
@@ -72,7 +72,7 @@ const steps: Step[] = [
     headingAccent: "everything.",
     description: "With your school configured and your people added, every module is live and ready. Teachers mark attendance from their phones. Grades compute as scores are entered. The bursar tracks payments. Admins see the full picture from the dashboard. No setup required per module — it all just works.",
     details: [
-      { heading: "Attendance is live immediately", text: "Teachers open EduJay on any device, pick their class, and mark. Absences trigger alerts automatically. No paper, no delays." },
+      { heading: "Attendance is live immediately", text: "Teachers open Edujay on any device, pick their class, and mark. Absences trigger alerts automatically. No paper, no delays." },
       { heading: "Grades flow from CA to results", text: "Enter CA component scores and exam scores — grades compute and feed straight into the term results report. One less thing to calculate." },
       { heading: "Timetable is accessible to all roles", text: "Build the timetable once and every teacher, student, and parent sees their own filtered view of it automatically." },
       { heading: "Finance and bursar dashboard live", text: "The bursar logs payments as they come in. The ledger updates in real time. End-of-term reports generate in one click." },

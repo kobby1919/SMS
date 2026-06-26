@@ -7,7 +7,7 @@ import HomepageNavbar from "@/src/components/HomepageNavbar"
 
 
 export const metadata = {
-  title: "Features — EduJay",
+  title: "Features — Edujay",
   description: "Every tool your school needs. Attendance, grading, timetables, results, finance, and a dedicated bursar dashboard — all in one platform.",
 };
 
@@ -44,7 +44,7 @@ export default function FeaturesPage() {
         color="#F59E0B"
         heading="Grades that"
         headingAccent="compute themselves."
-        description="Set your CA-to-exam weight split once — 30/70, 50/50, whatever your school uses — and EduJay handles the rest. Teachers enter scores, grades compute automatically, and results are ready the moment the last mark goes in."
+        description="Set your CA-to-exam weight split once — 30/70, 50/50, whatever your school uses — and Edujay handles the rest. Teachers enter scores, grades compute automatically, and results are ready the moment the last mark goes in."
         benefits={[
           { text: "Fully configurable CA-to-exam weight splits per school or class" },
           { text: "Automatic grade letter computation — A, B, C, D, F" },
@@ -81,7 +81,7 @@ export default function FeaturesPage() {
         color="#60A5FA"
         heading="Term reports,"
         headingAccent="in one click."
-        description="Generate clean, structured term result reports for every student in your school. From Nursery to JHS 3 — EduJay handles Ghana's full school structure and produces professional-grade reports instantly."
+        description="Generate clean, structured term result reports for every student in your school. From Nursery to JHS 3 — Edujay handles Ghana's full school structure and produces professional-grade reports instantly."
         benefits={[
           { text: "Printable and exportable PDF result sheets per student" },
           { text: "Supports all Ghana school levels — Nursery, KG, Class 1–6, JHS 1–3" },
@@ -100,7 +100,7 @@ export default function FeaturesPage() {
         color="#FB7185"
         heading="Every cedi,"
         headingAccent="accounted for."
-        description="Track student fee bills, log payments, and flag overdue accounts — all in one place. EduJay's finance module keeps your school's money clear and your bursar's desk clean."
+        description="Track student fee bills, log payments, and flag overdue accounts — all in one place. Edujay's finance module keeps your school's money clear and your bursar's desk clean."
         benefits={[
           { text: "Per-student fee ledger with bill, paid, and outstanding breakdown" },
           { text: "Payment status tracking — Paid, Pending, Overdue at a glance" },
@@ -118,7 +118,7 @@ export default function FeaturesPage() {
         color="#A855F7"
         heading="A command center"
         headingAccent="for your bursar."
-        description="The bursar's office runs on numbers — and EduJay gives them a dedicated space to stay on top of every cedi. Daily collections, outstanding balances, payment history, and one-click term reports. Everything reconciles automatically so end-of-term is never a scramble."
+        description="The bursar's office runs on numbers — and Edujay gives them a dedicated space to stay on top of every cedi. Daily collections, outstanding balances, payment history, and one-click term reports. Everything reconciles automatically so end-of-term is never a scramble."
         benefits={[
           { text: "Daily collection summary — total received, number of payments, breakdown by method" },
           { text: "Per-student fee ledger with full payment history and outstanding balance" },
@@ -138,7 +138,7 @@ export default function FeaturesPage() {
         color="#F59E0B"
         heading="Right person,"
         headingAccent="right view. Always."
-        description="EduJay is built around roles. Admins, teachers, students, and parents each log in to a version of EduJay shaped exactly for them — no clutter, no irrelevant data, no confusion."
+        description="Edujay is built around roles. Admins, teachers, students, and parents each log in to a version of Edujay shaped exactly for them — no clutter, no irrelevant data, no confusion."
         benefits={[
           { text: "Admins see the full school — every class, teacher, student, and report" },
           { text: "Teachers see only their assigned classes, subjects, and students" },

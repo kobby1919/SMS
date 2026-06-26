@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 const testimonials = [
   {
     quote:
-      "EduJay completely changed how we manage our school. Attendance used to take 30 minutes every morning — now it's done in seconds.",
+      "Edujay completely changed how we manage our school. Attendance used to take 30 minutes every morning — now it's done in seconds.",
     name: "Mrs. Abena Asante",
     role: "Headmistress",
     school: "Blessed Kids Academy, Accra",
@@ -70,7 +70,7 @@ export default function Testimonials() {
             Schools love
             <br />
             <span style={{ background: "linear-gradient(135deg, #8B7FF5 0%, #A855F7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              EduJay.
+              Edujay.
             </span>
           </h2>
 

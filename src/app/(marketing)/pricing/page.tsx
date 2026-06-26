@@ -7,7 +7,7 @@ import PricingFAQ from "@/src/components/pricing/PricingFAQ";
 import CTABanner from "@/src/components/CTABanner";
 
 export const metadata = {
-  title: "Pricing — EduJay",
+  title: "Pricing — Edujay",
   description: "Simple, honest pricing for every Ghanaian school. Start free, grow at your own pace.",
 };
 

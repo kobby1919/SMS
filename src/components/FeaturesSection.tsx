@@ -704,7 +704,7 @@ export default function FeaturesSection() {
                 lineHeight: 1.75,
               }}
             >
-              EduJay is purpose-built for Ghanaian schools — covering every
+              Edujay is purpose-built for Ghanaian schools — covering every
               workflow from the first bell to the final report card.
             </p>
           </div>

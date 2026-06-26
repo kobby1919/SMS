@@ -12,19 +12,19 @@ const timeline = [
   {
     year: "Early 2025",
     title: "Building the foundation",
-    description: "We spent months embedded with teachers, bursars, and headmasters across Accra and Kumasi. We watched how they actually worked — not how we assumed they did. EduJay's first modules were shaped entirely by those conversations.",
+    description: "We spent months embedded with teachers, bursars, and headmasters across Accra and Kumasi. We watched how they actually worked — not how we assumed they did. Edujay's first modules were shaped entirely by those conversations.",
     color: "#10B981",
   },
   {
     year: "Mid 2025",
     title: "First schools go live",
-    description: "The first three schools started using EduJay in Term 2. Teachers marked attendance on their phones for the first time. A bursar generated a full term financial report in under a minute. The feedback was immediate — and honest.",
+    description: "The first three schools started using Edujay in Term 2. Teachers marked attendance on their phones for the first time. A bursar generated a full term financial report in under a minute. The feedback was immediate — and honest.",
     color: "#F59E0B",
   },
   {
     year: "2026",
     title: "Growing across Ghana",
-    description: "EduJay now serves schools across Greater Accra, Ashanti, and Central regions. We're building the bursar dashboard, expanding result reporting, and working toward a parent mobile experience. The mission hasn't changed.",
+    description: "Edujay now serves schools across Greater Accra, Ashanti, and Central regions. We're building the bursar dashboard, expanding result reporting, and working toward a parent mobile experience. The mission hasn't changed.",
     color: "#FB7185",
   },
 ];
@@ -54,7 +54,7 @@ export default function AboutStory() {
           </div>
           <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-4"
             style={{ fontFamily: "'Clash Display', sans-serif" }}>
-            How EduJay
+            How Edujay
             <br />
             <span style={{ background: "linear-gradient(135deg, #8B7FF5 0%, #10B981 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               came to life.

@@ -6,7 +6,7 @@ import HIWFAQ from "@/src/components/howItWorks/HIWFAQ";
 import CTABanner from "@/src/components/CTABanner";
 
 export const metadata = {
-  title: "How It Works — EduJay",
+  title: "How It Works — Edujay",
   description: "Set up your school, add your people, and run everything — in three simple steps. No IT team needed.",
 };
 

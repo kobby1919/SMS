@@ -53,7 +53,7 @@ export default function AboutHero() {
 
           <p className="text-sm lg:text-base text-white/45 leading-relaxed mb-8 max-w-lg"
             style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
-            EduJay was born from a simple frustration — Ghanaian schools deserve better tools.
+            Edujay was born from a simple frustration — Ghanaian schools deserve better tools.
             We decided to build them.
           </p>
 

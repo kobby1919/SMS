@@ -249,7 +249,7 @@ export default function SchoolsSection() {
                 letterSpacing: "0.18em",
                 textTransform: "uppercase",
               }}>
-                Schools using EduJay
+                Schools using Edujay
               </span>
             </div>
 
@@ -283,7 +283,7 @@ export default function SchoolsSection() {
               lineHeight: 1.75,
               maxWidth:   "520px",
             }}>
-              From Greater Accra to Ashanti, schools rely on EduJay to manage students, staff, fees, and results — every day.
+              From Greater Accra to Ashanti, schools rely on Edujay to manage students, staff, fees, and results — every day.
             </p>
           </div>
         </div>
@@ -334,7 +334,7 @@ export default function SchoolsSection() {
               color:      "#9CA3AF",
               fontWeight: 400,
             }}>
-              Be among the first schools to transform with EduJay.
+              Be among the first schools to transform with Edujay.
             </p>
             <a
               href="/sign-up"

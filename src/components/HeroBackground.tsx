@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 
-export default function EduJayBackground({
+export default function EdujayBackground({
   children,
 }: {
   children?: React.ReactNode;

@@ -28,7 +28,7 @@ export default function FeaturesCTA() {
           <p className="text-base text-white/50 leading-relaxed mb-10 max-w-lg mx-auto"
             style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
             No modules to unlock. No upgrade walls. Every feature shown here is available
-            the moment you set up your school on EduJay.
+            the moment you set up your school on Edujay.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <motion.a href="/sign-up"

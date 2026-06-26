@@ -58,7 +58,7 @@ export default function AboutMission() {
               </p>
               <p className="text-base text-gray-500 leading-relaxed"
                 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>
-                EduJay is not a global product adapted for Ghana. It is built here, from scratch,
+                Edujay is not a global product adapted for Ghana. It is built here, from scratch,
                 with Ghana&apos;s school structure, curriculum, and workflows at its core.
               </p>
             </div>

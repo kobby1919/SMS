@@ -174,7 +174,7 @@ export function ResultsVisual({ color = "#60A5FA" }: { color?: string }) {
       <div className="rounded-2xl overflow-hidden" style={{ background: "white", border: `1px solid ${color}22`, boxShadow: `0 20px 60px ${color}18, 0 4px 20px rgba(0,0,0,0.06)` }}>
         {/* Report header */}
         <div className="px-6 py-5 text-center" style={{ borderBottom: "1px solid #f1f1f3", background: `${color}08` }}>
-          <div className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>EduJay · Term 2 Report</div>
+          <div className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>Edujay · Term 2 Report</div>
           <div className="text-base font-extrabold text-gray-900" style={{ fontFamily: "'Sora', sans-serif" }}>Ama Boateng</div>
           <div className="text-xs text-gray-400 mt-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>Class 4B · 2025/26 Academic Year</div>
           <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full" style={{ background: `${color}18`, border: `1px solid ${color}30` }}>

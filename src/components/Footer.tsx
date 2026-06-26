@@ -213,7 +213,7 @@ export default function Footer() {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <p className="text-xs" style={{ color: "rgba(255,255,255,0.2)", fontFamily: "'DM Sans', sans-serif" }}>
-            © {new Date().getFullYear()} EduJay. Built with ❤️ in Ghana.
+            © {new Date().getFullYear()} Edujay. Built with ❤️ in Ghana.
           </p>
 
           <div className="flex items-center gap-1.5">

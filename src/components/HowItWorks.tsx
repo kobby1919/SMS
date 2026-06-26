@@ -30,7 +30,7 @@ const STEPS: Step[] = [
     number: "01",
     label: "Foundation",
     title: "Set Up Your School",
-    body: "Configure your school profile, academic year, terms, classes, and subjects in minutes. EduJay adapts to your school's structure — from Nursery all the way to JHS 3.",
+    body: "Configure your school profile, academic year, terms, classes, and subjects in minutes. Edujay adapts to your school's structure — from Nursery all the way to JHS 3.",
     color: B.blueLight,
     details: ["Academic year & terms", "Classes & sections", "Subjects & curriculum"],
     icon: (
@@ -335,7 +335,7 @@ export default function HowItWorks() {
                 lineHeight: 1.85,
                 margin: 0,
               }}>
-                No lengthy onboarding. No IT team required. EduJay is designed so any school administrator can get started today — and be fully operational by tomorrow.
+                No lengthy onboarding. No IT team required. Edujay is designed so any school administrator can get started today — and be fully operational by tomorrow.
               </p>
             </div>
           </div>
@@ -397,7 +397,7 @@ export default function HowItWorks() {
               fontSize: 13,
               color: "rgba(200,204,255,0.4)",
             }}>
-              Join schools across Ghana already running on EduJay.
+              Join schools across Ghana already running on Edujay.
             </div>
           </div>
 

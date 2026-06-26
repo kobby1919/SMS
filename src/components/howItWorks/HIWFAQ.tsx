@@ -5,12 +5,12 @@ import { useState } from "react";
 
 const faqs = [
   {
-    q: "How long does it take to fully set up EduJay for my school?",
+    q: "How long does it take to fully set up Edujay for my school?",
     a: "Most schools are fully set up within an hour. School profile, classes, subjects, and your first batch of teachers and students can all be added in a single session. You don't need to complete everything before you start using it — you can add people and configure modules as you go.",
   },
   {
     q: "Do I need an IT person or technical knowledge to get started?",
-    a: "Not at all. EduJay is designed for school administrators, teachers, and bursars — not developers. If you can use a smartphone or a basic computer, you can set up and run EduJay. There's no installation, no servers to manage, and no technical configuration required.",
+    a: "Not at all. Edujay is designed for school administrators, teachers, and bursars — not developers. If you can use a smartphone or a basic computer, you can set up and run Edujay. There's no installation, no servers to manage, and no technical configuration required.",
   },
   {
     q: "Can I import existing student and teacher data?",
@@ -18,19 +18,19 @@ const faqs = [
   },
   {
     q: "What happens to my data at the end of the academic year?",
-    a: "All your data is preserved. When a new academic year begins, you simply create a new year configuration and EduJay carries over your school structure, staff, and students. Historical results, attendance records, and financial data remain archived and accessible at any time.",
+    a: "All your data is preserved. When a new academic year begins, you simply create a new year configuration and Edujay carries over your school structure, staff, and students. Historical results, attendance records, and financial data remain archived and accessible at any time.",
   },
   {
-    q: "Can multiple teachers and admins use EduJay at the same time?",
-    a: "Yes — EduJay is fully multi-user. Every teacher, admin, student, and parent has their own account and can be logged in simultaneously. A teacher marking attendance in Class 4B doesn't affect anything a teacher in JHS 1 is doing at the same time.",
+    q: "Can multiple teachers and admins use Edujay at the same time?",
+    a: "Yes — Edujay is fully multi-user. Every teacher, admin, student, and parent has their own account and can be logged in simultaneously. A teacher marking attendance in Class 4B doesn't affect anything a teacher in JHS 1 is doing at the same time.",
   },
   {
-    q: "What devices does EduJay work on?",
-    a: "EduJay runs entirely in the browser — no app download needed. It works on any device with a modern browser: phones, tablets, laptops, and desktops. Teachers commonly mark attendance on their phones while admins use laptops for reporting.",
+    q: "What devices does Edujay work on?",
+    a: "Edujay runs entirely in the browser — no app download needed. It works on any device with a modern browser: phones, tablets, laptops, and desktops. Teachers commonly mark attendance on their phones while admins use laptops for reporting.",
   },
   {
     q: "Is my school's data secure and private?",
-    a: "Yes. Every school on EduJay operates in complete isolation — no school can ever see another school's data. Authentication is handled by Clerk, an enterprise-grade security platform. All data is encrypted in transit and at rest.",
+    a: "Yes. Every school on Edujay operates in complete isolation — no school can ever see another school's data. Authentication is handled by Clerk, an enterprise-grade security platform. All data is encrypted in transit and at rest.",
   },
 ];
 

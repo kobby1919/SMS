@@ -101,7 +101,7 @@ export default function HowItWorksHero() {
             style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}
           >
             No IT team. No lengthy onboarding. No training manual. Any school
-            administrator can have EduJay fully set up and running on the same
+            administrator can have Edujay fully set up and running on the same
             day.
           </p>
 

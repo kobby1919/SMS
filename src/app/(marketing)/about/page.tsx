@@ -8,8 +8,8 @@ import Footer from "@/src/components/Footer";
 import HomepageNavbar from "@/src/components/HomepageNavbar"
 
 export const metadata = {
-  title: "About — EduJay",
-  description: "Built in Ghana, for Ghana. EduJay is purpose-built school management software for Ghanaian schools.",
+  title: "About — Edujay",
+  description: "Built in Ghana, for Ghana. Edujay is purpose-built school management software for Ghanaian schools.",
 };
 
 export default function AboutPage() {
