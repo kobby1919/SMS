@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { GraduationCap, ShieldCheck } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { AUTH_CALLBACK_PATH, MISSING_ROLE_QUERY } from "@/src/lib/auth/constants";
 
@@ -11,8 +10,7 @@ const ClerkSignIn = dynamic(
     ssr: false,
     loading: () => (
       <div className="w-full rounded-lg border border-slate-200 bg-white p-7 shadow-sm">
-        <div className="h-4 w-32 rounded bg-slate-100" />
-        <div className="mt-7 space-y-4">
+        <div className="space-y-4">
           <div className="h-11 rounded-md bg-slate-100" />
           <div className="h-11 rounded-md bg-slate-100" />
           <div className="h-11 rounded-md bg-blue-100" />
@@ -34,18 +32,6 @@ export default function SignInView() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#f6f8fb] px-4 py-10">
       <section className="w-full max-w-[430px]">
-        <div className="mb-6 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg border border-blue-100 bg-white shadow-sm">
-            <GraduationCap className="text-blue-700" size={26} />
-          </div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-950">
-            Edujay
-          </h1>
-          <p className="mt-2 text-sm font-medium text-slate-500">
-            Secure access for schools, staff, students, and parents.
-          </p>
-        </div>
-
         {missingRole && (
           <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
             <p className="font-semibold">Account is missing a role</p>
@@ -85,9 +71,9 @@ export default function SignInView() {
               rootBox: "w-full",
               card: "w-full rounded-lg border border-slate-200 shadow-sm",
               cardBox: "shadow-none",
-              header: "text-left",
-              headerTitle: "text-xl font-black tracking-tight text-slate-950",
-              headerSubtitle: "text-sm font-medium text-slate-500",
+              header: "hidden",
+              headerTitle: "hidden",
+              headerSubtitle: "hidden",
               formFieldLabel: "text-xs font-bold uppercase text-slate-500",
               formFieldInput:
                 "rounded-md border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-medium text-slate-900 " +
@@ -105,6 +91,9 @@ export default function SignInView() {
               alertText: "text-sm font-medium text-rose-600",
               socialButtonsBlockButton:
                 "rounded-md border border-slate-200 transition-colors hover:bg-slate-50",
+              footer: "hidden",
+              footerAction: "hidden",
+              footerPages: "hidden",
             },
             variables: {
               colorPrimary: "#1d4ed8",
@@ -118,15 +107,6 @@ export default function SignInView() {
             },
           }}
         />
-
-        <div className="mt-5 flex items-center justify-center gap-2 text-xs font-medium text-slate-500">
-          <ShieldCheck size={14} className="text-emerald-600" />
-          <span>Authentication is protected by Clerk.</span>
-        </div>
-
-        <p className="mt-4 text-center text-xs font-medium text-slate-400">
-          Edujay school management platform
-        </p>
       </section>
     </main>
   );
