@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { ShieldCheck } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { AUTH_CALLBACK_PATH, MISSING_ROLE_QUERY } from "@/src/lib/auth/constants";
 
@@ -32,6 +33,15 @@ export default function SignInView() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#f6f8fb] px-4 py-10">
       <section className="w-full max-w-[430px]">
+        <div className="mb-5 text-center">
+          <h1 className="text-2xl font-black tracking-tight text-slate-950">
+            Edujay
+          </h1>
+          <p className="mt-2 text-sm font-medium text-slate-500">
+            Secure school access
+          </p>
+        </div>
+
         {missingRole && (
           <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
             <p className="font-semibold">Account is missing a role</p>
@@ -107,6 +117,11 @@ export default function SignInView() {
             },
           }}
         />
+
+        <div className="mt-4 flex items-center justify-center gap-2 text-xs font-medium text-slate-500">
+          <ShieldCheck size={14} className="text-emerald-600" />
+          <span>Protected by Clerk</span>
+        </div>
       </section>
     </main>
   );
