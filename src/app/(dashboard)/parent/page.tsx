@@ -13,12 +13,447 @@ import {
   CheckCircle2, XCircle, Clock, FileCheck,
   AlertTriangle, TrendingUp, TrendingDown, Minus,
   CalendarDays, ShieldAlert, FileText, Award,
-  AlertCircle, Star, BookOpen,
+  AlertCircle, Star, BookOpen, BellRing, ClipboardList,
+  Megaphone, ReceiptText, WalletCards, MessageCircle,
+  BadgeCheck, HandCoins, NotebookTabs, ShieldCheck,
 } from "lucide-react";
 import { getGradeBandByGrade, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
-import { getParentDashboardData } from "@/src/lib/services/parent-dashboard";
+import {
+  getParentDashboardData,
+  type ParentAcademicProgress,
+  type ParentActivityFeedItem,
+  type ParentRiskAlert,
+} from "@/src/lib/services/parent-dashboard";
 
 export const dynamic = "force-dynamic";
+
+const activityTone: Record<ParentActivityFeedItem["tone"], string> = {
+  green: "bg-emerald-50 text-emerald-700 border-emerald-100",
+  blue: "bg-sky-50 text-sky-700 border-sky-100",
+  amber: "bg-amber-50 text-amber-700 border-amber-100",
+  rose: "bg-rose-50 text-rose-700 border-rose-100",
+  violet: "bg-violet-50 text-violet-700 border-violet-100",
+  slate: "bg-slate-50 text-slate-700 border-slate-100",
+};
+
+function ActivityIcon({ type }: { type: ParentActivityFeedItem["type"] }) {
+  const className = "h-4 w-4";
+  if (type === "ATTENDANCE") return <CheckCircle2 className={className} />;
+  if (type === "ASSESSMENT") return <Award className={className} />;
+  if (type === "ASSIGNMENT") return <ClipboardList className={className} />;
+  if (type === "ANNOUNCEMENT") return <Megaphone className={className} />;
+  if (type === "BILL") return <WalletCards className={className} />;
+  return <ReceiptText className={className} />;
+}
+
+function ActivityFeedPanel({ items }: { items: ParentActivityFeedItem[] }) {
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="px-5 py-4 border-b border-gray-100 flex items-start justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+            <BellRing size={17} />
+          </div>
+          <div>
+            <h2 className="text-sm font-black text-gray-900">Live School Feed</h2>
+            <p className="text-xs text-gray-400 font-medium mt-0.5">
+              Attendance, academics, fees, homework, and notices in one timeline.
+            </p>
+          </div>
+        </div>
+        <span className="hidden sm:inline-flex rounded-full bg-slate-50 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-slate-400">
+          Source of truth
+        </span>
+      </div>
+
+      {items.length === 0 ? (
+        <div className="px-5 py-8 text-center">
+          <p className="text-sm font-bold text-gray-400">No recent school activity yet</p>
+          <p className="text-xs text-gray-300 mt-1">
+            Updates will appear here when the school records attendance, scores, bills, payments, assignments, or notices.
+          </p>
+        </div>
+      ) : (
+        <div className="divide-y divide-gray-50">
+          {items.slice(0, 8).map((item) => {
+            const content = (
+              <div className="flex items-start gap-3 px-5 py-3.5 hover:bg-gray-50/70 transition-colors">
+                <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${activityTone[item.tone]}`}>
+                  <ActivityIcon type={item.type} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="truncate text-sm font-black text-gray-800">{item.title}</p>
+                    <span className="shrink-0 text-[10px] font-bold text-gray-300">
+                      {item.occurredAt.toLocaleDateString("en-GH", { day: "numeric", month: "short" })}
+                    </span>
+                  </div>
+                  <p className="mt-0.5 line-clamp-2 text-xs font-medium leading-relaxed text-gray-400">
+                    {item.childName && <span className="font-black text-gray-500">{item.childName}: </span>}
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            );
+
+            return item.href ? (
+              <Link key={item.id} href={item.href}>
+                {content}
+              </Link>
+            ) : (
+              <div key={item.id}>{content}</div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AcademicProgressPanel({
+  childName,
+  progress,
+  reportHref,
+}: {
+  childName: string;
+  progress: ParentAcademicProgress;
+  reportHref?: string;
+}) {
+  const trendCopy = {
+    up: "Improving",
+    down: "Dropping",
+    steady: "Stable",
+    new: "New data",
+  }[progress.trend];
+  const trendColor = {
+    up: "text-emerald-600 bg-emerald-50",
+    down: "text-rose-600 bg-rose-50",
+    steady: "text-slate-600 bg-slate-50",
+    new: "text-sky-600 bg-sky-50",
+  }[progress.trend];
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="px-5 py-4 border-b border-gray-100 flex items-start justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <div className="w-8 h-8 bg-sky-50 rounded-xl flex items-center justify-center shrink-0">
+            <BookOpen size={15} className="text-sky-600" />
+          </div>
+          <div>
+            <p className="text-sm font-black text-gray-800">Continuous Progress</p>
+            <p className="text-[11px] text-gray-400 font-medium mt-0.5">
+              See {childName}&apos;s academic movement before end-of-term reports.
+            </p>
+          </div>
+        </div>
+        <span className={`shrink-0 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wide ${trendColor}`}>
+          {trendCopy}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-3 divide-x divide-gray-100">
+        <div className="p-4">
+          <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">CA Ready</p>
+          <p className="mt-1 text-2xl font-black text-gray-900">{progress.completionRate}%</p>
+          <p className="text-[10px] font-semibold text-gray-400">
+            {progress.completedSubjects}/{progress.expectedSubjects || progress.completedSubjects} subjects
+          </p>
+        </div>
+        <div className="p-4">
+          <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Average</p>
+          <p className="mt-1 text-2xl font-black text-indigo-700">{progress.averageScore}%</p>
+          <p className="text-[10px] font-semibold text-gray-400">Current term</p>
+        </div>
+        <div className="p-4">
+          <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Movement</p>
+          <p className={`mt-1 text-2xl font-black ${progress.trend === "up" ? "text-emerald-600" : progress.trend === "down" ? "text-rose-600" : "text-gray-800"}`}>
+            {progress.trendDiff > 0 ? "+" : ""}{progress.trend === "new" ? "0" : progress.trendDiff}%
+          </p>
+          <p className="text-[10px] font-semibold text-gray-400">Vs previous term</p>
+        </div>
+      </div>
+
+      <div className="px-5 py-4 border-t border-gray-100">
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Subjects To Watch</p>
+          {reportHref && (
+            <Link href={reportHref} className="text-[11px] font-black text-indigo-600 hover:text-indigo-800">
+              Open report
+            </Link>
+          )}
+        </div>
+        {progress.focusSubjects.length === 0 ? (
+          <p className="rounded-xl bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">
+            No weak subject signal yet. Keep monitoring as teachers publish more CA records.
+          </p>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {progress.focusSubjects.map((subject) => (
+              <div key={subject.subjectId} className="flex items-center gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="truncate text-xs font-black text-gray-700">{subject.subjectName}</p>
+                    <span className={`text-[10px] font-black ${subject.status === "support" ? "text-rose-600" : subject.trend === "down" ? "text-rose-600" : "text-amber-600"}`}>
+                      {subject.grade} / {subject.score}%
+                    </span>
+                  </div>
+                  <div className="mt-1 h-2 overflow-hidden rounded-full bg-gray-100">
+                    <div
+                      className={`h-full rounded-full ${subject.status === "support" ? "bg-rose-500" : subject.status === "watch" ? "bg-amber-500" : "bg-emerald-500"}`}
+                      style={{ width: `${Math.max(subject.score, 6)}%` }}
+                    />
+                  </div>
+                </div>
+                <span className="w-20 shrink-0 rounded-lg bg-gray-50 px-2 py-1 text-center text-[10px] font-bold text-gray-500">
+                  {subject.trend === "new" ? "New" : subject.change > 0 ? `+${subject.change}%` : `${subject.change}%`}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function RiskAlertPanel({ alerts }: { alerts: ParentRiskAlert[] }) {
+  const severityStyle = {
+    high: "bg-rose-50 text-rose-700 border-rose-100",
+    medium: "bg-amber-50 text-amber-700 border-amber-100",
+    low: "bg-sky-50 text-sky-700 border-sky-100",
+  };
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+            <ShieldAlert size={17} />
+          </div>
+          <div>
+            <h2 className="text-sm font-black text-gray-900">Smart Parent Alerts</h2>
+            <p className="text-xs text-gray-400 font-medium mt-0.5">
+              Edujay surfaces issues early so parents do not wait until term end.
+            </p>
+          </div>
+        </div>
+      </div>
+      {alerts.length === 0 ? (
+        <div className="px-5 py-5 flex items-start gap-3">
+          <ShieldCheck className="h-5 w-5 text-emerald-500 shrink-0" />
+          <div>
+            <p className="text-sm font-black text-gray-800">No urgent parent alerts</p>
+            <p className="text-xs text-gray-400 font-medium mt-0.5">
+              Attendance, academics, finance, and school communication are being monitored.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="divide-y divide-gray-50">
+          {alerts.map((alert) => (
+            <Link key={alert.id} href={alert.href} className="flex items-start gap-3 px-5 py-3.5 hover:bg-gray-50">
+              <span className={`mt-0.5 rounded-xl border px-2 py-1 text-[10px] font-black uppercase ${severityStyle[alert.severity]}`}>
+                {alert.severity}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-black text-gray-800">{alert.title}</p>
+                <p className="mt-0.5 text-xs font-medium text-gray-400">{alert.description}</p>
+              </div>
+              <span className="hidden sm:inline text-[11px] font-black text-indigo-600">{alert.actionLabel}</span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ParentTrustPanel({ score }: { score: number }) {
+  return (
+    <div className="bg-slate-950 rounded-2xl border border-slate-800 shadow-sm p-5 text-white">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-xs font-black uppercase tracking-widest text-sky-300">Transparency Score</p>
+          <h2 className="mt-2 text-3xl font-black">{score}%</h2>
+          <p className="mt-1 max-w-xl text-sm font-medium text-slate-300">
+            This measures how much of the child&apos;s school life is visible to the parent: attendance, CA, finance, and notices.
+          </p>
+        </div>
+        <BadgeCheck className="h-8 w-8 text-emerald-300 shrink-0" />
+      </div>
+    </div>
+  );
+}
+
+function ParentValuePanels({ child }: { child: Awaited<ReturnType<typeof getParentDashboardData>>["childrenData"][number] }) {
+  const finance = child.financeSummary;
+  const homework = child.homeworkSummary;
+  const communication = child.communicationSummary;
+  const digest = child.weeklyDigest;
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 bg-emerald-50 rounded-xl flex items-center justify-center">
+            <HandCoins size={15} className="text-emerald-600" />
+          </div>
+          <div>
+            <p className="text-sm font-black text-gray-800">Fee Transparency</p>
+            <p className="text-[11px] text-gray-400 font-medium">Bills, payments, and balance in one place.</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          <div>
+            <p className="text-[10px] font-black uppercase text-gray-400">Billed</p>
+            <p className="text-sm font-black text-gray-800">GHS {finance.totalBilled.toFixed(2)}</p>
+          </div>
+          <div>
+            <p className="text-[10px] font-black uppercase text-gray-400">Paid</p>
+            <p className="text-sm font-black text-emerald-600">GHS {finance.totalPaid.toFixed(2)}</p>
+          </div>
+          <div>
+            <p className="text-[10px] font-black uppercase text-gray-400">Balance</p>
+            <p className="text-sm font-black text-rose-600">GHS {finance.outstanding.toFixed(2)}</p>
+          </div>
+        </div>
+        <div className="mt-4 h-2 rounded-full bg-gray-100 overflow-hidden">
+          <div className="h-full rounded-full bg-emerald-500" style={{ width: `${Math.min(finance.paymentRate, 100)}%` }} />
+        </div>
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <p className="text-xs font-semibold text-gray-400">
+            {finance.lastPayment
+              ? `Last receipt: ${finance.lastPayment.receiptNumber}`
+              : "No confirmed payment recorded yet"}
+          </p>
+          <Link href="/list/finance/bills" className="text-[11px] font-black text-indigo-600">View bills</Link>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 bg-violet-50 rounded-xl flex items-center justify-center">
+            <NotebookTabs size={15} className="text-violet-600" />
+          </div>
+          <div>
+            <p className="text-sm font-black text-gray-800">Homework Visibility</p>
+            <p className="text-[11px] text-gray-400 font-medium">Parents see upcoming work before deadlines pass.</p>
+          </div>
+        </div>
+        {homework.assignments.length === 0 ? (
+          <p className="rounded-xl bg-gray-50 px-3 py-3 text-xs font-bold text-gray-400">No assignment has been published for this class yet.</p>
+        ) : (
+          <div className="space-y-2">
+            {homework.assignments.slice(0, 3).map((assignment) => (
+              <div key={assignment.id} className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-xs font-black text-gray-700">{assignment.title}</p>
+                  <p className="text-[10px] font-semibold text-gray-400">{assignment.subjectName}</p>
+                </div>
+                <span className={`shrink-0 rounded-lg px-2 py-1 text-[10px] font-black ${
+                  assignment.status === "overdue" ? "bg-rose-50 text-rose-600" : "bg-sky-50 text-sky-600"
+                }`}>
+                  {assignment.dueDate.toLocaleDateString("en-GH", { day: "numeric", month: "short" })}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 bg-sky-50 rounded-xl flex items-center justify-center">
+            <MessageCircle size={15} className="text-sky-600" />
+          </div>
+          <div>
+            <p className="text-sm font-black text-gray-800">School Connection</p>
+            <p className="text-[11px] text-gray-400 font-medium">Teachers and notices tied to this child.</p>
+          </div>
+        </div>
+        <p className="text-xs font-bold text-gray-500">
+          {communication.teacherNames.length > 0
+            ? `Teachers: ${communication.teacherNames.join(", ")}`
+            : "No teacher timetable has been published yet."}
+        </p>
+        <p className="mt-2 text-xs font-semibold text-gray-400">
+          {communication.latestAnnouncement
+            ? `Latest notice: ${communication.latestAnnouncement.title}`
+            : "No recent school notice for this class."}
+        </p>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 bg-amber-50 rounded-xl flex items-center justify-center">
+            <ReceiptText size={15} className="text-amber-600" />
+          </div>
+          <div>
+            <p className="text-sm font-black text-gray-800">Weekly Digest Preview</p>
+            <p className="text-[11px] text-gray-400 font-medium">A compact summary parents can receive weekly.</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-5 gap-2 text-center">
+          {[
+            ["Att.", digest.attendanceRecords],
+            ["CA", digest.academicUpdates],
+            ["Fees", digest.financeUpdates],
+            ["Work", digest.homeworkUpdates],
+            ["News", digest.notices],
+          ].map(([label, value]) => (
+            <div key={label} className="rounded-xl bg-gray-50 px-2 py-2">
+              <p className="text-sm font-black text-gray-800">{value}</p>
+              <p className="text-[9px] font-black uppercase text-gray-400">{label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 bg-emerald-50 rounded-xl flex items-center justify-center">
+            <ShieldCheck size={15} className="text-emerald-600" />
+          </div>
+          <div>
+            <p className="text-sm font-black text-gray-800">Behaviour Record</p>
+            <p className="text-[11px] text-gray-400 font-medium">Discipline, praise, and conduct updates for parent trust.</p>
+          </div>
+        </div>
+        <div className="rounded-xl bg-emerald-50 px-3 py-3">
+          <p className="text-xs font-black text-emerald-700">No behaviour concern published</p>
+          <p className="mt-1 text-[11px] font-medium text-emerald-600">
+            When the school starts recording behaviour notes, parents will see praise, warnings, follow-ups, and resolution history here.
+          </p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 bg-indigo-50 rounded-xl flex items-center justify-center">
+            <FileCheck size={15} className="text-indigo-600" />
+          </div>
+          <div>
+            <p className="text-sm font-black text-gray-800">Parent Acknowledgement</p>
+            <p className="text-[11px] text-gray-400 font-medium">Important notices become traceable parent confirmations.</p>
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-3">
+          <div>
+            <p className="text-xs font-black text-gray-700">Current pending items</p>
+            <p className="mt-1 text-[11px] font-medium text-gray-400">
+              {communication.latestAnnouncement
+                ? `Latest notice available: ${communication.latestAnnouncement.title}`
+                : "No acknowledgement request has been published yet."}
+            </p>
+          </div>
+          <Link href="/list/announcements" className="shrink-0 text-[11px] font-black text-indigo-600">
+            Notices
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const ParentPage = async ({
   searchParams,
@@ -27,7 +462,7 @@ const ParentPage = async ({
 }) => {
   const { userId, schoolId } = await requirePageSession(["parent"]);
 
-  const { parent, childrenData } = await getParentDashboardData(userId, schoolId);
+  const { parent, childrenData, activityFeed, riskAlerts, familyTrustScore } = await getParentDashboardData(userId, schoolId);
   const children = parent?.students ?? [];
   const parentName = parent
     ? `${parent.name} ${parent.surname}`
@@ -66,6 +501,10 @@ const ParentPage = async ({
           </div>
         </div>
       )}
+
+      <ActivityFeedPanel items={activityFeed} />
+      <RiskAlertPanel alerts={riskAlerts} />
+      <ParentTrustPanel score={familyTrustScore} />
 
       <div className="flex flex-col xl:flex-row gap-5">
 
@@ -270,6 +709,18 @@ const ParentPage = async ({
               )}
 
               {/* â”€â”€ ATTENDANCE STATS (unchanged) â”€â”€ */}
+              <AcademicProgressPanel
+                childName={child.name}
+                progress={child.academicProgress}
+                reportHref={
+                  child.ca.latestGroup
+                    ? `/list/report-cards/${child.id}?term=${child.ca.latestGroup.term}&year=${child.ca.latestGroup.year}&classId=${child.classId}`
+                    : undefined
+                }
+              />
+
+              <ParentValuePanels child={child} />
+
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 {[
                   { label: "Present", value: child.stats.present, icon: <CheckCircle2 size={14} />, color: "bg-emerald-50 text-emerald-700" },
