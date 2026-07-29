@@ -133,9 +133,9 @@ function SignatureReveal({ onComplete }: SignatureRevealProps): React.ReactEleme
 
   return (
     <div style={{ position: "relative", width: "100%", maxWidth: 620 }}>
-      {/* Eyebrow — Clash Display */}
+      {/* Eyebrow */}
       <p style={{
-        fontFamily:    "'Clash Display', sans-serif",
+        fontFamily:    "'Clash Display', var(--font-inter), sans-serif",
         fontSize:      "11px",
         fontWeight:    600,
         letterSpacing: "0.20em",
@@ -199,10 +199,10 @@ function SignatureReveal({ onComplete }: SignatureRevealProps): React.ReactEleme
             <circle cx="0" cy="0" r="2"   fill="rgba(255,255,255,0.97)" />
           </g>
 
-          {/* SVG tagline — Clash Display */}
+          {/* SVG tagline */}
           <text x="350" y="262" textAnchor="middle" fill="rgba(139,127,245,0.38)"
             style={{
-              fontFamily:    "'Clash Display', sans-serif",
+              fontFamily:    "'Clash Display', var(--font-inter), sans-serif",
               fontSize:      "11px",
               fontWeight:    500,
               letterSpacing: "0.26em",
@@ -231,7 +231,7 @@ function EarlyAccessLine({ visible }: { visible: boolean }): React.ReactElement 
         <span style={{ position: "absolute", inset: 0, borderRadius: "50%", background: "#4ade80", animation: "ea-ping 1.8s ease-out infinite", opacity: 0.5 }} />
         <span style={{ position: "relative", display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: "#4ade80" }} />
       </span>
-      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 500, color: "rgba(255,255,255,0.48)", letterSpacing: "0.01em" }}>
+      <span style={{ fontFamily: "'DM Sans', var(--font-inter), sans-serif", fontSize: "13px", fontWeight: 500, color: "rgba(255,255,255,0.48)", letterSpacing: "0.01em" }}>
         Now accepting pilot schools
       </span>
     </div>
@@ -253,9 +253,6 @@ export default function HeroSection(): React.ReactElement {
   return (
     <>
       <style>{`
-        @import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-
         @keyframes slideUp  { from{opacity:0;transform:translateY(26px)} to{opacity:1;transform:translateY(0)} }
         @keyframes scaleIn  { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
         @keyframes lineGrow { from{transform:scaleX(0);transform-origin:left} to{transform:scaleX(1);transform-origin:left} }
@@ -268,7 +265,7 @@ export default function HeroSection(): React.ReactElement {
           display: inline-flex; align-items: center; gap: 8px;
           padding: 14px 30px;
           background: linear-gradient(135deg, #5B4FE9 0%, #7C71F0 100%);
-          color: #fff; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 15px;
+          color: #fff; font-family: 'DM Sans', var(--font-inter), sans-serif; font-weight: 600; font-size: 15px;
           border-radius: 12px; border: none; cursor: pointer;
           box-shadow: 0 4px 24px rgba(91,79,233,0.42);
           transition: box-shadow 0.3s ease, transform 0.2s ease; white-space: nowrap;
@@ -279,7 +276,7 @@ export default function HeroSection(): React.ReactElement {
         .ej-btn-text {
           display: inline-flex; align-items: center; gap: 6px;
           padding: 14px 4px; background: none; border: none; cursor: pointer;
-          font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 14px;
+          font-family: 'DM Sans', var(--font-inter), sans-serif; font-weight: 500; font-size: 14px;
           color: rgba(255,255,255,0.38); transition: color 0.2s ease;
           white-space: nowrap; text-decoration: none;
         }
@@ -364,11 +361,11 @@ export default function HeroSection(): React.ReactElement {
           >
             <div style={{ marginBottom: "clamp(24px,3.5vh,36px)" }} />
 
-            {/* Headline — Clash Display, fontWeight 600 */}
+            {/* Headline */}
             <h1
               className="ej-headline"
               style={{
-                fontFamily: "'Clash Display', sans-serif",
+                fontFamily: "'Clash Display', var(--font-inter), sans-serif",
                 fontWeight: 600,
                 fontSize: "clamp(2.8rem,4.8vw,5.6rem)",
                 lineHeight: 1.06,
@@ -393,7 +390,7 @@ export default function HeroSection(): React.ReactElement {
             <p
               className="ej-sub"
               style={{
-                fontFamily: "'DM Sans', sans-serif", fontWeight: 400,
+                fontFamily: "'DM Sans', var(--font-inter), sans-serif", fontWeight: 400,
                 fontSize: "clamp(1rem,1.35vw,1.1rem)", color: "rgba(255,255,255,0.50)",
                 lineHeight: 1.78, maxWidth: 440,
                 margin: "0 0 clamp(32px,4.5vh,44px)",
