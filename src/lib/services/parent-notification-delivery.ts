@@ -7,6 +7,7 @@ import type {
 } from "@/src/generated/prisma";
 import { rebuildParentDailySummary } from "@/src/lib/services/parent-daily-summary";
 import { getParentNotificationPreference } from "@/src/lib/services/parent-notification-preferences";
+import { appBaseUrl, sendEmail } from "@/src/lib/services/notifications";
 
 const DEFAULT_SETTINGS = {
   timezone: "Africa/Accra",
@@ -99,6 +100,7 @@ async function logDelivery(input: {
   recipient?: string | null;
   status: "SENT" | "FAILED" | "SKIPPED";
   messagePreview: string;
+  provider?: string;
   errorMessage?: string;
 }) {
   return prisma.parentNotificationDeliveryLog.create({
@@ -109,12 +111,89 @@ async function logDelivery(input: {
       channel: input.channel,
       recipient: input.recipient ?? null,
       status: input.status,
-      provider: "edujay-console",
+      provider: input.provider ?? "edujay-console",
       messagePreview: input.messagePreview.slice(0, 240),
       errorMessage: input.errorMessage,
       sentAt: input.status === "SENT" ? new Date() : null,
     },
   });
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function notificationUrl(notification: ParentNotification) {
+  const href = notification.href || "/parent/updates";
+  if (href.startsWith("http")) return href;
+  return `${appBaseUrl()}${href.startsWith("/") ? href : `/${href}`}`;
+}
+
+function dailySummaryText(notification: ParentNotification) {
+  return [
+    "Edujay Daily School Update",
+    "",
+    notification.body,
+    "",
+    `View full update: ${notificationUrl(notification)}`,
+  ].join("\n");
+}
+
+function dailySummaryHtml(notification: ParentNotification) {
+  const body = escapeHtml(notification.body).replace(/\n/g, "<br />");
+  const url = notificationUrl(notification);
+
+  return `
+    <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
+      <p style="margin:0 0 6px;color:#2563eb;font-weight:700">Edujay</p>
+      <h1 style="font-size:22px;margin:0 0 12px">Daily School Update</h1>
+      <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin:0 0 16px">
+        ${body}
+      </div>
+      <a href="${url}" style="display:inline-block;background:#1d4ed8;color:white;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700">
+        View full update
+      </a>
+      <p style="margin-top:18px;color:#64748b;font-size:13px">You received this because your school uses Edujay parent updates.</p>
+    </div>
+  `;
+}
+
+async function sendThroughChannel(input: {
+  channel: ParentDeliveryChannel;
+  recipient: string;
+  notification: ParentNotification;
+}) {
+  if (input.channel !== "EMAIL") {
+    return {
+      ok: false,
+      skipped: true,
+      provider: "not-configured",
+      message: `${input.channel} delivery provider is not connected yet.`,
+    };
+  }
+
+  const result = await sendEmail({
+    to: input.recipient,
+    subject: "Edujay Daily School Update",
+    text: dailySummaryText(input.notification),
+    html: dailySummaryHtml(input.notification),
+  });
+
+  if (result.ok) {
+    return { ok: true, skipped: false, provider: result.provider };
+  }
+
+  return {
+    ok: false,
+    skipped: false,
+    provider: result.provider,
+    message: result.message,
+  };
 }
 
 export async function deliverParentDailySummary(input: {
@@ -157,14 +236,24 @@ export async function deliverParentDailySummary(input: {
     const recipient = recipientForChannel(channel, parentWithPreference);
     if (!recipient) continue;
 
+    const result = await sendThroughChannel({
+      channel,
+      recipient,
+      notification: input.notification,
+    });
+
+    if (result.skipped) continue;
+
     return logDelivery({
       schoolId: input.schoolId,
       parentId: parent.id,
       notificationId: input.notification.id,
       channel,
       recipient,
-      status: "SENT",
+      status: result.ok ? "SENT" : "FAILED",
+      provider: result.provider,
       messagePreview: `Edujay daily update: ${input.notification.body}`,
+      errorMessage: result.ok ? undefined : result.message,
     });
   }
 
