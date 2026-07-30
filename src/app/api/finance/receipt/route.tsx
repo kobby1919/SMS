@@ -15,6 +15,7 @@ import { receiptPdfQuerySchema } from "@/src/lib/validation/finance";
 import { parseSearchParams } from "@/src/lib/validation/parse";
 import { documentTag } from "@/src/lib/cacheTags";
 import { getCachedDocument } from "@/src/lib/services/document-cache";
+import { getSchoolBranding, poweredByPlatformLine } from "@/src/lib/services/school-branding";
 import {
   renderToBuffer,
   Document,
@@ -251,6 +252,9 @@ type LineItem = {
 };
 
 type ReceiptPDFProps = {
+  schoolName: string;
+  schoolShortName: string;
+  schoolPrimaryColor: string;
   receiptNumber: string;
   paymentAmount: number;
   paymentMethod: string;
@@ -318,12 +322,12 @@ function ReceiptPDF(p: ReceiptPDFProps) {
     <Document title={`Receipt ${p.receiptNumber}`}>
       <Page size="A4" style={S.page}>
         {/* Header */}
-        <View style={S.header}>
+        <View style={[S.header, { backgroundColor: p.schoolPrimaryColor }]}>
           <View style={S.headerLeft}>
             <Text style={S.headerTag}>OFFICIAL PAYMENT RECEIPT</Text>
-            <Text style={S.headerTitle}>School Finance</Text>
+            <Text style={S.headerTitle}>{p.schoolName}</Text>
             <Text style={S.headerSub}>
-              Ghana Basic Education Management System
+              {poweredByPlatformLine()}
             </Text>
           </View>
           <View style={S.receiptBadge}>
@@ -532,7 +536,7 @@ function ReceiptPDF(p: ReceiptPDFProps) {
             })}
           </Text>
           <Text style={S.footerText}>
-            {p.receiptNumber} · {p.studentName} ·{" "}
+            {p.schoolShortName} - {p.receiptNumber} - {p.studentName} -{" "}
             {TERM_LABELS[p.term] ?? p.term} {p.academicYear}
           </Text>
         </View>
@@ -626,14 +630,25 @@ export async function GET(req: NextRequest) {
       // recordedBy may not correspond to an Admin row — silently fall back
     }
 
+    const branding = await getSchoolBranding(schoolId);
+
     const pdfBuffer = await getCachedDocument({
-      keyParts: [ctx.schoolId, "receipt", payment.id],
+      keyParts: [
+        ctx.schoolId,
+        "receipt",
+        payment.id,
+        branding.displayName,
+        branding.primaryColor,
+      ],
       tags: [
         documentTag(ctx.schoolId, "receipt"),
         documentTag(ctx.schoolId, "receipt", payment.id),
       ],
       generate: () => renderToBuffer(
       <ReceiptPDF
+        schoolName={branding.displayName}
+        schoolShortName={branding.shortName}
+        schoolPrimaryColor={branding.primaryColor}
         receiptNumber={payment.receiptNumber}
         paymentAmount={Number(payment.amount)}
         paymentMethod={payment.paymentMethod}

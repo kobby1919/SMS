@@ -11,6 +11,7 @@ import { reportCardPdfQuerySchema } from "@/src/lib/validation/academic";
 import { parseSearchParams } from "@/src/lib/validation/parse";
 import { documentTag } from "@/src/lib/cacheTags";
 import { getCachedDocument } from "@/src/lib/services/document-cache";
+import { getSchoolBranding } from "@/src/lib/services/school-branding";
 import {
   renderToBuffer,
   Document,
@@ -165,6 +166,7 @@ type SubjectRow = {
 };
 
 type PDFProps = {
+  schoolName: string; schoolShortName: string; schoolPrimaryColor: string;
   studentName: string; studentSurname: string; studentId: string; sex: string;
   className: string; gradeLevel: string; supervisor: string; classSize: number;
   parentName: string; parentPhone: string;
@@ -194,9 +196,9 @@ function ReportCardPDF(p: PDFProps) {
       <Page size="A4" style={S.page}>
 
         {/* Header */}
-        <View style={S.header}>
+        <View style={[S.header, { backgroundColor: p.schoolPrimaryColor }]}>
           <View style={S.headerLeft}>
-            <Text style={S.headerTag}>GHANA BASIC EDUCATION · ACADEMIC REPORT</Text>
+            <Text style={S.headerTag}>{p.schoolName.toUpperCase()} - ACADEMIC REPORT</Text>
             <Text style={S.headerTitle}>STUDENT REPORT CARD</Text>
             <Text style={S.headerSub}>{TERM_LABELS[p.term] ?? p.term} · {p.academicYear} Academic Year</Text>
           </View>
@@ -347,7 +349,7 @@ function ReportCardPDF(p: PDFProps) {
             Generated: {new Date().toLocaleDateString("en-GH", { day: "numeric", month: "long", year: "numeric" })}
           </Text>
           <Text style={S.footerText}>
-            {p.studentSurname.toUpperCase()}, {p.studentName} · {p.className} · {TERM_LABELS[p.term] ?? p.term} {p.academicYear}
+            {p.schoolShortName} - {p.studentSurname.toUpperCase()}, {p.studentName} - {p.className} - {TERM_LABELS[p.term] ?? p.term} {p.academicYear}
           </Text>
         </View>
 
@@ -462,16 +464,28 @@ export async function GET(req: NextRequest) {
     const attendAbsent  = student.attendances.filter((a) => a.status === "ABSENT").length;
     const attendLate    = student.attendances.filter((a) => a.status === "LATE").length;
     const attendTotal   = student.attendances.length;
+    const branding = await getSchoolBranding(schoolId);
 
     // Generate PDF buffer
     const pdfBuffer = await getCachedDocument({
-      keyParts: [ctx.schoolId, "report-card", student.id, term, activeYear],
+      keyParts: [
+        ctx.schoolId,
+        "report-card",
+        student.id,
+        term,
+        activeYear,
+        branding.displayName,
+        branding.primaryColor,
+      ],
       tags: [
         documentTag(ctx.schoolId, "report-card"),
         documentTag(ctx.schoolId, "report-card", student.id),
       ],
       generate: () => renderToBuffer(
       <ReportCardPDF
+        schoolName={branding.displayName}
+        schoolShortName={branding.shortName}
+        schoolPrimaryColor={branding.primaryColor}
         studentName={student.name}
         studentSurname={student.surname}
         studentId={student.id}

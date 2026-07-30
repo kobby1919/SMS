@@ -36,6 +36,12 @@ type SubjectRow = {
 };
 
 type Props = {
+  branding: {
+    displayName: string;
+    shortName: string;
+    primaryColor: string;
+    logoUrl?: string | null;
+  };
   student: {
     id: string;
     name: string;
@@ -208,6 +214,7 @@ function DownloadButton({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const ReportCardView = ({
+  branding,
   student,
   classInfo,
   parent,
@@ -303,7 +310,7 @@ const ReportCardView = ({
           className="relative overflow-hidden"
           style={{
             background:
-              "linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%)",
+              `linear-gradient(135deg, ${branding.primaryColor} 0%, #111827 100%)`,
           }}
         >
           <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full opacity-10 bg-white" />
@@ -312,7 +319,7 @@ const ReportCardView = ({
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
               <div className="text-center sm:text-left flex-1">
                 <p className="text-white/60 text-xs font-bold uppercase tracking-[0.2em] mb-1">
-                  Ghana Basic Education
+                  {branding.displayName}
                 </p>
                 <h1 className="text-2xl font-black tracking-tight">
                   ACADEMIC REPORT CARD
@@ -886,8 +893,8 @@ const ReportCardView = ({
               })}
             </p>
             <p className="text-[9px] text-gray-300 font-semibold">
-              {student.surname.toUpperCase()}, {student.name} · {classInfo.name}{" "}
-              · {TERM_LABELS[term]} {academicYear}
+              {branding.shortName} - {student.surname.toUpperCase()}, {student.name}{" "}
+              - {classInfo.name} - {TERM_LABELS[term]} {academicYear}
             </p>
           </div>
         </div>

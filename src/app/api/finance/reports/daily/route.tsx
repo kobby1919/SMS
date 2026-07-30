@@ -11,6 +11,7 @@ import { dailyFinanceReportQuerySchema } from "@/src/lib/validation/finance";
 import { parseSearchParams } from "@/src/lib/validation/parse";
 import { documentTag } from "@/src/lib/cacheTags";
 import { getCachedDocument } from "@/src/lib/services/document-cache";
+import { getSchoolBranding } from "@/src/lib/services/school-branding";
 import {
   renderToBuffer, Document, Page, Text, View, StyleSheet,
 } from "@react-pdf/renderer";
@@ -153,22 +154,29 @@ export async function GET(req: NextRequest) {
     const dateLabel = new Date(dateStr).toLocaleDateString("en-GH", {
       weekday: "long", day: "numeric", month: "long", year: "numeric",
     });
+    const branding = await getSchoolBranding(ctx.schoolId);
 
     const pdfBuffer = await getCachedDocument({
-      keyParts: [ctx.schoolId, "daily-finance", dateStr],
+      keyParts: [
+        ctx.schoolId,
+        "daily-finance",
+        dateStr,
+        branding.displayName,
+        branding.primaryColor,
+      ],
       tags: [
         documentTag(ctx.schoolId, "daily-finance"),
         documentTag(ctx.schoolId, "daily-finance", dateStr),
       ],
       generate: () => renderToBuffer(
-      <Document title={`Daily Collection Report — ${dateLabel}`}>
+      <Document title={`${branding.displayName} Daily Collection Report - ${dateLabel}`}>
         <Page size="A4" style={S.page}>
 
           {/* Header */}
-          <View style={S.header}>
+          <View style={[S.header, { backgroundColor: branding.primaryColor }]}>
             <View>
               <Text style={{ fontSize: 7, color: "#a5b4fc", letterSpacing: 2, marginBottom: 4 }}>
-                SCHOOL FINANCE · DAILY COLLECTION REPORT
+                {branding.displayName.toUpperCase()} - DAILY COLLECTION REPORT
               </Text>
               <Text style={S.headerTitle}>Daily Collection Report</Text>
               <Text style={S.headerSub}>All confirmed payments received on this date</Text>
@@ -273,7 +281,7 @@ export async function GET(req: NextRequest) {
               Generated: {new Date().toLocaleString("en-GH")}
             </Text>
             <Text style={S.footerText}>
-              Daily Collection Report · {dateLabel}
+              {branding.shortName} - Daily Collection Report - {dateLabel}
             </Text>
           </View>
 

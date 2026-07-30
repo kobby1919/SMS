@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import { getGradeBandByGrade, computeAggregate } from "@/src/lib/caGrades";
 import ReportCardView from "@/src/components/ReportCardView";
 import type { Term } from "@/src/generated/prisma";
+import { getSchoolBranding } from "@/src/lib/services/school-branding";
 
 export const dynamic = "force-dynamic";
 
@@ -49,7 +50,10 @@ const ReportCardPage = async ({
   }
 
   // ── Academic year fallback ────────────────────────────────────────────────
-  const configs      = await prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } });
+  const [configs, branding] = await Promise.all([
+    prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } }),
+    getSchoolBranding(schoolId),
+  ]);
   const activeYear   = academicYear || configs[0]?.academicYear || "2024/25";
   const config       = configs.find((c) => c.academicYear === activeYear);
   const cwWeight     = config?.classworkWeight ?? 30;
@@ -275,6 +279,12 @@ const ReportCardPage = async ({
 
   return (
     <ReportCardView
+      branding={{
+        displayName: branding.displayName,
+        shortName: branding.shortName,
+        primaryColor: branding.primaryColor,
+        logoUrl: branding.logoUrl,
+      }}
       student={{
         id:       student.id,
         name:     student.name,

@@ -16,6 +16,7 @@ import {
   type ParentActivityFeedItem,
   type ParentRiskAlert,
 } from "@/src/lib/services/parent-dashboard";
+import { getSchoolBranding } from "@/src/lib/services/school-branding";
 
 export const dynamic = "force-dynamic";
 
@@ -65,7 +66,7 @@ function getPreviewLines(summary?: ParentActivityFeedItem) {
     .slice(0, 3);
 }
 
-function TodayUpdateCard({ items }: { items: ParentActivityFeedItem[] }) {
+function TodayUpdateCard({ items, schoolName }: { items: ParentActivityFeedItem[]; schoolName: string }) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const tomorrow = new Date(today);
@@ -92,11 +93,11 @@ function TodayUpdateCard({ items }: { items: ParentActivityFeedItem[] }) {
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-3xl">
           <p className="text-[11px] font-black uppercase tracking-widest text-sky-300">
-            Parent Daily Summary
+            {schoolName} Parent Summary
           </p>
           <h1 className="mt-2 text-2xl font-black sm:text-3xl">Today&apos;s School Update</h1>
           <p className="mt-2 text-sm font-medium leading-relaxed text-slate-300">
-            A simple summary of what happened at school today. Full details are kept on a separate page so this dashboard stays clean.
+            A simple summary of what happened at {schoolName} today. Full details are kept on a separate page so this dashboard stays clean.
           </p>
         </div>
 
@@ -232,7 +233,10 @@ function UrgentAlerts({ alerts }: { alerts: ParentRiskAlert[] }) {
 
 const ParentPage = async () => {
   const { userId, schoolId } = await requirePageSession(["parent"]);
-  const { parent, childrenData, activityFeed, riskAlerts } = await getParentDashboardData(userId, schoolId);
+  const [{ parent, childrenData, activityFeed, riskAlerts }, branding] = await Promise.all([
+    getParentDashboardData(userId, schoolId),
+    getSchoolBranding(schoolId),
+  ]);
   const childCount = parent?.students.length ?? 0;
   const parentName = parent ? `${parent.name} ${parent.surname}` : "Parent";
 
@@ -241,11 +245,11 @@ const ParentPage = async () => {
       <WelcomeBanner
         role="parent"
         name={parentName}
-        subtitle={`${childCount} child${childCount !== 1 ? "ren" : ""} enrolled - daily school transparency`}
+        subtitle={`${childCount} child${childCount !== 1 ? "ren" : ""} enrolled at ${branding.displayName}`}
         tag="Parent Portal"
       />
 
-      <TodayUpdateCard items={activityFeed} />
+      <TodayUpdateCard items={activityFeed} schoolName={branding.displayName} />
       <UrgentAlerts alerts={riskAlerts} />
       <ChildrenSnapshot childrenData={childrenData} />
 

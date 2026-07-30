@@ -16,6 +16,7 @@ import { getParentDashboardData } from "@/src/lib/services/parent-dashboard";
 import { getParentNotificationPreference } from "@/src/lib/services/parent-notification-preferences";
 import type { ParentNotificationType } from "@/src/generated/prisma";
 import ParentNotificationPreferenceForm from "@/src/components/ParentNotificationPreferenceForm";
+import { getSchoolBranding } from "@/src/lib/services/school-branding";
 
 export const dynamic = "force-dynamic";
 
@@ -141,7 +142,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
   const nextDay = new Date(start);
   nextDay.setDate(nextDay.getDate() + 1);
 
-  const [events, summary, parent, notificationPreference] = await Promise.all([
+  const [events, summary, parent, notificationPreference, branding] = await Promise.all([
     prisma.parentActivityEvent.findMany({
       where: {
         schoolId,
@@ -171,6 +172,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
       },
     }),
     getParentNotificationPreference({ parentId: userId }),
+    getSchoolBranding(schoolId),
   ]);
 
   const visibleEvents = dedupeEvents(events);
@@ -207,7 +209,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
             <ArrowLeft size={14} />
             Parent dashboard
           </Link>
-          <h1 className="mt-3 text-2xl font-black text-gray-900">Daily School Updates</h1>
+          <h1 className="mt-3 text-2xl font-black text-gray-900">{branding.displayName} Daily Updates</h1>
           <p className="mt-1 text-sm font-semibold text-gray-400">{formatDate(start)}</p>
         </div>
         <div className="flex flex-col gap-2 sm:items-end">

@@ -21,7 +21,7 @@ export default async function SchoolSetupPage() {
         <div className="mb-6">
           <p className="text-sm font-semibold text-blue-700">School setup</p>
           <h1 className="mt-1 text-2xl font-black tracking-tight text-gray-900">
-            Finish setting up {school.name}
+            Finish setting up {school.displayName ?? school.name}
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-500">
             Complete the required basics before using the live admin dashboard.
