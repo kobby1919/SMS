@@ -14,6 +14,11 @@ type SchoolSetupState = {
   id: string;
   name: string;
   slug: string;
+  legalName: string | null;
+  displayName: string | null;
+  shortName: string | null;
+  emailFromName: string | null;
+  primaryColor: string;
   contactEmail: string | null;
   phone: string | null;
   address: string | null;
@@ -39,6 +44,11 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
   const router = useRouter();
   const [values, setValues] = useState({
     name: school.name,
+    legalName: school.legalName ?? school.name,
+    displayName: school.displayName ?? school.name,
+    shortName: school.shortName ?? school.name,
+    emailFromName: school.emailFromName ?? school.displayName ?? school.name,
+    primaryColor: school.primaryColor ?? "#2563eb",
     contactEmail: school.contactEmail ?? "",
     phone: school.phone ?? "",
     address: school.address ?? "",
@@ -123,7 +133,7 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
       <section className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
         <h2 className="text-lg font-black text-gray-900">School profile</h2>
         <p className="mt-1 text-sm text-gray-500">
-          Confirm the basics. These details become the tenant profile for this school.
+          Confirm the basics and parent-facing identity. Edujay stays the platform name, but parents should recognize the school first.
         </p>
 
         <div className="mt-5 space-y-4">
@@ -134,6 +144,63 @@ export default function SchoolSetupClient({ school }: { school: SchoolSetupState
               onChange={(event) => update("name", event.target.value)}
               className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
             />
+          </label>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="block">
+              <span className="text-xs font-bold uppercase text-gray-500">Legal name</span>
+              <input
+                value={values.legalName}
+                onChange={(event) => update("legalName", event.target.value)}
+                placeholder={values.name}
+                className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              />
+            </label>
+            <label className="block">
+              <span className="text-xs font-bold uppercase text-gray-500">Parent display name</span>
+              <input
+                value={values.displayName}
+                onChange={(event) => update("displayName", event.target.value)}
+                placeholder={values.name}
+                className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              />
+            </label>
+            <label className="block">
+              <span className="text-xs font-bold uppercase text-gray-500">Short name</span>
+              <input
+                value={values.shortName}
+                onChange={(event) => update("shortName", event.target.value)}
+                placeholder="e.g. Bright Future"
+                className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              />
+            </label>
+            <label className="block">
+              <span className="text-xs font-bold uppercase text-gray-500">Email sender name</span>
+              <input
+                value={values.emailFromName}
+                onChange={(event) => update("emailFromName", event.target.value)}
+                placeholder={values.displayName || values.name}
+                className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              />
+            </label>
+          </div>
+          <label className="block">
+            <span className="text-xs font-bold uppercase text-gray-500">Primary brand color</span>
+            <div className="mt-1 flex gap-2">
+              <input
+                type="color"
+                value={values.primaryColor}
+                onChange={(event) => update("primaryColor", event.target.value)}
+                className="h-10 w-14 rounded-lg border border-gray-200 bg-white p-1"
+              />
+              <input
+                value={values.primaryColor}
+                onChange={(event) => update("primaryColor", event.target.value)}
+                className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              />
+            </div>
+            <span className="mt-1 block text-xs text-gray-400">
+              Used on parent emails, receipts, and school-facing documents.
+            </span>
           </label>
           <label className="block">
             <span className="text-xs font-bold uppercase text-gray-500">Contact email</span>

@@ -127,6 +127,11 @@ export async function getSchoolOnboardingState(schoolId: string) {
       id: true,
       name: true,
       slug: true,
+      legalName: true,
+      displayName: true,
+      shortName: true,
+      emailFromName: true,
+      primaryColor: true,
       contactEmail: true,
       phone: true,
       address: true,
@@ -161,6 +166,11 @@ export async function getSchoolOnboardingState(schoolId: string) {
 export async function updateSchoolProfileSetup(
   input: {
     name: string;
+    legalName?: string;
+    displayName?: string;
+    shortName?: string;
+    emailFromName?: string;
+    primaryColor?: string;
     contactEmail?: string;
     phone?: string;
     address?: string;
@@ -172,6 +182,11 @@ export async function updateSchoolProfileSetup(
     where: { id: context.schoolId },
     data: {
       name: input.name,
+      legalName: input.legalName || input.name,
+      displayName: input.displayName || input.name,
+      shortName: input.shortName || input.displayName || input.name,
+      emailFromName: input.emailFromName || input.displayName || input.name,
+      primaryColor: input.primaryColor || "#2563eb",
       contactEmail: input.contactEmail || null,
       phone: input.phone || null,
       address: input.address || null,
@@ -185,7 +200,11 @@ export async function updateSchoolProfileSetup(
     action: "PROFILE_UPDATED",
     performedBy: context.userId,
     schoolId: context.schoolId,
-    metadata: { name: input.name },
+    metadata: {
+      name: input.name,
+      displayName: input.displayName || input.name,
+      emailFromName: input.emailFromName || input.displayName || input.name,
+    },
   });
 
   return school;

@@ -74,11 +74,22 @@ async function main() {
   // ── School ────────────────────────────────────────────────────────────────
   await prisma.school.upsert({
     where:  { id: DEFAULT_SCHOOL_ID },
-    update: {},
+    update: {
+      legalName: "Default School",
+      displayName: "Default School",
+      shortName: "Default School",
+      emailFromName: "Default School",
+      primaryColor: "#2563eb",
+    },
     create: {
       id:   DEFAULT_SCHOOL_ID,
       name: "Default School",
       slug: DEFAULT_SCHOOL_ID,
+      legalName: "Default School",
+      displayName: "Default School",
+      shortName: "Default School",
+      emailFromName: "Default School",
+      primaryColor: "#2563eb",
     },
   });
   console.log("✅ School created");

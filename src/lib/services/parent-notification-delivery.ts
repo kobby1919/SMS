@@ -8,6 +8,11 @@ import type {
 import { rebuildParentDailySummary } from "@/src/lib/services/parent-daily-summary";
 import { getParentNotificationPreference } from "@/src/lib/services/parent-notification-preferences";
 import { appBaseUrl, sendEmail } from "@/src/lib/services/notifications";
+import {
+  getSchoolBranding,
+  poweredByPlatformLine,
+  type SchoolBranding,
+} from "@/src/lib/services/school-branding";
 
 const DEFAULT_SETTINGS = {
   timezone: "Africa/Accra",
@@ -134,31 +139,38 @@ function notificationUrl(notification: ParentNotification) {
   return `${appBaseUrl()}${href.startsWith("/") ? href : `/${href}`}`;
 }
 
-function dailySummaryText(notification: ParentNotification) {
+function dailySummaryText(notification: ParentNotification, branding: SchoolBranding, studentLabel: string) {
   return [
-    "Edujay Daily School Update",
+    `${branding.displayName}: Daily School Update`,
+    studentLabel ? `Student: ${studentLabel}` : "",
     "",
     notification.body,
     "",
     `View full update: ${notificationUrl(notification)}`,
+    "",
+    poweredByPlatformLine(),
   ].join("\n");
 }
 
-function dailySummaryHtml(notification: ParentNotification) {
+function dailySummaryHtml(notification: ParentNotification, branding: SchoolBranding, studentLabel: string) {
   const body = escapeHtml(notification.body).replace(/\n/g, "<br />");
   const url = notificationUrl(notification);
+  const schoolName = escapeHtml(branding.displayName);
+  const safeStudentLabel = escapeHtml(studentLabel);
+  const primaryColor = escapeHtml(branding.primaryColor);
 
   return `
     <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
-      <p style="margin:0 0 6px;color:#2563eb;font-weight:700">Edujay</p>
-      <h1 style="font-size:22px;margin:0 0 12px">Daily School Update</h1>
+      <p style="margin:0 0 6px;color:${primaryColor};font-weight:700">${schoolName}</p>
+      <h1 style="font-size:22px;margin:0 0 4px">Daily School Update</h1>
+      ${safeStudentLabel ? `<p style="margin:0 0 12px;color:#64748b;font-size:14px">For ${safeStudentLabel}</p>` : ""}
       <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin:0 0 16px">
         ${body}
       </div>
-      <a href="${url}" style="display:inline-block;background:#1d4ed8;color:white;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700">
+      <a href="${url}" style="display:inline-block;background:${primaryColor};color:white;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700">
         View full update
       </a>
-      <p style="margin-top:18px;color:#64748b;font-size:13px">You received this because your school uses Edujay parent updates.</p>
+      <p style="margin-top:18px;color:#64748b;font-size:13px">${poweredByPlatformLine()} You received this because ${schoolName} uses parent updates.</p>
     </div>
   `;
 }
@@ -167,6 +179,8 @@ async function sendThroughChannel(input: {
   channel: ParentDeliveryChannel;
   recipient: string;
   notification: ParentNotification;
+  branding: SchoolBranding;
+  studentLabel: string;
 }) {
   if (input.channel !== "EMAIL") {
     return {
@@ -179,9 +193,9 @@ async function sendThroughChannel(input: {
 
   const result = await sendEmail({
     to: input.recipient,
-    subject: "Edujay Daily School Update",
-    text: dailySummaryText(input.notification),
-    html: dailySummaryHtml(input.notification),
+    subject: `${input.branding.displayName}: Daily update${input.studentLabel ? ` for ${input.studentLabel}` : ""}`,
+    text: dailySummaryText(input.notification, input.branding, input.studentLabel),
+    html: dailySummaryHtml(input.notification, input.branding, input.studentLabel),
   });
 
   if (result.ok) {
@@ -201,7 +215,7 @@ export async function deliverParentDailySummary(input: {
   parentId: string;
   notification: ParentNotification;
 }) {
-  const [settings, parent, notificationPreference] = await Promise.all([
+  const [settings, parent, notificationPreference, branding] = await Promise.all([
     getOrCreateSettings(input.schoolId),
     prisma.parent.findFirst({
       where: { id: input.parentId, schoolId: input.schoolId },
@@ -212,10 +226,28 @@ export async function deliverParentDailySummary(input: {
       },
     }),
     getParentNotificationPreference({ parentId: input.parentId }),
+    getSchoolBranding(input.schoolId),
   ]);
 
   if (!parent) return null;
   const parentWithPreference = { ...parent, notificationPreference };
+  const dayStart = new Date(input.notification.occurredAt);
+  dayStart.setHours(0, 0, 0, 0);
+  const dayEnd = new Date(dayStart);
+  dayEnd.setDate(dayEnd.getDate() + 1);
+  const students = await prisma.parentActivityEvent.findMany({
+    where: {
+      schoolId: input.schoolId,
+      parentId: input.parentId,
+      occurredAt: { gte: dayStart, lt: dayEnd },
+    },
+    distinct: ["studentId"],
+    select: { student: { select: { name: true, surname: true } } },
+  });
+  const studentLabel = students
+    .map((row) => row.student ? `${row.student.name} ${row.student.surname}` : null)
+    .filter(Boolean)
+    .join(", ");
 
   if (notificationPreference?.dailySummaryEnabled === false) {
     return logDelivery({
@@ -240,6 +272,8 @@ export async function deliverParentDailySummary(input: {
       channel,
       recipient,
       notification: input.notification,
+      branding,
+      studentLabel,
     });
 
     if (result.skipped) continue;
@@ -252,7 +286,7 @@ export async function deliverParentDailySummary(input: {
       recipient,
       status: result.ok ? "SENT" : "FAILED",
       provider: result.provider,
-      messagePreview: `Edujay daily update: ${input.notification.body}`,
+      messagePreview: `${branding.displayName} daily update: ${input.notification.body}`,
       errorMessage: result.ok ? undefined : result.message,
     });
   }

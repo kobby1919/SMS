@@ -227,6 +227,11 @@ model School {
   id               String                 @id
   name             String
   slug             String                 @unique
+  legalName        String?
+  displayName      String?
+  shortName        String?
+  emailFromName    String?
+  primaryColor     String                 @default("#2563eb")
   contactEmail     String?
   phone            String?
   address          String?

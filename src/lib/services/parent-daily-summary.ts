@@ -1,5 +1,6 @@
 import prisma from "@/src/lib/prisma";
 import { getSubjectCAProgress } from "@/src/lib/services/ca-activity";
+import { getSchoolBranding } from "@/src/lib/services/school-branding";
 
 function dayWindow(date: Date) {
   const start = new Date(date);
@@ -74,6 +75,8 @@ export async function rebuildParentDailySummary(input: {
     counts.notices ? `${counts.notices} notice` : null,
     counts.finance ? `${counts.finance} finance` : null,
   ].filter(Boolean);
+  const branding = await getSchoolBranding(input.schoolId);
+  const title = `${branding.displayName} Daily School Update`;
 
   return prisma.parentNotification.upsert({
     where: {
@@ -88,7 +91,7 @@ export async function rebuildParentDailySummary(input: {
       parentId: input.parentId,
       type: "DAILY_SUMMARY",
       priority: counts.attendance > 0 ? "HIGH" : "NORMAL",
-      title: "Today's School Update",
+      title,
       body: academicLines.length > 0
         ? academicLines.join("\n")
         : summaryBits.join(" - "),
@@ -99,7 +102,7 @@ export async function rebuildParentDailySummary(input: {
       occurredAt: summaryOccurredAt,
     },
     update: {
-      title: "Today's School Update",
+      title,
       body: academicLines.length > 0
         ? academicLines.join("\n")
         : summaryBits.join(" - "),
