@@ -185,8 +185,14 @@ enum JobStatus {
 
 enum PaymentProvider {
   PAYSTACK
+  FLUTTERWAVE
+  HUBTEL
+  EXPRESSPAY
+  THETELLER
   STRIPE
   MANUAL
+  BANK_TRANSFER
+  MOBILE_MONEY
   OTHER
 }
 

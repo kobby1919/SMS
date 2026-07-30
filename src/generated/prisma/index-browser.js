@@ -873,8 +873,14 @@ exports.PaymentMethod = exports.$Enums.PaymentMethod = {
 
 exports.PaymentProvider = exports.$Enums.PaymentProvider = {
   PAYSTACK: 'PAYSTACK',
+  FLUTTERWAVE: 'FLUTTERWAVE',
+  HUBTEL: 'HUBTEL',
+  EXPRESSPAY: 'EXPRESSPAY',
+  THETELLER: 'THETELLER',
   STRIPE: 'STRIPE',
   MANUAL: 'MANUAL',
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  MOBILE_MONEY: 'MOBILE_MONEY',
   OTHER: 'OTHER'
 };
 

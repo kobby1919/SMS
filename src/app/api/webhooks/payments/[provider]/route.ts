@@ -17,19 +17,37 @@ type PaymentWebhookRouteContext = {
 
 const PROVIDERS: Record<string, PaymentProvider> = {
   paystack: "PAYSTACK",
+  flutterwave: "FLUTTERWAVE",
+  hubtel: "HUBTEL",
+  expresspay: "EXPRESSPAY",
+  theteller: "THETELLER",
   stripe: "STRIPE",
   manual: "MANUAL",
+  bank: "BANK_TRANSFER",
+  "bank-transfer": "BANK_TRANSFER",
+  momo: "MOBILE_MONEY",
+  "mobile-money": "MOBILE_MONEY",
   other: "OTHER",
 };
 
 function providerSecret(provider: PaymentProvider) {
   if (provider === "PAYSTACK") return process.env.PAYSTACK_WEBHOOK_SECRET;
+  if (provider === "FLUTTERWAVE") return process.env.FLUTTERWAVE_WEBHOOK_SECRET;
+  if (provider === "HUBTEL") return process.env.HUBTEL_WEBHOOK_SECRET;
+  if (provider === "EXPRESSPAY") return process.env.EXPRESSPAY_WEBHOOK_SECRET;
+  if (provider === "THETELLER") return process.env.THETELLER_WEBHOOK_SECRET;
   if (provider === "STRIPE") return process.env.STRIPE_WEBHOOK_SECRET;
   return process.env.PAYMENT_WEBHOOK_SECRET;
 }
 
 function providerSignature(req: NextRequest, provider: PaymentProvider) {
   if (provider === "PAYSTACK") return req.headers.get("x-paystack-signature");
+  if (provider === "FLUTTERWAVE") {
+    return req.headers.get("verif-hash") ?? req.headers.get("x-flutterwave-signature");
+  }
+  if (provider === "HUBTEL") return req.headers.get("x-hubtel-signature");
+  if (provider === "EXPRESSPAY") return req.headers.get("x-expresspay-signature");
+  if (provider === "THETELLER") return req.headers.get("x-theteller-signature");
   if (provider === "STRIPE") return req.headers.get("stripe-signature");
   return req.headers.get("x-edujay-signature");
 }
