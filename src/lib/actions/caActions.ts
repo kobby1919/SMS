@@ -428,7 +428,7 @@ export async function createCABucketAction(data: {
   revalidatePath("/list/ca");
   revalidatePath("/teacher");
   revalidateDashboard(schoolId);
-  return bucket;
+  return { id: bucket.id };
 }
 
 export async function createCAActivityAction(data: {
@@ -484,7 +484,7 @@ export async function createCAActivityAction(data: {
   revalidatePath("/list/ca");
   revalidatePath("/teacher");
   revalidateDashboard(schoolId);
-  return activity;
+  return { id: activity.id };
 }
 
 export async function bulkUpsertCAActivityScores(data: {
@@ -553,7 +553,7 @@ export async function bulkUpsertCAActivityScores(data: {
   for (const studentId of new Set(parsed.rows.map((row) => row.studentId))) {
     revalidateDocument(schoolId, "report-card", studentId);
   }
-  return scores;
+  return { count: scores.length };
 }
 
 export async function lockCABucketAction(bucketId: number) {
@@ -576,7 +576,7 @@ export async function lockCABucketAction(bucketId: number) {
 
   revalidatePath("/list/ca");
   revalidateDashboard(schoolId);
-  return bucket;
+  return { id: bucket.id };
 }
 
 export async function lockCAActivityAction(activityId: number) {
@@ -599,5 +599,5 @@ export async function lockCAActivityAction(activityId: number) {
 
   revalidatePath("/list/ca");
   revalidateDashboard(schoolId);
-  return activity;
+  return { id: activity.id };
 }

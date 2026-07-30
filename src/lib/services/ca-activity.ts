@@ -182,6 +182,22 @@ export async function assertTeacherCanManageCAContext(input: {
 export async function createCABucket(input: CABucketInput) {
   await assertCAAllocationWithinConfig(input);
 
+  const existing = await prisma.cABucket.findFirst({
+    where: {
+      schoolId: input.schoolId,
+      classId: input.classId,
+      subjectId: input.subjectId,
+      term: input.term,
+      academicYear: input.academicYear,
+      name: input.name,
+    },
+    select: { id: true },
+  });
+
+  if (existing) {
+    throw new Error("This CA bucket already exists. Select the existing bucket and add activities under it.");
+  }
+
   return prisma.cABucket.create({
     data: {
       schoolId: input.schoolId,
