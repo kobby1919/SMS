@@ -1,6 +1,7 @@
 import prisma from "@/src/lib/prisma";
 import { getSubjectCAProgress } from "@/src/lib/services/ca-activity";
 import { getSchoolBranding } from "@/src/lib/services/school-branding";
+import { DISCOUNT_TYPE_LABELS, formatGHS, PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 
 function dayWindow(date: Date) {
   const start = new Date(date);
@@ -24,6 +25,144 @@ function uniqueEventsByBody<T extends { type: string; body: string; sourceModel:
     seen.add(key);
     return true;
   });
+}
+
+function toInt(value: string) {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+}
+
+type SummaryEvent = {
+  type: string;
+  title: string;
+  body: string;
+  sourceModel: string;
+  sourceId: string;
+};
+
+async function buildFinanceSummaryLines(schoolId: string, events: SummaryEvent[]) {
+  const financeEvents = events.filter((event) => event.type === "BILL" || event.type === "PAYMENT");
+  if (financeEvents.length === 0) return [];
+
+  const billIds = financeEvents
+    .filter((event) => event.sourceModel === "StudentBill")
+    .map((event) => toInt(event.sourceId))
+    .filter((id): id is number => id !== null);
+  const paymentIds = financeEvents
+    .filter((event) => event.sourceModel === "Payment" || event.sourceModel === "PaymentReversal")
+    .map((event) => toInt(event.sourceId))
+    .filter((id): id is number => id !== null);
+  const discountIds = financeEvents
+    .filter((event) => event.sourceModel === "Discount")
+    .map((event) => toInt(event.sourceId))
+    .filter((id): id is number => id !== null);
+  const queryIds = financeEvents
+    .filter((event) => event.sourceModel === "FinanceQuery")
+    .map((event) => toInt(event.sourceId))
+    .filter((id): id is number => id !== null);
+
+  const [bills, payments, discounts, queries] = await Promise.all([
+    billIds.length
+      ? prisma.studentBill.findMany({
+          where: { schoolId, id: { in: billIds } },
+          include: {
+            student: { select: { name: true, surname: true } },
+            feeStructure: { select: { title: true, term: true, academicYear: true } },
+          },
+        })
+      : [],
+    paymentIds.length
+      ? prisma.payment.findMany({
+          where: { schoolId, id: { in: paymentIds } },
+          include: {
+            reversal: { select: { reason: true } },
+            studentBill: {
+              select: {
+                balance: true,
+                feeStructure: { select: { title: true } },
+                student: { select: { name: true, surname: true } },
+              },
+            },
+          },
+        })
+      : [],
+    discountIds.length
+      ? prisma.discount.findMany({
+          where: { schoolId, id: { in: discountIds } },
+          include: {
+            studentBill: {
+              select: {
+                balance: true,
+                student: { select: { name: true, surname: true } },
+                feeStructure: { select: { title: true } },
+              },
+            },
+          },
+        })
+      : [],
+    queryIds.length
+      ? prisma.financeQuery.findMany({
+          where: { schoolId, id: { in: queryIds } },
+          include: {
+            student: { select: { name: true, surname: true } },
+            studentBill: { select: { balance: true, feeStructure: { select: { title: true } } } },
+          },
+        })
+      : [],
+  ]);
+
+  const billById = new Map(bills.map((bill) => [bill.id, bill]));
+  const paymentById = new Map(payments.map((payment) => [payment.id, payment]));
+  const discountById = new Map(discounts.map((discount) => [discount.id, discount]));
+  const queryById = new Map(queries.map((query) => [query.id, query]));
+
+  return financeEvents.slice(0, 8).map((event) => {
+    const id = toInt(event.sourceId);
+    if (event.sourceModel === "StudentBill" && id) {
+      const bill = billById.get(id);
+      if (bill) {
+        const dueText = bill.dueDate
+          ? ` Due ${bill.dueDate.toLocaleDateString("en-GH", { day: "numeric", month: "short", year: "numeric" })}.`
+          : "";
+        return `Fees: ${bill.feeStructure.title} for ${bill.student.name} ${bill.student.surname}. Total ${formatGHS(bill.totalAmount)}, paid ${formatGHS(bill.amountPaid)}, balance ${formatGHS(bill.balance)}.${dueText}`;
+      }
+    }
+
+    if ((event.sourceModel === "Payment" || event.sourceModel === "PaymentReversal") && id) {
+      const payment = paymentById.get(id);
+      if (payment) {
+        if (payment.status === "REVERSED") {
+          return `Fees: Payment ${payment.receiptNumber} for ${payment.studentBill.student.name} ${payment.studentBill.student.surname} was reversed. Amount ${formatGHS(payment.amount)}. Reason: ${payment.reversal?.reason ?? "Not stated"}. Current balance ${formatGHS(payment.studentBill.balance)}.`;
+        }
+        const receiptText = payment.status === "CONFIRMED" ? ` Receipt ${payment.receiptNumber}.` : "";
+        return `Fees: ${payment.status.toLowerCase()} payment for ${payment.studentBill.student.name} ${payment.studentBill.student.surname}. Amount ${formatGHS(payment.amount)} by ${PAYMENT_METHOD_LABELS[payment.paymentMethod] ?? payment.paymentMethod}.${receiptText} Current balance ${formatGHS(payment.studentBill.balance)}.`;
+      }
+    }
+
+    if (event.sourceModel === "Discount" && id) {
+      const discount = discountById.get(id);
+      if (discount) {
+        const discountValue = discount.amount
+          ? formatGHS(discount.amount)
+          : `${Number(discount.percentage ?? 0)}%`;
+        return `Fees: ${discount.status === "REMOVED" ? "Removed" : "Applied"} ${DISCOUNT_TYPE_LABELS[discount.type] ?? discount.type} for ${discount.studentBill.student.name} ${discount.studentBill.student.surname}. Value ${discountValue}. Balance ${formatGHS(discount.studentBill.balance)}. ${discount.status === "REMOVED" ? discount.removeReason ?? "" : discount.description}`;
+      }
+    }
+
+    if (event.sourceModel === "FinanceQuery" && id) {
+      const query = queryById.get(id);
+      if (query) {
+        return `Fees: Finance query for ${query.student.name} ${query.student.surname} is ${query.status.toLowerCase().replace("_", " ")}. Bill: ${query.studentBill.feeStructure.title}. Balance ${formatGHS(query.studentBill.balance)}.`;
+      }
+    }
+
+    return `Fees: ${event.body}`;
+  });
+}
+
+function buildSection(title: string, lines: string[]) {
+  if (lines.length === 0) return [];
+  return [`${title}:`, ...lines.map((line) => `- ${line}`)];
 }
 
 export async function rebuildParentDailySummary(input: {
@@ -68,6 +207,19 @@ export async function rebuildParentDailySummary(input: {
     .filter((event) => event.type === "ASSESSMENT")
     .slice(0, 4)
     .map((event) => event.body);
+  const financeLines = await buildFinanceSummaryLines(input.schoolId, uniqueEvents);
+  const homeworkLines = uniqueEvents
+    .filter((event) => event.type === "ASSIGNMENT")
+    .slice(0, 3)
+    .map((event) => event.body);
+  const noticeLines = uniqueEvents
+    .filter((event) => event.type === "ANNOUNCEMENT")
+    .slice(0, 3)
+    .map((event) => event.body);
+  const attendanceLines = uniqueEvents
+    .filter((event) => event.type === "ATTENDANCE")
+    .slice(0, 3)
+    .map((event) => event.body);
   const summaryBits = [
     `${uniqueEvents.length} school update${uniqueEvents.length === 1 ? "" : "s"}`,
     counts.academics ? `${counts.academics} academic` : null,
@@ -77,6 +229,16 @@ export async function rebuildParentDailySummary(input: {
   ].filter(Boolean);
   const branding = await getSchoolBranding(input.schoolId);
   const title = `${branding.displayName} Daily School Update`;
+  const bodyLines = [
+    ...buildSection("Finance", financeLines),
+    ...buildSection("Academics", academicLines),
+    ...buildSection("Attendance", attendanceLines),
+    ...buildSection("Homework", homeworkLines),
+    ...buildSection("Notices", noticeLines),
+  ];
+  const body = bodyLines.length > 0
+    ? bodyLines.join("\n")
+    : summaryBits.join(" - ");
 
   return prisma.parentNotification.upsert({
     where: {
@@ -92,9 +254,7 @@ export async function rebuildParentDailySummary(input: {
       type: "DAILY_SUMMARY",
       priority: counts.attendance > 0 ? "HIGH" : "NORMAL",
       title,
-      body: academicLines.length > 0
-        ? academicLines.join("\n")
-        : summaryBits.join(" - "),
+      body,
       payload: { counts, eventIds: uniqueEvents.map((event) => event.id) },
       sourceModel: "ParentDailySummary",
       sourceId: dateKey(start),
@@ -103,9 +263,7 @@ export async function rebuildParentDailySummary(input: {
     },
     update: {
       title,
-      body: academicLines.length > 0
-        ? academicLines.join("\n")
-        : summaryBits.join(" - "),
+      body,
       payload: { counts, eventIds: uniqueEvents.map((event) => event.id) },
       occurredAt: summaryOccurredAt,
       readAt: null,
