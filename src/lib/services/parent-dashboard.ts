@@ -17,6 +17,7 @@ export type ParentAcademicProgressSubject = {
   trend: "up" | "down" | "steady" | "new";
   change: number;
   status: "strong" | "watch" | "support";
+  isMature: boolean;
 };
 
 export type ParentAcademicProgress = {
@@ -160,6 +161,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       where: { schoolId, studentId: { in: childIds } },
       select: {
         studentId: true,
+        createdAt: true,
         activity: {
           select: {
             classId: true,
@@ -272,6 +274,14 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
         `${score.studentId}__${score.activity.subjectId}__${score.activity.classId}__${score.activity.bucket.term}__${score.activity.bucket.academicYear}`,
     ),
   );
+  const firstActivityScoreAtByCAKey = new Map<string, Date>();
+  for (const score of caActivityScores) {
+    const key = `${score.studentId}__${score.activity.subjectId}__${score.activity.classId}__${score.activity.bucket.term}__${score.activity.bucket.academicYear}`;
+    const existing = firstActivityScoreAtByCAKey.get(key);
+    if (!existing || score.createdAt < existing) {
+      firstActivityScoreAtByCAKey.set(key, score.createdAt);
+    }
+  }
 
   const subjectIdsByClass = new Map<number, Map<number, string>>();
   for (const subject of classSubjects) {
@@ -419,6 +429,12 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
         const change = previous
           ? Math.round((record.totalScore - previous.totalScore) * 10) / 10
           : 0;
+        const caKey = `${record.studentId}__${record.subjectId}__${record.classId}__${record.term}__${record.academicYear}`;
+        const firstScoreAt = firstActivityScoreAtByCAKey.get(caKey);
+        const ageInDays = firstScoreAt
+          ? Math.floor((today.getTime() - firstScoreAt.getTime()) / (1000 * 60 * 60 * 24))
+          : 0;
+        const isMature = ageInDays >= 21;
         return {
           subjectId: record.subjectId,
           subjectName: record.subject.name,
@@ -426,7 +442,8 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
           grade: record.grade,
           trend: previous ? (change > 2 ? "up" : change < -2 ? "down" : "steady") : "new",
           change,
-          status: record.totalScore >= 70 ? "strong" : record.totalScore >= 50 ? "watch" : "support",
+          status: !isMature ? "watch" : record.totalScore >= 70 ? "strong" : record.totalScore >= 50 ? "watch" : "support",
+          isMature,
         };
       })
       .sort((a, b) => a.score - b.score);
@@ -451,7 +468,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       trendDiff,
       subjects: progressSubjects,
       focusSubjects: progressSubjects
-        .filter((subject) => subject.status !== "strong" || subject.trend === "down")
+        .filter((subject) => subject.isMature && (subject.status !== "strong" || subject.trend === "down"))
         .slice(0, 3),
     };
     const financeSummary: ParentFinanceSummary = {

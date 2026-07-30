@@ -144,6 +144,7 @@ const CAEntryForm = ({
   );
 
   const updateRow = (idx: number, field: keyof CARow, value: string) => {
+    if (activityCAEnabled && field === "classworkScore") return;
     const studentId = rows[idx]?.studentId;
     if (!studentId) return;
     setRowEdits((prev) => ({
@@ -180,7 +181,7 @@ const CAEntryForm = ({
 
     // Only submit rows that have at least one score entered
     const filledRows = rows
-      .filter((r) => r.classworkScore !== "" || r.examScore !== "")
+      .filter((r) => activityCAEnabled ? r.examScore !== "" : r.classworkScore !== "" || r.examScore !== "")
       .map((r) => ({
         studentId:      r.studentId,
         classworkScore: parseFloat(r.classworkScore) || 0,
@@ -189,7 +190,7 @@ const CAEntryForm = ({
       }));
 
     if (filledRows.length === 0) {
-      setApiError("Please enter at least one score before saving.");
+      setApiError(activityCAEnabled ? "Please enter at least one exam score before saving." : "Please enter at least one score before saving.");
       return;
     }
 
@@ -219,12 +220,14 @@ const CAEntryForm = ({
       context.academicYear === selectedYear,
   );
 
-  const filledCount = rows.filter(
-    (r) => r.classworkScore !== "" && r.examScore !== ""
+  const filledCount = rows.filter((r) =>
+    activityCAEnabled ? r.examScore !== "" : r.classworkScore !== "" && r.examScore !== "",
   ).length;
 
   const classAvg = (() => {
-    const filled = rows.filter((r) => r.classworkScore !== "" && r.examScore !== "");
+    const filled = rows.filter((r) =>
+      activityCAEnabled ? r.classworkScore !== "" : r.classworkScore !== "" && r.examScore !== "",
+    );
     if (filled.length === 0) return null;
     const total = filled.reduce((sum, r) => {
       const cw = parseFloat(r.classworkScore) || 0;
@@ -360,7 +363,7 @@ const CAEntryForm = ({
 
       {activityCAEnabled && (
         <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
-          Activity-based CA is active for this subject. Edujay has locked manual CA entry here; teachers should record activities in the Activity CA tab and enter only the exam score on this screen.
+          Activity-based CA is active for this subject. Edujay has locked manual CA entry here. The CA values below are computed from recorded activities; teachers should enter only exam scores on this screen.
         </div>
       )}
 
@@ -490,7 +493,9 @@ const CAEntryForm = ({
               Object.fromEntries(
                 rows.map((row) => [
                   row.studentId,
-                  { classworkScore: "", examScore: "", remarks: "" },
+                  activityCAEnabled
+                    ? { examScore: "", remarks: "" }
+                    : { classworkScore: "", examScore: "", remarks: "" },
                 ])
               )
             )
