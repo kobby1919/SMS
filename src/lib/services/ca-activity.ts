@@ -2,6 +2,26 @@ import prisma from "@/src/lib/prisma";
 import type { CABucketAggregationMode, CAActivityType, Prisma, Term } from "@/src/generated/prisma";
 import { getGradeBand } from "@/src/lib/caGrades";
 
+type CAAuditDelegate = {
+  create(args: {
+    data: {
+      schoolId: string;
+      actorId?: string;
+      action: string;
+      entityType: string;
+      entityId: string;
+      message: string;
+      metadata?: Prisma.InputJsonValue;
+    };
+  }): Promise<unknown>;
+};
+
+type PrismaWithCAAudit = typeof prisma & {
+  cAAuditLog?: CAAuditDelegate;
+};
+
+const prismaWithCAAudit = prisma as PrismaWithCAAudit;
+
 type CAContext = {
   schoolId: string;
   classId: number;
@@ -19,17 +39,44 @@ export async function logCAAudit(input: {
   message: string;
   metadata?: Prisma.InputJsonValue;
 }) {
-  return prisma.cAAuditLog.create({
-    data: {
-      schoolId: input.schoolId,
-      actorId: input.actorId,
-      action: input.action,
-      entityType: input.entityType,
-      entityId: String(input.entityId),
-      message: input.message,
-      metadata: input.metadata,
-    },
-  });
+  const data = {
+    schoolId: input.schoolId,
+    actorId: input.actorId,
+    action: input.action,
+    entityType: input.entityType,
+    entityId: String(input.entityId),
+    message: input.message,
+    metadata: input.metadata,
+  };
+
+  if (prismaWithCAAudit.cAAuditLog) {
+    return prismaWithCAAudit.cAAuditLog.create({ data });
+  }
+
+  await prisma.$executeRaw`
+    INSERT INTO "CAAuditLog" (
+      "schoolId",
+      "actorId",
+      "action",
+      "entityType",
+      "entityId",
+      "message",
+      "metadata",
+      "createdAt"
+    )
+    VALUES (
+      ${data.schoolId},
+      ${data.actorId ?? null},
+      ${data.action},
+      ${data.entityType},
+      ${data.entityId},
+      ${data.message},
+      CAST(${data.metadata ? JSON.stringify(data.metadata) : null} AS JSONB),
+      CURRENT_TIMESTAMP
+    )
+  `;
+
+  return null;
 }
 
 export type CABucketInput = CAContext & {
