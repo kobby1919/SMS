@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   AlertCircle,
@@ -123,8 +123,7 @@ const CAActivityManager = ({
   const [scoreEdits, setScoreEdits] = useState<Record<string, string>>({});
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isSavingScores, setIsSavingScores] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [pendingAction, setPendingAction] = useState<string | null>(null);
 
   const scopedBuckets = useMemo(
     () =>
@@ -143,7 +142,8 @@ const CAActivityManager = ({
 
   const usedAllocation = scopedBuckets.reduce((sum, bucket) => sum + bucket.allocationMarks, 0);
 
-  const handleCreateBucket = () => {
+  const handleCreateBucket = async () => {
+    if (pendingAction) return;
     setError(null);
     setMessage(null);
     if (!selectedSubjectId) {
@@ -151,28 +151,30 @@ const CAActivityManager = ({
       return;
     }
 
-    startTransition(async () => {
-      try {
-        const bucket = await createCABucketAction({
-          classId,
-          subjectId: selectedSubjectId as number,
-          term: selectedTerm,
-          academicYear: selectedYear,
-          name: bucketName,
-          type: bucketType,
-          aggregationMode,
-          allocationMarks: Number(bucketAllocation),
-        });
-        setSelectedBucketId(bucket.id);
-        setMessage("CA bucket created.");
-        router.refresh();
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Could not create CA bucket.");
-      }
-    });
+    setPendingAction("bucket");
+    try {
+      const bucket = await createCABucketAction({
+        classId,
+        subjectId: selectedSubjectId as number,
+        term: selectedTerm,
+        academicYear: selectedYear,
+        name: bucketName,
+        type: bucketType,
+        aggregationMode,
+        allocationMarks: Number(bucketAllocation),
+      });
+      setSelectedBucketId(bucket.id);
+      setMessage("CA bucket added successfully.");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not create CA bucket.");
+    } finally {
+      setPendingAction(null);
+    }
   };
 
-  const handleCreateActivity = () => {
+  const handleCreateActivity = async () => {
+    if (pendingAction) return;
     setError(null);
     setMessage(null);
     const bucket = selectedBucket;
@@ -185,29 +187,31 @@ const CAActivityManager = ({
       return;
     }
 
-    startTransition(async () => {
-      try {
-        const activity = await createCAActivityAction({
-          bucketId: bucket.id,
-          title: activityTitle || undefined,
-          type: bucket.type,
-          rawMaxScore: Number(rawMaxScore),
-          allocationMarks:
-            bucket.aggregationMode === "SUM_ACTIVITIES"
-              ? Number(activityAllocation)
-              : null,
-        });
-        setSelectedActivityId(activity.id);
-        setActivityTitle("");
-        setMessage("Activity created. You can now enter student scores.");
-        router.refresh();
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Could not create activity.");
-      }
-    });
+    setPendingAction("activity");
+    try {
+      const activity = await createCAActivityAction({
+        bucketId: bucket.id,
+        title: activityTitle || undefined,
+        type: bucket.type,
+        rawMaxScore: Number(rawMaxScore),
+        allocationMarks:
+          bucket.aggregationMode === "SUM_ACTIVITIES"
+            ? Number(activityAllocation)
+            : null,
+      });
+      setSelectedActivityId(activity.id);
+      setActivityTitle("");
+      setMessage("Activity added successfully. You can now enter student scores.");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not create activity.");
+    } finally {
+      setPendingAction(null);
+    }
   };
 
-  const handleSaveScores = () => {
+  const handleSaveScores = async () => {
+    if (pendingAction) return;
     setError(null);
     setMessage(null);
     if (!selectedActivity) {
@@ -228,57 +232,59 @@ const CAActivityManager = ({
       return;
     }
 
-    setIsSavingScores(true);
+    setPendingAction("scores");
     setMessage("Saving scores and preparing parent updates...");
 
-    startTransition(async () => {
-      try {
-        const result = await bulkUpsertCAActivityScores({
-          activityId: selectedActivity.id,
-          rows,
-        });
-        setMessage(
-          `Saved ${result.count} score${result.count === 1 ? "" : "s"}. ${
-            result.eventCount > 0
-              ? `${result.eventCount} parent update${result.eventCount === 1 ? "" : "s"} prepared.`
-              : "No parent update was needed."
-          }`,
-        );
-        router.refresh();
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Could not save scores.");
-      } finally {
-        setIsSavingScores(false);
-      }
-    });
+    try {
+      const result = await bulkUpsertCAActivityScores({
+        activityId: selectedActivity.id,
+        rows,
+      });
+      setMessage(
+        `Scores saved successfully. Saved ${result.count} score${result.count === 1 ? "" : "s"}. ${
+          result.eventCount > 0
+            ? `${result.eventCount} parent update${result.eventCount === 1 ? "" : "s"} prepared.`
+            : "No parent update was needed."
+        }`,
+      );
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save scores.");
+    } finally {
+      setPendingAction(null);
+    }
   };
 
-  const handleLockBucket = (bucketId: number) => {
+  const handleLockBucket = async (bucketId: number) => {
+    if (pendingAction) return;
     setError(null);
     setMessage(null);
-    startTransition(async () => {
-      try {
-        await lockCABucketAction(bucketId);
-        setMessage("CA bucket locked. Future changes now require an audited correction.");
-        router.refresh();
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Could not lock CA bucket.");
-      }
-    });
+    setPendingAction(`lock-bucket-${bucketId}`);
+    try {
+      await lockCABucketAction(bucketId);
+      setMessage("CA bucket locked. Future changes now require an audited correction.");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not lock CA bucket.");
+    } finally {
+      setPendingAction(null);
+    }
   };
 
-  const handleLockActivity = (activityId: number) => {
+  const handleLockActivity = async (activityId: number) => {
+    if (pendingAction) return;
     setError(null);
     setMessage(null);
-    startTransition(async () => {
-      try {
-        await lockCAActivityAction(activityId);
-        setMessage("CA activity locked. Future score changes now require an audited correction.");
-        router.refresh();
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Could not lock CA activity.");
-      }
-    });
+    setPendingAction(`lock-activity-${activityId}`);
+    try {
+      await lockCAActivityAction(activityId);
+      setMessage("CA activity locked. Future score changes now require an audited correction.");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not lock CA activity.");
+    } finally {
+      setPendingAction(null);
+    }
   };
 
   return (
@@ -291,9 +297,9 @@ const CAActivityManager = ({
       </div>
 
       {error && (
-        <div className="flex items-start gap-2.5 p-3.5 bg-rose-50 border border-rose-200 rounded-xl">
-          <AlertCircle size={15} className="text-rose-500 shrink-0 mt-0.5" />
-          <p className="text-xs font-semibold text-rose-700">{error}</p>
+        <div className="flex items-start gap-2.5 p-3.5 bg-amber-50 border border-amber-200 rounded-xl">
+          <AlertCircle size={15} className="text-amber-500 shrink-0 mt-0.5" />
+          <p className="text-xs font-semibold text-amber-800">{error}</p>
         </div>
       )}
       {message && (
@@ -405,11 +411,11 @@ const CAActivityManager = ({
           <button
             type="button"
             onClick={handleCreateBucket}
-            disabled={isPending || !selectedSubjectId}
+            disabled={pendingAction !== null || !selectedSubjectId}
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-black text-white hover:bg-indigo-700 disabled:opacity-50"
           >
-            {isPending ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
-            Add Bucket
+            {pendingAction === "bucket" ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
+            {pendingAction === "bucket" ? "Adding Bucket..." : "Add Bucket"}
           </button>
 
           <div className="mt-4 space-y-2">
@@ -462,7 +468,7 @@ const CAActivityManager = ({
                       className="inline-flex items-center justify-center rounded-lg border border-amber-200 bg-amber-50 p-1.5 text-amber-700"
                       title="Lock bucket"
                     >
-                      <Lock size={12} />
+                      {pendingAction === `lock-bucket-${bucket.id}` ? <Loader2 size={12} className="animate-spin" /> : <Lock size={12} />}
                     </span>
                   )}
                 </span>
@@ -514,11 +520,11 @@ const CAActivityManager = ({
           <button
             type="button"
             onClick={handleCreateActivity}
-            disabled={isPending || !selectedBucket || selectedBucket.isLocked}
+            disabled={pendingAction !== null || !selectedBucket || selectedBucket.isLocked}
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-black text-white hover:bg-slate-700 disabled:opacity-50"
           >
-            {isPending ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
-            Add Activity
+            {pendingAction === "activity" ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
+            {pendingAction === "activity" ? "Adding Activity..." : "Add Activity"}
           </button>
 
           <div className="mt-4 space-y-2">
@@ -573,7 +579,7 @@ const CAActivityManager = ({
                       className="inline-flex items-center justify-center rounded-lg border border-amber-200 bg-amber-50 p-1.5 text-amber-700"
                       title="Lock activity"
                     >
-                      <Lock size={12} />
+                      {pendingAction === `lock-activity-${activity.id}` ? <Loader2 size={12} className="animate-spin" /> : <Lock size={12} />}
                     </span>
                   )}
                 </span>
@@ -596,11 +602,11 @@ const CAActivityManager = ({
           <button
             type="button"
             onClick={handleSaveScores}
-            disabled={isPending || isSavingScores || !selectedActivity || selectedActivity.isLocked || Boolean(selectedBucket?.isLocked)}
+            disabled={pendingAction !== null || !selectedActivity || selectedActivity.isLocked || Boolean(selectedBucket?.isLocked)}
             className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-black text-white hover:bg-emerald-700 disabled:opacity-50"
           >
-            {isPending || isSavingScores ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
-            {isPending || isSavingScores ? "Saving..." : "Save Scores"}
+            {pendingAction === "scores" ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
+            {pendingAction === "scores" ? "Saving Scores..." : "Save Scores"}
           </button>
         </div>
 
