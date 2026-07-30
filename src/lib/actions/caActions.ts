@@ -527,7 +527,7 @@ export async function bulkUpsertCAActivityScores(data: {
     studentIds: parsed.rows.map((row) => row.studentId),
   });
 
-  await recordCAActivityScoreEvents({
+  const events = await recordCAActivityScoreEvents({
     schoolId,
     activityId: parsed.activityId,
     scoreIds: scores.map((score) => score.id),
@@ -553,7 +553,7 @@ export async function bulkUpsertCAActivityScores(data: {
   for (const studentId of new Set(parsed.rows.map((row) => row.studentId))) {
     revalidateDocument(schoolId, "report-card", studentId);
   }
-  return { count: scores.length };
+  return { count: scores.length, eventCount: events.length };
 }
 
 export async function lockCABucketAction(bucketId: number) {

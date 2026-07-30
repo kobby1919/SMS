@@ -123,6 +123,7 @@ const CAActivityManager = ({
   const [scoreEdits, setScoreEdits] = useState<Record<string, string>>({});
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isSavingScores, setIsSavingScores] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const scopedBuckets = useMemo(
@@ -227,16 +228,27 @@ const CAActivityManager = ({
       return;
     }
 
+    setIsSavingScores(true);
+    setMessage("Saving scores and preparing parent updates...");
+
     startTransition(async () => {
       try {
-        await bulkUpsertCAActivityScores({
+        const result = await bulkUpsertCAActivityScores({
           activityId: selectedActivity.id,
           rows,
         });
-        setMessage("Activity scores saved.");
+        setMessage(
+          `Saved ${result.count} score${result.count === 1 ? "" : "s"}. ${
+            result.eventCount > 0
+              ? `${result.eventCount} parent update${result.eventCount === 1 ? "" : "s"} prepared.`
+              : "No parent update was needed."
+          }`,
+        );
         router.refresh();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Could not save scores.");
+      } finally {
+        setIsSavingScores(false);
       }
     });
   };
@@ -584,11 +596,11 @@ const CAActivityManager = ({
           <button
             type="button"
             onClick={handleSaveScores}
-            disabled={isPending || !selectedActivity || selectedActivity.isLocked || Boolean(selectedBucket?.isLocked)}
+            disabled={isPending || isSavingScores || !selectedActivity || selectedActivity.isLocked || Boolean(selectedBucket?.isLocked)}
             className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-black text-white hover:bg-emerald-700 disabled:opacity-50"
           >
-            {isPending ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
-            Save Scores
+            {isPending || isSavingScores ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
+            {isPending || isSavingScores ? "Saving..." : "Save Scores"}
           </button>
         </div>
 
