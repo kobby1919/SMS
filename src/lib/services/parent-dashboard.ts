@@ -2,18 +2,12 @@ import prisma from "@/src/lib/prisma";
 import { computeAggregate } from "@/src/lib/caGrades";
 import type { CalendarLesson } from "@/src/components/BigCalendar";
 import type { Term } from "@/src/generated/prisma";
+import {
+  syncParentNotificationsFromSources,
+  type ParentNotificationFeedItem,
+} from "@/src/lib/services/parent-notifications";
 
-export type ParentActivityFeedItem = {
-  id: string;
-  childId?: string;
-  childName?: string;
-  type: "ATTENDANCE" | "ASSESSMENT" | "ASSIGNMENT" | "ANNOUNCEMENT" | "BILL" | "PAYMENT";
-  title: string;
-  description: string;
-  occurredAt: Date;
-  tone: "green" | "blue" | "amber" | "rose" | "violet" | "slate";
-  href?: string;
-};
+export type ParentActivityFeedItem = ParentNotificationFeedItem;
 
 export type ParentAcademicProgressSubject = {
   subjectId: number;
@@ -292,105 +286,17 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     teacherNamesByClass.set(lesson.classId, rows);
   }
 
-  const childById = new Map(children.map((child) => [child.id, child]));
-  const activityFeed: ParentActivityFeedItem[] = [
-    ...attendance.slice(0, 30).map((record): ParentActivityFeedItem => {
-      const child = childById.get(record.studentId);
-      const subject = record.lesson.subject.name;
-      const status = record.status.toLowerCase();
-      return {
-        id: `attendance-${record.id}`,
-        childId: record.studentId,
-        childName: child ? `${child.name} ${child.surname}` : undefined,
-        type: "ATTENDANCE",
-        title: `${child?.name ?? "Your child"} was marked ${status}`,
-        description: `${subject}${record.note ? ` - ${record.note}` : ""}`,
-        occurredAt: record.date,
-        tone:
-          record.status === "PRESENT"
-            ? "green"
-            : record.status === "ABSENT"
-              ? "rose"
-              : record.status === "LATE"
-                ? "amber"
-                : "blue",
-        href: "/list/attendance",
-      };
-    }),
-    ...assessments.slice(-30).map((record): ParentActivityFeedItem => {
-      const child = childById.get(record.studentId);
-      return {
-        id: `ca-${record.id}`,
-        childId: record.studentId,
-        childName: child ? `${child.name} ${child.surname}` : undefined,
-        type: "ASSESSMENT",
-        title: `${record.subject.name} score published`,
-        description: `${record.totalScore.toFixed(1)}% - Grade ${record.grade}. ${record.remarks || "Continuous assessment updated."}`,
-        occurredAt: record.updatedAt,
-        tone: record.totalScore >= 70 ? "green" : record.totalScore >= 50 ? "amber" : "rose",
-        href: `/list/report-cards/${record.studentId}?term=${record.term}&year=${record.academicYear}&classId=${record.classId}`,
-      };
-    }),
-    ...assignments.flatMap((assignment): ParentActivityFeedItem[] =>
-      children
-        .filter((child) => child.classId === assignment.lesson.classId)
-        .map((child) => ({
-          id: `assignment-${assignment.id}-${child.id}`,
-          childId: child.id,
-          childName: `${child.name} ${child.surname}`,
-          type: "ASSIGNMENT",
-          title: `${assignment.lesson.subject.name} assignment due`,
-          description: `${assignment.title} is due ${assignment.dueDate.toLocaleDateString("en-GH", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          })}.`,
-          occurredAt: assignment.dueDate,
-          tone: assignment.dueDate < today ? "rose" : "blue",
-          href: "/list/assignments",
-        })),
-    ),
-    ...announcements.map((announcement): ParentActivityFeedItem => ({
-      id: `announcement-${announcement.id}`,
-      type: "ANNOUNCEMENT",
-      title: announcement.title,
-      description: announcement.description,
-      occurredAt: announcement.date,
-      tone: "violet",
-      href: "/list/announcements",
-    })),
-    ...bills.map((bill): ParentActivityFeedItem => {
-      const child = childById.get(bill.studentId);
-      const balance = Number(bill.balance);
-      return {
-        id: `bill-${bill.id}`,
-        childId: bill.studentId,
-        childName: child ? `${child.name} ${child.surname}` : undefined,
-        type: "BILL",
-        title: `${bill.feeStructure.title} fee status`,
-        description: `Balance: GHS ${balance.toFixed(2)}. Status: ${bill.status}.`,
-        occurredAt: bill.updatedAt,
-        tone: balance <= 0 ? "green" : bill.status === "PARTIAL" ? "amber" : "rose",
-        href: "/list/finance/bills",
-      };
-    }),
-    ...payments.map((payment): ParentActivityFeedItem => {
-      const child = childById.get(payment.studentBill.studentId);
-      return {
-        id: `payment-${payment.id}`,
-        childId: payment.studentBill.studentId,
-        childName: child ? `${child.name} ${child.surname}` : undefined,
-        type: "PAYMENT",
-        title: `Payment received: GHS ${Number(payment.amount).toFixed(2)}`,
-        description: `${payment.studentBill.feeStructure.title} - receipt ${payment.receiptNumber}`,
-        occurredAt: payment.paymentDate,
-        tone: "green",
-        href: `/api/finance/receipt?paymentId=${payment.id}`,
-      };
-    }),
-  ]
-    .sort((a, b) => b.occurredAt.getTime() - a.occurredAt.getTime())
-    .slice(0, 20);
+  const activityFeed = await syncParentNotificationsFromSources({
+    schoolId,
+    parentId: userId,
+    children,
+    attendance: attendance.slice(0, 30),
+    assessments: assessments.slice(-30),
+    assignments,
+    announcements,
+    bills,
+    payments,
+  });
 
   const prepared = children.map((child) => {
     const childAttendance = attendanceByStudent.get(child.id) ?? [];

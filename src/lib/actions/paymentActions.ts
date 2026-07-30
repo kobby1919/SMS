@@ -26,6 +26,7 @@ import {
   assertCanReversePayment,
   assertPaymentWithinAllowedOverpay,
 } from "@/src/lib/services/finance-policy";
+import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
 
 // ─── Record a payment ─────────────────────────────────────────────────────────
 
@@ -181,6 +182,25 @@ export async function recordPayment(input: RecordPaymentInput) {
       paidBy:         data.paidBy,
       studentBillId: data.studentBillId,
       studentName:   `${bill.student.name} ${bill.student.surname}`,
+    },
+  });
+
+  await recordParentActivityEvents({
+    schoolId,
+    studentIds: [bill.studentId],
+    type: "PAYMENT",
+    title: `Payment received: GHS ${paymentAmount.toNumber().toFixed(2)}`,
+    body: `Receipt ${receiptNumber} was recorded for ${bill.student.name} ${bill.student.surname}.`,
+    href: `/api/finance/receipt?paymentId=${payment.id}`,
+    sourceModel: "Payment",
+    sourceId: String(payment.id),
+    sourceKey: `payment:${payment.id}:confirmed`,
+    occurredAt: payment.paymentDate,
+    payload: {
+      paymentId: payment.id,
+      receiptNumber,
+      amount: paymentAmount.toNumber(),
+      paymentMethod: data.paymentMethod,
     },
   });
 

@@ -8,6 +8,7 @@ import { requireResourceAccess } from "@/src/lib/authz";
 import { assertSameSchool } from "@/src/lib/tenant";
 import { revalidatePath } from "next/cache";
 import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
+import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   assignmentFormSchema,
@@ -337,6 +338,24 @@ export async function createAssignment(data: AssignmentFormData): Promise<void> 
     },
   });
 
+  await recordParentActivityEvents({
+    schoolId: ctx.schoolId,
+    classId: assignment.lesson.class.id,
+    type: "ASSIGNMENT",
+    title: `${assignment.lesson.subject.name} assignment published`,
+    body: `${parsed.title} is due on ${dueFmt}. Teacher: ${assignment.lesson.teacher.name} ${assignment.lesson.teacher.surname}.`,
+    href: "/list/assignments",
+    sourceModel: "Assignment",
+    sourceId: String(assignment.id),
+    sourceKey: `assignment:${assignment.id}:created`,
+    occurredAt: new Date(),
+    payload: {
+      assignmentTitle: parsed.title,
+      subjectName: assignment.lesson.subject.name,
+      dueDate: parsed.dueDate,
+    },
+  });
+
   revalidatePath("/list/assignments");
   revalidatePath("/list/announcements");
   revalidateDashboard(ctx.schoolId);
@@ -391,6 +410,24 @@ export async function updateAssignment(data: AssignmentFormData): Promise<void> 
 
   if (existingAnn) await prisma.announcement.update({ where: { id: existingAnn.id }, data: announcementData });
   else             await prisma.announcement.create({ data: announcementData });
+
+  await recordParentActivityEvents({
+    schoolId: ctx.schoolId,
+    classId: assignment.lesson.class.id,
+    type: "ASSIGNMENT",
+    title: `${assignment.lesson.subject.name} assignment updated`,
+    body: `${parsed.title} has been updated. New due date: ${dueFmt}.`,
+    href: "/list/assignments",
+    sourceModel: "Assignment",
+    sourceId: String(assignment.id),
+    sourceKey: `assignment:${assignment.id}:updated:${new Date(parsed.dueDate).getTime()}`,
+    occurredAt: new Date(),
+    payload: {
+      assignmentTitle: parsed.title,
+      subjectName: assignment.lesson.subject.name,
+      dueDate: parsed.dueDate,
+    },
+  });
 
   revalidatePath("/list/assignments");
   revalidatePath("/list/announcements");

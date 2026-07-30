@@ -37,9 +37,18 @@ type RowEdit = Partial<Pick<CARow, "classworkScore" | "examScore" | "remarks">>;
 
 type ExistingCA = {
   studentId:      string;
+  subjectId:      number;
+  term:           Term;
+  academicYear:   string;
   classworkScore: number;
   examScore:      number;
   remarks:        string;
+};
+
+type ActivityCAContext = {
+  subjectId: number;
+  term: Term;
+  academicYear: string;
 };
 
 type Props = {
@@ -49,12 +58,25 @@ type Props = {
   subjects:     Subject[];
   academicYears: string[];
   existingCA?:  ExistingCA[]; // pre-loaded when editing
+  activityCAContexts?: ActivityCAContext[];
   onSuccess?:   () => void;
 };
 
-const buildRows = (students: Student[], existingCA: ExistingCA[]): CARow[] =>
+const buildRows = (
+  students: Student[],
+  existingCA: ExistingCA[],
+  selectedSubjectId: number | "",
+  selectedTerm: Term,
+  selectedYear: string,
+): CARow[] =>
   students.map((student) => {
-    const existing = existingCA.find((entry) => entry.studentId === student.id);
+    const existing = existingCA.find(
+      (entry) =>
+        entry.studentId === student.id &&
+        entry.subjectId === selectedSubjectId &&
+        entry.term === selectedTerm &&
+        entry.academicYear === selectedYear,
+    );
     return {
       studentId:      student.id,
       classworkScore: existing ? String(existing.classworkScore) : "",
@@ -83,7 +105,7 @@ function ScorePreview({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const CAEntryForm = ({
-  classId, className, students, subjects, academicYears, existingCA = [], onSuccess,
+  classId, className, students, subjects, academicYears, existingCA = [], activityCAContexts = [], onSuccess,
 }: Props) => {
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | "">("");
   const [selectedTerm,      setSelectedTerm]      = useState<Term>("TERM_2");
@@ -112,8 +134,8 @@ const CAEntryForm = ({
   }, [selectedYear]);
 
   const baseRows = useMemo(
-    () => buildRows(students, existingCA),
-    [students, existingCA]
+    () => buildRows(students, existingCA, selectedSubjectId, selectedTerm, selectedYear),
+    [students, existingCA, selectedSubjectId, selectedTerm, selectedYear]
   );
 
   const rows = useMemo(
@@ -146,12 +168,12 @@ const CAEntryForm = ({
     for (const row of rows) {
       const cw = parseFloat(row.classworkScore);
       const ex = parseFloat(row.examScore);
-      if (row.classworkScore !== "" && (isNaN(cw) || cw < 0 || cw > 100)) {
-        setApiError("All classwork scores must be between 0 and 100.");
+      if (row.classworkScore !== "" && (isNaN(cw) || cw < 0 || cw > (activityCAEnabled ? cwWeight : 100))) {
+        setApiError(activityCAEnabled ? `Auto CA marks must be between 0 and ${cwWeight}.` : "All classwork scores must be between 0 and 100.");
         return;
       }
-      if (row.examScore !== "" && (isNaN(ex) || ex < 0 || ex > 100)) {
-        setApiError("All exam scores must be between 0 and 100.");
+      if (row.examScore !== "" && (isNaN(ex) || ex < 0 || ex > (activityCAEnabled ? exWeight : 100))) {
+        setApiError(activityCAEnabled ? `Exam scores must be between 0 and ${exWeight}.` : "All exam scores must be between 0 and 100.");
         return;
       }
     }
@@ -190,6 +212,12 @@ const CAEntryForm = ({
 
   const cwWeight = caConfig?.classworkWeight ?? 30;
   const exWeight = caConfig?.examWeight      ?? 70;
+  const activityCAEnabled = activityCAContexts.some(
+    (context) =>
+      context.subjectId === selectedSubjectId &&
+      context.term === selectedTerm &&
+      context.academicYear === selectedYear,
+  );
 
   const filledCount = rows.filter(
     (r) => r.classworkScore !== "" && r.examScore !== ""
@@ -201,7 +229,7 @@ const CAEntryForm = ({
     const total = filled.reduce((sum, r) => {
       const cw = parseFloat(r.classworkScore) || 0;
       const ex = parseFloat(r.examScore)      || 0;
-      return sum + (cw * cwWeight) / 100 + (ex * exWeight) / 100;
+      return sum + (activityCAEnabled ? cw + ex : (cw * cwWeight) / 100 + (ex * exWeight) / 100);
     }, 0);
     return Math.round((total / filled.length) * 10) / 10;
   })();
@@ -316,8 +344,8 @@ const CAEntryForm = ({
 
       {/* CA weight config info pill */}
       {caConfig && (
-        <div className="flex items-center gap-3 p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
-          <TrendingUp size={14} className="text-indigo-500 shrink-0" />
+        <div className={`flex items-center gap-3 p-3 border rounded-xl ${activityCAEnabled ? "bg-emerald-50 border-emerald-100" : "bg-indigo-50 border-indigo-100"}`}>
+          <TrendingUp size={14} className={`${activityCAEnabled ? "text-emerald-500" : "text-indigo-500"} shrink-0`} />
           {configLoading ? (
             <p className="text-xs text-indigo-600 font-semibold">Loading weights…</p>
           ) : (
@@ -327,6 +355,12 @@ const CAEntryForm = ({
               Exam = <span className="font-black">{exWeight}%</span>
             </p>
           )}
+        </div>
+      )}
+
+      {activityCAEnabled && (
+        <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
+          Activity-based CA is active for this subject. Edujay has locked manual CA entry here; teachers should record activities in the Activity CA tab and enter only the exam score on this screen.
         </div>
       )}
 
@@ -354,7 +388,7 @@ const CAEntryForm = ({
           <div className="grid min-w-[720px] grid-cols-[2fr_1fr_1fr_1fr_2fr] gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
             <span className="text-xs font-black uppercase tracking-wider text-gray-400">Student</span>
             <span className="text-xs font-black uppercase tracking-wider text-gray-400">
-              Classwork ({cwWeight}%)
+              {activityCAEnabled ? `Auto CA (${cwWeight})` : `Classwork (${cwWeight}%)`}
             </span>
             <span className="text-xs font-black uppercase tracking-wider text-gray-400">
               Exam ({exWeight}%)
@@ -369,7 +403,7 @@ const CAEntryForm = ({
               const student = students[idx];
               const cw = parseFloat(row.classworkScore);
               const ex = parseFloat(row.examScore);
-              const bothValid = !isNaN(cw) && !isNaN(ex) && cw >= 0 && cw <= 100 && ex >= 0 && ex <= 100;
+              const bothValid = !isNaN(cw) && !isNaN(ex) && cw >= 0 && cw <= (activityCAEnabled ? cwWeight : 100) && ex >= 0 && ex <= (activityCAEnabled ? exWeight : 100);
 
               return (
                 <div
@@ -392,19 +426,24 @@ const CAEntryForm = ({
                   <input
                     type="number"
                     min={0}
-                    max={100}
+                    max={activityCAEnabled ? cwWeight : 100}
                     step={0.5}
                     placeholder="—"
                     value={row.classworkScore}
                     onChange={(e) => updateRow(idx, "classworkScore", e.target.value)}
-                    className="ring-[1.5px] ring-gray-200 p-2 rounded-xl text-sm font-bold text-gray-800 text-center focus:ring-indigo-500 outline-none transition-all w-full"
+                    disabled={activityCAEnabled}
+                    className={`ring-[1.5px] p-2 rounded-xl text-sm font-bold text-center outline-none transition-all w-full ${
+                      activityCAEnabled
+                        ? "ring-emerald-100 bg-emerald-50 text-emerald-700"
+                        : "ring-gray-200 text-gray-800 focus:ring-indigo-500"
+                    }`}
                   />
 
                   {/* Exam score */}
                   <input
                     type="number"
                     min={0}
-                    max={100}
+                    max={activityCAEnabled ? exWeight : 100}
                     step={0.5}
                     placeholder="—"
                     value={row.examScore}
@@ -417,7 +456,8 @@ const CAEntryForm = ({
                     {bothValid && caConfig ? (
                       <ScorePreview
                         classwork={cw} exam={ex}
-                        cwWeight={cwWeight} exWeight={exWeight}
+                        cwWeight={activityCAEnabled ? 100 : cwWeight}
+                        exWeight={activityCAEnabled ? 100 : exWeight}
                       />
                     ) : (
                       <span className="text-xs text-gray-300 font-bold">—</span>

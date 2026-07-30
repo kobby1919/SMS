@@ -24,6 +24,7 @@ import {
   assertCanGenerateBills,
   assertCanWaiveBill,
 } from "@/src/lib/services/finance-policy";
+import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -165,7 +166,7 @@ export async function generateBills(rawInput: GenerateBillsInput): Promise<{
         generatedBy: userId,
       })),
       skipDuplicates: true,
-      select: { id: true },
+      select: { id: true, studentId: true },
     });
 
     if (bills.length > 0) {
@@ -187,6 +188,29 @@ export async function generateBills(rawInput: GenerateBillsInput): Promise<{
   });
   const created = createdBills.length;
   const skipped = students.length - created;
+
+  if (createdBills.length > 0) {
+    await Promise.all(
+      createdBills.map((bill) =>
+        recordParentActivityEvents({
+          schoolId,
+          studentIds: [bill.studentId],
+          type: "BILL",
+          title: `${structure.title} bill generated`,
+          body: `A new bill of GHS ${billTotal.toNumber().toFixed(2)} has been generated.`,
+          href: "/list/finance/bills",
+          sourceModel: "StudentBill",
+          sourceId: String(bill.id),
+          sourceKey: `student-bill:${bill.id}:generated`,
+          occurredAt: new Date(),
+          payload: {
+            feeStructureId: input.feeStructureId,
+            amount: billTotal.toNumber(),
+          },
+        }),
+      ),
+    );
+  }
 
   await writeAuditLog({
     schoolId,

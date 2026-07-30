@@ -1,5 +1,6 @@
 import prisma from "@/src/lib/prisma";
 import type { AttendanceStatus } from "@/src/generated/prisma";
+import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
 
 export type AttendanceStatusCounts = Record<AttendanceStatus, number>;
 
@@ -191,6 +192,35 @@ export async function saveAttendance({
       })),
     }),
   ]);
+
+  const lessonForEvent = await prisma.lesson.findFirst({
+    where: { id: lessonId, schoolId },
+    select: {
+      teacherId: true,
+      subject: { select: { name: true } },
+    },
+  });
+
+  if (lessonForEvent) {
+    await Promise.all(
+      records.map((record) =>
+        recordParentActivityEvents({
+          schoolId,
+          studentIds: [record.studentId],
+          teacherId: lessonForEvent.teacherId,
+          type: "ATTENDANCE",
+          title: `${lessonForEvent.subject.name} attendance recorded`,
+          body: `Attendance was marked ${record.status.toLowerCase()}${record.note ? ` - ${record.note}` : ""}.`,
+          href: "/list/attendance",
+          sourceModel: "Attendance",
+          sourceId: `${lessonId}:${record.studentId}:${attendanceDate.toISOString()}`,
+          sourceKey: `attendance:${lessonId}:${record.studentId}:${attendanceDate.toISOString()}:${record.status}`,
+          occurredAt: attendanceDate,
+          payload: { status: record.status, note: record.note ?? null },
+        }),
+      ),
+    );
+  }
 
   return records.length;
 }

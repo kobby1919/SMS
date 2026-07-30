@@ -175,6 +175,52 @@ enum WebhookEventStatus {
   IGNORED
 }
 
+enum CAActivityType {
+  MIDTERM_EXAM
+  CLASS_TEST
+  CLASS_EXERCISE
+  QUIZ
+  HOMEWORK
+  PROJECT
+  PRACTICAL
+  PARTICIPATION
+  OTHER
+}
+
+enum CABucketAggregationMode {
+  AVERAGE_TO_BUCKET
+  SUM_ACTIVITIES
+}
+
+enum ParentNotificationType {
+  DAILY_SUMMARY
+  ATTENDANCE
+  ASSESSMENT
+  ASSIGNMENT
+  ANNOUNCEMENT
+  BILL
+  PAYMENT
+}
+
+enum ParentNotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+}
+
+enum ParentDeliveryChannel {
+  EMAIL
+  SMS
+  WHATSAPP
+}
+
+enum ParentDeliveryStatus {
+  PENDING
+  SENT
+  FAILED
+  SKIPPED
+}
+
 // ─── EXISTING MODELS ─────────────────────────────────────────────────────────
 
 model School {
@@ -206,6 +252,10 @@ model School {
   events                Event[]
   announcements         Announcement[]
   caConfigs             CAConfig[]
+  caBuckets             CABucket[]
+  caActivities          CAActivity[]
+  caActivityScores      CAActivityScore[]
+  caAuditLogs           CAAuditLog[]
   continuousAssessments ContinuousAssessment[]
   syllabi               Syllabus[]
   syllabusTopicProgress SyllabusTopicProgress[]
@@ -221,6 +271,11 @@ model School {
   onboardingAuditLogs    OnboardingAuditLog[]
   financeJobs            FinanceJob[]
   paymentWebhookEvents   PaymentWebhookEvent[]
+  parentNotifications    ParentNotification[]
+  parentActivityEvents   ParentActivityEvent[]
+  notificationSettings   SchoolNotificationSetting?
+  parentPreferences      ParentNotificationPreference[]
+  parentDeliveryLogs     ParentNotificationDeliveryLog[]
 }
 
 model Admin {
@@ -259,7 +314,10 @@ model Student {
   attendances           Attendance[]
   results               Result[]
   continuousAssessments ContinuousAssessment[]
+  caActivityScores      CAActivityScore[]
   bills                 StudentBill[]
+  parentNotifications   ParentNotification[]
+  parentActivityEvents   ParentActivityEvent[]
 
   @@index([schoolId])
   @@index([schoolId, classId])
@@ -290,6 +348,10 @@ model Teacher {
   classes  Class[]   @relation("ClassTeacher")
 
   continuousAssessments ContinuousAssessment[]
+  caBuckets             CABucket[]
+  caActivities          CAActivity[]
+  caActivityScores      CAActivityScore[]
+  parentActivityEvents   ParentActivityEvent[]
   syllabusTopicProgress SyllabusTopicProgress[]
 
   @@index([schoolId])
@@ -310,9 +372,149 @@ model Parent {
   school   School @relation(fields: [schoolId], references: [id])
 
   students Student[]
+  notifications ParentNotification[]
+  activityEvents ParentActivityEvent[]
+  notificationPreference ParentNotificationPreference?
+  notificationDeliveries ParentNotificationDeliveryLog[]
 
   @@index([schoolId])
   @@index([schoolId, createdAt])
+}
+
+model SchoolNotificationSetting {
+  id                     String   @id @default(cuid())
+  timezone               String   @default("Africa/Accra")
+  openingTime            String   @default("07:30")
+  closingTime            String   @default("15:00")
+  dailySummarySendTime   String   @default("15:15")
+  activeDays             String[] @default(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"])
+  emailEnabled           Boolean  @default(true)
+  smsEnabled             Boolean  @default(true)
+  whatsappEnabled        Boolean  @default(false)
+  urgentAlertsImmediate  Boolean  @default(true)
+  quietHoursStart        String   @default("20:00")
+  quietHoursEnd          String   @default("06:00")
+  lastDailySummaryRunAt  DateTime?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  schoolId String @unique
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+}
+
+model ParentNotificationPreference {
+  id                  String                @id @default(cuid())
+  dailySummaryEnabled Boolean               @default(true)
+  urgentAlertsEnabled Boolean               @default(true)
+  preferredChannel    ParentDeliveryChannel @default(WHATSAPP)
+  fallbackChannel     ParentDeliveryChannel @default(SMS)
+  emailEnabled        Boolean               @default(true)
+  smsEnabled          Boolean               @default(true)
+  whatsappEnabled     Boolean               @default(true)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  parentId String @unique
+  parent   Parent @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId, preferredChannel])
+  @@index([schoolId, dailySummaryEnabled])
+}
+
+model ParentNotification {
+  id          String                     @id @default(cuid())
+  type        ParentNotificationType
+  priority    ParentNotificationPriority @default(NORMAL)
+  title       String
+  body        String
+  href        String?
+  payload     Json?
+  sourceModel String
+  sourceId    String
+  sourceKey   String
+  occurredAt  DateTime
+  readAt      DateTime?
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  parentId String
+  parent   Parent @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  studentId String?
+  student   Student? @relation(fields: [studentId], references: [id], onDelete: SetNull)
+
+  deliveries ParentNotificationDeliveryLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, parentId, sourceKey])
+  @@index([schoolId, parentId, readAt, occurredAt])
+  @@index([schoolId, parentId, type, occurredAt])
+  @@index([schoolId, studentId, occurredAt])
+}
+
+model ParentNotificationDeliveryLog {
+  id             String               @id @default(cuid())
+  channel        ParentDeliveryChannel
+  status         ParentDeliveryStatus @default(PENDING)
+  recipient      String?
+  provider       String?
+  messagePreview String
+  errorMessage   String?
+  sentAt         DateTime?
+  attemptedAt    DateTime             @default(now())
+  createdAt      DateTime             @default(now())
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  parentId String
+  parent   Parent @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  notificationId String?
+  notification   ParentNotification? @relation(fields: [notificationId], references: [id], onDelete: SetNull)
+
+  @@index([schoolId, status, attemptedAt])
+  @@index([schoolId, parentId, attemptedAt])
+  @@index([schoolId, channel, attemptedAt])
+  @@index([notificationId])
+}
+
+model ParentActivityEvent {
+  id          String                 @id @default(cuid())
+  type        ParentNotificationType
+  title       String
+  body        String
+  href        String?
+  payload     Json?
+  sourceModel String
+  sourceId    String
+  sourceKey   String
+  occurredAt  DateTime
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  parentId String
+  parent   Parent @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  studentId String?
+  student   Student? @relation(fields: [studentId], references: [id], onDelete: SetNull)
+
+  teacherId String?
+  teacher   Teacher? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@unique([schoolId, parentId, sourceKey])
+  @@index([schoolId, parentId, occurredAt])
+  @@index([schoolId, studentId, occurredAt])
+  @@index([schoolId, teacherId, occurredAt])
 }
 
 model Grade {
@@ -350,6 +552,8 @@ model Class {
   grade                 Grade                   @relation(fields: [gradeId], references: [id])
   events                Event[]
   announcements         Announcement[]
+  caBuckets             CABucket[]
+  caActivities          CAActivity[]
   continuousAssessments ContinuousAssessment[]
   syllabusTopicProgress SyllabusTopicProgress[]
 
@@ -367,6 +571,8 @@ model Subject {
   lessons  Lesson[]
 
   continuousAssessments ContinuousAssessment[]
+  caBuckets             CABucket[]
+  caActivities          CAActivity[]
   syllabi               Syllabus[]
 
   @@unique([schoolId, name])
@@ -534,6 +740,122 @@ model CAConfig {
   school   School @relation(fields: [schoolId], references: [id])
 
   @@unique([schoolId, academicYear])
+}
+
+model CABucket {
+  id              Int                     @id @default(autoincrement())
+  name            String
+  type            CAActivityType
+  aggregationMode CABucketAggregationMode @default(AVERAGE_TO_BUCKET)
+  allocationMarks Decimal                 @db.Decimal(8, 2)
+  term            Term
+  academicYear    String
+  order           Int                     @default(0)
+  isLocked        Boolean                 @default(false)
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  classId Int
+  class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  subjectId Int
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  createdBy String?
+  creator   Teacher? @relation(fields: [createdBy], references: [id])
+
+  activities CAActivity[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, classId, subjectId, term, academicYear, name])
+  @@index([schoolId, classId, subjectId, term, academicYear])
+  @@index([schoolId, createdBy])
+}
+
+model CAActivity {
+  id              Int            @id @default(autoincrement())
+  title           String
+  type            CAActivityType
+  rawMaxScore     Decimal        @db.Decimal(8, 2)
+  allocationMarks Decimal?       @db.Decimal(8, 2)
+  activityDate    DateTime       @default(now())
+  sequence        Int            @default(1)
+  isLocked        Boolean        @default(false)
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  bucketId Int
+  bucket   CABucket @relation(fields: [bucketId], references: [id], onDelete: Cascade)
+
+  classId Int
+  class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  subjectId Int
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+
+  scores CAActivityScore[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([bucketId, type, sequence])
+  @@index([schoolId, classId, subjectId, activityDate])
+  @@index([schoolId, teacherId, activityDate])
+  @@index([schoolId, bucketId])
+}
+
+model CAActivityScore {
+  id                     Int      @id @default(autoincrement())
+  rawScore               Decimal  @db.Decimal(8, 2)
+  normalizedContribution Decimal  @default(0) @db.Decimal(8, 2)
+  comment                String?
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  activityId Int
+  activity   CAActivity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  recordedBy String
+  teacher    Teacher @relation(fields: [recordedBy], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([activityId, studentId])
+  @@index([schoolId, studentId])
+  @@index([schoolId, activityId])
+  @@index([schoolId, recordedBy, updatedAt])
+}
+
+model CAAuditLog {
+  id         Int      @id @default(autoincrement())
+  action     String
+  entityType String
+  entityId   String
+  message    String
+  metadata   Json?
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  actorId String?
+
+  createdAt DateTime @default(now())
+
+  @@index([schoolId, createdAt])
+  @@index([schoolId, actorId, createdAt])
+  @@index([schoolId, entityType, entityId])
 }
 
 model ContinuousAssessment {

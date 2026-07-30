@@ -187,6 +187,94 @@ exports.Prisma.ParentScalarFieldEnum = {
   schoolId: 'schoolId'
 };
 
+exports.Prisma.SchoolNotificationSettingScalarFieldEnum = {
+  id: 'id',
+  timezone: 'timezone',
+  openingTime: 'openingTime',
+  closingTime: 'closingTime',
+  dailySummarySendTime: 'dailySummarySendTime',
+  activeDays: 'activeDays',
+  emailEnabled: 'emailEnabled',
+  smsEnabled: 'smsEnabled',
+  whatsappEnabled: 'whatsappEnabled',
+  urgentAlertsImmediate: 'urgentAlertsImmediate',
+  quietHoursStart: 'quietHoursStart',
+  quietHoursEnd: 'quietHoursEnd',
+  lastDailySummaryRunAt: 'lastDailySummaryRunAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId'
+};
+
+exports.Prisma.ParentNotificationPreferenceScalarFieldEnum = {
+  id: 'id',
+  dailySummaryEnabled: 'dailySummaryEnabled',
+  urgentAlertsEnabled: 'urgentAlertsEnabled',
+  preferredChannel: 'preferredChannel',
+  fallbackChannel: 'fallbackChannel',
+  emailEnabled: 'emailEnabled',
+  smsEnabled: 'smsEnabled',
+  whatsappEnabled: 'whatsappEnabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId',
+  parentId: 'parentId'
+};
+
+exports.Prisma.ParentNotificationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  priority: 'priority',
+  title: 'title',
+  body: 'body',
+  href: 'href',
+  payload: 'payload',
+  sourceModel: 'sourceModel',
+  sourceId: 'sourceId',
+  sourceKey: 'sourceKey',
+  occurredAt: 'occurredAt',
+  readAt: 'readAt',
+  schoolId: 'schoolId',
+  parentId: 'parentId',
+  studentId: 'studentId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ParentNotificationDeliveryLogScalarFieldEnum = {
+  id: 'id',
+  channel: 'channel',
+  status: 'status',
+  recipient: 'recipient',
+  provider: 'provider',
+  messagePreview: 'messagePreview',
+  errorMessage: 'errorMessage',
+  sentAt: 'sentAt',
+  attemptedAt: 'attemptedAt',
+  createdAt: 'createdAt',
+  schoolId: 'schoolId',
+  parentId: 'parentId',
+  notificationId: 'notificationId'
+};
+
+exports.Prisma.ParentActivityEventScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  body: 'body',
+  href: 'href',
+  payload: 'payload',
+  sourceModel: 'sourceModel',
+  sourceId: 'sourceId',
+  sourceKey: 'sourceKey',
+  occurredAt: 'occurredAt',
+  schoolId: 'schoolId',
+  parentId: 'parentId',
+  studentId: 'studentId',
+  teacherId: 'teacherId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.GradeScalarFieldEnum = {
   id: 'id',
   level: 'level',
@@ -290,6 +378,67 @@ exports.Prisma.CAConfigScalarFieldEnum = {
   examWeight: 'examWeight',
   createdAt: 'createdAt',
   schoolId: 'schoolId'
+};
+
+exports.Prisma.CABucketScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  aggregationMode: 'aggregationMode',
+  allocationMarks: 'allocationMarks',
+  term: 'term',
+  academicYear: 'academicYear',
+  order: 'order',
+  isLocked: 'isLocked',
+  schoolId: 'schoolId',
+  classId: 'classId',
+  subjectId: 'subjectId',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CAActivityScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  type: 'type',
+  rawMaxScore: 'rawMaxScore',
+  allocationMarks: 'allocationMarks',
+  activityDate: 'activityDate',
+  sequence: 'sequence',
+  isLocked: 'isLocked',
+  schoolId: 'schoolId',
+  bucketId: 'bucketId',
+  classId: 'classId',
+  subjectId: 'subjectId',
+  teacherId: 'teacherId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CAActivityScoreScalarFieldEnum = {
+  id: 'id',
+  rawScore: 'rawScore',
+  normalizedContribution: 'normalizedContribution',
+  comment: 'comment',
+  schoolId: 'schoolId',
+  activityId: 'activityId',
+  studentId: 'studentId',
+  recordedBy: 'recordedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CAAuditLogScalarFieldEnum = {
+  id: 'id',
+  action: 'action',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  message: 'message',
+  metadata: 'metadata',
+  schoolId: 'schoolId',
+  actorId: 'actorId',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.ContinuousAssessmentScalarFieldEnum = {
@@ -550,6 +699,11 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
 exports.Prisma.JsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
@@ -582,6 +736,35 @@ exports.UserSex = exports.$Enums.UserSex = {
   FEMALE: 'FEMALE'
 };
 
+exports.ParentDeliveryChannel = exports.$Enums.ParentDeliveryChannel = {
+  EMAIL: 'EMAIL',
+  SMS: 'SMS',
+  WHATSAPP: 'WHATSAPP'
+};
+
+exports.ParentNotificationType = exports.$Enums.ParentNotificationType = {
+  DAILY_SUMMARY: 'DAILY_SUMMARY',
+  ATTENDANCE: 'ATTENDANCE',
+  ASSESSMENT: 'ASSESSMENT',
+  ASSIGNMENT: 'ASSIGNMENT',
+  ANNOUNCEMENT: 'ANNOUNCEMENT',
+  BILL: 'BILL',
+  PAYMENT: 'PAYMENT'
+};
+
+exports.ParentNotificationPriority = exports.$Enums.ParentNotificationPriority = {
+  LOW: 'LOW',
+  NORMAL: 'NORMAL',
+  HIGH: 'HIGH'
+};
+
+exports.ParentDeliveryStatus = exports.$Enums.ParentDeliveryStatus = {
+  PENDING: 'PENDING',
+  SENT: 'SENT',
+  FAILED: 'FAILED',
+  SKIPPED: 'SKIPPED'
+};
+
 exports.Day = exports.$Enums.Day = {
   MONDAY: 'MONDAY',
   TUESDAY: 'TUESDAY',
@@ -595,6 +778,23 @@ exports.AttendanceStatus = exports.$Enums.AttendanceStatus = {
   ABSENT: 'ABSENT',
   LATE: 'LATE',
   EXCUSED: 'EXCUSED'
+};
+
+exports.CAActivityType = exports.$Enums.CAActivityType = {
+  MIDTERM_EXAM: 'MIDTERM_EXAM',
+  CLASS_TEST: 'CLASS_TEST',
+  CLASS_EXERCISE: 'CLASS_EXERCISE',
+  QUIZ: 'QUIZ',
+  HOMEWORK: 'HOMEWORK',
+  PROJECT: 'PROJECT',
+  PRACTICAL: 'PRACTICAL',
+  PARTICIPATION: 'PARTICIPATION',
+  OTHER: 'OTHER'
+};
+
+exports.CABucketAggregationMode = exports.$Enums.CABucketAggregationMode = {
+  AVERAGE_TO_BUCKET: 'AVERAGE_TO_BUCKET',
+  SUM_ACTIVITIES: 'SUM_ACTIVITIES'
 };
 
 exports.Term = exports.$Enums.Term = {
@@ -741,6 +941,11 @@ exports.Prisma.ModelName = {
   Student: 'Student',
   Teacher: 'Teacher',
   Parent: 'Parent',
+  SchoolNotificationSetting: 'SchoolNotificationSetting',
+  ParentNotificationPreference: 'ParentNotificationPreference',
+  ParentNotification: 'ParentNotification',
+  ParentNotificationDeliveryLog: 'ParentNotificationDeliveryLog',
+  ParentActivityEvent: 'ParentActivityEvent',
   Grade: 'Grade',
   Class: 'Class',
   Subject: 'Subject',
@@ -752,6 +957,10 @@ exports.Prisma.ModelName = {
   Event: 'Event',
   Announcement: 'Announcement',
   CAConfig: 'CAConfig',
+  CABucket: 'CABucket',
+  CAActivity: 'CAActivity',
+  CAActivityScore: 'CAActivityScore',
+  CAAuditLog: 'CAAuditLog',
   ContinuousAssessment: 'ContinuousAssessment',
   Syllabus: 'Syllabus',
   SyllabusTopic: 'SyllabusTopic',

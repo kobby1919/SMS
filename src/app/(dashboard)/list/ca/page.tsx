@@ -7,7 +7,8 @@ import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import CAEntryForm from "@/src/components/CAEntryForm";
 import CAClassSummary from "@/src/components/CAClassSummary";
-import { ClipboardList, AlertTriangle, BookOpen, Users } from "lucide-react";
+import CAActivityManager from "@/src/components/CAActivityManager";
+import { ClipboardList, AlertTriangle, BookOpen, Users, Layers3 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,7 @@ const CAPage = async ({
   let supervisedClasses: {
     id: number;
     name: string;
+    supervisorId: string | null;
     grade: { level: string };
   }[] = [];
 
@@ -37,7 +39,13 @@ const CAPage = async ({
     });
   } else {
     supervisedClasses = await prisma.class.findMany({
-      where: { schoolId, supervisorId: userId },
+      where: {
+        schoolId,
+        OR: [
+          { supervisorId: userId },
+          { lessons: { some: { teacherId: userId } } },
+        ],
+      },
       orderBy: { name: "asc" },
       include: { grade: { select: { level: true } } },
     });
@@ -79,7 +87,13 @@ const CAPage = async ({
   // A subject may have multiple lesson slots per week (e.g. Math on Mon & Wed).
   // We deduplicate by subjectId so each subject appears only once.
   const lessonsForClass = await prisma.lesson.findMany({
-    where: { schoolId, classId: activeClass.id },
+    where: {
+      schoolId,
+      classId: activeClass.id,
+      ...(role === "teacher" && activeClass.supervisorId !== userId
+        ? { teacherId: userId }
+        : {}),
+    },
     select: { subject: { select: { id: true, name: true } } },
     orderBy: { subject: { name: "asc" } },
   });
@@ -131,6 +145,30 @@ const CAPage = async ({
       ? configs.map((c) => c.academicYear)
       : ["2025/26", "2026/27"];
 
+  const caBuckets = await prisma.cABucket.findMany({
+    where: {
+      schoolId,
+      classId: activeClass.id,
+      ...(subjects.length > 0 ? { subjectId: { in: subjects.map((subject) => subject.id) } } : {}),
+    },
+    include: {
+      activities: {
+        orderBy: [{ activityDate: "asc" }, { sequence: "asc" }],
+        include: {
+          teacher: { select: { name: true, surname: true } },
+          scores: {
+            select: {
+              studentId: true,
+              rawScore: true,
+              normalizedContribution: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: [{ subjectId: "asc" }, { order: "asc" }, { id: "asc" }],
+  });
+
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
       {/* ── Page Header ── */}
@@ -156,6 +194,7 @@ const CAPage = async ({
           <div className="flex bg-gray-100 p-1 rounded-xl gap-1">
             {[
               { key: "entry", label: "Entry", icon: <BookOpen size={13} /> },
+              { key: "activity", label: "Activity CA", icon: <Layers3 size={13} /> },
               { key: "summary", label: "Summary", icon: <Users size={13} /> },
             ].map((tab) => (
               <a
@@ -254,6 +293,51 @@ const CAPage = async ({
                   classworkScore: ca.classworkScore,
                   examScore: ca.examScore,
                   remarks: ca.remarks,
+                }))}
+                activityCAContexts={Array.from(
+                  new Map(
+                    caBuckets.map((bucket) => [
+                      `${bucket.subjectId}-${bucket.term}-${bucket.academicYear}`,
+                      {
+                        subjectId: bucket.subjectId,
+                        term: bucket.term,
+                        academicYear: bucket.academicYear,
+                      },
+                    ]),
+                  ).values(),
+                )}
+              />
+            ) : viewMode === "activity" ? (
+              <CAActivityManager
+                classId={activeClass.id}
+                className={activeClass.name}
+                students={students}
+                subjects={subjects}
+                academicYears={academicYears}
+                buckets={caBuckets.map((bucket) => ({
+                  id: bucket.id,
+                  name: bucket.name,
+                  type: bucket.type,
+                  aggregationMode: bucket.aggregationMode,
+                  allocationMarks: Number(bucket.allocationMarks),
+                  term: bucket.term,
+                  academicYear: bucket.academicYear,
+                  subjectId: bucket.subjectId,
+                  activities: bucket.activities.map((activity) => ({
+                    id: activity.id,
+                    title: activity.title,
+                    type: activity.type,
+                    rawMaxScore: Number(activity.rawMaxScore),
+                    allocationMarks: activity.allocationMarks === null ? null : Number(activity.allocationMarks),
+                    sequence: activity.sequence,
+                    activityDate: activity.activityDate,
+                    teacherName: `${activity.teacher.name} ${activity.teacher.surname}`,
+                    scores: activity.scores.map((score) => ({
+                      studentId: score.studentId,
+                      rawScore: Number(score.rawScore),
+                      normalizedContribution: Number(score.normalizedContribution),
+                    })),
+                  })),
                 }))}
               />
             ) : (

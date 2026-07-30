@@ -1,6 +1,23 @@
 import { z } from "zod";
 import { nonEmptyStringSchema, positiveIntSchema, termSchema } from "./common";
 
+export const caActivityTypeSchema = z.enum([
+  "MIDTERM_EXAM",
+  "CLASS_TEST",
+  "CLASS_EXERCISE",
+  "QUIZ",
+  "HOMEWORK",
+  "PROJECT",
+  "PRACTICAL",
+  "PARTICIPATION",
+  "OTHER",
+]);
+
+export const caBucketAggregationModeSchema = z.enum([
+  "AVERAGE_TO_BUCKET",
+  "SUM_ACTIVITIES",
+]);
+
 export const caConfigSchema = z.object({
   academicYear: nonEmptyStringSchema,
   classworkWeight: z.coerce.number().min(0).max(100),
@@ -42,4 +59,41 @@ export const caBulkEntrySchema = z.object({
   classId: positiveIntSchema,
   term: termSchema,
   academicYear: nonEmptyStringSchema,
+});
+
+export const caBucketSchema = z.object({
+  name: z.string().trim().min(2).max(80),
+  type: caActivityTypeSchema,
+  aggregationMode: caBucketAggregationModeSchema,
+  allocationMarks: z.coerce.number().positive().max(100),
+  classId: positiveIntSchema,
+  subjectId: positiveIntSchema,
+  term: termSchema,
+  academicYear: nonEmptyStringSchema,
+  order: z.coerce.number().int().min(0).max(100).optional(),
+});
+
+export const caActivitySchema = z.object({
+  bucketId: positiveIntSchema,
+  title: z.string().trim().min(2).max(100).optional(),
+  type: caActivityTypeSchema.optional(),
+  rawMaxScore: z.coerce.number().positive().max(1000),
+  allocationMarks: z.coerce.number().positive().max(100).optional().nullable(),
+  activityDate: z.coerce.date().optional(),
+});
+
+export const caActivityScoreSchema = z.object({
+  activityId: positiveIntSchema,
+  studentId: nonEmptyStringSchema,
+  rawScore: z.coerce.number().min(0).max(1000),
+  comment: z.string().trim().max(300).optional(),
+});
+
+export const caBulkActivityScoreSchema = z.object({
+  activityId: positiveIntSchema,
+  rows: z.array(z.object({
+    studentId: nonEmptyStringSchema,
+    rawScore: z.coerce.number().min(0).max(1000),
+    comment: z.string().trim().max(300).optional(),
+  })).min(1).max(500),
 });

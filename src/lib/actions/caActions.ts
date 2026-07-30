@@ -10,12 +10,25 @@ import { revalidateDashboard, revalidateDocument } from "@/src/lib/cacheTags";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   caBulkEntrySchema,
+  caBulkActivityScoreSchema,
+  caActivitySchema,
+  caBucketSchema,
   caConfigSchema,
   caRecordSchema,
   caRecordUpdateSchema,
 } from "@/src/lib/validation/ca";
 import { nonEmptyStringSchema, positiveIntSchema } from "@/src/lib/validation/common";
 import type { Term } from "@/src/generated/prisma";
+import {
+  assertTeacherCanManageCAContext,
+  createCAActivity,
+  createCABucket,
+  getSubjectCAProgress,
+  logCAAudit,
+  syncComputedCARecordsForActivity,
+  upsertCAActivityScore,
+} from "@/src/lib/services/ca-activity";
+import { recordCAActivityScoreEvents } from "@/src/lib/services/parent-daily-summary";
 
 // ─── Ghana BECE Grading System ────────────────────────────────────────────────
 // Score ranges → letter grade + grade point
@@ -285,12 +298,36 @@ export async function bulkUpsertCA(
 
   const results = await Promise.all(
     rows.map(async (row) => {
-      const { totalScore, grade, gradePoint } = await computeCA(
-        row.classworkScore,
-        row.examScore,
-        config.classworkWeight,
-        config.examWeight
-      );
+      const progress = await getSubjectCAProgress({
+        schoolId,
+        studentId: row.studentId,
+        classId,
+        subjectId,
+        term,
+        academicYear,
+      });
+      const useActivityCA = progress.totalAllocatedMarks > 0;
+      const classworkScore = useActivityCA ? progress.earnedMarks : row.classworkScore;
+      const examScore = useActivityCA ? Math.min(row.examScore, config.examWeight) : row.examScore;
+      let totalScore: number;
+      let grade: string;
+      let gradePoint: number;
+      if (useActivityCA) {
+        totalScore = Math.round((classworkScore + examScore) * 100) / 100;
+        const gradeInfo = await getBECEGrade(totalScore);
+        grade = gradeInfo.grade;
+        gradePoint = gradeInfo.gradePoint;
+      } else {
+        const computed = await computeCA(
+          classworkScore,
+          examScore,
+          config.classworkWeight,
+          config.examWeight,
+        );
+        totalScore = computed.totalScore;
+        grade = computed.grade;
+        gradePoint = computed.gradePoint;
+      }
 
       return prisma.continuousAssessment.upsert({
         where: {
@@ -304,9 +341,9 @@ export async function bulkUpsertCA(
           },
         },
         create: {
-          classworkScore: row.classworkScore,
+          classworkScore,
           schoolId,
-          examScore:      row.examScore,
+          examScore,
           totalScore,
           grade,
           gradePoint,
@@ -320,8 +357,8 @@ export async function bulkUpsertCA(
           configId:    config.id,
         },
         update: {
-          classworkScore: row.classworkScore,
-          examScore:      row.examScore,
+          classworkScore,
+          examScore,
           totalScore,
           grade,
           gradePoint,
@@ -340,4 +377,227 @@ export async function bulkUpsertCA(
     revalidateDocument(schoolId, "report-card", studentId);
   }
   return results;
+}
+
+export async function createCABucketAction(data: {
+  name: string;
+  type: string;
+  aggregationMode: string;
+  allocationMarks: number;
+  classId: number;
+  subjectId: number;
+  term: Term;
+  academicYear: string;
+  order?: number;
+}) {
+  const parsed = parseActionInput(caBucketSchema, data);
+  const { userId, role, schoolId } = await requireRole(["admin", "teacher"]);
+
+  await assertTeacherCanManageCAContext({
+    userId,
+    role,
+    schoolId,
+    classId: parsed.classId,
+    subjectId: parsed.subjectId,
+  });
+
+  const bucket = await createCABucket({
+    schoolId,
+    classId: parsed.classId,
+    subjectId: parsed.subjectId,
+    term: parsed.term,
+    academicYear: parsed.academicYear,
+    name: parsed.name,
+    type: parsed.type,
+    aggregationMode: parsed.aggregationMode,
+    allocationMarks: parsed.allocationMarks,
+    order: parsed.order,
+    createdBy: role === "teacher" ? userId : undefined,
+  });
+
+  await logCAAudit({
+    schoolId,
+    actorId: role === "teacher" ? userId : undefined,
+    action: "CA_BUCKET_CREATED",
+    entityType: "CABucket",
+    entityId: bucket.id,
+    message: `${parsed.name} bucket created with ${parsed.allocationMarks} CA marks.`,
+    metadata: parsed,
+  });
+
+  revalidatePath("/list/ca");
+  revalidatePath("/teacher");
+  revalidateDashboard(schoolId);
+  return bucket;
+}
+
+export async function createCAActivityAction(data: {
+  bucketId: number;
+  title?: string;
+  type?: string;
+  rawMaxScore: number;
+  allocationMarks?: number | null;
+  activityDate?: Date;
+}) {
+  const parsed = parseActionInput(caActivitySchema, data);
+  const { userId, schoolId } = await requireRole(["teacher"]);
+
+  const bucket = await prisma.cABucket.findFirst({
+    where: { id: parsed.bucketId, schoolId },
+    select: { classId: true, subjectId: true },
+  });
+  if (!bucket) throw new Error("CA bucket not found.");
+
+  await assertTeacherCanManageCAContext({
+    userId,
+    role: "teacher",
+    schoolId,
+    classId: bucket.classId,
+    subjectId: bucket.subjectId,
+  });
+
+  const activity = await createCAActivity({
+    schoolId,
+    bucketId: parsed.bucketId,
+    title: parsed.title,
+    type: parsed.type,
+    rawMaxScore: parsed.rawMaxScore,
+    allocationMarks: parsed.allocationMarks,
+    activityDate: parsed.activityDate,
+    teacherId: userId,
+  });
+
+  await logCAAudit({
+    schoolId,
+    actorId: userId,
+    action: "CA_ACTIVITY_CREATED",
+    entityType: "CAActivity",
+    entityId: activity.id,
+    message: `${activity.title} created for CA score entry.`,
+    metadata: {
+      bucketId: parsed.bucketId,
+      rawMaxScore: parsed.rawMaxScore,
+      allocationMarks: parsed.allocationMarks,
+    },
+  });
+
+  revalidatePath("/list/ca");
+  revalidatePath("/teacher");
+  revalidateDashboard(schoolId);
+  return activity;
+}
+
+export async function bulkUpsertCAActivityScores(data: {
+  activityId: number;
+  rows: { studentId: string; rawScore: number; comment?: string }[];
+}) {
+  const parsed = parseActionInput(caBulkActivityScoreSchema, data);
+  const { userId, schoolId } = await requireRole(["teacher"]);
+
+  const activity = await prisma.cAActivity.findFirst({
+    where: { id: parsed.activityId, schoolId },
+    select: { classId: true, subjectId: true },
+  });
+  if (!activity) throw new Error("CA activity not found.");
+
+  await assertTeacherCanManageCAContext({
+    userId,
+    role: "teacher",
+    schoolId,
+    classId: activity.classId,
+    subjectId: activity.subjectId,
+  });
+
+  const scores = await Promise.all(
+    parsed.rows.map((row) =>
+      upsertCAActivityScore({
+        schoolId,
+        activityId: parsed.activityId,
+        studentId: row.studentId,
+        rawScore: row.rawScore,
+        recordedBy: userId,
+        comment: row.comment,
+      }),
+    ),
+  );
+
+  await syncComputedCARecordsForActivity({
+    schoolId,
+    activityId: parsed.activityId,
+    studentIds: parsed.rows.map((row) => row.studentId),
+  });
+
+  await recordCAActivityScoreEvents({
+    schoolId,
+    activityId: parsed.activityId,
+    scoreIds: scores.map((score) => score.id),
+  });
+
+  await logCAAudit({
+    schoolId,
+    actorId: userId,
+    action: "CA_ACTIVITY_SCORES_UPSERTED",
+    entityType: "CAActivity",
+    entityId: parsed.activityId,
+    message: `${scores.length} student score${scores.length === 1 ? "" : "s"} saved for a CA activity.`,
+    metadata: {
+      scoreIds: scores.map((score) => score.id),
+      studentIds: parsed.rows.map((row) => row.studentId),
+    },
+  });
+
+  revalidatePath("/list/ca");
+  revalidatePath("/parent");
+  revalidatePath("/teacher");
+  revalidateDashboard(schoolId);
+  for (const studentId of new Set(parsed.rows.map((row) => row.studentId))) {
+    revalidateDocument(schoolId, "report-card", studentId);
+  }
+  return scores;
+}
+
+export async function lockCABucketAction(bucketId: number) {
+  bucketId = parseActionInput(positiveIntSchema, bucketId);
+  const { userId, schoolId } = await requireRole(["admin"]);
+
+  const bucket = await prisma.cABucket.update({
+    where: { id: bucketId, schoolId },
+    data: { isLocked: true },
+  });
+
+  await logCAAudit({
+    schoolId,
+    actorId: userId,
+    action: "CA_BUCKET_LOCKED",
+    entityType: "CABucket",
+    entityId: bucket.id,
+    message: `${bucket.name} bucket was locked.`,
+  });
+
+  revalidatePath("/list/ca");
+  revalidateDashboard(schoolId);
+  return bucket;
+}
+
+export async function lockCAActivityAction(activityId: number) {
+  activityId = parseActionInput(positiveIntSchema, activityId);
+  const { userId, schoolId } = await requireRole(["admin"]);
+
+  const activity = await prisma.cAActivity.update({
+    where: { id: activityId, schoolId },
+    data: { isLocked: true },
+  });
+
+  await logCAAudit({
+    schoolId,
+    actorId: userId,
+    action: "CA_ACTIVITY_LOCKED",
+    entityType: "CAActivity",
+    entityId: activity.id,
+    message: `${activity.title} activity was locked.`,
+  });
+
+  revalidatePath("/list/ca");
+  revalidateDashboard(schoolId);
+  return activity;
 }

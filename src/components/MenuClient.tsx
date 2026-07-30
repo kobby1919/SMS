@@ -24,6 +24,7 @@ import {
   SlidersHorizontal,
   Star,
   ScrollText,
+  BellRing,
 } from "lucide-react";
 
 const menuItems = [
@@ -52,6 +53,12 @@ const menuItems = [
         icon: LayoutDashboard,
         label: "Dashboard",
         href: "/parent",
+        visible: ["parent"],
+      },
+      {
+        icon: BellRing,
+        label: "Daily Updates",
+        href: "/parent/updates",
         visible: ["parent"],
       },
       {
@@ -193,6 +200,12 @@ const menuItems = [
         href: "/admin/ca-config",
         visible: ["admin"],
       },
+      {
+        icon: BellRing,
+        label: "Parent Notifications",
+        href: "/admin/notification-settings",
+        visible: ["admin"],
+      },
     ],
   },
 ];
@@ -223,6 +236,7 @@ const MenuClient = ({ role }: { role: string }) => {
                   item.href !== "/teacher" &&
                   item.href !== "/student" &&
                   item.href !== "/parent" &&
+                  item.href !== "/bursar" &&
                   pathname.startsWith(item.href));
 
               return (
