@@ -162,7 +162,13 @@ async function buildFinanceSummaryLines(schoolId: string, events: SummaryEvent[]
 
 function buildSection(title: string, lines: string[]) {
   if (lines.length === 0) return [];
-  return [`${title}:`, ...lines.map((line) => `- ${line}`)];
+  return [
+    `${title}:`,
+    ...lines.flatMap((line) => {
+      const parts = line.split("\n").map((part) => part.trim()).filter(Boolean);
+      return parts.map((part, index) => index === 0 ? `- ${part}` : `  ${part}`);
+    }),
+  ];
 }
 
 export async function rebuildParentDailySummary(input: {
@@ -325,7 +331,14 @@ export async function recordCAActivityScoreEvents(input: {
     const rawScore = Number(score.rawScore);
     const rawMaxScore = Number(activity.rawMaxScore);
     const normalized = Number(score.normalizedContribution);
-    const eventBody = `${activity.subject.name}: ${activity.title} added by ${teacherName}. Score ${rawScore}/${rawMaxScore}. ${activity.bucket.name} CA mark: ${normalized}/${Number(activity.bucket.allocationMarks)}. Current ${activity.subject.name} CA: ${progress.earnedMarks}/${progress.classworkWeight}. Exam score is not recorded yet, so this is CA progress, not a final report grade.`;
+    const eventBody = [
+      `${activity.subject.name}: ${activity.title}`,
+      `Teacher: ${teacherName}`,
+      `Score: ${rawScore}/${rawMaxScore}`,
+      `${activity.bucket.name} CA mark: ${normalized}/${Number(activity.bucket.allocationMarks)}`,
+      `Current ${activity.subject.name} CA: ${progress.earnedMarks}/${progress.classworkWeight}`,
+      "Note: Exam score is not recorded yet, so this is CA progress, not a final report grade.",
+    ].join("\n");
     const href = `/list/report-cards/${score.student.id}?term=${activity.bucket.term}&year=${activity.bucket.academicYear}&classId=${activity.class.id}&caScoreId=${score.id}`;
 
     events.push({
