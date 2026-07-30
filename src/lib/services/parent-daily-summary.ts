@@ -138,7 +138,7 @@ export async function recordCAActivityScoreEvents(input: {
     const rawScore = Number(score.rawScore);
     const rawMaxScore = Number(activity.rawMaxScore);
     const normalized = Number(score.normalizedContribution);
-    const eventBody = `${activity.subject.name}: ${activity.title} added by ${teacherName}. Score ${rawScore}/${rawMaxScore}. ${activity.bucket.name} CA mark: ${normalized}/${Number(activity.bucket.allocationMarks)}. Current ${activity.subject.name} CA: ${progress.earnedMarks}/${progress.classworkWeight}.`;
+    const eventBody = `${activity.subject.name}: ${activity.title} added by ${teacherName}. Score ${rawScore}/${rawMaxScore}. ${activity.bucket.name} CA mark: ${normalized}/${Number(activity.bucket.allocationMarks)}. Current ${activity.subject.name} CA: ${progress.earnedMarks}/${progress.classworkWeight}. Exam score is not recorded yet, so this is CA progress, not a final report grade.`;
 
     events.push({
       schoolId: input.schoolId,
@@ -148,7 +148,7 @@ export async function recordCAActivityScoreEvents(input: {
       type: "ASSESSMENT" as const,
       title: `${activity.subject.name} CA update`,
       body: eventBody,
-      href: `/list/report-cards/${score.student.id}?term=${activity.bucket.term}&year=${activity.bucket.academicYear}&classId=${activity.class.id}`,
+      href: "/parent/updates",
       payload: {
         studentName: `${score.student.name} ${score.student.surname}`,
         subjectName: activity.subject.name,

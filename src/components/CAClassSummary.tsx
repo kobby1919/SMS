@@ -35,6 +35,10 @@ type Props = {
   caRecords: CARecord[];
 };
 
+function isReportReady(record?: CARecord) {
+  return Boolean(record && record.examScore > 0);
+}
+
 // ─── Position badge ────────────────────────────────────────────────────────────
 function PositionBadge({ pos }: { pos: number }) {
   if (pos === 1) return (
@@ -86,7 +90,10 @@ const CAClassSummary = ({ className, students, subjects, caRecords }: Props) => 
   const subjectPositions: Record<number, Record<string, number>> = {};
   for (const sub of subjects) {
     const rows = students
-      .map((s) => ({ studentId: s.id, score: lookup[s.id]?.[sub.id]?.totalScore ?? -1 }))
+      .map((s) => {
+        const record = lookup[s.id]?.[sub.id];
+        return { studentId: s.id, score: isReportReady(record) ? record.totalScore : -1 };
+      })
       .filter((r) => r.score >= 0)
       .sort((a, b) => b.score - a.score);
 
@@ -99,7 +106,7 @@ const CAClassSummary = ({ className, students, subjects, caRecords }: Props) => 
   // Overall: sum of gradePoints per student → rank (lower = better)
   const studentOverall: Record<string, { totalScore: number; aggregate: number; subjects: number }> = {};
   for (const s of students) {
-    const records = subjects.map((sub) => lookup[s.id]?.[sub.id]).filter(Boolean) as CARecord[];
+    const records = subjects.map((sub) => lookup[s.id]?.[sub.id]).filter(isReportReady) as CARecord[];
     const scores  = records.map((r) => r.totalScore);
     const gps     = records.map((r) => r.gradePoint);
 
@@ -119,6 +126,8 @@ const CAClassSummary = ({ className, students, subjects, caRecords }: Props) => 
   const sortedStudents = [...students].sort((a, b) => {
     const aData = studentOverall[a.id];
     const bData = studentOverall[b.id];
+    if (aData.subjects === 0 && bData.subjects > 0) return 1;
+    if (bData.subjects === 0 && aData.subjects > 0) return -1;
     if (aData.aggregate !== bData.aggregate) return aData.aggregate - bData.aggregate;
     return bData.totalScore - aData.totalScore; // tiebreak: higher avg
   });
@@ -208,7 +217,7 @@ const CAClassSummary = ({ className, students, subjects, caRecords }: Props) => 
             {sortedStudents.map((student, rowIdx) => {
               const overall  = studentOverall[student.id];
               const position = overallPositions[student.id];
-              const isTop    = position <= 3;
+              const isTop    = overall.subjects > 0 && position <= 3;
 
               return (
                 <tr
@@ -244,20 +253,29 @@ const CAClassSummary = ({ className, students, subjects, caRecords }: Props) => 
                         </td>
                       );
                     }
-                    const band = getGradeBandByGrade(rec.grade);
+                    const reportReady = isReportReady(rec);
+                    const band = reportReady ? getGradeBandByGrade(rec.grade) : null;
                     return (
                       <td key={sub.id} className="px-3 py-3 text-center">
                         <div className="flex flex-col items-center gap-1">
-                          <span className={`text-xs font-black px-2 py-0.5 rounded-lg border ${band.bg} ${band.color} ${band.border}`}>
-                            {rec.grade}
-                          </span>
-                          <span className="text-[10px] text-gray-400 font-semibold">
-                            {Math.round(rec.totalScore * 10) / 10}%
-                          </span>
+                          {reportReady && band ? (
+                            <>
+                              <span className={`text-xs font-black px-2 py-0.5 rounded-lg border ${band.bg} ${band.color} ${band.border}`}>
+                                {rec.grade}
+                              </span>
+                              <span className="text-[10px] text-gray-400 font-semibold">
+                                {Math.round(rec.totalScore * 10) / 10}%
+                              </span>
+                            </>
+                          ) : (
+                            <span className="rounded-lg border border-sky-100 bg-sky-50 px-2 py-0.5 text-[10px] font-black text-sky-700">
+                              CA in build
+                            </span>
+                          )}
                           <span className="text-[9px] font-semibold text-gray-400">
-                            CA {Math.round(rec.classworkScore * 10) / 10} + Exam {Math.round(rec.examScore * 10) / 10}
+                            CA {Math.round(rec.classworkScore * 10) / 10} + {reportReady ? `Exam ${Math.round(rec.examScore * 10) / 10}` : "Exam pending"}
                           </span>
-                          {pos && <PositionBadge pos={pos} />}
+                          {reportReady && pos && <PositionBadge pos={pos} />}
                         </div>
                       </td>
                     );

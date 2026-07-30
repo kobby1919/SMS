@@ -119,8 +119,8 @@ function TodayUpdateCard({ items }: { items: ParentActivityFeedItem[] }) {
       <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
         {previewLines.length > 0 ? (
           <div className="space-y-2">
-            {previewLines.map((line) => (
-              <p key={line} className="text-sm font-semibold leading-relaxed text-slate-200">
+            {previewLines.map((line, index) => (
+              <p key={`${index}-${line}`} className="text-sm font-semibold leading-relaxed text-slate-200">
                 {line}
               </p>
             ))}

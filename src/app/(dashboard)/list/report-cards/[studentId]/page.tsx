@@ -90,6 +90,7 @@ const ReportCardPage = async ({
       subjectId:  true,
       totalScore: true,
       gradePoint: true,
+      examScore: true,
     },
   });
 
@@ -97,7 +98,7 @@ const ReportCardPage = async ({
   const subjectPositions: Record<number, number> = {};
   for (const [subjectId] of timetableSubjects) {
     const subjectScores = classCARecords
-      .filter((r) => r.subjectId === subjectId)
+      .filter((r) => r.subjectId === subjectId && r.examScore > 0)
       .sort((a, b) => b.totalScore - a.totalScore);
 
     const myIdx = subjectScores.findIndex((r) => r.studentId === studentId);
@@ -108,6 +109,7 @@ const ReportCardPage = async ({
   // Group all students' grade points by studentId
   const studentGPMap: Record<string, number[]> = {};
   for (const r of classCARecords) {
+    if (r.examScore <= 0) continue;
     if (!studentGPMap[r.studentId]) studentGPMap[r.studentId] = [];
     studentGPMap[r.studentId].push(r.gradePoint);
   }
@@ -116,7 +118,8 @@ const ReportCardPage = async ({
     .map(([sid, gps]) => ({ studentId: sid, aggregate: computeAggregate(gps) }))
     .sort((a, b) => a.aggregate - b.aggregate);
 
-  const overallPosition = classAggregates.findIndex((c) => c.studentId === studentId) + 1;
+  const positionIndex = classAggregates.findIndex((c) => c.studentId === studentId);
+  const overallPosition = positionIndex >= 0 ? positionIndex + 1 : 0;
   const classSize       = (await prisma.student.count({ where: { schoolId, classId: student.classId } }));
 
   // ── Build subject rows ────────────────────────────────────────────────────
@@ -130,6 +133,7 @@ const ReportCardPage = async ({
       totalScore:     ca.totalScore,
       grade:          ca.grade,
       gradePoint:     ca.gradePoint,
+      isComplete:     ca.examScore > 0,
       label:          band.label,
       position:       subjectPositions[ca.subject.id] ?? 0,
       remarks:        ca.remarks,
@@ -137,8 +141,9 @@ const ReportCardPage = async ({
   });
 
   // ── Overall stats ─────────────────────────────────────────────────────────
-  const gradePoints   = subjectRows.map((s) => s.gradePoint);
-  const totalScores   = subjectRows.map((s) => s.totalScore);
+  const completedRows = subjectRows.filter((s) => s.isComplete);
+  const gradePoints   = completedRows.map((s) => s.gradePoint);
+  const totalScores   = completedRows.map((s) => s.totalScore);
   const aggregate     = computeAggregate(gradePoints);
   const avgScore      = totalScores.length > 0
     ? Math.round((totalScores.reduce((a, b) => a + b, 0) / totalScores.length) * 10) / 10
@@ -191,7 +196,8 @@ const ReportCardPage = async ({
         totalPossible,
         overallPosition,
         classSize,
-        subjectCount: subjectRows.length,
+        subjectCount: completedRows.length,
+        pendingSubjectCount: subjectRows.length - completedRows.length,
       }}
       attendance={{
         present: presentCount,

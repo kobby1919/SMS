@@ -29,6 +29,7 @@ type SubjectRow = {
   label: string;
   position: number;
   remarks: string;
+  isComplete: boolean;
 };
 
 type Props = {
@@ -60,6 +61,7 @@ type Props = {
     overallPosition: number;
     classSize: number;
     subjectCount: number;
+    pendingSubjectCount: number;
   };
   attendance: { present: number; absent: number; late: number; total: number };
   role: string;
@@ -209,12 +211,19 @@ const ReportCardView = ({
   attendance,
   role,
 }: Props) => {
-  const narrative = getPerformanceNarrative(
-    overallStats.aggregate,
-    overallStats.avgScore,
-    overallStats.overallPosition,
-    overallStats.classSize,
-  );
+  const reportReady = overallStats.subjectCount > 0;
+  const narrative = reportReady
+    ? getPerformanceNarrative(
+        overallStats.aggregate,
+        overallStats.avgScore,
+        overallStats.overallPosition,
+        overallStats.classSize,
+      )
+    : {
+        headline: "CA In Progress",
+        body: "Class activity scores are being built from real teacher entries. End-of-term exams have not been recorded yet, so final totals, grades, aggregates, and positions are not ready.",
+        color: "text-sky-700",
+      };
   const attendanceRate =
     attendance.total > 0
       ? Math.round((attendance.present / attendance.total) * 100)
@@ -258,13 +267,22 @@ const ReportCardView = ({
                   ? "Teacher View"
                   : "Admin View"}
           </span>
-          {/* Real PDF download */}
-          <DownloadButton
-            studentId={student.id}
-            term={term}
-            academicYear={academicYear}
-            classId={isNaN(classId as number) ? undefined : classId}
-          />
+          {reportReady ? (
+            <DownloadButton
+              studentId={student.id}
+              term={term}
+              academicYear={academicYear}
+              classId={isNaN(classId as number) ? undefined : classId}
+            />
+          ) : (
+            <button
+              type="button"
+              disabled
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-400 rounded-xl text-sm font-bold"
+            >
+              <Download size={14} /> PDF pending exams
+            </button>
+          )}
         </div>
       </div>
 
@@ -298,11 +316,12 @@ const ReportCardView = ({
                   Aggregate
                 </p>
                 <p className="text-5xl font-black text-white leading-none">
-                  {overallStats.aggregate}
+                  {reportReady ? overallStats.aggregate : "Pending"}
                 </p>
                 <p className="text-white/60 text-xs font-semibold mt-1">
-                  {ordinal(overallStats.overallPosition)} of{" "}
-                  {overallStats.classSize}
+                  {reportReady
+                    ? `${ordinal(overallStats.overallPosition)} of ${overallStats.classSize}`
+                    : "Exam scores not recorded"}
                 </p>
               </div>
             </div>
@@ -388,6 +407,12 @@ const ReportCardView = ({
             </p>
           </div>
 
+          {!reportReady && (
+            <div className="rounded-xl border border-sky-100 bg-sky-50 px-4 py-3 text-sm font-semibold text-sky-800">
+              CA is currently being built from teacher activity entries. Exam scores have not been recorded yet, so this page is a progress view, not a final report card.
+            </div>
+          )}
+
           {/* Subject table */}
           <div>
             <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">
@@ -432,7 +457,7 @@ const ReportCardView = ({
                     </tr>
                   ) : (
                     subjectRows.map((row) => {
-                      const band = getGradeBandByGrade(row.grade);
+                      const band = row.isComplete ? getGradeBandByGrade(row.grade) : null;
                       return (
                         <tr key={row.id} className="hover:bg-gray-50/50">
                           <td className="px-4 py-3 font-bold text-gray-800">
@@ -445,21 +470,31 @@ const ReportCardView = ({
                             {row.examScore.toFixed(1)}
                           </td>
                           <td className="px-3 py-3 text-center">
-                            <span
-                              className={`font-black text-sm ${band.color}`}
-                            >
-                              {row.totalScore.toFixed(1)}
-                            </span>
+                            {row.isComplete && band ? (
+                              <span className={`font-black text-sm ${band.color}`}>
+                                {row.totalScore.toFixed(1)}
+                              </span>
+                            ) : (
+                              <span className="text-xs font-black text-sky-600">Pending</span>
+                            )}
                           </td>
                           <td className="px-3 py-3 text-center">
-                            <GradeBadge grade={row.grade} />
+                            {row.isComplete ? (
+                              <GradeBadge grade={row.grade} />
+                            ) : (
+                              <span className="rounded-lg border border-sky-100 bg-sky-50 px-2 py-1 text-[10px] font-black text-sky-700">
+                                CA in build
+                              </span>
+                            )}
                           </td>
                           <td className="px-3 py-3 text-center">
-                            <PosBadge pos={row.position} />
+                            {row.isComplete ? <PosBadge pos={row.position} /> : <span className="text-xs text-gray-300">-</span>}
                           </td>
                           <td className="px-4 py-3 hidden lg:table-cell">
                             <span className="text-xs text-gray-400 italic">
-                              {row.remarks || band.label}
+                              {row.isComplete && band
+                                ? row.remarks || band.label
+                                : "Exam not recorded yet. Current CA is still building."}
                             </span>
                           </td>
                         </tr>
@@ -480,11 +515,12 @@ const ReportCardView = ({
                         —
                       </td>
                       <td className="px-3 py-3 text-center font-black text-indigo-900">
-                        {overallStats.totalRawScore.toFixed(1)} /{" "}
-                        {overallStats.totalPossible}
+                        {reportReady
+                          ? `${overallStats.totalRawScore.toFixed(1)} / ${overallStats.totalPossible}`
+                          : "Pending"}
                       </td>
                       <td className="px-3 py-3 text-center font-black text-indigo-900">
-                        {overallStats.avgScore.toFixed(1)}%
+                        {reportReady ? `${overallStats.avgScore.toFixed(1)}%` : "Pending"}
                       </td>
                       <td
                         className="px-3 py-3 text-center font-black text-indigo-900"
@@ -492,7 +528,7 @@ const ReportCardView = ({
                       >
                         Agg:{" "}
                         <span className="text-lg">
-                          {overallStats.aggregate}
+                          {reportReady ? overallStats.aggregate : "Pending"}
                         </span>
                       </td>
                     </tr>
@@ -558,22 +594,24 @@ const ReportCardView = ({
             {[
               {
                 label: "Overall Average",
-                value: `${overallStats.avgScore.toFixed(1)}%`,
-                sub: `${overallStats.subjectCount} subjects`,
+                value: reportReady ? `${overallStats.avgScore.toFixed(1)}%` : "Pending",
+                sub: reportReady
+                  ? `${overallStats.subjectCount} completed subjects`
+                  : `${overallStats.pendingSubjectCount} CA subject${overallStats.pendingSubjectCount === 1 ? "" : "s"} in build`,
                 icon: <TrendingUp size={15} />,
                 color: "bg-indigo-50 text-indigo-600",
               },
               {
                 label: "Aggregate Score",
-                value: overallStats.aggregate,
-                sub: "Ghana BECE system",
+                value: reportReady ? overallStats.aggregate : "Pending",
+                sub: reportReady ? "Ghana BECE system" : "Waiting for exams",
                 icon: <Award size={15} />,
                 color: "bg-amber-50 text-amber-600",
               },
               {
                 label: "Class Position",
-                value: ordinal(overallStats.overallPosition),
-                sub: `out of ${overallStats.classSize} students`,
+                value: reportReady ? ordinal(overallStats.overallPosition) : "Pending",
+                sub: reportReady ? `out of ${overallStats.classSize} students` : "Waiting for exams",
                 icon: <Star size={15} />,
                 color: "bg-violet-50 text-violet-600",
               },
@@ -680,12 +718,13 @@ const ReportCardView = ({
 
           {/* Parent / student insight */}
           {(role === "parent" || role === "student") &&
-            subjectRows.length > 0 &&
+            subjectRows.some((row) => row.isComplete) &&
             (() => {
-              const best = [...subjectRows].sort(
+              const completedRows = subjectRows.filter((row) => row.isComplete);
+              const best = [...completedRows].sort(
                 (a, b) => a.gradePoint - b.gradePoint,
               )[0];
-              const worst = [...subjectRows].sort(
+              const worst = [...completedRows].sort(
                 (a, b) => b.gradePoint - a.gradePoint,
               )[0];
               return (
