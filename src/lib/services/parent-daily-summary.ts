@@ -31,6 +31,8 @@ export async function rebuildParentDailySummary(input: {
   date: Date;
 }) {
   const { start, end } = dayWindow(input.date);
+  const summaryOccurredAt = new Date(end);
+  summaryOccurredAt.setMilliseconds(summaryOccurredAt.getMilliseconds() - 1);
   const events = await prisma.parentActivityEvent.findMany({
     where: {
       schoolId: input.schoolId,
@@ -42,7 +44,17 @@ export async function rebuildParentDailySummary(input: {
 
   const uniqueEvents = uniqueEventsByBody(events);
 
-  if (uniqueEvents.length === 0) return null;
+  if (uniqueEvents.length === 0) {
+    await prisma.parentNotification.deleteMany({
+      where: {
+        schoolId: input.schoolId,
+        parentId: input.parentId,
+        type: "DAILY_SUMMARY",
+        sourceKey: `daily-summary:${input.parentId}:${dateKey(start)}`,
+      },
+    });
+    return null;
+  }
 
   const counts = {
     attendance: uniqueEvents.filter((event) => event.type === "ATTENDANCE").length,
@@ -84,7 +96,7 @@ export async function rebuildParentDailySummary(input: {
       sourceModel: "ParentDailySummary",
       sourceId: dateKey(start),
       sourceKey: `daily-summary:${input.parentId}:${dateKey(start)}`,
-      occurredAt: new Date(),
+      occurredAt: summaryOccurredAt,
     },
     update: {
       title: "Today's School Update",
@@ -92,7 +104,7 @@ export async function rebuildParentDailySummary(input: {
         ? academicLines.join("\n")
         : summaryBits.join(" - "),
       payload: { counts, eventIds: uniqueEvents.map((event) => event.id) },
-      occurredAt: new Date(),
+      occurredAt: summaryOccurredAt,
       readAt: null,
     },
   });

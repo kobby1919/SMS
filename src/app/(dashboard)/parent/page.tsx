@@ -66,8 +66,13 @@ function getPreviewLines(summary?: ParentActivityFeedItem) {
 }
 
 function TodayUpdateCard({ items }: { items: ParentActivityFeedItem[] }) {
-  const latestSummary = items.find((item) => item.type === "DAILY_SUMMARY");
-  const fallbackItems = items.filter((item) => item.type !== "DAILY_SUMMARY").slice(0, 3);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const todayItems = items.filter((item) => item.occurredAt >= today && item.occurredAt < tomorrow);
+  const latestSummary = todayItems.find((item) => item.type === "DAILY_SUMMARY");
+  const fallbackItems = todayItems.filter((item) => item.type !== "DAILY_SUMMARY").slice(0, 3);
   const counts = getDailySummaryCounts(latestSummary);
   const previewLines = getPreviewLines(latestSummary);
   const totalUpdates = latestSummary
@@ -164,7 +169,9 @@ function ChildrenSnapshot({
     <section className="grid gap-3 md:grid-cols-2">
       {childrenData.map((child) => {
         const outstanding = child.financeSummary.outstanding;
-        const latestAverage = child.ca.latestGroup?.avgScore;
+        const latestAverage = child.academicProgress.completedSubjects > 0
+          ? child.academicProgress.averageScore
+          : null;
         return (
           <div key={child.id} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
             <div className="flex items-start justify-between gap-3">

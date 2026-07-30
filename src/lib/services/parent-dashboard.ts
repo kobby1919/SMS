@@ -137,7 +137,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  const [lessons, attendance, assessments, classCounts, assignments, announcements, bills, payments, classSubjects] = await Promise.all([
+  const [lessons, attendance, assessments, caActivityScores, classCounts, assignments, announcements, bills, payments, classSubjects] = await Promise.all([
     prisma.lesson.findMany({
       where: { schoolId, classId: { in: classIds } },
       include: {
@@ -155,6 +155,19 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       where: { schoolId, studentId: { in: childIds } },
       include: { subject: { select: { name: true } } },
       orderBy: [{ academicYear: "asc" }, { term: "asc" }],
+    }),
+    prisma.cAActivityScore.findMany({
+      where: { schoolId, studentId: { in: childIds } },
+      select: {
+        studentId: true,
+        activity: {
+          select: {
+            classId: true,
+            subjectId: true,
+            bucket: { select: { term: true, academicYear: true } },
+          },
+        },
+      },
     }),
     prisma.student.groupBy({
       by: ["classId"],
@@ -252,6 +265,13 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     rows.push(record);
     assessmentsByStudent.set(record.studentId, rows);
   }
+
+  const activityBackedCAKeys = new Set(
+    caActivityScores.map(
+      (score) =>
+        `${score.studentId}__${score.activity.subjectId}__${score.activity.classId}__${score.activity.bucket.term}__${score.activity.bucket.academicYear}`,
+    ),
+  );
 
   const subjectIdsByClass = new Map<number, Map<number, string>>();
   for (const subject of classSubjects) {
@@ -385,12 +405,14 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       myPosition = ranked.findIndex((row) => row.studentId === child.id) + 1;
     }
 
-    const sortedByGradePoint = latestGroup
-      ? [...latestGroup.records].sort((a, b) => a.gradePoint - b.gradePoint)
-      : [];
     const expectedSubjects = subjectIdsByClass.get(child.classId) ?? new Map<number, string>();
     const previousBySubject = new Map(prevGroup?.records.map((record) => [record.subjectId, record]) ?? []);
-    const latestSubjects = latestGroup?.records ?? [];
+    const latestSubjects = (latestGroup?.records ?? []).filter((record) =>
+      activityBackedCAKeys.has(
+        `${record.studentId}__${record.subjectId}__${record.classId}__${record.term}__${record.academicYear}`,
+      ),
+    );
+    const sortedByGradePoint = [...latestSubjects].sort((a, b) => a.gradePoint - b.gradePoint);
     const progressSubjects: ParentAcademicProgressSubject[] = latestSubjects
       .map((record): ParentAcademicProgressSubject => {
         const previous = previousBySubject.get(record.subjectId);
@@ -409,11 +431,16 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       })
       .sort((a, b) => a.score - b.score);
     const completedSubjects = latestSubjects.length;
+    const averageScore = completedSubjects
+      ? Math.round(
+          (latestSubjects.reduce((sum, record) => sum + record.totalScore, 0) / completedSubjects) * 10,
+        ) / 10
+      : 0;
     const academicProgress: ParentAcademicProgress = {
       completionRate: expectedSubjects.size > 0 ? Math.round((completedSubjects / expectedSubjects.size) * 100) : 0,
       completedSubjects,
       expectedSubjects: expectedSubjects.size,
-      averageScore: latestGroup?.avgScore ?? 0,
+      averageScore,
       trend: !prevGroup || !latestGroup
         ? "new"
         : trendDiff > 2
