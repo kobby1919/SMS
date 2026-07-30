@@ -14,6 +14,12 @@ const matchers = Object.keys(routeAccessMap).map((route) => ({
   allowedRoles: routeAccessMap[route],
 }));
 
+const isInternalSecretRoute = createRouteMatcher([
+  "/api/webhooks/payments(.*)",
+  "/api/internal/finance/jobs/run",
+  "/api/internal/parent-summaries/run",
+]);
+
 const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-in(.*)",
@@ -30,10 +36,15 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
+  const pathname = req.nextUrl.pathname;
+
+  if (isInternalSecretRoute(req)) {
+    return NextResponse.next();
+  }
+
   const { sessionClaims, userId } = await auth();
   // Edge-safe: JWT only. Full role resolution (Clerk API) runs on /auth/callback and RSC.
   const role = await resolveSessionRole(userId, sessionClaims, { jwtOnly: true });
-  const pathname = req.nextUrl.pathname;
 
   if (isPublicRoute(req)) {
     if (isAuthCallbackPath(pathname)) {
