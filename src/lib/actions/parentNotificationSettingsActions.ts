@@ -70,3 +70,26 @@ export async function updateParentNotificationPreference(data: unknown) {
   revalidatePath("/parent/updates");
   revalidatePath("/parent");
 }
+
+export type ParentPreferenceActionState = {
+  status: "idle" | "success" | "error";
+  message: string;
+};
+
+export async function updateParentNotificationPreferenceWithState(
+  _state: ParentPreferenceActionState,
+  data: FormData,
+): Promise<ParentPreferenceActionState> {
+  try {
+    await updateParentNotificationPreference(data);
+    return {
+      status: "success",
+      message: "Delivery preferences saved successfully.",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Could not save delivery preferences.",
+    };
+  }
+}

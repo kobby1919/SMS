@@ -15,7 +15,7 @@ import { requirePageSession } from "@/src/lib/authz";
 import { getParentDashboardData } from "@/src/lib/services/parent-dashboard";
 import { getParentNotificationPreference } from "@/src/lib/services/parent-notification-preferences";
 import type { ParentNotificationType } from "@/src/generated/prisma";
-import { updateParentNotificationPreference } from "@/src/lib/actions/parentNotificationSettingsActions";
+import ParentNotificationPreferenceForm from "@/src/components/ParentNotificationPreferenceForm";
 
 export const dynamic = "force-dynamic";
 
@@ -229,59 +229,11 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
         </div>
       </div>
 
-      <section className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h2 className="text-sm font-black text-gray-900">Delivery Preferences</h2>
-            <p className="mt-1 text-xs font-semibold text-gray-400">
-              Contact on file: {parent?.phone || "no phone"} {parent?.email ? `- ${parent.email}` : "- no email"}
-            </p>
-          </div>
-        </div>
-        <form action={updateParentNotificationPreference} className="mt-4 grid gap-3 lg:grid-cols-4">
-          <label className="flex flex-col gap-1">
-            <span className="text-[10px] font-black uppercase text-gray-400">Preferred</span>
-            <select name="preferredChannel" defaultValue={notificationPreference?.preferredChannel ?? "WHATSAPP"} className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold">
-              <option value="WHATSAPP">WhatsApp</option>
-              <option value="SMS">SMS</option>
-              <option value="EMAIL">Email</option>
-            </select>
-          </label>
-          <label className="flex flex-col gap-1">
-            <span className="text-[10px] font-black uppercase text-gray-400">Fallback</span>
-            <select name="fallbackChannel" defaultValue={notificationPreference?.fallbackChannel ?? "SMS"} className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold">
-              <option value="SMS">SMS</option>
-              <option value="WHATSAPP">WhatsApp</option>
-              <option value="EMAIL">Email</option>
-            </select>
-          </label>
-          <div className="grid grid-cols-2 gap-2 lg:col-span-1">
-            <label className="flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2 text-xs font-black text-gray-600">
-              <input type="checkbox" name="dailySummaryEnabled" defaultChecked={notificationPreference?.dailySummaryEnabled ?? true} />
-              Daily
-            </label>
-            <label className="flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2 text-xs font-black text-gray-600">
-              <input type="checkbox" name="urgentAlertsEnabled" defaultChecked={notificationPreference?.urgentAlertsEnabled ?? true} />
-              Urgent
-            </label>
-            <label className="flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2 text-xs font-black text-gray-600">
-              <input type="checkbox" name="emailEnabled" defaultChecked={notificationPreference?.emailEnabled ?? true} />
-              Email
-            </label>
-            <label className="flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2 text-xs font-black text-gray-600">
-              <input type="checkbox" name="smsEnabled" defaultChecked={notificationPreference?.smsEnabled ?? true} />
-              SMS
-            </label>
-            <label className="flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2 text-xs font-black text-gray-600">
-              <input type="checkbox" name="whatsappEnabled" defaultChecked={notificationPreference?.whatsappEnabled ?? true} />
-              WhatsApp
-            </label>
-          </div>
-          <button className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-black text-white">
-            Save preferences
-          </button>
-        </form>
-      </section>
+      <ParentNotificationPreferenceForm
+        contactEmail={parent?.email}
+        contactPhone={parent?.phone}
+        preference={notificationPreference}
+      />
 
       <section className="rounded-2xl border border-slate-200 bg-slate-950 p-5 text-white shadow-sm">
         <div className="flex items-start gap-3">
