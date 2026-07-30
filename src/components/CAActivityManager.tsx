@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   ChevronDown,
   ClipboardList,
+  Lock,
   Loader2,
   Plus,
   Save,
@@ -21,6 +22,8 @@ import {
   createCAActivityAction,
   createCABucketAction,
   bulkUpsertCAActivityScores,
+  lockCAActivityAction,
+  lockCABucketAction,
 } from "@/src/lib/actions/caActions";
 import { TERM_LABELS } from "@/src/lib/caGrades";
 
@@ -48,6 +51,7 @@ type Activity = {
   rawMaxScore: number;
   allocationMarks: number | null;
   sequence: number;
+  isLocked: boolean;
   activityDate: Date;
   teacherName: string;
   scores: ActivityScore[];
@@ -62,6 +66,7 @@ type Bucket = {
   term: Term;
   academicYear: string;
   subjectId: number;
+  isLocked: boolean;
   activities: Activity[];
 };
 
@@ -72,6 +77,7 @@ type Props = {
   subjects: Subject[];
   academicYears: string[];
   buckets: Bucket[];
+  canLock?: boolean;
 };
 
 const activityTypeLabels: Record<CAActivityType, string> = {
@@ -99,6 +105,7 @@ const CAActivityManager = ({
   subjects,
   academicYears,
   buckets,
+  canLock = false,
 }: Props) => {
   const router = useRouter();
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | "">(subjects[0]?.id ?? "");
@@ -172,6 +179,10 @@ const CAActivityManager = ({
       setError("Create or select a CA bucket first.");
       return;
     }
+    if (bucket.isLocked) {
+      setError("This CA bucket is locked. Admin correction is required before adding activities.");
+      return;
+    }
 
     startTransition(async () => {
       try {
@@ -202,6 +213,10 @@ const CAActivityManager = ({
       setError("Select an activity first.");
       return;
     }
+    if (selectedActivity.isLocked || selectedBucket?.isLocked) {
+      setError("This CA activity is locked. Admin correction is required before changing scores.");
+      return;
+    }
 
     const rows = Object.entries(scoreEdits)
       .filter(([, rawScore]) => rawScore !== "")
@@ -222,6 +237,34 @@ const CAActivityManager = ({
         router.refresh();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Could not save scores.");
+      }
+    });
+  };
+
+  const handleLockBucket = (bucketId: number) => {
+    setError(null);
+    setMessage(null);
+    startTransition(async () => {
+      try {
+        await lockCABucketAction(bucketId);
+        setMessage("CA bucket locked. Future changes now require an audited correction.");
+        router.refresh();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Could not lock CA bucket.");
+      }
+    });
+  };
+
+  const handleLockActivity = (activityId: number) => {
+    setError(null);
+    setMessage(null);
+    startTransition(async () => {
+      try {
+        await lockCAActivityAction(activityId);
+        setMessage("CA activity locked. Future score changes now require an audited correction.");
+        router.refresh();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Could not lock CA activity.");
       }
     });
   };
@@ -375,12 +418,42 @@ const CAActivityManager = ({
                 }`}
               >
                 <span>
-                  <span className="block text-sm font-black text-gray-800">{bucket.name}</span>
+                  <span className="flex items-center gap-2 text-sm font-black text-gray-800">
+                    {bucket.name}
+                    {bucket.isLocked && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[9px] font-black uppercase text-amber-700">
+                        <Lock size={10} /> Locked
+                      </span>
+                    )}
+                  </span>
                   <span className="text-[11px] font-semibold text-gray-400">
                     {activityTypeLabels[bucket.type]} · {bucket.aggregationMode === "AVERAGE_TO_BUCKET" ? "average" : "allocated"}
                   </span>
                 </span>
-                <span className="text-xs font-black text-indigo-600">{formatMark(bucket.allocationMarks)} marks</span>
+                <span className="flex items-center gap-2">
+                  <span className="text-xs font-black text-indigo-600">{formatMark(bucket.allocationMarks)} marks</span>
+                  {canLock && !bucket.isLocked && (
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleLockBucket(bucket.id);
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          handleLockBucket(bucket.id);
+                        }
+                      }}
+                      className="inline-flex items-center justify-center rounded-lg border border-amber-200 bg-amber-50 p-1.5 text-amber-700"
+                      title="Lock bucket"
+                    >
+                      <Lock size={12} />
+                    </span>
+                  )}
+                </span>
               </button>
             ))}
           </div>
@@ -429,7 +502,7 @@ const CAActivityManager = ({
           <button
             type="button"
             onClick={handleCreateActivity}
-            disabled={isPending || !selectedBucket}
+            disabled={isPending || !selectedBucket || selectedBucket.isLocked}
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-black text-white hover:bg-slate-700 disabled:opacity-50"
           >
             {isPending ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
@@ -456,12 +529,42 @@ const CAActivityManager = ({
                 }`}
               >
                 <span>
-                  <span className="block text-sm font-black text-gray-800">{activity.title}</span>
+                  <span className="flex items-center gap-2 text-sm font-black text-gray-800">
+                    {activity.title}
+                    {activity.isLocked && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[9px] font-black uppercase text-amber-700">
+                        <Lock size={10} /> Locked
+                      </span>
+                    )}
+                  </span>
                   <span className="text-[11px] font-semibold text-gray-400">
                     /{formatMark(activity.rawMaxScore)} · {activity.teacherName}
                   </span>
                 </span>
-                <span className="text-xs font-black text-slate-600">{activity.scores.length}/{students.length}</span>
+                <span className="flex items-center gap-2">
+                  <span className="text-xs font-black text-slate-600">{activity.scores.length}/{students.length}</span>
+                  {canLock && !activity.isLocked && (
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleLockActivity(activity.id);
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          handleLockActivity(activity.id);
+                        }
+                      }}
+                      className="inline-flex items-center justify-center rounded-lg border border-amber-200 bg-amber-50 p-1.5 text-amber-700"
+                      title="Lock activity"
+                    >
+                      <Lock size={12} />
+                    </span>
+                  )}
+                </span>
               </button>
             ))}
           </div>
@@ -481,7 +584,7 @@ const CAActivityManager = ({
           <button
             type="button"
             onClick={handleSaveScores}
-            disabled={isPending || !selectedActivity}
+            disabled={isPending || !selectedActivity || selectedActivity.isLocked || Boolean(selectedBucket?.isLocked)}
             className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-black text-white hover:bg-emerald-700 disabled:opacity-50"
           >
             {isPending ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}

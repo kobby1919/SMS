@@ -13,6 +13,7 @@ import {
 import prisma from "@/src/lib/prisma";
 import { requirePageSession } from "@/src/lib/authz";
 import { getParentDashboardData } from "@/src/lib/services/parent-dashboard";
+import { getParentNotificationPreference } from "@/src/lib/services/parent-notification-preferences";
 import type { ParentNotificationType } from "@/src/generated/prisma";
 import { updateParentNotificationPreference } from "@/src/lib/actions/parentNotificationSettingsActions";
 
@@ -124,9 +125,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
         phone: true,
       },
     }),
-    prisma.parentNotificationPreference.findUnique({
-      where: { parentId: userId },
-    }),
+    getParentNotificationPreference({ parentId: userId }),
   ]);
 
   const grouped = events.reduce<Record<ParentNotificationType, typeof events>>((acc, event) => {

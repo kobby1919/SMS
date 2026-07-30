@@ -314,6 +314,7 @@ const CAPage = async ({
                 students={students}
                 subjects={subjects}
                 academicYears={academicYears}
+                canLock={role === "admin"}
                 buckets={caBuckets.map((bucket) => ({
                   id: bucket.id,
                   name: bucket.name,
@@ -323,6 +324,7 @@ const CAPage = async ({
                   term: bucket.term,
                   academicYear: bucket.academicYear,
                   subjectId: bucket.subjectId,
+                  isLocked: bucket.isLocked,
                   activities: bucket.activities.map((activity) => ({
                     id: activity.id,
                     title: activity.title,
@@ -330,6 +332,7 @@ const CAPage = async ({
                     rawMaxScore: Number(activity.rawMaxScore),
                     allocationMarks: activity.allocationMarks === null ? null : Number(activity.allocationMarks),
                     sequence: activity.sequence,
+                    isLocked: activity.isLocked,
                     activityDate: activity.activityDate,
                     teacherName: `${activity.teacher.name} ${activity.teacher.surname}`,
                     scores: activity.scores.map((score) => ({

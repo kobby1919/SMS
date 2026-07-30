@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import prisma from "@/src/lib/prisma";
 import { requireRole } from "@/src/lib/authz";
 import { parseActionInput } from "@/src/lib/validation/parse";
+import { upsertParentNotificationPreference } from "@/src/lib/services/parent-notification-preferences";
 import {
   parentNotificationPreferenceSchema,
   schoolNotificationSettingsSchema,
@@ -60,14 +61,10 @@ export async function updateParentNotificationPreference(data: unknown) {
     : data;
   const parsed = parseActionInput(parentNotificationPreferenceSchema, input);
 
-  await prisma.parentNotificationPreference.upsert({
-    where: { parentId: userId },
-    create: {
-      schoolId,
-      parentId: userId,
-      ...parsed,
-    },
-    update: parsed,
+  await upsertParentNotificationPreference({
+    schoolId,
+    parentId: userId,
+    ...parsed,
   });
 
   revalidatePath("/parent/updates");

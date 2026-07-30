@@ -6,6 +6,7 @@ import type {
   SchoolNotificationSetting,
 } from "@/src/generated/prisma";
 import { rebuildParentDailySummary } from "@/src/lib/services/parent-daily-summary";
+import { getParentNotificationPreference } from "@/src/lib/services/parent-notification-preferences";
 
 const DEFAULT_SETTINGS = {
   timezone: "Africa/Accra",
@@ -131,9 +132,7 @@ export async function deliverParentDailySummary(input: {
         phone: true,
       },
     }),
-    prisma.parentNotificationPreference.findUnique({
-      where: { parentId: input.parentId },
-    }),
+    getParentNotificationPreference({ parentId: input.parentId }),
   ]);
 
   if (!parent) return null;
