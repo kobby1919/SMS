@@ -198,7 +198,11 @@ export async function generateBills(rawInput: GenerateBillsInput): Promise<{
           studentIds: [bill.studentId],
           type: "BILL",
           title: `${structure.title} bill generated`,
-          body: `A new bill of GHS ${billTotal.toNumber().toFixed(2)} has been generated.`,
+          body: `A new bill of GHS ${billTotal.toNumber().toFixed(2)} has been generated.${
+            structure.dueDate
+              ? ` Due ${structure.dueDate.toLocaleDateString("en-GH", { day: "numeric", month: "short", year: "numeric" })}.`
+              : ""
+          }`,
           href: `/parent/finance/bills/${bill.id}`,
           sourceModel: "StudentBill",
           sourceId: String(bill.id),
@@ -316,6 +320,24 @@ export async function waiveBill(billId: number, reason: string) {
     },
     idempotencyKey: `finance-summary:${schoolId}:bill-waived:${billId}`,
     createdBy: userId,
+  });
+
+  await recordParentActivityEvents({
+    schoolId,
+    studentIds: [bill.studentId],
+    type: "BILL",
+    title: "Bill waived by school",
+    body: `${bill.student.name} ${bill.student.surname}'s bill was waived. Reason: ${reason}.`,
+    href: `/parent/finance/bills/${billId}`,
+    sourceModel: "StudentBill",
+    sourceId: String(billId),
+    sourceKey: `student-bill:${billId}:waived`,
+    occurredAt: new Date(),
+    payload: {
+      billId,
+      reason,
+      originalAmount: Number(bill.totalAmount),
+    },
   });
 
   revalidatePath("/list/finance/bills");

@@ -32,6 +32,17 @@ export type ParentFinanceQuery = {
   resolvedAt?: Date | null;
 };
 
+export type ParentFinanceAdjustment = {
+  id: string;
+  type: "discount" | "waiver" | "reversal";
+  label: string;
+  description: string;
+  amount?: number | null;
+  percentage?: number | null;
+  actor?: string | null;
+  date: Date;
+};
+
 export type ParentFinanceBill = {
   id: number;
   childId: string;
@@ -62,11 +73,22 @@ export type ParentFinanceBill = {
     isOptional: boolean;
   }[];
   payments: ParentFinancePayment[];
+  adjustments: ParentFinanceAdjustment[];
   queries: ParentFinanceQuery[];
 };
 
 export type ParentFinanceOverview = {
   parentId: string;
+  children: {
+    id: string;
+    name: string;
+    className: string;
+    outstanding: number;
+  }[];
+  filters: {
+    academicYears: string[];
+    terms: string[];
+  };
   bills: ParentFinanceBill[];
   totals: {
     totalBilled: number;
@@ -127,15 +149,35 @@ function explainBalance(bill: {
   return `${bill.title} is GHS ${bill.totalAmount.toFixed(2)}. You have paid GHS ${bill.amountPaid.toFixed(2)}.${discount} Balance is GHS ${bill.balance.toFixed(2)}.`;
 }
 
+function sortBillsForParents(a: ParentFinanceBill, b: ParentFinanceBill) {
+  if (a.dueDate && b.dueDate) return a.dueDate.getTime() - b.dueDate.getTime();
+  if (a.dueDate) return -1;
+  if (b.dueDate) return 1;
+  return b.id - a.id;
+}
+
 export async function getParentFinanceOverview(parentId: string, schoolId: string): Promise<ParentFinanceOverview> {
   const parent = await prisma.parent.findFirst({
     where: { id: parentId, schoolId },
-    select: { id: true, students: { where: { schoolId }, select: { id: true } } },
+    select: {
+      id: true,
+      students: {
+        where: { schoolId },
+        select: {
+          id: true,
+          name: true,
+          surname: true,
+          class: { select: { name: true } },
+        },
+      },
+    },
   });
   const childIds = parent?.students.map((student) => student.id) ?? [];
   if (!parent || childIds.length === 0) {
     return {
       parentId,
+      children: [],
+      filters: { academicYears: [], terms: [] },
       bills: [],
       totals: {
         totalBilled: 0,
@@ -172,12 +214,24 @@ export async function getParentFinanceOverview(parentId: string, schoolId: strin
       },
       payments: {
         orderBy: { paymentDate: "desc" },
+        include: {
+          reversal: {
+            select: {
+              reason: true,
+              reversedBy: true,
+              reversedAt: true,
+            },
+          },
+        },
+      },
+      discounts: {
+        orderBy: { createdAt: "desc" },
       },
       financeQueries: {
         orderBy: { createdAt: "desc" },
       },
     },
-    orderBy: [{ dueDate: "asc" }, { updatedAt: "desc" }],
+    orderBy: { updatedAt: "desc" },
   });
 
   const now = new Date();
@@ -230,6 +284,42 @@ export async function getParentFinanceOverview(parentId: string, schoolId: strin
         referenceNo: payment.referenceNo,
         receiptHref: `/api/finance/receipt?billId=${bill.id}&receiptNumber=${encodeURIComponent(payment.receiptNumber)}`,
       })),
+      adjustments: [
+        ...bill.discounts.map((discount) => ({
+          id: `discount:${discount.id}`,
+          type: "discount" as const,
+          label: discount.type.replaceAll("_", " "),
+          description: discount.description,
+          amount: discount.amount ? toNumber(discount.amount) : null,
+          percentage: discount.percentage ? toNumber(discount.percentage) : null,
+          actor: discount.approvedBy,
+          date: discount.createdAt,
+        })),
+        ...bill.payments
+          .filter((payment) => payment.status === "REVERSED" && payment.reversal)
+          .map((payment) => ({
+            id: `reversal:${payment.id}`,
+            type: "reversal" as const,
+            label: "Payment reversed",
+            description: payment.reversal?.reason ?? "Payment reversal recorded.",
+            amount: toNumber(payment.amount),
+            percentage: null,
+            actor: payment.reversal?.reversedBy ?? null,
+            date: payment.reversal?.reversedAt ?? payment.paymentDate,
+          })),
+        ...(bill.status === "WAIVED"
+          ? [{
+              id: `waiver:${bill.id}`,
+              type: "waiver" as const,
+              label: "Bill waived",
+              description: bill.notes ?? "This bill was waived by the school.",
+              amount: balance > 0 ? balance : totalAmount,
+              percentage: null,
+              actor: null,
+              date: bill.dueDate ?? now,
+            }]
+          : []),
+      ].sort((a, b) => b.date.getTime() - a.date.getTime()),
       queries: bill.financeQueries.map((query) => ({
         id: query.id,
         reason: query.reason,
@@ -242,6 +332,8 @@ export async function getParentFinanceOverview(parentId: string, schoolId: strin
     };
   });
 
+  bills.sort(sortBillsForParents);
+
   const totalBilled = bills.reduce((sum, bill) => sum + bill.totalAmount, 0);
   const totalPaid = bills.reduce((sum, bill) => sum + bill.amountPaid, 0);
   const totalDiscount = bills.reduce((sum, bill) => sum + bill.discountAmount, 0);
@@ -250,6 +342,20 @@ export async function getParentFinanceOverview(parentId: string, schoolId: strin
 
   return {
     parentId,
+    children: parent.students.map((child) => {
+      const childBill = bills.find((bill) => bill.childId === child.id);
+      const childBills = bills.filter((bill) => bill.childId === child.id);
+      return {
+        id: child.id,
+        name: childBill?.childName ?? `${child.name} ${child.surname}`,
+        className: childBill?.className ?? child.class?.name ?? "",
+        outstanding: childBills.reduce((sum, bill) => sum + bill.balance, 0),
+      };
+    }),
+    filters: {
+      academicYears: [...new Set(bills.map((bill) => bill.academicYear))].sort().reverse(),
+      terms: [...new Set(bills.map((bill) => bill.termLabel))],
+    },
     bills,
     totals: {
       totalBilled,

@@ -36,6 +36,12 @@ const QUERY_REASON_LABELS: Record<string, string> = {
   OTHER: "Other",
 };
 
+const ADJUSTMENT_STYLES = {
+  discount: "bg-emerald-50 text-emerald-800",
+  waiver: "bg-sky-50 text-sky-800",
+  reversal: "bg-rose-50 text-rose-800",
+};
+
 function formatDate(date?: Date | null) {
   if (!date) return "No due date set";
   return date.toLocaleDateString("en-GH", { day: "numeric", month: "long", year: "numeric" });
@@ -147,7 +153,14 @@ export default async function ParentFinanceBillPage({
                 {bill.payments.map((payment) => (
                   <div key={payment.id} className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <p className="text-sm font-black text-gray-900">{payment.receiptNumber}</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-sm font-black text-gray-900">{payment.receiptNumber}</p>
+                        <span className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase ${
+                          payment.status === "CONFIRMED" ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"
+                        }`}>
+                          {payment.status.toLowerCase()}
+                        </span>
+                      </div>
                       <p className="mt-0.5 text-xs font-semibold text-gray-400">
                         {payment.methodLabel} - {formatDate(payment.date)}
                         {payment.referenceNo ? ` - Ref: ${payment.referenceNo}` : ""}
@@ -165,6 +178,42 @@ export default async function ParentFinanceBillPage({
                         </Link>
                       )}
                     </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          <section className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+            <div className="border-b border-gray-100 px-5 py-4">
+              <h2 className="text-sm font-black uppercase tracking-wider text-gray-500">Adjustments</h2>
+            </div>
+            {bill.adjustments.length === 0 ? (
+              <div className="px-5 py-8 text-center">
+                <p className="text-sm font-bold text-gray-400">No discounts, waivers, or reversals have been recorded for this bill.</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-50">
+                {bill.adjustments.map((adjustment) => (
+                  <div key={adjustment.id} className="px-5 py-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <p className="text-sm font-black text-gray-900">{adjustment.label}</p>
+                        <p className="mt-0.5 text-xs font-semibold text-gray-400">
+                          {formatDate(adjustment.date)}
+                          {adjustment.actor ? ` - By ${adjustment.actor}` : ""}
+                        </p>
+                      </div>
+                      <span className={`rounded-full px-2 py-1 text-[10px] font-black uppercase ${ADJUSTMENT_STYLES[adjustment.type]}`}>
+                        {adjustment.type}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm font-semibold text-gray-500">{adjustment.description}</p>
+                    {(adjustment.amount || adjustment.percentage) && (
+                      <p className="mt-2 text-xs font-black text-gray-700">
+                        {adjustment.amount ? formatGHS(adjustment.amount) : `${adjustment.percentage}%`}
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>

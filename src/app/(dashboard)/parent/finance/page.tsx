@@ -32,12 +32,34 @@ function formatDate(date?: Date | null) {
   return date.toLocaleDateString("en-GH", { day: "numeric", month: "short", year: "numeric" });
 }
 
-export default async function ParentFinancePage() {
+function buildQuery(current: Record<string, string | undefined>, patch: Record<string, string | undefined>) {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries({ ...current, ...patch })) {
+    if (value) params.set(key, value);
+  }
+  const query = params.toString();
+  return query ? `/parent/finance?${query}` : "/parent/finance";
+}
+
+export default async function ParentFinancePage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   const { userId, schoolId } = await requirePageSession(["parent"]);
+  const filters = await searchParams;
   const [finance, branding] = await Promise.all([
     getParentFinanceOverview(userId, schoolId),
     getSchoolBranding(schoolId),
   ]);
+  const selectedChild = filters.childId;
+  const selectedYear = filters.academicYear;
+  const selectedTerm = filters.term;
+  const visibleBills = finance.bills.filter((bill) =>
+    (!selectedChild || bill.childId === selectedChild) &&
+    (!selectedYear || bill.academicYear === selectedYear) &&
+    (!selectedTerm || bill.termLabel === selectedTerm)
+  );
 
   return (
     <div className="flex flex-col gap-5 p-4">
@@ -76,15 +98,82 @@ export default async function ParentFinancePage() {
         </div>
       </section>
 
+      <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-wider text-gray-400">Children</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Link
+                href={buildQuery(filters, { childId: undefined })}
+                className={`rounded-xl border px-3 py-2 text-xs font-black transition ${
+                  !selectedChild ? "border-amber-200 bg-amber-50 text-amber-800" : "border-gray-100 text-gray-500 hover:bg-gray-50"
+                }`}
+              >
+                Family
+              </Link>
+              {finance.children.map((child) => (
+                <Link
+                  key={child.id}
+                  href={buildQuery(filters, { childId: child.id })}
+                  className={`rounded-xl border px-3 py-2 text-xs font-black transition ${
+                    selectedChild === child.id ? "border-amber-200 bg-amber-50 text-amber-800" : "border-gray-100 text-gray-500 hover:bg-gray-50"
+                  }`}
+                >
+                  {child.name}
+                  {child.outstanding > 0 ? ` - ${formatGHS(child.outstanding)}` : " - OK"}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <p className="text-xs font-black uppercase tracking-wider text-gray-400">Academic Year</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <Link href={buildQuery(filters, { academicYear: undefined })} className={`rounded-xl border px-3 py-2 text-xs font-black ${!selectedYear ? "border-sky-200 bg-sky-50 text-sky-800" : "border-gray-100 text-gray-500"}`}>
+                  All
+                </Link>
+                {finance.filters.academicYears.map((year) => (
+                  <Link key={year} href={buildQuery(filters, { academicYear: year })} className={`rounded-xl border px-3 py-2 text-xs font-black ${selectedYear === year ? "border-sky-200 bg-sky-50 text-sky-800" : "border-gray-100 text-gray-500"}`}>
+                    {year}
+                  </Link>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-black uppercase tracking-wider text-gray-400">Term</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <Link href={buildQuery(filters, { term: undefined })} className={`rounded-xl border px-3 py-2 text-xs font-black ${!selectedTerm ? "border-sky-200 bg-sky-50 text-sky-800" : "border-gray-100 text-gray-500"}`}>
+                  All
+                </Link>
+                {finance.filters.terms.map((term) => (
+                  <Link key={term} href={buildQuery(filters, { term })} className={`rounded-xl border px-3 py-2 text-xs font-black ${selectedTerm === term ? "border-sky-200 bg-sky-50 text-sky-800" : "border-gray-100 text-gray-500"}`}>
+                    {term}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {finance.bills.length === 0 ? (
         <section className="rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-sm">
           <ReceiptText size={28} className="mx-auto text-gray-200" />
           <p className="mt-3 text-sm font-black text-gray-500">No fee bills have been published yet.</p>
           <p className="mt-1 text-xs font-semibold text-gray-400">When the school generates a bill, it will appear here.</p>
         </section>
+      ) : visibleBills.length === 0 ? (
+        <section className="rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-sm">
+          <ReceiptText size={28} className="mx-auto text-gray-200" />
+          <p className="mt-3 text-sm font-black text-gray-500">No bills match these filters.</p>
+          <Link href="/parent/finance" className="mt-3 inline-flex text-xs font-black text-amber-700 hover:text-amber-800">
+            Clear filters
+          </Link>
+        </section>
       ) : (
         <section className="grid gap-3">
-          {finance.bills.map((bill) => (
+          {visibleBills.map((bill) => (
             <Link
               key={bill.id}
               href={`/parent/finance/bills/${bill.id}`}

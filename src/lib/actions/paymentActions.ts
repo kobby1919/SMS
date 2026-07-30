@@ -386,6 +386,25 @@ export async function reversePayment(paymentId: number, reason: string) {
     }),
   ]);
 
+  await recordParentActivityEvents({
+    schoolId,
+    studentIds: [payment.studentBill.studentId],
+    type: "PAYMENT",
+    title: `Payment reversed: ${payment.receiptNumber}`,
+    body: `A payment of GHS ${amountToReverse.toNumber().toFixed(2)} was reversed. Reason: ${data.reason}.`,
+    href: `/parent/finance/bills/${billId}`,
+    sourceModel: "PaymentReversal",
+    sourceId: String(data.paymentId),
+    sourceKey: `payment:${data.paymentId}:reversed`,
+    occurredAt: new Date(),
+    payload: {
+      paymentId: data.paymentId,
+      receiptNumber: payment.receiptNumber,
+      amount: amountToReverse.toNumber(),
+      reason: data.reason,
+    },
+  });
+
   revalidatePath(`/list/finance/bills/${billId}`);
   revalidatePath("/list/finance/payments");
   revalidatePath("/parent");
