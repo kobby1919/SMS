@@ -56,6 +56,12 @@ type Props = {
   cwWeight: number;
   exWeight: number;
   subjectRows: SubjectRow[];
+  openedCAUpdate?: {
+    subjectName: string;
+    activityTitle: string;
+    openedAt: Date;
+    isLatest: boolean;
+  };
   overallStats: {
     aggregate: number;
     avgScore: number;
@@ -210,6 +216,7 @@ const ReportCardView = ({
   cwWeight,
   exWeight,
   subjectRows,
+  openedCAUpdate,
   overallStats,
   attendance,
   role,
@@ -413,6 +420,26 @@ const ReportCardView = ({
           {!reportReady && (
             <div className="rounded-xl border border-sky-100 bg-sky-50 px-4 py-3 text-sm font-semibold text-sky-800">
               CA is currently being built from teacher activity entries. Exam scores have not been recorded yet, so this page is a progress view, not a final report card.
+            </div>
+          )}
+
+          {openedCAUpdate && (
+            <div
+              className={`rounded-xl border px-4 py-3 text-sm font-semibold ${
+                openedCAUpdate.isLatest
+                  ? "border-emerald-100 bg-emerald-50 text-emerald-800"
+                  : "border-amber-100 bg-amber-50 text-amber-800"
+              }`}
+            >
+              <p className="font-black">
+                {openedCAUpdate.isLatest ? "Current CA update" : "Past CA update"}
+              </p>
+              <p className="mt-1">
+                {openedCAUpdate.subjectName} - {openedCAUpdate.activityTitle}.
+                {openedCAUpdate.isLatest
+                  ? " This is the latest CA record for this subject."
+                  : " A newer CA record exists, so parents should use the latest daily update for the current CA position."}
+              </p>
             </div>
           )}
 

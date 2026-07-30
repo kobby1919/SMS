@@ -74,7 +74,6 @@ export async function syncParentNotificationsFromSources({
   parentId,
   children,
   attendance,
-  assessments,
   assignments,
   announcements,
   bills,
@@ -158,25 +157,6 @@ export async function syncParentNotificationsFromSources({
         occurredAt: record.date,
         studentId: record.studentId,
       };
-    }),
-    ...assessments.map((record) => {
-      const reportReady = record.examScore > 0;
-      return {
-      sourceKey: `assessment:${record.id}`,
-      sourceModel: "ContinuousAssessment",
-      sourceId: String(record.id),
-      type: "ASSESSMENT" as const,
-      priority: reportReady && record.totalScore < 50 ? ("HIGH" as const) : ("NORMAL" as const),
-      title: reportReady ? `${record.subject.name} score published` : `${record.subject.name} CA progress updated`,
-      body: reportReady
-        ? `${record.totalScore.toFixed(1)}% - Grade ${record.grade}. ${record.remarks || "Report score updated."}`
-        : `Current CA: ${record.classworkScore.toFixed(1)}. Exam score is not recorded yet, so this is progress, not a final report grade.`,
-      href: reportReady
-        ? `/list/report-cards/${record.studentId}?term=${record.term}&year=${record.academicYear}&classId=${record.classId}`
-        : "/parent/updates",
-      occurredAt: record.updatedAt,
-      studentId: record.studentId,
-    };
     }),
     ...assignments.flatMap((assignment) =>
       children

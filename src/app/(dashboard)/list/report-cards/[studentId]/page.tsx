@@ -27,6 +27,7 @@ const ReportCardPage = async ({
   const sp            = await searchParams;
   const term          = (sp.term ?? "TERM_2") as Term;
   const academicYear  = sp.year ?? "";
+  const openedCAScoreId = sp.caScoreId ? Number(sp.caScoreId) : null;
 
   // ── Load student ──────────────────────────────────────────────────────────
   const student = await prisma.student.findFirst({
@@ -112,6 +113,50 @@ const ReportCardPage = async ({
       latestCABySubject.set(record.subjectId, record);
     }
   }
+
+  const openedCAUpdate = openedCAScoreId
+    ? await prisma.cAActivityScore.findFirst({
+        where: {
+          id: openedCAScoreId,
+          schoolId,
+          studentId,
+          activity: {
+            classId: student.classId,
+            bucket: {
+              term,
+              academicYear: activeYear,
+            },
+          },
+        },
+        include: {
+          activity: {
+            select: {
+              title: true,
+              subjectId: true,
+              subject: { select: { name: true } },
+            },
+          },
+        },
+      })
+    : null;
+  const latestScoreForOpenedSubject = openedCAUpdate
+    ? await prisma.cAActivityScore.findFirst({
+        where: {
+          schoolId,
+          studentId,
+          activity: {
+            classId: student.classId,
+            subjectId: openedCAUpdate.activity.subjectId,
+            bucket: {
+              term,
+              academicYear: activeYear,
+            },
+          },
+        },
+        orderBy: { updatedAt: "desc" },
+        select: { id: true, updatedAt: true },
+      })
+    : null;
 
   // ── Subjects on timetable for this class ──────────────────────────────────
   const lessons = await prisma.lesson.findMany({
@@ -257,6 +302,12 @@ const ReportCardPage = async ({
       cwWeight={cwWeight}
       exWeight={exWeight}
       subjectRows={subjectRows}
+      openedCAUpdate={openedCAUpdate ? {
+        subjectName: openedCAUpdate.activity.subject.name,
+        activityTitle: openedCAUpdate.activity.title,
+        openedAt: openedCAUpdate.updatedAt,
+        isLatest: latestScoreForOpenedSubject?.id === openedCAUpdate.id,
+      } : undefined}
       overallStats={{
         aggregate,
         avgScore,
