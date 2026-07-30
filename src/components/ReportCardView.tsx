@@ -30,6 +30,8 @@ type SubjectRow = {
   position: number;
   remarks: string;
   isComplete: boolean;
+  caChange: number;
+  caTrend: "up" | "down" | "steady" | "new";
 };
 
 type Props = {
@@ -410,6 +412,62 @@ const ReportCardView = ({
           {!reportReady && (
             <div className="rounded-xl border border-sky-100 bg-sky-50 px-4 py-3 text-sm font-semibold text-sky-800">
               CA is currently being built from teacher activity entries. Exam scores have not been recorded yet, so this page is a progress view, not a final report card.
+            </div>
+          )}
+
+          {!reportReady && subjectRows.length > 0 && (
+            <div className="rounded-2xl border border-gray-100 bg-white p-4">
+              <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                    CA Progress Insight
+                  </p>
+                  <h2 className="text-base font-black text-gray-900">
+                    Current activity progress before exams
+                  </h2>
+                </div>
+                <p className="text-xs font-semibold text-gray-400">
+                  Target CA: {cwWeight} marks
+                </p>
+              </div>
+              <div className="grid gap-3 md:grid-cols-2">
+                {subjectRows.map((row) => {
+                  const percent = Math.min(100, Math.round((row.classworkScore / Math.max(cwWeight, 1)) * 100));
+                  const trendLabel =
+                    row.caTrend === "up"
+                      ? `Improving by ${Math.abs(row.caChange)}`
+                      : row.caTrend === "down"
+                        ? `Dropping by ${Math.abs(row.caChange)}`
+                        : row.caTrend === "steady"
+                          ? "Steady"
+                          : "New CA record";
+                  const trendClass =
+                    row.caTrend === "up"
+                      ? "text-emerald-700 bg-emerald-50"
+                      : row.caTrend === "down"
+                        ? "text-rose-700 bg-rose-50"
+                        : "text-slate-600 bg-slate-50";
+
+                  return (
+                    <div key={row.id} className="rounded-xl border border-gray-100 p-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-black text-gray-900">{row.name}</p>
+                          <p className="mt-0.5 text-xs font-semibold text-gray-400">
+                            CA {row.classworkScore.toFixed(1)} / {cwWeight}
+                          </p>
+                        </div>
+                        <span className={`rounded-full px-2.5 py-1 text-[10px] font-black ${trendClass}`}>
+                          {trendLabel}
+                        </span>
+                      </div>
+                      <div className="mt-3 h-2 overflow-hidden rounded-full bg-gray-100">
+                        <div className="h-full rounded-full bg-sky-500" style={{ width: `${percent}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 

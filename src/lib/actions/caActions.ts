@@ -508,7 +508,7 @@ export async function bulkUpsertCAActivityScores(data: {
     subjectId: activity.subjectId,
   });
 
-  const scores = await Promise.all(
+  const writeResults = await Promise.all(
     parsed.rows.map((row) =>
       upsertCAActivityScore({
         schoolId,
@@ -520,6 +520,8 @@ export async function bulkUpsertCAActivityScores(data: {
       }),
     ),
   );
+  const changedScores = writeResults.filter((result) => result.changed).map((result) => result.score);
+  const allScores = writeResults.map((result) => result.score);
 
   await syncComputedCARecordsForActivity({
     schoolId,
@@ -527,11 +529,13 @@ export async function bulkUpsertCAActivityScores(data: {
     studentIds: parsed.rows.map((row) => row.studentId),
   });
 
-  const events = await recordCAActivityScoreEvents({
-    schoolId,
-    activityId: parsed.activityId,
-    scoreIds: scores.map((score) => score.id),
-  });
+  const events = changedScores.length > 0
+    ? await recordCAActivityScoreEvents({
+        schoolId,
+        activityId: parsed.activityId,
+        scoreIds: changedScores.map((score) => score.id),
+      })
+    : [];
 
   await logCAAudit({
     schoolId,
@@ -539,9 +543,10 @@ export async function bulkUpsertCAActivityScores(data: {
     action: "CA_ACTIVITY_SCORES_UPSERTED",
     entityType: "CAActivity",
     entityId: parsed.activityId,
-    message: `${scores.length} student score${scores.length === 1 ? "" : "s"} saved for a CA activity.`,
+    message: `${allScores.length} student score${allScores.length === 1 ? "" : "s"} submitted for a CA activity.`,
     metadata: {
-      scoreIds: scores.map((score) => score.id),
+      scoreIds: allScores.map((score) => score.id),
+      changedScoreIds: changedScores.map((score) => score.id),
       studentIds: parsed.rows.map((row) => row.studentId),
     },
   });
@@ -553,7 +558,7 @@ export async function bulkUpsertCAActivityScores(data: {
   for (const studentId of new Set(parsed.rows.map((row) => row.studentId))) {
     revalidateDocument(schoolId, "report-card", studentId);
   }
-  return { count: scores.length, eventCount: events.length };
+  return { count: allScores.length, changedCount: changedScores.length, eventCount: events.length };
 }
 
 export async function lockCABucketAction(bucketId: number) {

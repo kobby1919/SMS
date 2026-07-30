@@ -240,13 +240,17 @@ const CAActivityManager = ({
         activityId: selectedActivity.id,
         rows,
       });
-      setMessage(
-        `Scores saved successfully. Saved ${result.count} score${result.count === 1 ? "" : "s"}. ${
-          result.eventCount > 0
-            ? `${result.eventCount} parent update${result.eventCount === 1 ? "" : "s"} prepared.`
-            : "No parent update was needed."
-        } Score fields cleared for the next activity.`,
-      );
+      if (result.changedCount === 0) {
+        setMessage("No score changes detected. Nothing new was sent to parents.");
+      } else {
+        setMessage(
+          `Scores saved successfully. Updated ${result.changedCount} of ${result.count} score${result.count === 1 ? "" : "s"}. ${
+            result.eventCount > 0
+              ? `${result.eventCount} parent update${result.eventCount === 1 ? "" : "s"} prepared.`
+              : "No parent update was needed."
+          } Score fields cleared for the next activity.`,
+        );
+      }
       setScoreEdits({});
       router.refresh();
     } catch (err) {

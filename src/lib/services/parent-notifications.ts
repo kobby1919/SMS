@@ -50,6 +50,25 @@ function notificationTone(type: ParentNotificationType, priority: ParentNotifica
   return "slate";
 }
 
+function uniqueFeedNotifications<T extends {
+  type: ParentNotificationType;
+  body: string;
+  sourceModel: string;
+  sourceId: string;
+}>(notifications: T[]) {
+  const seen = new Set<string>();
+  return notifications.filter((notification) => {
+    const key =
+      notification.sourceModel === "ContinuousAssessment" ||
+      notification.sourceModel === "CAActivityScore"
+        ? `${notification.sourceModel}:${notification.sourceId}`
+        : `${notification.type}:${notification.body}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 export async function syncParentNotificationsFromSources({
   schoolId,
   parentId,
@@ -80,6 +99,8 @@ export async function syncParentNotificationsFromSources({
     term: string;
     academicYear: string;
     totalScore: number;
+    classworkScore: number;
+    examScore: number;
     grade: string;
     remarks: string;
     updatedAt: Date;
@@ -138,18 +159,25 @@ export async function syncParentNotificationsFromSources({
         studentId: record.studentId,
       };
     }),
-    ...assessments.map((record) => ({
-      sourceKey: `assessment:${record.id}:${record.updatedAt.getTime()}`,
+    ...assessments.map((record) => {
+      const reportReady = record.examScore > 0;
+      return {
+      sourceKey: `assessment:${record.id}`,
       sourceModel: "ContinuousAssessment",
       sourceId: String(record.id),
       type: "ASSESSMENT" as const,
-      priority: record.totalScore < 50 ? ("HIGH" as const) : ("NORMAL" as const),
-      title: `${record.subject.name} score published`,
-      body: `${record.totalScore.toFixed(1)}% - Grade ${record.grade}. ${record.remarks || "Continuous assessment updated."}`,
-      href: `/list/report-cards/${record.studentId}?term=${record.term}&year=${record.academicYear}&classId=${record.classId}`,
+      priority: reportReady && record.totalScore < 50 ? ("HIGH" as const) : ("NORMAL" as const),
+      title: reportReady ? `${record.subject.name} score published` : `${record.subject.name} CA progress updated`,
+      body: reportReady
+        ? `${record.totalScore.toFixed(1)}% - Grade ${record.grade}. ${record.remarks || "Report score updated."}`
+        : `Current CA: ${record.classworkScore.toFixed(1)}. Exam score is not recorded yet, so this is progress, not a final report grade.`,
+      href: reportReady
+        ? `/list/report-cards/${record.studentId}?term=${record.term}&year=${record.academicYear}&classId=${record.classId}`
+        : "/parent/updates",
       occurredAt: record.updatedAt,
       studentId: record.studentId,
-    })),
+    };
+    }),
     ...assignments.flatMap((assignment) =>
       children
         .filter((child) => child.classId === assignment.lesson.classId)
@@ -275,7 +303,7 @@ export async function syncParentNotificationsFromSources({
     take: 30,
   });
 
-  return notifications.map((notification): ParentNotificationFeedItem => {
+  return uniqueFeedNotifications(notifications).map((notification): ParentNotificationFeedItem => {
     const child = notification.studentId ? childById.get(notification.studentId) : undefined;
     return {
       id: notification.id,

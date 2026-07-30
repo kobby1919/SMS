@@ -108,6 +108,14 @@ export type CAActivityScoreInput = {
   comment?: string;
 };
 
+export type CAActivityScoreWriteResult = {
+  score: {
+    id: number;
+    studentId: string;
+  };
+  changed: boolean;
+};
+
 export type CABucketProgress = {
   bucketId: number;
   name: string;
@@ -364,7 +372,7 @@ export async function createCAActivity(input: CAActivityInput) {
   });
 }
 
-export async function upsertCAActivityScore(input: CAActivityScoreInput) {
+export async function upsertCAActivityScore(input: CAActivityScoreInput): Promise<CAActivityScoreWriteResult> {
   const activity = await prisma.cAActivity.findFirst({
     where: { id: input.activityId, schoolId: input.schoolId },
     include: {
@@ -392,8 +400,29 @@ export async function upsertCAActivityScore(input: CAActivityScoreInput) {
     toNumber(activity.rawMaxScore),
     allocation,
   );
+  const nextComment = input.comment?.trim() || null;
 
-  return prisma.cAActivityScore.upsert({
+  const existing = await prisma.cAActivityScore.findUnique({
+    where: { activityId_studentId: { activityId: input.activityId, studentId: input.studentId } },
+    select: {
+      id: true,
+      studentId: true,
+      rawScore: true,
+      normalizedContribution: true,
+      comment: true,
+    },
+  });
+
+  if (
+    existing &&
+    toNumber(existing.rawScore) === input.rawScore &&
+    toNumber(existing.normalizedContribution) === normalizedContribution &&
+    (existing.comment ?? null) === nextComment
+  ) {
+    return { score: existing, changed: false };
+  }
+
+  const score = await prisma.cAActivityScore.upsert({
     where: { activityId_studentId: { activityId: input.activityId, studentId: input.studentId } },
     create: {
       schoolId: input.schoolId,
@@ -402,15 +431,21 @@ export async function upsertCAActivityScore(input: CAActivityScoreInput) {
       rawScore: input.rawScore,
       normalizedContribution,
       recordedBy: input.recordedBy,
-      comment: input.comment?.trim() || null,
+      comment: nextComment,
     },
     update: {
       rawScore: input.rawScore,
       normalizedContribution,
       recordedBy: input.recordedBy,
-      comment: input.comment?.trim() || null,
+      comment: nextComment,
+    },
+    select: {
+      id: true,
+      studentId: true,
     },
   });
+
+  return { score, changed: true };
 }
 
 export async function getSubjectCAProgress(input: CAContext & { studentId: string }): Promise<SubjectCAProgress> {

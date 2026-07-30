@@ -11,6 +11,8 @@ import type { Term } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
 
+type CATrend = "up" | "down" | "steady" | "new";
+
 const ReportCardPage = async ({
   params,
   searchParams,
@@ -66,6 +68,30 @@ const ReportCardPage = async ({
     },
     orderBy: { subject: { name: "asc" } },
   });
+
+  const previousCARecords = await prisma.continuousAssessment.findMany({
+    where: {
+      schoolId,
+      studentId,
+      classId: student.classId,
+      OR: [
+        { academicYear: { not: activeYear } },
+        { term: { not: term } },
+      ],
+    },
+    select: {
+      subjectId: true,
+      classworkScore: true,
+      updatedAt: true,
+    },
+    orderBy: { updatedAt: "desc" },
+  });
+  const previousCABySubject = new Map<number, { classworkScore: number }>();
+  for (const record of previousCARecords) {
+    if (!previousCABySubject.has(record.subjectId)) {
+      previousCABySubject.set(record.subjectId, record);
+    }
+  }
 
   // ── Subjects on timetable for this class ──────────────────────────────────
   const lessons = await prisma.lesson.findMany({
@@ -125,6 +151,17 @@ const ReportCardPage = async ({
   // ── Build subject rows ────────────────────────────────────────────────────
   const subjectRows = caRecords.map((ca) => {
     const band = getGradeBandByGrade(ca.grade);
+    const previous = previousCABySubject.get(ca.subjectId);
+    const caChange = previous
+      ? Math.round((ca.classworkScore - previous.classworkScore) * 10) / 10
+      : 0;
+    const caTrend: CATrend = previous
+      ? caChange > 0
+        ? "up"
+        : caChange < 0
+          ? "down"
+          : "steady"
+      : "new";
     return {
       id:             ca.subject.id,
       name:           ca.subject.name,
@@ -134,6 +171,8 @@ const ReportCardPage = async ({
       grade:          ca.grade,
       gradePoint:     ca.gradePoint,
       isComplete:     ca.examScore > 0,
+      caChange,
+      caTrend,
       label:          band.label,
       position:       subjectPositions[ca.subject.id] ?? 0,
       remarks:        ca.remarks,

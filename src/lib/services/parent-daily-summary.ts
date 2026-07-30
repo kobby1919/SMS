@@ -13,6 +13,18 @@ function dateKey(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
+function uniqueEventsByBody<T extends { type: string; body: string; sourceModel: string; sourceId: string }>(events: T[]) {
+  const seen = new Set<string>();
+  return events.filter((event) => {
+    const key = event.sourceModel === "CAActivityScore"
+      ? `${event.sourceModel}:${event.sourceId}`
+      : `${event.type}:${event.body}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 export async function rebuildParentDailySummary(input: {
   schoolId: string;
   parentId: string;
@@ -28,21 +40,23 @@ export async function rebuildParentDailySummary(input: {
     orderBy: [{ occurredAt: "asc" }, { createdAt: "asc" }],
   });
 
-  if (events.length === 0) return null;
+  const uniqueEvents = uniqueEventsByBody(events);
+
+  if (uniqueEvents.length === 0) return null;
 
   const counts = {
-    attendance: events.filter((event) => event.type === "ATTENDANCE").length,
-    academics: events.filter((event) => event.type === "ASSESSMENT").length,
-    homework: events.filter((event) => event.type === "ASSIGNMENT").length,
-    notices: events.filter((event) => event.type === "ANNOUNCEMENT").length,
-    finance: events.filter((event) => event.type === "BILL" || event.type === "PAYMENT").length,
+    attendance: uniqueEvents.filter((event) => event.type === "ATTENDANCE").length,
+    academics: uniqueEvents.filter((event) => event.type === "ASSESSMENT").length,
+    homework: uniqueEvents.filter((event) => event.type === "ASSIGNMENT").length,
+    notices: uniqueEvents.filter((event) => event.type === "ANNOUNCEMENT").length,
+    finance: uniqueEvents.filter((event) => event.type === "BILL" || event.type === "PAYMENT").length,
   };
-  const academicLines = events
+  const academicLines = uniqueEvents
     .filter((event) => event.type === "ASSESSMENT")
     .slice(0, 4)
     .map((event) => event.body);
   const summaryBits = [
-    `${events.length} school update${events.length === 1 ? "" : "s"}`,
+    `${uniqueEvents.length} school update${uniqueEvents.length === 1 ? "" : "s"}`,
     counts.academics ? `${counts.academics} academic` : null,
     counts.homework ? `${counts.homework} homework` : null,
     counts.notices ? `${counts.notices} notice` : null,
@@ -66,7 +80,7 @@ export async function rebuildParentDailySummary(input: {
       body: academicLines.length > 0
         ? academicLines.join("\n")
         : summaryBits.join(" - "),
-      payload: { counts, eventIds: events.map((event) => event.id) },
+      payload: { counts, eventIds: uniqueEvents.map((event) => event.id) },
       sourceModel: "ParentDailySummary",
       sourceId: dateKey(start),
       sourceKey: `daily-summary:${input.parentId}:${dateKey(start)}`,
@@ -77,7 +91,7 @@ export async function rebuildParentDailySummary(input: {
       body: academicLines.length > 0
         ? academicLines.join("\n")
         : summaryBits.join(" - "),
-      payload: { counts, eventIds: events.map((event) => event.id) },
+      payload: { counts, eventIds: uniqueEvents.map((event) => event.id) },
       occurredAt: new Date(),
       readAt: null,
     },
@@ -164,17 +178,35 @@ export async function recordCAActivityScoreEvents(input: {
       },
       sourceModel: "CAActivityScore",
       sourceId: String(score.id),
-      sourceKey: `ca-activity-score:${score.id}:${score.updatedAt.getTime()}`,
+      sourceKey: `ca-activity-score:${score.id}`,
       occurredAt: new Date(),
     });
   }
 
-  if (events.length > 0) {
-    await prisma.parentActivityEvent.createMany({
-      data: events,
-      skipDuplicates: true,
-    });
-  }
+  await Promise.all(
+    events.map((event) =>
+      prisma.parentActivityEvent.upsert({
+        where: {
+          schoolId_parentId_sourceKey: {
+            schoolId: event.schoolId,
+            parentId: event.parentId,
+            sourceKey: event.sourceKey,
+          },
+        },
+        create: event,
+        update: {
+          title: event.title,
+          body: event.body,
+          href: event.href,
+          payload: event.payload,
+          sourceId: event.sourceId,
+          occurredAt: event.occurredAt,
+          teacherId: event.teacherId,
+          studentId: event.studentId,
+        },
+      }),
+    ),
+  );
 
   const uniqueParentIds = [...new Set(events.map((event) => event.parentId))];
   await Promise.all(
