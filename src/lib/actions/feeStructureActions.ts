@@ -33,6 +33,7 @@ export type FeeStructureInput = {
   gradeId:      number;
   term:         Term;
   academicYear: string;
+  dueDate?:     string | null;
 };
 
 export async function createFeeStructure(data: FeeStructureInput) {
@@ -63,6 +64,7 @@ export async function createFeeStructure(data: FeeStructureInput) {
       gradeId:      parsed.gradeId,
       term:         parsed.term,
       academicYear: parsed.academicYear,
+      dueDate:      parsed.dueDate ? new Date(parsed.dueDate) : null,
       status:       "DRAFT",
       createdBy:    userId,
     },
@@ -79,6 +81,7 @@ export async function createFeeStructure(data: FeeStructureInput) {
       gradeId:      structure.gradeId,
       term:         structure.term,
       academicYear: structure.academicYear,
+      dueDate:      structure.dueDate,
     },
   });
 

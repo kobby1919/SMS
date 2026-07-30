@@ -191,7 +191,7 @@ export async function recordPayment(input: RecordPaymentInput) {
     type: "PAYMENT",
     title: `Payment received: GHS ${paymentAmount.toNumber().toFixed(2)}`,
     body: `Receipt ${receiptNumber} was recorded for ${bill.student.name} ${bill.student.surname}.`,
-    href: `/api/finance/receipt?paymentId=${payment.id}`,
+    href: `/api/finance/receipt?billId=${data.studentBillId}&receiptNumber=${encodeURIComponent(receiptNumber)}`,
     sourceModel: "Payment",
     sourceId: String(payment.id),
     sourceKey: `payment:${payment.id}:confirmed`,
@@ -248,6 +248,9 @@ export async function recordPayment(input: RecordPaymentInput) {
   revalidatePath(`/list/finance/bills/${data.studentBillId}`);
   revalidatePath("/list/finance/bills");
   revalidatePath("/list/finance/payments");
+  revalidatePath("/parent");
+  revalidatePath("/parent/finance");
+  revalidatePath(`/parent/finance/bills/${data.studentBillId}`);
   revalidatePath("/bursar");
   revalidateDashboard(schoolId);
   revalidateDocument(
@@ -385,6 +388,9 @@ export async function reversePayment(paymentId: number, reason: string) {
 
   revalidatePath(`/list/finance/bills/${billId}`);
   revalidatePath("/list/finance/payments");
+  revalidatePath("/parent");
+  revalidatePath("/parent/finance");
+  revalidatePath(`/parent/finance/bills/${billId}`);
   revalidatePath("/bursar");
   revalidateDashboard(schoolId);
   revalidateDocument(schoolId, "receipt", data.paymentId);

@@ -17,6 +17,7 @@ import {
   PAYMENT_METHOD_LABELS,
 } from "@/src/lib/constants/finance";
 import WaiveBillButton from "@/src/components/WaiveBillButton";
+import FinanceQueryResolveForm from "@/src/components/FinanceQueryResolveForm";
 
 export const dynamic = "force-dynamic";
 
@@ -70,6 +71,13 @@ const BillDetailPage = async ({
       },
       discounts: {
         orderBy: { createdAt: "desc" },
+      },
+      financeQueries: {
+        orderBy: { createdAt: "desc" },
+        include: {
+          parent: { select: { name: true, surname: true, phone: true, email: true } },
+          payment: { select: { receiptNumber: true, amount: true } },
+        },
       },
     },
   });
@@ -378,6 +386,44 @@ const BillDetailPage = async ({
             <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
               <p className="text-[10px] font-black uppercase tracking-wider text-amber-500 mb-1">Notes</p>
               <p className="text-xs text-amber-800 leading-relaxed">{bill.notes}</p>
+            </div>
+          )}
+
+          {bill.financeQueries.length > 0 && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+              <div className="px-5 py-4 border-b border-gray-100">
+                <p className="text-xs font-black uppercase tracking-wider text-gray-400">Parent Finance Queries</p>
+              </div>
+              <div className="divide-y divide-gray-50">
+                {bill.financeQueries.map((query) => (
+                  <div key={query.id} className="px-5 py-4">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <div>
+                        <p className="text-sm font-black text-gray-900">
+                          {query.reason.replaceAll("_", " ")}
+                        </p>
+                        <p className="mt-0.5 text-xs font-semibold text-gray-400">
+                          {query.parent.name} {query.parent.surname}
+                          {query.payment ? ` - Receipt ${query.payment.receiptNumber}` : ""}
+                        </p>
+                      </div>
+                      <span className="rounded-full bg-amber-50 px-2 py-1 text-[10px] font-black uppercase text-amber-700">
+                        {query.status.replaceAll("_", " ")}
+                      </span>
+                    </div>
+                    <p className="mt-3 rounded-xl bg-gray-50 px-3 py-2 text-sm font-semibold text-gray-600">
+                      {query.message}
+                    </p>
+                    {query.response ? (
+                      <p className="mt-2 rounded-xl bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">
+                        Response: {query.response}
+                      </p>
+                    ) : (
+                      <FinanceQueryResolveForm queryId={query.id} />
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

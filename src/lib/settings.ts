@@ -68,5 +68,6 @@ export const routeAccessMap: RouteAccessMap = {
   "/list/finance/audit":                    ["admin"],
 
   // API routes for finance PDF / Excel exports
+  "/api/finance/receipt":                   ["admin", "bursar", "parent", "student"],
   "/api/finance/(.*)":                      ["admin", "bursar"],
 };

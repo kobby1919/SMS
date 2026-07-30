@@ -219,6 +219,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       include: {
         studentBill: {
           select: {
+            id: true,
             studentId: true,
             feeStructure: { select: { title: true } },
           },
@@ -603,7 +604,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
             title: "Outstanding fee balance",
             description: `GHS ${financeSummary.outstanding.toFixed(2)} is still outstanding.`,
             actionLabel: "View bills",
-            href: "/list/finance/bills",
+            href: "/parent/finance",
           }]
         : []),
     ];

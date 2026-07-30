@@ -163,6 +163,7 @@ export async function generateBills(rawInput: GenerateBillsInput): Promise<{
         discountAmount: 0,
         balance: billTotal,
         status: "UNPAID" as const,
+        dueDate: structure.dueDate,
         generatedBy: userId,
       })),
       skipDuplicates: true,
@@ -198,7 +199,7 @@ export async function generateBills(rawInput: GenerateBillsInput): Promise<{
           type: "BILL",
           title: `${structure.title} bill generated`,
           body: `A new bill of GHS ${billTotal.toNumber().toFixed(2)} has been generated.`,
-          href: "/list/finance/bills",
+          href: `/parent/finance/bills/${bill.id}`,
           sourceModel: "StudentBill",
           sourceId: String(bill.id),
           sourceKey: `student-bill:${bill.id}:generated`,
@@ -257,6 +258,8 @@ export async function generateBills(rawInput: GenerateBillsInput): Promise<{
 
   revalidatePath("/list/finance/bills");
   revalidatePath(`/list/finance/fee-structures/${input.feeStructureId}`);
+  revalidatePath("/parent");
+  revalidatePath("/parent/finance");
   revalidatePath("/bursar");
   revalidateDashboard(schoolId);
 
@@ -317,6 +320,8 @@ export async function waiveBill(billId: number, reason: string) {
 
   revalidatePath("/list/finance/bills");
   revalidatePath(`/list/finance/bills/${billId}`);
+  revalidatePath("/parent");
+  revalidatePath("/parent/finance");
   revalidateDashboard(schoolId);
 }
 

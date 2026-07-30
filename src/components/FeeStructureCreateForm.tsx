@@ -30,6 +30,7 @@ const FeeStructureCreateForm = ({ grades, academicYears }: Props) => {
   const [gradeId,      setGradeId]      = useState<number | "">("");
   const [term,         setTerm]         = useState("TERM_1");
   const [academicYear, setAcademicYear] = useState(academicYears[0] ?? "");
+  const [dueDate,      setDueDate]      = useState("");
 
   // Auto-generate a sensible title when grade/term/year are selected
   const autoTitle = () => {
@@ -60,6 +61,7 @@ const FeeStructureCreateForm = ({ grades, academicYears }: Props) => {
           gradeId:      gradeId as number,
           term:         term as Term,
           academicYear: academicYear.trim(),
+          dueDate:      dueDate || undefined,
         });
         router.push(`/list/finance/fee-structures/${structure.id}`);
       } catch (e: unknown) {
@@ -135,6 +137,18 @@ const FeeStructureCreateForm = ({ grades, academicYears }: Props) => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder={autoTitle() || "e.g. JHS 2 — Term 1 2025/26 Fees"}
+            className="ring-[1.5px] ring-gray-200 px-3 py-3 rounded-xl text-sm font-semibold text-gray-700 focus:ring-violet-500 outline-none"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-black uppercase tracking-wider text-gray-500">
+            Payment Due Date <span className="font-normal normal-case text-gray-300">(optional)</span>
+          </label>
+          <input
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
             className="ring-[1.5px] ring-gray-200 px-3 py-3 rounded-xl text-sm font-semibold text-gray-700 focus:ring-violet-500 outline-none"
           />
         </div>

@@ -513,6 +513,7 @@ exports.Prisma.FeeStructureScalarFieldEnum = {
   term: 'term',
   status: 'status',
   publishedAt: 'publishedAt',
+  dueDate: 'dueDate',
   schoolId: 'schoolId',
   gradeId: 'gradeId',
   createdBy: 'createdBy',
@@ -538,6 +539,7 @@ exports.Prisma.StudentBillScalarFieldEnum = {
   discountAmount: 'discountAmount',
   balance: 'balance',
   status: 'status',
+  dueDate: 'dueDate',
   notes: 'notes',
   schoolId: 'schoolId',
   studentId: 'studentId',
@@ -616,6 +618,23 @@ exports.Prisma.FinanceAuditLogScalarFieldEnum = {
   ipAddress: 'ipAddress',
   createdAt: 'createdAt',
   schoolId: 'schoolId'
+};
+
+exports.Prisma.FinanceQueryScalarFieldEnum = {
+  id: 'id',
+  reason: 'reason',
+  message: 'message',
+  status: 'status',
+  response: 'response',
+  resolvedAt: 'resolvedAt',
+  resolvedBy: 'resolvedBy',
+  schoolId: 'schoolId',
+  parentId: 'parentId',
+  studentId: 'studentId',
+  studentBillId: 'studentBillId',
+  paymentId: 'paymentId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.FinanceJobScalarFieldEnum = {
@@ -877,7 +896,24 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   PAYMENT_RECORDED: 'PAYMENT_RECORDED',
   PAYMENT_REVERSED: 'PAYMENT_REVERSED',
   DISCOUNT_APPLIED: 'DISCOUNT_APPLIED',
-  DISCOUNT_REMOVED: 'DISCOUNT_REMOVED'
+  DISCOUNT_REMOVED: 'DISCOUNT_REMOVED',
+  FINANCE_QUERY_OPENED: 'FINANCE_QUERY_OPENED',
+  FINANCE_QUERY_RESOLVED: 'FINANCE_QUERY_RESOLVED'
+};
+
+exports.FinanceQueryReason = exports.$Enums.FinanceQueryReason = {
+  ALREADY_PAID: 'ALREADY_PAID',
+  WRONG_AMOUNT: 'WRONG_AMOUNT',
+  NEED_CLARIFICATION: 'NEED_CLARIFICATION',
+  RECEIPT_ISSUE: 'RECEIPT_ISSUE',
+  OTHER: 'OTHER'
+};
+
+exports.FinanceQueryStatus = exports.$Enums.FinanceQueryStatus = {
+  OPEN: 'OPEN',
+  IN_REVIEW: 'IN_REVIEW',
+  RESOLVED: 'RESOLVED',
+  CLOSED: 'CLOSED'
 };
 
 exports.FinanceJobType = exports.$Enums.FinanceJobType = {
@@ -979,6 +1015,7 @@ exports.Prisma.ModelName = {
   Discount: 'Discount',
   ReceiptCounter: 'ReceiptCounter',
   FinanceAuditLog: 'FinanceAuditLog',
+  FinanceQuery: 'FinanceQuery',
   FinanceJob: 'FinanceJob',
   PaymentWebhookEvent: 'PaymentWebhookEvent',
   RateLimitBucket: 'RateLimitBucket',

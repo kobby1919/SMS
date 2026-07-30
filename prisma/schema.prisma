@@ -98,6 +98,23 @@ enum AuditAction {
   PAYMENT_REVERSED
   DISCOUNT_APPLIED
   DISCOUNT_REMOVED
+  FINANCE_QUERY_OPENED
+  FINANCE_QUERY_RESOLVED
+}
+
+enum FinanceQueryReason {
+  ALREADY_PAID
+  WRONG_AMOUNT
+  NEED_CLARIFICATION
+  RECEIPT_ISSUE
+  OTHER
+}
+
+enum FinanceQueryStatus {
+  OPEN
+  IN_REVIEW
+  RESOLVED
+  CLOSED
 }
 
 enum WaitlistRole {
@@ -224,23 +241,23 @@ enum ParentDeliveryStatus {
 // ─── EXISTING MODELS ─────────────────────────────────────────────────────────
 
 model School {
-  id                 String                 @id
-  name               String
-  slug               String                 @unique
-  legalName          String?
-  displayName        String?
-  shortName          String?
-  emailFromName      String?
-  primaryColor       String                 @default("#2563eb")
-  contactEmail       String?
-  phone              String?
-  address            String?
-  logoUrl            String?
-  onboardingStatus   SchoolOnboardingStatus @default(PENDING_SETUP)
-  setupStep          String?
-  setupCompletedAt   DateTime?
-  createdAt          DateTime               @default(now())
-  updatedAt          DateTime               @updatedAt
+  id               String                 @id
+  name             String
+  slug             String                 @unique
+  legalName        String?
+  displayName      String?
+  shortName        String?
+  emailFromName    String?
+  primaryColor     String                 @default("#2563eb")
+  contactEmail     String?
+  phone            String?
+  address          String?
+  logoUrl          String?
+  onboardingStatus SchoolOnboardingStatus @default(PENDING_SETUP)
+  setupStep        String?
+  setupCompletedAt DateTime?
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
 
   admins                Admin[]
   students              Student[]
@@ -269,18 +286,19 @@ model School {
   payments              Payment[]
   paymentReversals      PaymentReversal[]
   discounts             Discount[]
+  financeQueries        FinanceQuery[]
   receiptCounters       ReceiptCounter[]
   financeAuditLogs      FinanceAuditLog[]
   invites               SchoolInvite[]
-  waitlistEntries        WaitlistEntry[]
-  onboardingAuditLogs    OnboardingAuditLog[]
-  financeJobs            FinanceJob[]
-  paymentWebhookEvents   PaymentWebhookEvent[]
-  parentNotifications    ParentNotification[]
-  parentActivityEvents   ParentActivityEvent[]
-  notificationSettings   SchoolNotificationSetting?
-  parentPreferences      ParentNotificationPreference[]
-  parentDeliveryLogs     ParentNotificationDeliveryLog[]
+  waitlistEntries       WaitlistEntry[]
+  onboardingAuditLogs   OnboardingAuditLog[]
+  financeJobs           FinanceJob[]
+  paymentWebhookEvents  PaymentWebhookEvent[]
+  parentNotifications   ParentNotification[]
+  parentActivityEvents  ParentActivityEvent[]
+  notificationSettings  SchoolNotificationSetting?
+  parentPreferences     ParentNotificationPreference[]
+  parentDeliveryLogs    ParentNotificationDeliveryLog[]
 }
 
 model Admin {
@@ -322,7 +340,8 @@ model Student {
   caActivityScores      CAActivityScore[]
   bills                 StudentBill[]
   parentNotifications   ParentNotification[]
-  parentActivityEvents   ParentActivityEvent[]
+  parentActivityEvents  ParentActivityEvent[]
+  financeQueries        FinanceQuery[]
 
   @@index([schoolId])
   @@index([schoolId, classId])
@@ -356,7 +375,7 @@ model Teacher {
   caBuckets             CABucket[]
   caActivities          CAActivity[]
   caActivityScores      CAActivityScore[]
-  parentActivityEvents   ParentActivityEvent[]
+  parentActivityEvents  ParentActivityEvent[]
   syllabusTopicProgress SyllabusTopicProgress[]
 
   @@index([schoolId])
@@ -376,32 +395,33 @@ model Parent {
   schoolId String @default("default-school")
   school   School @relation(fields: [schoolId], references: [id])
 
-  students Student[]
-  notifications ParentNotification[]
-  activityEvents ParentActivityEvent[]
+  students               Student[]
+  notifications          ParentNotification[]
+  activityEvents         ParentActivityEvent[]
   notificationPreference ParentNotificationPreference?
   notificationDeliveries ParentNotificationDeliveryLog[]
+  financeQueries         FinanceQuery[]
 
   @@index([schoolId])
   @@index([schoolId, createdAt])
 }
 
 model SchoolNotificationSetting {
-  id                     String   @id @default(cuid())
-  timezone               String   @default("Africa/Accra")
-  openingTime            String   @default("07:30")
-  closingTime            String   @default("15:00")
-  dailySummarySendTime   String   @default("15:15")
-  activeDays             String[] @default(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"])
-  emailEnabled           Boolean  @default(true)
-  smsEnabled             Boolean  @default(true)
-  whatsappEnabled        Boolean  @default(false)
-  urgentAlertsImmediate  Boolean  @default(true)
-  quietHoursStart        String   @default("20:00")
-  quietHoursEnd          String   @default("06:00")
-  lastDailySummaryRunAt  DateTime?
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
+  id                    String    @id @default(cuid())
+  timezone              String    @default("Africa/Accra")
+  openingTime           String    @default("07:30")
+  closingTime           String    @default("15:00")
+  dailySummarySendTime  String    @default("15:15")
+  activeDays            String[]  @default(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"])
+  emailEnabled          Boolean   @default(true)
+  smsEnabled            Boolean   @default(true)
+  whatsappEnabled       Boolean   @default(false)
+  urgentAlertsImmediate Boolean   @default(true)
+  quietHoursStart       String    @default("20:00")
+  quietHoursEnd         String    @default("06:00")
+  lastDailySummaryRunAt DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
   schoolId String @unique
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
@@ -464,16 +484,16 @@ model ParentNotification {
 }
 
 model ParentNotificationDeliveryLog {
-  id             String               @id @default(cuid())
+  id             String                @id @default(cuid())
   channel        ParentDeliveryChannel
-  status         ParentDeliveryStatus @default(PENDING)
+  status         ParentDeliveryStatus  @default(PENDING)
   recipient      String?
   provider       String?
   messagePreview String
   errorMessage   String?
   sentAt         DateTime?
-  attemptedAt    DateTime             @default(now())
-  createdAt      DateTime             @default(now())
+  attemptedAt    DateTime              @default(now())
+  createdAt      DateTime              @default(now())
 
   schoolId String
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
@@ -817,9 +837,9 @@ model CAActivity {
 }
 
 model CAActivityScore {
-  id                     Int      @id @default(autoincrement())
-  rawScore               Decimal  @db.Decimal(8, 2)
-  normalizedContribution Decimal  @default(0) @db.Decimal(8, 2)
+  id                     Int     @id @default(autoincrement())
+  rawScore               Decimal @db.Decimal(8, 2)
+  normalizedContribution Decimal @default(0) @db.Decimal(8, 2)
   comment                String?
 
   schoolId String @default("default-school")
@@ -844,7 +864,7 @@ model CAActivityScore {
 }
 
 model CAAuditLog {
-  id         Int      @id @default(autoincrement())
+  id         Int    @id @default(autoincrement())
   action     String
   entityType String
   entityId   String
@@ -981,6 +1001,7 @@ model FeeStructure {
   term         Term
   status       FeeStructureStatus @default(DRAFT)
   publishedAt  DateTime?
+  dueDate      DateTime?
 
   schoolId String @default("default-school")
   school   School @relation(fields: [schoolId], references: [id])
@@ -1033,6 +1054,7 @@ model StudentBill {
   discountAmount Decimal    @default(0) @db.Decimal(10, 2)
   balance        Decimal    @db.Decimal(10, 2)
   status         BillStatus @default(UNPAID)
+  dueDate        DateTime?
   notes          String?
 
   schoolId String @default("default-school")
@@ -1044,9 +1066,10 @@ model StudentBill {
   feeStructureId Int
   feeStructure   FeeStructure @relation(fields: [feeStructureId], references: [id])
 
-  lineItems BillLineItem[]
-  payments  Payment[]
-  discounts Discount[]
+  lineItems      BillLineItem[]
+  payments       Payment[]
+  discounts      Discount[]
+  financeQueries FinanceQuery[]
 
   generatedBy String
   createdAt   DateTime @default(now())
@@ -1054,6 +1077,7 @@ model StudentBill {
 
   @@unique([schoolId, studentId, feeStructureId])
   @@index([schoolId, status])
+  @@index([schoolId, dueDate])
   @@index([schoolId, feeStructureId])
   @@index([schoolId, studentId])
   @@index([schoolId, status, studentId])
@@ -1088,18 +1112,18 @@ model BillLineItem {
 // referenceNo: MoMo transaction ID, cheque number, bank ref etc.
 
 model Payment {
-  id            Int           @id @default(autoincrement())
-  receiptNumber String
-  amount        Decimal       @db.Decimal(10, 2)
-  paymentMethod PaymentMethod
-  paymentDate   DateTime      @default(now())
-  paidBy        String // name of person who paid
-  referenceNo   String?
+  id                Int              @id @default(autoincrement())
+  receiptNumber     String
+  amount            Decimal          @db.Decimal(10, 2)
+  paymentMethod     PaymentMethod
+  paymentDate       DateTime         @default(now())
+  paidBy            String // name of person who paid
+  referenceNo       String?
   externalProvider  PaymentProvider?
   externalReference String?
   idempotencyKey    String?
-  notes         String?
-  status        PaymentStatus @default(CONFIRMED)
+  notes             String?
+  status            PaymentStatus    @default(CONFIRMED)
 
   schoolId String @default("default-school")
   school   School @relation(fields: [schoolId], references: [id])
@@ -1110,8 +1134,9 @@ model Payment {
   recordedBy String
   createdAt  DateTime @default(now())
 
-  reversal      PaymentReversal?
-  webhookEvents PaymentWebhookEvent[]
+  reversal       PaymentReversal?
+  webhookEvents  PaymentWebhookEvent[]
+  financeQueries FinanceQuery[]
 
   @@unique([schoolId, receiptNumber])
   @@unique([schoolId, externalProvider, externalReference])
@@ -1205,6 +1230,38 @@ model FinanceAuditLog {
 // Collected before any school signs up, so there's nothing to scope to.
 
 // Shared rate-limit state. Tenant/user/IP scope is encoded in the key.
+model FinanceQuery {
+  id         Int                @id @default(autoincrement())
+  reason     FinanceQueryReason
+  message    String
+  status     FinanceQueryStatus @default(OPEN)
+  response   String?
+  resolvedAt DateTime?
+  resolvedBy String?
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  parentId String
+  parent   Parent @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  studentBillId Int
+  studentBill   StudentBill @relation(fields: [studentBillId], references: [id])
+
+  paymentId Int?
+  payment   Payment? @relation(fields: [paymentId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId, status, createdAt])
+  @@index([schoolId, parentId, createdAt])
+  @@index([schoolId, studentBillId, status])
+}
+
 model FinanceJob {
   id             String         @id @default(cuid())
   type           FinanceJobType
@@ -1262,17 +1319,17 @@ model RateLimitBucket {
 }
 
 model WaitlistEntry {
-  id         String       @id @default(cuid())
+  id         String         @id @default(cuid())
   name       String
   schoolName String
-  email      String       @unique
+  email      String         @unique
   role       WaitlistRole
   message    String?
   status     WaitlistStatus @default(PENDING)
   reviewedBy String?
   reviewedAt DateTime?
   schoolId   String?
-  createdAt  DateTime     @default(now())
+  createdAt  DateTime       @default(now())
 
   school School? @relation(fields: [schoolId], references: [id])
 

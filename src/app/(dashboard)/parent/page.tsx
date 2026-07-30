@@ -264,7 +264,7 @@ const ParentPage = async () => {
           <p className="mt-3 text-sm font-black text-gray-900">Attendance</p>
           <p className="mt-1 text-xs font-semibold text-gray-400">Check attendance history.</p>
         </Link>
-        <Link href="/list/finance/bills" className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:border-amber-200 hover:bg-amber-50">
+        <Link href="/parent/finance" className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:border-amber-200 hover:bg-amber-50">
           <WalletCards className="h-5 w-5 text-amber-600" />
           <p className="mt-3 text-sm font-black text-gray-900">Fees</p>
           <p className="mt-1 text-xs font-semibold text-gray-400">View bills, payments, and balances.</p>

@@ -189,6 +189,12 @@ const menuItems = [
         href: "/list/finance/payments",
         visible: ["admin", "bursar"],
       },
+      {
+        icon: Wallet,
+        label: "My Fees",
+        href: "/parent/finance",
+        visible: ["parent"],
+      },
     ],
   },
   {

@@ -58,6 +58,7 @@ export const feeStructureCreateSchema = z.object({
   academicYear: nonEmptyStringSchema,
   term: termSchema,
   gradeId: positiveIntSchema,
+  dueDate: z.string().trim().optional().nullable(),
 });
 
 export const feeStructureUpdateSchema = z.object({
@@ -94,4 +95,23 @@ export const dailyFinanceReportQuerySchema = z.object({
 export const receiptPdfQuerySchema = z.object({
   billId: positiveIntSchema,
   receiptNumber: nonEmptyStringSchema.max(100),
+});
+
+export const parentFinanceQuerySchema = z.object({
+  studentBillId: positiveIntSchema,
+  paymentId: positiveIntSchema.optional().nullable(),
+  reason: z.enum([
+    "ALREADY_PAID",
+    "WRONG_AMOUNT",
+    "NEED_CLARIFICATION",
+    "RECEIPT_ISSUE",
+    "OTHER",
+  ]),
+  message: nonEmptyStringSchema.max(1000),
+});
+
+export const resolveFinanceQuerySchema = z.object({
+  queryId: positiveIntSchema,
+  response: nonEmptyStringSchema.max(1000),
+  status: z.enum(["RESOLVED", "CLOSED"]),
 });

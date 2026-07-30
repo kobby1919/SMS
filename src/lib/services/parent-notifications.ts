@@ -135,6 +135,7 @@ export async function syncParentNotificationsFromSources({
     receiptNumber: string;
     paymentDate: Date;
     studentBill: {
+      id: number;
       studentId: string;
       feeStructure: { title: string };
     };
@@ -202,7 +203,7 @@ export async function syncParentNotificationsFromSources({
       priority: Number(bill.balance) > 0 ? ("NORMAL" as const) : ("LOW" as const),
       title: `${bill.feeStructure.title} fee status`,
       body: `Balance: GHS ${Number(bill.balance).toFixed(2)}. Status: ${bill.status}.`,
-      href: "/list/finance/bills",
+      href: `/parent/finance/bills/${bill.id}`,
       occurredAt: bill.updatedAt,
       studentId: bill.studentId,
     })),
@@ -214,7 +215,7 @@ export async function syncParentNotificationsFromSources({
       priority: "LOW" as const,
       title: `Payment received: GHS ${Number(payment.amount).toFixed(2)}`,
       body: `${payment.studentBill.feeStructure.title} - receipt ${payment.receiptNumber}`,
-      href: `/api/finance/receipt?paymentId=${payment.id}`,
+      href: `/api/finance/receipt?billId=${payment.studentBill.id}&receiptNumber=${encodeURIComponent(payment.receiptNumber)}`,
       occurredAt: payment.paymentDate,
       studentId: payment.studentBill.studentId,
     })),

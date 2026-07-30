@@ -204,6 +204,11 @@ export type ReceiptCounter = $Result.DefaultSelection<Prisma.$ReceiptCounterPayl
  */
 export type FinanceAuditLog = $Result.DefaultSelection<Prisma.$FinanceAuditLogPayload>
 /**
+ * Model FinanceQuery
+ * 
+ */
+export type FinanceQuery = $Result.DefaultSelection<Prisma.$FinanceQueryPayload>
+/**
  * Model FinanceJob
  * 
  */
@@ -359,10 +364,33 @@ export const AuditAction: {
   PAYMENT_RECORDED: 'PAYMENT_RECORDED',
   PAYMENT_REVERSED: 'PAYMENT_REVERSED',
   DISCOUNT_APPLIED: 'DISCOUNT_APPLIED',
-  DISCOUNT_REMOVED: 'DISCOUNT_REMOVED'
+  DISCOUNT_REMOVED: 'DISCOUNT_REMOVED',
+  FINANCE_QUERY_OPENED: 'FINANCE_QUERY_OPENED',
+  FINANCE_QUERY_RESOLVED: 'FINANCE_QUERY_RESOLVED'
 };
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
+
+
+export const FinanceQueryReason: {
+  ALREADY_PAID: 'ALREADY_PAID',
+  WRONG_AMOUNT: 'WRONG_AMOUNT',
+  NEED_CLARIFICATION: 'NEED_CLARIFICATION',
+  RECEIPT_ISSUE: 'RECEIPT_ISSUE',
+  OTHER: 'OTHER'
+};
+
+export type FinanceQueryReason = (typeof FinanceQueryReason)[keyof typeof FinanceQueryReason]
+
+
+export const FinanceQueryStatus: {
+  OPEN: 'OPEN',
+  IN_REVIEW: 'IN_REVIEW',
+  RESOLVED: 'RESOLVED',
+  CLOSED: 'CLOSED'
+};
+
+export type FinanceQueryStatus = (typeof FinanceQueryStatus)[keyof typeof FinanceQueryStatus]
 
 
 export const WaitlistRole: {
@@ -579,6 +607,14 @@ export const DiscountType: typeof $Enums.DiscountType
 export type AuditAction = $Enums.AuditAction
 
 export const AuditAction: typeof $Enums.AuditAction
+
+export type FinanceQueryReason = $Enums.FinanceQueryReason
+
+export const FinanceQueryReason: typeof $Enums.FinanceQueryReason
+
+export type FinanceQueryStatus = $Enums.FinanceQueryStatus
+
+export const FinanceQueryStatus: typeof $Enums.FinanceQueryStatus
 
 export type WaitlistRole = $Enums.WaitlistRole
 
@@ -1142,6 +1178,16 @@ export class PrismaClient<
   get financeAuditLog(): Prisma.FinanceAuditLogDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.financeQuery`: Exposes CRUD operations for the **FinanceQuery** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more FinanceQueries
+    * const financeQueries = await prisma.financeQuery.findMany()
+    * ```
+    */
+  get financeQuery(): Prisma.FinanceQueryDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.financeJob`: Exposes CRUD operations for the **FinanceJob** model.
     * Example usage:
     * ```ts
@@ -1672,6 +1718,7 @@ export namespace Prisma {
     Discount: 'Discount',
     ReceiptCounter: 'ReceiptCounter',
     FinanceAuditLog: 'FinanceAuditLog',
+    FinanceQuery: 'FinanceQuery',
     FinanceJob: 'FinanceJob',
     PaymentWebhookEvent: 'PaymentWebhookEvent',
     RateLimitBucket: 'RateLimitBucket',
@@ -1693,7 +1740,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "schoolNotificationSetting" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "result" | "attendance" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
+      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "schoolNotificationSetting" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "result" | "attendance" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -4509,6 +4556,80 @@ export namespace Prisma {
           }
         }
       }
+      FinanceQuery: {
+        payload: Prisma.$FinanceQueryPayload<ExtArgs>
+        fields: Prisma.FinanceQueryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FinanceQueryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceQueryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FinanceQueryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceQueryPayload>
+          }
+          findFirst: {
+            args: Prisma.FinanceQueryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceQueryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FinanceQueryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceQueryPayload>
+          }
+          findMany: {
+            args: Prisma.FinanceQueryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceQueryPayload>[]
+          }
+          create: {
+            args: Prisma.FinanceQueryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceQueryPayload>
+          }
+          createMany: {
+            args: Prisma.FinanceQueryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FinanceQueryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceQueryPayload>[]
+          }
+          delete: {
+            args: Prisma.FinanceQueryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceQueryPayload>
+          }
+          update: {
+            args: Prisma.FinanceQueryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceQueryPayload>
+          }
+          deleteMany: {
+            args: Prisma.FinanceQueryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FinanceQueryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.FinanceQueryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceQueryPayload>[]
+          }
+          upsert: {
+            args: Prisma.FinanceQueryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FinanceQueryPayload>
+          }
+          aggregate: {
+            args: Prisma.FinanceQueryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFinanceQuery>
+          }
+          groupBy: {
+            args: Prisma.FinanceQueryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FinanceQueryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FinanceQueryCountArgs<ExtArgs>
+            result: $Utils.Optional<FinanceQueryCountAggregateOutputType> | number
+          }
+        }
+      }
       FinanceJob: {
         payload: Prisma.$FinanceJobPayload<ExtArgs>
         fields: Prisma.FinanceJobFieldRefs
@@ -5099,6 +5220,7 @@ export namespace Prisma {
     discount?: DiscountOmit
     receiptCounter?: ReceiptCounterOmit
     financeAuditLog?: FinanceAuditLogOmit
+    financeQuery?: FinanceQueryOmit
     financeJob?: FinanceJobOmit
     paymentWebhookEvent?: PaymentWebhookEventOmit
     rateLimitBucket?: RateLimitBucketOmit
@@ -5212,6 +5334,7 @@ export namespace Prisma {
     payments: number
     paymentReversals: number
     discounts: number
+    financeQueries: number
     receiptCounters: number
     financeAuditLogs: number
     invites: number
@@ -5253,6 +5376,7 @@ export namespace Prisma {
     payments?: boolean | SchoolCountOutputTypeCountPaymentsArgs
     paymentReversals?: boolean | SchoolCountOutputTypeCountPaymentReversalsArgs
     discounts?: boolean | SchoolCountOutputTypeCountDiscountsArgs
+    financeQueries?: boolean | SchoolCountOutputTypeCountFinanceQueriesArgs
     receiptCounters?: boolean | SchoolCountOutputTypeCountReceiptCountersArgs
     financeAuditLogs?: boolean | SchoolCountOutputTypeCountFinanceAuditLogsArgs
     invites?: boolean | SchoolCountOutputTypeCountInvitesArgs
@@ -5469,6 +5593,13 @@ export namespace Prisma {
   /**
    * SchoolCountOutputType without action
    */
+  export type SchoolCountOutputTypeCountFinanceQueriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FinanceQueryWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
   export type SchoolCountOutputTypeCountReceiptCountersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ReceiptCounterWhereInput
   }
@@ -5556,6 +5687,7 @@ export namespace Prisma {
     bills: number
     parentNotifications: number
     parentActivityEvents: number
+    financeQueries: number
   }
 
   export type StudentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5566,6 +5698,7 @@ export namespace Prisma {
     bills?: boolean | StudentCountOutputTypeCountBillsArgs
     parentNotifications?: boolean | StudentCountOutputTypeCountParentNotificationsArgs
     parentActivityEvents?: boolean | StudentCountOutputTypeCountParentActivityEventsArgs
+    financeQueries?: boolean | StudentCountOutputTypeCountFinanceQueriesArgs
   }
 
   // Custom InputTypes
@@ -5626,6 +5759,13 @@ export namespace Prisma {
    */
   export type StudentCountOutputTypeCountParentActivityEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ParentActivityEventWhereInput
+  }
+
+  /**
+   * StudentCountOutputType without action
+   */
+  export type StudentCountOutputTypeCountFinanceQueriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FinanceQueryWhereInput
   }
 
 
@@ -5741,6 +5881,7 @@ export namespace Prisma {
     notifications: number
     activityEvents: number
     notificationDeliveries: number
+    financeQueries: number
   }
 
   export type ParentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5748,6 +5889,7 @@ export namespace Prisma {
     notifications?: boolean | ParentCountOutputTypeCountNotificationsArgs
     activityEvents?: boolean | ParentCountOutputTypeCountActivityEventsArgs
     notificationDeliveries?: boolean | ParentCountOutputTypeCountNotificationDeliveriesArgs
+    financeQueries?: boolean | ParentCountOutputTypeCountFinanceQueriesArgs
   }
 
   // Custom InputTypes
@@ -5787,6 +5929,13 @@ export namespace Prisma {
    */
   export type ParentCountOutputTypeCountNotificationDeliveriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ParentNotificationDeliveryLogWhereInput
+  }
+
+  /**
+   * ParentCountOutputType without action
+   */
+  export type ParentCountOutputTypeCountFinanceQueriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FinanceQueryWhereInput
   }
 
 
@@ -6363,12 +6512,14 @@ export namespace Prisma {
     lineItems: number
     payments: number
     discounts: number
+    financeQueries: number
   }
 
   export type StudentBillCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     lineItems?: boolean | StudentBillCountOutputTypeCountLineItemsArgs
     payments?: boolean | StudentBillCountOutputTypeCountPaymentsArgs
     discounts?: boolean | StudentBillCountOutputTypeCountDiscountsArgs
+    financeQueries?: boolean | StudentBillCountOutputTypeCountFinanceQueriesArgs
   }
 
   // Custom InputTypes
@@ -6403,6 +6554,13 @@ export namespace Prisma {
     where?: DiscountWhereInput
   }
 
+  /**
+   * StudentBillCountOutputType without action
+   */
+  export type StudentBillCountOutputTypeCountFinanceQueriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FinanceQueryWhereInput
+  }
+
 
   /**
    * Count Type PaymentCountOutputType
@@ -6410,10 +6568,12 @@ export namespace Prisma {
 
   export type PaymentCountOutputType = {
     webhookEvents: number
+    financeQueries: number
   }
 
   export type PaymentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     webhookEvents?: boolean | PaymentCountOutputTypeCountWebhookEventsArgs
+    financeQueries?: boolean | PaymentCountOutputTypeCountFinanceQueriesArgs
   }
 
   // Custom InputTypes
@@ -6432,6 +6592,13 @@ export namespace Prisma {
    */
   export type PaymentCountOutputTypeCountWebhookEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PaymentWebhookEventWhereInput
+  }
+
+  /**
+   * PaymentCountOutputType without action
+   */
+  export type PaymentCountOutputTypeCountFinanceQueriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FinanceQueryWhereInput
   }
 
 
@@ -6726,6 +6893,7 @@ export namespace Prisma {
     payments?: boolean | School$paymentsArgs<ExtArgs>
     paymentReversals?: boolean | School$paymentReversalsArgs<ExtArgs>
     discounts?: boolean | School$discountsArgs<ExtArgs>
+    financeQueries?: boolean | School$financeQueriesArgs<ExtArgs>
     receiptCounters?: boolean | School$receiptCountersArgs<ExtArgs>
     financeAuditLogs?: boolean | School$financeAuditLogsArgs<ExtArgs>
     invites?: boolean | School$invitesArgs<ExtArgs>
@@ -6830,6 +6998,7 @@ export namespace Prisma {
     payments?: boolean | School$paymentsArgs<ExtArgs>
     paymentReversals?: boolean | School$paymentReversalsArgs<ExtArgs>
     discounts?: boolean | School$discountsArgs<ExtArgs>
+    financeQueries?: boolean | School$financeQueriesArgs<ExtArgs>
     receiptCounters?: boolean | School$receiptCountersArgs<ExtArgs>
     financeAuditLogs?: boolean | School$financeAuditLogsArgs<ExtArgs>
     invites?: boolean | School$invitesArgs<ExtArgs>
@@ -6877,6 +7046,7 @@ export namespace Prisma {
       payments: Prisma.$PaymentPayload<ExtArgs>[]
       paymentReversals: Prisma.$PaymentReversalPayload<ExtArgs>[]
       discounts: Prisma.$DiscountPayload<ExtArgs>[]
+      financeQueries: Prisma.$FinanceQueryPayload<ExtArgs>[]
       receiptCounters: Prisma.$ReceiptCounterPayload<ExtArgs>[]
       financeAuditLogs: Prisma.$FinanceAuditLogPayload<ExtArgs>[]
       invites: Prisma.$SchoolInvitePayload<ExtArgs>[]
@@ -7329,6 +7499,7 @@ export namespace Prisma {
     payments<T extends School$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, School$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     paymentReversals<T extends School$paymentReversalsArgs<ExtArgs> = {}>(args?: Subset<T, School$paymentReversalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentReversalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     discounts<T extends School$discountsArgs<ExtArgs> = {}>(args?: Subset<T, School$discountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DiscountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    financeQueries<T extends School$financeQueriesArgs<ExtArgs> = {}>(args?: Subset<T, School$financeQueriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     receiptCounters<T extends School$receiptCountersArgs<ExtArgs> = {}>(args?: Subset<T, School$receiptCountersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReceiptCounterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     financeAuditLogs<T extends School$financeAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$financeAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     invites<T extends School$invitesArgs<ExtArgs> = {}>(args?: Subset<T, School$invitesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolInvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -8425,6 +8596,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DiscountScalarFieldEnum | DiscountScalarFieldEnum[]
+  }
+
+  /**
+   * School.financeQueries
+   */
+  export type School$financeQueriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryInclude<ExtArgs> | null
+    where?: FinanceQueryWhereInput
+    orderBy?: FinanceQueryOrderByWithRelationInput | FinanceQueryOrderByWithRelationInput[]
+    cursor?: FinanceQueryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FinanceQueryScalarFieldEnum | FinanceQueryScalarFieldEnum[]
   }
 
   /**
@@ -10059,6 +10254,7 @@ export namespace Prisma {
     bills?: boolean | Student$billsArgs<ExtArgs>
     parentNotifications?: boolean | Student$parentNotificationsArgs<ExtArgs>
     parentActivityEvents?: boolean | Student$parentActivityEventsArgs<ExtArgs>
+    financeQueries?: boolean | Student$financeQueriesArgs<ExtArgs>
     _count?: boolean | StudentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["student"]>
 
@@ -10137,6 +10333,7 @@ export namespace Prisma {
     bills?: boolean | Student$billsArgs<ExtArgs>
     parentNotifications?: boolean | Student$parentNotificationsArgs<ExtArgs>
     parentActivityEvents?: boolean | Student$parentActivityEventsArgs<ExtArgs>
+    financeQueries?: boolean | Student$financeQueriesArgs<ExtArgs>
     _count?: boolean | StudentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type StudentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10166,6 +10363,7 @@ export namespace Prisma {
       bills: Prisma.$StudentBillPayload<ExtArgs>[]
       parentNotifications: Prisma.$ParentNotificationPayload<ExtArgs>[]
       parentActivityEvents: Prisma.$ParentActivityEventPayload<ExtArgs>[]
+      financeQueries: Prisma.$FinanceQueryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10588,6 +10786,7 @@ export namespace Prisma {
     bills<T extends Student$billsArgs<ExtArgs> = {}>(args?: Subset<T, Student$billsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StudentBillPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentNotifications<T extends Student$parentNotificationsArgs<ExtArgs> = {}>(args?: Subset<T, Student$parentNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentActivityEvents<T extends Student$parentActivityEventsArgs<ExtArgs> = {}>(args?: Subset<T, Student$parentActivityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentActivityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    financeQueries<T extends Student$financeQueriesArgs<ExtArgs> = {}>(args?: Subset<T, Student$financeQueriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11198,6 +11397,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ParentActivityEventScalarFieldEnum | ParentActivityEventScalarFieldEnum[]
+  }
+
+  /**
+   * Student.financeQueries
+   */
+  export type Student$financeQueriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryInclude<ExtArgs> | null
+    where?: FinanceQueryWhereInput
+    orderBy?: FinanceQueryOrderByWithRelationInput | FinanceQueryOrderByWithRelationInput[]
+    cursor?: FinanceQueryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FinanceQueryScalarFieldEnum | FinanceQueryScalarFieldEnum[]
   }
 
   /**
@@ -12876,6 +13099,7 @@ export namespace Prisma {
     activityEvents?: boolean | Parent$activityEventsArgs<ExtArgs>
     notificationPreference?: boolean | Parent$notificationPreferenceArgs<ExtArgs>
     notificationDeliveries?: boolean | Parent$notificationDeliveriesArgs<ExtArgs>
+    financeQueries?: boolean | Parent$financeQueriesArgs<ExtArgs>
     _count?: boolean | ParentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["parent"]>
 
@@ -12925,6 +13149,7 @@ export namespace Prisma {
     activityEvents?: boolean | Parent$activityEventsArgs<ExtArgs>
     notificationPreference?: boolean | Parent$notificationPreferenceArgs<ExtArgs>
     notificationDeliveries?: boolean | Parent$notificationDeliveriesArgs<ExtArgs>
+    financeQueries?: boolean | Parent$financeQueriesArgs<ExtArgs>
     _count?: boolean | ParentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ParentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -12943,6 +13168,7 @@ export namespace Prisma {
       activityEvents: Prisma.$ParentActivityEventPayload<ExtArgs>[]
       notificationPreference: Prisma.$ParentNotificationPreferencePayload<ExtArgs> | null
       notificationDeliveries: Prisma.$ParentNotificationDeliveryLogPayload<ExtArgs>[]
+      financeQueries: Prisma.$FinanceQueryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -13354,6 +13580,7 @@ export namespace Prisma {
     activityEvents<T extends Parent$activityEventsArgs<ExtArgs> = {}>(args?: Subset<T, Parent$activityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentActivityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notificationPreference<T extends Parent$notificationPreferenceArgs<ExtArgs> = {}>(args?: Subset<T, Parent$notificationPreferenceArgs<ExtArgs>>): Prisma__ParentNotificationPreferenceClient<$Result.GetResult<Prisma.$ParentNotificationPreferencePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     notificationDeliveries<T extends Parent$notificationDeliveriesArgs<ExtArgs> = {}>(args?: Subset<T, Parent$notificationDeliveriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentNotificationDeliveryLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    financeQueries<T extends Parent$financeQueriesArgs<ExtArgs> = {}>(args?: Subset<T, Parent$financeQueriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13905,6 +14132,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ParentNotificationDeliveryLogScalarFieldEnum | ParentNotificationDeliveryLogScalarFieldEnum[]
+  }
+
+  /**
+   * Parent.financeQueries
+   */
+  export type Parent$financeQueriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryInclude<ExtArgs> | null
+    where?: FinanceQueryWhereInput
+    orderBy?: FinanceQueryOrderByWithRelationInput | FinanceQueryOrderByWithRelationInput[]
+    cursor?: FinanceQueryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FinanceQueryScalarFieldEnum | FinanceQueryScalarFieldEnum[]
   }
 
   /**
@@ -43174,6 +43425,7 @@ export namespace Prisma {
     term: $Enums.Term | null
     status: $Enums.FeeStructureStatus | null
     publishedAt: Date | null
+    dueDate: Date | null
     schoolId: string | null
     gradeId: number | null
     createdBy: string | null
@@ -43189,6 +43441,7 @@ export namespace Prisma {
     term: $Enums.Term | null
     status: $Enums.FeeStructureStatus | null
     publishedAt: Date | null
+    dueDate: Date | null
     schoolId: string | null
     gradeId: number | null
     createdBy: string | null
@@ -43204,6 +43457,7 @@ export namespace Prisma {
     term: number
     status: number
     publishedAt: number
+    dueDate: number
     schoolId: number
     gradeId: number
     createdBy: number
@@ -43231,6 +43485,7 @@ export namespace Prisma {
     term?: true
     status?: true
     publishedAt?: true
+    dueDate?: true
     schoolId?: true
     gradeId?: true
     createdBy?: true
@@ -43246,6 +43501,7 @@ export namespace Prisma {
     term?: true
     status?: true
     publishedAt?: true
+    dueDate?: true
     schoolId?: true
     gradeId?: true
     createdBy?: true
@@ -43261,6 +43517,7 @@ export namespace Prisma {
     term?: true
     status?: true
     publishedAt?: true
+    dueDate?: true
     schoolId?: true
     gradeId?: true
     createdBy?: true
@@ -43363,6 +43620,7 @@ export namespace Prisma {
     term: $Enums.Term
     status: $Enums.FeeStructureStatus
     publishedAt: Date | null
+    dueDate: Date | null
     schoolId: string
     gradeId: number
     createdBy: string
@@ -43397,6 +43655,7 @@ export namespace Prisma {
     term?: boolean
     status?: boolean
     publishedAt?: boolean
+    dueDate?: boolean
     schoolId?: boolean
     gradeId?: boolean
     createdBy?: boolean
@@ -43417,6 +43676,7 @@ export namespace Prisma {
     term?: boolean
     status?: boolean
     publishedAt?: boolean
+    dueDate?: boolean
     schoolId?: boolean
     gradeId?: boolean
     createdBy?: boolean
@@ -43434,6 +43694,7 @@ export namespace Prisma {
     term?: boolean
     status?: boolean
     publishedAt?: boolean
+    dueDate?: boolean
     schoolId?: boolean
     gradeId?: boolean
     createdBy?: boolean
@@ -43451,6 +43712,7 @@ export namespace Prisma {
     term?: boolean
     status?: boolean
     publishedAt?: boolean
+    dueDate?: boolean
     schoolId?: boolean
     gradeId?: boolean
     createdBy?: boolean
@@ -43458,7 +43720,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type FeeStructureOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "academicYear" | "term" | "status" | "publishedAt" | "schoolId" | "gradeId" | "createdBy" | "createdAt" | "updatedAt", ExtArgs["result"]["feeStructure"]>
+  export type FeeStructureOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "academicYear" | "term" | "status" | "publishedAt" | "dueDate" | "schoolId" | "gradeId" | "createdBy" | "createdAt" | "updatedAt", ExtArgs["result"]["feeStructure"]>
   export type FeeStructureInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     grade?: boolean | GradeDefaultArgs<ExtArgs>
@@ -43491,6 +43753,7 @@ export namespace Prisma {
       term: $Enums.Term
       status: $Enums.FeeStructureStatus
       publishedAt: Date | null
+      dueDate: Date | null
       schoolId: string
       gradeId: number
       createdBy: string
@@ -43930,6 +44193,7 @@ export namespace Prisma {
     readonly term: FieldRef<"FeeStructure", 'Term'>
     readonly status: FieldRef<"FeeStructure", 'FeeStructureStatus'>
     readonly publishedAt: FieldRef<"FeeStructure", 'DateTime'>
+    readonly dueDate: FieldRef<"FeeStructure", 'DateTime'>
     readonly schoolId: FieldRef<"FeeStructure", 'String'>
     readonly gradeId: FieldRef<"FeeStructure", 'Int'>
     readonly createdBy: FieldRef<"FeeStructure", 'String'>
@@ -45613,6 +45877,7 @@ export namespace Prisma {
     discountAmount: Decimal | null
     balance: Decimal | null
     status: $Enums.BillStatus | null
+    dueDate: Date | null
     notes: string | null
     schoolId: string | null
     studentId: string | null
@@ -45629,6 +45894,7 @@ export namespace Prisma {
     discountAmount: Decimal | null
     balance: Decimal | null
     status: $Enums.BillStatus | null
+    dueDate: Date | null
     notes: string | null
     schoolId: string | null
     studentId: string | null
@@ -45645,6 +45911,7 @@ export namespace Prisma {
     discountAmount: number
     balance: number
     status: number
+    dueDate: number
     notes: number
     schoolId: number
     studentId: number
@@ -45681,6 +45948,7 @@ export namespace Prisma {
     discountAmount?: true
     balance?: true
     status?: true
+    dueDate?: true
     notes?: true
     schoolId?: true
     studentId?: true
@@ -45697,6 +45965,7 @@ export namespace Prisma {
     discountAmount?: true
     balance?: true
     status?: true
+    dueDate?: true
     notes?: true
     schoolId?: true
     studentId?: true
@@ -45713,6 +45982,7 @@ export namespace Prisma {
     discountAmount?: true
     balance?: true
     status?: true
+    dueDate?: true
     notes?: true
     schoolId?: true
     studentId?: true
@@ -45816,6 +46086,7 @@ export namespace Prisma {
     discountAmount: Decimal
     balance: Decimal
     status: $Enums.BillStatus
+    dueDate: Date | null
     notes: string | null
     schoolId: string
     studentId: string
@@ -45851,6 +46122,7 @@ export namespace Prisma {
     discountAmount?: boolean
     balance?: boolean
     status?: boolean
+    dueDate?: boolean
     notes?: boolean
     schoolId?: boolean
     studentId?: boolean
@@ -45864,6 +46136,7 @@ export namespace Prisma {
     lineItems?: boolean | StudentBill$lineItemsArgs<ExtArgs>
     payments?: boolean | StudentBill$paymentsArgs<ExtArgs>
     discounts?: boolean | StudentBill$discountsArgs<ExtArgs>
+    financeQueries?: boolean | StudentBill$financeQueriesArgs<ExtArgs>
     _count?: boolean | StudentBillCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["studentBill"]>
 
@@ -45874,6 +46147,7 @@ export namespace Prisma {
     discountAmount?: boolean
     balance?: boolean
     status?: boolean
+    dueDate?: boolean
     notes?: boolean
     schoolId?: boolean
     studentId?: boolean
@@ -45893,6 +46167,7 @@ export namespace Prisma {
     discountAmount?: boolean
     balance?: boolean
     status?: boolean
+    dueDate?: boolean
     notes?: boolean
     schoolId?: boolean
     studentId?: boolean
@@ -45912,6 +46187,7 @@ export namespace Prisma {
     discountAmount?: boolean
     balance?: boolean
     status?: boolean
+    dueDate?: boolean
     notes?: boolean
     schoolId?: boolean
     studentId?: boolean
@@ -45921,7 +46197,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type StudentBillOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "totalAmount" | "amountPaid" | "discountAmount" | "balance" | "status" | "notes" | "schoolId" | "studentId" | "feeStructureId" | "generatedBy" | "createdAt" | "updatedAt", ExtArgs["result"]["studentBill"]>
+  export type StudentBillOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "totalAmount" | "amountPaid" | "discountAmount" | "balance" | "status" | "dueDate" | "notes" | "schoolId" | "studentId" | "feeStructureId" | "generatedBy" | "createdAt" | "updatedAt", ExtArgs["result"]["studentBill"]>
   export type StudentBillInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     student?: boolean | StudentDefaultArgs<ExtArgs>
@@ -45929,6 +46205,7 @@ export namespace Prisma {
     lineItems?: boolean | StudentBill$lineItemsArgs<ExtArgs>
     payments?: boolean | StudentBill$paymentsArgs<ExtArgs>
     discounts?: boolean | StudentBill$discountsArgs<ExtArgs>
+    financeQueries?: boolean | StudentBill$financeQueriesArgs<ExtArgs>
     _count?: boolean | StudentBillCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type StudentBillIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -45951,6 +46228,7 @@ export namespace Prisma {
       lineItems: Prisma.$BillLineItemPayload<ExtArgs>[]
       payments: Prisma.$PaymentPayload<ExtArgs>[]
       discounts: Prisma.$DiscountPayload<ExtArgs>[]
+      financeQueries: Prisma.$FinanceQueryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -45959,6 +46237,7 @@ export namespace Prisma {
       discountAmount: Prisma.Decimal
       balance: Prisma.Decimal
       status: $Enums.BillStatus
+      dueDate: Date | null
       notes: string | null
       schoolId: string
       studentId: string
@@ -46366,6 +46645,7 @@ export namespace Prisma {
     lineItems<T extends StudentBill$lineItemsArgs<ExtArgs> = {}>(args?: Subset<T, StudentBill$lineItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BillLineItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     payments<T extends StudentBill$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, StudentBill$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     discounts<T extends StudentBill$discountsArgs<ExtArgs> = {}>(args?: Subset<T, StudentBill$discountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DiscountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    financeQueries<T extends StudentBill$financeQueriesArgs<ExtArgs> = {}>(args?: Subset<T, StudentBill$financeQueriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -46401,6 +46681,7 @@ export namespace Prisma {
     readonly discountAmount: FieldRef<"StudentBill", 'Decimal'>
     readonly balance: FieldRef<"StudentBill", 'Decimal'>
     readonly status: FieldRef<"StudentBill", 'BillStatus'>
+    readonly dueDate: FieldRef<"StudentBill", 'DateTime'>
     readonly notes: FieldRef<"StudentBill", 'String'>
     readonly schoolId: FieldRef<"StudentBill", 'String'>
     readonly studentId: FieldRef<"StudentBill", 'String'>
@@ -46878,6 +47159,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DiscountScalarFieldEnum | DiscountScalarFieldEnum[]
+  }
+
+  /**
+   * StudentBill.financeQueries
+   */
+  export type StudentBill$financeQueriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryInclude<ExtArgs> | null
+    where?: FinanceQueryWhereInput
+    orderBy?: FinanceQueryOrderByWithRelationInput | FinanceQueryOrderByWithRelationInput[]
+    cursor?: FinanceQueryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FinanceQueryScalarFieldEnum | FinanceQueryScalarFieldEnum[]
   }
 
   /**
@@ -48374,6 +48679,7 @@ export namespace Prisma {
     studentBill?: boolean | StudentBillDefaultArgs<ExtArgs>
     reversal?: boolean | Payment$reversalArgs<ExtArgs>
     webhookEvents?: boolean | Payment$webhookEventsArgs<ExtArgs>
+    financeQueries?: boolean | Payment$financeQueriesArgs<ExtArgs>
     _count?: boolean | PaymentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["payment"]>
 
@@ -48444,6 +48750,7 @@ export namespace Prisma {
     studentBill?: boolean | StudentBillDefaultArgs<ExtArgs>
     reversal?: boolean | Payment$reversalArgs<ExtArgs>
     webhookEvents?: boolean | Payment$webhookEventsArgs<ExtArgs>
+    financeQueries?: boolean | Payment$financeQueriesArgs<ExtArgs>
     _count?: boolean | PaymentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type PaymentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -48462,6 +48769,7 @@ export namespace Prisma {
       studentBill: Prisma.$StudentBillPayload<ExtArgs>
       reversal: Prisma.$PaymentReversalPayload<ExtArgs> | null
       webhookEvents: Prisma.$PaymentWebhookEventPayload<ExtArgs>[]
+      financeQueries: Prisma.$FinanceQueryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -48878,6 +49186,7 @@ export namespace Prisma {
     studentBill<T extends StudentBillDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StudentBillDefaultArgs<ExtArgs>>): Prisma__StudentBillClient<$Result.GetResult<Prisma.$StudentBillPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     reversal<T extends Payment$reversalArgs<ExtArgs> = {}>(args?: Subset<T, Payment$reversalArgs<ExtArgs>>): Prisma__PaymentReversalClient<$Result.GetResult<Prisma.$PaymentReversalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     webhookEvents<T extends Payment$webhookEventsArgs<ExtArgs> = {}>(args?: Subset<T, Payment$webhookEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    financeQueries<T extends Payment$financeQueriesArgs<ExtArgs> = {}>(args?: Subset<T, Payment$financeQueriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -49364,6 +49673,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PaymentWebhookEventScalarFieldEnum | PaymentWebhookEventScalarFieldEnum[]
+  }
+
+  /**
+   * Payment.financeQueries
+   */
+  export type Payment$financeQueriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryInclude<ExtArgs> | null
+    where?: FinanceQueryWhereInput
+    orderBy?: FinanceQueryOrderByWithRelationInput | FinanceQueryOrderByWithRelationInput[]
+    cursor?: FinanceQueryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FinanceQueryScalarFieldEnum | FinanceQueryScalarFieldEnum[]
   }
 
   /**
@@ -53910,6 +54243,1279 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: FinanceAuditLogInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model FinanceQuery
+   */
+
+  export type AggregateFinanceQuery = {
+    _count: FinanceQueryCountAggregateOutputType | null
+    _avg: FinanceQueryAvgAggregateOutputType | null
+    _sum: FinanceQuerySumAggregateOutputType | null
+    _min: FinanceQueryMinAggregateOutputType | null
+    _max: FinanceQueryMaxAggregateOutputType | null
+  }
+
+  export type FinanceQueryAvgAggregateOutputType = {
+    id: number | null
+    studentBillId: number | null
+    paymentId: number | null
+  }
+
+  export type FinanceQuerySumAggregateOutputType = {
+    id: number | null
+    studentBillId: number | null
+    paymentId: number | null
+  }
+
+  export type FinanceQueryMinAggregateOutputType = {
+    id: number | null
+    reason: $Enums.FinanceQueryReason | null
+    message: string | null
+    status: $Enums.FinanceQueryStatus | null
+    response: string | null
+    resolvedAt: Date | null
+    resolvedBy: string | null
+    schoolId: string | null
+    parentId: string | null
+    studentId: string | null
+    studentBillId: number | null
+    paymentId: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type FinanceQueryMaxAggregateOutputType = {
+    id: number | null
+    reason: $Enums.FinanceQueryReason | null
+    message: string | null
+    status: $Enums.FinanceQueryStatus | null
+    response: string | null
+    resolvedAt: Date | null
+    resolvedBy: string | null
+    schoolId: string | null
+    parentId: string | null
+    studentId: string | null
+    studentBillId: number | null
+    paymentId: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type FinanceQueryCountAggregateOutputType = {
+    id: number
+    reason: number
+    message: number
+    status: number
+    response: number
+    resolvedAt: number
+    resolvedBy: number
+    schoolId: number
+    parentId: number
+    studentId: number
+    studentBillId: number
+    paymentId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type FinanceQueryAvgAggregateInputType = {
+    id?: true
+    studentBillId?: true
+    paymentId?: true
+  }
+
+  export type FinanceQuerySumAggregateInputType = {
+    id?: true
+    studentBillId?: true
+    paymentId?: true
+  }
+
+  export type FinanceQueryMinAggregateInputType = {
+    id?: true
+    reason?: true
+    message?: true
+    status?: true
+    response?: true
+    resolvedAt?: true
+    resolvedBy?: true
+    schoolId?: true
+    parentId?: true
+    studentId?: true
+    studentBillId?: true
+    paymentId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type FinanceQueryMaxAggregateInputType = {
+    id?: true
+    reason?: true
+    message?: true
+    status?: true
+    response?: true
+    resolvedAt?: true
+    resolvedBy?: true
+    schoolId?: true
+    parentId?: true
+    studentId?: true
+    studentBillId?: true
+    paymentId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type FinanceQueryCountAggregateInputType = {
+    id?: true
+    reason?: true
+    message?: true
+    status?: true
+    response?: true
+    resolvedAt?: true
+    resolvedBy?: true
+    schoolId?: true
+    parentId?: true
+    studentId?: true
+    studentBillId?: true
+    paymentId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type FinanceQueryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FinanceQuery to aggregate.
+     */
+    where?: FinanceQueryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FinanceQueries to fetch.
+     */
+    orderBy?: FinanceQueryOrderByWithRelationInput | FinanceQueryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FinanceQueryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FinanceQueries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FinanceQueries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned FinanceQueries
+    **/
+    _count?: true | FinanceQueryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: FinanceQueryAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: FinanceQuerySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FinanceQueryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FinanceQueryMaxAggregateInputType
+  }
+
+  export type GetFinanceQueryAggregateType<T extends FinanceQueryAggregateArgs> = {
+        [P in keyof T & keyof AggregateFinanceQuery]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFinanceQuery[P]>
+      : GetScalarType<T[P], AggregateFinanceQuery[P]>
+  }
+
+
+
+
+  export type FinanceQueryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FinanceQueryWhereInput
+    orderBy?: FinanceQueryOrderByWithAggregationInput | FinanceQueryOrderByWithAggregationInput[]
+    by: FinanceQueryScalarFieldEnum[] | FinanceQueryScalarFieldEnum
+    having?: FinanceQueryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FinanceQueryCountAggregateInputType | true
+    _avg?: FinanceQueryAvgAggregateInputType
+    _sum?: FinanceQuerySumAggregateInputType
+    _min?: FinanceQueryMinAggregateInputType
+    _max?: FinanceQueryMaxAggregateInputType
+  }
+
+  export type FinanceQueryGroupByOutputType = {
+    id: number
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status: $Enums.FinanceQueryStatus
+    response: string | null
+    resolvedAt: Date | null
+    resolvedBy: string | null
+    schoolId: string
+    parentId: string
+    studentId: string
+    studentBillId: number
+    paymentId: number | null
+    createdAt: Date
+    updatedAt: Date
+    _count: FinanceQueryCountAggregateOutputType | null
+    _avg: FinanceQueryAvgAggregateOutputType | null
+    _sum: FinanceQuerySumAggregateOutputType | null
+    _min: FinanceQueryMinAggregateOutputType | null
+    _max: FinanceQueryMaxAggregateOutputType | null
+  }
+
+  type GetFinanceQueryGroupByPayload<T extends FinanceQueryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FinanceQueryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FinanceQueryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FinanceQueryGroupByOutputType[P]>
+            : GetScalarType<T[P], FinanceQueryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FinanceQuerySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reason?: boolean
+    message?: boolean
+    status?: boolean
+    response?: boolean
+    resolvedAt?: boolean
+    resolvedBy?: boolean
+    schoolId?: boolean
+    parentId?: boolean
+    studentId?: boolean
+    studentBillId?: boolean
+    paymentId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    studentBill?: boolean | StudentBillDefaultArgs<ExtArgs>
+    payment?: boolean | FinanceQuery$paymentArgs<ExtArgs>
+  }, ExtArgs["result"]["financeQuery"]>
+
+  export type FinanceQuerySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reason?: boolean
+    message?: boolean
+    status?: boolean
+    response?: boolean
+    resolvedAt?: boolean
+    resolvedBy?: boolean
+    schoolId?: boolean
+    parentId?: boolean
+    studentId?: boolean
+    studentBillId?: boolean
+    paymentId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    studentBill?: boolean | StudentBillDefaultArgs<ExtArgs>
+    payment?: boolean | FinanceQuery$paymentArgs<ExtArgs>
+  }, ExtArgs["result"]["financeQuery"]>
+
+  export type FinanceQuerySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reason?: boolean
+    message?: boolean
+    status?: boolean
+    response?: boolean
+    resolvedAt?: boolean
+    resolvedBy?: boolean
+    schoolId?: boolean
+    parentId?: boolean
+    studentId?: boolean
+    studentBillId?: boolean
+    paymentId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    studentBill?: boolean | StudentBillDefaultArgs<ExtArgs>
+    payment?: boolean | FinanceQuery$paymentArgs<ExtArgs>
+  }, ExtArgs["result"]["financeQuery"]>
+
+  export type FinanceQuerySelectScalar = {
+    id?: boolean
+    reason?: boolean
+    message?: boolean
+    status?: boolean
+    response?: boolean
+    resolvedAt?: boolean
+    resolvedBy?: boolean
+    schoolId?: boolean
+    parentId?: boolean
+    studentId?: boolean
+    studentBillId?: boolean
+    paymentId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type FinanceQueryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "reason" | "message" | "status" | "response" | "resolvedAt" | "resolvedBy" | "schoolId" | "parentId" | "studentId" | "studentBillId" | "paymentId" | "createdAt" | "updatedAt", ExtArgs["result"]["financeQuery"]>
+  export type FinanceQueryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    studentBill?: boolean | StudentBillDefaultArgs<ExtArgs>
+    payment?: boolean | FinanceQuery$paymentArgs<ExtArgs>
+  }
+  export type FinanceQueryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    studentBill?: boolean | StudentBillDefaultArgs<ExtArgs>
+    payment?: boolean | FinanceQuery$paymentArgs<ExtArgs>
+  }
+  export type FinanceQueryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    studentBill?: boolean | StudentBillDefaultArgs<ExtArgs>
+    payment?: boolean | FinanceQuery$paymentArgs<ExtArgs>
+  }
+
+  export type $FinanceQueryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "FinanceQuery"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      parent: Prisma.$ParentPayload<ExtArgs>
+      student: Prisma.$StudentPayload<ExtArgs>
+      studentBill: Prisma.$StudentBillPayload<ExtArgs>
+      payment: Prisma.$PaymentPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      reason: $Enums.FinanceQueryReason
+      message: string
+      status: $Enums.FinanceQueryStatus
+      response: string | null
+      resolvedAt: Date | null
+      resolvedBy: string | null
+      schoolId: string
+      parentId: string
+      studentId: string
+      studentBillId: number
+      paymentId: number | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["financeQuery"]>
+    composites: {}
+  }
+
+  type FinanceQueryGetPayload<S extends boolean | null | undefined | FinanceQueryDefaultArgs> = $Result.GetResult<Prisma.$FinanceQueryPayload, S>
+
+  type FinanceQueryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<FinanceQueryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FinanceQueryCountAggregateInputType | true
+    }
+
+  export interface FinanceQueryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FinanceQuery'], meta: { name: 'FinanceQuery' } }
+    /**
+     * Find zero or one FinanceQuery that matches the filter.
+     * @param {FinanceQueryFindUniqueArgs} args - Arguments to find a FinanceQuery
+     * @example
+     * // Get one FinanceQuery
+     * const financeQuery = await prisma.financeQuery.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FinanceQueryFindUniqueArgs>(args: SelectSubset<T, FinanceQueryFindUniqueArgs<ExtArgs>>): Prisma__FinanceQueryClient<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one FinanceQuery that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {FinanceQueryFindUniqueOrThrowArgs} args - Arguments to find a FinanceQuery
+     * @example
+     * // Get one FinanceQuery
+     * const financeQuery = await prisma.financeQuery.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FinanceQueryFindUniqueOrThrowArgs>(args: SelectSubset<T, FinanceQueryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FinanceQueryClient<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FinanceQuery that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FinanceQueryFindFirstArgs} args - Arguments to find a FinanceQuery
+     * @example
+     * // Get one FinanceQuery
+     * const financeQuery = await prisma.financeQuery.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FinanceQueryFindFirstArgs>(args?: SelectSubset<T, FinanceQueryFindFirstArgs<ExtArgs>>): Prisma__FinanceQueryClient<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FinanceQuery that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FinanceQueryFindFirstOrThrowArgs} args - Arguments to find a FinanceQuery
+     * @example
+     * // Get one FinanceQuery
+     * const financeQuery = await prisma.financeQuery.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FinanceQueryFindFirstOrThrowArgs>(args?: SelectSubset<T, FinanceQueryFindFirstOrThrowArgs<ExtArgs>>): Prisma__FinanceQueryClient<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more FinanceQueries that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FinanceQueryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all FinanceQueries
+     * const financeQueries = await prisma.financeQuery.findMany()
+     * 
+     * // Get first 10 FinanceQueries
+     * const financeQueries = await prisma.financeQuery.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const financeQueryWithIdOnly = await prisma.financeQuery.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FinanceQueryFindManyArgs>(args?: SelectSubset<T, FinanceQueryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a FinanceQuery.
+     * @param {FinanceQueryCreateArgs} args - Arguments to create a FinanceQuery.
+     * @example
+     * // Create one FinanceQuery
+     * const FinanceQuery = await prisma.financeQuery.create({
+     *   data: {
+     *     // ... data to create a FinanceQuery
+     *   }
+     * })
+     * 
+     */
+    create<T extends FinanceQueryCreateArgs>(args: SelectSubset<T, FinanceQueryCreateArgs<ExtArgs>>): Prisma__FinanceQueryClient<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many FinanceQueries.
+     * @param {FinanceQueryCreateManyArgs} args - Arguments to create many FinanceQueries.
+     * @example
+     * // Create many FinanceQueries
+     * const financeQuery = await prisma.financeQuery.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FinanceQueryCreateManyArgs>(args?: SelectSubset<T, FinanceQueryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many FinanceQueries and returns the data saved in the database.
+     * @param {FinanceQueryCreateManyAndReturnArgs} args - Arguments to create many FinanceQueries.
+     * @example
+     * // Create many FinanceQueries
+     * const financeQuery = await prisma.financeQuery.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many FinanceQueries and only return the `id`
+     * const financeQueryWithIdOnly = await prisma.financeQuery.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FinanceQueryCreateManyAndReturnArgs>(args?: SelectSubset<T, FinanceQueryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a FinanceQuery.
+     * @param {FinanceQueryDeleteArgs} args - Arguments to delete one FinanceQuery.
+     * @example
+     * // Delete one FinanceQuery
+     * const FinanceQuery = await prisma.financeQuery.delete({
+     *   where: {
+     *     // ... filter to delete one FinanceQuery
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FinanceQueryDeleteArgs>(args: SelectSubset<T, FinanceQueryDeleteArgs<ExtArgs>>): Prisma__FinanceQueryClient<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one FinanceQuery.
+     * @param {FinanceQueryUpdateArgs} args - Arguments to update one FinanceQuery.
+     * @example
+     * // Update one FinanceQuery
+     * const financeQuery = await prisma.financeQuery.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FinanceQueryUpdateArgs>(args: SelectSubset<T, FinanceQueryUpdateArgs<ExtArgs>>): Prisma__FinanceQueryClient<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more FinanceQueries.
+     * @param {FinanceQueryDeleteManyArgs} args - Arguments to filter FinanceQueries to delete.
+     * @example
+     * // Delete a few FinanceQueries
+     * const { count } = await prisma.financeQuery.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FinanceQueryDeleteManyArgs>(args?: SelectSubset<T, FinanceQueryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FinanceQueries.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FinanceQueryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many FinanceQueries
+     * const financeQuery = await prisma.financeQuery.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FinanceQueryUpdateManyArgs>(args: SelectSubset<T, FinanceQueryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FinanceQueries and returns the data updated in the database.
+     * @param {FinanceQueryUpdateManyAndReturnArgs} args - Arguments to update many FinanceQueries.
+     * @example
+     * // Update many FinanceQueries
+     * const financeQuery = await prisma.financeQuery.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more FinanceQueries and only return the `id`
+     * const financeQueryWithIdOnly = await prisma.financeQuery.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends FinanceQueryUpdateManyAndReturnArgs>(args: SelectSubset<T, FinanceQueryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one FinanceQuery.
+     * @param {FinanceQueryUpsertArgs} args - Arguments to update or create a FinanceQuery.
+     * @example
+     * // Update or create a FinanceQuery
+     * const financeQuery = await prisma.financeQuery.upsert({
+     *   create: {
+     *     // ... data to create a FinanceQuery
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the FinanceQuery we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FinanceQueryUpsertArgs>(args: SelectSubset<T, FinanceQueryUpsertArgs<ExtArgs>>): Prisma__FinanceQueryClient<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of FinanceQueries.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FinanceQueryCountArgs} args - Arguments to filter FinanceQueries to count.
+     * @example
+     * // Count the number of FinanceQueries
+     * const count = await prisma.financeQuery.count({
+     *   where: {
+     *     // ... the filter for the FinanceQueries we want to count
+     *   }
+     * })
+    **/
+    count<T extends FinanceQueryCountArgs>(
+      args?: Subset<T, FinanceQueryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FinanceQueryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a FinanceQuery.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FinanceQueryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FinanceQueryAggregateArgs>(args: Subset<T, FinanceQueryAggregateArgs>): Prisma.PrismaPromise<GetFinanceQueryAggregateType<T>>
+
+    /**
+     * Group by FinanceQuery.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FinanceQueryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FinanceQueryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FinanceQueryGroupByArgs['orderBy'] }
+        : { orderBy?: FinanceQueryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FinanceQueryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFinanceQueryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the FinanceQuery model
+   */
+  readonly fields: FinanceQueryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for FinanceQuery.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FinanceQueryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    parent<T extends ParentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ParentDefaultArgs<ExtArgs>>): Prisma__ParentClient<$Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    student<T extends StudentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StudentDefaultArgs<ExtArgs>>): Prisma__StudentClient<$Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    studentBill<T extends StudentBillDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StudentBillDefaultArgs<ExtArgs>>): Prisma__StudentBillClient<$Result.GetResult<Prisma.$StudentBillPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    payment<T extends FinanceQuery$paymentArgs<ExtArgs> = {}>(args?: Subset<T, FinanceQuery$paymentArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the FinanceQuery model
+   */
+  interface FinanceQueryFieldRefs {
+    readonly id: FieldRef<"FinanceQuery", 'Int'>
+    readonly reason: FieldRef<"FinanceQuery", 'FinanceQueryReason'>
+    readonly message: FieldRef<"FinanceQuery", 'String'>
+    readonly status: FieldRef<"FinanceQuery", 'FinanceQueryStatus'>
+    readonly response: FieldRef<"FinanceQuery", 'String'>
+    readonly resolvedAt: FieldRef<"FinanceQuery", 'DateTime'>
+    readonly resolvedBy: FieldRef<"FinanceQuery", 'String'>
+    readonly schoolId: FieldRef<"FinanceQuery", 'String'>
+    readonly parentId: FieldRef<"FinanceQuery", 'String'>
+    readonly studentId: FieldRef<"FinanceQuery", 'String'>
+    readonly studentBillId: FieldRef<"FinanceQuery", 'Int'>
+    readonly paymentId: FieldRef<"FinanceQuery", 'Int'>
+    readonly createdAt: FieldRef<"FinanceQuery", 'DateTime'>
+    readonly updatedAt: FieldRef<"FinanceQuery", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * FinanceQuery findUnique
+   */
+  export type FinanceQueryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryInclude<ExtArgs> | null
+    /**
+     * Filter, which FinanceQuery to fetch.
+     */
+    where: FinanceQueryWhereUniqueInput
+  }
+
+  /**
+   * FinanceQuery findUniqueOrThrow
+   */
+  export type FinanceQueryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryInclude<ExtArgs> | null
+    /**
+     * Filter, which FinanceQuery to fetch.
+     */
+    where: FinanceQueryWhereUniqueInput
+  }
+
+  /**
+   * FinanceQuery findFirst
+   */
+  export type FinanceQueryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryInclude<ExtArgs> | null
+    /**
+     * Filter, which FinanceQuery to fetch.
+     */
+    where?: FinanceQueryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FinanceQueries to fetch.
+     */
+    orderBy?: FinanceQueryOrderByWithRelationInput | FinanceQueryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FinanceQueries.
+     */
+    cursor?: FinanceQueryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FinanceQueries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FinanceQueries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FinanceQueries.
+     */
+    distinct?: FinanceQueryScalarFieldEnum | FinanceQueryScalarFieldEnum[]
+  }
+
+  /**
+   * FinanceQuery findFirstOrThrow
+   */
+  export type FinanceQueryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryInclude<ExtArgs> | null
+    /**
+     * Filter, which FinanceQuery to fetch.
+     */
+    where?: FinanceQueryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FinanceQueries to fetch.
+     */
+    orderBy?: FinanceQueryOrderByWithRelationInput | FinanceQueryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FinanceQueries.
+     */
+    cursor?: FinanceQueryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FinanceQueries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FinanceQueries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FinanceQueries.
+     */
+    distinct?: FinanceQueryScalarFieldEnum | FinanceQueryScalarFieldEnum[]
+  }
+
+  /**
+   * FinanceQuery findMany
+   */
+  export type FinanceQueryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryInclude<ExtArgs> | null
+    /**
+     * Filter, which FinanceQueries to fetch.
+     */
+    where?: FinanceQueryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FinanceQueries to fetch.
+     */
+    orderBy?: FinanceQueryOrderByWithRelationInput | FinanceQueryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing FinanceQueries.
+     */
+    cursor?: FinanceQueryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FinanceQueries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FinanceQueries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FinanceQueries.
+     */
+    distinct?: FinanceQueryScalarFieldEnum | FinanceQueryScalarFieldEnum[]
+  }
+
+  /**
+   * FinanceQuery create
+   */
+  export type FinanceQueryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a FinanceQuery.
+     */
+    data: XOR<FinanceQueryCreateInput, FinanceQueryUncheckedCreateInput>
+  }
+
+  /**
+   * FinanceQuery createMany
+   */
+  export type FinanceQueryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many FinanceQueries.
+     */
+    data: FinanceQueryCreateManyInput | FinanceQueryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * FinanceQuery createManyAndReturn
+   */
+  export type FinanceQueryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * The data used to create many FinanceQueries.
+     */
+    data: FinanceQueryCreateManyInput | FinanceQueryCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FinanceQuery update
+   */
+  export type FinanceQueryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a FinanceQuery.
+     */
+    data: XOR<FinanceQueryUpdateInput, FinanceQueryUncheckedUpdateInput>
+    /**
+     * Choose, which FinanceQuery to update.
+     */
+    where: FinanceQueryWhereUniqueInput
+  }
+
+  /**
+   * FinanceQuery updateMany
+   */
+  export type FinanceQueryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update FinanceQueries.
+     */
+    data: XOR<FinanceQueryUpdateManyMutationInput, FinanceQueryUncheckedUpdateManyInput>
+    /**
+     * Filter which FinanceQueries to update
+     */
+    where?: FinanceQueryWhereInput
+    /**
+     * Limit how many FinanceQueries to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * FinanceQuery updateManyAndReturn
+   */
+  export type FinanceQueryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * The data used to update FinanceQueries.
+     */
+    data: XOR<FinanceQueryUpdateManyMutationInput, FinanceQueryUncheckedUpdateManyInput>
+    /**
+     * Filter which FinanceQueries to update
+     */
+    where?: FinanceQueryWhereInput
+    /**
+     * Limit how many FinanceQueries to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FinanceQuery upsert
+   */
+  export type FinanceQueryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the FinanceQuery to update in case it exists.
+     */
+    where: FinanceQueryWhereUniqueInput
+    /**
+     * In case the FinanceQuery found by the `where` argument doesn't exist, create a new FinanceQuery with this data.
+     */
+    create: XOR<FinanceQueryCreateInput, FinanceQueryUncheckedCreateInput>
+    /**
+     * In case the FinanceQuery was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FinanceQueryUpdateInput, FinanceQueryUncheckedUpdateInput>
+  }
+
+  /**
+   * FinanceQuery delete
+   */
+  export type FinanceQueryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryInclude<ExtArgs> | null
+    /**
+     * Filter which FinanceQuery to delete.
+     */
+    where: FinanceQueryWhereUniqueInput
+  }
+
+  /**
+   * FinanceQuery deleteMany
+   */
+  export type FinanceQueryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FinanceQueries to delete
+     */
+    where?: FinanceQueryWhereInput
+    /**
+     * Limit how many FinanceQueries to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * FinanceQuery.payment
+   */
+  export type FinanceQuery$paymentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    where?: PaymentWhereInput
+  }
+
+  /**
+   * FinanceQuery without action
+   */
+  export type FinanceQueryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FinanceQuery
+     */
+    select?: FinanceQuerySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FinanceQuery
+     */
+    omit?: FinanceQueryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FinanceQueryInclude<ExtArgs> | null
   }
 
 
@@ -61363,6 +62969,7 @@ export namespace Prisma {
     term: 'term',
     status: 'status',
     publishedAt: 'publishedAt',
+    dueDate: 'dueDate',
     schoolId: 'schoolId',
     gradeId: 'gradeId',
     createdBy: 'createdBy',
@@ -61394,6 +63001,7 @@ export namespace Prisma {
     discountAmount: 'discountAmount',
     balance: 'balance',
     status: 'status',
+    dueDate: 'dueDate',
     notes: 'notes',
     schoolId: 'schoolId',
     studentId: 'studentId',
@@ -61493,6 +63101,26 @@ export namespace Prisma {
   };
 
   export type FinanceAuditLogScalarFieldEnum = (typeof FinanceAuditLogScalarFieldEnum)[keyof typeof FinanceAuditLogScalarFieldEnum]
+
+
+  export const FinanceQueryScalarFieldEnum: {
+    id: 'id',
+    reason: 'reason',
+    message: 'message',
+    status: 'status',
+    response: 'response',
+    resolvedAt: 'resolvedAt',
+    resolvedBy: 'resolvedBy',
+    schoolId: 'schoolId',
+    parentId: 'parentId',
+    studentId: 'studentId',
+    studentBillId: 'studentBillId',
+    paymentId: 'paymentId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type FinanceQueryScalarFieldEnum = (typeof FinanceQueryScalarFieldEnum)[keyof typeof FinanceQueryScalarFieldEnum]
 
 
   export const FinanceJobScalarFieldEnum: {
@@ -62019,6 +63647,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'FinanceQueryReason'
+   */
+  export type EnumFinanceQueryReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FinanceQueryReason'>
+    
+
+
+  /**
+   * Reference to a field of type 'FinanceQueryReason[]'
+   */
+  export type ListEnumFinanceQueryReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FinanceQueryReason[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'FinanceQueryStatus'
+   */
+  export type EnumFinanceQueryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FinanceQueryStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'FinanceQueryStatus[]'
+   */
+  export type ListEnumFinanceQueryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FinanceQueryStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'FinanceJobType'
    */
   export type EnumFinanceJobTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FinanceJobType'>
@@ -62167,6 +63823,7 @@ export namespace Prisma {
     payments?: PaymentListRelationFilter
     paymentReversals?: PaymentReversalListRelationFilter
     discounts?: DiscountListRelationFilter
+    financeQueries?: FinanceQueryListRelationFilter
     receiptCounters?: ReceiptCounterListRelationFilter
     financeAuditLogs?: FinanceAuditLogListRelationFilter
     invites?: SchoolInviteListRelationFilter
@@ -62226,6 +63883,7 @@ export namespace Prisma {
     payments?: PaymentOrderByRelationAggregateInput
     paymentReversals?: PaymentReversalOrderByRelationAggregateInput
     discounts?: DiscountOrderByRelationAggregateInput
+    financeQueries?: FinanceQueryOrderByRelationAggregateInput
     receiptCounters?: ReceiptCounterOrderByRelationAggregateInput
     financeAuditLogs?: FinanceAuditLogOrderByRelationAggregateInput
     invites?: SchoolInviteOrderByRelationAggregateInput
@@ -62288,6 +63946,7 @@ export namespace Prisma {
     payments?: PaymentListRelationFilter
     paymentReversals?: PaymentReversalListRelationFilter
     discounts?: DiscountListRelationFilter
+    financeQueries?: FinanceQueryListRelationFilter
     receiptCounters?: ReceiptCounterListRelationFilter
     financeAuditLogs?: FinanceAuditLogListRelationFilter
     invites?: SchoolInviteListRelationFilter
@@ -62423,6 +64082,7 @@ export namespace Prisma {
     bills?: StudentBillListRelationFilter
     parentNotifications?: ParentNotificationListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
+    financeQueries?: FinanceQueryListRelationFilter
   }
 
   export type StudentOrderByWithRelationInput = {
@@ -62452,6 +64112,7 @@ export namespace Prisma {
     bills?: StudentBillOrderByRelationAggregateInput
     parentNotifications?: ParentNotificationOrderByRelationAggregateInput
     parentActivityEvents?: ParentActivityEventOrderByRelationAggregateInput
+    financeQueries?: FinanceQueryOrderByRelationAggregateInput
   }
 
   export type StudentWhereUniqueInput = Prisma.AtLeast<{
@@ -62484,6 +64145,7 @@ export namespace Prisma {
     bills?: StudentBillListRelationFilter
     parentNotifications?: ParentNotificationListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
+    financeQueries?: FinanceQueryListRelationFilter
   }, "id" | "username">
 
   export type StudentOrderByWithAggregationInput = {
@@ -62673,6 +64335,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventListRelationFilter
     notificationPreference?: XOR<ParentNotificationPreferenceNullableScalarRelationFilter, ParentNotificationPreferenceWhereInput> | null
     notificationDeliveries?: ParentNotificationDeliveryLogListRelationFilter
+    financeQueries?: FinanceQueryListRelationFilter
   }
 
   export type ParentOrderByWithRelationInput = {
@@ -62691,6 +64354,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventOrderByRelationAggregateInput
     notificationPreference?: ParentNotificationPreferenceOrderByWithRelationInput
     notificationDeliveries?: ParentNotificationDeliveryLogOrderByRelationAggregateInput
+    financeQueries?: FinanceQueryOrderByRelationAggregateInput
   }
 
   export type ParentWhereUniqueInput = Prisma.AtLeast<{
@@ -62712,6 +64376,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventListRelationFilter
     notificationPreference?: XOR<ParentNotificationPreferenceNullableScalarRelationFilter, ParentNotificationPreferenceWhereInput> | null
     notificationDeliveries?: ParentNotificationDeliveryLogListRelationFilter
+    financeQueries?: FinanceQueryListRelationFilter
   }, "id" | "username">
 
   export type ParentOrderByWithAggregationInput = {
@@ -64939,6 +66604,7 @@ export namespace Prisma {
     term?: EnumTermFilter<"FeeStructure"> | $Enums.Term
     status?: EnumFeeStructureStatusFilter<"FeeStructure"> | $Enums.FeeStructureStatus
     publishedAt?: DateTimeNullableFilter<"FeeStructure"> | Date | string | null
+    dueDate?: DateTimeNullableFilter<"FeeStructure"> | Date | string | null
     schoolId?: StringFilter<"FeeStructure"> | string
     gradeId?: IntFilter<"FeeStructure"> | number
     createdBy?: StringFilter<"FeeStructure"> | string
@@ -64958,6 +66624,7 @@ export namespace Prisma {
     term?: SortOrder
     status?: SortOrder
     publishedAt?: SortOrderInput | SortOrder
+    dueDate?: SortOrderInput | SortOrder
     schoolId?: SortOrder
     gradeId?: SortOrder
     createdBy?: SortOrder
@@ -64981,6 +66648,7 @@ export namespace Prisma {
     term?: EnumTermFilter<"FeeStructure"> | $Enums.Term
     status?: EnumFeeStructureStatusFilter<"FeeStructure"> | $Enums.FeeStructureStatus
     publishedAt?: DateTimeNullableFilter<"FeeStructure"> | Date | string | null
+    dueDate?: DateTimeNullableFilter<"FeeStructure"> | Date | string | null
     schoolId?: StringFilter<"FeeStructure"> | string
     gradeId?: IntFilter<"FeeStructure"> | number
     createdBy?: StringFilter<"FeeStructure"> | string
@@ -65000,6 +66668,7 @@ export namespace Prisma {
     term?: SortOrder
     status?: SortOrder
     publishedAt?: SortOrderInput | SortOrder
+    dueDate?: SortOrderInput | SortOrder
     schoolId?: SortOrder
     gradeId?: SortOrder
     createdBy?: SortOrder
@@ -65023,6 +66692,7 @@ export namespace Prisma {
     term?: EnumTermWithAggregatesFilter<"FeeStructure"> | $Enums.Term
     status?: EnumFeeStructureStatusWithAggregatesFilter<"FeeStructure"> | $Enums.FeeStructureStatus
     publishedAt?: DateTimeNullableWithAggregatesFilter<"FeeStructure"> | Date | string | null
+    dueDate?: DateTimeNullableWithAggregatesFilter<"FeeStructure"> | Date | string | null
     schoolId?: StringWithAggregatesFilter<"FeeStructure"> | string
     gradeId?: IntWithAggregatesFilter<"FeeStructure"> | number
     createdBy?: StringWithAggregatesFilter<"FeeStructure"> | string
@@ -65115,6 +66785,7 @@ export namespace Prisma {
     discountAmount?: DecimalFilter<"StudentBill"> | Decimal | DecimalJsLike | number | string
     balance?: DecimalFilter<"StudentBill"> | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFilter<"StudentBill"> | $Enums.BillStatus
+    dueDate?: DateTimeNullableFilter<"StudentBill"> | Date | string | null
     notes?: StringNullableFilter<"StudentBill"> | string | null
     schoolId?: StringFilter<"StudentBill"> | string
     studentId?: StringFilter<"StudentBill"> | string
@@ -65128,6 +66799,7 @@ export namespace Prisma {
     lineItems?: BillLineItemListRelationFilter
     payments?: PaymentListRelationFilter
     discounts?: DiscountListRelationFilter
+    financeQueries?: FinanceQueryListRelationFilter
   }
 
   export type StudentBillOrderByWithRelationInput = {
@@ -65137,6 +66809,7 @@ export namespace Prisma {
     discountAmount?: SortOrder
     balance?: SortOrder
     status?: SortOrder
+    dueDate?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
     schoolId?: SortOrder
     studentId?: SortOrder
@@ -65150,6 +66823,7 @@ export namespace Prisma {
     lineItems?: BillLineItemOrderByRelationAggregateInput
     payments?: PaymentOrderByRelationAggregateInput
     discounts?: DiscountOrderByRelationAggregateInput
+    financeQueries?: FinanceQueryOrderByRelationAggregateInput
   }
 
   export type StudentBillWhereUniqueInput = Prisma.AtLeast<{
@@ -65163,6 +66837,7 @@ export namespace Prisma {
     discountAmount?: DecimalFilter<"StudentBill"> | Decimal | DecimalJsLike | number | string
     balance?: DecimalFilter<"StudentBill"> | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFilter<"StudentBill"> | $Enums.BillStatus
+    dueDate?: DateTimeNullableFilter<"StudentBill"> | Date | string | null
     notes?: StringNullableFilter<"StudentBill"> | string | null
     schoolId?: StringFilter<"StudentBill"> | string
     studentId?: StringFilter<"StudentBill"> | string
@@ -65176,6 +66851,7 @@ export namespace Prisma {
     lineItems?: BillLineItemListRelationFilter
     payments?: PaymentListRelationFilter
     discounts?: DiscountListRelationFilter
+    financeQueries?: FinanceQueryListRelationFilter
   }, "id" | "schoolId_studentId_feeStructureId">
 
   export type StudentBillOrderByWithAggregationInput = {
@@ -65185,6 +66861,7 @@ export namespace Prisma {
     discountAmount?: SortOrder
     balance?: SortOrder
     status?: SortOrder
+    dueDate?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
     schoolId?: SortOrder
     studentId?: SortOrder
@@ -65209,6 +66886,7 @@ export namespace Prisma {
     discountAmount?: DecimalWithAggregatesFilter<"StudentBill"> | Decimal | DecimalJsLike | number | string
     balance?: DecimalWithAggregatesFilter<"StudentBill"> | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusWithAggregatesFilter<"StudentBill"> | $Enums.BillStatus
+    dueDate?: DateTimeNullableWithAggregatesFilter<"StudentBill"> | Date | string | null
     notes?: StringNullableWithAggregatesFilter<"StudentBill"> | string | null
     schoolId?: StringWithAggregatesFilter<"StudentBill"> | string
     studentId?: StringWithAggregatesFilter<"StudentBill"> | string
@@ -65322,6 +67000,7 @@ export namespace Prisma {
     studentBill?: XOR<StudentBillScalarRelationFilter, StudentBillWhereInput>
     reversal?: XOR<PaymentReversalNullableScalarRelationFilter, PaymentReversalWhereInput> | null
     webhookEvents?: PaymentWebhookEventListRelationFilter
+    financeQueries?: FinanceQueryListRelationFilter
   }
 
   export type PaymentOrderByWithRelationInput = {
@@ -65345,6 +67024,7 @@ export namespace Prisma {
     studentBill?: StudentBillOrderByWithRelationInput
     reversal?: PaymentReversalOrderByWithRelationInput
     webhookEvents?: PaymentWebhookEventOrderByRelationAggregateInput
+    financeQueries?: FinanceQueryOrderByRelationAggregateInput
   }
 
   export type PaymentWhereUniqueInput = Prisma.AtLeast<{
@@ -65374,6 +67054,7 @@ export namespace Prisma {
     studentBill?: XOR<StudentBillScalarRelationFilter, StudentBillWhereInput>
     reversal?: XOR<PaymentReversalNullableScalarRelationFilter, PaymentReversalWhereInput> | null
     webhookEvents?: PaymentWebhookEventListRelationFilter
+    financeQueries?: FinanceQueryListRelationFilter
   }, "id" | "schoolId_receiptNumber" | "schoolId_externalProvider_externalReference" | "schoolId_idempotencyKey">
 
   export type PaymentOrderByWithAggregationInput = {
@@ -65695,6 +67376,120 @@ export namespace Prisma {
     ipAddress?: StringNullableWithAggregatesFilter<"FinanceAuditLog"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"FinanceAuditLog"> | Date | string
     schoolId?: StringWithAggregatesFilter<"FinanceAuditLog"> | string
+  }
+
+  export type FinanceQueryWhereInput = {
+    AND?: FinanceQueryWhereInput | FinanceQueryWhereInput[]
+    OR?: FinanceQueryWhereInput[]
+    NOT?: FinanceQueryWhereInput | FinanceQueryWhereInput[]
+    id?: IntFilter<"FinanceQuery"> | number
+    reason?: EnumFinanceQueryReasonFilter<"FinanceQuery"> | $Enums.FinanceQueryReason
+    message?: StringFilter<"FinanceQuery"> | string
+    status?: EnumFinanceQueryStatusFilter<"FinanceQuery"> | $Enums.FinanceQueryStatus
+    response?: StringNullableFilter<"FinanceQuery"> | string | null
+    resolvedAt?: DateTimeNullableFilter<"FinanceQuery"> | Date | string | null
+    resolvedBy?: StringNullableFilter<"FinanceQuery"> | string | null
+    schoolId?: StringFilter<"FinanceQuery"> | string
+    parentId?: StringFilter<"FinanceQuery"> | string
+    studentId?: StringFilter<"FinanceQuery"> | string
+    studentBillId?: IntFilter<"FinanceQuery"> | number
+    paymentId?: IntNullableFilter<"FinanceQuery"> | number | null
+    createdAt?: DateTimeFilter<"FinanceQuery"> | Date | string
+    updatedAt?: DateTimeFilter<"FinanceQuery"> | Date | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    parent?: XOR<ParentScalarRelationFilter, ParentWhereInput>
+    student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
+    studentBill?: XOR<StudentBillScalarRelationFilter, StudentBillWhereInput>
+    payment?: XOR<PaymentNullableScalarRelationFilter, PaymentWhereInput> | null
+  }
+
+  export type FinanceQueryOrderByWithRelationInput = {
+    id?: SortOrder
+    reason?: SortOrder
+    message?: SortOrder
+    status?: SortOrder
+    response?: SortOrderInput | SortOrder
+    resolvedAt?: SortOrderInput | SortOrder
+    resolvedBy?: SortOrderInput | SortOrder
+    schoolId?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    studentBillId?: SortOrder
+    paymentId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+    parent?: ParentOrderByWithRelationInput
+    student?: StudentOrderByWithRelationInput
+    studentBill?: StudentBillOrderByWithRelationInput
+    payment?: PaymentOrderByWithRelationInput
+  }
+
+  export type FinanceQueryWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: FinanceQueryWhereInput | FinanceQueryWhereInput[]
+    OR?: FinanceQueryWhereInput[]
+    NOT?: FinanceQueryWhereInput | FinanceQueryWhereInput[]
+    reason?: EnumFinanceQueryReasonFilter<"FinanceQuery"> | $Enums.FinanceQueryReason
+    message?: StringFilter<"FinanceQuery"> | string
+    status?: EnumFinanceQueryStatusFilter<"FinanceQuery"> | $Enums.FinanceQueryStatus
+    response?: StringNullableFilter<"FinanceQuery"> | string | null
+    resolvedAt?: DateTimeNullableFilter<"FinanceQuery"> | Date | string | null
+    resolvedBy?: StringNullableFilter<"FinanceQuery"> | string | null
+    schoolId?: StringFilter<"FinanceQuery"> | string
+    parentId?: StringFilter<"FinanceQuery"> | string
+    studentId?: StringFilter<"FinanceQuery"> | string
+    studentBillId?: IntFilter<"FinanceQuery"> | number
+    paymentId?: IntNullableFilter<"FinanceQuery"> | number | null
+    createdAt?: DateTimeFilter<"FinanceQuery"> | Date | string
+    updatedAt?: DateTimeFilter<"FinanceQuery"> | Date | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    parent?: XOR<ParentScalarRelationFilter, ParentWhereInput>
+    student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
+    studentBill?: XOR<StudentBillScalarRelationFilter, StudentBillWhereInput>
+    payment?: XOR<PaymentNullableScalarRelationFilter, PaymentWhereInput> | null
+  }, "id">
+
+  export type FinanceQueryOrderByWithAggregationInput = {
+    id?: SortOrder
+    reason?: SortOrder
+    message?: SortOrder
+    status?: SortOrder
+    response?: SortOrderInput | SortOrder
+    resolvedAt?: SortOrderInput | SortOrder
+    resolvedBy?: SortOrderInput | SortOrder
+    schoolId?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    studentBillId?: SortOrder
+    paymentId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: FinanceQueryCountOrderByAggregateInput
+    _avg?: FinanceQueryAvgOrderByAggregateInput
+    _max?: FinanceQueryMaxOrderByAggregateInput
+    _min?: FinanceQueryMinOrderByAggregateInput
+    _sum?: FinanceQuerySumOrderByAggregateInput
+  }
+
+  export type FinanceQueryScalarWhereWithAggregatesInput = {
+    AND?: FinanceQueryScalarWhereWithAggregatesInput | FinanceQueryScalarWhereWithAggregatesInput[]
+    OR?: FinanceQueryScalarWhereWithAggregatesInput[]
+    NOT?: FinanceQueryScalarWhereWithAggregatesInput | FinanceQueryScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"FinanceQuery"> | number
+    reason?: EnumFinanceQueryReasonWithAggregatesFilter<"FinanceQuery"> | $Enums.FinanceQueryReason
+    message?: StringWithAggregatesFilter<"FinanceQuery"> | string
+    status?: EnumFinanceQueryStatusWithAggregatesFilter<"FinanceQuery"> | $Enums.FinanceQueryStatus
+    response?: StringNullableWithAggregatesFilter<"FinanceQuery"> | string | null
+    resolvedAt?: DateTimeNullableWithAggregatesFilter<"FinanceQuery"> | Date | string | null
+    resolvedBy?: StringNullableWithAggregatesFilter<"FinanceQuery"> | string | null
+    schoolId?: StringWithAggregatesFilter<"FinanceQuery"> | string
+    parentId?: StringWithAggregatesFilter<"FinanceQuery"> | string
+    studentId?: StringWithAggregatesFilter<"FinanceQuery"> | string
+    studentBillId?: IntWithAggregatesFilter<"FinanceQuery"> | number
+    paymentId?: IntNullableWithAggregatesFilter<"FinanceQuery"> | number | null
+    createdAt?: DateTimeWithAggregatesFilter<"FinanceQuery"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"FinanceQuery"> | Date | string
   }
 
   export type FinanceJobWhereInput = {
@@ -66246,6 +68041,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -66305,6 +68101,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -66364,6 +68161,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -66423,6 +68221,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -66561,6 +68360,7 @@ export namespace Prisma {
     bills?: StudentBillCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateInput = {
@@ -66586,6 +68386,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUpdateInput = {
@@ -66611,6 +68412,7 @@ export namespace Prisma {
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateInput = {
@@ -66636,6 +68438,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentCreateManyInput = {
@@ -66850,6 +68653,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventCreateNestedManyWithoutParentInput
     notificationPreference?: ParentNotificationPreferenceCreateNestedOneWithoutParentInput
     notificationDeliveries?: ParentNotificationDeliveryLogCreateNestedManyWithoutParentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateInput = {
@@ -66867,6 +68671,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutParentInput
     notificationPreference?: ParentNotificationPreferenceUncheckedCreateNestedOneWithoutParentInput
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutParentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentUpdateInput = {
@@ -66884,6 +68689,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventUpdateManyWithoutParentNestedInput
     notificationPreference?: ParentNotificationPreferenceUpdateOneWithoutParentNestedInput
     notificationDeliveries?: ParentNotificationDeliveryLogUpdateManyWithoutParentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateInput = {
@@ -66901,6 +68707,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventUncheckedUpdateManyWithoutParentNestedInput
     notificationPreference?: ParentNotificationPreferenceUncheckedUpdateOneWithoutParentNestedInput
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutParentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type ParentCreateManyInput = {
@@ -69126,6 +70933,7 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.FeeStructureStatus
     publishedAt?: Date | string | null
+    dueDate?: Date | string | null
     createdBy: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -69143,6 +70951,7 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.FeeStructureStatus
     publishedAt?: Date | string | null
+    dueDate?: Date | string | null
     schoolId?: string
     gradeId: number
     createdBy: string
@@ -69159,6 +70968,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumFeeStructureStatusFieldUpdateOperationsInput | $Enums.FeeStructureStatus
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -69176,6 +70986,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumFeeStructureStatusFieldUpdateOperationsInput | $Enums.FeeStructureStatus
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     gradeId?: IntFieldUpdateOperationsInput | number
     createdBy?: StringFieldUpdateOperationsInput | string
@@ -69193,6 +71004,7 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.FeeStructureStatus
     publishedAt?: Date | string | null
+    dueDate?: Date | string | null
     schoolId?: string
     gradeId: number
     createdBy: string
@@ -69207,6 +71019,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumFeeStructureStatusFieldUpdateOperationsInput | $Enums.FeeStructureStatus
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -69220,6 +71033,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumFeeStructureStatusFieldUpdateOperationsInput | $Enums.FeeStructureStatus
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     gradeId?: IntFieldUpdateOperationsInput | number
     createdBy?: StringFieldUpdateOperationsInput | string
@@ -69310,6 +71124,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     generatedBy: string
     createdAt?: Date | string
@@ -69320,6 +71135,7 @@ export namespace Prisma {
     lineItems?: BillLineItemCreateNestedManyWithoutStudentBillInput
     payments?: PaymentCreateNestedManyWithoutStudentBillInput
     discounts?: DiscountCreateNestedManyWithoutStudentBillInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentBillInput
   }
 
   export type StudentBillUncheckedCreateInput = {
@@ -69329,6 +71145,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     schoolId?: string
     studentId: string
@@ -69339,6 +71156,7 @@ export namespace Prisma {
     lineItems?: BillLineItemUncheckedCreateNestedManyWithoutStudentBillInput
     payments?: PaymentUncheckedCreateNestedManyWithoutStudentBillInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutStudentBillInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentBillInput
   }
 
   export type StudentBillUpdateInput = {
@@ -69347,6 +71165,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     generatedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -69357,6 +71176,7 @@ export namespace Prisma {
     lineItems?: BillLineItemUpdateManyWithoutStudentBillNestedInput
     payments?: PaymentUpdateManyWithoutStudentBillNestedInput
     discounts?: DiscountUpdateManyWithoutStudentBillNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentBillNestedInput
   }
 
   export type StudentBillUncheckedUpdateInput = {
@@ -69366,6 +71186,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     studentId?: StringFieldUpdateOperationsInput | string
@@ -69376,6 +71197,7 @@ export namespace Prisma {
     lineItems?: BillLineItemUncheckedUpdateManyWithoutStudentBillNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutStudentBillNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutStudentBillNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentBillNestedInput
   }
 
   export type StudentBillCreateManyInput = {
@@ -69385,6 +71207,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     schoolId?: string
     studentId: string
@@ -69400,6 +71223,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     generatedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -69413,6 +71237,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     studentId?: StringFieldUpdateOperationsInput | string
@@ -69519,6 +71344,7 @@ export namespace Prisma {
     studentBill: StudentBillCreateNestedOneWithoutPaymentsInput
     reversal?: PaymentReversalCreateNestedOneWithoutPaymentInput
     webhookEvents?: PaymentWebhookEventCreateNestedManyWithoutPaymentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentUncheckedCreateInput = {
@@ -69540,6 +71366,7 @@ export namespace Prisma {
     createdAt?: Date | string
     reversal?: PaymentReversalUncheckedCreateNestedOneWithoutPaymentInput
     webhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutPaymentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentUpdateInput = {
@@ -69560,6 +71387,7 @@ export namespace Prisma {
     studentBill?: StudentBillUpdateOneRequiredWithoutPaymentsNestedInput
     reversal?: PaymentReversalUpdateOneWithoutPaymentNestedInput
     webhookEvents?: PaymentWebhookEventUpdateManyWithoutPaymentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentUncheckedUpdateInput = {
@@ -69581,6 +71409,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reversal?: PaymentReversalUncheckedUpdateOneWithoutPaymentNestedInput
     webhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutPaymentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentCreateManyInput = {
@@ -69897,6 +71726,117 @@ export namespace Prisma {
     ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type FinanceQueryCreateInput = {
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutFinanceQueriesInput
+    parent: ParentCreateNestedOneWithoutFinanceQueriesInput
+    student: StudentCreateNestedOneWithoutFinanceQueriesInput
+    studentBill: StudentBillCreateNestedOneWithoutFinanceQueriesInput
+    payment?: PaymentCreateNestedOneWithoutFinanceQueriesInput
+  }
+
+  export type FinanceQueryUncheckedCreateInput = {
+    id?: number
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    schoolId: string
+    parentId: string
+    studentId: string
+    studentBillId: number
+    paymentId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FinanceQueryUpdateInput = {
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    parent?: ParentUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    student?: StudentUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    studentBill?: StudentBillUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    payment?: PaymentUpdateOneWithoutFinanceQueriesNestedInput
+  }
+
+  export type FinanceQueryUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    studentBillId?: IntFieldUpdateOperationsInput | number
+    paymentId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FinanceQueryCreateManyInput = {
+    id?: number
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    schoolId: string
+    parentId: string
+    studentId: string
+    studentBillId: number
+    paymentId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FinanceQueryUpdateManyMutationInput = {
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FinanceQueryUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    studentBillId?: IntFieldUpdateOperationsInput | number
+    paymentId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FinanceJobCreateInput = {
@@ -70678,6 +72618,12 @@ export namespace Prisma {
     none?: DiscountWhereInput
   }
 
+  export type FinanceQueryListRelationFilter = {
+    every?: FinanceQueryWhereInput
+    some?: FinanceQueryWhereInput
+    none?: FinanceQueryWhereInput
+  }
+
   export type ReceiptCounterListRelationFilter = {
     every?: ReceiptCounterWhereInput
     some?: ReceiptCounterWhereInput
@@ -70859,6 +72805,10 @@ export namespace Prisma {
   }
 
   export type DiscountOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FinanceQueryOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -72993,6 +74943,7 @@ export namespace Prisma {
     term?: SortOrder
     status?: SortOrder
     publishedAt?: SortOrder
+    dueDate?: SortOrder
     schoolId?: SortOrder
     gradeId?: SortOrder
     createdBy?: SortOrder
@@ -73013,6 +74964,7 @@ export namespace Prisma {
     term?: SortOrder
     status?: SortOrder
     publishedAt?: SortOrder
+    dueDate?: SortOrder
     schoolId?: SortOrder
     gradeId?: SortOrder
     createdBy?: SortOrder
@@ -73028,6 +74980,7 @@ export namespace Prisma {
     term?: SortOrder
     status?: SortOrder
     publishedAt?: SortOrder
+    dueDate?: SortOrder
     schoolId?: SortOrder
     gradeId?: SortOrder
     createdBy?: SortOrder
@@ -73147,6 +75100,7 @@ export namespace Prisma {
     discountAmount?: SortOrder
     balance?: SortOrder
     status?: SortOrder
+    dueDate?: SortOrder
     notes?: SortOrder
     schoolId?: SortOrder
     studentId?: SortOrder
@@ -73172,6 +75126,7 @@ export namespace Prisma {
     discountAmount?: SortOrder
     balance?: SortOrder
     status?: SortOrder
+    dueDate?: SortOrder
     notes?: SortOrder
     schoolId?: SortOrder
     studentId?: SortOrder
@@ -73188,6 +75143,7 @@ export namespace Prisma {
     discountAmount?: SortOrder
     balance?: SortOrder
     status?: SortOrder
+    dueDate?: SortOrder
     notes?: SortOrder
     schoolId?: SortOrder
     studentId?: SortOrder
@@ -73676,6 +75632,108 @@ export namespace Prisma {
     _max?: NestedJsonFilter<$PrismaModel>
   }
 
+  export type EnumFinanceQueryReasonFilter<$PrismaModel = never> = {
+    equals?: $Enums.FinanceQueryReason | EnumFinanceQueryReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.FinanceQueryReason[] | ListEnumFinanceQueryReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FinanceQueryReason[] | ListEnumFinanceQueryReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumFinanceQueryReasonFilter<$PrismaModel> | $Enums.FinanceQueryReason
+  }
+
+  export type EnumFinanceQueryStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.FinanceQueryStatus | EnumFinanceQueryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.FinanceQueryStatus[] | ListEnumFinanceQueryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FinanceQueryStatus[] | ListEnumFinanceQueryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumFinanceQueryStatusFilter<$PrismaModel> | $Enums.FinanceQueryStatus
+  }
+
+  export type PaymentNullableScalarRelationFilter = {
+    is?: PaymentWhereInput | null
+    isNot?: PaymentWhereInput | null
+  }
+
+  export type FinanceQueryCountOrderByAggregateInput = {
+    id?: SortOrder
+    reason?: SortOrder
+    message?: SortOrder
+    status?: SortOrder
+    response?: SortOrder
+    resolvedAt?: SortOrder
+    resolvedBy?: SortOrder
+    schoolId?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    studentBillId?: SortOrder
+    paymentId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FinanceQueryAvgOrderByAggregateInput = {
+    id?: SortOrder
+    studentBillId?: SortOrder
+    paymentId?: SortOrder
+  }
+
+  export type FinanceQueryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    reason?: SortOrder
+    message?: SortOrder
+    status?: SortOrder
+    response?: SortOrder
+    resolvedAt?: SortOrder
+    resolvedBy?: SortOrder
+    schoolId?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    studentBillId?: SortOrder
+    paymentId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FinanceQueryMinOrderByAggregateInput = {
+    id?: SortOrder
+    reason?: SortOrder
+    message?: SortOrder
+    status?: SortOrder
+    response?: SortOrder
+    resolvedAt?: SortOrder
+    resolvedBy?: SortOrder
+    schoolId?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    studentBillId?: SortOrder
+    paymentId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FinanceQuerySumOrderByAggregateInput = {
+    id?: SortOrder
+    studentBillId?: SortOrder
+    paymentId?: SortOrder
+  }
+
+  export type EnumFinanceQueryReasonWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FinanceQueryReason | EnumFinanceQueryReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.FinanceQueryReason[] | ListEnumFinanceQueryReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FinanceQueryReason[] | ListEnumFinanceQueryReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumFinanceQueryReasonWithAggregatesFilter<$PrismaModel> | $Enums.FinanceQueryReason
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFinanceQueryReasonFilter<$PrismaModel>
+    _max?: NestedEnumFinanceQueryReasonFilter<$PrismaModel>
+  }
+
+  export type EnumFinanceQueryStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FinanceQueryStatus | EnumFinanceQueryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.FinanceQueryStatus[] | ListEnumFinanceQueryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FinanceQueryStatus[] | ListEnumFinanceQueryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumFinanceQueryStatusWithAggregatesFilter<$PrismaModel> | $Enums.FinanceQueryStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFinanceQueryStatusFilter<$PrismaModel>
+    _max?: NestedEnumFinanceQueryStatusFilter<$PrismaModel>
+  }
+
   export type EnumFinanceJobTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.FinanceJobType | EnumFinanceJobTypeFieldRefInput<$PrismaModel>
     in?: $Enums.FinanceJobType[] | ListEnumFinanceJobTypeFieldRefInput<$PrismaModel>
@@ -73792,11 +75850,6 @@ export namespace Prisma {
   export type SchoolNullableScalarRelationFilter = {
     is?: SchoolWhereInput | null
     isNot?: SchoolWhereInput | null
-  }
-
-  export type PaymentNullableScalarRelationFilter = {
-    is?: PaymentWhereInput | null
-    isNot?: PaymentWhereInput | null
   }
 
   export type PaymentWebhookEventProviderProviderEventIdCompoundUniqueInput = {
@@ -74287,6 +76340,13 @@ export namespace Prisma {
     connect?: DiscountWhereUniqueInput | DiscountWhereUniqueInput[]
   }
 
+  export type FinanceQueryCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<FinanceQueryCreateWithoutSchoolInput, FinanceQueryUncheckedCreateWithoutSchoolInput> | FinanceQueryCreateWithoutSchoolInput[] | FinanceQueryUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutSchoolInput | FinanceQueryCreateOrConnectWithoutSchoolInput[]
+    createMany?: FinanceQueryCreateManySchoolInputEnvelope
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+  }
+
   export type ReceiptCounterCreateNestedManyWithoutSchoolInput = {
     create?: XOR<ReceiptCounterCreateWithoutSchoolInput, ReceiptCounterUncheckedCreateWithoutSchoolInput> | ReceiptCounterCreateWithoutSchoolInput[] | ReceiptCounterUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: ReceiptCounterCreateOrConnectWithoutSchoolInput | ReceiptCounterCreateOrConnectWithoutSchoolInput[]
@@ -74557,6 +76617,13 @@ export namespace Prisma {
     connectOrCreate?: DiscountCreateOrConnectWithoutSchoolInput | DiscountCreateOrConnectWithoutSchoolInput[]
     createMany?: DiscountCreateManySchoolInputEnvelope
     connect?: DiscountWhereUniqueInput | DiscountWhereUniqueInput[]
+  }
+
+  export type FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<FinanceQueryCreateWithoutSchoolInput, FinanceQueryUncheckedCreateWithoutSchoolInput> | FinanceQueryCreateWithoutSchoolInput[] | FinanceQueryUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutSchoolInput | FinanceQueryCreateOrConnectWithoutSchoolInput[]
+    createMany?: FinanceQueryCreateManySchoolInputEnvelope
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
   }
 
   export type ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput = {
@@ -75038,6 +77105,20 @@ export namespace Prisma {
     update?: DiscountUpdateWithWhereUniqueWithoutSchoolInput | DiscountUpdateWithWhereUniqueWithoutSchoolInput[]
     updateMany?: DiscountUpdateManyWithWhereWithoutSchoolInput | DiscountUpdateManyWithWhereWithoutSchoolInput[]
     deleteMany?: DiscountScalarWhereInput | DiscountScalarWhereInput[]
+  }
+
+  export type FinanceQueryUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<FinanceQueryCreateWithoutSchoolInput, FinanceQueryUncheckedCreateWithoutSchoolInput> | FinanceQueryCreateWithoutSchoolInput[] | FinanceQueryUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutSchoolInput | FinanceQueryCreateOrConnectWithoutSchoolInput[]
+    upsert?: FinanceQueryUpsertWithWhereUniqueWithoutSchoolInput | FinanceQueryUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: FinanceQueryCreateManySchoolInputEnvelope
+    set?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    disconnect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    delete?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    update?: FinanceQueryUpdateWithWhereUniqueWithoutSchoolInput | FinanceQueryUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: FinanceQueryUpdateManyWithWhereWithoutSchoolInput | FinanceQueryUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: FinanceQueryScalarWhereInput | FinanceQueryScalarWhereInput[]
   }
 
   export type ReceiptCounterUpdateManyWithoutSchoolNestedInput = {
@@ -75582,6 +77663,20 @@ export namespace Prisma {
     deleteMany?: DiscountScalarWhereInput | DiscountScalarWhereInput[]
   }
 
+  export type FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<FinanceQueryCreateWithoutSchoolInput, FinanceQueryUncheckedCreateWithoutSchoolInput> | FinanceQueryCreateWithoutSchoolInput[] | FinanceQueryUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutSchoolInput | FinanceQueryCreateOrConnectWithoutSchoolInput[]
+    upsert?: FinanceQueryUpsertWithWhereUniqueWithoutSchoolInput | FinanceQueryUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: FinanceQueryCreateManySchoolInputEnvelope
+    set?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    disconnect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    delete?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    update?: FinanceQueryUpdateWithWhereUniqueWithoutSchoolInput | FinanceQueryUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: FinanceQueryUpdateManyWithWhereWithoutSchoolInput | FinanceQueryUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: FinanceQueryScalarWhereInput | FinanceQueryScalarWhereInput[]
+  }
+
   export type ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput = {
     create?: XOR<ReceiptCounterCreateWithoutSchoolInput, ReceiptCounterUncheckedCreateWithoutSchoolInput> | ReceiptCounterCreateWithoutSchoolInput[] | ReceiptCounterUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: ReceiptCounterCreateOrConnectWithoutSchoolInput | ReceiptCounterCreateOrConnectWithoutSchoolInput[]
@@ -75833,6 +77928,13 @@ export namespace Prisma {
     connect?: ParentActivityEventWhereUniqueInput | ParentActivityEventWhereUniqueInput[]
   }
 
+  export type FinanceQueryCreateNestedManyWithoutStudentInput = {
+    create?: XOR<FinanceQueryCreateWithoutStudentInput, FinanceQueryUncheckedCreateWithoutStudentInput> | FinanceQueryCreateWithoutStudentInput[] | FinanceQueryUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutStudentInput | FinanceQueryCreateOrConnectWithoutStudentInput[]
+    createMany?: FinanceQueryCreateManyStudentInputEnvelope
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+  }
+
   export type AttendanceUncheckedCreateNestedManyWithoutStudentInput = {
     create?: XOR<AttendanceCreateWithoutStudentInput, AttendanceUncheckedCreateWithoutStudentInput> | AttendanceCreateWithoutStudentInput[] | AttendanceUncheckedCreateWithoutStudentInput[]
     connectOrCreate?: AttendanceCreateOrConnectWithoutStudentInput | AttendanceCreateOrConnectWithoutStudentInput[]
@@ -75880,6 +77982,13 @@ export namespace Prisma {
     connectOrCreate?: ParentActivityEventCreateOrConnectWithoutStudentInput | ParentActivityEventCreateOrConnectWithoutStudentInput[]
     createMany?: ParentActivityEventCreateManyStudentInputEnvelope
     connect?: ParentActivityEventWhereUniqueInput | ParentActivityEventWhereUniqueInput[]
+  }
+
+  export type FinanceQueryUncheckedCreateNestedManyWithoutStudentInput = {
+    create?: XOR<FinanceQueryCreateWithoutStudentInput, FinanceQueryUncheckedCreateWithoutStudentInput> | FinanceQueryCreateWithoutStudentInput[] | FinanceQueryUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutStudentInput | FinanceQueryCreateOrConnectWithoutStudentInput[]
+    createMany?: FinanceQueryCreateManyStudentInputEnvelope
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
   }
 
   export type EnumUserSexFieldUpdateOperationsInput = {
@@ -76016,6 +78125,20 @@ export namespace Prisma {
     deleteMany?: ParentActivityEventScalarWhereInput | ParentActivityEventScalarWhereInput[]
   }
 
+  export type FinanceQueryUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<FinanceQueryCreateWithoutStudentInput, FinanceQueryUncheckedCreateWithoutStudentInput> | FinanceQueryCreateWithoutStudentInput[] | FinanceQueryUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutStudentInput | FinanceQueryCreateOrConnectWithoutStudentInput[]
+    upsert?: FinanceQueryUpsertWithWhereUniqueWithoutStudentInput | FinanceQueryUpsertWithWhereUniqueWithoutStudentInput[]
+    createMany?: FinanceQueryCreateManyStudentInputEnvelope
+    set?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    disconnect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    delete?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    update?: FinanceQueryUpdateWithWhereUniqueWithoutStudentInput | FinanceQueryUpdateWithWhereUniqueWithoutStudentInput[]
+    updateMany?: FinanceQueryUpdateManyWithWhereWithoutStudentInput | FinanceQueryUpdateManyWithWhereWithoutStudentInput[]
+    deleteMany?: FinanceQueryScalarWhereInput | FinanceQueryScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -76120,6 +78243,20 @@ export namespace Prisma {
     update?: ParentActivityEventUpdateWithWhereUniqueWithoutStudentInput | ParentActivityEventUpdateWithWhereUniqueWithoutStudentInput[]
     updateMany?: ParentActivityEventUpdateManyWithWhereWithoutStudentInput | ParentActivityEventUpdateManyWithWhereWithoutStudentInput[]
     deleteMany?: ParentActivityEventScalarWhereInput | ParentActivityEventScalarWhereInput[]
+  }
+
+  export type FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<FinanceQueryCreateWithoutStudentInput, FinanceQueryUncheckedCreateWithoutStudentInput> | FinanceQueryCreateWithoutStudentInput[] | FinanceQueryUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutStudentInput | FinanceQueryCreateOrConnectWithoutStudentInput[]
+    upsert?: FinanceQueryUpsertWithWhereUniqueWithoutStudentInput | FinanceQueryUpsertWithWhereUniqueWithoutStudentInput[]
+    createMany?: FinanceQueryCreateManyStudentInputEnvelope
+    set?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    disconnect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    delete?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    update?: FinanceQueryUpdateWithWhereUniqueWithoutStudentInput | FinanceQueryUpdateWithWhereUniqueWithoutStudentInput[]
+    updateMany?: FinanceQueryUpdateManyWithWhereWithoutStudentInput | FinanceQueryUpdateManyWithWhereWithoutStudentInput[]
+    deleteMany?: FinanceQueryScalarWhereInput | FinanceQueryScalarWhereInput[]
   }
 
   export type SchoolCreateNestedOneWithoutTeachersInput = {
@@ -76550,6 +78687,13 @@ export namespace Prisma {
     connect?: ParentNotificationDeliveryLogWhereUniqueInput | ParentNotificationDeliveryLogWhereUniqueInput[]
   }
 
+  export type FinanceQueryCreateNestedManyWithoutParentInput = {
+    create?: XOR<FinanceQueryCreateWithoutParentInput, FinanceQueryUncheckedCreateWithoutParentInput> | FinanceQueryCreateWithoutParentInput[] | FinanceQueryUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutParentInput | FinanceQueryCreateOrConnectWithoutParentInput[]
+    createMany?: FinanceQueryCreateManyParentInputEnvelope
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+  }
+
   export type StudentUncheckedCreateNestedManyWithoutParentInput = {
     create?: XOR<StudentCreateWithoutParentInput, StudentUncheckedCreateWithoutParentInput> | StudentCreateWithoutParentInput[] | StudentUncheckedCreateWithoutParentInput[]
     connectOrCreate?: StudentCreateOrConnectWithoutParentInput | StudentCreateOrConnectWithoutParentInput[]
@@ -76582,6 +78726,13 @@ export namespace Prisma {
     connectOrCreate?: ParentNotificationDeliveryLogCreateOrConnectWithoutParentInput | ParentNotificationDeliveryLogCreateOrConnectWithoutParentInput[]
     createMany?: ParentNotificationDeliveryLogCreateManyParentInputEnvelope
     connect?: ParentNotificationDeliveryLogWhereUniqueInput | ParentNotificationDeliveryLogWhereUniqueInput[]
+  }
+
+  export type FinanceQueryUncheckedCreateNestedManyWithoutParentInput = {
+    create?: XOR<FinanceQueryCreateWithoutParentInput, FinanceQueryUncheckedCreateWithoutParentInput> | FinanceQueryCreateWithoutParentInput[] | FinanceQueryUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutParentInput | FinanceQueryCreateOrConnectWithoutParentInput[]
+    createMany?: FinanceQueryCreateManyParentInputEnvelope
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
   }
 
   export type SchoolUpdateOneRequiredWithoutParentsNestedInput = {
@@ -76658,6 +78809,20 @@ export namespace Prisma {
     deleteMany?: ParentNotificationDeliveryLogScalarWhereInput | ParentNotificationDeliveryLogScalarWhereInput[]
   }
 
+  export type FinanceQueryUpdateManyWithoutParentNestedInput = {
+    create?: XOR<FinanceQueryCreateWithoutParentInput, FinanceQueryUncheckedCreateWithoutParentInput> | FinanceQueryCreateWithoutParentInput[] | FinanceQueryUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutParentInput | FinanceQueryCreateOrConnectWithoutParentInput[]
+    upsert?: FinanceQueryUpsertWithWhereUniqueWithoutParentInput | FinanceQueryUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: FinanceQueryCreateManyParentInputEnvelope
+    set?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    disconnect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    delete?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    update?: FinanceQueryUpdateWithWhereUniqueWithoutParentInput | FinanceQueryUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: FinanceQueryUpdateManyWithWhereWithoutParentInput | FinanceQueryUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: FinanceQueryScalarWhereInput | FinanceQueryScalarWhereInput[]
+  }
+
   export type StudentUncheckedUpdateManyWithoutParentNestedInput = {
     create?: XOR<StudentCreateWithoutParentInput, StudentUncheckedCreateWithoutParentInput> | StudentCreateWithoutParentInput[] | StudentUncheckedCreateWithoutParentInput[]
     connectOrCreate?: StudentCreateOrConnectWithoutParentInput | StudentCreateOrConnectWithoutParentInput[]
@@ -76722,6 +78887,20 @@ export namespace Prisma {
     update?: ParentNotificationDeliveryLogUpdateWithWhereUniqueWithoutParentInput | ParentNotificationDeliveryLogUpdateWithWhereUniqueWithoutParentInput[]
     updateMany?: ParentNotificationDeliveryLogUpdateManyWithWhereWithoutParentInput | ParentNotificationDeliveryLogUpdateManyWithWhereWithoutParentInput[]
     deleteMany?: ParentNotificationDeliveryLogScalarWhereInput | ParentNotificationDeliveryLogScalarWhereInput[]
+  }
+
+  export type FinanceQueryUncheckedUpdateManyWithoutParentNestedInput = {
+    create?: XOR<FinanceQueryCreateWithoutParentInput, FinanceQueryUncheckedCreateWithoutParentInput> | FinanceQueryCreateWithoutParentInput[] | FinanceQueryUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutParentInput | FinanceQueryCreateOrConnectWithoutParentInput[]
+    upsert?: FinanceQueryUpsertWithWhereUniqueWithoutParentInput | FinanceQueryUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: FinanceQueryCreateManyParentInputEnvelope
+    set?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    disconnect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    delete?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    update?: FinanceQueryUpdateWithWhereUniqueWithoutParentInput | FinanceQueryUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: FinanceQueryUpdateManyWithWhereWithoutParentInput | FinanceQueryUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: FinanceQueryScalarWhereInput | FinanceQueryScalarWhereInput[]
   }
 
   export type SchoolNotificationSettingCreateactiveDaysInput = {
@@ -79155,6 +81334,13 @@ export namespace Prisma {
     connect?: DiscountWhereUniqueInput | DiscountWhereUniqueInput[]
   }
 
+  export type FinanceQueryCreateNestedManyWithoutStudentBillInput = {
+    create?: XOR<FinanceQueryCreateWithoutStudentBillInput, FinanceQueryUncheckedCreateWithoutStudentBillInput> | FinanceQueryCreateWithoutStudentBillInput[] | FinanceQueryUncheckedCreateWithoutStudentBillInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutStudentBillInput | FinanceQueryCreateOrConnectWithoutStudentBillInput[]
+    createMany?: FinanceQueryCreateManyStudentBillInputEnvelope
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+  }
+
   export type BillLineItemUncheckedCreateNestedManyWithoutStudentBillInput = {
     create?: XOR<BillLineItemCreateWithoutStudentBillInput, BillLineItemUncheckedCreateWithoutStudentBillInput> | BillLineItemCreateWithoutStudentBillInput[] | BillLineItemUncheckedCreateWithoutStudentBillInput[]
     connectOrCreate?: BillLineItemCreateOrConnectWithoutStudentBillInput | BillLineItemCreateOrConnectWithoutStudentBillInput[]
@@ -79174,6 +81360,13 @@ export namespace Prisma {
     connectOrCreate?: DiscountCreateOrConnectWithoutStudentBillInput | DiscountCreateOrConnectWithoutStudentBillInput[]
     createMany?: DiscountCreateManyStudentBillInputEnvelope
     connect?: DiscountWhereUniqueInput | DiscountWhereUniqueInput[]
+  }
+
+  export type FinanceQueryUncheckedCreateNestedManyWithoutStudentBillInput = {
+    create?: XOR<FinanceQueryCreateWithoutStudentBillInput, FinanceQueryUncheckedCreateWithoutStudentBillInput> | FinanceQueryCreateWithoutStudentBillInput[] | FinanceQueryUncheckedCreateWithoutStudentBillInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutStudentBillInput | FinanceQueryCreateOrConnectWithoutStudentBillInput[]
+    createMany?: FinanceQueryCreateManyStudentBillInputEnvelope
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
   }
 
   export type EnumBillStatusFieldUpdateOperationsInput = {
@@ -79246,6 +81439,20 @@ export namespace Prisma {
     deleteMany?: DiscountScalarWhereInput | DiscountScalarWhereInput[]
   }
 
+  export type FinanceQueryUpdateManyWithoutStudentBillNestedInput = {
+    create?: XOR<FinanceQueryCreateWithoutStudentBillInput, FinanceQueryUncheckedCreateWithoutStudentBillInput> | FinanceQueryCreateWithoutStudentBillInput[] | FinanceQueryUncheckedCreateWithoutStudentBillInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutStudentBillInput | FinanceQueryCreateOrConnectWithoutStudentBillInput[]
+    upsert?: FinanceQueryUpsertWithWhereUniqueWithoutStudentBillInput | FinanceQueryUpsertWithWhereUniqueWithoutStudentBillInput[]
+    createMany?: FinanceQueryCreateManyStudentBillInputEnvelope
+    set?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    disconnect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    delete?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    update?: FinanceQueryUpdateWithWhereUniqueWithoutStudentBillInput | FinanceQueryUpdateWithWhereUniqueWithoutStudentBillInput[]
+    updateMany?: FinanceQueryUpdateManyWithWhereWithoutStudentBillInput | FinanceQueryUpdateManyWithWhereWithoutStudentBillInput[]
+    deleteMany?: FinanceQueryScalarWhereInput | FinanceQueryScalarWhereInput[]
+  }
+
   export type BillLineItemUncheckedUpdateManyWithoutStudentBillNestedInput = {
     create?: XOR<BillLineItemCreateWithoutStudentBillInput, BillLineItemUncheckedCreateWithoutStudentBillInput> | BillLineItemCreateWithoutStudentBillInput[] | BillLineItemUncheckedCreateWithoutStudentBillInput[]
     connectOrCreate?: BillLineItemCreateOrConnectWithoutStudentBillInput | BillLineItemCreateOrConnectWithoutStudentBillInput[]
@@ -79286,6 +81493,20 @@ export namespace Prisma {
     update?: DiscountUpdateWithWhereUniqueWithoutStudentBillInput | DiscountUpdateWithWhereUniqueWithoutStudentBillInput[]
     updateMany?: DiscountUpdateManyWithWhereWithoutStudentBillInput | DiscountUpdateManyWithWhereWithoutStudentBillInput[]
     deleteMany?: DiscountScalarWhereInput | DiscountScalarWhereInput[]
+  }
+
+  export type FinanceQueryUncheckedUpdateManyWithoutStudentBillNestedInput = {
+    create?: XOR<FinanceQueryCreateWithoutStudentBillInput, FinanceQueryUncheckedCreateWithoutStudentBillInput> | FinanceQueryCreateWithoutStudentBillInput[] | FinanceQueryUncheckedCreateWithoutStudentBillInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutStudentBillInput | FinanceQueryCreateOrConnectWithoutStudentBillInput[]
+    upsert?: FinanceQueryUpsertWithWhereUniqueWithoutStudentBillInput | FinanceQueryUpsertWithWhereUniqueWithoutStudentBillInput[]
+    createMany?: FinanceQueryCreateManyStudentBillInputEnvelope
+    set?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    disconnect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    delete?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    update?: FinanceQueryUpdateWithWhereUniqueWithoutStudentBillInput | FinanceQueryUpdateWithWhereUniqueWithoutStudentBillInput[]
+    updateMany?: FinanceQueryUpdateManyWithWhereWithoutStudentBillInput | FinanceQueryUpdateManyWithWhereWithoutStudentBillInput[]
+    deleteMany?: FinanceQueryScalarWhereInput | FinanceQueryScalarWhereInput[]
   }
 
   export type StudentBillCreateNestedOneWithoutLineItemsInput = {
@@ -79341,6 +81562,13 @@ export namespace Prisma {
     connect?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
   }
 
+  export type FinanceQueryCreateNestedManyWithoutPaymentInput = {
+    create?: XOR<FinanceQueryCreateWithoutPaymentInput, FinanceQueryUncheckedCreateWithoutPaymentInput> | FinanceQueryCreateWithoutPaymentInput[] | FinanceQueryUncheckedCreateWithoutPaymentInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutPaymentInput | FinanceQueryCreateOrConnectWithoutPaymentInput[]
+    createMany?: FinanceQueryCreateManyPaymentInputEnvelope
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+  }
+
   export type PaymentReversalUncheckedCreateNestedOneWithoutPaymentInput = {
     create?: XOR<PaymentReversalCreateWithoutPaymentInput, PaymentReversalUncheckedCreateWithoutPaymentInput>
     connectOrCreate?: PaymentReversalCreateOrConnectWithoutPaymentInput
@@ -79352,6 +81580,13 @@ export namespace Prisma {
     connectOrCreate?: PaymentWebhookEventCreateOrConnectWithoutPaymentInput | PaymentWebhookEventCreateOrConnectWithoutPaymentInput[]
     createMany?: PaymentWebhookEventCreateManyPaymentInputEnvelope
     connect?: PaymentWebhookEventWhereUniqueInput | PaymentWebhookEventWhereUniqueInput[]
+  }
+
+  export type FinanceQueryUncheckedCreateNestedManyWithoutPaymentInput = {
+    create?: XOR<FinanceQueryCreateWithoutPaymentInput, FinanceQueryUncheckedCreateWithoutPaymentInput> | FinanceQueryCreateWithoutPaymentInput[] | FinanceQueryUncheckedCreateWithoutPaymentInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutPaymentInput | FinanceQueryCreateOrConnectWithoutPaymentInput[]
+    createMany?: FinanceQueryCreateManyPaymentInputEnvelope
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
   }
 
   export type EnumPaymentMethodFieldUpdateOperationsInput = {
@@ -79406,6 +81641,20 @@ export namespace Prisma {
     deleteMany?: PaymentWebhookEventScalarWhereInput | PaymentWebhookEventScalarWhereInput[]
   }
 
+  export type FinanceQueryUpdateManyWithoutPaymentNestedInput = {
+    create?: XOR<FinanceQueryCreateWithoutPaymentInput, FinanceQueryUncheckedCreateWithoutPaymentInput> | FinanceQueryCreateWithoutPaymentInput[] | FinanceQueryUncheckedCreateWithoutPaymentInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutPaymentInput | FinanceQueryCreateOrConnectWithoutPaymentInput[]
+    upsert?: FinanceQueryUpsertWithWhereUniqueWithoutPaymentInput | FinanceQueryUpsertWithWhereUniqueWithoutPaymentInput[]
+    createMany?: FinanceQueryCreateManyPaymentInputEnvelope
+    set?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    disconnect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    delete?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    update?: FinanceQueryUpdateWithWhereUniqueWithoutPaymentInput | FinanceQueryUpdateWithWhereUniqueWithoutPaymentInput[]
+    updateMany?: FinanceQueryUpdateManyWithWhereWithoutPaymentInput | FinanceQueryUpdateManyWithWhereWithoutPaymentInput[]
+    deleteMany?: FinanceQueryScalarWhereInput | FinanceQueryScalarWhereInput[]
+  }
+
   export type PaymentReversalUncheckedUpdateOneWithoutPaymentNestedInput = {
     create?: XOR<PaymentReversalCreateWithoutPaymentInput, PaymentReversalUncheckedCreateWithoutPaymentInput>
     connectOrCreate?: PaymentReversalCreateOrConnectWithoutPaymentInput
@@ -79428,6 +81677,20 @@ export namespace Prisma {
     update?: PaymentWebhookEventUpdateWithWhereUniqueWithoutPaymentInput | PaymentWebhookEventUpdateWithWhereUniqueWithoutPaymentInput[]
     updateMany?: PaymentWebhookEventUpdateManyWithWhereWithoutPaymentInput | PaymentWebhookEventUpdateManyWithWhereWithoutPaymentInput[]
     deleteMany?: PaymentWebhookEventScalarWhereInput | PaymentWebhookEventScalarWhereInput[]
+  }
+
+  export type FinanceQueryUncheckedUpdateManyWithoutPaymentNestedInput = {
+    create?: XOR<FinanceQueryCreateWithoutPaymentInput, FinanceQueryUncheckedCreateWithoutPaymentInput> | FinanceQueryCreateWithoutPaymentInput[] | FinanceQueryUncheckedCreateWithoutPaymentInput[]
+    connectOrCreate?: FinanceQueryCreateOrConnectWithoutPaymentInput | FinanceQueryCreateOrConnectWithoutPaymentInput[]
+    upsert?: FinanceQueryUpsertWithWhereUniqueWithoutPaymentInput | FinanceQueryUpsertWithWhereUniqueWithoutPaymentInput[]
+    createMany?: FinanceQueryCreateManyPaymentInputEnvelope
+    set?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    disconnect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    delete?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    connect?: FinanceQueryWhereUniqueInput | FinanceQueryWhereUniqueInput[]
+    update?: FinanceQueryUpdateWithWhereUniqueWithoutPaymentInput | FinanceQueryUpdateWithWhereUniqueWithoutPaymentInput[]
+    updateMany?: FinanceQueryUpdateManyWithWhereWithoutPaymentInput | FinanceQueryUpdateManyWithWhereWithoutPaymentInput[]
+    deleteMany?: FinanceQueryScalarWhereInput | FinanceQueryScalarWhereInput[]
   }
 
   export type SchoolCreateNestedOneWithoutPaymentReversalsInput = {
@@ -79520,6 +81783,86 @@ export namespace Prisma {
     upsert?: SchoolUpsertWithoutFinanceAuditLogsInput
     connect?: SchoolWhereUniqueInput
     update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutFinanceAuditLogsInput, SchoolUpdateWithoutFinanceAuditLogsInput>, SchoolUncheckedUpdateWithoutFinanceAuditLogsInput>
+  }
+
+  export type SchoolCreateNestedOneWithoutFinanceQueriesInput = {
+    create?: XOR<SchoolCreateWithoutFinanceQueriesInput, SchoolUncheckedCreateWithoutFinanceQueriesInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutFinanceQueriesInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type ParentCreateNestedOneWithoutFinanceQueriesInput = {
+    create?: XOR<ParentCreateWithoutFinanceQueriesInput, ParentUncheckedCreateWithoutFinanceQueriesInput>
+    connectOrCreate?: ParentCreateOrConnectWithoutFinanceQueriesInput
+    connect?: ParentWhereUniqueInput
+  }
+
+  export type StudentCreateNestedOneWithoutFinanceQueriesInput = {
+    create?: XOR<StudentCreateWithoutFinanceQueriesInput, StudentUncheckedCreateWithoutFinanceQueriesInput>
+    connectOrCreate?: StudentCreateOrConnectWithoutFinanceQueriesInput
+    connect?: StudentWhereUniqueInput
+  }
+
+  export type StudentBillCreateNestedOneWithoutFinanceQueriesInput = {
+    create?: XOR<StudentBillCreateWithoutFinanceQueriesInput, StudentBillUncheckedCreateWithoutFinanceQueriesInput>
+    connectOrCreate?: StudentBillCreateOrConnectWithoutFinanceQueriesInput
+    connect?: StudentBillWhereUniqueInput
+  }
+
+  export type PaymentCreateNestedOneWithoutFinanceQueriesInput = {
+    create?: XOR<PaymentCreateWithoutFinanceQueriesInput, PaymentUncheckedCreateWithoutFinanceQueriesInput>
+    connectOrCreate?: PaymentCreateOrConnectWithoutFinanceQueriesInput
+    connect?: PaymentWhereUniqueInput
+  }
+
+  export type EnumFinanceQueryReasonFieldUpdateOperationsInput = {
+    set?: $Enums.FinanceQueryReason
+  }
+
+  export type EnumFinanceQueryStatusFieldUpdateOperationsInput = {
+    set?: $Enums.FinanceQueryStatus
+  }
+
+  export type SchoolUpdateOneRequiredWithoutFinanceQueriesNestedInput = {
+    create?: XOR<SchoolCreateWithoutFinanceQueriesInput, SchoolUncheckedCreateWithoutFinanceQueriesInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutFinanceQueriesInput
+    upsert?: SchoolUpsertWithoutFinanceQueriesInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutFinanceQueriesInput, SchoolUpdateWithoutFinanceQueriesInput>, SchoolUncheckedUpdateWithoutFinanceQueriesInput>
+  }
+
+  export type ParentUpdateOneRequiredWithoutFinanceQueriesNestedInput = {
+    create?: XOR<ParentCreateWithoutFinanceQueriesInput, ParentUncheckedCreateWithoutFinanceQueriesInput>
+    connectOrCreate?: ParentCreateOrConnectWithoutFinanceQueriesInput
+    upsert?: ParentUpsertWithoutFinanceQueriesInput
+    connect?: ParentWhereUniqueInput
+    update?: XOR<XOR<ParentUpdateToOneWithWhereWithoutFinanceQueriesInput, ParentUpdateWithoutFinanceQueriesInput>, ParentUncheckedUpdateWithoutFinanceQueriesInput>
+  }
+
+  export type StudentUpdateOneRequiredWithoutFinanceQueriesNestedInput = {
+    create?: XOR<StudentCreateWithoutFinanceQueriesInput, StudentUncheckedCreateWithoutFinanceQueriesInput>
+    connectOrCreate?: StudentCreateOrConnectWithoutFinanceQueriesInput
+    upsert?: StudentUpsertWithoutFinanceQueriesInput
+    connect?: StudentWhereUniqueInput
+    update?: XOR<XOR<StudentUpdateToOneWithWhereWithoutFinanceQueriesInput, StudentUpdateWithoutFinanceQueriesInput>, StudentUncheckedUpdateWithoutFinanceQueriesInput>
+  }
+
+  export type StudentBillUpdateOneRequiredWithoutFinanceQueriesNestedInput = {
+    create?: XOR<StudentBillCreateWithoutFinanceQueriesInput, StudentBillUncheckedCreateWithoutFinanceQueriesInput>
+    connectOrCreate?: StudentBillCreateOrConnectWithoutFinanceQueriesInput
+    upsert?: StudentBillUpsertWithoutFinanceQueriesInput
+    connect?: StudentBillWhereUniqueInput
+    update?: XOR<XOR<StudentBillUpdateToOneWithWhereWithoutFinanceQueriesInput, StudentBillUpdateWithoutFinanceQueriesInput>, StudentBillUncheckedUpdateWithoutFinanceQueriesInput>
+  }
+
+  export type PaymentUpdateOneWithoutFinanceQueriesNestedInput = {
+    create?: XOR<PaymentCreateWithoutFinanceQueriesInput, PaymentUncheckedCreateWithoutFinanceQueriesInput>
+    connectOrCreate?: PaymentCreateOrConnectWithoutFinanceQueriesInput
+    upsert?: PaymentUpsertWithoutFinanceQueriesInput
+    disconnect?: PaymentWhereInput | boolean
+    delete?: PaymentWhereInput | boolean
+    connect?: PaymentWhereUniqueInput
+    update?: XOR<XOR<PaymentUpdateToOneWithWhereWithoutFinanceQueriesInput, PaymentUpdateWithoutFinanceQueriesInput>, PaymentUncheckedUpdateWithoutFinanceQueriesInput>
   }
 
   export type SchoolCreateNestedOneWithoutFinanceJobsInput = {
@@ -80303,6 +82646,40 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type NestedEnumFinanceQueryReasonFilter<$PrismaModel = never> = {
+    equals?: $Enums.FinanceQueryReason | EnumFinanceQueryReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.FinanceQueryReason[] | ListEnumFinanceQueryReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FinanceQueryReason[] | ListEnumFinanceQueryReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumFinanceQueryReasonFilter<$PrismaModel> | $Enums.FinanceQueryReason
+  }
+
+  export type NestedEnumFinanceQueryStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.FinanceQueryStatus | EnumFinanceQueryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.FinanceQueryStatus[] | ListEnumFinanceQueryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FinanceQueryStatus[] | ListEnumFinanceQueryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumFinanceQueryStatusFilter<$PrismaModel> | $Enums.FinanceQueryStatus
+  }
+
+  export type NestedEnumFinanceQueryReasonWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FinanceQueryReason | EnumFinanceQueryReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.FinanceQueryReason[] | ListEnumFinanceQueryReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FinanceQueryReason[] | ListEnumFinanceQueryReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumFinanceQueryReasonWithAggregatesFilter<$PrismaModel> | $Enums.FinanceQueryReason
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFinanceQueryReasonFilter<$PrismaModel>
+    _max?: NestedEnumFinanceQueryReasonFilter<$PrismaModel>
+  }
+
+  export type NestedEnumFinanceQueryStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FinanceQueryStatus | EnumFinanceQueryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.FinanceQueryStatus[] | ListEnumFinanceQueryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FinanceQueryStatus[] | ListEnumFinanceQueryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumFinanceQueryStatusWithAggregatesFilter<$PrismaModel> | $Enums.FinanceQueryStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFinanceQueryStatusFilter<$PrismaModel>
+    _max?: NestedEnumFinanceQueryStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumFinanceJobTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.FinanceJobType | EnumFinanceJobTypeFieldRefInput<$PrismaModel>
     in?: $Enums.FinanceJobType[] | ListEnumFinanceJobTypeFieldRefInput<$PrismaModel>
@@ -80481,6 +82858,7 @@ export namespace Prisma {
     bills?: StudentBillCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutSchoolInput = {
@@ -80505,6 +82883,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutSchoolInput = {
@@ -80589,6 +82968,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventCreateNestedManyWithoutParentInput
     notificationPreference?: ParentNotificationPreferenceCreateNestedOneWithoutParentInput
     notificationDeliveries?: ParentNotificationDeliveryLogCreateNestedManyWithoutParentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutSchoolInput = {
@@ -80605,6 +82985,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutParentInput
     notificationPreference?: ParentNotificationPreferenceUncheckedCreateNestedOneWithoutParentInput
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutParentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutSchoolInput = {
@@ -81222,6 +83603,7 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.FeeStructureStatus
     publishedAt?: Date | string | null
+    dueDate?: Date | string | null
     createdBy: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -81238,6 +83620,7 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.FeeStructureStatus
     publishedAt?: Date | string | null
+    dueDate?: Date | string | null
     gradeId: number
     createdBy: string
     createdAt?: Date | string
@@ -81262,6 +83645,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     generatedBy: string
     createdAt?: Date | string
@@ -81271,6 +83655,7 @@ export namespace Prisma {
     lineItems?: BillLineItemCreateNestedManyWithoutStudentBillInput
     payments?: PaymentCreateNestedManyWithoutStudentBillInput
     discounts?: DiscountCreateNestedManyWithoutStudentBillInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentBillInput
   }
 
   export type StudentBillUncheckedCreateWithoutSchoolInput = {
@@ -81280,6 +83665,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     studentId: string
     feeStructureId: number
@@ -81289,6 +83675,7 @@ export namespace Prisma {
     lineItems?: BillLineItemUncheckedCreateNestedManyWithoutStudentBillInput
     payments?: PaymentUncheckedCreateNestedManyWithoutStudentBillInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutStudentBillInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentBillInput
   }
 
   export type StudentBillCreateOrConnectWithoutSchoolInput = {
@@ -81318,6 +83705,7 @@ export namespace Prisma {
     studentBill: StudentBillCreateNestedOneWithoutPaymentsInput
     reversal?: PaymentReversalCreateNestedOneWithoutPaymentInput
     webhookEvents?: PaymentWebhookEventCreateNestedManyWithoutPaymentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentUncheckedCreateWithoutSchoolInput = {
@@ -81338,6 +83726,7 @@ export namespace Prisma {
     createdAt?: Date | string
     reversal?: PaymentReversalUncheckedCreateNestedOneWithoutPaymentInput
     webhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutPaymentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentCreateOrConnectWithoutSchoolInput = {
@@ -81403,6 +83792,47 @@ export namespace Prisma {
 
   export type DiscountCreateManySchoolInputEnvelope = {
     data: DiscountCreateManySchoolInput | DiscountCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FinanceQueryCreateWithoutSchoolInput = {
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parent: ParentCreateNestedOneWithoutFinanceQueriesInput
+    student: StudentCreateNestedOneWithoutFinanceQueriesInput
+    studentBill: StudentBillCreateNestedOneWithoutFinanceQueriesInput
+    payment?: PaymentCreateNestedOneWithoutFinanceQueriesInput
+  }
+
+  export type FinanceQueryUncheckedCreateWithoutSchoolInput = {
+    id?: number
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    parentId: string
+    studentId: string
+    studentBillId: number
+    paymentId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FinanceQueryCreateOrConnectWithoutSchoolInput = {
+    where: FinanceQueryWhereUniqueInput
+    create: XOR<FinanceQueryCreateWithoutSchoolInput, FinanceQueryUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type FinanceQueryCreateManySchoolInputEnvelope = {
+    data: FinanceQueryCreateManySchoolInput | FinanceQueryCreateManySchoolInput[]
     skipDuplicates?: boolean
   }
 
@@ -82565,6 +84995,7 @@ export namespace Prisma {
     term?: EnumTermFilter<"FeeStructure"> | $Enums.Term
     status?: EnumFeeStructureStatusFilter<"FeeStructure"> | $Enums.FeeStructureStatus
     publishedAt?: DateTimeNullableFilter<"FeeStructure"> | Date | string | null
+    dueDate?: DateTimeNullableFilter<"FeeStructure"> | Date | string | null
     schoolId?: StringFilter<"FeeStructure"> | string
     gradeId?: IntFilter<"FeeStructure"> | number
     createdBy?: StringFilter<"FeeStructure"> | string
@@ -82598,6 +85029,7 @@ export namespace Prisma {
     discountAmount?: DecimalFilter<"StudentBill"> | Decimal | DecimalJsLike | number | string
     balance?: DecimalFilter<"StudentBill"> | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFilter<"StudentBill"> | $Enums.BillStatus
+    dueDate?: DateTimeNullableFilter<"StudentBill"> | Date | string | null
     notes?: StringNullableFilter<"StudentBill"> | string | null
     schoolId?: StringFilter<"StudentBill"> | string
     studentId?: StringFilter<"StudentBill"> | string
@@ -82702,6 +85134,42 @@ export namespace Prisma {
     schoolId?: StringFilter<"Discount"> | string
     studentBillId?: IntFilter<"Discount"> | number
     createdAt?: DateTimeFilter<"Discount"> | Date | string
+  }
+
+  export type FinanceQueryUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: FinanceQueryWhereUniqueInput
+    update: XOR<FinanceQueryUpdateWithoutSchoolInput, FinanceQueryUncheckedUpdateWithoutSchoolInput>
+    create: XOR<FinanceQueryCreateWithoutSchoolInput, FinanceQueryUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type FinanceQueryUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: FinanceQueryWhereUniqueInput
+    data: XOR<FinanceQueryUpdateWithoutSchoolInput, FinanceQueryUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type FinanceQueryUpdateManyWithWhereWithoutSchoolInput = {
+    where: FinanceQueryScalarWhereInput
+    data: XOR<FinanceQueryUpdateManyMutationInput, FinanceQueryUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type FinanceQueryScalarWhereInput = {
+    AND?: FinanceQueryScalarWhereInput | FinanceQueryScalarWhereInput[]
+    OR?: FinanceQueryScalarWhereInput[]
+    NOT?: FinanceQueryScalarWhereInput | FinanceQueryScalarWhereInput[]
+    id?: IntFilter<"FinanceQuery"> | number
+    reason?: EnumFinanceQueryReasonFilter<"FinanceQuery"> | $Enums.FinanceQueryReason
+    message?: StringFilter<"FinanceQuery"> | string
+    status?: EnumFinanceQueryStatusFilter<"FinanceQuery"> | $Enums.FinanceQueryStatus
+    response?: StringNullableFilter<"FinanceQuery"> | string | null
+    resolvedAt?: DateTimeNullableFilter<"FinanceQuery"> | Date | string | null
+    resolvedBy?: StringNullableFilter<"FinanceQuery"> | string | null
+    schoolId?: StringFilter<"FinanceQuery"> | string
+    parentId?: StringFilter<"FinanceQuery"> | string
+    studentId?: StringFilter<"FinanceQuery"> | string
+    studentBillId?: IntFilter<"FinanceQuery"> | number
+    paymentId?: IntNullableFilter<"FinanceQuery"> | number | null
+    createdAt?: DateTimeFilter<"FinanceQuery"> | Date | string
+    updatedAt?: DateTimeFilter<"FinanceQuery"> | Date | string
   }
 
   export type ReceiptCounterUpsertWithWhereUniqueWithoutSchoolInput = {
@@ -83166,6 +85634,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -83224,6 +85693,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -83298,6 +85768,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -83356,6 +85827,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -83414,6 +85886,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -83472,6 +85945,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -83505,6 +85979,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventCreateNestedManyWithoutParentInput
     notificationPreference?: ParentNotificationPreferenceCreateNestedOneWithoutParentInput
     notificationDeliveries?: ParentNotificationDeliveryLogCreateNestedManyWithoutParentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutStudentsInput = {
@@ -83521,6 +85996,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutParentInput
     notificationPreference?: ParentNotificationPreferenceUncheckedCreateNestedOneWithoutParentInput
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutParentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutStudentsInput = {
@@ -83738,6 +86214,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     generatedBy: string
     createdAt?: Date | string
@@ -83747,6 +86224,7 @@ export namespace Prisma {
     lineItems?: BillLineItemCreateNestedManyWithoutStudentBillInput
     payments?: PaymentCreateNestedManyWithoutStudentBillInput
     discounts?: DiscountCreateNestedManyWithoutStudentBillInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentBillInput
   }
 
   export type StudentBillUncheckedCreateWithoutStudentInput = {
@@ -83756,6 +86234,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     schoolId?: string
     feeStructureId: number
@@ -83765,6 +86244,7 @@ export namespace Prisma {
     lineItems?: BillLineItemUncheckedCreateNestedManyWithoutStudentBillInput
     payments?: PaymentUncheckedCreateNestedManyWithoutStudentBillInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutStudentBillInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentBillInput
   }
 
   export type StudentBillCreateOrConnectWithoutStudentInput = {
@@ -83871,6 +86351,47 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type FinanceQueryCreateWithoutStudentInput = {
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutFinanceQueriesInput
+    parent: ParentCreateNestedOneWithoutFinanceQueriesInput
+    studentBill: StudentBillCreateNestedOneWithoutFinanceQueriesInput
+    payment?: PaymentCreateNestedOneWithoutFinanceQueriesInput
+  }
+
+  export type FinanceQueryUncheckedCreateWithoutStudentInput = {
+    id?: number
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    schoolId: string
+    parentId: string
+    studentBillId: number
+    paymentId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FinanceQueryCreateOrConnectWithoutStudentInput = {
+    where: FinanceQueryWhereUniqueInput
+    create: XOR<FinanceQueryCreateWithoutStudentInput, FinanceQueryUncheckedCreateWithoutStudentInput>
+  }
+
+  export type FinanceQueryCreateManyStudentInputEnvelope = {
+    data: FinanceQueryCreateManyStudentInput | FinanceQueryCreateManyStudentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SchoolUpsertWithoutStudentsInput = {
     update: XOR<SchoolUpdateWithoutStudentsInput, SchoolUncheckedUpdateWithoutStudentsInput>
     create: XOR<SchoolCreateWithoutStudentsInput, SchoolUncheckedCreateWithoutStudentsInput>
@@ -83926,6 +86447,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -83984,6 +86506,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -84023,6 +86546,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventUpdateManyWithoutParentNestedInput
     notificationPreference?: ParentNotificationPreferenceUpdateOneWithoutParentNestedInput
     notificationDeliveries?: ParentNotificationDeliveryLogUpdateManyWithoutParentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutStudentsInput = {
@@ -84039,6 +86563,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventUncheckedUpdateManyWithoutParentNestedInput
     notificationPreference?: ParentNotificationPreferenceUncheckedUpdateOneWithoutParentNestedInput
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutParentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type ClassUpsertWithoutStudentsInput = {
@@ -84227,6 +86752,22 @@ export namespace Prisma {
     data: XOR<ParentActivityEventUpdateManyMutationInput, ParentActivityEventUncheckedUpdateManyWithoutStudentInput>
   }
 
+  export type FinanceQueryUpsertWithWhereUniqueWithoutStudentInput = {
+    where: FinanceQueryWhereUniqueInput
+    update: XOR<FinanceQueryUpdateWithoutStudentInput, FinanceQueryUncheckedUpdateWithoutStudentInput>
+    create: XOR<FinanceQueryCreateWithoutStudentInput, FinanceQueryUncheckedCreateWithoutStudentInput>
+  }
+
+  export type FinanceQueryUpdateWithWhereUniqueWithoutStudentInput = {
+    where: FinanceQueryWhereUniqueInput
+    data: XOR<FinanceQueryUpdateWithoutStudentInput, FinanceQueryUncheckedUpdateWithoutStudentInput>
+  }
+
+  export type FinanceQueryUpdateManyWithWhereWithoutStudentInput = {
+    where: FinanceQueryScalarWhereInput
+    data: XOR<FinanceQueryUpdateManyMutationInput, FinanceQueryUncheckedUpdateManyWithoutStudentInput>
+  }
+
   export type SchoolCreateWithoutTeachersInput = {
     id: string
     name: string
@@ -84271,6 +86812,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -84329,6 +86871,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -84752,6 +87295,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -84810,6 +87354,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -85012,6 +87557,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -85070,6 +87616,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -85111,6 +87658,7 @@ export namespace Prisma {
     bills?: StudentBillCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutParentInput = {
@@ -85135,6 +87683,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutParentInput = {
@@ -85314,6 +87863,47 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type FinanceQueryCreateWithoutParentInput = {
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutFinanceQueriesInput
+    student: StudentCreateNestedOneWithoutFinanceQueriesInput
+    studentBill: StudentBillCreateNestedOneWithoutFinanceQueriesInput
+    payment?: PaymentCreateNestedOneWithoutFinanceQueriesInput
+  }
+
+  export type FinanceQueryUncheckedCreateWithoutParentInput = {
+    id?: number
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    schoolId: string
+    studentId: string
+    studentBillId: number
+    paymentId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FinanceQueryCreateOrConnectWithoutParentInput = {
+    where: FinanceQueryWhereUniqueInput
+    create: XOR<FinanceQueryCreateWithoutParentInput, FinanceQueryUncheckedCreateWithoutParentInput>
+  }
+
+  export type FinanceQueryCreateManyParentInputEnvelope = {
+    data: FinanceQueryCreateManyParentInput | FinanceQueryCreateManyParentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SchoolUpsertWithoutParentsInput = {
     update: XOR<SchoolUpdateWithoutParentsInput, SchoolUncheckedUpdateWithoutParentsInput>
     create: XOR<SchoolCreateWithoutParentsInput, SchoolUncheckedCreateWithoutParentsInput>
@@ -85369,6 +87959,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -85427,6 +88018,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -85544,6 +88136,22 @@ export namespace Prisma {
     data: XOR<ParentNotificationDeliveryLogUpdateManyMutationInput, ParentNotificationDeliveryLogUncheckedUpdateManyWithoutParentInput>
   }
 
+  export type FinanceQueryUpsertWithWhereUniqueWithoutParentInput = {
+    where: FinanceQueryWhereUniqueInput
+    update: XOR<FinanceQueryUpdateWithoutParentInput, FinanceQueryUncheckedUpdateWithoutParentInput>
+    create: XOR<FinanceQueryCreateWithoutParentInput, FinanceQueryUncheckedCreateWithoutParentInput>
+  }
+
+  export type FinanceQueryUpdateWithWhereUniqueWithoutParentInput = {
+    where: FinanceQueryWhereUniqueInput
+    data: XOR<FinanceQueryUpdateWithoutParentInput, FinanceQueryUncheckedUpdateWithoutParentInput>
+  }
+
+  export type FinanceQueryUpdateManyWithWhereWithoutParentInput = {
+    where: FinanceQueryScalarWhereInput
+    data: XOR<FinanceQueryUpdateManyMutationInput, FinanceQueryUncheckedUpdateManyWithoutParentInput>
+  }
+
   export type SchoolCreateWithoutNotificationSettingsInput = {
     id: string
     name: string
@@ -85589,6 +88197,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -85647,6 +88256,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -85721,6 +88331,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -85779,6 +88390,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -85837,6 +88449,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -85895,6 +88508,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -85927,6 +88541,7 @@ export namespace Prisma {
     notifications?: ParentNotificationCreateNestedManyWithoutParentInput
     activityEvents?: ParentActivityEventCreateNestedManyWithoutParentInput
     notificationDeliveries?: ParentNotificationDeliveryLogCreateNestedManyWithoutParentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutNotificationPreferenceInput = {
@@ -85943,6 +88558,7 @@ export namespace Prisma {
     notifications?: ParentNotificationUncheckedCreateNestedManyWithoutParentInput
     activityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutParentInput
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutParentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutNotificationPreferenceInput = {
@@ -86006,6 +88622,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -86064,6 +88681,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -86102,6 +88720,7 @@ export namespace Prisma {
     notifications?: ParentNotificationUpdateManyWithoutParentNestedInput
     activityEvents?: ParentActivityEventUpdateManyWithoutParentNestedInput
     notificationDeliveries?: ParentNotificationDeliveryLogUpdateManyWithoutParentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutNotificationPreferenceInput = {
@@ -86118,6 +88737,7 @@ export namespace Prisma {
     notifications?: ParentNotificationUncheckedUpdateManyWithoutParentNestedInput
     activityEvents?: ParentActivityEventUncheckedUpdateManyWithoutParentNestedInput
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutParentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type SchoolCreateWithoutParentNotificationsInput = {
@@ -86165,6 +88785,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -86223,6 +88844,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -86255,6 +88877,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventCreateNestedManyWithoutParentInput
     notificationPreference?: ParentNotificationPreferenceCreateNestedOneWithoutParentInput
     notificationDeliveries?: ParentNotificationDeliveryLogCreateNestedManyWithoutParentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutNotificationsInput = {
@@ -86271,6 +88894,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutParentInput
     notificationPreference?: ParentNotificationPreferenceUncheckedCreateNestedOneWithoutParentInput
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutParentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutNotificationsInput = {
@@ -86300,6 +88924,7 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
     bills?: StudentBillCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutParentNotificationsInput = {
@@ -86324,6 +88949,7 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutParentNotificationsInput = {
@@ -86427,6 +89053,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -86485,6 +89112,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -86523,6 +89151,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventUpdateManyWithoutParentNestedInput
     notificationPreference?: ParentNotificationPreferenceUpdateOneWithoutParentNestedInput
     notificationDeliveries?: ParentNotificationDeliveryLogUpdateManyWithoutParentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutNotificationsInput = {
@@ -86539,6 +89168,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventUncheckedUpdateManyWithoutParentNestedInput
     notificationPreference?: ParentNotificationPreferenceUncheckedUpdateOneWithoutParentNestedInput
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutParentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type StudentUpsertWithoutParentNotificationsInput = {
@@ -86574,6 +89204,7 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutParentNotificationsInput = {
@@ -86598,6 +89229,7 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type ParentNotificationDeliveryLogUpsertWithWhereUniqueWithoutNotificationInput = {
@@ -86661,6 +89293,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -86719,6 +89352,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -86751,6 +89385,7 @@ export namespace Prisma {
     notifications?: ParentNotificationCreateNestedManyWithoutParentInput
     activityEvents?: ParentActivityEventCreateNestedManyWithoutParentInput
     notificationPreference?: ParentNotificationPreferenceCreateNestedOneWithoutParentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutNotificationDeliveriesInput = {
@@ -86767,6 +89402,7 @@ export namespace Prisma {
     notifications?: ParentNotificationUncheckedCreateNestedManyWithoutParentInput
     activityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutParentInput
     notificationPreference?: ParentNotificationPreferenceUncheckedCreateNestedOneWithoutParentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutNotificationDeliveriesInput = {
@@ -86875,6 +89511,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -86933,6 +89570,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -86971,6 +89609,7 @@ export namespace Prisma {
     notifications?: ParentNotificationUpdateManyWithoutParentNestedInput
     activityEvents?: ParentActivityEventUpdateManyWithoutParentNestedInput
     notificationPreference?: ParentNotificationPreferenceUpdateOneWithoutParentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutNotificationDeliveriesInput = {
@@ -86987,6 +89626,7 @@ export namespace Prisma {
     notifications?: ParentNotificationUncheckedUpdateManyWithoutParentNestedInput
     activityEvents?: ParentActivityEventUncheckedUpdateManyWithoutParentNestedInput
     notificationPreference?: ParentNotificationPreferenceUncheckedUpdateOneWithoutParentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type ParentNotificationUpsertWithoutDeliveriesInput = {
@@ -87085,6 +89725,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -87143,6 +89784,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -87175,6 +89817,7 @@ export namespace Prisma {
     notifications?: ParentNotificationCreateNestedManyWithoutParentInput
     notificationPreference?: ParentNotificationPreferenceCreateNestedOneWithoutParentInput
     notificationDeliveries?: ParentNotificationDeliveryLogCreateNestedManyWithoutParentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutActivityEventsInput = {
@@ -87191,6 +89834,7 @@ export namespace Prisma {
     notifications?: ParentNotificationUncheckedCreateNestedManyWithoutParentInput
     notificationPreference?: ParentNotificationPreferenceUncheckedCreateNestedOneWithoutParentInput
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutParentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutActivityEventsInput = {
@@ -87220,6 +89864,7 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
     bills?: StudentBillCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutParentActivityEventsInput = {
@@ -87244,6 +89889,7 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutParentActivityEventsInput = {
@@ -87360,6 +90006,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -87418,6 +90065,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -87456,6 +90104,7 @@ export namespace Prisma {
     notifications?: ParentNotificationUpdateManyWithoutParentNestedInput
     notificationPreference?: ParentNotificationPreferenceUpdateOneWithoutParentNestedInput
     notificationDeliveries?: ParentNotificationDeliveryLogUpdateManyWithoutParentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutActivityEventsInput = {
@@ -87472,6 +90121,7 @@ export namespace Prisma {
     notifications?: ParentNotificationUncheckedUpdateManyWithoutParentNestedInput
     notificationPreference?: ParentNotificationPreferenceUncheckedUpdateOneWithoutParentNestedInput
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutParentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type StudentUpsertWithoutParentActivityEventsInput = {
@@ -87507,6 +90157,7 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutParentActivityEventsInput = {
@@ -87531,6 +90182,7 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type TeacherUpsertWithoutParentActivityEventsInput = {
@@ -87636,6 +90288,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -87694,6 +90347,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -87735,6 +90389,7 @@ export namespace Prisma {
     bills?: StudentBillCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutGradeInput = {
@@ -87759,6 +90414,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutGradeInput = {
@@ -87856,6 +90512,7 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.FeeStructureStatus
     publishedAt?: Date | string | null
+    dueDate?: Date | string | null
     createdBy: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -87872,6 +90529,7 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.FeeStructureStatus
     publishedAt?: Date | string | null
+    dueDate?: Date | string | null
     schoolId?: string
     createdBy: string
     createdAt?: Date | string
@@ -87945,6 +90603,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -88003,6 +90662,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -88125,6 +90785,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -88183,6 +90844,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -88314,6 +90976,7 @@ export namespace Prisma {
     bills?: StudentBillCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutClassInput = {
@@ -88338,6 +91001,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutClassInput = {
@@ -88647,6 +91311,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -88705,6 +91370,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -88980,6 +91646,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -89038,6 +91705,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -89374,6 +92042,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -89432,6 +92101,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -89586,6 +92256,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -89644,6 +92315,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -89922,6 +92594,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -89980,6 +92653,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -90221,6 +92895,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -90279,6 +92954,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -90414,6 +93090,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -90472,6 +93149,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -90584,6 +93262,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -90642,6 +93321,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -90777,6 +93457,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -90835,6 +93516,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -90947,6 +93629,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -91005,6 +93688,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -91090,6 +93774,7 @@ export namespace Prisma {
     bills?: StudentBillCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutResultsInput = {
@@ -91114,6 +93799,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutResultsInput = {
@@ -91176,6 +93862,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -91234,6 +93921,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -91337,6 +94025,7 @@ export namespace Prisma {
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutResultsInput = {
@@ -91361,6 +94050,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type SchoolCreateWithoutAttendancesInput = {
@@ -91407,6 +94097,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -91465,6 +94156,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -91506,6 +94198,7 @@ export namespace Prisma {
     bills?: StudentBillCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutAttendancesInput = {
@@ -91530,6 +94223,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutAttendancesInput = {
@@ -91624,6 +94318,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -91682,6 +94377,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -91729,6 +94425,7 @@ export namespace Prisma {
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutAttendancesInput = {
@@ -91753,6 +94450,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type LessonUpsertWithoutAttendancesInput = {
@@ -91837,6 +94535,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -91895,6 +94594,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -92007,6 +94707,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -92065,6 +94766,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -92167,6 +94869,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -92225,6 +94928,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -92337,6 +95041,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -92395,6 +95100,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -92497,6 +95203,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -92555,6 +95262,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -92629,6 +95337,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -92687,6 +95396,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -92745,6 +95455,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -92803,6 +95514,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -93039,6 +95751,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -93097,6 +95810,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -93306,6 +96020,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -93364,6 +96079,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -93628,6 +96344,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -93686,6 +96403,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -93941,6 +96659,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -93999,6 +96718,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -94080,6 +96800,7 @@ export namespace Prisma {
     bills?: StudentBillCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutCaActivityScoresInput = {
@@ -94104,6 +96825,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutCaActivityScoresInput = {
@@ -94219,6 +96941,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -94277,6 +97000,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -94370,6 +97094,7 @@ export namespace Prisma {
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutCaActivityScoresInput = {
@@ -94394,6 +97119,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type TeacherUpsertWithoutCaActivityScoresInput = {
@@ -94499,6 +97225,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -94557,6 +97284,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -94631,6 +97359,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -94689,6 +97418,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -94747,6 +97477,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -94805,6 +97536,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -94846,6 +97578,7 @@ export namespace Prisma {
     bills?: StudentBillCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutContinuousAssessmentsInput = {
@@ -94870,6 +97603,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutContinuousAssessmentsInput = {
@@ -95049,6 +97783,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -95107,6 +97842,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -95154,6 +97890,7 @@ export namespace Prisma {
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutContinuousAssessmentsInput = {
@@ -95178,6 +97915,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type TeacherUpsertWithoutContinuousAssessmentsInput = {
@@ -95359,6 +98097,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -95417,6 +98156,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -95580,6 +98320,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -95638,6 +98379,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -95903,6 +98645,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -95961,6 +98704,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -96160,6 +98904,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -96218,6 +98963,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -96419,6 +99165,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -96477,6 +99224,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -96557,6 +99305,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     generatedBy: string
     createdAt?: Date | string
@@ -96566,6 +99315,7 @@ export namespace Prisma {
     lineItems?: BillLineItemCreateNestedManyWithoutStudentBillInput
     payments?: PaymentCreateNestedManyWithoutStudentBillInput
     discounts?: DiscountCreateNestedManyWithoutStudentBillInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentBillInput
   }
 
   export type StudentBillUncheckedCreateWithoutFeeStructureInput = {
@@ -96575,6 +99325,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     schoolId?: string
     studentId: string
@@ -96584,6 +99335,7 @@ export namespace Prisma {
     lineItems?: BillLineItemUncheckedCreateNestedManyWithoutStudentBillInput
     payments?: PaymentUncheckedCreateNestedManyWithoutStudentBillInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutStudentBillInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentBillInput
   }
 
   export type StudentBillCreateOrConnectWithoutFeeStructureInput = {
@@ -96651,6 +99403,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -96709,6 +99462,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -96806,6 +99560,7 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.FeeStructureStatus
     publishedAt?: Date | string | null
+    dueDate?: Date | string | null
     createdBy: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -96822,6 +99577,7 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.FeeStructureStatus
     publishedAt?: Date | string | null
+    dueDate?: Date | string | null
     schoolId?: string
     gradeId: number
     createdBy: string
@@ -96884,6 +99640,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumFeeStructureStatusFieldUpdateOperationsInput | $Enums.FeeStructureStatus
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -96900,6 +99657,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumFeeStructureStatusFieldUpdateOperationsInput | $Enums.FeeStructureStatus
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     gradeId?: IntFieldUpdateOperationsInput | number
     createdBy?: StringFieldUpdateOperationsInput | string
@@ -96983,6 +99741,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -97041,6 +99800,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -97082,6 +99842,7 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutBillsInput = {
@@ -97106,6 +99867,7 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutBillsInput = {
@@ -97120,6 +99882,7 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.FeeStructureStatus
     publishedAt?: Date | string | null
+    dueDate?: Date | string | null
     createdBy: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -97136,6 +99899,7 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.FeeStructureStatus
     publishedAt?: Date | string | null
+    dueDate?: Date | string | null
     schoolId?: string
     gradeId: number
     createdBy: string
@@ -97197,6 +99961,7 @@ export namespace Prisma {
     school?: SchoolCreateNestedOneWithoutPaymentsInput
     reversal?: PaymentReversalCreateNestedOneWithoutPaymentInput
     webhookEvents?: PaymentWebhookEventCreateNestedManyWithoutPaymentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentUncheckedCreateWithoutStudentBillInput = {
@@ -97217,6 +99982,7 @@ export namespace Prisma {
     createdAt?: Date | string
     reversal?: PaymentReversalUncheckedCreateNestedOneWithoutPaymentInput
     webhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutPaymentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentCreateOrConnectWithoutStudentBillInput = {
@@ -97257,6 +100023,47 @@ export namespace Prisma {
 
   export type DiscountCreateManyStudentBillInputEnvelope = {
     data: DiscountCreateManyStudentBillInput | DiscountCreateManyStudentBillInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FinanceQueryCreateWithoutStudentBillInput = {
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutFinanceQueriesInput
+    parent: ParentCreateNestedOneWithoutFinanceQueriesInput
+    student: StudentCreateNestedOneWithoutFinanceQueriesInput
+    payment?: PaymentCreateNestedOneWithoutFinanceQueriesInput
+  }
+
+  export type FinanceQueryUncheckedCreateWithoutStudentBillInput = {
+    id?: number
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    schoolId: string
+    parentId: string
+    studentId: string
+    paymentId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FinanceQueryCreateOrConnectWithoutStudentBillInput = {
+    where: FinanceQueryWhereUniqueInput
+    create: XOR<FinanceQueryCreateWithoutStudentBillInput, FinanceQueryUncheckedCreateWithoutStudentBillInput>
+  }
+
+  export type FinanceQueryCreateManyStudentBillInputEnvelope = {
+    data: FinanceQueryCreateManyStudentBillInput | FinanceQueryCreateManyStudentBillInput[]
     skipDuplicates?: boolean
   }
 
@@ -97315,6 +100122,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -97373,6 +100181,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -97420,6 +100229,7 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutBillsInput = {
@@ -97444,6 +100254,7 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type FeeStructureUpsertWithoutBillsInput = {
@@ -97464,6 +100275,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumFeeStructureStatusFieldUpdateOperationsInput | $Enums.FeeStructureStatus
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -97480,6 +100292,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumFeeStructureStatusFieldUpdateOperationsInput | $Enums.FeeStructureStatus
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     gradeId?: IntFieldUpdateOperationsInput | number
     createdBy?: StringFieldUpdateOperationsInput | string
@@ -97536,12 +100349,29 @@ export namespace Prisma {
     data: XOR<DiscountUpdateManyMutationInput, DiscountUncheckedUpdateManyWithoutStudentBillInput>
   }
 
+  export type FinanceQueryUpsertWithWhereUniqueWithoutStudentBillInput = {
+    where: FinanceQueryWhereUniqueInput
+    update: XOR<FinanceQueryUpdateWithoutStudentBillInput, FinanceQueryUncheckedUpdateWithoutStudentBillInput>
+    create: XOR<FinanceQueryCreateWithoutStudentBillInput, FinanceQueryUncheckedCreateWithoutStudentBillInput>
+  }
+
+  export type FinanceQueryUpdateWithWhereUniqueWithoutStudentBillInput = {
+    where: FinanceQueryWhereUniqueInput
+    data: XOR<FinanceQueryUpdateWithoutStudentBillInput, FinanceQueryUncheckedUpdateWithoutStudentBillInput>
+  }
+
+  export type FinanceQueryUpdateManyWithWhereWithoutStudentBillInput = {
+    where: FinanceQueryScalarWhereInput
+    data: XOR<FinanceQueryUpdateManyMutationInput, FinanceQueryUncheckedUpdateManyWithoutStudentBillInput>
+  }
+
   export type StudentBillCreateWithoutLineItemsInput = {
     totalAmount: Decimal | DecimalJsLike | number | string
     amountPaid?: Decimal | DecimalJsLike | number | string
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     generatedBy: string
     createdAt?: Date | string
@@ -97551,6 +100381,7 @@ export namespace Prisma {
     feeStructure: FeeStructureCreateNestedOneWithoutBillsInput
     payments?: PaymentCreateNestedManyWithoutStudentBillInput
     discounts?: DiscountCreateNestedManyWithoutStudentBillInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentBillInput
   }
 
   export type StudentBillUncheckedCreateWithoutLineItemsInput = {
@@ -97560,6 +100391,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     schoolId?: string
     studentId: string
@@ -97569,6 +100401,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     payments?: PaymentUncheckedCreateNestedManyWithoutStudentBillInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutStudentBillInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentBillInput
   }
 
   export type StudentBillCreateOrConnectWithoutLineItemsInput = {
@@ -97619,6 +100452,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     generatedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -97628,6 +100462,7 @@ export namespace Prisma {
     feeStructure?: FeeStructureUpdateOneRequiredWithoutBillsNestedInput
     payments?: PaymentUpdateManyWithoutStudentBillNestedInput
     discounts?: DiscountUpdateManyWithoutStudentBillNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentBillNestedInput
   }
 
   export type StudentBillUncheckedUpdateWithoutLineItemsInput = {
@@ -97637,6 +100472,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     studentId?: StringFieldUpdateOperationsInput | string
@@ -97646,6 +100482,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     payments?: PaymentUncheckedUpdateManyWithoutStudentBillNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutStudentBillNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentBillNestedInput
   }
 
   export type FeeItemUpsertWithoutBillLineItemsInput = {
@@ -97724,6 +100561,7 @@ export namespace Prisma {
     studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -97782,6 +100620,7 @@ export namespace Prisma {
     studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -97807,6 +100646,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     generatedBy: string
     createdAt?: Date | string
@@ -97816,6 +100656,7 @@ export namespace Prisma {
     feeStructure: FeeStructureCreateNestedOneWithoutBillsInput
     lineItems?: BillLineItemCreateNestedManyWithoutStudentBillInput
     discounts?: DiscountCreateNestedManyWithoutStudentBillInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentBillInput
   }
 
   export type StudentBillUncheckedCreateWithoutPaymentsInput = {
@@ -97825,6 +100666,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     schoolId?: string
     studentId: string
@@ -97834,6 +100676,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     lineItems?: BillLineItemUncheckedCreateNestedManyWithoutStudentBillInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutStudentBillInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentBillInput
   }
 
   export type StudentBillCreateOrConnectWithoutPaymentsInput = {
@@ -97899,6 +100742,47 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type FinanceQueryCreateWithoutPaymentInput = {
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutFinanceQueriesInput
+    parent: ParentCreateNestedOneWithoutFinanceQueriesInput
+    student: StudentCreateNestedOneWithoutFinanceQueriesInput
+    studentBill: StudentBillCreateNestedOneWithoutFinanceQueriesInput
+  }
+
+  export type FinanceQueryUncheckedCreateWithoutPaymentInput = {
+    id?: number
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    schoolId: string
+    parentId: string
+    studentId: string
+    studentBillId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FinanceQueryCreateOrConnectWithoutPaymentInput = {
+    where: FinanceQueryWhereUniqueInput
+    create: XOR<FinanceQueryCreateWithoutPaymentInput, FinanceQueryUncheckedCreateWithoutPaymentInput>
+  }
+
+  export type FinanceQueryCreateManyPaymentInputEnvelope = {
+    data: FinanceQueryCreateManyPaymentInput | FinanceQueryCreateManyPaymentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SchoolUpsertWithoutPaymentsInput = {
     update: XOR<SchoolUpdateWithoutPaymentsInput, SchoolUncheckedUpdateWithoutPaymentsInput>
     create: XOR<SchoolCreateWithoutPaymentsInput, SchoolUncheckedCreateWithoutPaymentsInput>
@@ -97954,6 +100838,7 @@ export namespace Prisma {
     studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -98012,6 +100897,7 @@ export namespace Prisma {
     studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -98043,6 +100929,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     generatedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -98052,6 +100939,7 @@ export namespace Prisma {
     feeStructure?: FeeStructureUpdateOneRequiredWithoutBillsNestedInput
     lineItems?: BillLineItemUpdateManyWithoutStudentBillNestedInput
     discounts?: DiscountUpdateManyWithoutStudentBillNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentBillNestedInput
   }
 
   export type StudentBillUncheckedUpdateWithoutPaymentsInput = {
@@ -98061,6 +100949,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     studentId?: StringFieldUpdateOperationsInput | string
@@ -98070,6 +100959,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lineItems?: BillLineItemUncheckedUpdateManyWithoutStudentBillNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutStudentBillNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentBillNestedInput
   }
 
   export type PaymentReversalUpsertWithoutPaymentInput = {
@@ -98112,6 +101002,22 @@ export namespace Prisma {
   export type PaymentWebhookEventUpdateManyWithWhereWithoutPaymentInput = {
     where: PaymentWebhookEventScalarWhereInput
     data: XOR<PaymentWebhookEventUpdateManyMutationInput, PaymentWebhookEventUncheckedUpdateManyWithoutPaymentInput>
+  }
+
+  export type FinanceQueryUpsertWithWhereUniqueWithoutPaymentInput = {
+    where: FinanceQueryWhereUniqueInput
+    update: XOR<FinanceQueryUpdateWithoutPaymentInput, FinanceQueryUncheckedUpdateWithoutPaymentInput>
+    create: XOR<FinanceQueryCreateWithoutPaymentInput, FinanceQueryUncheckedCreateWithoutPaymentInput>
+  }
+
+  export type FinanceQueryUpdateWithWhereUniqueWithoutPaymentInput = {
+    where: FinanceQueryWhereUniqueInput
+    data: XOR<FinanceQueryUpdateWithoutPaymentInput, FinanceQueryUncheckedUpdateWithoutPaymentInput>
+  }
+
+  export type FinanceQueryUpdateManyWithWhereWithoutPaymentInput = {
+    where: FinanceQueryScalarWhereInput
+    data: XOR<FinanceQueryUpdateManyMutationInput, FinanceQueryUncheckedUpdateManyWithoutPaymentInput>
   }
 
   export type SchoolCreateWithoutPaymentReversalsInput = {
@@ -98158,6 +101064,7 @@ export namespace Prisma {
     studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -98216,6 +101123,7 @@ export namespace Prisma {
     studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -98252,6 +101160,7 @@ export namespace Prisma {
     school?: SchoolCreateNestedOneWithoutPaymentsInput
     studentBill: StudentBillCreateNestedOneWithoutPaymentsInput
     webhookEvents?: PaymentWebhookEventCreateNestedManyWithoutPaymentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentUncheckedCreateWithoutReversalInput = {
@@ -98272,6 +101181,7 @@ export namespace Prisma {
     recordedBy: string
     createdAt?: Date | string
     webhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutPaymentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentCreateOrConnectWithoutReversalInput = {
@@ -98334,6 +101244,7 @@ export namespace Prisma {
     studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -98392,6 +101303,7 @@ export namespace Prisma {
     studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -98434,6 +101346,7 @@ export namespace Prisma {
     school?: SchoolUpdateOneRequiredWithoutPaymentsNestedInput
     studentBill?: StudentBillUpdateOneRequiredWithoutPaymentsNestedInput
     webhookEvents?: PaymentWebhookEventUpdateManyWithoutPaymentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentUncheckedUpdateWithoutReversalInput = {
@@ -98454,6 +101367,7 @@ export namespace Prisma {
     recordedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     webhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutPaymentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutPaymentNestedInput
   }
 
   export type SchoolCreateWithoutDiscountsInput = {
@@ -98500,6 +101414,7 @@ export namespace Prisma {
     studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -98558,6 +101473,7 @@ export namespace Prisma {
     studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -98583,6 +101499,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     generatedBy: string
     createdAt?: Date | string
@@ -98592,6 +101509,7 @@ export namespace Prisma {
     feeStructure: FeeStructureCreateNestedOneWithoutBillsInput
     lineItems?: BillLineItemCreateNestedManyWithoutStudentBillInput
     payments?: PaymentCreateNestedManyWithoutStudentBillInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentBillInput
   }
 
   export type StudentBillUncheckedCreateWithoutDiscountsInput = {
@@ -98601,6 +101519,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     schoolId?: string
     studentId: string
@@ -98610,6 +101529,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     lineItems?: BillLineItemUncheckedCreateNestedManyWithoutStudentBillInput
     payments?: PaymentUncheckedCreateNestedManyWithoutStudentBillInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentBillInput
   }
 
   export type StudentBillCreateOrConnectWithoutDiscountsInput = {
@@ -98672,6 +101592,7 @@ export namespace Prisma {
     studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -98730,6 +101651,7 @@ export namespace Prisma {
     studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -98761,6 +101683,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     generatedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -98770,6 +101693,7 @@ export namespace Prisma {
     feeStructure?: FeeStructureUpdateOneRequiredWithoutBillsNestedInput
     lineItems?: BillLineItemUpdateManyWithoutStudentBillNestedInput
     payments?: PaymentUpdateManyWithoutStudentBillNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentBillNestedInput
   }
 
   export type StudentBillUncheckedUpdateWithoutDiscountsInput = {
@@ -98779,6 +101703,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     studentId?: StringFieldUpdateOperationsInput | string
@@ -98788,6 +101713,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lineItems?: BillLineItemUncheckedUpdateManyWithoutStudentBillNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutStudentBillNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentBillNestedInput
   }
 
   export type SchoolCreateWithoutReceiptCountersInput = {
@@ -98835,6 +101761,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
@@ -98893,6 +101820,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
@@ -98967,6 +101895,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
@@ -99025,6 +101954,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
@@ -99083,6 +102013,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
@@ -99141,6 +102072,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
@@ -99215,6 +102147,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
@@ -99273,6 +102206,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
@@ -99284,6 +102218,650 @@ export namespace Prisma {
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolCreateWithoutFinanceQueriesInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutFinanceQueriesInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutFinanceQueriesInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutFinanceQueriesInput, SchoolUncheckedCreateWithoutFinanceQueriesInput>
+  }
+
+  export type ParentCreateWithoutFinanceQueriesInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    createdAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutParentsInput
+    students?: StudentCreateNestedManyWithoutParentInput
+    notifications?: ParentNotificationCreateNestedManyWithoutParentInput
+    activityEvents?: ParentActivityEventCreateNestedManyWithoutParentInput
+    notificationPreference?: ParentNotificationPreferenceCreateNestedOneWithoutParentInput
+    notificationDeliveries?: ParentNotificationDeliveryLogCreateNestedManyWithoutParentInput
+  }
+
+  export type ParentUncheckedCreateWithoutFinanceQueriesInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    createdAt?: Date | string
+    schoolId?: string
+    students?: StudentUncheckedCreateNestedManyWithoutParentInput
+    notifications?: ParentNotificationUncheckedCreateNestedManyWithoutParentInput
+    activityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutParentInput
+    notificationPreference?: ParentNotificationPreferenceUncheckedCreateNestedOneWithoutParentInput
+    notificationDeliveries?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type ParentCreateOrConnectWithoutFinanceQueriesInput = {
+    where: ParentWhereUniqueInput
+    create: XOR<ParentCreateWithoutFinanceQueriesInput, ParentUncheckedCreateWithoutFinanceQueriesInput>
+  }
+
+  export type StudentCreateWithoutFinanceQueriesInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutStudentsInput
+    parent: ParentCreateNestedOneWithoutStudentsInput
+    class: ClassCreateNestedOneWithoutStudentsInput
+    grade: GradeCreateNestedOneWithoutStudentsInput
+    attendances?: AttendanceCreateNestedManyWithoutStudentInput
+    results?: ResultCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
+    bills?: StudentBillCreateNestedManyWithoutStudentInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentUncheckedCreateWithoutFinanceQueriesInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    schoolId?: string
+    parentId: string
+    classId: number
+    gradeId: number
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutStudentInput
+    results?: ResultUncheckedCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
+    bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentCreateOrConnectWithoutFinanceQueriesInput = {
+    where: StudentWhereUniqueInput
+    create: XOR<StudentCreateWithoutFinanceQueriesInput, StudentUncheckedCreateWithoutFinanceQueriesInput>
+  }
+
+  export type StudentBillCreateWithoutFinanceQueriesInput = {
+    totalAmount: Decimal | DecimalJsLike | number | string
+    amountPaid?: Decimal | DecimalJsLike | number | string
+    discountAmount?: Decimal | DecimalJsLike | number | string
+    balance: Decimal | DecimalJsLike | number | string
+    status?: $Enums.BillStatus
+    dueDate?: Date | string | null
+    notes?: string | null
+    generatedBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutStudentBillsInput
+    student: StudentCreateNestedOneWithoutBillsInput
+    feeStructure: FeeStructureCreateNestedOneWithoutBillsInput
+    lineItems?: BillLineItemCreateNestedManyWithoutStudentBillInput
+    payments?: PaymentCreateNestedManyWithoutStudentBillInput
+    discounts?: DiscountCreateNestedManyWithoutStudentBillInput
+  }
+
+  export type StudentBillUncheckedCreateWithoutFinanceQueriesInput = {
+    id?: number
+    totalAmount: Decimal | DecimalJsLike | number | string
+    amountPaid?: Decimal | DecimalJsLike | number | string
+    discountAmount?: Decimal | DecimalJsLike | number | string
+    balance: Decimal | DecimalJsLike | number | string
+    status?: $Enums.BillStatus
+    dueDate?: Date | string | null
+    notes?: string | null
+    schoolId?: string
+    studentId: string
+    feeStructureId: number
+    generatedBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lineItems?: BillLineItemUncheckedCreateNestedManyWithoutStudentBillInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutStudentBillInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutStudentBillInput
+  }
+
+  export type StudentBillCreateOrConnectWithoutFinanceQueriesInput = {
+    where: StudentBillWhereUniqueInput
+    create: XOR<StudentBillCreateWithoutFinanceQueriesInput, StudentBillUncheckedCreateWithoutFinanceQueriesInput>
+  }
+
+  export type PaymentCreateWithoutFinanceQueriesInput = {
+    receiptNumber: string
+    amount: Decimal | DecimalJsLike | number | string
+    paymentMethod: $Enums.PaymentMethod
+    paymentDate?: Date | string
+    paidBy: string
+    referenceNo?: string | null
+    externalProvider?: $Enums.PaymentProvider | null
+    externalReference?: string | null
+    idempotencyKey?: string | null
+    notes?: string | null
+    status?: $Enums.PaymentStatus
+    recordedBy: string
+    createdAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutPaymentsInput
+    studentBill: StudentBillCreateNestedOneWithoutPaymentsInput
+    reversal?: PaymentReversalCreateNestedOneWithoutPaymentInput
+    webhookEvents?: PaymentWebhookEventCreateNestedManyWithoutPaymentInput
+  }
+
+  export type PaymentUncheckedCreateWithoutFinanceQueriesInput = {
+    id?: number
+    receiptNumber: string
+    amount: Decimal | DecimalJsLike | number | string
+    paymentMethod: $Enums.PaymentMethod
+    paymentDate?: Date | string
+    paidBy: string
+    referenceNo?: string | null
+    externalProvider?: $Enums.PaymentProvider | null
+    externalReference?: string | null
+    idempotencyKey?: string | null
+    notes?: string | null
+    status?: $Enums.PaymentStatus
+    schoolId?: string
+    studentBillId: number
+    recordedBy: string
+    createdAt?: Date | string
+    reversal?: PaymentReversalUncheckedCreateNestedOneWithoutPaymentInput
+    webhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutPaymentInput
+  }
+
+  export type PaymentCreateOrConnectWithoutFinanceQueriesInput = {
+    where: PaymentWhereUniqueInput
+    create: XOR<PaymentCreateWithoutFinanceQueriesInput, PaymentUncheckedCreateWithoutFinanceQueriesInput>
+  }
+
+  export type SchoolUpsertWithoutFinanceQueriesInput = {
+    update: XOR<SchoolUpdateWithoutFinanceQueriesInput, SchoolUncheckedUpdateWithoutFinanceQueriesInput>
+    create: XOR<SchoolCreateWithoutFinanceQueriesInput, SchoolUncheckedCreateWithoutFinanceQueriesInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutFinanceQueriesInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutFinanceQueriesInput, SchoolUncheckedUpdateWithoutFinanceQueriesInput>
+  }
+
+  export type SchoolUpdateWithoutFinanceQueriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutFinanceQueriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type ParentUpsertWithoutFinanceQueriesInput = {
+    update: XOR<ParentUpdateWithoutFinanceQueriesInput, ParentUncheckedUpdateWithoutFinanceQueriesInput>
+    create: XOR<ParentCreateWithoutFinanceQueriesInput, ParentUncheckedCreateWithoutFinanceQueriesInput>
+    where?: ParentWhereInput
+  }
+
+  export type ParentUpdateToOneWithWhereWithoutFinanceQueriesInput = {
+    where?: ParentWhereInput
+    data: XOR<ParentUpdateWithoutFinanceQueriesInput, ParentUncheckedUpdateWithoutFinanceQueriesInput>
+  }
+
+  export type ParentUpdateWithoutFinanceQueriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutParentsNestedInput
+    students?: StudentUpdateManyWithoutParentNestedInput
+    notifications?: ParentNotificationUpdateManyWithoutParentNestedInput
+    activityEvents?: ParentActivityEventUpdateManyWithoutParentNestedInput
+    notificationPreference?: ParentNotificationPreferenceUpdateOneWithoutParentNestedInput
+    notificationDeliveries?: ParentNotificationDeliveryLogUpdateManyWithoutParentNestedInput
+  }
+
+  export type ParentUncheckedUpdateWithoutFinanceQueriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    students?: StudentUncheckedUpdateManyWithoutParentNestedInput
+    notifications?: ParentNotificationUncheckedUpdateManyWithoutParentNestedInput
+    activityEvents?: ParentActivityEventUncheckedUpdateManyWithoutParentNestedInput
+    notificationPreference?: ParentNotificationPreferenceUncheckedUpdateOneWithoutParentNestedInput
+    notificationDeliveries?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type StudentUpsertWithoutFinanceQueriesInput = {
+    update: XOR<StudentUpdateWithoutFinanceQueriesInput, StudentUncheckedUpdateWithoutFinanceQueriesInput>
+    create: XOR<StudentCreateWithoutFinanceQueriesInput, StudentUncheckedCreateWithoutFinanceQueriesInput>
+    where?: StudentWhereInput
+  }
+
+  export type StudentUpdateToOneWithWhereWithoutFinanceQueriesInput = {
+    where?: StudentWhereInput
+    data: XOR<StudentUpdateWithoutFinanceQueriesInput, StudentUncheckedUpdateWithoutFinanceQueriesInput>
+  }
+
+  export type StudentUpdateWithoutFinanceQueriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
+    parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
+    class?: ClassUpdateOneRequiredWithoutStudentsNestedInput
+    grade?: GradeUpdateOneRequiredWithoutStudentsNestedInput
+    attendances?: AttendanceUpdateManyWithoutStudentNestedInput
+    results?: ResultUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
+    bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+  }
+
+  export type StudentUncheckedUpdateWithoutFinanceQueriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    classId?: IntFieldUpdateOperationsInput | number
+    gradeId?: IntFieldUpdateOperationsInput | number
+    attendances?: AttendanceUncheckedUpdateManyWithoutStudentNestedInput
+    results?: ResultUncheckedUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
+    bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+  }
+
+  export type StudentBillUpsertWithoutFinanceQueriesInput = {
+    update: XOR<StudentBillUpdateWithoutFinanceQueriesInput, StudentBillUncheckedUpdateWithoutFinanceQueriesInput>
+    create: XOR<StudentBillCreateWithoutFinanceQueriesInput, StudentBillUncheckedCreateWithoutFinanceQueriesInput>
+    where?: StudentBillWhereInput
+  }
+
+  export type StudentBillUpdateToOneWithWhereWithoutFinanceQueriesInput = {
+    where?: StudentBillWhereInput
+    data: XOR<StudentBillUpdateWithoutFinanceQueriesInput, StudentBillUncheckedUpdateWithoutFinanceQueriesInput>
+  }
+
+  export type StudentBillUpdateWithoutFinanceQueriesInput = {
+    totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountPaid?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    generatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutStudentBillsNestedInput
+    student?: StudentUpdateOneRequiredWithoutBillsNestedInput
+    feeStructure?: FeeStructureUpdateOneRequiredWithoutBillsNestedInput
+    lineItems?: BillLineItemUpdateManyWithoutStudentBillNestedInput
+    payments?: PaymentUpdateManyWithoutStudentBillNestedInput
+    discounts?: DiscountUpdateManyWithoutStudentBillNestedInput
+  }
+
+  export type StudentBillUncheckedUpdateWithoutFinanceQueriesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    amountPaid?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    feeStructureId?: IntFieldUpdateOperationsInput | number
+    generatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lineItems?: BillLineItemUncheckedUpdateManyWithoutStudentBillNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutStudentBillNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutStudentBillNestedInput
+  }
+
+  export type PaymentUpsertWithoutFinanceQueriesInput = {
+    update: XOR<PaymentUpdateWithoutFinanceQueriesInput, PaymentUncheckedUpdateWithoutFinanceQueriesInput>
+    create: XOR<PaymentCreateWithoutFinanceQueriesInput, PaymentUncheckedCreateWithoutFinanceQueriesInput>
+    where?: PaymentWhereInput
+  }
+
+  export type PaymentUpdateToOneWithWhereWithoutFinanceQueriesInput = {
+    where?: PaymentWhereInput
+    data: XOR<PaymentUpdateWithoutFinanceQueriesInput, PaymentUncheckedUpdateWithoutFinanceQueriesInput>
+  }
+
+  export type PaymentUpdateWithoutFinanceQueriesInput = {
+    receiptNumber?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    paidBy?: StringFieldUpdateOperationsInput | string
+    referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    externalProvider?: NullableEnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider | null
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    recordedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutPaymentsNestedInput
+    studentBill?: StudentBillUpdateOneRequiredWithoutPaymentsNestedInput
+    reversal?: PaymentReversalUpdateOneWithoutPaymentNestedInput
+    webhookEvents?: PaymentWebhookEventUpdateManyWithoutPaymentNestedInput
+  }
+
+  export type PaymentUncheckedUpdateWithoutFinanceQueriesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    receiptNumber?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    paidBy?: StringFieldUpdateOperationsInput | string
+    referenceNo?: NullableStringFieldUpdateOperationsInput | string | null
+    externalProvider?: NullableEnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider | null
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    schoolId?: StringFieldUpdateOperationsInput | string
+    studentBillId?: IntFieldUpdateOperationsInput | number
+    recordedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reversal?: PaymentReversalUncheckedUpdateOneWithoutPaymentNestedInput
+    webhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutPaymentNestedInput
   }
 
   export type SchoolCreateWithoutFinanceJobsInput = {
@@ -99331,6 +102909,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -99389,6 +102968,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -99463,6 +103043,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -99521,6 +103102,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -99579,6 +103161,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -99637,6 +103220,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -99672,6 +103256,7 @@ export namespace Prisma {
     school?: SchoolCreateNestedOneWithoutPaymentsInput
     studentBill: StudentBillCreateNestedOneWithoutPaymentsInput
     reversal?: PaymentReversalCreateNestedOneWithoutPaymentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentUncheckedCreateWithoutWebhookEventsInput = {
@@ -99692,6 +103277,7 @@ export namespace Prisma {
     recordedBy: string
     createdAt?: Date | string
     reversal?: PaymentReversalUncheckedCreateNestedOneWithoutPaymentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentCreateOrConnectWithoutWebhookEventsInput = {
@@ -99755,6 +103341,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -99813,6 +103400,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -99854,6 +103442,7 @@ export namespace Prisma {
     school?: SchoolUpdateOneRequiredWithoutPaymentsNestedInput
     studentBill?: StudentBillUpdateOneRequiredWithoutPaymentsNestedInput
     reversal?: PaymentReversalUpdateOneWithoutPaymentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentUncheckedUpdateWithoutWebhookEventsInput = {
@@ -99874,6 +103463,7 @@ export namespace Prisma {
     recordedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reversal?: PaymentReversalUncheckedUpdateOneWithoutPaymentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutPaymentNestedInput
   }
 
   export type SchoolCreateWithoutWaitlistEntriesInput = {
@@ -99921,6 +103511,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -99979,6 +103570,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -100053,6 +103645,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -100111,6 +103704,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -100169,6 +103763,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
@@ -100227,6 +103822,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
@@ -100301,6 +103897,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
@@ -100359,6 +103956,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
@@ -100417,6 +104015,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
     discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
@@ -100475,6 +104074,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
     paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
     discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
     receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
     financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
@@ -100549,6 +104149,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
@@ -100607,6 +104208,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
     paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
     receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
     financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
@@ -100868,6 +104470,7 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.FeeStructureStatus
     publishedAt?: Date | string | null
+    dueDate?: Date | string | null
     gradeId: number
     createdBy: string
     createdAt?: Date | string
@@ -100881,6 +104484,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     studentId: string
     feeStructureId: number
@@ -100924,6 +104528,22 @@ export namespace Prisma {
     approvedBy: string
     studentBillId: number
     createdAt?: Date | string
+  }
+
+  export type FinanceQueryCreateManySchoolInput = {
+    id?: number
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    parentId: string
+    studentId: string
+    studentBillId: number
+    paymentId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ReceiptCounterCreateManySchoolInput = {
@@ -101114,6 +104734,7 @@ export namespace Prisma {
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutSchoolInput = {
@@ -101138,6 +104759,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateManyWithoutSchoolInput = {
@@ -101234,6 +104856,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventUpdateManyWithoutParentNestedInput
     notificationPreference?: ParentNotificationPreferenceUpdateOneWithoutParentNestedInput
     notificationDeliveries?: ParentNotificationDeliveryLogUpdateManyWithoutParentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutSchoolInput = {
@@ -101250,6 +104873,7 @@ export namespace Prisma {
     activityEvents?: ParentActivityEventUncheckedUpdateManyWithoutParentNestedInput
     notificationPreference?: ParentNotificationPreferenceUncheckedUpdateOneWithoutParentNestedInput
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutParentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateManyWithoutSchoolInput = {
@@ -101880,6 +105504,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumFeeStructureStatusFieldUpdateOperationsInput | $Enums.FeeStructureStatus
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -101896,6 +105521,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumFeeStructureStatusFieldUpdateOperationsInput | $Enums.FeeStructureStatus
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     gradeId?: IntFieldUpdateOperationsInput | number
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -101912,6 +105538,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumFeeStructureStatusFieldUpdateOperationsInput | $Enums.FeeStructureStatus
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     gradeId?: IntFieldUpdateOperationsInput | number
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -101924,6 +105551,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     generatedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -101933,6 +105561,7 @@ export namespace Prisma {
     lineItems?: BillLineItemUpdateManyWithoutStudentBillNestedInput
     payments?: PaymentUpdateManyWithoutStudentBillNestedInput
     discounts?: DiscountUpdateManyWithoutStudentBillNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentBillNestedInput
   }
 
   export type StudentBillUncheckedUpdateWithoutSchoolInput = {
@@ -101942,6 +105571,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     studentId?: StringFieldUpdateOperationsInput | string
     feeStructureId?: IntFieldUpdateOperationsInput | number
@@ -101951,6 +105581,7 @@ export namespace Prisma {
     lineItems?: BillLineItemUncheckedUpdateManyWithoutStudentBillNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutStudentBillNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutStudentBillNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentBillNestedInput
   }
 
   export type StudentBillUncheckedUpdateManyWithoutSchoolInput = {
@@ -101960,6 +105591,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     studentId?: StringFieldUpdateOperationsInput | string
     feeStructureId?: IntFieldUpdateOperationsInput | number
@@ -101985,6 +105617,7 @@ export namespace Prisma {
     studentBill?: StudentBillUpdateOneRequiredWithoutPaymentsNestedInput
     reversal?: PaymentReversalUpdateOneWithoutPaymentNestedInput
     webhookEvents?: PaymentWebhookEventUpdateManyWithoutPaymentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentUncheckedUpdateWithoutSchoolInput = {
@@ -102005,6 +105638,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reversal?: PaymentReversalUncheckedUpdateOneWithoutPaymentNestedInput
     webhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutPaymentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentUncheckedUpdateManyWithoutSchoolInput = {
@@ -102078,6 +105712,53 @@ export namespace Prisma {
     approvedBy?: StringFieldUpdateOperationsInput | string
     studentBillId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FinanceQueryUpdateWithoutSchoolInput = {
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parent?: ParentUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    student?: StudentUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    studentBill?: StudentBillUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    payment?: PaymentUpdateOneWithoutFinanceQueriesNestedInput
+  }
+
+  export type FinanceQueryUncheckedUpdateWithoutSchoolInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    studentBillId?: IntFieldUpdateOperationsInput | number
+    paymentId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FinanceQueryUncheckedUpdateManyWithoutSchoolInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    studentBillId?: IntFieldUpdateOperationsInput | number
+    paymentId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ReceiptCounterUpdateWithoutSchoolInput = {
@@ -102592,6 +106273,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     schoolId?: string
     feeStructureId: number
@@ -102634,6 +106316,22 @@ export namespace Prisma {
     parentId: string
     teacherId?: string | null
     createdAt?: Date | string
+  }
+
+  export type FinanceQueryCreateManyStudentInput = {
+    id?: number
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    schoolId: string
+    parentId: string
+    studentBillId: number
+    paymentId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type AttendanceUpdateWithoutStudentInput = {
@@ -102797,6 +106495,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     generatedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -102806,6 +106505,7 @@ export namespace Prisma {
     lineItems?: BillLineItemUpdateManyWithoutStudentBillNestedInput
     payments?: PaymentUpdateManyWithoutStudentBillNestedInput
     discounts?: DiscountUpdateManyWithoutStudentBillNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentBillNestedInput
   }
 
   export type StudentBillUncheckedUpdateWithoutStudentInput = {
@@ -102815,6 +106515,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     feeStructureId?: IntFieldUpdateOperationsInput | number
@@ -102824,6 +106525,7 @@ export namespace Prisma {
     lineItems?: BillLineItemUncheckedUpdateManyWithoutStudentBillNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutStudentBillNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutStudentBillNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentBillNestedInput
   }
 
   export type StudentBillUncheckedUpdateManyWithoutStudentInput = {
@@ -102833,6 +106535,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     feeStructureId?: IntFieldUpdateOperationsInput | number
@@ -102949,6 +106652,53 @@ export namespace Prisma {
     parentId?: StringFieldUpdateOperationsInput | string
     teacherId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FinanceQueryUpdateWithoutStudentInput = {
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    parent?: ParentUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    studentBill?: StudentBillUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    payment?: PaymentUpdateOneWithoutFinanceQueriesNestedInput
+  }
+
+  export type FinanceQueryUncheckedUpdateWithoutStudentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    studentBillId?: IntFieldUpdateOperationsInput | number
+    paymentId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FinanceQueryUncheckedUpdateManyWithoutStudentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    studentBillId?: IntFieldUpdateOperationsInput | number
+    paymentId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type LessonCreateManyTeacherInput = {
@@ -103513,6 +107263,22 @@ export namespace Prisma {
     notificationId?: string | null
   }
 
+  export type FinanceQueryCreateManyParentInput = {
+    id?: number
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    schoolId: string
+    studentId: string
+    studentBillId: number
+    paymentId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type StudentUpdateWithoutParentInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
@@ -103535,6 +107301,7 @@ export namespace Prisma {
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutParentInput = {
@@ -103559,6 +107326,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateManyWithoutParentInput = {
@@ -103733,6 +107501,53 @@ export namespace Prisma {
     notificationId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type FinanceQueryUpdateWithoutParentInput = {
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    student?: StudentUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    studentBill?: StudentBillUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    payment?: PaymentUpdateOneWithoutFinanceQueriesNestedInput
+  }
+
+  export type FinanceQueryUncheckedUpdateWithoutParentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    studentBillId?: IntFieldUpdateOperationsInput | number
+    paymentId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FinanceQueryUncheckedUpdateManyWithoutParentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    studentBillId?: IntFieldUpdateOperationsInput | number
+    paymentId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ParentNotificationDeliveryLogCreateManyNotificationInput = {
     id?: string
     channel: $Enums.ParentDeliveryChannel
@@ -103839,6 +107654,7 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.FeeStructureStatus
     publishedAt?: Date | string | null
+    dueDate?: Date | string | null
     schoolId?: string
     createdBy: string
     createdAt?: Date | string
@@ -103867,6 +107683,7 @@ export namespace Prisma {
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutGradeInput = {
@@ -103891,6 +107708,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateManyWithoutGradeInput = {
@@ -103996,6 +107814,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumFeeStructureStatusFieldUpdateOperationsInput | $Enums.FeeStructureStatus
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -104012,6 +107831,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumFeeStructureStatusFieldUpdateOperationsInput | $Enums.FeeStructureStatus
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -104028,6 +107848,7 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumFeeStructureStatusFieldUpdateOperationsInput | $Enums.FeeStructureStatus
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -104202,6 +108023,7 @@ export namespace Prisma {
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutClassInput = {
@@ -104226,6 +108048,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateManyWithoutClassInput = {
@@ -105278,6 +109101,7 @@ export namespace Prisma {
     discountAmount?: Decimal | DecimalJsLike | number | string
     balance: Decimal | DecimalJsLike | number | string
     status?: $Enums.BillStatus
+    dueDate?: Date | string | null
     notes?: string | null
     schoolId?: string
     studentId: string
@@ -105323,6 +109147,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     generatedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -105332,6 +109157,7 @@ export namespace Prisma {
     lineItems?: BillLineItemUpdateManyWithoutStudentBillNestedInput
     payments?: PaymentUpdateManyWithoutStudentBillNestedInput
     discounts?: DiscountUpdateManyWithoutStudentBillNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentBillNestedInput
   }
 
   export type StudentBillUncheckedUpdateWithoutFeeStructureInput = {
@@ -105341,6 +109167,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     studentId?: StringFieldUpdateOperationsInput | string
@@ -105350,6 +109177,7 @@ export namespace Prisma {
     lineItems?: BillLineItemUncheckedUpdateManyWithoutStudentBillNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutStudentBillNestedInput
     discounts?: DiscountUncheckedUpdateManyWithoutStudentBillNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentBillNestedInput
   }
 
   export type StudentBillUncheckedUpdateManyWithoutFeeStructureInput = {
@@ -105359,6 +109187,7 @@ export namespace Prisma {
     discountAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumBillStatusFieldUpdateOperationsInput | $Enums.BillStatus
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     studentId?: StringFieldUpdateOperationsInput | string
@@ -105450,6 +109279,22 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type FinanceQueryCreateManyStudentBillInput = {
+    id?: number
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    schoolId: string
+    parentId: string
+    studentId: string
+    paymentId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type BillLineItemUpdateWithoutStudentBillInput = {
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     amountPaid?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -105499,6 +109344,7 @@ export namespace Prisma {
     school?: SchoolUpdateOneRequiredWithoutPaymentsNestedInput
     reversal?: PaymentReversalUpdateOneWithoutPaymentNestedInput
     webhookEvents?: PaymentWebhookEventUpdateManyWithoutPaymentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentUncheckedUpdateWithoutStudentBillInput = {
@@ -105519,6 +109365,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reversal?: PaymentReversalUncheckedUpdateOneWithoutPaymentNestedInput
     webhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutPaymentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentUncheckedUpdateManyWithoutStudentBillInput = {
@@ -105571,6 +109418,53 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type FinanceQueryUpdateWithoutStudentBillInput = {
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    parent?: ParentUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    student?: StudentUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    payment?: PaymentUpdateOneWithoutFinanceQueriesNestedInput
+  }
+
+  export type FinanceQueryUncheckedUpdateWithoutStudentBillInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    paymentId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FinanceQueryUncheckedUpdateManyWithoutStudentBillInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    paymentId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type PaymentWebhookEventCreateManyPaymentInput = {
     id?: string
     provider: $Enums.PaymentProvider
@@ -105583,6 +109477,22 @@ export namespace Prisma {
     processedAt?: Date | string | null
     lastError?: string | null
     schoolId?: string | null
+  }
+
+  export type FinanceQueryCreateManyPaymentInput = {
+    id?: number
+    reason: $Enums.FinanceQueryReason
+    message: string
+    status?: $Enums.FinanceQueryStatus
+    response?: string | null
+    resolvedAt?: Date | string | null
+    resolvedBy?: string | null
+    schoolId: string
+    parentId: string
+    studentId: string
+    studentBillId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type PaymentWebhookEventUpdateWithoutPaymentInput = {
@@ -105625,6 +109535,53 @@ export namespace Prisma {
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
     schoolId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type FinanceQueryUpdateWithoutPaymentInput = {
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    parent?: ParentUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    student?: StudentUpdateOneRequiredWithoutFinanceQueriesNestedInput
+    studentBill?: StudentBillUpdateOneRequiredWithoutFinanceQueriesNestedInput
+  }
+
+  export type FinanceQueryUncheckedUpdateWithoutPaymentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    studentBillId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FinanceQueryUncheckedUpdateManyWithoutPaymentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    reason?: EnumFinanceQueryReasonFieldUpdateOperationsInput | $Enums.FinanceQueryReason
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumFinanceQueryStatusFieldUpdateOperationsInput | $Enums.FinanceQueryStatus
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    studentBillId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

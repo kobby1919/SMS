@@ -98,6 +98,23 @@ enum AuditAction {
   PAYMENT_REVERSED
   DISCOUNT_APPLIED
   DISCOUNT_REMOVED
+  FINANCE_QUERY_OPENED
+  FINANCE_QUERY_RESOLVED
+}
+
+enum FinanceQueryReason {
+  ALREADY_PAID
+  WRONG_AMOUNT
+  NEED_CLARIFICATION
+  RECEIPT_ISSUE
+  OTHER
+}
+
+enum FinanceQueryStatus {
+  OPEN
+  IN_REVIEW
+  RESOLVED
+  CLOSED
 }
 
 enum WaitlistRole {
@@ -269,6 +286,7 @@ model School {
   payments              Payment[]
   paymentReversals      PaymentReversal[]
   discounts             Discount[]
+  financeQueries        FinanceQuery[]
   receiptCounters       ReceiptCounter[]
   financeAuditLogs      FinanceAuditLog[]
   invites               SchoolInvite[]
@@ -323,6 +341,7 @@ model Student {
   bills                 StudentBill[]
   parentNotifications   ParentNotification[]
   parentActivityEvents  ParentActivityEvent[]
+  financeQueries        FinanceQuery[]
 
   @@index([schoolId])
   @@index([schoolId, classId])
@@ -381,6 +400,7 @@ model Parent {
   activityEvents         ParentActivityEvent[]
   notificationPreference ParentNotificationPreference?
   notificationDeliveries ParentNotificationDeliveryLog[]
+  financeQueries         FinanceQuery[]
 
   @@index([schoolId])
   @@index([schoolId, createdAt])
@@ -981,6 +1001,7 @@ model FeeStructure {
   term         Term
   status       FeeStructureStatus @default(DRAFT)
   publishedAt  DateTime?
+  dueDate      DateTime?
 
   schoolId String @default("default-school")
   school   School @relation(fields: [schoolId], references: [id])
@@ -1033,6 +1054,7 @@ model StudentBill {
   discountAmount Decimal    @default(0) @db.Decimal(10, 2)
   balance        Decimal    @db.Decimal(10, 2)
   status         BillStatus @default(UNPAID)
+  dueDate        DateTime?
   notes          String?
 
   schoolId String @default("default-school")
@@ -1044,9 +1066,10 @@ model StudentBill {
   feeStructureId Int
   feeStructure   FeeStructure @relation(fields: [feeStructureId], references: [id])
 
-  lineItems BillLineItem[]
-  payments  Payment[]
-  discounts Discount[]
+  lineItems      BillLineItem[]
+  payments       Payment[]
+  discounts      Discount[]
+  financeQueries FinanceQuery[]
 
   generatedBy String
   createdAt   DateTime @default(now())
@@ -1054,6 +1077,7 @@ model StudentBill {
 
   @@unique([schoolId, studentId, feeStructureId])
   @@index([schoolId, status])
+  @@index([schoolId, dueDate])
   @@index([schoolId, feeStructureId])
   @@index([schoolId, studentId])
   @@index([schoolId, status, studentId])
@@ -1110,8 +1134,9 @@ model Payment {
   recordedBy String
   createdAt  DateTime @default(now())
 
-  reversal      PaymentReversal?
-  webhookEvents PaymentWebhookEvent[]
+  reversal       PaymentReversal?
+  webhookEvents  PaymentWebhookEvent[]
+  financeQueries FinanceQuery[]
 
   @@unique([schoolId, receiptNumber])
   @@unique([schoolId, externalProvider, externalReference])
@@ -1205,6 +1230,38 @@ model FinanceAuditLog {
 // Collected before any school signs up, so there's nothing to scope to.
 
 // Shared rate-limit state. Tenant/user/IP scope is encoded in the key.
+model FinanceQuery {
+  id         Int                @id @default(autoincrement())
+  reason     FinanceQueryReason
+  message    String
+  status     FinanceQueryStatus @default(OPEN)
+  response   String?
+  resolvedAt DateTime?
+  resolvedBy String?
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  parentId String
+  parent   Parent @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  studentBillId Int
+  studentBill   StudentBill @relation(fields: [studentBillId], references: [id])
+
+  paymentId Int?
+  payment   Payment? @relation(fields: [paymentId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId, status, createdAt])
+  @@index([schoolId, parentId, createdAt])
+  @@index([schoolId, studentBillId, status])
+}
+
 model FinanceJob {
   id             String         @id @default(cuid())
   type           FinanceJobType
