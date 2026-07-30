@@ -32,6 +32,7 @@ type SubjectRow = {
   isComplete: boolean;
   caChange: number;
   caTrend: "up" | "down" | "steady" | "new";
+  hasNewerCARecord: boolean;
 };
 
 type Props = {
@@ -453,10 +454,15 @@ const ReportCardView = ({
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <p className="text-sm font-black text-gray-900">{row.name}</p>
-                          <p className="mt-0.5 text-xs font-semibold text-gray-400">
-                            CA {row.classworkScore.toFixed(1)} / {cwWeight}
+                        <p className="mt-0.5 text-xs font-semibold text-gray-400">
+                          CA {row.classworkScore.toFixed(1)} / {cwWeight}
+                        </p>
+                        {row.hasNewerCARecord && (
+                          <p className="mt-1 text-[10px] font-black uppercase tracking-wide text-amber-600">
+                            Newer CA exists in the latest parent update
                           </p>
-                        </div>
+                        )}
+                      </div>
                         <span className={`rounded-full px-2.5 py-1 text-[10px] font-black ${trendClass}`}>
                           {trendLabel}
                         </span>

@@ -84,6 +84,51 @@ function dateHref(date: Date) {
   return `/parent/updates?date=${date.toISOString().slice(0, 10)}`;
 }
 
+function eventDedupeKey(event: {
+  type: ParentNotificationType;
+  body: string;
+  sourceModel: string;
+  sourceId: string;
+}) {
+  return event.sourceModel === "CAActivityScore" || event.sourceModel === "ContinuousAssessment"
+    ? `${event.sourceModel}:${event.sourceId}`
+    : `${event.type}:${event.body}`;
+}
+
+function dedupeEvents<T extends {
+  type: ParentNotificationType;
+  body: string;
+  sourceModel: string;
+  sourceId: string;
+}>(events: T[]) {
+  const seen = new Set<string>();
+  return events.filter((event) => {
+    const key = eventDedupeKey(event);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function formatDateTime(date: Date) {
+  return date.toLocaleString("en-GH", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function formatDayLabel(date: Date) {
+  return date.toLocaleDateString("en-GH", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
 const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
   const { userId, schoolId } = await requirePageSession(["parent"]);
 
@@ -128,10 +173,22 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
     getParentNotificationPreference({ parentId: userId }),
   ]);
 
-  const grouped = events.reduce<Record<ParentNotificationType, typeof events>>((acc, event) => {
+  const visibleEvents = dedupeEvents(events);
+  const summaryCounts = summary?.payload && typeof summary.payload === "object" && "counts" in summary.payload
+    ? summary.payload.counts as Record<string, number>
+    : null;
+  const academicEventsByDay = visibleEvents
+    .filter((event) => event.type === "ASSESSMENT")
+    .reduce<Record<string, typeof visibleEvents>>((acc, event) => {
+      const key = event.occurredAt.toISOString().slice(0, 10);
+      acc[key] = [...(acc[key] ?? []), event];
+      return acc;
+    }, {});
+
+  const grouped = visibleEvents.reduce<Record<ParentNotificationType, typeof visibleEvents>>((acc, event) => {
     acc[event.type] = [...(acc[event.type] ?? []), event];
     return acc;
-  }, {} as Record<ParentNotificationType, typeof events>);
+  }, {} as Record<ParentNotificationType, typeof visibleEvents>);
 
   const orderedTypes: ParentNotificationType[] = [
     "ATTENDANCE",
@@ -166,7 +223,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
             </Link>
           </div>
           <div className="rounded-2xl border border-sky-100 bg-sky-50 px-4 py-3 text-sky-700">
-            <p className="text-2xl font-black">{events.length}</p>
+            <p className="text-2xl font-black">{visibleEvents.length}</p>
             <p className="text-[10px] font-black uppercase tracking-widest">records today</p>
           </div>
         </div>
@@ -231,16 +288,38 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
           <div className="rounded-xl bg-sky-400/10 p-2 text-sky-200">
             <BellRing size={18} />
           </div>
-          <div>
+          <div className="flex-1">
             <p className="text-sm font-black">Summary parents receive</p>
-            <p className="mt-1 text-sm font-medium leading-relaxed text-slate-300">
-              {summary?.body || "No daily summary has been generated for this date yet."}
-            </p>
+            {summaryCounts ? (
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-5">
+                {[
+                  ["Attendance", summaryCounts.attendance ?? 0],
+                  ["Academics", summaryCounts.academics ?? 0],
+                  ["Homework", summaryCounts.homework ?? 0],
+                  ["Fees", summaryCounts.finance ?? 0],
+                  ["Notices", summaryCounts.notices ?? 0],
+                ].map(([label, count]) => (
+                  <div key={label} className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">
+                    <p className="text-lg font-black">{count}</p>
+                    <p className="text-[10px] font-black uppercase tracking-wide text-slate-400">{label}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-1 text-sm font-medium leading-relaxed text-slate-300">
+                No daily summary has been generated for this date yet.
+              </p>
+            )}
+            {summary?.body && (
+              <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
+                <p className="whitespace-pre-line text-sm font-medium leading-relaxed text-slate-300">{summary.body}</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {events.length === 0 ? (
+      {visibleEvents.length === 0 ? (
         <section className="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center shadow-sm">
           <CalendarDays className="mx-auto h-8 w-8 text-gray-300" />
           <p className="mt-3 text-sm font-black text-gray-500">No activity was recorded for this day.</p>
@@ -270,12 +349,51 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
                     </div>
                   </div>
                   <div className="divide-y divide-gray-50">
-                    {grouped[type].map((event) => (
+                    {type === "ASSESSMENT"
+                      ? Object.entries(academicEventsByDay)
+                        .sort(([a], [b]) => b.localeCompare(a))
+                        .map(([day, dayEvents]) => (
+                          <div key={day} className="divide-y divide-gray-50">
+                            <div className="bg-blue-50/60 px-5 py-2 text-[11px] font-black uppercase tracking-widest text-blue-700">
+                              {formatDayLabel(new Date(day))}
+                            </div>
+                            {dayEvents.map((event) => (
+                              <div key={event.id} className="px-5 py-4">
+                                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                                  <div className="min-w-0">
+                                    <p className="text-sm font-black text-gray-900">{event.title}</p>
+                                    <p className="mt-1 text-sm font-medium leading-relaxed text-gray-500">{event.body}</p>
+                                    <p className="mt-2 text-xs font-black text-blue-500">{formatDateTime(event.occurredAt)}</p>
+                                    {event.student && (
+                                      <p className="mt-2 text-xs font-bold text-gray-400">
+                                        Child: {event.student.name} {event.student.surname}
+                                      </p>
+                                    )}
+                                    {event.teacher && (
+                                      <p className="mt-1 text-xs font-bold text-gray-400">
+                                        Teacher: {event.teacher.name} {event.teacher.surname}
+                                        {event.teacher.phone ? ` - ${event.teacher.phone}` : ""}
+                                        {!event.teacher.phone && event.teacher.email ? ` - ${event.teacher.email}` : ""}
+                                      </p>
+                                    )}
+                                  </div>
+                                  {event.href && (
+                                    <Link href={event.href} className="shrink-0 rounded-xl bg-gray-900 px-3 py-2 text-center text-xs font-black text-white">
+                                      Open
+                                    </Link>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ))
+                      : grouped[type].map((event) => (
                       <div key={event.id} className="px-5 py-4">
                         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                           <div className="min-w-0">
                             <p className="text-sm font-black text-gray-900">{event.title}</p>
                             <p className="mt-1 text-sm font-medium leading-relaxed text-gray-500">{event.body}</p>
+                            <p className="mt-2 text-xs font-black text-gray-400">{formatDateTime(event.occurredAt)}</p>
                             {event.student && (
                               <p className="mt-2 text-xs font-bold text-gray-400">
                                 Child: {event.student.name} {event.student.surname}

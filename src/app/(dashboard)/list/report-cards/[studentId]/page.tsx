@@ -92,6 +92,26 @@ const ReportCardPage = async ({
       previousCABySubject.set(record.subjectId, record);
     }
   }
+  const latestCARecords = await prisma.continuousAssessment.findMany({
+    where: {
+      schoolId,
+      studentId,
+      classId: student.classId,
+    },
+    select: {
+      subjectId: true,
+      term: true,
+      academicYear: true,
+      updatedAt: true,
+    },
+    orderBy: { updatedAt: "desc" },
+  });
+  const latestCABySubject = new Map<number, { term: Term; academicYear: string; updatedAt: Date }>();
+  for (const record of latestCARecords) {
+    if (!latestCABySubject.has(record.subjectId)) {
+      latestCABySubject.set(record.subjectId, record);
+    }
+  }
 
   // ── Subjects on timetable for this class ──────────────────────────────────
   const lessons = await prisma.lesson.findMany({
@@ -152,6 +172,7 @@ const ReportCardPage = async ({
   const subjectRows = caRecords.map((ca) => {
     const band = getGradeBandByGrade(ca.grade);
     const previous = previousCABySubject.get(ca.subjectId);
+    const latest = latestCABySubject.get(ca.subjectId);
     const caChange = previous
       ? Math.round((ca.classworkScore - previous.classworkScore) * 10) / 10
       : 0;
@@ -173,6 +194,14 @@ const ReportCardPage = async ({
       isComplete:     ca.examScore > 0,
       caChange,
       caTrend,
+      hasNewerCARecord: Boolean(
+        latest &&
+        (
+          latest.academicYear !== ca.academicYear ||
+          latest.term !== ca.term ||
+          latest.updatedAt.getTime() > ca.updatedAt.getTime()
+        ),
+      ),
       label:          band.label,
       position:       subjectPositions[ca.subject.id] ?? 0,
       remarks:        ca.remarks,
