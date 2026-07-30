@@ -121,7 +121,7 @@ export async function deliverParentDailySummary(input: {
   parentId: string;
   notification: ParentNotification;
 }) {
-  const [settings, parent] = await Promise.all([
+  const [settings, parent, notificationPreference] = await Promise.all([
     getOrCreateSettings(input.schoolId),
     prisma.parent.findFirst({
       where: { id: input.parentId, schoolId: input.schoolId },
@@ -129,29 +129,33 @@ export async function deliverParentDailySummary(input: {
         id: true,
         email: true,
         phone: true,
-        notificationPreference: true,
       },
+    }),
+    prisma.parentNotificationPreference.findUnique({
+      where: { parentId: input.parentId },
     }),
   ]);
 
   if (!parent) return null;
-  if (parent.notificationPreference?.dailySummaryEnabled === false) {
+  const parentWithPreference = { ...parent, notificationPreference };
+
+  if (notificationPreference?.dailySummaryEnabled === false) {
     return logDelivery({
       schoolId: input.schoolId,
       parentId: parent.id,
       notificationId: input.notification.id,
-      channel: parent.notificationPreference.preferredChannel,
+      channel: notificationPreference.preferredChannel,
       status: "SKIPPED",
       messagePreview: input.notification.body,
       errorMessage: "Daily summaries disabled by parent preference.",
     });
   }
 
-  for (const channel of channelOrder(parent)) {
+  for (const channel of channelOrder(parentWithPreference)) {
     if (!isChannelEnabled(channel, settings)) continue;
-    if (!isParentChannelEnabled(channel, parent.notificationPreference)) continue;
+    if (!isParentChannelEnabled(channel, notificationPreference)) continue;
 
-    const recipient = recipientForChannel(channel, parent);
+    const recipient = recipientForChannel(channel, parentWithPreference);
     if (!recipient) continue;
 
     return logDelivery({
@@ -169,7 +173,7 @@ export async function deliverParentDailySummary(input: {
     schoolId: input.schoolId,
     parentId: parent.id,
     notificationId: input.notification.id,
-    channel: parent.notificationPreference?.preferredChannel ?? "SMS",
+    channel: notificationPreference?.preferredChannel ?? "SMS",
     status: "SKIPPED",
     messagePreview: input.notification.body,
     errorMessage: "No enabled delivery channel with a reachable parent contact.",

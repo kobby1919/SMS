@@ -95,7 +95,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
   const nextDay = new Date(start);
   nextDay.setDate(nextDay.getDate() + 1);
 
-  const [events, summary, parent] = await Promise.all([
+  const [events, summary, parent, notificationPreference] = await Promise.all([
     prisma.parentActivityEvent.findMany({
       where: {
         schoolId,
@@ -122,8 +122,10 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
       select: {
         email: true,
         phone: true,
-        notificationPreference: true,
       },
+    }),
+    prisma.parentNotificationPreference.findUnique({
+      where: { parentId: userId },
     }),
   ]);
 
@@ -183,7 +185,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
         <form action={updateParentNotificationPreference} className="mt-4 grid gap-3 lg:grid-cols-4">
           <label className="flex flex-col gap-1">
             <span className="text-[10px] font-black uppercase text-gray-400">Preferred</span>
-            <select name="preferredChannel" defaultValue={parent?.notificationPreference?.preferredChannel ?? "WHATSAPP"} className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold">
+            <select name="preferredChannel" defaultValue={notificationPreference?.preferredChannel ?? "WHATSAPP"} className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold">
               <option value="WHATSAPP">WhatsApp</option>
               <option value="SMS">SMS</option>
               <option value="EMAIL">Email</option>
@@ -191,7 +193,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
           </label>
           <label className="flex flex-col gap-1">
             <span className="text-[10px] font-black uppercase text-gray-400">Fallback</span>
-            <select name="fallbackChannel" defaultValue={parent?.notificationPreference?.fallbackChannel ?? "SMS"} className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold">
+            <select name="fallbackChannel" defaultValue={notificationPreference?.fallbackChannel ?? "SMS"} className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-bold">
               <option value="SMS">SMS</option>
               <option value="WHATSAPP">WhatsApp</option>
               <option value="EMAIL">Email</option>
@@ -199,23 +201,23 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
           </label>
           <div className="grid grid-cols-2 gap-2 lg:col-span-1">
             <label className="flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2 text-xs font-black text-gray-600">
-              <input type="checkbox" name="dailySummaryEnabled" defaultChecked={parent?.notificationPreference?.dailySummaryEnabled ?? true} />
+              <input type="checkbox" name="dailySummaryEnabled" defaultChecked={notificationPreference?.dailySummaryEnabled ?? true} />
               Daily
             </label>
             <label className="flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2 text-xs font-black text-gray-600">
-              <input type="checkbox" name="urgentAlertsEnabled" defaultChecked={parent?.notificationPreference?.urgentAlertsEnabled ?? true} />
+              <input type="checkbox" name="urgentAlertsEnabled" defaultChecked={notificationPreference?.urgentAlertsEnabled ?? true} />
               Urgent
             </label>
             <label className="flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2 text-xs font-black text-gray-600">
-              <input type="checkbox" name="emailEnabled" defaultChecked={parent?.notificationPreference?.emailEnabled ?? true} />
+              <input type="checkbox" name="emailEnabled" defaultChecked={notificationPreference?.emailEnabled ?? true} />
               Email
             </label>
             <label className="flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2 text-xs font-black text-gray-600">
-              <input type="checkbox" name="smsEnabled" defaultChecked={parent?.notificationPreference?.smsEnabled ?? true} />
+              <input type="checkbox" name="smsEnabled" defaultChecked={notificationPreference?.smsEnabled ?? true} />
               SMS
             </label>
             <label className="flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2 text-xs font-black text-gray-600">
-              <input type="checkbox" name="whatsappEnabled" defaultChecked={parent?.notificationPreference?.whatsappEnabled ?? true} />
+              <input type="checkbox" name="whatsappEnabled" defaultChecked={notificationPreference?.whatsappEnabled ?? true} />
               WhatsApp
             </label>
           </div>
