@@ -603,10 +603,10 @@ export async function GET(req: NextRequest) {
     const payment = bill.payments[0];
     if (!payment) return new NextResponse("Payment not found", { status: 404 });
 
-    if (payment.status === "REVERSED") {
+    if (payment.status !== "CONFIRMED") {
       return new NextResponse(
-        "This payment has been reversed and the receipt is void.",
-        { status: 410 },
+        "A receipt is only available for confirmed payments.",
+        { status: 409 },
       );
     }
 

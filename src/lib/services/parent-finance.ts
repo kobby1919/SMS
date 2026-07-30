@@ -144,9 +144,17 @@ function explainBalance(bill: {
   amountPaid: number;
   discountAmount: number;
   balance: number;
+  lineItems: { name: string; balance: number }[];
 }) {
   const discount = bill.discountAmount > 0 ? ` Discounts/waivers applied: GHS ${bill.discountAmount.toFixed(2)}.` : "";
-  return `${bill.title} is GHS ${bill.totalAmount.toFixed(2)}. You have paid GHS ${bill.amountPaid.toFixed(2)}.${discount} Balance is GHS ${bill.balance.toFixed(2)}.`;
+  const outstandingItems = bill.lineItems
+    .filter((line) => line.balance > 0)
+    .slice(0, 4)
+    .map((line) => `${line.name}: GHS ${line.balance.toFixed(2)}`);
+  const itemExplanation = outstandingItems.length > 0
+    ? ` Outstanding items: ${outstandingItems.join(", ")}.`
+    : "";
+  return `${bill.title} is GHS ${bill.totalAmount.toFixed(2)}. You have paid GHS ${bill.amountPaid.toFixed(2)}.${discount} Balance is GHS ${bill.balance.toFixed(2)}.${itemExplanation}`;
 }
 
 function sortBillsForParents(a: ParentFinanceBill, b: ParentFinanceBill) {
@@ -243,6 +251,17 @@ export async function getParentFinanceOverview(parentId: string, schoolId: strin
     const state = billState({ status: bill.status, balance, dueDate: bill.dueDate, now });
     const title = bill.feeStructure.title;
     const paymentRate = totalAmount > 0 ? Math.min(Math.round((amountPaid / totalAmount) * 100), 100) : 100;
+    const lineItems = bill.lineItems.map((line) => ({
+      id: line.id,
+      name: line.feeItem.name,
+      category: line.feeItem.category,
+      categoryLabel: FEE_CATEGORY_LABELS[line.feeItem.category] ?? line.feeItem.category,
+      amount: toNumber(line.amount),
+      amountPaid: toNumber(line.amountPaid),
+      balance: toNumber(line.balance),
+      isPaid: line.isPaid,
+      isOptional: line.feeItem.isOptional,
+    }));
 
     return {
       id: bill.id,
@@ -261,18 +280,8 @@ export async function getParentFinanceOverview(parentId: string, schoolId: strin
       paymentRate,
       dueDate: bill.dueDate,
       daysUntilDue: state.daysUntilDue,
-      balanceExplanation: explainBalance({ title, totalAmount, amountPaid, discountAmount, balance }),
-      lineItems: bill.lineItems.map((line) => ({
-        id: line.id,
-        name: line.feeItem.name,
-        category: line.feeItem.category,
-        categoryLabel: FEE_CATEGORY_LABELS[line.feeItem.category] ?? line.feeItem.category,
-        amount: toNumber(line.amount),
-        amountPaid: toNumber(line.amountPaid),
-        balance: toNumber(line.balance),
-        isPaid: line.isPaid,
-        isOptional: line.feeItem.isOptional,
-      })),
+      balanceExplanation: explainBalance({ title, totalAmount, amountPaid, discountAmount, balance, lineItems }),
+      lineItems,
       payments: bill.payments.map((payment) => ({
         id: payment.id,
         receiptNumber: payment.receiptNumber,
@@ -288,12 +297,16 @@ export async function getParentFinanceOverview(parentId: string, schoolId: strin
         ...bill.discounts.map((discount) => ({
           id: `discount:${discount.id}`,
           type: "discount" as const,
-          label: discount.type.replaceAll("_", " "),
-          description: discount.description,
+          label: discount.status === "REMOVED"
+            ? `${discount.type.replaceAll("_", " ")} removed`
+            : discount.type.replaceAll("_", " "),
+          description: discount.status === "REMOVED"
+            ? discount.removeReason ?? `Removed discount: ${discount.description}`
+            : discount.description,
           amount: discount.amount ? toNumber(discount.amount) : null,
           percentage: discount.percentage ? toNumber(discount.percentage) : null,
-          actor: discount.approvedBy,
-          date: discount.createdAt,
+          actor: discount.status === "REMOVED" ? discount.removedBy : discount.approvedBy,
+          date: discount.status === "REMOVED" ? discount.removedAt ?? discount.createdAt : discount.createdAt,
         })),
         ...bill.payments
           .filter((payment) => payment.status === "REVERSED" && payment.reversal)
@@ -338,7 +351,10 @@ export async function getParentFinanceOverview(parentId: string, schoolId: strin
   const totalPaid = bills.reduce((sum, bill) => sum + bill.amountPaid, 0);
   const totalDiscount = bills.reduce((sum, bill) => sum + bill.discountAmount, 0);
   const outstanding = bills.reduce((sum, bill) => sum + bill.balance, 0);
-  const allPayments = bills.flatMap((bill) => bill.payments).sort((a, b) => b.date.getTime() - a.date.getTime());
+  const allPayments = bills
+    .flatMap((bill) => bill.payments)
+    .filter((payment) => payment.status === "CONFIRMED")
+    .sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return {
     parentId,

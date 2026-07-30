@@ -13,6 +13,7 @@ import {
   ChevronRight,
   Download,
   CalendarDays,
+  Clock,
 } from "lucide-react";
 import { formatGHS, PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
@@ -28,7 +29,7 @@ const TERM_LABELS: Record<string, string> = {
   TERM_2: "Term 2",
   TERM_3: "Term 3",
 };
-const PAYMENT_STATUSES = ["CONFIRMED", "REVERSED"] as const;
+const PAYMENT_STATUSES = ["PENDING", "CONFIRMED", "FAILED", "REVERSED"] as const;
 const PAYMENT_METHODS = [
   "CASH",
   "MTN_MOMO",
@@ -38,6 +39,48 @@ const PAYMENT_METHODS = [
   "CHEQUE",
   "OTHER",
 ] as const;
+
+const PAYMENT_STATUS_META: Record<PaymentStatus, {
+  label: string;
+  row: string;
+  iconBg: string;
+  icon: "check" | "clock" | "x";
+  amount: string;
+  badge: string;
+}> = {
+  PENDING: {
+    label: "PENDING",
+    row: "bg-amber-50/30",
+    iconBg: "bg-amber-100",
+    icon: "clock",
+    amount: "text-amber-700",
+    badge: "bg-amber-100 text-amber-700",
+  },
+  CONFIRMED: {
+    label: "CONFIRMED",
+    row: "hover:bg-gray-50/60",
+    iconBg: "bg-emerald-100",
+    icon: "check",
+    amount: "text-emerald-700",
+    badge: "bg-emerald-100 text-emerald-700",
+  },
+  FAILED: {
+    label: "FAILED",
+    row: "bg-rose-50/30",
+    iconBg: "bg-rose-100",
+    icon: "x",
+    amount: "text-rose-500",
+    badge: "bg-rose-100 text-rose-600",
+  },
+  REVERSED: {
+    label: "REVERSED",
+    row: "bg-rose-50/30",
+    iconBg: "bg-rose-100",
+    icon: "x",
+    amount: "text-rose-400 line-through",
+    badge: "bg-rose-100 text-rose-600",
+  },
+};
 
 function parsePaymentStatus(value: string | undefined): PaymentStatus | undefined {
   return PAYMENT_STATUSES.includes(value as PaymentStatus)
@@ -370,7 +413,9 @@ const PaymentsPage = async ({
             className="appearance-none ring-[1.5px] ring-gray-200 px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 outline-none bg-white"
           >
             <option value="">All Status</option>
+            <option value="PENDING">Pending</option>
             <option value="CONFIRMED">Confirmed</option>
+            <option value="FAILED">Failed</option>
             <option value="REVERSED">Reversed</option>
           </select>
 
@@ -440,19 +485,23 @@ const PaymentsPage = async ({
           <div className="divide-y divide-gray-50">
             {payments.map((p) => {
               const isReversed = p.status === "REVERSED";
+              const isConfirmed = p.status === "CONFIRMED";
+              const statusMeta = PAYMENT_STATUS_META[p.status];
               return (
                 <div
                   key={p.id}
                   className={`flex items-center gap-4 px-5 py-4 transition-colors
-                    ${isReversed ? "bg-rose-50/30" : "hover:bg-gray-50/60"}`}
+                    ${statusMeta.row}`}
                 >
                   {/* Status icon */}
                   <div
                     className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0
-                    ${isReversed ? "bg-rose-100" : "bg-emerald-100"}`}
+                    ${statusMeta.iconBg}`}
                   >
-                    {isReversed ? (
+                    {statusMeta.icon === "x" ? (
                       <XCircle size={16} className="text-rose-500" />
+                    ) : statusMeta.icon === "clock" ? (
+                      <Clock size={16} className="text-amber-600" />
                     ) : (
                       <CheckCircle2 size={16} className="text-emerald-600" />
                     )}
@@ -464,11 +513,9 @@ const PaymentsPage = async ({
                       <p className="text-sm font-black text-gray-800">
                         {p.receiptNumber}
                       </p>
-                      {isReversed && (
-                        <span className="text-[9px] font-black px-1.5 py-0.5 bg-rose-100 text-rose-600 rounded-md">
-                          REVERSED
-                        </span>
-                      )}
+                      <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md ${statusMeta.badge}`}>
+                        {statusMeta.label}
+                      </span>
                     </div>
                     <p className="text-xs text-gray-500 mt-0.5">
                       {p.studentBill.student?.surname}{" "}
@@ -518,7 +565,7 @@ const PaymentsPage = async ({
                   {/* Amount */}
                   <div className="shrink-0 text-right">
                     <p
-                      className={`text-base font-black ${isReversed ? "text-rose-400 line-through" : "text-emerald-700"}`}
+                      className={`text-base font-black ${statusMeta.amount}`}
                     >
                       {formatGHS(p.amount)}
                     </p>
@@ -527,7 +574,7 @@ const PaymentsPage = async ({
                   {/* Actions */}
                   <div className="flex items-center gap-2 shrink-0">
                     {/* Receipt PDF link */}
-                    {!isReversed && (
+                    {isConfirmed && (
                       <a
                         href={`/api/finance/receipt?billId=${p.studentBillId}&receiptNumber=${encodeURIComponent(p.receiptNumber)}`}
                         target="_blank"
@@ -539,7 +586,7 @@ const PaymentsPage = async ({
                     )}
 
                     {/* Reverse button (admin/bursar, confirmed only) */}
-                    {!isReversed && (
+                    {isConfirmed && (
                       <PaymentReverseButton
                         paymentId={p.id}
                         receiptNumber={p.receiptNumber}

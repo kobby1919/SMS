@@ -76,7 +76,9 @@ enum PaymentMethod {
 }
 
 enum PaymentStatus {
+  PENDING
   CONFIRMED
+  FAILED
   REVERSED
 }
 
@@ -86,6 +88,11 @@ enum DiscountType {
   STAFF_CHILD
   BURSARY
   OTHER
+}
+
+enum DiscountStatus {
+  ACTIVE
+  REMOVED
 }
 
 enum AuditAction {
@@ -1172,12 +1179,16 @@ model PaymentReversal {
 // Never edit a discount — remove and re-apply if correction needed.
 
 model Discount {
-  id          Int          @id @default(autoincrement())
-  type        DiscountType
-  description String
-  amount      Decimal?     @db.Decimal(10, 2)
-  percentage  Decimal?     @db.Decimal(5, 2)
-  approvedBy  String
+  id           Int            @id @default(autoincrement())
+  type         DiscountType
+  status       DiscountStatus @default(ACTIVE)
+  description  String
+  amount       Decimal?       @db.Decimal(10, 2)
+  percentage   Decimal?       @db.Decimal(5, 2)
+  approvedBy   String
+  removedBy    String?
+  removeReason String?
+  removedAt    DateTime?
 
   schoolId String @default("default-school")
   school   School @relation(fields: [schoolId], references: [id])
@@ -1186,6 +1197,9 @@ model Discount {
   studentBill   StudentBill @relation(fields: [studentBillId], references: [id])
 
   createdAt DateTime @default(now())
+
+  @@index([schoolId, status, createdAt])
+  @@index([schoolId, studentBillId, status])
 }
 
 // ReceiptCounter: tracks the receipt number counter per calendar year.

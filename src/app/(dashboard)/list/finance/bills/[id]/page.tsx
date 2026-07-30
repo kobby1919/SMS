@@ -18,6 +18,7 @@ import {
 } from "@/src/lib/constants/finance";
 import WaiveBillButton from "@/src/components/WaiveBillButton";
 import FinanceQueryResolveForm from "@/src/components/FinanceQueryResolveForm";
+import BillDiscountPanel from "@/src/components/BillDiscountPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -88,6 +89,7 @@ const BillDetailPage = async ({
   const canRecordPayment = bill.status !== "PAID" && bill.status !== "WAIVED";
   const confirmedPayments = bill.payments.filter((p) => p.status === "CONFIRMED");
   const reversedPayments  = bill.payments.filter((p) => p.status === "REVERSED");
+  const activeDiscounts = bill.discounts.filter((d) => d.status === "ACTIVE");
 
   // Progress percentage
   const progressPct = Number(bill.totalAmount) > 0
@@ -271,13 +273,13 @@ const BillDetailPage = async ({
           </div>
 
           {/* Discounts */}
-          {bill.discounts.length > 0 && (
+          {activeDiscounts.length > 0 && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100">
                 <p className="text-xs font-black uppercase tracking-wider text-gray-400">Discounts Applied</p>
               </div>
               <div className="divide-y divide-gray-50">
-                {bill.discounts.map((d) => (
+                {activeDiscounts.map((d) => (
                   <div key={d.id} className="px-5 py-3.5 flex items-center justify-between">
                     <div>
                       <p className="text-sm font-bold text-gray-800">{d.description}</p>
@@ -300,6 +302,11 @@ const BillDetailPage = async ({
 
         {/* Right — payment history */}
         <div className="w-full lg:w-80 shrink-0 flex flex-col gap-4">
+          <BillDiscountPanel
+            billId={bill.id}
+            currentBalance={Number(bill.balance)}
+            discounts={bill.discounts}
+          />
 
           {/* Confirmed payments */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">

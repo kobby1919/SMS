@@ -337,7 +337,9 @@ export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
 
 
 export const PaymentStatus: {
+  PENDING: 'PENDING',
   CONFIRMED: 'CONFIRMED',
+  FAILED: 'FAILED',
   REVERSED: 'REVERSED'
 };
 
@@ -353,6 +355,14 @@ export const DiscountType: {
 };
 
 export type DiscountType = (typeof DiscountType)[keyof typeof DiscountType]
+
+
+export const DiscountStatus: {
+  ACTIVE: 'ACTIVE',
+  REMOVED: 'REMOVED'
+};
+
+export type DiscountStatus = (typeof DiscountStatus)[keyof typeof DiscountStatus]
 
 
 export const AuditAction: {
@@ -603,6 +613,10 @@ export const PaymentStatus: typeof $Enums.PaymentStatus
 export type DiscountType = $Enums.DiscountType
 
 export const DiscountType: typeof $Enums.DiscountType
+
+export type DiscountStatus = $Enums.DiscountStatus
+
+export const DiscountStatus: typeof $Enums.DiscountStatus
 
 export type AuditAction = $Enums.AuditAction
 
@@ -50869,10 +50883,14 @@ export namespace Prisma {
   export type DiscountMinAggregateOutputType = {
     id: number | null
     type: $Enums.DiscountType | null
+    status: $Enums.DiscountStatus | null
     description: string | null
     amount: Decimal | null
     percentage: Decimal | null
     approvedBy: string | null
+    removedBy: string | null
+    removeReason: string | null
+    removedAt: Date | null
     schoolId: string | null
     studentBillId: number | null
     createdAt: Date | null
@@ -50881,10 +50899,14 @@ export namespace Prisma {
   export type DiscountMaxAggregateOutputType = {
     id: number | null
     type: $Enums.DiscountType | null
+    status: $Enums.DiscountStatus | null
     description: string | null
     amount: Decimal | null
     percentage: Decimal | null
     approvedBy: string | null
+    removedBy: string | null
+    removeReason: string | null
+    removedAt: Date | null
     schoolId: string | null
     studentBillId: number | null
     createdAt: Date | null
@@ -50893,10 +50915,14 @@ export namespace Prisma {
   export type DiscountCountAggregateOutputType = {
     id: number
     type: number
+    status: number
     description: number
     amount: number
     percentage: number
     approvedBy: number
+    removedBy: number
+    removeReason: number
+    removedAt: number
     schoolId: number
     studentBillId: number
     createdAt: number
@@ -50921,10 +50947,14 @@ export namespace Prisma {
   export type DiscountMinAggregateInputType = {
     id?: true
     type?: true
+    status?: true
     description?: true
     amount?: true
     percentage?: true
     approvedBy?: true
+    removedBy?: true
+    removeReason?: true
+    removedAt?: true
     schoolId?: true
     studentBillId?: true
     createdAt?: true
@@ -50933,10 +50963,14 @@ export namespace Prisma {
   export type DiscountMaxAggregateInputType = {
     id?: true
     type?: true
+    status?: true
     description?: true
     amount?: true
     percentage?: true
     approvedBy?: true
+    removedBy?: true
+    removeReason?: true
+    removedAt?: true
     schoolId?: true
     studentBillId?: true
     createdAt?: true
@@ -50945,10 +50979,14 @@ export namespace Prisma {
   export type DiscountCountAggregateInputType = {
     id?: true
     type?: true
+    status?: true
     description?: true
     amount?: true
     percentage?: true
     approvedBy?: true
+    removedBy?: true
+    removeReason?: true
+    removedAt?: true
     schoolId?: true
     studentBillId?: true
     createdAt?: true
@@ -51044,10 +51082,14 @@ export namespace Prisma {
   export type DiscountGroupByOutputType = {
     id: number
     type: $Enums.DiscountType
+    status: $Enums.DiscountStatus
     description: string
     amount: Decimal | null
     percentage: Decimal | null
     approvedBy: string
+    removedBy: string | null
+    removeReason: string | null
+    removedAt: Date | null
     schoolId: string
     studentBillId: number
     createdAt: Date
@@ -51075,10 +51117,14 @@ export namespace Prisma {
   export type DiscountSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     type?: boolean
+    status?: boolean
     description?: boolean
     amount?: boolean
     percentage?: boolean
     approvedBy?: boolean
+    removedBy?: boolean
+    removeReason?: boolean
+    removedAt?: boolean
     schoolId?: boolean
     studentBillId?: boolean
     createdAt?: boolean
@@ -51089,10 +51135,14 @@ export namespace Prisma {
   export type DiscountSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     type?: boolean
+    status?: boolean
     description?: boolean
     amount?: boolean
     percentage?: boolean
     approvedBy?: boolean
+    removedBy?: boolean
+    removeReason?: boolean
+    removedAt?: boolean
     schoolId?: boolean
     studentBillId?: boolean
     createdAt?: boolean
@@ -51103,10 +51153,14 @@ export namespace Prisma {
   export type DiscountSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     type?: boolean
+    status?: boolean
     description?: boolean
     amount?: boolean
     percentage?: boolean
     approvedBy?: boolean
+    removedBy?: boolean
+    removeReason?: boolean
+    removedAt?: boolean
     schoolId?: boolean
     studentBillId?: boolean
     createdAt?: boolean
@@ -51117,16 +51171,20 @@ export namespace Prisma {
   export type DiscountSelectScalar = {
     id?: boolean
     type?: boolean
+    status?: boolean
     description?: boolean
     amount?: boolean
     percentage?: boolean
     approvedBy?: boolean
+    removedBy?: boolean
+    removeReason?: boolean
+    removedAt?: boolean
     schoolId?: boolean
     studentBillId?: boolean
     createdAt?: boolean
   }
 
-  export type DiscountOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "description" | "amount" | "percentage" | "approvedBy" | "schoolId" | "studentBillId" | "createdAt", ExtArgs["result"]["discount"]>
+  export type DiscountOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "status" | "description" | "amount" | "percentage" | "approvedBy" | "removedBy" | "removeReason" | "removedAt" | "schoolId" | "studentBillId" | "createdAt", ExtArgs["result"]["discount"]>
   export type DiscountInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     studentBill?: boolean | StudentBillDefaultArgs<ExtArgs>
@@ -51149,10 +51207,14 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       type: $Enums.DiscountType
+      status: $Enums.DiscountStatus
       description: string
       amount: Prisma.Decimal | null
       percentage: Prisma.Decimal | null
       approvedBy: string
+      removedBy: string | null
+      removeReason: string | null
+      removedAt: Date | null
       schoolId: string
       studentBillId: number
       createdAt: Date
@@ -51583,10 +51645,14 @@ export namespace Prisma {
   interface DiscountFieldRefs {
     readonly id: FieldRef<"Discount", 'Int'>
     readonly type: FieldRef<"Discount", 'DiscountType'>
+    readonly status: FieldRef<"Discount", 'DiscountStatus'>
     readonly description: FieldRef<"Discount", 'String'>
     readonly amount: FieldRef<"Discount", 'Decimal'>
     readonly percentage: FieldRef<"Discount", 'Decimal'>
     readonly approvedBy: FieldRef<"Discount", 'String'>
+    readonly removedBy: FieldRef<"Discount", 'String'>
+    readonly removeReason: FieldRef<"Discount", 'String'>
+    readonly removedAt: FieldRef<"Discount", 'DateTime'>
     readonly schoolId: FieldRef<"Discount", 'String'>
     readonly studentBillId: FieldRef<"Discount", 'Int'>
     readonly createdAt: FieldRef<"Discount", 'DateTime'>
@@ -63066,10 +63132,14 @@ export namespace Prisma {
   export const DiscountScalarFieldEnum: {
     id: 'id',
     type: 'type',
+    status: 'status',
     description: 'description',
     amount: 'amount',
     percentage: 'percentage',
     approvedBy: 'approvedBy',
+    removedBy: 'removedBy',
+    removeReason: 'removeReason',
+    removedAt: 'removedAt',
     schoolId: 'schoolId',
     studentBillId: 'studentBillId',
     createdAt: 'createdAt'
@@ -63629,6 +63699,20 @@ export namespace Prisma {
    * Reference to a field of type 'DiscountType[]'
    */
   export type ListEnumDiscountTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DiscountType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'DiscountStatus'
+   */
+  export type EnumDiscountStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DiscountStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'DiscountStatus[]'
+   */
+  export type ListEnumDiscountStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DiscountStatus[]'>
     
 
 
@@ -67174,10 +67258,14 @@ export namespace Prisma {
     NOT?: DiscountWhereInput | DiscountWhereInput[]
     id?: IntFilter<"Discount"> | number
     type?: EnumDiscountTypeFilter<"Discount"> | $Enums.DiscountType
+    status?: EnumDiscountStatusFilter<"Discount"> | $Enums.DiscountStatus
     description?: StringFilter<"Discount"> | string
     amount?: DecimalNullableFilter<"Discount"> | Decimal | DecimalJsLike | number | string | null
     percentage?: DecimalNullableFilter<"Discount"> | Decimal | DecimalJsLike | number | string | null
     approvedBy?: StringFilter<"Discount"> | string
+    removedBy?: StringNullableFilter<"Discount"> | string | null
+    removeReason?: StringNullableFilter<"Discount"> | string | null
+    removedAt?: DateTimeNullableFilter<"Discount"> | Date | string | null
     schoolId?: StringFilter<"Discount"> | string
     studentBillId?: IntFilter<"Discount"> | number
     createdAt?: DateTimeFilter<"Discount"> | Date | string
@@ -67188,10 +67276,14 @@ export namespace Prisma {
   export type DiscountOrderByWithRelationInput = {
     id?: SortOrder
     type?: SortOrder
+    status?: SortOrder
     description?: SortOrder
     amount?: SortOrderInput | SortOrder
     percentage?: SortOrderInput | SortOrder
     approvedBy?: SortOrder
+    removedBy?: SortOrderInput | SortOrder
+    removeReason?: SortOrderInput | SortOrder
+    removedAt?: SortOrderInput | SortOrder
     schoolId?: SortOrder
     studentBillId?: SortOrder
     createdAt?: SortOrder
@@ -67205,10 +67297,14 @@ export namespace Prisma {
     OR?: DiscountWhereInput[]
     NOT?: DiscountWhereInput | DiscountWhereInput[]
     type?: EnumDiscountTypeFilter<"Discount"> | $Enums.DiscountType
+    status?: EnumDiscountStatusFilter<"Discount"> | $Enums.DiscountStatus
     description?: StringFilter<"Discount"> | string
     amount?: DecimalNullableFilter<"Discount"> | Decimal | DecimalJsLike | number | string | null
     percentage?: DecimalNullableFilter<"Discount"> | Decimal | DecimalJsLike | number | string | null
     approvedBy?: StringFilter<"Discount"> | string
+    removedBy?: StringNullableFilter<"Discount"> | string | null
+    removeReason?: StringNullableFilter<"Discount"> | string | null
+    removedAt?: DateTimeNullableFilter<"Discount"> | Date | string | null
     schoolId?: StringFilter<"Discount"> | string
     studentBillId?: IntFilter<"Discount"> | number
     createdAt?: DateTimeFilter<"Discount"> | Date | string
@@ -67219,10 +67315,14 @@ export namespace Prisma {
   export type DiscountOrderByWithAggregationInput = {
     id?: SortOrder
     type?: SortOrder
+    status?: SortOrder
     description?: SortOrder
     amount?: SortOrderInput | SortOrder
     percentage?: SortOrderInput | SortOrder
     approvedBy?: SortOrder
+    removedBy?: SortOrderInput | SortOrder
+    removeReason?: SortOrderInput | SortOrder
+    removedAt?: SortOrderInput | SortOrder
     schoolId?: SortOrder
     studentBillId?: SortOrder
     createdAt?: SortOrder
@@ -67239,10 +67339,14 @@ export namespace Prisma {
     NOT?: DiscountScalarWhereWithAggregatesInput | DiscountScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Discount"> | number
     type?: EnumDiscountTypeWithAggregatesFilter<"Discount"> | $Enums.DiscountType
+    status?: EnumDiscountStatusWithAggregatesFilter<"Discount"> | $Enums.DiscountStatus
     description?: StringWithAggregatesFilter<"Discount"> | string
     amount?: DecimalNullableWithAggregatesFilter<"Discount"> | Decimal | DecimalJsLike | number | string | null
     percentage?: DecimalNullableWithAggregatesFilter<"Discount"> | Decimal | DecimalJsLike | number | string | null
     approvedBy?: StringWithAggregatesFilter<"Discount"> | string
+    removedBy?: StringNullableWithAggregatesFilter<"Discount"> | string | null
+    removeReason?: StringNullableWithAggregatesFilter<"Discount"> | string | null
+    removedAt?: DateTimeNullableWithAggregatesFilter<"Discount"> | Date | string | null
     schoolId?: StringWithAggregatesFilter<"Discount"> | string
     studentBillId?: IntWithAggregatesFilter<"Discount"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Discount"> | Date | string
@@ -71526,10 +71630,14 @@ export namespace Prisma {
 
   export type DiscountCreateInput = {
     type: $Enums.DiscountType
+    status?: $Enums.DiscountStatus
     description: string
     amount?: Decimal | DecimalJsLike | number | string | null
     percentage?: Decimal | DecimalJsLike | number | string | null
     approvedBy: string
+    removedBy?: string | null
+    removeReason?: string | null
+    removedAt?: Date | string | null
     createdAt?: Date | string
     school?: SchoolCreateNestedOneWithoutDiscountsInput
     studentBill: StudentBillCreateNestedOneWithoutDiscountsInput
@@ -71538,10 +71646,14 @@ export namespace Prisma {
   export type DiscountUncheckedCreateInput = {
     id?: number
     type: $Enums.DiscountType
+    status?: $Enums.DiscountStatus
     description: string
     amount?: Decimal | DecimalJsLike | number | string | null
     percentage?: Decimal | DecimalJsLike | number | string | null
     approvedBy: string
+    removedBy?: string | null
+    removeReason?: string | null
+    removedAt?: Date | string | null
     schoolId?: string
     studentBillId: number
     createdAt?: Date | string
@@ -71549,10 +71661,14 @@ export namespace Prisma {
 
   export type DiscountUpdateInput = {
     type?: EnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType
+    status?: EnumDiscountStatusFieldUpdateOperationsInput | $Enums.DiscountStatus
     description?: StringFieldUpdateOperationsInput | string
     amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     percentage?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     approvedBy?: StringFieldUpdateOperationsInput | string
+    removedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    removeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutDiscountsNestedInput
     studentBill?: StudentBillUpdateOneRequiredWithoutDiscountsNestedInput
@@ -71561,10 +71677,14 @@ export namespace Prisma {
   export type DiscountUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     type?: EnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType
+    status?: EnumDiscountStatusFieldUpdateOperationsInput | $Enums.DiscountStatus
     description?: StringFieldUpdateOperationsInput | string
     amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     percentage?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     approvedBy?: StringFieldUpdateOperationsInput | string
+    removedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    removeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     studentBillId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -71573,10 +71693,14 @@ export namespace Prisma {
   export type DiscountCreateManyInput = {
     id?: number
     type: $Enums.DiscountType
+    status?: $Enums.DiscountStatus
     description: string
     amount?: Decimal | DecimalJsLike | number | string | null
     percentage?: Decimal | DecimalJsLike | number | string | null
     approvedBy: string
+    removedBy?: string | null
+    removeReason?: string | null
+    removedAt?: Date | string | null
     schoolId?: string
     studentBillId: number
     createdAt?: Date | string
@@ -71584,20 +71708,28 @@ export namespace Prisma {
 
   export type DiscountUpdateManyMutationInput = {
     type?: EnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType
+    status?: EnumDiscountStatusFieldUpdateOperationsInput | $Enums.DiscountStatus
     description?: StringFieldUpdateOperationsInput | string
     amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     percentage?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     approvedBy?: StringFieldUpdateOperationsInput | string
+    removedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    removeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type DiscountUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     type?: EnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType
+    status?: EnumDiscountStatusFieldUpdateOperationsInput | $Enums.DiscountStatus
     description?: StringFieldUpdateOperationsInput | string
     amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     percentage?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     approvedBy?: StringFieldUpdateOperationsInput | string
+    removedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    removeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     studentBillId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -75426,13 +75558,24 @@ export namespace Prisma {
     not?: NestedEnumDiscountTypeFilter<$PrismaModel> | $Enums.DiscountType
   }
 
+  export type EnumDiscountStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.DiscountStatus | EnumDiscountStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DiscountStatus[] | ListEnumDiscountStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DiscountStatus[] | ListEnumDiscountStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDiscountStatusFilter<$PrismaModel> | $Enums.DiscountStatus
+  }
+
   export type DiscountCountOrderByAggregateInput = {
     id?: SortOrder
     type?: SortOrder
+    status?: SortOrder
     description?: SortOrder
     amount?: SortOrder
     percentage?: SortOrder
     approvedBy?: SortOrder
+    removedBy?: SortOrder
+    removeReason?: SortOrder
+    removedAt?: SortOrder
     schoolId?: SortOrder
     studentBillId?: SortOrder
     createdAt?: SortOrder
@@ -75448,10 +75591,14 @@ export namespace Prisma {
   export type DiscountMaxOrderByAggregateInput = {
     id?: SortOrder
     type?: SortOrder
+    status?: SortOrder
     description?: SortOrder
     amount?: SortOrder
     percentage?: SortOrder
     approvedBy?: SortOrder
+    removedBy?: SortOrder
+    removeReason?: SortOrder
+    removedAt?: SortOrder
     schoolId?: SortOrder
     studentBillId?: SortOrder
     createdAt?: SortOrder
@@ -75460,10 +75607,14 @@ export namespace Prisma {
   export type DiscountMinOrderByAggregateInput = {
     id?: SortOrder
     type?: SortOrder
+    status?: SortOrder
     description?: SortOrder
     amount?: SortOrder
     percentage?: SortOrder
     approvedBy?: SortOrder
+    removedBy?: SortOrder
+    removeReason?: SortOrder
+    removedAt?: SortOrder
     schoolId?: SortOrder
     studentBillId?: SortOrder
     createdAt?: SortOrder
@@ -75484,6 +75635,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumDiscountTypeFilter<$PrismaModel>
     _max?: NestedEnumDiscountTypeFilter<$PrismaModel>
+  }
+
+  export type EnumDiscountStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DiscountStatus | EnumDiscountStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DiscountStatus[] | ListEnumDiscountStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DiscountStatus[] | ListEnumDiscountStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDiscountStatusWithAggregatesFilter<$PrismaModel> | $Enums.DiscountStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDiscountStatusFilter<$PrismaModel>
+    _max?: NestedEnumDiscountStatusFilter<$PrismaModel>
   }
 
   export type ReceiptCounterSchoolIdYearCompoundUniqueInput = {
@@ -81737,6 +81898,10 @@ export namespace Prisma {
     set?: $Enums.DiscountType
   }
 
+  export type EnumDiscountStatusFieldUpdateOperationsInput = {
+    set?: $Enums.DiscountStatus
+  }
+
   export type SchoolUpdateOneRequiredWithoutDiscountsNestedInput = {
     create?: XOR<SchoolCreateWithoutDiscountsInput, SchoolUncheckedCreateWithoutDiscountsInput>
     connectOrCreate?: SchoolCreateOrConnectWithoutDiscountsInput
@@ -82596,6 +82761,13 @@ export namespace Prisma {
     not?: NestedEnumDiscountTypeFilter<$PrismaModel> | $Enums.DiscountType
   }
 
+  export type NestedEnumDiscountStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.DiscountStatus | EnumDiscountStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DiscountStatus[] | ListEnumDiscountStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DiscountStatus[] | ListEnumDiscountStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDiscountStatusFilter<$PrismaModel> | $Enums.DiscountStatus
+  }
+
   export type NestedEnumDiscountTypeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.DiscountType | EnumDiscountTypeFieldRefInput<$PrismaModel>
     in?: $Enums.DiscountType[] | ListEnumDiscountTypeFieldRefInput<$PrismaModel>
@@ -82604,6 +82776,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumDiscountTypeFilter<$PrismaModel>
     _max?: NestedEnumDiscountTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumDiscountStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DiscountStatus | EnumDiscountStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DiscountStatus[] | ListEnumDiscountStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DiscountStatus[] | ListEnumDiscountStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDiscountStatusWithAggregatesFilter<$PrismaModel> | $Enums.DiscountStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDiscountStatusFilter<$PrismaModel>
+    _max?: NestedEnumDiscountStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumAuditActionFilter<$PrismaModel = never> = {
@@ -83766,10 +83948,14 @@ export namespace Prisma {
 
   export type DiscountCreateWithoutSchoolInput = {
     type: $Enums.DiscountType
+    status?: $Enums.DiscountStatus
     description: string
     amount?: Decimal | DecimalJsLike | number | string | null
     percentage?: Decimal | DecimalJsLike | number | string | null
     approvedBy: string
+    removedBy?: string | null
+    removeReason?: string | null
+    removedAt?: Date | string | null
     createdAt?: Date | string
     studentBill: StudentBillCreateNestedOneWithoutDiscountsInput
   }
@@ -83777,10 +83963,14 @@ export namespace Prisma {
   export type DiscountUncheckedCreateWithoutSchoolInput = {
     id?: number
     type: $Enums.DiscountType
+    status?: $Enums.DiscountStatus
     description: string
     amount?: Decimal | DecimalJsLike | number | string | null
     percentage?: Decimal | DecimalJsLike | number | string | null
     approvedBy: string
+    removedBy?: string | null
+    removeReason?: string | null
+    removedAt?: Date | string | null
     studentBillId: number
     createdAt?: Date | string
   }
@@ -85127,10 +85317,14 @@ export namespace Prisma {
     NOT?: DiscountScalarWhereInput | DiscountScalarWhereInput[]
     id?: IntFilter<"Discount"> | number
     type?: EnumDiscountTypeFilter<"Discount"> | $Enums.DiscountType
+    status?: EnumDiscountStatusFilter<"Discount"> | $Enums.DiscountStatus
     description?: StringFilter<"Discount"> | string
     amount?: DecimalNullableFilter<"Discount"> | Decimal | DecimalJsLike | number | string | null
     percentage?: DecimalNullableFilter<"Discount"> | Decimal | DecimalJsLike | number | string | null
     approvedBy?: StringFilter<"Discount"> | string
+    removedBy?: StringNullableFilter<"Discount"> | string | null
+    removeReason?: StringNullableFilter<"Discount"> | string | null
+    removedAt?: DateTimeNullableFilter<"Discount"> | Date | string | null
     schoolId?: StringFilter<"Discount"> | string
     studentBillId?: IntFilter<"Discount"> | number
     createdAt?: DateTimeFilter<"Discount"> | Date | string
@@ -99997,10 +100191,14 @@ export namespace Prisma {
 
   export type DiscountCreateWithoutStudentBillInput = {
     type: $Enums.DiscountType
+    status?: $Enums.DiscountStatus
     description: string
     amount?: Decimal | DecimalJsLike | number | string | null
     percentage?: Decimal | DecimalJsLike | number | string | null
     approvedBy: string
+    removedBy?: string | null
+    removeReason?: string | null
+    removedAt?: Date | string | null
     createdAt?: Date | string
     school?: SchoolCreateNestedOneWithoutDiscountsInput
   }
@@ -100008,10 +100206,14 @@ export namespace Prisma {
   export type DiscountUncheckedCreateWithoutStudentBillInput = {
     id?: number
     type: $Enums.DiscountType
+    status?: $Enums.DiscountStatus
     description: string
     amount?: Decimal | DecimalJsLike | number | string | null
     percentage?: Decimal | DecimalJsLike | number | string | null
     approvedBy: string
+    removedBy?: string | null
+    removeReason?: string | null
+    removedAt?: Date | string | null
     schoolId?: string
     createdAt?: Date | string
   }
@@ -104522,10 +104724,14 @@ export namespace Prisma {
   export type DiscountCreateManySchoolInput = {
     id?: number
     type: $Enums.DiscountType
+    status?: $Enums.DiscountStatus
     description: string
     amount?: Decimal | DecimalJsLike | number | string | null
     percentage?: Decimal | DecimalJsLike | number | string | null
     approvedBy: string
+    removedBy?: string | null
+    removeReason?: string | null
+    removedAt?: Date | string | null
     studentBillId: number
     createdAt?: Date | string
   }
@@ -105684,10 +105890,14 @@ export namespace Prisma {
 
   export type DiscountUpdateWithoutSchoolInput = {
     type?: EnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType
+    status?: EnumDiscountStatusFieldUpdateOperationsInput | $Enums.DiscountStatus
     description?: StringFieldUpdateOperationsInput | string
     amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     percentage?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     approvedBy?: StringFieldUpdateOperationsInput | string
+    removedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    removeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     studentBill?: StudentBillUpdateOneRequiredWithoutDiscountsNestedInput
   }
@@ -105695,10 +105905,14 @@ export namespace Prisma {
   export type DiscountUncheckedUpdateWithoutSchoolInput = {
     id?: IntFieldUpdateOperationsInput | number
     type?: EnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType
+    status?: EnumDiscountStatusFieldUpdateOperationsInput | $Enums.DiscountStatus
     description?: StringFieldUpdateOperationsInput | string
     amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     percentage?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     approvedBy?: StringFieldUpdateOperationsInput | string
+    removedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    removeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     studentBillId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -105706,10 +105920,14 @@ export namespace Prisma {
   export type DiscountUncheckedUpdateManyWithoutSchoolInput = {
     id?: IntFieldUpdateOperationsInput | number
     type?: EnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType
+    status?: EnumDiscountStatusFieldUpdateOperationsInput | $Enums.DiscountStatus
     description?: StringFieldUpdateOperationsInput | string
     amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     percentage?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     approvedBy?: StringFieldUpdateOperationsInput | string
+    removedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    removeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     studentBillId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -109271,10 +109489,14 @@ export namespace Prisma {
   export type DiscountCreateManyStudentBillInput = {
     id?: number
     type: $Enums.DiscountType
+    status?: $Enums.DiscountStatus
     description: string
     amount?: Decimal | DecimalJsLike | number | string | null
     percentage?: Decimal | DecimalJsLike | number | string | null
     approvedBy: string
+    removedBy?: string | null
+    removeReason?: string | null
+    removedAt?: Date | string | null
     schoolId?: string
     createdAt?: Date | string
   }
@@ -109388,10 +109610,14 @@ export namespace Prisma {
 
   export type DiscountUpdateWithoutStudentBillInput = {
     type?: EnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType
+    status?: EnumDiscountStatusFieldUpdateOperationsInput | $Enums.DiscountStatus
     description?: StringFieldUpdateOperationsInput | string
     amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     percentage?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     approvedBy?: StringFieldUpdateOperationsInput | string
+    removedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    removeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutDiscountsNestedInput
   }
@@ -109399,10 +109625,14 @@ export namespace Prisma {
   export type DiscountUncheckedUpdateWithoutStudentBillInput = {
     id?: IntFieldUpdateOperationsInput | number
     type?: EnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType
+    status?: EnumDiscountStatusFieldUpdateOperationsInput | $Enums.DiscountStatus
     description?: StringFieldUpdateOperationsInput | string
     amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     percentage?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     approvedBy?: StringFieldUpdateOperationsInput | string
+    removedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    removeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -109410,10 +109640,14 @@ export namespace Prisma {
   export type DiscountUncheckedUpdateManyWithoutStudentBillInput = {
     id?: IntFieldUpdateOperationsInput | number
     type?: EnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType
+    status?: EnumDiscountStatusFieldUpdateOperationsInput | $Enums.DiscountStatus
     description?: StringFieldUpdateOperationsInput | string
     amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     percentage?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     approvedBy?: StringFieldUpdateOperationsInput | string
+    removedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    removeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

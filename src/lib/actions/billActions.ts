@@ -5,6 +5,7 @@ import prisma from "@/src/lib/prisma";
 import { revalidatePath } from "next/cache";
 import {
   requireFinanceAccess,
+  recomputeBillStatus,
   writeAuditLog,
 } from "@/src/lib/actions/financeActions";
 import { requireResourceAccess } from "@/src/lib/authz";
@@ -12,11 +13,13 @@ import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   billFiltersSchema,
   billPreviewSchema,
+  applyDiscountSchema,
   generateBillsSchema,
+  removeDiscountSchema,
   waiveBillSchema,
 } from "@/src/lib/validation/finance";
 import { Prisma } from "@/src/generated/prisma";
-import type { BillStatus } from "@/src/generated/prisma";
+import type { BillStatus, DiscountType } from "@/src/generated/prisma";
 import { enforceActionRateLimit } from "@/src/lib/rate-limit";
 import { revalidateDashboard } from "@/src/lib/cacheTags";
 import { enqueueFinanceJob } from "@/src/lib/services/finance-queue";
@@ -348,6 +351,216 @@ export async function waiveBill(billId: number, reason: string) {
 }
 
 // ─── Get bills (with filters) ─────────────────────────────────────────────────
+
+export async function applyBillDiscount(rawInput: unknown) {
+  const ctx = await requireFinanceAccess();
+  const { userId, schoolId } = ctx;
+  await enforceActionRateLimit({
+    key: `finance:discount-apply:${schoolId}:${userId}`,
+    limit: 20,
+    windowMs: 60_000,
+  });
+  const input = parseActionInput(applyDiscountSchema, rawInput);
+
+  const bill = requireResourceAccess(
+    await prisma.studentBill.findFirst({
+      where: { id: input.billId, schoolId },
+      include: { student: { select: { id: true, name: true, surname: true } } },
+    }),
+    ctx,
+    "Bill not found.",
+  );
+
+  if (bill.status === "WAIVED") {
+    throw new Error("Cannot apply a discount to a waived bill.");
+  }
+
+  const totalAmount = new Prisma.Decimal(bill.totalAmount);
+  const currentBalance = new Prisma.Decimal(bill.balance);
+  const discountValue = input.amount
+    ? new Prisma.Decimal(input.amount)
+    : totalAmount.mul(new Prisma.Decimal(input.percentage ?? 0)).div(100).toDecimalPlaces(2);
+
+  if (discountValue.lte(0)) {
+    throw new Error("Discount must be greater than zero.");
+  }
+
+  if (discountValue.gt(currentBalance)) {
+    throw new Error(
+      `Discount amount (GHS ${discountValue.toFixed(2)}) cannot exceed the current balance ` +
+      `(GHS ${currentBalance.toFixed(2)}).`,
+    );
+  }
+
+  const discount = await prisma.$transaction(async (tx) => {
+    const created = await tx.discount.create({
+      data: {
+        schoolId,
+        studentBillId: bill.id,
+        type: input.type as DiscountType,
+        description: input.description,
+        amount: input.amount ? discountValue : null,
+        percentage: input.percentage ? new Prisma.Decimal(input.percentage) : null,
+        approvedBy: userId,
+      },
+    });
+
+    await tx.studentBill.update({
+      where: { id: bill.id },
+      data: { discountAmount: { increment: discountValue } },
+    });
+
+    return created;
+  });
+
+  await recomputeBillStatus(bill.id, schoolId);
+
+  await writeAuditLog({
+    schoolId,
+    action: "DISCOUNT_APPLIED",
+    performedBy: userId,
+    entityType: "Discount",
+    entityId: discount.id,
+    metadata: {
+      discountId: discount.id,
+      billId: bill.id,
+      studentId: bill.studentId,
+      studentName: `${bill.student.name} ${bill.student.surname}`,
+      type: input.type,
+      amount: discountValue.toNumber(),
+      percentage: input.percentage ?? null,
+      description: input.description,
+    },
+  });
+
+  await recordParentActivityEvents({
+    schoolId,
+    studentIds: [bill.studentId],
+    type: "BILL",
+    title: "Discount applied",
+    body: `A GHS ${discountValue.toFixed(2)} discount was applied to ${bill.student.name} ${bill.student.surname}'s bill. ${input.description}`,
+    href: `/parent/finance/bills/${bill.id}`,
+    sourceModel: "Discount",
+    sourceId: String(discount.id),
+    sourceKey: `discount:${discount.id}:applied`,
+    occurredAt: new Date(),
+    payload: {
+      discountId: discount.id,
+      billId: bill.id,
+      amount: discountValue.toNumber(),
+      type: input.type,
+    },
+  });
+
+  revalidatePath("/list/finance/bills");
+  revalidatePath(`/list/finance/bills/${bill.id}`);
+  revalidatePath("/parent");
+  revalidatePath("/parent/finance");
+  revalidatePath(`/parent/finance/bills/${bill.id}`);
+  revalidatePath("/bursar");
+  revalidateDashboard(schoolId);
+
+  return { id: discount.id, amount: discountValue.toNumber() };
+}
+
+export async function removeBillDiscount(rawInput: unknown) {
+  const ctx = await requireFinanceAccess();
+  const { userId, schoolId } = ctx;
+  await enforceActionRateLimit({
+    key: `finance:discount-remove:${schoolId}:${userId}`,
+    limit: 20,
+    windowMs: 60_000,
+  });
+  const input = parseActionInput(removeDiscountSchema, rawInput);
+
+  const discount = requireResourceAccess(
+    await prisma.discount.findFirst({
+      where: { id: input.discountId, schoolId },
+      include: {
+        studentBill: {
+          include: { student: { select: { id: true, name: true, surname: true } } },
+        },
+      },
+    }),
+    ctx,
+    "Discount not found.",
+  );
+
+  if (discount.status === "REMOVED") {
+    throw new Error("This discount has already been removed.");
+  }
+
+  const discountValue = discount.amount
+    ? new Prisma.Decimal(discount.amount)
+    : new Prisma.Decimal(discount.studentBill.totalAmount)
+      .mul(new Prisma.Decimal(discount.percentage ?? 0))
+      .div(100)
+      .toDecimalPlaces(2);
+
+  await prisma.$transaction(async (tx) => {
+    await tx.discount.update({
+      where: { id: discount.id },
+      data: {
+        status: "REMOVED",
+        removedBy: userId,
+        removeReason: input.reason,
+        removedAt: new Date(),
+      },
+    });
+
+    await tx.studentBill.update({
+      where: { id: discount.studentBillId },
+      data: { discountAmount: { decrement: discountValue } },
+    });
+  });
+
+  await recomputeBillStatus(discount.studentBillId, schoolId);
+
+  await writeAuditLog({
+    schoolId,
+    action: "DISCOUNT_REMOVED",
+    performedBy: userId,
+    entityType: "Discount",
+    entityId: discount.id,
+    metadata: {
+      discountId: discount.id,
+      billId: discount.studentBillId,
+      studentId: discount.studentBill.studentId,
+      studentName: `${discount.studentBill.student.name} ${discount.studentBill.student.surname}`,
+      amount: discountValue.toNumber(),
+      reason: input.reason,
+    },
+  });
+
+  await recordParentActivityEvents({
+    schoolId,
+    studentIds: [discount.studentBill.studentId],
+    type: "BILL",
+    title: "Discount removed",
+    body: `A GHS ${discountValue.toFixed(2)} discount was removed from ${discount.studentBill.student.name} ${discount.studentBill.student.surname}'s bill. Reason: ${input.reason}.`,
+    href: `/parent/finance/bills/${discount.studentBillId}`,
+    sourceModel: "Discount",
+    sourceId: String(discount.id),
+    sourceKey: `discount:${discount.id}:removed`,
+    occurredAt: new Date(),
+    payload: {
+      discountId: discount.id,
+      billId: discount.studentBillId,
+      amount: discountValue.toNumber(),
+      reason: input.reason,
+    },
+  });
+
+  revalidatePath("/list/finance/bills");
+  revalidatePath(`/list/finance/bills/${discount.studentBillId}`);
+  revalidatePath("/parent");
+  revalidatePath("/parent/finance");
+  revalidatePath(`/parent/finance/bills/${discount.studentBillId}`);
+  revalidatePath("/bursar");
+  revalidateDashboard(schoolId);
+
+  return { id: discount.id, amount: discountValue.toNumber() };
+}
 
 export type BillFilters = {
   feeStructureId?: number;

@@ -30,7 +30,7 @@ export const billStatusSchema = z.enum([
   "OVERPAID",
   "WAIVED",
 ]);
-export const paymentStatusSchema = z.enum(["CONFIRMED", "REVERSED"]);
+export const paymentStatusSchema = z.enum(["PENDING", "CONFIRMED", "FAILED", "REVERSED"]);
 
 export const positiveIntSchema = z.coerce.number().int().positive();
 export const nonEmptyStringSchema = z.string().trim().min(1);

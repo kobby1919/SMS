@@ -592,10 +592,14 @@ exports.Prisma.PaymentReversalScalarFieldEnum = {
 exports.Prisma.DiscountScalarFieldEnum = {
   id: 'id',
   type: 'type',
+  status: 'status',
   description: 'description',
   amount: 'amount',
   percentage: 'percentage',
   approvedBy: 'approvedBy',
+  removedBy: 'removedBy',
+  removeReason: 'removeReason',
+  removedAt: 'removedAt',
   schoolId: 'schoolId',
   studentBillId: 'studentBillId',
   createdAt: 'createdAt'
@@ -875,7 +879,9 @@ exports.PaymentProvider = exports.$Enums.PaymentProvider = {
 };
 
 exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  PENDING: 'PENDING',
   CONFIRMED: 'CONFIRMED',
+  FAILED: 'FAILED',
   REVERSED: 'REVERSED'
 };
 
@@ -885,6 +891,11 @@ exports.DiscountType = exports.$Enums.DiscountType = {
   STAFF_CHILD: 'STAFF_CHILD',
   BURSARY: 'BURSARY',
   OTHER: 'OTHER'
+};
+
+exports.DiscountStatus = exports.$Enums.DiscountStatus = {
+  ACTIVE: 'ACTIVE',
+  REMOVED: 'REMOVED'
 };
 
 exports.AuditAction = exports.$Enums.AuditAction = {

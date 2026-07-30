@@ -34,8 +34,8 @@ import type { AuditAction } from "@/src/generated/prisma";
 //   48th payment of 2026   → RCP-2026-048
 //   First payment of 2027  → RCP-2027-001  (counter reset automatically)
 
-export async function generateReceiptNumber(): Promise<string> {
-  const { schoolId } = await requireFinanceAccess();
+export async function generateReceiptNumber(trustedSchoolId?: string): Promise<string> {
+  const schoolId = trustedSchoolId ?? (await requireFinanceAccess()).schoolId;
   const year = new Date().getFullYear();
 
   // Upsert the counter row for this year, then increment atomically

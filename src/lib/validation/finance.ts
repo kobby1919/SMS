@@ -84,6 +84,22 @@ export const waiveBillSchema = z.object({
   reason: nonEmptyStringSchema.max(500),
 });
 
+export const applyDiscountSchema = z.object({
+  billId: positiveIntSchema,
+  type: z.enum(["SCHOLARSHIP", "SIBLING", "STAFF_CHILD", "BURSARY", "OTHER"]),
+  description: nonEmptyStringSchema.max(500),
+  amount: z.coerce.number().positive().optional().nullable(),
+  percentage: z.coerce.number().positive().max(100).optional().nullable(),
+}).refine(
+  (value) => Boolean(value.amount) !== Boolean(value.percentage),
+  "Provide either a fixed amount or a percentage, not both.",
+);
+
+export const removeDiscountSchema = z.object({
+  discountId: positiveIntSchema,
+  reason: nonEmptyStringSchema.max(500),
+});
+
 export const dailyFinanceReportQuerySchema = z.object({
   date: z
     .string()

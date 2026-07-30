@@ -1,6 +1,6 @@
 import prisma from "@/src/lib/prisma";
 import { Prisma } from "@/src/generated/prisma";
-import type { PaymentProvider, PaymentWebhookEvent } from "@/src/generated/prisma";
+import type { PaymentProvider, PaymentStatus, PaymentWebhookEvent } from "@/src/generated/prisma";
 import {
   generateReceiptNumber,
   recomputeBillStatus,
@@ -11,6 +11,7 @@ import {
   assertCanRecordPayment,
   assertPaymentWithinAllowedOverpay,
 } from "@/src/lib/services/finance-policy";
+import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
 
 type WebhookRecord = PaymentWebhookEvent & {
   payload: Prisma.JsonValue;
@@ -22,7 +23,7 @@ type NormalizedPaymentWebhook = {
   amount: Prisma.Decimal;
   externalReference: string;
   paidBy: string;
-  eventIsSuccessful: boolean;
+  paymentStatus: Extract<PaymentStatus, "PENDING" | "CONFIRMED" | "FAILED">;
 };
 
 function asRecord(value: unknown): Record<string, unknown> {
@@ -100,6 +101,12 @@ function normalizePaymentWebhook(event: WebhookRecord): NormalizedPaymentWebhook
     status === "success" ||
     status === "succeeded" ||
     status === "paid";
+  const eventIsFailed =
+    eventType.includes("fail") ||
+    eventType.includes("cancel") ||
+    status === "failed" ||
+    status === "cancelled" ||
+    status === "canceled";
 
   if (!schoolId || !studentBillId || !amount || !externalReference) return null;
 
@@ -109,8 +116,13 @@ function normalizePaymentWebhook(event: WebhookRecord): NormalizedPaymentWebhook
     amount,
     externalReference,
     paidBy,
-    eventIsSuccessful,
+    paymentStatus: eventIsSuccessful ? "CONFIRMED" : eventIsFailed ? "FAILED" : "PENDING",
   };
+}
+
+function provisionalReceiptNumber(provider: PaymentProvider, externalReference: string) {
+  const cleanRef = externalReference.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 48);
+  return `WEB-${provider}-${cleanRef || Date.now()}`;
 }
 
 async function markWebhookProcessed(eventId: string, paymentId: number | null, status: "PROCESSED" | "IGNORED") {
@@ -150,12 +162,12 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
 
   try {
     const normalized = normalizePaymentWebhook(event as WebhookRecord);
-    if (!normalized || !normalized.eventIsSuccessful) {
+    if (!normalized) {
       return markWebhookProcessed(webhookEventId, null, "IGNORED");
     }
 
     const idempotencyKey = `payment:${event.provider}:${normalized.externalReference}`;
-    const existingPayment = await prisma.payment.findFirst({
+    let existingPayment = await prisma.payment.findFirst({
       where: {
         schoolId: normalized.schoolId,
         OR: [
@@ -168,30 +180,24 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
       },
     });
 
-    if (existingPayment) {
+    if (existingPayment && existingPayment.status === "CONFIRMED") {
       return markWebhookProcessed(webhookEventId, existingPayment.id, "PROCESSED");
     }
 
     const bill = await prisma.studentBill.findFirst({
       where: { id: normalized.studentBillId, schoolId: normalized.schoolId },
       include: {
-        student: { select: { name: true, surname: true } },
+        student: { select: { id: true, name: true, surname: true } },
         lineItems: true,
       },
     });
 
     if (!bill) throw new Error("Webhook payment bill not found.");
-    assertCanRecordPayment(bill.status);
-    assertPaymentWithinAllowedOverpay({
-      amount: normalized.amount,
-      currentBalance: bill.balance,
-    });
 
-    const receiptNumber = await generateReceiptNumber();
-    const payment = await prisma.$transaction(async (tx) => {
-      const createdPayment = await tx.payment.create({
+    if (normalized.paymentStatus !== "CONFIRMED") {
+      const payment = existingPayment ?? await prisma.payment.create({
         data: {
-          receiptNumber,
+          receiptNumber: provisionalReceiptNumber(event.provider, normalized.externalReference),
           amount: normalized.amount,
           schoolId: normalized.schoolId,
           paymentMethod: "OTHER",
@@ -201,12 +207,90 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
           externalProvider: event.provider,
           externalReference: normalized.externalReference,
           idempotencyKey,
-          notes: `Recorded from ${event.provider} webhook ${event.providerEventId}`,
-          status: "CONFIRMED",
+          notes: `${normalized.paymentStatus.toLowerCase()} ${event.provider} payment webhook ${event.providerEventId}`,
+          status: normalized.paymentStatus,
           studentBillId: normalized.studentBillId,
           recordedBy: "system:webhook",
         },
       });
+
+      if (existingPayment && existingPayment.status !== normalized.paymentStatus) {
+        existingPayment = await prisma.payment.update({
+          where: { id: existingPayment.id },
+          data: {
+            status: normalized.paymentStatus,
+            notes: `${normalized.paymentStatus.toLowerCase()} ${event.provider} payment webhook ${event.providerEventId}`,
+          },
+        });
+      }
+
+      await recordParentActivityEvents({
+        schoolId: normalized.schoolId,
+        studentIds: [bill.studentId],
+        type: "PAYMENT",
+        title: normalized.paymentStatus === "FAILED" ? "Online payment failed" : "Online payment pending",
+        body: `${event.provider} payment of GHS ${normalized.amount.toFixed(2)} for ${bill.student.name} ${bill.student.surname} is ${normalized.paymentStatus.toLowerCase()}.`,
+        href: `/parent/finance/bills/${bill.id}`,
+        sourceModel: "Payment",
+        sourceId: String(payment.id),
+        sourceKey: `payment:${payment.id}:${normalized.paymentStatus.toLowerCase()}`,
+        occurredAt: new Date(),
+        payload: {
+          paymentId: payment.id,
+          provider: event.provider,
+          externalReference: normalized.externalReference,
+          amount: normalized.amount.toNumber(),
+          status: normalized.paymentStatus,
+        },
+      });
+
+      await prisma.paymentWebhookEvent.update({
+        where: { id: webhookEventId },
+        data: { paymentId: payment.id },
+      });
+
+      return markWebhookProcessed(webhookEventId, payment.id, "PROCESSED");
+    }
+
+    assertCanRecordPayment(bill.status);
+    assertPaymentWithinAllowedOverpay({
+      amount: normalized.amount,
+      currentBalance: bill.balance,
+    });
+
+    const receiptNumber = await generateReceiptNumber(normalized.schoolId);
+    const payment = await prisma.$transaction(async (tx) => {
+      const createdPayment = existingPayment
+        ? await tx.payment.update({
+            where: { id: existingPayment.id },
+            data: {
+              receiptNumber,
+              amount: normalized.amount,
+              paymentDate: new Date(),
+              paidBy: normalized.paidBy,
+              referenceNo: normalized.externalReference,
+              notes: `Confirmed from ${event.provider} webhook ${event.providerEventId}`,
+              status: "CONFIRMED",
+            },
+          })
+        : await tx.payment.create({
+            data: {
+              receiptNumber,
+              amount: normalized.amount,
+              schoolId: normalized.schoolId,
+              paymentMethod: "OTHER",
+              paymentDate: new Date(),
+              paidBy: normalized.paidBy,
+              referenceNo: normalized.externalReference,
+              externalProvider: event.provider,
+              externalReference: normalized.externalReference,
+              idempotencyKey,
+              notes: `Recorded from ${event.provider} webhook ${event.providerEventId}`,
+              status: "CONFIRMED",
+              studentBillId: normalized.studentBillId,
+              recordedBy: "system:webhook",
+            },
+          });
 
       await tx.studentBill.update({
         where: { id: normalized.studentBillId },
@@ -267,12 +351,42 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
       },
     });
 
+    await recordParentActivityEvents({
+      schoolId: normalized.schoolId,
+      studentIds: [bill.studentId],
+      type: "PAYMENT",
+      title: `Online payment received: GHS ${normalized.amount.toFixed(2)}`,
+      body: `Receipt ${receiptNumber} was recorded for ${bill.student.name} ${bill.student.surname} from ${event.provider}.`,
+      href: `/api/finance/receipt?billId=${normalized.studentBillId}&receiptNumber=${encodeURIComponent(receiptNumber)}`,
+      sourceModel: "Payment",
+      sourceId: String(payment.id),
+      sourceKey: `payment:${payment.id}:webhook-confirmed`,
+      occurredAt: payment.paymentDate,
+      payload: {
+        paymentId: payment.id,
+        receiptNumber,
+        amount: normalized.amount.toNumber(),
+        provider: event.provider,
+      },
+    });
+
     await Promise.all([
       enqueueFinanceJob({
         schoolId: normalized.schoolId,
         type: "GENERATE_RECEIPT_PDF",
         payload: { paymentId: payment.id, receiptNumber },
         idempotencyKey: `receipt-pdf:${normalized.schoolId}:${payment.id}`,
+        createdBy: "system:webhook",
+      }),
+      enqueueFinanceJob({
+        schoolId: normalized.schoolId,
+        type: "SEND_PAYMENT_RECEIPT",
+        payload: {
+          paymentId: payment.id,
+          studentBillId: normalized.studentBillId,
+          receiptNumber,
+        },
+        idempotencyKey: `payment-receipt:${normalized.schoolId}:${payment.id}`,
         createdBy: "system:webhook",
       }),
       enqueueFinanceJob({

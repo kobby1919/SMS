@@ -42,6 +42,13 @@ const ADJUSTMENT_STYLES = {
   reversal: "bg-rose-50 text-rose-800",
 };
 
+const PAYMENT_STATUS_STYLES: Record<string, string> = {
+  PENDING: "bg-amber-50 text-amber-700",
+  CONFIRMED: "bg-emerald-50 text-emerald-700",
+  FAILED: "bg-rose-50 text-rose-700",
+  REVERSED: "bg-rose-50 text-rose-700",
+};
+
 function formatDate(date?: Date | null) {
   if (!date) return "No due date set";
   return date.toLocaleDateString("en-GH", { day: "numeric", month: "long", year: "numeric" });
@@ -155,9 +162,7 @@ export default async function ParentFinanceBillPage({
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="text-sm font-black text-gray-900">{payment.receiptNumber}</p>
-                        <span className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase ${
-                          payment.status === "CONFIRMED" ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"
-                        }`}>
+                        <span className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase ${PAYMENT_STATUS_STYLES[payment.status] ?? "bg-slate-50 text-slate-700"}`}>
                           {payment.status.toLowerCase()}
                         </span>
                       </div>
