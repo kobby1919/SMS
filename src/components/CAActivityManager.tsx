@@ -245,8 +245,9 @@ const CAActivityManager = ({
           result.eventCount > 0
             ? `${result.eventCount} parent update${result.eventCount === 1 ? "" : "s"} prepared.`
             : "No parent update was needed."
-        }`,
+        } Score fields cleared for the next activity.`,
       );
+      setScoreEdits({});
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save scores.");
@@ -618,8 +619,7 @@ const CAActivityManager = ({
           <div className="overflow-x-auto rounded-2xl border border-gray-100">
             <div className="min-w-[560px] divide-y divide-gray-50">
               {students.map((student) => {
-                const existing = selectedActivity.scores.find((score) => score.studentId === student.id);
-                const value = scoreEdits[student.id] ?? (existing ? String(existing.rawScore) : "");
+                const value = scoreEdits[student.id] ?? "";
                 const raw = Number(value);
                 const markPreview = value === "" || Number.isNaN(raw)
                   ? null

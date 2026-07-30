@@ -254,6 +254,9 @@ const CAClassSummary = ({ className, students, subjects, caRecords }: Props) => 
                           <span className="text-[10px] text-gray-400 font-semibold">
                             {Math.round(rec.totalScore * 10) / 10}%
                           </span>
+                          <span className="text-[9px] font-semibold text-gray-400">
+                            CA {Math.round(rec.classworkScore * 10) / 10} + Exam {Math.round(rec.examScore * 10) / 10}
+                          </span>
                           {pos && <PositionBadge pos={pos} />}
                         </div>
                       </td>
