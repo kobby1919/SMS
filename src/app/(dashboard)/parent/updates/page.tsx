@@ -21,7 +21,7 @@ import { getSchoolBranding } from "@/src/lib/services/school-branding";
 export const dynamic = "force-dynamic";
 
 type UpdatesPageProps = {
-  searchParams: { date?: string };
+  searchParams: Promise<{ date?: string }>;
 };
 
 const typeMeta: Record<ParentNotificationType, { label: string; icon: React.ReactNode; tone: string }> = {
@@ -138,11 +138,12 @@ function isSameDay(a: Date, b: Date) {
 
 const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
   const { userId, schoolId } = await requirePageSession(["parent"]);
+  const params = await searchParams;
 
   // Keeps source records and daily summaries fresh even when this page is opened directly.
   await getParentDashboardData(userId, schoolId);
 
-  const { start, end } = dayWindow(searchParams.date);
+  const { start, end } = dayWindow(params.date);
   const previousDay = new Date(start);
   previousDay.setDate(previousDay.getDate() - 1);
   const nextDay = new Date(start);
