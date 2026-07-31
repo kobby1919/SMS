@@ -17,6 +17,7 @@ import { getParentNotificationPreference } from "@/src/lib/services/parent-notif
 import type { ParentNotificationType } from "@/src/generated/prisma";
 import ParentNotificationPreferenceForm from "@/src/components/ParentNotificationPreferenceForm";
 import { getSchoolBranding } from "@/src/lib/services/school-branding";
+import { formatGHS, PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 
 export const dynamic = "force-dynamic";
 
@@ -138,6 +139,109 @@ function isSameDay(a: Date, b: Date) {
     a.getDate() === b.getDate();
 }
 
+function toInt(value: string) {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+}
+
+async function buildFinanceEventBodies(
+  schoolId: string,
+  events: Array<{
+    id: string;
+    type: ParentNotificationType;
+    body: string;
+    sourceModel: string;
+    sourceId: string;
+  }>,
+) {
+  const financeEvents = events.filter((event) => event.type === "BILL" || event.type === "PAYMENT");
+  const billIds = financeEvents
+    .filter((event) => event.sourceModel === "StudentBill")
+    .map((event) => toInt(event.sourceId))
+    .filter((id): id is number => id !== null);
+  const paymentIds = financeEvents
+    .filter((event) => event.sourceModel === "Payment" || event.sourceModel === "PaymentReversal")
+    .map((event) => toInt(event.sourceId))
+    .filter((id): id is number => id !== null);
+
+  const [bills, payments] = await Promise.all([
+    billIds.length
+      ? prisma.studentBill.findMany({
+          where: { schoolId, id: { in: billIds } },
+          include: {
+            student: { select: { name: true, surname: true } },
+            feeStructure: { select: { title: true, term: true, academicYear: true } },
+          },
+        })
+      : [],
+    paymentIds.length
+      ? prisma.payment.findMany({
+          where: { schoolId, id: { in: paymentIds } },
+          include: {
+            reversal: { select: { reason: true } },
+            studentBill: {
+              select: {
+                id: true,
+                totalAmount: true,
+                amountPaid: true,
+                balance: true,
+                status: true,
+                feeStructure: { select: { title: true } },
+                student: { select: { name: true, surname: true } },
+              },
+            },
+          },
+        })
+      : [],
+  ]);
+
+  const billById = new Map(bills.map((bill) => [bill.id, bill]));
+  const paymentById = new Map(payments.map((payment) => [payment.id, payment]));
+  const bodies = new Map<string, string>();
+
+  for (const event of financeEvents) {
+    const id = toInt(event.sourceId);
+    if (event.sourceModel === "StudentBill" && id) {
+      const bill = billById.get(id);
+      if (bill) {
+        bodies.set(event.id, [
+          `Bill: ${bill.feeStructure.title}`,
+          `Student: ${bill.student.name} ${bill.student.surname}`,
+          `Total billed: ${formatGHS(bill.totalAmount)}`,
+          `Paid so far: ${formatGHS(bill.amountPaid)}`,
+          `Current balance: ${formatGHS(bill.balance)}`,
+          `Status: ${bill.status}`,
+          bill.dueDate
+            ? `Due date: ${bill.dueDate.toLocaleDateString("en-GH", { day: "numeric", month: "short", year: "numeric" })}`
+            : "Due date: Not set",
+        ].join("\n"));
+      }
+    }
+
+    if ((event.sourceModel === "Payment" || event.sourceModel === "PaymentReversal") && id) {
+      const payment = paymentById.get(id);
+      if (payment) {
+        const statusLine = payment.status === "REVERSED"
+          ? `Status: Reversed${payment.reversal?.reason ? ` (${payment.reversal.reason})` : ""}`
+          : `Status: ${payment.status}`;
+        bodies.set(event.id, [
+          `Bill: ${payment.studentBill.feeStructure.title}`,
+          `Student: ${payment.studentBill.student.name} ${payment.studentBill.student.surname}`,
+          `Receipt: ${payment.receiptNumber}`,
+          `Amount paid: ${formatGHS(payment.amount)}`,
+          `Method: ${PAYMENT_METHOD_LABELS[payment.paymentMethod] ?? payment.paymentMethod}`,
+          `Total billed: ${formatGHS(payment.studentBill.totalAmount)}`,
+          `Paid so far: ${formatGHS(payment.studentBill.amountPaid)}`,
+          `Current balance: ${formatGHS(payment.studentBill.balance)}`,
+          statusLine,
+        ].join("\n"));
+      }
+    }
+  }
+
+  return bodies;
+}
+
 const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
   const { userId, schoolId } = await requirePageSession(["parent"]);
   const params = await searchParams;
@@ -186,6 +290,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
   ]);
 
   const visibleEvents = dedupeEvents(events);
+  const financeEventBodies = await buildFinanceEventBodies(schoolId, visibleEvents);
   const summaryCounts = summary?.payload && typeof summary.payload === "object" && "counts" in summary.payload
     ? summary.payload.counts as Record<string, number>
     : null;
@@ -360,7 +465,9 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
                         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                           <div className="min-w-0">
                             <p className="text-sm font-black text-gray-900">{event.title}</p>
-                            <p className="mt-1 whitespace-pre-line text-sm font-medium leading-relaxed text-gray-500">{event.body}</p>
+                            <p className="mt-1 whitespace-pre-line text-sm font-medium leading-relaxed text-gray-500">
+                              {financeEventBodies.get(event.id) ?? event.body}
+                            </p>
                             <p className="mt-2 text-xs font-black text-gray-400">{formatDateTime(event.occurredAt)}</p>
                             {event.student && (
                               <p className="mt-2 text-xs font-bold text-gray-400">
