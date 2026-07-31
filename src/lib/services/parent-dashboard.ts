@@ -13,11 +13,13 @@ export type ParentAcademicProgressSubject = {
   subjectId: number;
   subjectName: string;
   score: number;
+  maxScore: number;
   grade: string;
   trend: "up" | "down" | "steady" | "new";
   change: number;
-  status: "strong" | "watch" | "support";
+  status: "strong" | "watch" | "support" | "not-started";
   isMature: boolean;
+  hasCARecord: boolean;
 };
 
 export type ParentAcademicProgress = {
@@ -442,7 +444,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       ),
     );
     const sortedByGradePoint = [...latestSubjects].sort((a, b) => a.gradePoint - b.gradePoint);
-    const progressSubjects: ParentAcademicProgressSubject[] = latestSubjects
+    const recordedProgressSubjects = latestSubjects
       .map((record): ParentAcademicProgressSubject => {
         const previous = previousBySubject.get(record.subjectId);
         const change = previous
@@ -458,6 +460,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
           subjectId: record.subjectId,
           subjectName: record.subject.name,
           score: Math.round(record.classworkScore * 10) / 10,
+          maxScore: classworkWeight,
           grade: record.grade,
           trend: previous ? (change > 2 ? "up" : change < -2 ? "down" : "steady") : "new",
           change,
@@ -469,9 +472,29 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
                 ? "watch"
                 : "support",
           isMature,
+          hasCARecord: true,
         };
       })
       .sort((a, b) => a.score - b.score);
+    const progressBySubjectId = new Map(recordedProgressSubjects.map((subject) => [subject.subjectId, subject]));
+    const progressSubjects: ParentAcademicProgressSubject[] = expectedSubjects.size > 0
+      ? Array.from(expectedSubjects.entries())
+          .map(([subjectId, subjectName]) =>
+            progressBySubjectId.get(subjectId) ?? {
+              subjectId,
+              subjectName,
+              score: 0,
+              maxScore: classworkWeight,
+              grade: "Pending",
+              trend: "new" as const,
+              change: 0,
+              status: "not-started" as const,
+              isMature: false,
+              hasCARecord: false,
+            },
+          )
+          .sort((a, b) => a.subjectName.localeCompare(b.subjectName))
+      : recordedProgressSubjects;
     const completedSubjects = latestSubjects.length;
     const reportReadySubjects = (latestGroup?.reportReadyRecords ?? []).filter((record) =>
       activityBackedCAKeys.has(
