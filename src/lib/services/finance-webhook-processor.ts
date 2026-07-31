@@ -12,6 +12,7 @@ import {
   assertPaymentWithinAllowedOverpay,
 } from "@/src/lib/services/finance-policy";
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
+import { PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 
 type WebhookRecord = PaymentWebhookEvent & {
   payload: Prisma.JsonValue;
@@ -334,6 +335,13 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
     });
 
     await recomputeBillStatus(normalized.studentBillId, normalized.schoolId);
+    const updatedBill = await prisma.studentBill.findFirst({
+      where: { id: normalized.studentBillId, schoolId: normalized.schoolId },
+      include: {
+        feeStructure: { select: { title: true } },
+      },
+    });
+
     await writeAuditLog({
       schoolId: normalized.schoolId,
       action: "PAYMENT_RECORDED",
@@ -356,7 +364,15 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
       studentIds: [bill.studentId],
       type: "PAYMENT",
       title: `Online payment received: GHS ${normalized.amount.toFixed(2)}`,
-      body: `Receipt ${receiptNumber} was recorded for ${bill.student.name} ${bill.student.surname} from ${event.provider}.`,
+      body: [
+        `Bill: ${updatedBill?.feeStructure.title ?? "School fees"}`,
+        `Receipt: ${receiptNumber}`,
+        `Amount paid: GHS ${normalized.amount.toFixed(2)}`,
+        `Method: ${PAYMENT_METHOD_LABELS.OTHER}`,
+        `Provider: ${event.provider}`,
+        `Current balance: GHS ${Number(updatedBill?.balance ?? 0).toFixed(2)}`,
+        `Status: ${updatedBill?.status ?? "UPDATED"}`,
+      ].join("\n"),
       href: `/api/finance/receipt?billId=${normalized.studentBillId}&receiptNumber=${encodeURIComponent(receiptNumber)}`,
       sourceModel: "Payment",
       sourceId: String(payment.id),

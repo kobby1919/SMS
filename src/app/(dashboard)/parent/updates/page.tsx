@@ -91,7 +91,9 @@ function eventDedupeKey(event: {
   sourceModel: string;
   sourceId: string;
 }) {
-  return event.sourceModel === "CAActivityScore" || event.sourceModel === "ContinuousAssessment"
+  return event.sourceModel === "CAActivityScore" ||
+    event.sourceModel === "ContinuousAssessment" ||
+    event.sourceModel === "Payment"
     ? `${event.sourceModel}:${event.sourceId}`
     : `${event.type}:${event.body}`;
 }
@@ -196,7 +198,8 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
     }, {});
 
   const grouped = visibleEvents.reduce<Record<ParentNotificationType, typeof visibleEvents>>((acc, event) => {
-    acc[event.type] = [...(acc[event.type] ?? []), event];
+    const groupType = event.type === "PAYMENT" ? "BILL" : event.type;
+    acc[groupType] = [...(acc[groupType] ?? []), event];
     return acc;
   }, {} as Record<ParentNotificationType, typeof visibleEvents>);
 
@@ -205,7 +208,6 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
     "ASSESSMENT",
     "ASSIGNMENT",
     "BILL",
-    "PAYMENT",
     "ANNOUNCEMENT",
   ];
 
@@ -328,7 +330,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
                                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                                   <div className="min-w-0">
                                     <p className="text-sm font-black text-gray-900">{event.title}</p>
-                                    <p className="mt-1 text-sm font-medium leading-relaxed text-gray-500">{event.body}</p>
+                                    <p className="mt-1 whitespace-pre-line text-sm font-medium leading-relaxed text-gray-500">{event.body}</p>
                                     <p className="mt-2 text-xs font-black text-blue-500">{formatDateTime(event.occurredAt)}</p>
                                     {event.student && (
                                       <p className="mt-2 text-xs font-bold text-gray-400">
@@ -358,7 +360,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
                         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                           <div className="min-w-0">
                             <p className="text-sm font-black text-gray-900">{event.title}</p>
-                            <p className="mt-1 text-sm font-medium leading-relaxed text-gray-500">{event.body}</p>
+                            <p className="mt-1 whitespace-pre-line text-sm font-medium leading-relaxed text-gray-500">{event.body}</p>
                             <p className="mt-2 text-xs font-black text-gray-400">{formatDateTime(event.occurredAt)}</p>
                             {event.student && (
                               <p className="mt-2 text-xs font-bold text-gray-400">

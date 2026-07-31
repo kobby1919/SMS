@@ -27,6 +27,7 @@ import {
   assertPaymentWithinAllowedOverpay,
 } from "@/src/lib/services/finance-policy";
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
+import { PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 
 // ─── Record a payment ─────────────────────────────────────────────────────────
 
@@ -168,6 +169,13 @@ export async function recordPayment(input: RecordPaymentInput) {
   }
 
   await recomputeBillStatus(data.studentBillId, schoolId);
+  const updatedBill = await prisma.studentBill.findFirst({
+    where: { id: data.studentBillId, schoolId },
+    include: {
+      feeStructure: { select: { title: true } },
+      student: { select: { name: true, surname: true } },
+    },
+  });
 
   await writeAuditLog({
     schoolId,
@@ -190,7 +198,14 @@ export async function recordPayment(input: RecordPaymentInput) {
     studentIds: [bill.studentId],
     type: "PAYMENT",
     title: `Payment received: GHS ${paymentAmount.toNumber().toFixed(2)}`,
-    body: `Receipt ${receiptNumber} was recorded for ${bill.student.name} ${bill.student.surname}.`,
+    body: [
+      `Bill: ${updatedBill?.feeStructure.title ?? "School fees"}`,
+      `Receipt: ${receiptNumber}`,
+      `Amount paid: GHS ${paymentAmount.toNumber().toFixed(2)}`,
+      `Method: ${PAYMENT_METHOD_LABELS[data.paymentMethod] ?? data.paymentMethod}`,
+      `Current balance: GHS ${Number(updatedBill?.balance ?? 0).toFixed(2)}`,
+      `Status: ${updatedBill?.status ?? "UPDATED"}`,
+    ].join("\n"),
     href: `/api/finance/receipt?billId=${data.studentBillId}&receiptNumber=${encodeURIComponent(receiptNumber)}`,
     sourceModel: "Payment",
     sourceId: String(payment.id),

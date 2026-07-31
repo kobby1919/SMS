@@ -221,6 +221,8 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
           select: {
             id: true,
             studentId: true,
+            balance: true,
+            status: true,
             feeStructure: { select: { title: true } },
           },
         },

@@ -4,6 +4,7 @@ import type {
   ParentNotificationType,
 } from "@/src/generated/prisma";
 import { rebuildParentDailySummary } from "@/src/lib/services/parent-daily-summary";
+import { PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 
 export type ParentNotificationFeedItem = {
   id: string;
@@ -135,9 +136,12 @@ export async function syncParentNotificationsFromSources({
     receiptNumber: string;
     paymentDate: Date;
     createdAt: Date;
+    paymentMethod: string;
     studentBill: {
       id: number;
       studentId: string;
+      balance: unknown;
+      status: string;
       feeStructure: { title: string };
     };
   }>;
@@ -215,7 +219,14 @@ export async function syncParentNotificationsFromSources({
       type: "PAYMENT" as const,
       priority: "LOW" as const,
       title: `Payment received: GHS ${Number(payment.amount).toFixed(2)}`,
-      body: `${payment.studentBill.feeStructure.title} - receipt ${payment.receiptNumber}`,
+      body: [
+        `Bill: ${payment.studentBill.feeStructure.title}`,
+        `Receipt: ${payment.receiptNumber}`,
+        `Amount paid: GHS ${Number(payment.amount).toFixed(2)}`,
+        `Method: ${PAYMENT_METHOD_LABELS[payment.paymentMethod as keyof typeof PAYMENT_METHOD_LABELS] ?? payment.paymentMethod}`,
+        `Current balance: GHS ${Number(payment.studentBill.balance).toFixed(2)}`,
+        `Status: ${payment.studentBill.status}`,
+      ].join("\n"),
       href: `/api/finance/receipt?billId=${payment.studentBill.id}&receiptNumber=${encodeURIComponent(payment.receiptNumber)}`,
       occurredAt: payment.createdAt,
       studentId: payment.studentBill.studentId,
