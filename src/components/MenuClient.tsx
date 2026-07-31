@@ -27,6 +27,38 @@ import {
   BellRing,
 } from "lucide-react";
 
+const parentMenuItems = [
+  {
+    title: "Parent",
+    items: [
+      {
+        icon: LayoutDashboard,
+        label: "Home",
+        href: "/parent",
+        visible: ["parent"],
+      },
+      {
+        icon: BellRing,
+        label: "Today",
+        href: "/parent/updates",
+        visible: ["parent"],
+      },
+      {
+        icon: Wallet,
+        label: "Fees",
+        href: "/parent/finance",
+        visible: ["parent"],
+      },
+      {
+        icon: FileText,
+        label: "Results",
+        href: "/list/report-cards",
+        visible: ["parent"],
+      },
+    ],
+  },
+];
+
 const menuItems = [
   {
     title: "Overview",
@@ -218,10 +250,11 @@ const menuItems = [
 
 const MenuClient = ({ role }: { role: string }) => {
   const pathname = usePathname();
+  const visibleMenuItems = role === "parent" ? parentMenuItems : menuItems;
 
   return (
     <div className="mt-4 text-sm flex flex-col gap-0.5">
-      {menuItems.map((section) => {
+      {visibleMenuItems.map((section) => {
         const visibleItems = section.items.filter((item) =>
           item.visible.includes(role),
         );
