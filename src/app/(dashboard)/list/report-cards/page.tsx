@@ -36,6 +36,7 @@ const ReportCardListPage = async ({
   const selectedClassId = params.classId ? parseInt(params.classId) : null;
   const selectedTerm = params.term ?? "TERM_2";
   const selectedYear = params.year ?? "";
+  const selectedChildId = params.childId;
 
   if (role === "student") {
     redirect(
@@ -44,73 +45,193 @@ const ReportCardListPage = async ({
   }
   // 3. Handle Parent with Multiple Children
   if (role === "parent") {
-    const children = await prisma.student.findMany({
-      where: { schoolId, parentId: userId },
-      select: {
-        id: true,
-        name: true,
-        surname: true,
-        img: true,
-        class: { select: { name: true } },
-      },
-    });
+    const [children, configs] = await Promise.all([
+      prisma.student.findMany({
+        where: { schoolId, parentId: userId },
+        select: {
+          id: true,
+          name: true,
+          surname: true,
+          img: true,
+          classId: true,
+          class: { select: { name: true } },
+        },
+        orderBy: [{ name: "asc" }, { surname: "asc" }],
+      }),
+      prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } }),
+    ]);
 
     if (children.length === 0) redirect("/");
+    const activeYear = selectedYear || configs[0]?.academicYear || "2024/25";
+    const config = configs.find((item) => item.academicYear === activeYear);
+    const cwWeight = config?.classworkWeight ?? 30;
+    const visibleChildren = selectedChildId
+      ? children.filter((child) => child.id === selectedChildId)
+      : children;
+    const safeVisibleChildren = visibleChildren.length > 0 ? visibleChildren : children;
+    const childIds = safeVisibleChildren.map((child) => child.id);
+    const classIds = [...new Set(safeVisibleChildren.map((child) => child.classId))];
+    const [caRecords, lessons] = await Promise.all([
+      prisma.continuousAssessment.findMany({
+        where: {
+          schoolId,
+          studentId: { in: childIds },
+          term: selectedTerm as Term,
+          academicYear: activeYear,
+        },
+        include: { subject: { select: { id: true, name: true } } },
+        orderBy: { subject: { name: "asc" } },
+      }),
+      prisma.lesson.findMany({
+        where: { schoolId, classId: { in: classIds } },
+        select: { classId: true, subject: { select: { id: true, name: true } } },
+      }),
+    ]);
 
-    // If only one child, just redirect like before
-    if (children.length === 1) {
-      redirect(
-        `/list/report-cards/${children[0].id}?term=${selectedTerm}&year=${selectedYear}`,
-      );
+    const subjectsByClass = new Map<number, Map<number, string>>();
+    for (const lesson of lessons) {
+      const subjects = subjectsByClass.get(lesson.classId) ?? new Map<number, string>();
+      subjects.set(lesson.subject.id, lesson.subject.name);
+      subjectsByClass.set(lesson.classId, subjects);
     }
 
-    // If multiple children, return a selection UI instead of redirecting
     return (
-      <div className="flex-1 m-4 flex flex-col gap-6 items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <h1 className="text-2xl font-black text-gray-800">
-            Select a Student
-          </h1>
-          <p className="text-gray-400 text-sm mt-1">
-            Which report card would you like to view?
-          </p>
+      <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
+        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+                <FileText size={20} />
+              </div>
+              <div>
+                <h1 className="text-xl font-black text-gray-900">Ward Results</h1>
+                <p className="mt-0.5 text-sm font-semibold text-gray-400">
+                  Report-card building summary for {TERM_LABELS[selectedTerm]} - {activeYear}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-wrap justify-center gap-4">
-          {children.map((child) => (
-            <Link
-              key={child.id}
-              href={`/list/report-cards/${child.id}?term=${selectedTerm}&year=${selectedYear}`}
-              className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md hover:border-jayPurple/30 transition-all flex flex-col items-center gap-4 w-48 group"
-            >
-              <div className="w-20 h-20 rounded-2xl bg-jayPurpleLight flex items-center justify-center overflow-hidden">
-                {child.img ? (
-                  <Image
-                    unoptimized
-                    src={child.img}
-                    alt=""
-                    width={80}
-                    height={80}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-2xl font-bold text-jayPurple">
-                    {child.name[0]}
+
+        <section className="grid gap-3 lg:grid-cols-2">
+          {safeVisibleChildren.map((child) => {
+            const subjects = subjectsByClass.get(child.classId) ?? new Map<number, string>();
+            const records = caRecords.filter((record) => record.studentId === child.id);
+            const recordsBySubject = new Map(records.map((record) => [record.subjectId, record]));
+            const subjectRows = subjects.size > 0
+              ? Array.from(subjects.entries()).map(([subjectId, subjectName]) => ({
+                  subjectId,
+                  subjectName,
+                  record: recordsBySubject.get(subjectId),
+                }))
+              : records.map((record) => ({
+                  subjectId: record.subjectId,
+                  subjectName: record.subject.name,
+                  record,
+                }));
+            const reportReady = records.filter((record) => record.examScore > 0);
+            const caStarted = records.length;
+            const subjectTotal = subjectRows.length;
+            const avgCA = caStarted
+              ? Math.round((records.reduce((sum, record) => sum + record.classworkScore, 0) / caStarted) * 10) / 10
+              : 0;
+
+            return (
+              <article key={child.id} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-blue-50 text-sm font-black text-blue-700">
+                    {child.img ? (
+                      <Image
+                        unoptimized
+                        src={child.img}
+                        alt=""
+                        width={48}
+                        height={48}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      `${child.name[0]}${child.surname[0]}`
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h2 className="truncate text-base font-black text-gray-900">{child.name} {child.surname}</h2>
+                    <p className="mt-0.5 text-xs font-bold text-gray-400">{child.class.name}</p>
+                  </div>
+                  <span className="rounded-full bg-sky-50 px-2 py-1 text-[10px] font-black text-sky-700">
+                    {caStarted}/{subjectTotal || caStarted} CA
                   </span>
-                )}
-              </div>
-              <div className="text-center">
-                <p className="font-bold text-gray-800 group-hover:text-jayPurple transition-colors">
-                  {child.name} {child.surname}
-                </p>
-                <p className="text-xs text-gray-400 font-medium">
-                  {child.class.name}
-                </p>
-              </div>
-              <div className="flex items-center gap-1 text-xs font-bold text-jayPurple bg-jayPurpleLight px-3 py-1 rounded-full">
-                View Report <ChevronRight size={12} />
-              </div>
-            </Link>
-          ))}
+                </div>
+
+                <div className="mt-4 grid grid-cols-3 gap-2">
+                  <div className="rounded-xl bg-sky-50 p-3 text-sky-700">
+                    <p className="text-sm font-black">{caStarted}/{subjectTotal || caStarted}</p>
+                    <p className="text-[10px] font-black uppercase">CA started</p>
+                  </div>
+                  <div className="rounded-xl bg-blue-50 p-3 text-blue-700">
+                    <p className="text-sm font-black">{reportReady.length}/{subjectTotal || reportReady.length}</p>
+                    <p className="text-[10px] font-black uppercase">Reports ready</p>
+                  </div>
+                  <div className="rounded-xl bg-slate-50 p-3 text-slate-700">
+                    <p className="text-sm font-black">{avgCA}/{cwWeight}</p>
+                    <p className="text-[10px] font-black uppercase">Avg CA</p>
+                  </div>
+                </div>
+
+                <div className="mt-4 rounded-xl border border-gray-100">
+                  <div className="border-b border-gray-100 px-3 py-2">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Report building summary</p>
+                  </div>
+                  <div className="divide-y divide-gray-50">
+                    {subjectRows.length > 0 ? subjectRows.map(({ subjectId, subjectName, record }) => (
+                      <div key={subjectId} className="flex items-center justify-between gap-3 px-3 py-2">
+                        <div className="min-w-0">
+                          <p className="truncate text-xs font-black text-gray-900">{subjectName}</p>
+                          <p className="text-[10px] font-semibold text-gray-400">
+                            {record?.examScore && record.examScore > 0 ? "Report score ready" : record ? "CA building, exam pending" : "No CA yet"}
+                          </p>
+                        </div>
+                        <p className="shrink-0 text-xs font-black text-sky-700">
+                          {record ? `${Math.round(record.classworkScore * 10) / 10}/${cwWeight}` : "-"}
+                        </p>
+                      </div>
+                    )) : (
+                      <p className="px-3 py-3 text-xs font-semibold text-gray-400">No class subjects have been linked yet.</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Link
+                    href={`/list/report-cards/${child.id}?term=${selectedTerm}&year=${activeYear}&classId=${child.classId}`}
+                    className="rounded-xl bg-slate-900 px-3 py-2 text-xs font-black text-white"
+                  >
+                    Open full report
+                  </Link>
+                  {selectedChildId && (
+                    <Link
+                      href="/list/report-cards"
+                      className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-black text-gray-600"
+                    >
+                      Show all wards
+                    </Link>
+                  )}
+                  <Link
+                    href={`/parent/children/${child.id}`}
+                    className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-black text-gray-600"
+                  >
+                    Open ward checkup
+                  </Link>
+                </div>
+              </article>
+            );
+          })}
+        </section>
+
+        <div className="rounded-2xl border border-sky-100 bg-sky-50 p-4">
+          <p className="text-sm font-black text-sky-900">How to read this</p>
+          <p className="mt-1 text-xs font-semibold leading-relaxed text-sky-700">
+            CA shows the continuous assessment marks collected so far. A report becomes ready when the exam score is added. This helps parents see how the report card is being built before the end of term.
+          </p>
         </div>
       </div>
     );

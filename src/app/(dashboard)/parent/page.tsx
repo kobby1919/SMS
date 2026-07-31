@@ -71,10 +71,6 @@ function formatGHS(amount: number) {
   })}`;
 }
 
-function formatMark(value: number) {
-  return Number.isInteger(value) ? String(value) : value.toFixed(1);
-}
-
 function TodayUpdateCard({ items, schoolName }: { items: ParentActivityFeedItem[]; schoolName: string }) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -247,55 +243,18 @@ function ChildrenSnapshot({
               </div>
             </div>
 
-            <div className="mt-4 rounded-xl border border-sky-100 bg-sky-50/60 p-3">
-              <div className="flex items-center justify-between gap-2">
-                <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-sky-700">Current CA by subject</p>
-                  <p className="mt-0.5 text-xs font-semibold text-sky-600">
-                    This is CA progress only. Exam marks are added later for the final report.
-                  </p>
-                </div>
-                <span className="shrink-0 rounded-full bg-white px-2 py-1 text-[10px] font-black text-sky-700">
-                  {child.academicProgress.completedSubjects}/{child.academicProgress.expectedSubjects || child.academicProgress.subjects.length}
-                </span>
-              </div>
-
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                {child.academicProgress.subjects.length > 0 ? (
-                  child.academicProgress.subjects.map((subject) => {
-                    const percent = subject.hasCARecord
-                      ? Math.min(100, Math.round((subject.score / Math.max(subject.maxScore, 1)) * 100))
-                      : 0;
-                    return (
-                      <div key={subject.subjectId} className="rounded-lg bg-white px-3 py-2 ring-1 ring-sky-100">
-                        <div className="flex items-center justify-between gap-2">
-                          <p className="min-w-0 truncate text-xs font-black text-gray-900">{subject.subjectName}</p>
-                          <p className="shrink-0 text-xs font-black text-sky-700">
-                            {subject.hasCARecord ? `${formatMark(subject.score)}/${formatMark(subject.maxScore)}` : "No CA yet"}
-                          </p>
-                        </div>
-                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-sky-100">
-                          <div className="h-full rounded-full bg-sky-500" style={{ width: `${percent}%` }} />
-                        </div>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <p className="rounded-lg bg-white px-3 py-2 text-xs font-semibold text-sky-700 ring-1 ring-sky-100">
-                    No subjects have been linked to this class yet.
-                  </p>
-                )}
-              </div>
-            </div>
+            <p className="mt-4 rounded-xl border border-slate-100 bg-slate-50 px-3 py-3 text-xs font-semibold leading-relaxed text-slate-500">
+              Open this ward to see attendance, subject CA progress, fees, homework, notices, and where support may be needed.
+            </p>
 
             <div className="mt-4 flex flex-wrap gap-2">
-              <Link href="/parent/updates" className="rounded-xl bg-slate-900 px-3 py-2 text-xs font-black text-white">
-                View today
+              <Link href={`/parent/children/${child.id}`} className="rounded-xl bg-slate-900 px-3 py-2 text-xs font-black text-white">
+                Open ward checkup
               </Link>
               <Link href="/parent/finance" className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-black text-gray-600">
                 Fees
               </Link>
-              <Link href="/list/report-cards" className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-black text-gray-600">
+              <Link href={`/list/report-cards?childId=${child.id}`} className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-black text-gray-600">
                 Results
               </Link>
             </div>
