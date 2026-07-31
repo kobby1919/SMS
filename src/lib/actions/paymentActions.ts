@@ -195,12 +195,13 @@ export async function recordPayment(input: RecordPaymentInput) {
     sourceModel: "Payment",
     sourceId: String(payment.id),
     sourceKey: `payment:${payment.id}:confirmed`,
-    occurredAt: payment.paymentDate,
+    occurredAt: payment.createdAt,
     payload: {
       paymentId: payment.id,
       receiptNumber,
       amount: paymentAmount.toNumber(),
       paymentMethod: data.paymentMethod,
+      paymentDate: payment.paymentDate.toISOString(),
     },
   });
 

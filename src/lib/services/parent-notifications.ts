@@ -134,6 +134,7 @@ export async function syncParentNotificationsFromSources({
     amount: unknown;
     receiptNumber: string;
     paymentDate: Date;
+    createdAt: Date;
     studentBill: {
       id: number;
       studentId: string;
@@ -216,7 +217,7 @@ export async function syncParentNotificationsFromSources({
       title: `Payment received: GHS ${Number(payment.amount).toFixed(2)}`,
       body: `${payment.studentBill.feeStructure.title} - receipt ${payment.receiptNumber}`,
       href: `/api/finance/receipt?billId=${payment.studentBill.id}&receiptNumber=${encodeURIComponent(payment.receiptNumber)}`,
-      occurredAt: payment.paymentDate,
+      occurredAt: payment.createdAt,
       studentId: payment.studentBill.studentId,
     })),
   ];

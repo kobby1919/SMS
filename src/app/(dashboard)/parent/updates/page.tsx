@@ -130,6 +130,12 @@ function formatDayLabel(date: Date) {
   });
 }
 
+function isSameDay(a: Date, b: Date) {
+  return a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+}
+
 const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
   const { userId, schoolId } = await requirePageSession(["parent"]);
 
@@ -141,6 +147,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
   previousDay.setDate(previousDay.getDate() - 1);
   const nextDay = new Date(start);
   nextDay.setDate(nextDay.getDate() + 1);
+  const selectedIsToday = isSameDay(start, new Date());
 
   const [events, summary, parent, notificationPreference, branding] = await Promise.all([
     prisma.parentActivityEvent.findMany({
@@ -226,7 +233,9 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
           </div>
           <div className="rounded-2xl border border-sky-100 bg-sky-50 px-4 py-3 text-sky-700">
             <p className="text-2xl font-black">{visibleEvents.length}</p>
-            <p className="text-[10px] font-black uppercase tracking-widest">records today</p>
+            <p className="text-[10px] font-black uppercase tracking-widest">
+              {selectedIsToday ? "records today" : "records this day"}
+            </p>
           </div>
         </div>
       </div>
@@ -261,7 +270,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
               </div>
             ) : (
               <p className="mt-1 text-sm font-medium leading-relaxed text-slate-300">
-                No daily summary has been generated for this date yet.
+                No daily summary has been generated for {formatDayLabel(start)} yet.
               </p>
             )}
             {summary?.body && (
@@ -276,7 +285,9 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
       {visibleEvents.length === 0 ? (
         <section className="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center shadow-sm">
           <CalendarDays className="mx-auto h-8 w-8 text-gray-300" />
-          <p className="mt-3 text-sm font-black text-gray-500">No activity was recorded for this day.</p>
+          <p className="mt-3 text-sm font-black text-gray-500">
+            No activity was recorded for {selectedIsToday ? "today" : formatDayLabel(start)}.
+          </p>
           <p className="mt-1 text-xs font-semibold text-gray-400">
             Attendance, CA scores, homework, fees, payments, and notices will appear here after the school records them.
           </p>

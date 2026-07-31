@@ -361,12 +361,13 @@ export async function processPaymentWebhookEvent(webhookEventId: string) {
       sourceModel: "Payment",
       sourceId: String(payment.id),
       sourceKey: `payment:${payment.id}:webhook-confirmed`,
-      occurredAt: payment.paymentDate,
+      occurredAt: payment.createdAt,
       payload: {
         paymentId: payment.id,
         receiptNumber,
         amount: normalized.amount.toNumber(),
         provider: event.provider,
+        paymentDate: payment.paymentDate.toISOString(),
       },
     });
 
