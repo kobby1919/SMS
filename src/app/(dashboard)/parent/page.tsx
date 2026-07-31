@@ -175,18 +175,23 @@ function ChildrenSnapshot({
     <section className="grid gap-3 md:grid-cols-2">
       {childrenData.map((child) => {
         const outstanding = child.financeSummary.outstanding;
-        const latestAverage = child.academicProgress.completedSubjects > 0
-          ? child.academicProgress.averageScore
+        const caAverage = child.academicProgress.completedSubjects > 0
+          ? child.academicProgress.averageCAMarks
           : null;
         const attendanceToday = child.todayAttendance.at(0)?.status ?? "Not marked";
         const homeworkCount = child.homeworkSummary.dueSoon + child.homeworkSummary.overdue;
-        const academicLabel = latestAverage === null
+        const academicLabel = caAverage === null
           ? "CA building"
-          : child.academicProgress.trend === "down"
-            ? "Dropping"
-            : child.academicProgress.trend === "up"
-              ? "Improving"
-              : "Steady";
+          : child.academicProgress.hasReportScores
+            ? child.academicProgress.trend === "down"
+              ? "Dropping"
+              : child.academicProgress.trend === "up"
+                ? "Improving"
+                : "Steady"
+            : "CA building";
+        const caLabel = caAverage === null
+          ? "-"
+          : `${caAverage}/${child.academicProgress.classworkWeight}`;
         return (
           <article key={child.id} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
             <div className="flex items-start justify-between gap-3">
@@ -231,7 +236,7 @@ function ChildrenSnapshot({
                 <p className="text-[10px] font-bold uppercase text-gray-400">30-day attendance</p>
               </div>
               <div className="rounded-xl bg-white px-3 py-2 ring-1 ring-gray-100">
-                <p className="text-sm font-black text-gray-900">{latestAverage ?? "-"}{latestAverage !== null ? "%" : ""}</p>
+                <p className="text-sm font-black text-gray-900">{caLabel}</p>
                 <p className="text-[10px] font-bold uppercase text-gray-400">CA progress</p>
               </div>
               <div className="rounded-xl bg-white px-3 py-2 ring-1 ring-gray-100">

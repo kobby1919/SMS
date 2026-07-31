@@ -25,6 +25,10 @@ export type ParentAcademicProgress = {
   completedSubjects: number;
   expectedSubjects: number;
   averageScore: number;
+  averageCAMarks: number;
+  classworkWeight: number;
+  reportReadySubjects: number;
+  hasReportScores: boolean;
   trend: "up" | "down" | "steady" | "new";
   trendDiff: number;
   subjects: ParentAcademicProgressSubject[];
@@ -138,7 +142,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  const [lessons, attendance, assessments, caActivityScores, classCounts, assignments, announcements, bills, payments, classSubjects] = await Promise.all([
+  const [lessons, attendance, assessments, caActivityScores, classCounts, assignments, announcements, bills, payments, classSubjects, caConfigs] = await Promise.all([
     prisma.lesson.findMany({
       where: { schoolId, classId: { in: classIds } },
       include: {
@@ -242,7 +246,12 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       },
       orderBy: { name: "asc" },
     }),
+    prisma.cAConfig.findMany({
+      where: { schoolId },
+      select: { academicYear: true, classworkWeight: true },
+    }),
   ]);
+  const caConfigByYear = new Map(caConfigs.map((config) => [config.academicYear, config]));
 
   const lessonsByClass = new Map<number, CalendarLesson[]>();
   for (const lesson of lessons) {
@@ -343,13 +352,19 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     }
     const termGroups = Array.from(groupMap.entries()).map(([key, records]) => {
       const [year, term] = key.split("__");
-      const scores = records.map((record) => record.totalScore);
+      const reportReadyRecords = records.filter((record) => record.examScore > 0);
+      const scores = reportReadyRecords.map((record) => record.totalScore);
+      const caScores = records.map((record) => record.classworkScore);
       return {
         term,
         year,
         records,
+        reportReadyRecords,
         avgScore: scores.length
           ? Math.round((scores.reduce((sum, score) => sum + score, 0) / scores.length) * 10) / 10
+          : 0,
+        avgCAMarks: caScores.length
+          ? Math.round((caScores.reduce((sum, score) => sum + score, 0) / caScores.length) * 10) / 10
           : 0,
         aggregate: computeAggregate(records.map((record) => record.gradePoint)),
       };
@@ -386,10 +401,10 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     const late = childAttendance.filter((row) => row.status === "LATE").length;
     const excused = childAttendance.filter((row) => row.status === "EXCUSED").length;
     const total = childAttendance.length;
-    const trendDiff = prevGroup && latestGroup
+    const trendDiff = prevGroup && latestGroup && prevGroup.reportReadyRecords.length > 0 && latestGroup.reportReadyRecords.length > 0
       ? Math.round((latestGroup.avgScore - prevGroup.avgScore) * 10) / 10
       : 0;
-    const trend = !prevGroup || !latestGroup
+    const trend = !prevGroup || !latestGroup || prevGroup.reportReadyRecords.length === 0 || latestGroup.reportReadyRecords.length === 0
       ? "neutral"
       : trendDiff > 2
         ? "up"
@@ -420,6 +435,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
 
     const expectedSubjects = subjectIdsByClass.get(child.classId) ?? new Map<number, string>();
     const previousBySubject = new Map(prevGroup?.records.map((record) => [record.subjectId, record]) ?? []);
+    const classworkWeight = caConfigByYear.get(latestGroup?.year ?? "")?.classworkWeight ?? 30;
     const latestSubjects = (latestGroup?.records ?? []).filter((record) =>
       activityBackedCAKeys.has(
         `${record.studentId}__${record.subjectId}__${record.classId}__${record.term}__${record.academicYear}`,
@@ -441,19 +457,35 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
         return {
           subjectId: record.subjectId,
           subjectName: record.subject.name,
-          score: Math.round(record.totalScore * 10) / 10,
+          score: Math.round(record.classworkScore * 10) / 10,
           grade: record.grade,
           trend: previous ? (change > 2 ? "up" : change < -2 ? "down" : "steady") : "new",
           change,
-          status: !isMature ? "watch" : record.totalScore >= 70 ? "strong" : record.totalScore >= 50 ? "watch" : "support",
+          status: !isMature
+            ? "watch"
+            : (record.classworkScore / Math.max(classworkWeight, 1)) * 100 >= 70
+              ? "strong"
+              : (record.classworkScore / Math.max(classworkWeight, 1)) * 100 >= 50
+                ? "watch"
+                : "support",
           isMature,
         };
       })
       .sort((a, b) => a.score - b.score);
     const completedSubjects = latestSubjects.length;
-    const averageScore = completedSubjects
+    const reportReadySubjects = (latestGroup?.reportReadyRecords ?? []).filter((record) =>
+      activityBackedCAKeys.has(
+        `${record.studentId}__${record.subjectId}__${record.classId}__${record.term}__${record.academicYear}`,
+      ),
+    );
+    const averageScore = reportReadySubjects.length
       ? Math.round(
-          (latestSubjects.reduce((sum, record) => sum + record.totalScore, 0) / completedSubjects) * 10,
+          (reportReadySubjects.reduce((sum, record) => sum + record.totalScore, 0) / reportReadySubjects.length) * 10,
+        ) / 10
+      : 0;
+    const averageCAMarks = completedSubjects
+      ? Math.round(
+          (latestSubjects.reduce((sum, record) => sum + record.classworkScore, 0) / completedSubjects) * 10,
         ) / 10
       : 0;
     const academicProgress: ParentAcademicProgress = {
@@ -461,6 +493,10 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       completedSubjects,
       expectedSubjects: expectedSubjects.size,
       averageScore,
+      averageCAMarks,
+      classworkWeight,
+      reportReadySubjects: reportReadySubjects.length,
+      hasReportScores: reportReadySubjects.length > 0,
       trend: !prevGroup || !latestGroup
         ? "new"
         : trendDiff > 2
@@ -571,7 +607,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
             href: "/list/attendance",
           }]
         : []),
-      ...(academicProgress.trend === "down"
+      ...(academicProgress.hasReportScores && academicProgress.trend === "down"
         ? [{
             id: `academic-trend-${child.id}`,
             childId: child.id,
