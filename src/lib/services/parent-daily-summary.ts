@@ -289,71 +289,12 @@ async function buildFinanceSummaryLines(schoolId: string, events: SummaryEvent[]
 }
 
 async function buildAcademicSummaryLines(
-  schoolId: string,
+  _schoolId: string,
   events: SummaryEvent[],
   periodLabel: "today" | "this week",
 ) {
   const academicEvents = events.filter((event) => event.type === "ASSESSMENT").slice(0, 4);
-  const scoreIds = academicEvents
-    .filter((event) => event.sourceModel === "CAActivityScore")
-    .map((event) => toInt(event.sourceId))
-    .filter((id): id is number => id !== null);
-
-  const scores = scoreIds.length > 0
-    ? await prisma.cAActivityScore.findMany({
-        where: { schoolId, id: { in: scoreIds } },
-        include: {
-          student: { select: { id: true } },
-          activity: {
-            include: {
-              bucket: {
-                select: {
-                  name: true,
-                  allocationMarks: true,
-                  term: true,
-                  academicYear: true,
-                },
-              },
-              subject: { select: { id: true, name: true } },
-              class: { select: { id: true } },
-              teacher: { select: { name: true, surname: true } },
-            },
-          },
-        },
-      })
-    : [];
-  const scoreById = new Map(scores.map((score) => [score.id, score]));
-
-  const lines = await Promise.all(
-    academicEvents.map(async (event) => {
-      if (event.sourceModel !== "CAActivityScore") return event.body;
-      const scoreId = toInt(event.sourceId);
-      const score = scoreId ? scoreById.get(scoreId) : null;
-      if (!score) return event.body;
-
-      const progress = await getSubjectCAProgress({
-        schoolId,
-        studentId: score.student.id,
-        classId: score.activity.class.id,
-        subjectId: score.activity.subject.id,
-        term: score.activity.bucket.term,
-        academicYear: score.activity.bucket.academicYear,
-      });
-      const teacherName = `${score.activity.teacher.name} ${score.activity.teacher.surname}`;
-      const rawScore = Number(score.rawScore);
-      const rawMaxScore = Number(score.activity.rawMaxScore);
-      const normalized = Number(score.normalizedContribution);
-
-      return [
-        `${score.activity.subject.name}: ${score.activity.title}`,
-        `Teacher: ${teacherName}`,
-        `Score: ${formatMark(rawScore)}/${formatMark(rawMaxScore)}`,
-        `${score.activity.bucket.name} CA mark: ${formatMark(normalized)}/${formatMark(Number(score.activity.bucket.allocationMarks))}`,
-        `Current ${score.activity.subject.name} CA: ${formatMark(progress.earnedMarks)}/${formatMark(progress.classworkWeight)}`,
-        "Note: Exam score is not recorded yet, so this is CA progress, not a final report grade.",
-      ].join("\n");
-    }),
-  );
+  const lines = academicEvents.map((event) => event.body);
 
   const givenLines = lines.filter((line) => line.includes("Score: Pending"));
   const publishedLines = lines.filter((line) => !line.includes("Score: Pending"));
