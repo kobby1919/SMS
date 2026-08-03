@@ -92,7 +92,8 @@ function eventDedupeKey(event: {
   sourceModel: string;
   sourceId: string;
 }) {
-  return event.sourceModel === "CAActivityScore" ||
+  return event.sourceModel === "Attendance" ||
+    event.sourceModel === "CAActivityScore" ||
     event.sourceModel === "ContinuousAssessment" ||
     event.sourceModel === "Payment"
     ? `${event.sourceModel}:${event.sourceId}`
@@ -205,14 +206,17 @@ function buildAttendanceUpdateGroups(
   events: Array<{
     id: string;
     type: ParentNotificationType;
+    body: string;
     href: string | null;
     occurredAt: Date;
+    sourceModel: string;
+    sourceId: string;
     studentId: string | null;
     student: { name: string; surname: string } | null;
   }>,
   bodies: Map<string, string>,
 ) {
-  const attendanceEvents = events.filter((event) => event.type === "ATTENDANCE");
+  const attendanceEvents = dedupeEvents(events.filter((event) => event.type === "ATTENDANCE"));
   const grouped = new Map<string, typeof attendanceEvents>();
 
   for (const event of attendanceEvents) {
