@@ -21,6 +21,7 @@ import {
   TERM_LABELS,
 } from "@/src/lib/caGrades";
 import ReportCardFilters from "@/src/components/ReportCardFilters";
+import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 import type { Term } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
@@ -71,7 +72,7 @@ const ReportCardListPage = async ({
     const safeVisibleChildren = visibleChildren.length > 0 ? visibleChildren : children;
     const childIds = safeVisibleChildren.map((child) => child.id);
     const classIds = [...new Set(safeVisibleChildren.map((child) => child.classId))];
-    const [caRecords, lessons] = await Promise.all([
+    const [caRecords, subjectsByClass] = await Promise.all([
       prisma.continuousAssessment.findMany({
         where: {
           schoolId,
@@ -82,18 +83,8 @@ const ReportCardListPage = async ({
         include: { subject: { select: { id: true, name: true } } },
         orderBy: { subject: { name: "asc" } },
       }),
-      prisma.lesson.findMany({
-        where: { schoolId, classId: { in: classIds } },
-        select: { classId: true, subject: { select: { id: true, name: true } } },
-      }),
+      listClassSubjectsFromTimetable(schoolId, classIds),
     ]);
-
-    const subjectsByClass = new Map<number, Map<number, string>>();
-    for (const lesson of lessons) {
-      const subjects = subjectsByClass.get(lesson.classId) ?? new Map<number, string>();
-      subjects.set(lesson.subject.id, lesson.subject.name);
-      subjectsByClass.set(lesson.classId, subjects);
-    }
 
     return (
       <div className="flex-1 m-4 mt-0 flex flex-col gap-4">

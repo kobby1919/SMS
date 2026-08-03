@@ -28,7 +28,10 @@ import {
   syncComputedCARecordsForActivity,
   upsertCAActivityScore,
 } from "@/src/lib/services/ca-activity";
-import { recordCAActivityScoreEvents } from "@/src/lib/services/parent-daily-summary";
+import {
+  recordCAActivityGivenEvents,
+  recordCAActivityScoreEvents,
+} from "@/src/lib/services/parent-daily-summary";
 
 // ─── Ghana BECE Grading System ────────────────────────────────────────────────
 // Score ranges → letter grade + grade point
@@ -481,7 +484,13 @@ export async function createCAActivityAction(data: {
     },
   });
 
+  await recordCAActivityGivenEvents({
+    schoolId,
+    activityId: activity.id,
+  });
+
   revalidatePath("/list/ca");
+  revalidatePath("/parent");
   revalidatePath("/teacher");
   revalidateDashboard(schoolId);
   return { id: activity.id };

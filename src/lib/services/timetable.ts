@@ -35,6 +35,36 @@ export function listTimetableLessons(schoolId: string, classId?: number) {
   });
 }
 
+export async function listClassSubjectsFromTimetable(
+  schoolId: string,
+  classIds: number[],
+  options: { teacherId?: string } = {},
+) {
+  if (classIds.length === 0) return new Map<number, Map<number, string>>();
+
+  const lessons = await prisma.lesson.findMany({
+    where: {
+      schoolId,
+      classId: { in: classIds },
+      ...(options.teacherId ? { teacherId: options.teacherId } : {}),
+    },
+    select: {
+      classId: true,
+      subject: { select: { id: true, name: true } },
+    },
+    orderBy: { subject: { name: "asc" } },
+  });
+
+  const subjectsByClass = new Map<number, Map<number, string>>();
+  for (const lesson of lessons) {
+    const subjects = subjectsByClass.get(lesson.classId) ?? new Map<number, string>();
+    subjects.set(lesson.subject.id, lesson.subject.name);
+    subjectsByClass.set(lesson.classId, subjects);
+  }
+
+  return subjectsByClass;
+}
+
 async function validateLessonInput(
   schoolId: string,
   input: TimetableLessonInput,

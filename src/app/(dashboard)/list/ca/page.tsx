@@ -8,6 +8,8 @@ import prisma from "@/src/lib/prisma";
 import CAEntryForm from "@/src/components/CAEntryForm";
 import CAClassSummary from "@/src/components/CAClassSummary";
 import CAActivityManager from "@/src/components/CAActivityManager";
+import { getSubjectCAProgress } from "@/src/lib/services/ca-activity";
+import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 import { ClipboardList, AlertTriangle, BookOpen, Users, Layers3 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -86,27 +88,12 @@ const CAPage = async ({
   // ── Subjects for this class — ONLY from the timetable (Lesson table) ─────
   // A subject may have multiple lesson slots per week (e.g. Math on Mon & Wed).
   // We deduplicate by subjectId so each subject appears only once.
-  const lessonsForClass = await prisma.lesson.findMany({
-    where: {
-      schoolId,
-      classId: activeClass.id,
-      ...(role === "teacher" && activeClass.supervisorId !== userId
-        ? { teacherId: userId }
-        : {}),
-    },
-    select: { subject: { select: { id: true, name: true } } },
-    orderBy: { subject: { name: "asc" } },
-  });
-
-  const subjectMap = new Map<number, { id: number; name: string }>();
-  for (const lesson of lessonsForClass) {
-    if (!subjectMap.has(lesson.subject.id)) {
-      subjectMap.set(lesson.subject.id, lesson.subject);
-    }
-  }
-  const subjects = Array.from(subjectMap.values()).sort((a, b) =>
-    a.name.localeCompare(b.name),
+  const subjectsByClass = await listClassSubjectsFromTimetable(
+    schoolId,
+    [activeClass.id],
+    role === "teacher" && activeClass.supervisorId !== userId ? { teacherId: userId } : {},
   );
+  const subjects = Array.from(subjectsByClass.get(activeClass.id) ?? [], ([id, name]) => ({ id, name }));
 
   // ── Existing CA records (pre-fill the entry form) ─────────────────────────
   const existingCA = await prisma.continuousAssessment.findMany({
@@ -168,6 +155,44 @@ const CAPage = async ({
     },
     orderBy: [{ subjectId: "asc" }, { order: "asc" }, { id: "asc" }],
   });
+
+  const activityCAContexts = Array.from(
+    new Map(
+      caBuckets.map((bucket) => [
+        `${bucket.subjectId}-${bucket.term}-${bucket.academicYear}`,
+        {
+          subjectId: bucket.subjectId,
+          term: bucket.term,
+          academicYear: bucket.academicYear,
+        },
+      ]),
+    ).values(),
+  );
+
+  const activityCAProgress = (
+    await Promise.all(
+      activityCAContexts.flatMap((context) =>
+        students.map(async (student) => {
+          const progress = await getSubjectCAProgress({
+            schoolId,
+            classId: activeClass.id,
+            studentId: student.id,
+            subjectId: context.subjectId,
+            term: context.term,
+            academicYear: context.academicYear,
+          });
+
+          return {
+            studentId: student.id,
+            subjectId: context.subjectId,
+            term: context.term,
+            academicYear: context.academicYear,
+            classworkScore: progress.earnedMarks,
+          };
+        }),
+      ),
+    )
+  ).flat();
 
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
@@ -294,18 +319,8 @@ const CAPage = async ({
                   examScore: ca.examScore,
                   remarks: ca.remarks,
                 }))}
-                activityCAContexts={Array.from(
-                  new Map(
-                    caBuckets.map((bucket) => [
-                      `${bucket.subjectId}-${bucket.term}-${bucket.academicYear}`,
-                      {
-                        subjectId: bucket.subjectId,
-                        term: bucket.term,
-                        academicYear: bucket.academicYear,
-                      },
-                    ]),
-                  ).values(),
-                )}
+                activityCAProgress={activityCAProgress}
+                activityCAContexts={activityCAContexts}
               />
             ) : viewMode === "activity" ? (
               <CAActivityManager

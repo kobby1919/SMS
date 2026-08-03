@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { bulkUpsertCA } from "@/src/lib/actions/caActions";
 import { getGradeBand, TERM_LABELS } from "@/src/lib/caGrades";
+import { formatMark } from "@/src/lib/formatters/marks";
 import type { Term } from "@/src/generated/prisma";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -45,6 +46,14 @@ type ExistingCA = {
   remarks:        string;
 };
 
+type ActivityCAProgress = {
+  studentId:      string;
+  subjectId:      number;
+  term:           Term;
+  academicYear:   string;
+  classworkScore: number;
+};
+
 type ActivityCAContext = {
   subjectId: number;
   term: Term;
@@ -58,6 +67,7 @@ type Props = {
   subjects:     Subject[];
   academicYears: string[];
   existingCA?:  ExistingCA[]; // pre-loaded when editing
+  activityCAProgress?: ActivityCAProgress[];
   activityCAContexts?: ActivityCAContext[];
   onSuccess?:   () => void;
 };
@@ -65,9 +75,11 @@ type Props = {
 const buildRows = (
   students: Student[],
   existingCA: ExistingCA[],
+  activityCAProgress: ActivityCAProgress[],
   selectedSubjectId: number | "",
   selectedTerm: Term,
   selectedYear: string,
+  activityCAEnabled: boolean,
 ): CARow[] =>
   students.map((student) => {
     const existing = existingCA.find(
@@ -77,9 +89,16 @@ const buildRows = (
         entry.term === selectedTerm &&
         entry.academicYear === selectedYear,
     );
+    const activityProgress = activityCAProgress.find(
+      (entry) =>
+        entry.studentId === student.id &&
+        entry.subjectId === selectedSubjectId &&
+        entry.term === selectedTerm &&
+        entry.academicYear === selectedYear,
+    );
     return {
       studentId:      student.id,
-      classworkScore: existing ? String(existing.classworkScore) : "",
+      classworkScore: activityCAEnabled ? String(activityProgress?.classworkScore ?? 0) : existing ? String(existing.classworkScore) : "",
       examScore:      existing ? String(existing.examScore)      : "",
       remarks:        existing ? existing.remarks                : "",
     };
@@ -87,11 +106,14 @@ const buildRows = (
 
 // ─── Live score preview (weighted total + grade) ──────────────────────────────
 function ScorePreview({
-  classwork, exam, cwWeight, exWeight,
+  classwork, exam, cwWeight, exWeight, activityCAEnabled = false,
 }: {
   classwork: number; exam: number; cwWeight: number; exWeight: number;
+  activityCAEnabled?: boolean;
 }) {
-  const total = (classwork * cwWeight) / 100 + (exam * exWeight) / 100;
+  const total = activityCAEnabled
+    ? classwork + exam
+    : (classwork * cwWeight) / 100 + (exam * exWeight) / 100;
   const band  = getGradeBand(total);
   return (
     <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border ${band.bg} ${band.border}`}>
@@ -105,7 +127,7 @@ function ScorePreview({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const CAEntryForm = ({
-  classId, className, students, subjects, academicYears, existingCA = [], activityCAContexts = [], onSuccess,
+  classId, className, students, subjects, academicYears, existingCA = [], activityCAProgress = [], activityCAContexts = [], onSuccess,
 }: Props) => {
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | "">("");
   const [selectedTerm,      setSelectedTerm]      = useState<Term>("TERM_2");
@@ -133,9 +155,18 @@ const CAEntryForm = ({
       .finally(() => setConfigLoading(false));
   }, [selectedYear]);
 
+  const cwWeight = caConfig?.classworkWeight ?? 30;
+  const exWeight = caConfig?.examWeight      ?? 70;
+  const activityCAEnabled = activityCAContexts.some(
+    (context) =>
+      context.subjectId === selectedSubjectId &&
+      context.term === selectedTerm &&
+      context.academicYear === selectedYear,
+  );
+
   const baseRows = useMemo(
-    () => buildRows(students, existingCA, selectedSubjectId, selectedTerm, selectedYear),
-    [students, existingCA, selectedSubjectId, selectedTerm, selectedYear]
+    () => buildRows(students, existingCA, activityCAProgress, selectedSubjectId, selectedTerm, selectedYear, activityCAEnabled),
+    [students, existingCA, activityCAProgress, selectedSubjectId, selectedTerm, selectedYear, activityCAEnabled]
   );
 
   const rows = useMemo(
@@ -211,15 +242,6 @@ const CAEntryForm = ({
     });
   };
 
-  const cwWeight = caConfig?.classworkWeight ?? 30;
-  const exWeight = caConfig?.examWeight      ?? 70;
-  const activityCAEnabled = activityCAContexts.some(
-    (context) =>
-      context.subjectId === selectedSubjectId &&
-      context.term === selectedTerm &&
-      context.academicYear === selectedYear,
-  );
-
   const filledCount = rows.filter((r) =>
     activityCAEnabled ? r.examScore !== "" : r.classworkScore !== "" && r.examScore !== "",
   ).length;
@@ -251,13 +273,22 @@ const CAEntryForm = ({
         {/* Live class average preview */}
         {classAvg !== null && (
           <div className={`px-4 py-2.5 rounded-2xl border ${getGradeBand(classAvg).bg} ${getGradeBand(classAvg).border}`}>
-            <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Class Avg</p>
+            <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">
+              {activityCAEnabled ? "Current CA Avg" : "Class Avg"}
+            </p>
             <p className={`text-2xl font-black leading-none mt-0.5 ${getGradeBand(classAvg).color}`}>
-              {classAvg}%
+              {activityCAEnabled ? `${formatMark(classAvg)}/${cwWeight}` : `${classAvg}%`}
             </p>
-            <p className={`text-[10px] font-bold ${getGradeBand(classAvg).color} opacity-70`}>
+            {activityCAEnabled && (
+              <p className="text-[10px] font-bold text-emerald-600 opacity-80">
+                CA only, exam not included
+              </p>
+            )}
+            {!activityCAEnabled && (
+              <p className={`text-[10px] font-bold ${getGradeBand(classAvg).color} opacity-70`}>
               {getGradeBand(classAvg).grade} · {getGradeBand(classAvg).label}
-            </p>
+              </p>
+            )}
           </div>
         )}
       </div>
@@ -426,6 +457,12 @@ const CAEntryForm = ({
                   </div>
 
                   {/* Classwork score */}
+                  {activityCAEnabled ? (
+                    <div className="w-full rounded-xl bg-emerald-50 p-2 text-center text-sm font-black text-emerald-700 ring-[1.5px] ring-emerald-100">
+                      {formatMark(Number.isNaN(cw) ? 0 : cw)}
+                      <span className="ml-0.5 text-[10px] font-bold text-emerald-500">/{cwWeight}</span>
+                    </div>
+                  ) : (
                   <input
                     type="number"
                     min={0}
@@ -441,6 +478,7 @@ const CAEntryForm = ({
                         : "ring-gray-200 text-gray-800 focus:ring-indigo-500"
                     }`}
                   />
+                  )}
 
                   {/* Exam score */}
                   <input
@@ -459,8 +497,9 @@ const CAEntryForm = ({
                     {bothValid && caConfig ? (
                       <ScorePreview
                         classwork={cw} exam={ex}
-                        cwWeight={activityCAEnabled ? 100 : cwWeight}
-                        exWeight={activityCAEnabled ? 100 : exWeight}
+                        cwWeight={cwWeight}
+                        exWeight={exWeight}
+                        activityCAEnabled={activityCAEnabled}
                       />
                     ) : (
                       <span className="text-xs text-gray-300 font-bold">—</span>

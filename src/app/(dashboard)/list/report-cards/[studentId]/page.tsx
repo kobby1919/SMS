@@ -9,6 +9,7 @@ import { getGradeBandByGrade, computeAggregate } from "@/src/lib/caGrades";
 import ReportCardView from "@/src/components/ReportCardView";
 import type { Term } from "@/src/generated/prisma";
 import { getSchoolBranding } from "@/src/lib/services/school-branding";
+import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 
 export const dynamic = "force-dynamic";
 
@@ -163,14 +164,8 @@ const ReportCardPage = async ({
     : null;
 
   // ── Subjects on timetable for this class ──────────────────────────────────
-  const lessons = await prisma.lesson.findMany({
-    where:  { schoolId, classId: student.classId },
-    select: { subject: { select: { id: true, name: true } } },
-  });
-  const timetableSubjects = new Map<number, string>();
-  for (const l of lessons) {
-    if (!timetableSubjects.has(l.subject.id)) timetableSubjects.set(l.subject.id, l.subject.name);
-  }
+  const subjectsByClass = await listClassSubjectsFromTimetable(schoolId, [student.classId]);
+  const timetableSubjects = subjectsByClass.get(student.classId) ?? new Map<number, string>();
 
   // ── All CA records for this class/term/year (to compute class positions) ──
   const classCARecords = await prisma.continuousAssessment.findMany({
