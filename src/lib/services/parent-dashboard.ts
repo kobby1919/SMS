@@ -144,11 +144,11 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  const [lessons, attendance, assessments, caActivityScores, classCounts, assignments, announcements, bills, payments, classSubjects, caConfigs] = await Promise.all([
+  const [lessons, attendance, assessments, caActivityScores, classCounts, assignments, announcements, bills, payments, caConfigs] = await Promise.all([
     prisma.lesson.findMany({
       where: { schoolId, classId: { in: classIds } },
       include: {
-        subject: { select: { name: true } },
+        subject: { select: { id: true, name: true } },
         teacher: { select: { name: true, surname: true } },
       },
       orderBy: [{ day: "asc" }, { startTime: "asc" }],
@@ -236,18 +236,6 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       orderBy: { paymentDate: "desc" },
       take: 20,
     }),
-    prisma.subject.findMany({
-      where: { schoolId, lessons: { some: { classId: { in: classIds } } } },
-      select: {
-        id: true,
-        name: true,
-        lessons: {
-          where: { classId: { in: classIds } },
-          select: { classId: true },
-        },
-      },
-      orderBy: { name: "asc" },
-    }),
     prisma.cAConfig.findMany({
       where: { schoolId },
       select: { academicYear: true, classworkWeight: true },
@@ -298,12 +286,10 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
   }
 
   const subjectIdsByClass = new Map<number, Map<number, string>>();
-  for (const subject of classSubjects) {
-    for (const lesson of subject.lessons) {
-      const rows = subjectIdsByClass.get(lesson.classId) ?? new Map<number, string>();
-      rows.set(subject.id, subject.name);
-      subjectIdsByClass.set(lesson.classId, rows);
-    }
+  for (const lesson of lessons) {
+    const rows = subjectIdsByClass.get(lesson.classId) ?? new Map<number, string>();
+    rows.set(lesson.subject.id, lesson.subject.name);
+    subjectIdsByClass.set(lesson.classId, rows);
   }
   const assignmentsByClass = new Map<number, typeof assignments>();
   for (const assignment of assignments) {
@@ -439,6 +425,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     const previousBySubject = new Map(prevGroup?.records.map((record) => [record.subjectId, record]) ?? []);
     const classworkWeight = caConfigByYear.get(latestGroup?.year ?? "")?.classworkWeight ?? 30;
     const latestSubjects = (latestGroup?.records ?? []).filter((record) =>
+      (expectedSubjects.size === 0 || expectedSubjects.has(record.subjectId)) &&
       activityBackedCAKeys.has(
         `${record.studentId}__${record.subjectId}__${record.classId}__${record.term}__${record.academicYear}`,
       ),
@@ -459,7 +446,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
         return {
           subjectId: record.subjectId,
           subjectName: record.subject.name,
-          score: Math.round(record.classworkScore * 10) / 10,
+          score: record.classworkScore,
           maxScore: classworkWeight,
           grade: record.grade,
           trend: previous ? (change > 2 ? "up" : change < -2 ? "down" : "steady") : "new",
@@ -497,6 +484,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       : recordedProgressSubjects;
     const completedSubjects = latestSubjects.length;
     const reportReadySubjects = (latestGroup?.reportReadyRecords ?? []).filter((record) =>
+      (expectedSubjects.size === 0 || expectedSubjects.has(record.subjectId)) &&
       activityBackedCAKeys.has(
         `${record.studentId}__${record.subjectId}__${record.classId}__${record.term}__${record.academicYear}`,
       ),
@@ -507,9 +495,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
         ) / 10
       : 0;
     const averageCAMarks = completedSubjects
-      ? Math.round(
-          (latestSubjects.reduce((sum, record) => sum + record.classworkScore, 0) / completedSubjects) * 10,
-        ) / 10
+      ? Math.round((latestSubjects.reduce((sum, record) => sum + record.classworkScore, 0) / completedSubjects) * 100) / 100
       : 0;
     const academicProgress: ParentAcademicProgress = {
       completionRate: expectedSubjects.size > 0 ? Math.round((completedSubjects / expectedSubjects.size) * 100) : 0,

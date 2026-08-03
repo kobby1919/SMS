@@ -256,7 +256,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
   nextDay.setDate(nextDay.getDate() + 1);
   const selectedIsToday = isSameDay(start, new Date());
 
-  const [events, summary, parent, notificationPreference, branding] = await Promise.all([
+  const [events, parent, notificationPreference, branding] = await Promise.all([
     prisma.parentActivityEvent.findMany({
       where: {
         schoolId,
@@ -268,15 +268,6 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
         teacher: { select: { name: true, surname: true, phone: true, email: true } },
       },
       orderBy: [{ occurredAt: "asc" }, { createdAt: "asc" }],
-    }),
-    prisma.parentNotification.findFirst({
-      where: {
-        schoolId,
-        parentId: userId,
-        type: "DAILY_SUMMARY",
-        occurredAt: { gte: start, lt: end },
-      },
-      orderBy: { occurredAt: "desc" },
     }),
     prisma.parent.findFirst({
       where: { id: userId, schoolId },
@@ -291,9 +282,6 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
 
   const visibleEvents = dedupeEvents(events);
   const financeEventBodies = await buildFinanceEventBodies(schoolId, visibleEvents);
-  const summaryCounts = summary?.payload && typeof summary.payload === "object" && "counts" in summary.payload
-    ? summary.payload.counts as Record<string, number>
-    : null;
   const academicEventsByDay = visibleEvents
     .filter((event) => event.type === "ASSESSMENT")
     .reduce<Record<string, typeof visibleEvents>>((acc, event) => {
@@ -353,42 +341,6 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
         contactPhone={parent?.phone}
         preference={notificationPreference}
       />
-
-      <section className="rounded-2xl border border-slate-200 bg-slate-950 p-5 text-white shadow-sm">
-        <div className="flex items-start gap-3">
-          <div className="rounded-xl bg-sky-400/10 p-2 text-sky-200">
-            <BellRing size={18} />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-black">Summary parents receive</p>
-            {summaryCounts ? (
-              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-5">
-                {[
-                  ["Attendance", summaryCounts.attendance ?? 0],
-                  ["Academics", summaryCounts.academics ?? 0],
-                  ["Homework", summaryCounts.homework ?? 0],
-                  ["Fees", summaryCounts.finance ?? 0],
-                  ["Notices", summaryCounts.notices ?? 0],
-                ].map(([label, count]) => (
-                  <div key={label} className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">
-                    <p className="text-lg font-black">{count}</p>
-                    <p className="text-[10px] font-black uppercase tracking-wide text-slate-400">{label}</p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="mt-1 text-sm font-medium leading-relaxed text-slate-300">
-                No daily summary has been generated for {formatDayLabel(start)} yet.
-              </p>
-            )}
-            {summary?.body && (
-              <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
-                <p className="whitespace-pre-line text-sm font-medium leading-relaxed text-slate-300">{summary.body}</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
 
       {visibleEvents.length === 0 ? (
         <section className="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center shadow-sm">

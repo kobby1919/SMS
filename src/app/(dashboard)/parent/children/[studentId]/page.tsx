@@ -11,6 +11,7 @@ import {
 import { requirePageSession } from "@/src/lib/authz";
 import { getParentDashboardData } from "@/src/lib/services/parent-dashboard";
 import { getSchoolBranding } from "@/src/lib/services/school-branding";
+import { formatMark } from "@/src/lib/formatters/marks";
 
 export const dynamic = "force-dynamic";
 
@@ -19,10 +20,6 @@ function formatGHS(amount: number) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
-}
-
-function formatMark(value: number) {
-  return Number.isInteger(value) ? String(value) : value.toFixed(1);
 }
 
 function formatDate(date: Date) {
