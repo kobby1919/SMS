@@ -355,11 +355,36 @@ exports.Prisma.AttendanceScalarFieldEnum = {
   present: 'present',
   status: 'status',
   note: 'note',
+  arrivalTime: 'arrivalTime',
+  followUpStatus: 'followUpStatus',
+  followUpNote: 'followUpNote',
+  correctionCount: 'correctionCount',
+  lastCorrectedAt: 'lastCorrectedAt',
   schoolId: 'schoolId',
   studentId: 'studentId',
   lessonId: 'lessonId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AttendanceAuditLogScalarFieldEnum = {
+  id: 'id',
+  action: 'action',
+  previousStatus: 'previousStatus',
+  newStatus: 'newStatus',
+  previousNote: 'previousNote',
+  newNote: 'newNote',
+  previousArrivalTime: 'previousArrivalTime',
+  newArrivalTime: 'newArrivalTime',
+  previousFollowUp: 'previousFollowUp',
+  newFollowUp: 'newFollowUp',
+  actorId: 'actorId',
+  reason: 'reason',
+  createdAt: 'createdAt',
+  schoolId: 'schoolId',
+  attendanceId: 'attendanceId',
+  studentId: 'studentId',
+  lessonId: 'lessonId'
 };
 
 exports.Prisma.EventScalarFieldEnum = {
@@ -820,6 +845,13 @@ exports.AttendanceStatus = exports.$Enums.AttendanceStatus = {
   EXCUSED: 'EXCUSED'
 };
 
+exports.AttendanceFollowUpStatus = exports.$Enums.AttendanceFollowUpStatus = {
+  NOT_REQUIRED: 'NOT_REQUIRED',
+  PENDING_REASON: 'PENDING_REASON',
+  REASON_PROVIDED: 'REASON_PROVIDED',
+  RESOLVED: 'RESOLVED'
+};
+
 exports.CAActivityType = exports.$Enums.CAActivityType = {
   MIDTERM_EXAM: 'MIDTERM_EXAM',
   CLASS_TEST: 'CLASS_TEST',
@@ -1024,6 +1056,7 @@ exports.Prisma.ModelName = {
   Assignment: 'Assignment',
   Result: 'Result',
   Attendance: 'Attendance',
+  AttendanceAuditLog: 'AttendanceAuditLog',
   Event: 'Event',
   Announcement: 'Announcement',
   CAConfig: 'CAConfig',

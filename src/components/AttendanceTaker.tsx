@@ -34,12 +34,14 @@ type AttendanceRecord = {
   studentId: string;
   status:    "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";
   note?:     string;
+  arrivalTime?: string;
 };
 
 type ExistingRecord = {
   studentId: string;
   status:    "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";
   note:      string | null;
+  arrivalTime: string | null;
 };
 
 type Props = {
@@ -120,6 +122,7 @@ const AttendanceTaker = ({
         studentId: s.id,
         status:    existing?.status ?? "PRESENT",
         note:      existing?.note   ?? "",
+        arrivalTime: existing?.arrivalTime ?? "",
       };
     });
     return state;
@@ -138,7 +141,11 @@ const AttendanceTaker = ({
   const markStudent = (studentId: string, status: AttendanceRecord["status"]) => {
     setAttendance((prev) => ({
       ...prev,
-      [studentId]: { ...prev[studentId], status },
+      [studentId]: {
+        ...prev[studentId],
+        status,
+        arrivalTime: status === "LATE" ? prev[studentId]?.arrivalTime ?? "" : "",
+      },
     }));
     if (status === "LATE") {
       setNoteTarget(studentId);
@@ -152,11 +159,23 @@ const AttendanceTaker = ({
     }));
   };
 
+  const setArrivalTime = (studentId: string, arrivalTime: string) => {
+    setAttendance((prev) => ({
+      ...prev,
+      [studentId]: { ...prev[studentId], arrivalTime },
+    }));
+  };
+
   // ── Bulk mark all ────────────────────────────────────────────────────────
   const markAll = (status: AttendanceRecord["status"]) => {
     const updated: Record<string, AttendanceRecord> = {};
     students.forEach((s) => {
-      updated[s.id] = { studentId: s.id, status, note: attendance[s.id]?.note ?? "" };
+      updated[s.id] = {
+        studentId: s.id,
+        status,
+        note: attendance[s.id]?.note ?? "",
+        arrivalTime: status === "LATE" ? attendance[s.id]?.arrivalTime ?? "" : "",
+      };
     });
     setAttendance(updated);
     if (status === "LATE" && students[0]) {
@@ -181,6 +200,14 @@ const AttendanceTaker = ({
       setNoteTarget(lateWithoutNote.studentId);
       return;
     }
+    const lateWithoutArrivalTime = Object.values(attendance).find(
+      (record) => record.status === "LATE" && !record.arrivalTime?.trim(),
+    );
+    if (lateWithoutArrivalTime) {
+      setError("Add arrival time for every late student before saving attendance.");
+      setNoteTarget(lateWithoutArrivalTime.studentId);
+      return;
+    }
 
     setSaving(true);
     setError(null);
@@ -194,6 +221,7 @@ const AttendanceTaker = ({
           records:  Object.values(attendance).map((record) => ({
             ...record,
             note: record.note?.trim() || null,
+            arrivalTime: record.status === "LATE" ? record.arrivalTime?.trim() || null : null,
           })),
         }),
       });
@@ -388,6 +416,7 @@ const AttendanceTaker = ({
                     const cfg     = STATUS_CONFIG[status];
                     const isNoting = noteTarget === student.id;
                     const lateNeedsNote = status === "LATE" && !record?.note?.trim();
+                    const lateNeedsArrivalTime = status === "LATE" && !record?.arrivalTime?.trim();
 
                     return (
                       <motion.div
@@ -426,6 +455,11 @@ const AttendanceTaker = ({
                                 Late note required before saving.
                               </p>
                             )}
+                            {lateNeedsArrivalTime && (
+                              <p className="text-[11px] font-bold text-amber-600">
+                                Arrival time required for late attendance.
+                              </p>
+                            )}
                           </div>
 
                           {/* Status buttons */}
@@ -462,17 +496,26 @@ const AttendanceTaker = ({
 
                         {/* Note input (expandable) */}
                         <AnimatePresence>
-                          {(isNoting || lateNeedsNote) && (
+                          {(isNoting || lateNeedsNote || lateNeedsArrivalTime) && (
                             <motion.div
                               initial={{ height: 0, opacity: 0 }}
                               animate={{ height: "auto", opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
                               className="overflow-hidden"
                             >
-                              <div className="px-4 pb-3 pt-1">
+                              <div className="grid gap-2 px-4 pb-3 pt-1 sm:grid-cols-[140px_1fr]">
+                                {status === "LATE" && (
+                                  <input
+                                    type="time"
+                                    value={record?.arrivalTime ?? ""}
+                                    onChange={(e) => setArrivalTime(student.id, e.target.value)}
+                                    className="w-full px-3 py-2 text-xs rounded-lg border border-amber-200 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-300 text-gray-700"
+                                    aria-label={`Arrival time for ${student.name} ${student.surname}`}
+                                  />
+                                )}
                                 <input
                                   type="text"
-                                  placeholder="Add a note (e.g. sick, left early, parent called)…"
+                                  placeholder={status === "LATE" ? "Reason for lateness" : "Add a note (e.g. sick, left early, parent called)"}
                                   value={record?.note ?? ""}
                                   onChange={(e) => setNote(student.id, e.target.value)}
                                   className="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 text-gray-700"

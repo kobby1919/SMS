@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId, schoolId } = await requireRole(["admin", "teacher"]);
+    const { userId, role, schoolId } = await requireRole(["admin", "teacher"]);
     const limited = await enforceRateLimit(req, {
       scope: "attendance:submit",
       actorId: userId,
@@ -62,6 +62,8 @@ export async function POST(req: NextRequest) {
       lessonId: parsed.data.lessonId,
       date: new Date(parsed.data.date),
       records: parsed.data.records,
+      actorId: userId,
+      actorRole: role ?? "teacher",
     });
 
     revalidateDashboard(schoolId);

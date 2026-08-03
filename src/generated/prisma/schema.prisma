@@ -29,6 +29,13 @@ enum AttendanceStatus {
   EXCUSED
 }
 
+enum AttendanceFollowUpStatus {
+  NOT_REQUIRED
+  PENDING_REASON
+  REASON_PROVIDED
+  RESOLVED
+}
+
 enum Term {
   TERM_1
   TERM_2
@@ -291,6 +298,7 @@ model School {
   assignments           Assignment[]
   results               Result[]
   attendances           Attendance[]
+  attendanceAuditLogs   AttendanceAuditLog[]
   events                Event[]
   announcements         Announcement[]
   caConfigs             CAConfig[]
@@ -355,6 +363,7 @@ model Student {
   grade    Grade  @relation(fields: [gradeId], references: [id])
 
   attendances           Attendance[]
+  attendanceAuditLogs   AttendanceAuditLog[]
   results               Result[]
   continuousAssessments ContinuousAssessment[]
   caActivityScores      CAActivityScore[]
@@ -648,9 +657,10 @@ model Lesson {
   teacherId String
   teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 
-  exams       Exam[]
-  assignments Assignment[]
-  attendances Attendance[]
+  exams               Exam[]
+  assignments         Assignment[]
+  attendances         Attendance[]
+  attendanceAuditLogs AttendanceAuditLog[]
 
   @@index([schoolId, teacherId])
   @@index([schoolId, classId])
@@ -719,11 +729,16 @@ model Result {
 }
 
 model Attendance {
-  id      Int              @id @default(autoincrement())
-  date    DateTime         @default(now())
-  present Boolean
-  status  AttendanceStatus @default(PRESENT)
-  note    String?
+  id              Int                      @id @default(autoincrement())
+  date            DateTime                 @default(now())
+  present         Boolean
+  status          AttendanceStatus         @default(PRESENT)
+  note            String?
+  arrivalTime     String?
+  followUpStatus  AttendanceFollowUpStatus @default(NOT_REQUIRED)
+  followUpNote    String?
+  correctionCount Int                      @default(0)
+  lastCorrectedAt DateTime?
 
   schoolId String @default("default-school")
   school   School @relation(fields: [schoolId], references: [id])
@@ -737,12 +752,47 @@ model Attendance {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  auditLogs AttendanceAuditLog[]
+
   @@unique([schoolId, studentId, lessonId, date])
   @@index([schoolId, lessonId, date])
   @@index([schoolId, date, status])
+  @@index([schoolId, followUpStatus, date])
   @@index([studentId, date, status])
   @@index([schoolId, studentId, date])
   @@index([schoolId, studentId, date, status])
+}
+
+model AttendanceAuditLog {
+  id                  String                    @id @default(cuid())
+  action              String
+  previousStatus      AttendanceStatus?
+  newStatus           AttendanceStatus?
+  previousNote        String?
+  newNote             String?
+  previousArrivalTime String?
+  newArrivalTime      String?
+  previousFollowUp    AttendanceFollowUpStatus?
+  newFollowUp         AttendanceFollowUpStatus?
+  actorId             String?
+  reason              String?
+  createdAt           DateTime                  @default(now())
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  attendanceId Int?
+  attendance   Attendance? @relation(fields: [attendanceId], references: [id], onDelete: SetNull)
+
+  studentId String?
+  student   Student? @relation(fields: [studentId], references: [id], onDelete: SetNull)
+
+  lessonId Int?
+  lesson   Lesson? @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+
+  @@index([schoolId, createdAt])
+  @@index([schoolId, attendanceId])
+  @@index([schoolId, studentId, createdAt])
 }
 
 model Event {

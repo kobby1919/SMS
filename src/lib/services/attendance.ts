@@ -1,5 +1,5 @@
 import prisma from "@/src/lib/prisma";
-import type { AttendanceStatus } from "@/src/generated/prisma";
+import type { AttendanceFollowUpStatus, AttendanceStatus } from "@/src/generated/prisma";
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
 
 const ATTENDANCE_STATUS_LABELS: Record<AttendanceStatus, string> = {
@@ -150,11 +150,20 @@ export async function saveAttendance({
   lessonId,
   date,
   records,
+  actorId,
+  actorRole,
 }: {
   schoolId: string;
   lessonId: number;
   date: Date;
-  records: { studentId: string; status: AttendanceStatus; note?: string | null }[];
+  records: {
+    studentId: string;
+    status: AttendanceStatus;
+    note?: string | null;
+    arrivalTime?: string | null;
+  }[];
+  actorId: string;
+  actorRole: string;
 }) {
   const attendanceDate = new Date(date);
   attendanceDate.setHours(12, 0, 0, 0);
@@ -167,9 +176,22 @@ export async function saveAttendance({
   if (lateWithoutNote) {
     throw new Error("Late attendance requires a note.");
   }
+  const lateWithoutArrivalTime = records.find((record) => record.status === "LATE" && !record.arrivalTime?.trim());
+  if (lateWithoutArrivalTime) {
+    throw new Error("Late attendance requires arrival time.");
+  }
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const selectedDay = new Date(attendanceDate);
+  selectedDay.setHours(0, 0, 0, 0);
+  if (actorRole === "teacher" && selectedDay < today) {
+    throw new Error("Past attendance is locked for teachers. Please ask an admin to correct it.");
+  }
   const cleanedRecords = records.map((record) => ({
     ...record,
     note: record.note?.trim() || null,
+    arrivalTime: record.status === "LATE" ? record.arrivalTime?.trim() ?? null : null,
+    followUpStatus: attendanceFollowUpStatus(record.status, record.note),
   }));
 
   const lesson = await prisma.lesson.findFirst({
@@ -186,27 +208,79 @@ export async function saveAttendance({
     throw new Error("One or more students do not belong to this lesson's class.");
   }
 
-  await prisma.$transaction([
-    prisma.attendance.deleteMany({
-      where: {
-        schoolId,
-        lessonId,
-        date: attendanceDate,
-        studentId: { in: studentIds },
-      },
-    }),
-    prisma.attendance.createMany({
-      data: cleanedRecords.map((record) => ({
+  const existingRecords = await prisma.attendance.findMany({
+    where: {
+      schoolId,
+      lessonId,
+      date: attendanceDate,
+      studentId: { in: studentIds },
+    },
+  });
+  const existingByStudent = new Map(existingRecords.map((record) => [record.studentId, record]));
+
+  await prisma.$transaction(
+    cleanedRecords.flatMap((record) => {
+      const existing = existingByStudent.get(record.studentId);
+      const nextData = {
         schoolId,
         studentId: record.studentId,
         lessonId,
         date: attendanceDate,
         status: record.status,
         present: record.status === "PRESENT",
-        note: record.note ?? null,
-      })),
+        note: record.note,
+        arrivalTime: record.arrivalTime,
+        followUpStatus: record.followUpStatus,
+      };
+
+      if (!existing) {
+        return [
+          prisma.attendance.create({ data: nextData }),
+        ];
+      }
+
+      const changed = existing.status !== record.status ||
+        (existing.note ?? null) !== record.note ||
+        (existing.arrivalTime ?? null) !== record.arrivalTime ||
+        existing.followUpStatus !== record.followUpStatus;
+
+      if (!changed) return [];
+
+      return [
+        prisma.attendance.update({
+          where: { id: existing.id },
+          data: {
+            status: record.status,
+            present: record.status === "PRESENT",
+            note: record.note,
+            arrivalTime: record.arrivalTime,
+            followUpStatus: record.followUpStatus,
+            correctionCount: { increment: 1 },
+            lastCorrectedAt: new Date(),
+          },
+        }),
+        prisma.attendanceAuditLog.create({
+          data: {
+            schoolId,
+            attendanceId: existing.id,
+            studentId: record.studentId,
+            lessonId,
+            actorId,
+            action: selectedDay < today ? "PAST_ATTENDANCE_CORRECTED" : "ATTENDANCE_CORRECTED",
+            previousStatus: existing.status,
+            newStatus: record.status,
+            previousNote: existing.note,
+            newNote: record.note,
+            previousArrivalTime: existing.arrivalTime,
+            newArrivalTime: record.arrivalTime,
+            previousFollowUp: existing.followUpStatus,
+            newFollowUp: record.followUpStatus,
+            reason: record.note ?? "No note provided.",
+          },
+        }),
+      ];
     }),
-  ]);
+  );
 
   const lessonForEvent = await prisma.lesson.findFirst({
     where: { id: lessonId, schoolId },
@@ -225,7 +299,7 @@ export async function saveAttendance({
         const note = record.note;
         const needsReason = record.status === "ABSENT" || record.status === "LATE";
         const body = [
-          `${statusLabel} for ${lessonForEvent.subject.name}.`,
+          `${statusLabel} for ${lessonForEvent.subject.name}${record.arrivalTime ? ` at ${record.arrivalTime}` : ""}.`,
           `Teacher: ${teacherName}`,
           note
             ? `Note: ${note}`
@@ -250,6 +324,8 @@ export async function saveAttendance({
             status: record.status,
             statusLabel,
             note: note ?? null,
+            arrivalTime: record.arrivalTime,
+            followUpStatus: record.followUpStatus,
             subjectName: lessonForEvent.subject.name,
             teacherName,
           },
@@ -259,6 +335,14 @@ export async function saveAttendance({
   }
 
   return records.length;
+}
+
+function attendanceFollowUpStatus(
+  status: AttendanceStatus,
+  note?: string | null,
+): AttendanceFollowUpStatus {
+  if (status !== "ABSENT") return "NOT_REQUIRED";
+  return note?.trim() ? "REASON_PROVIDED" : "PENDING_REASON";
 }
 
 export async function deleteAttendanceRecord({

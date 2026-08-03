@@ -102,9 +102,10 @@ function buildAttendanceSummaryLines(events: SummaryEvent[], period: "daily" | "
       const statusLabel = status ? ATTENDANCE_STATUS_LABELS[status] : "Marked";
       const subjectName = textFromPayload(event.payload, "subjectName");
       const teacherName = textFromPayload(event.payload, "teacherName");
+      const arrivalTime = textFromPayload(event.payload, "arrivalTime");
       const note = textFromPayload(event.payload, "note");
       return [
-        `${studentName}: ${statusLabel}${subjectName ? ` for ${subjectName}` : ""}.`,
+        `${studentName}: ${statusLabel}${subjectName ? ` for ${subjectName}` : ""}${arrivalTime ? ` at ${arrivalTime}` : ""}.`,
         teacherName ? `Teacher: ${teacherName}` : null,
         note ? `Note: ${note}` : status === "ABSENT" || status === "LATE" ? "Note: No reason provided yet." : null,
       ].filter(Boolean).join("\n");

@@ -40,6 +40,7 @@ const TakeAttendancePage = async ({
     studentId: string;
     status: AttendanceStatus;
     note: string | null;
+    arrivalTime: string | null;
   };
 
   let teacherLessons: LessonWithSummary[] = [];
@@ -96,7 +97,7 @@ const TakeAttendancePage = async ({
           lessonId,
           date: { gte: dayStart, lte: dayEnd },
         },
-        select: { studentId: true, status: true, note: true },
+        select: { studentId: true, status: true, note: true, arrivalTime: true },
       });
     }
   }
