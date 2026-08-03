@@ -16,6 +16,16 @@ export const attendanceSubmitSchema = z.object({
   lessonId: positiveIntSchema,
   date: isoDateStringSchema,
   records: z.array(attendanceRecordSchema).min(1),
+}).superRefine((value, ctx) => {
+  value.records.forEach((record, index) => {
+    if (record.status === "LATE" && !record.note?.trim()) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Late attendance requires a note.",
+        path: ["records", index, "note"],
+      });
+    }
+  });
 });
 
 export const attendanceDeleteQuerySchema = z.object({

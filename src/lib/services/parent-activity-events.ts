@@ -57,10 +57,32 @@ export async function recordParentActivityEvents(input: ActivityEventInput) {
 
   if (events.length === 0) return [];
 
-  await prisma.parentActivityEvent.createMany({
-    data: events,
-    skipDuplicates: true,
-  });
+  await Promise.all(
+    events.map((event) =>
+      prisma.parentActivityEvent.upsert({
+        where: {
+          schoolId_parentId_sourceKey: {
+            schoolId: event.schoolId,
+            parentId: event.parentId,
+            sourceKey: event.sourceKey,
+          },
+        },
+        create: event,
+        update: {
+          studentId: event.studentId,
+          teacherId: event.teacherId,
+          type: event.type,
+          title: event.title,
+          body: event.body,
+          href: event.href,
+          payload: event.payload,
+          sourceModel: event.sourceModel,
+          sourceId: event.sourceId,
+          occurredAt: event.occurredAt,
+        },
+      }),
+    ),
+  );
 
   const uniqueParentIds = [...new Set(events.map((event) => event.parentId))];
   await Promise.all(

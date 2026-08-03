@@ -2,6 +2,13 @@ import prisma from "@/src/lib/prisma";
 import type { AttendanceStatus } from "@/src/generated/prisma";
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
 
+const ATTENDANCE_STATUS_LABELS: Record<AttendanceStatus, string> = {
+  PRESENT: "Present",
+  ABSENT: "Absent",
+  LATE: "Late",
+  EXCUSED: "Excused",
+};
+
 export type AttendanceStatusCounts = Record<AttendanceStatus, number>;
 
 export type AttendanceStatusCountRow = {
@@ -156,6 +163,14 @@ export async function saveAttendance({
   if (studentIds.length !== records.length) {
     throw new Error("Each student may appear only once in an attendance submission.");
   }
+  const lateWithoutNote = records.find((record) => record.status === "LATE" && !record.note?.trim());
+  if (lateWithoutNote) {
+    throw new Error("Late attendance requires a note.");
+  }
+  const cleanedRecords = records.map((record) => ({
+    ...record,
+    note: record.note?.trim() || null,
+  }));
 
   const lesson = await prisma.lesson.findFirst({
     where: { id: lessonId, schoolId },
@@ -181,7 +196,7 @@ export async function saveAttendance({
       },
     }),
     prisma.attendance.createMany({
-      data: records.map((record) => ({
+      data: cleanedRecords.map((record) => ({
         schoolId,
         studentId: record.studentId,
         lessonId,
@@ -197,28 +212,49 @@ export async function saveAttendance({
     where: { id: lessonId, schoolId },
     select: {
       teacherId: true,
+      teacher: { select: { name: true, surname: true } },
       subject: { select: { name: true } },
     },
   });
 
   if (lessonForEvent) {
+    const teacherName = `${lessonForEvent.teacher.name} ${lessonForEvent.teacher.surname}`;
     await Promise.all(
-      records.map((record) =>
-        recordParentActivityEvents({
+      cleanedRecords.map((record) => {
+        const statusLabel = ATTENDANCE_STATUS_LABELS[record.status];
+        const note = record.note;
+        const needsReason = record.status === "ABSENT" || record.status === "LATE";
+        const body = [
+          `${statusLabel} for ${lessonForEvent.subject.name}.`,
+          `Teacher: ${teacherName}`,
+          note
+            ? `Note: ${note}`
+            : needsReason
+              ? "Note: No reason provided yet."
+              : null,
+        ].filter(Boolean).join("\n");
+
+        return recordParentActivityEvents({
           schoolId,
           studentIds: [record.studentId],
           teacherId: lessonForEvent.teacherId,
           type: "ATTENDANCE",
-          title: `${lessonForEvent.subject.name} attendance recorded`,
-          body: `Attendance was marked ${record.status.toLowerCase()}${record.note ? ` - ${record.note}` : ""}.`,
-          href: "/list/attendance",
+          title: `${lessonForEvent.subject.name} attendance: ${statusLabel}`,
+          body,
+          href: "/parent/updates",
           sourceModel: "Attendance",
           sourceId: `${lessonId}:${record.studentId}:${attendanceDate.toISOString()}`,
-          sourceKey: `attendance:${lessonId}:${record.studentId}:${attendanceDate.toISOString()}:${record.status}`,
+          sourceKey: `attendance:${lessonId}:${attendanceDate.toISOString()}`,
           occurredAt: attendanceDate,
-          payload: { status: record.status, note: record.note ?? null },
-        }),
-      ),
+          payload: {
+            status: record.status,
+            statusLabel,
+            note: note ?? null,
+            subjectName: lessonForEvent.subject.name,
+            teacherName,
+          },
+        });
+      }),
     );
   }
 

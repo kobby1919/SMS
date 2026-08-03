@@ -140,6 +140,9 @@ const AttendanceTaker = ({
       ...prev,
       [studentId]: { ...prev[studentId], status },
     }));
+    if (status === "LATE") {
+      setNoteTarget(studentId);
+    }
   };
 
   const setNote = (studentId: string, note: string) => {
@@ -156,6 +159,9 @@ const AttendanceTaker = ({
       updated[s.id] = { studentId: s.id, status, note: attendance[s.id]?.note ?? "" };
     });
     setAttendance(updated);
+    if (status === "LATE" && students[0]) {
+      setNoteTarget(students[0].id);
+    }
   };
 
   // ── Stats ────────────────────────────────────────────────────────────────
@@ -167,6 +173,15 @@ const AttendanceTaker = ({
   // ── Submit ───────────────────────────────────────────────────────────────
   const handleSubmit = async () => {
     if (!selectedLessonId) return;
+    const lateWithoutNote = Object.values(attendance).find(
+      (record) => record.status === "LATE" && !record.note?.trim(),
+    );
+    if (lateWithoutNote) {
+      setError("Add a note for every late student before saving attendance.");
+      setNoteTarget(lateWithoutNote.studentId);
+      return;
+    }
+
     setSaving(true);
     setError(null);
     try {
@@ -176,7 +191,10 @@ const AttendanceTaker = ({
         body: JSON.stringify({
           lessonId: selectedLessonId,
           date:     dateStr,
-          records:  Object.values(attendance),
+          records:  Object.values(attendance).map((record) => ({
+            ...record,
+            note: record.note?.trim() || null,
+          })),
         }),
       });
       const data = await res.json();
@@ -369,6 +387,7 @@ const AttendanceTaker = ({
                     const status  = record?.status ?? "PRESENT";
                     const cfg     = STATUS_CONFIG[status];
                     const isNoting = noteTarget === student.id;
+                    const lateNeedsNote = status === "LATE" && !record?.note?.trim();
 
                     return (
                       <motion.div
@@ -400,6 +419,11 @@ const AttendanceTaker = ({
                             {record?.note && (
                               <p className="text-[11px] text-gray-400 truncate italic">
                                 &quot;{record.note}&quot;
+                              </p>
+                            )}
+                            {lateNeedsNote && (
+                              <p className="text-[11px] font-bold text-amber-600">
+                                Late note required before saving.
                               </p>
                             )}
                           </div>
@@ -438,7 +462,7 @@ const AttendanceTaker = ({
 
                         {/* Note input (expandable) */}
                         <AnimatePresence>
-                          {isNoting && (
+                          {(isNoting || lateNeedsNote) && (
                             <motion.div
                               initial={{ height: 0, opacity: 0 }}
                               animate={{ height: "auto", opacity: 1 }}

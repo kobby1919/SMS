@@ -62,9 +62,80 @@ type SummaryEvent = {
   type: string;
   title: string;
   body: string;
+  payload?: unknown;
   sourceModel: string;
   sourceId: string;
 };
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value && typeof value === "object" && !Array.isArray(value));
+}
+
+function textFromPayload(payload: unknown, key: string) {
+  if (!isRecord(payload)) return null;
+  const value = payload[key];
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function attendanceStatusFromPayload(payload: unknown) {
+  const status = textFromPayload(payload, "status");
+  return status === "PRESENT" || status === "ABSENT" || status === "LATE" || status === "EXCUSED"
+    ? status
+    : null;
+}
+
+const ATTENDANCE_STATUS_LABELS = {
+  PRESENT: "Present",
+  ABSENT: "Absent",
+  LATE: "Late",
+  EXCUSED: "Excused",
+} as const;
+
+function buildAttendanceSummaryLines(events: SummaryEvent[], period: "daily" | "weekly") {
+  const attendanceEvents = events.filter((event) => event.type === "ATTENDANCE");
+  if (attendanceEvents.length === 0) return [];
+
+  if (period === "daily") {
+    return attendanceEvents.slice(0, 6).map((event) => {
+      const studentName = textFromPayload(event.payload, "studentName") ?? "Your child";
+      const status = attendanceStatusFromPayload(event.payload);
+      const statusLabel = status ? ATTENDANCE_STATUS_LABELS[status] : "Marked";
+      const subjectName = textFromPayload(event.payload, "subjectName");
+      const teacherName = textFromPayload(event.payload, "teacherName");
+      const note = textFromPayload(event.payload, "note");
+      return [
+        `${studentName}: ${statusLabel}${subjectName ? ` for ${subjectName}` : ""}.`,
+        teacherName ? `Teacher: ${teacherName}` : null,
+        note ? `Note: ${note}` : status === "ABSENT" || status === "LATE" ? "Note: No reason provided yet." : null,
+      ].filter(Boolean).join("\n");
+    });
+  }
+
+  const grouped = new Map<string, { present: number; absent: number; late: number; excused: number; total: number }>();
+  for (const event of attendanceEvents) {
+    const studentName = textFromPayload(event.payload, "studentName") ?? "Your child";
+    const status = attendanceStatusFromPayload(event.payload);
+    if (!status) continue;
+    const row = grouped.get(studentName) ?? { present: 0, absent: 0, late: 0, excused: 0, total: 0 };
+    if (status === "PRESENT") row.present += 1;
+    if (status === "ABSENT") row.absent += 1;
+    if (status === "LATE") row.late += 1;
+    if (status === "EXCUSED") row.excused += 1;
+    row.total += 1;
+    grouped.set(studentName, row);
+  }
+
+  if (grouped.size === 0) return attendanceEvents.slice(0, 6).map((event) => event.body);
+
+  return Array.from(grouped.entries()).slice(0, 6).map(([studentName, row]) => {
+    const rate = row.total > 0 ? Math.round((row.present / row.total) * 100) : 0;
+    return [
+      `${studentName}: ${row.present}/${row.total} present this week.`,
+      `Late: ${row.late}. Absent: ${row.absent}. Excused: ${row.excused}.`,
+      `Attendance rate: ${rate}%.`,
+    ].join("\n");
+  });
+}
 
 async function buildFinanceSummaryLines(schoolId: string, events: SummaryEvent[]) {
   const financeEvents = events.filter((event) => event.type === "BILL" || event.type === "PAYMENT");
@@ -440,12 +511,10 @@ async function rebuildParentSummary(input: {
     .filter((event) => event.type === "ANNOUNCEMENT")
     .slice(0, 3)
     .map((event) => event.body);
-  const attendanceLines = uniqueEvents
-    .filter((event) => event.type === "ATTENDANCE")
-    .slice(0, 3)
-    .map((event) => event.body);
+  const attendanceLines = buildAttendanceSummaryLines(uniqueEvents, input.period);
   const summaryBits = [
     `${uniqueEvents.length} school update${uniqueEvents.length === 1 ? "" : "s"}`,
+    counts.attendance ? `${counts.attendance} attendance` : null,
     counts.academics ? `${counts.academics} academic` : null,
     counts.homework ? `${counts.homework} homework` : null,
     counts.notices ? `${counts.notices} notice` : null,
