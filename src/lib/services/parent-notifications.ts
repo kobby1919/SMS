@@ -4,6 +4,7 @@ import type {
   ParentNotificationType,
 } from "@/src/generated/prisma";
 import { rebuildParentDailySummary } from "@/src/lib/services/parent-daily-summary";
+import { deliverParentUrgentNotification } from "@/src/lib/services/parent-notification-delivery";
 import { PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 
 export type ParentNotificationFeedItem = {
@@ -35,6 +36,9 @@ type SourceRecord = {
   priority?: ParentNotificationPriority;
   title: string;
   body: string;
+  payload?: Record<string, unknown>;
+  shouldCreateNotification?: boolean;
+  deliverImmediately?: boolean;
   href?: string;
   occurredAt: Date;
   studentId?: string;
@@ -88,8 +92,13 @@ export async function syncParentNotificationsFromSources({
     studentId: string;
     status: string;
     note: string | null;
+    arrivalTime?: string | null;
+    followUpStatus?: string | null;
     date: Date;
-    lesson: { subject: { name: string } };
+    lesson: {
+      subject: { name: string };
+      teacher?: { name: string; surname: string } | null;
+    };
   }>;
   assessments: Array<{
     id: number;
@@ -147,18 +156,58 @@ export async function syncParentNotificationsFromSources({
   }>;
 }) {
   const childById = new Map(children.map((child) => [child.id, child]));
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const weeklyLateByStudent = new Map<string, number>();
+  for (const record of attendance) {
+    if (record.status !== "LATE" || record.date < sevenDaysAgo) continue;
+    weeklyLateByStudent.set(record.studentId, (weeklyLateByStudent.get(record.studentId) ?? 0) + 1);
+  }
+
   const candidates: SourceRecord[] = [
     ...attendance.map((record) => {
       const child = childById.get(record.studentId);
       const status = record.status.toLowerCase();
+      const studentName = child ? `${child.name} ${child.surname}` : "Your child";
+      const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+      const weeklyLateCount = weeklyLateByStudent.get(record.studentId) ?? 0;
+      const repeatedLate = record.status === "LATE" && weeklyLateCount >= 2;
+      const isUrgent = record.status === "ABSENT" || repeatedLate;
+      const teacherName = record.lesson.teacher
+        ? `${record.lesson.teacher.name} ${record.lesson.teacher.surname}`
+        : null;
+      const note = record.note ?? (record.status === "ABSENT" ? "No reason provided yet." : null);
       return {
         sourceKey: `attendance:${record.id}`,
         sourceModel: "Attendance",
         sourceId: String(record.id),
         type: "ATTENDANCE" as const,
-        priority: record.status === "ABSENT" ? ("HIGH" as const) : ("NORMAL" as const),
-        title: `${child?.name ?? "Your child"} was marked ${status}`,
-        body: `${record.lesson.subject.name}${record.note ? ` - ${record.note}` : ""}`,
+        priority: isUrgent ? ("HIGH" as const) : ("NORMAL" as const),
+        title: repeatedLate
+          ? `${child?.name ?? "Your child"} has repeated lateness`
+          : `${child?.name ?? "Your child"} was marked ${status}`,
+        body: [
+          `Student: ${studentName}`,
+          `Status: ${statusLabel}`,
+          `Subject: ${record.lesson.subject.name}`,
+          teacherName ? `Teacher: ${teacherName}` : null,
+          record.arrivalTime ? `Arrival time: ${record.arrivalTime}` : null,
+          repeatedLate ? `Pattern: Late ${weeklyLateCount} times in the last 7 days.` : null,
+          note ? `Note: ${note}` : null,
+        ].filter(Boolean).join("\n"),
+        payload: {
+          studentName,
+          status: record.status,
+          statusLabel,
+          subjectName: record.lesson.subject.name,
+          teacherName,
+          arrivalTime: record.arrivalTime ?? null,
+          note,
+          followUpStatus: record.followUpStatus ?? null,
+          weeklyLateCount,
+        },
+        shouldCreateNotification: isUrgent,
+        deliverImmediately: isUrgent,
         href: "/list/attendance",
         occurredAt: record.date,
         studentId: record.studentId,
@@ -173,16 +222,17 @@ export async function syncParentNotificationsFromSources({
           sourceId: String(assignment.id),
           type: "ASSIGNMENT" as const,
           priority: assignment.dueDate < new Date() ? ("HIGH" as const) : ("NORMAL" as const),
-          title: `${assignment.lesson.subject.name} assignment due`,
+        title: `${assignment.lesson.subject.name} assignment due`,
           body: `${assignment.title} is due ${assignment.dueDate.toLocaleDateString("en-GH", {
             day: "numeric",
             month: "short",
             year: "numeric",
           })}.`,
-          href: "/list/assignments",
-          occurredAt: assignment.dueDate,
-          studentId: child.id,
-        })),
+        href: "/list/assignments",
+        occurredAt: assignment.dueDate,
+        studentId: child.id,
+        shouldCreateNotification: true,
+      })),
     ),
     ...announcements.flatMap((announcement) =>
       children
@@ -198,6 +248,7 @@ export async function syncParentNotificationsFromSources({
           href: "/list/announcements",
           occurredAt: announcement.date,
           studentId: child.id,
+          shouldCreateNotification: true,
         })),
     ),
     ...bills.map((bill) => ({
@@ -211,6 +262,7 @@ export async function syncParentNotificationsFromSources({
       href: `/parent/finance/bills/${bill.id}`,
       occurredAt: bill.updatedAt,
       studentId: bill.studentId,
+      shouldCreateNotification: true,
     })),
     ...payments.map((payment) => ({
       sourceKey: `payment:${payment.id}`,
@@ -230,6 +282,7 @@ export async function syncParentNotificationsFromSources({
       href: `/api/finance/receipt?billId=${payment.studentBill.id}&receiptNumber=${encodeURIComponent(payment.receiptNumber)}`,
       occurredAt: payment.createdAt,
       studentId: payment.studentBill.studentId,
+      shouldCreateNotification: true,
     })),
   ];
 
@@ -243,7 +296,7 @@ export async function syncParentNotificationsFromSources({
         title: candidate.title,
         body: candidate.body,
         href: candidate.href,
-        payload: { priority: candidate.priority ?? "NORMAL" },
+        payload: { priority: candidate.priority ?? "NORMAL", ...candidate.payload },
         sourceModel: candidate.sourceModel,
         sourceId: candidate.sourceId,
         sourceKey: candidate.sourceKey,
@@ -271,23 +324,45 @@ export async function syncParentNotificationsFromSources({
       ),
     );
 
-    await prisma.parentNotification.createMany({
-      data: candidates.map((candidate) => ({
-        schoolId,
-        parentId,
-        studentId: candidate.studentId,
-        type: candidate.type,
-        priority: candidate.priority ?? "NORMAL",
-        title: candidate.title,
-        body: candidate.body,
-        href: candidate.href,
-        sourceModel: candidate.sourceModel,
-        sourceId: candidate.sourceId,
-        sourceKey: candidate.sourceKey,
-        occurredAt: candidate.occurredAt,
-      })),
-      skipDuplicates: true,
-    });
+    const notificationCandidates = candidates.filter((candidate) => candidate.shouldCreateNotification !== false);
+    if (notificationCandidates.length > 0) {
+      await prisma.parentNotification.createMany({
+        data: notificationCandidates.map((candidate) => ({
+          schoolId,
+          parentId,
+          studentId: candidate.studentId,
+          type: candidate.type,
+          priority: candidate.priority ?? "NORMAL",
+          title: candidate.title,
+          body: candidate.body,
+          href: candidate.href,
+          payload: { priority: candidate.priority ?? "NORMAL", ...candidate.payload },
+          sourceModel: candidate.sourceModel,
+          sourceId: candidate.sourceId,
+          sourceKey: candidate.sourceKey,
+          occurredAt: candidate.occurredAt,
+        })),
+        skipDuplicates: true,
+      });
+    }
+
+    const urgentSourceKeys = notificationCandidates
+      .filter((candidate) => candidate.deliverImmediately)
+      .map((candidate) => candidate.sourceKey);
+    if (urgentSourceKeys.length > 0) {
+      const urgentNotifications = await prisma.parentNotification.findMany({
+        where: {
+          schoolId,
+          parentId,
+          sourceKey: { in: urgentSourceKeys },
+        },
+      });
+      await Promise.all(
+        urgentNotifications.map((notification) =>
+          deliverParentUrgentNotification({ schoolId, parentId, notification }),
+        ),
+      );
+    }
   }
 
   const notifications = await prisma.parentNotification.findMany({

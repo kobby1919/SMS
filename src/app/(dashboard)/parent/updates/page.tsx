@@ -144,6 +144,123 @@ function toInt(value: string) {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 }
 
+async function buildAttendanceEventBodies(
+  schoolId: string,
+  events: Array<{
+    id: string;
+    type: ParentNotificationType;
+    body: string;
+    sourceModel: string;
+    sourceId: string;
+  }>,
+) {
+  const attendanceIds = events
+    .filter((event) => event.type === "ATTENDANCE" && event.sourceModel === "Attendance")
+    .map((event) => toInt(event.sourceId))
+    .filter((id): id is number => id !== null);
+
+  if (attendanceIds.length === 0) return new Map<string, string>();
+
+  const records = await prisma.attendance.findMany({
+    where: { schoolId, id: { in: attendanceIds } },
+    include: {
+      student: { select: { name: true, surname: true } },
+      lesson: {
+        include: {
+          subject: { select: { name: true } },
+          teacher: { select: { name: true, surname: true } },
+        },
+      },
+    },
+  });
+
+  const recordById = new Map(records.map((record) => [record.id, record]));
+  const bodies = new Map<string, string>();
+
+  for (const event of events) {
+    const id = toInt(event.sourceId);
+    if (!id) continue;
+
+    const record = recordById.get(id);
+    if (!record) continue;
+
+    const statusLabel = record.status.charAt(0) + record.status.slice(1).toLowerCase();
+    const teacherName = `${record.lesson.teacher.name} ${record.lesson.teacher.surname}`;
+    const note = record.note ?? (record.status === "ABSENT" ? "No reason provided yet." : null);
+
+    bodies.set(event.id, [
+      `Student: ${record.student.name} ${record.student.surname}`,
+      `Status: ${statusLabel}`,
+      `Subject: ${record.lesson.subject.name}`,
+      `Teacher: ${teacherName}`,
+      record.arrivalTime ? `Arrival time: ${record.arrivalTime}` : null,
+      note ? `Note: ${note}` : null,
+    ].filter(Boolean).join("\n"));
+  }
+
+  return bodies;
+}
+
+function buildAttendanceUpdateGroups(
+  events: Array<{
+    id: string;
+    type: ParentNotificationType;
+    href: string | null;
+    occurredAt: Date;
+    studentId: string | null;
+    student: { name: string; surname: string } | null;
+  }>,
+  bodies: Map<string, string>,
+) {
+  const attendanceEvents = events.filter((event) => event.type === "ATTENDANCE");
+  const grouped = new Map<string, typeof attendanceEvents>();
+
+  for (const event of attendanceEvents) {
+    const key = event.studentId ?? event.id;
+    grouped.set(key, [...(grouped.get(key) ?? []), event]);
+  }
+
+  return Array.from(grouped.entries()).map(([key, groupEvents]) => {
+    const firstEvent = groupEvents[0];
+    const studentName = firstEvent.student
+      ? `${firstEvent.student.name} ${firstEvent.student.surname}`
+      : "Your child";
+    const bodyLines = groupEvents
+      .map((event) => bodies.get(event.id) ?? "")
+      .filter(Boolean);
+    const joinedBody = bodyLines.join("\n\n");
+    const lowerBody = joinedBody.toLowerCase();
+    const absentCount = (lowerBody.match(/status: absent/g) ?? []).length;
+    const lateCount = (lowerBody.match(/status: late/g) ?? []).length;
+    const excusedCount = (lowerBody.match(/status: excused/g) ?? []).length;
+    const presentCount = (lowerBody.match(/status: present/g) ?? []).length;
+    const headline = absentCount > 0
+      ? "Attendance needs attention"
+      : lateCount > 0
+        ? "Late attendance recorded"
+        : excusedCount > 0
+          ? "Excused attendance recorded"
+          : "Attendance marked";
+    const lessonLabel = groupEvents.length === 1 ? "lesson" : "lessons";
+
+    return {
+      key,
+      title: `${studentName}: ${headline}`,
+      body: [
+        `Marked lessons: ${groupEvents.length} ${lessonLabel}`,
+        `Present: ${presentCount}. Late: ${lateCount}. Absent: ${absentCount}. Excused: ${excusedCount}.`,
+        ...bodyLines.slice(0, 4).map((line) => line
+          .split("\n")
+          .filter((part) => !part.startsWith("Student:"))
+          .join("\n")),
+      ].filter(Boolean).join("\n"),
+      href: firstEvent.href,
+      occurredAt: firstEvent.occurredAt,
+      studentName,
+    };
+  });
+}
+
 async function buildFinanceEventBodies(
   schoolId: string,
   events: Array<{
@@ -281,7 +398,12 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
   ]);
 
   const visibleEvents = dedupeEvents(events);
-  const financeEventBodies = await buildFinanceEventBodies(schoolId, visibleEvents);
+  const [attendanceEventBodies, financeEventBodies] = await Promise.all([
+    buildAttendanceEventBodies(schoolId, visibleEvents),
+    buildFinanceEventBodies(schoolId, visibleEvents),
+  ]);
+  const enrichedEventBodies = new Map([...attendanceEventBodies, ...financeEventBodies]);
+  const attendanceUpdateGroups = buildAttendanceUpdateGroups(visibleEvents, attendanceEventBodies);
   const academicEventsByDay = visibleEvents
     .filter((event) => event.type === "ASSESSMENT")
     .reduce<Record<string, typeof visibleEvents>>((acc, event) => {
@@ -374,7 +496,25 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
                     </div>
                   </div>
                   <div className="divide-y divide-gray-50">
-                    {type === "ASSESSMENT"
+                    {type === "ATTENDANCE"
+                      ? attendanceUpdateGroups.map((group) => (
+                          <div key={group.key} className="px-5 py-4">
+                            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                              <div className="min-w-0">
+                                <p className="text-sm font-black text-gray-900">{group.title}</p>
+                                <p className="mt-1 whitespace-pre-line text-sm font-medium leading-relaxed text-gray-500">{group.body}</p>
+                                <p className="mt-2 text-xs font-black text-gray-400">{formatDateTime(group.occurredAt)}</p>
+                                <p className="mt-2 text-xs font-bold text-gray-400">Child: {group.studentName}</p>
+                              </div>
+                              {group.href && (
+                                <Link href={group.href} className="shrink-0 rounded-xl bg-gray-900 px-3 py-2 text-center text-xs font-black text-white">
+                                  Open
+                                </Link>
+                              )}
+                            </div>
+                          </div>
+                        ))
+                      : type === "ASSESSMENT"
                       ? Object.entries(academicEventsByDay)
                         .sort(([a], [b]) => b.localeCompare(a))
                         .map(([day, dayEvents]) => (
@@ -418,7 +558,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
                           <div className="min-w-0">
                             <p className="text-sm font-black text-gray-900">{event.title}</p>
                             <p className="mt-1 whitespace-pre-line text-sm font-medium leading-relaxed text-gray-500">
-                              {financeEventBodies.get(event.id) ?? event.body}
+                              {enrichedEventBodies.get(event.id) ?? event.body}
                             </p>
                             <p className="mt-2 text-xs font-black text-gray-400">{formatDateTime(event.occurredAt)}</p>
                             {event.student && (

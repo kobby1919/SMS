@@ -5,7 +5,9 @@ import {
   Award,
   BellRing,
   CheckCircle2,
+  Clock3,
   ClipboardList,
+  Info,
   WalletCards,
 } from "lucide-react";
 import { requirePageSession } from "@/src/lib/authz";
@@ -30,6 +32,39 @@ function formatDate(date: Date) {
   });
 }
 
+function formatTimeLabel(value?: string | null) {
+  if (!value) return null;
+  return value;
+}
+
+function attendanceStatusMeta(status?: string) {
+  switch (status) {
+    case "PRESENT":
+      return { label: "Present", className: "bg-emerald-50 text-emerald-700 ring-emerald-100" };
+    case "LATE":
+      return { label: "Late", className: "bg-amber-50 text-amber-700 ring-amber-100" };
+    case "ABSENT":
+      return { label: "Absent", className: "bg-rose-50 text-rose-700 ring-rose-100" };
+    case "EXCUSED":
+      return { label: "Excused", className: "bg-sky-50 text-sky-700 ring-sky-100" };
+    default:
+      return { label: "Not marked", className: "bg-slate-50 text-slate-600 ring-slate-100" };
+  }
+}
+
+function insightToneClass(tone: string) {
+  switch (tone) {
+    case "good":
+      return "bg-emerald-50 text-emerald-700 ring-emerald-100";
+    case "warning":
+      return "bg-amber-50 text-amber-700 ring-amber-100";
+    case "danger":
+      return "bg-rose-50 text-rose-700 ring-rose-100";
+    default:
+      return "bg-slate-50 text-slate-600 ring-slate-100";
+  }
+}
+
 export default async function ParentChildCheckupPage({
   params,
 }: {
@@ -44,7 +79,28 @@ export default async function ParentChildCheckupPage({
   const child = childrenData.find((item) => item.id === studentId);
   if (!child) notFound();
 
-  const attendanceToday = child.todayAttendance.at(0)?.status ?? "Not marked";
+  const todayAttendanceRecords = child.todayAttendance;
+  const todayCounts = {
+    present: todayAttendanceRecords.filter((record) => record.status === "PRESENT").length,
+    late: todayAttendanceRecords.filter((record) => record.status === "LATE").length,
+    absent: todayAttendanceRecords.filter((record) => record.status === "ABSENT").length,
+    excused: todayAttendanceRecords.filter((record) => record.status === "EXCUSED").length,
+  };
+  const overallTodayStatus = todayCounts.absent > 0
+    ? "ABSENT"
+    : todayCounts.late > 0
+      ? "LATE"
+      : todayCounts.excused > 0
+        ? "EXCUSED"
+        : todayAttendanceRecords.length > 0
+          ? "PRESENT"
+          : undefined;
+  const attendanceStatus = attendanceStatusMeta(overallTodayStatus);
+  const attendanceToday = attendanceStatus.label;
+  const todayLessonLabel = todayAttendanceRecords.length === 1 ? "lesson" : "lessons";
+  const notableTodayRecords = todayAttendanceRecords
+    .filter((record) => record.status !== "PRESENT" || record.note || record.arrivalTime)
+    .slice(0, 3);
   const homeworkCount = child.homeworkSummary.dueSoon + child.homeworkSummary.overdue;
   const subjectTotal = child.academicProgress.expectedSubjects || child.academicProgress.subjects.length;
   const recentItems = child.activityFeed.slice(0, 5);
@@ -124,15 +180,91 @@ export default async function ParentChildCheckupPage({
 
       <section className="grid gap-3 md:grid-cols-2">
         <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-          <h2 className="text-sm font-black text-gray-900">Attendance</h2>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <div className="rounded-xl bg-emerald-50 p-3 text-emerald-700">
-              <p className="text-xl font-black">{child.stats.rate}%</p>
-              <p className="text-[10px] font-black uppercase">30-day rate</p>
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h2 className="text-sm font-black text-gray-900">Attendance</h2>
+              <p className="mt-1 text-xs font-semibold text-gray-400">Today and last 30 days</p>
             </div>
-            <div className="rounded-xl bg-slate-50 p-3 text-slate-700">
-              <p className="text-xl font-black">{child.stats.present}/{child.stats.total}</p>
-              <p className="text-[10px] font-black uppercase">Present records</p>
+            <span className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-black ring-1 ${attendanceStatus.className}`}>
+              {attendanceToday}
+            </span>
+          </div>
+
+          <div className="mt-3 rounded-xl bg-slate-50 p-3">
+            {todayAttendanceRecords.length > 0 ? (
+              <div className="space-y-2 text-xs font-semibold text-slate-600">
+                <div className="flex items-center justify-between gap-3">
+                  <span>Marked lessons</span>
+                  <span className="text-right font-black text-slate-900">
+                    {todayAttendanceRecords.length} {todayLessonLabel}
+                  </span>
+                </div>
+                <div className="grid grid-cols-4 gap-1">
+                  <span className="rounded-lg bg-white px-2 py-1 text-center font-black text-emerald-700 ring-1 ring-slate-100">
+                    {todayCounts.present} present
+                  </span>
+                  <span className="rounded-lg bg-white px-2 py-1 text-center font-black text-amber-700 ring-1 ring-slate-100">
+                    {todayCounts.late} late
+                  </span>
+                  <span className="rounded-lg bg-white px-2 py-1 text-center font-black text-rose-700 ring-1 ring-slate-100">
+                    {todayCounts.absent} absent
+                  </span>
+                  <span className="rounded-lg bg-white px-2 py-1 text-center font-black text-sky-700 ring-1 ring-slate-100">
+                    {todayCounts.excused} excused
+                  </span>
+                </div>
+                {notableTodayRecords.length > 0 && (
+                  <div className="space-y-1">
+                    {notableTodayRecords.map((record) => {
+                      const teacherName = record.lesson.teacher
+                        ? `${record.lesson.teacher.name} ${record.lesson.teacher.surname}`
+                        : "Teacher not listed";
+                      const note = record.note ?? (record.status === "ABSENT" ? "No reason provided yet." : null);
+                      const arrivalTime = formatTimeLabel(record.arrivalTime);
+                      return (
+                        <div key={record.id} className="rounded-lg bg-white p-2 text-slate-700 ring-1 ring-slate-100">
+                          <p className="font-black">{record.lesson.subject.name}: {attendanceStatusMeta(record.status).label}</p>
+                          <p className="mt-0.5 text-slate-500">{teacherName}</p>
+                          {arrivalTime && (
+                            <p className="mt-0.5 inline-flex items-center gap-1 text-amber-700">
+                              <Clock3 size={13} />
+                              Arrival time: {arrivalTime}
+                            </p>
+                          )}
+                          {note && <p className="mt-0.5">Note: {note}</p>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-sm font-semibold text-slate-500">Attendance has not been marked today.</p>
+            )}
+          </div>
+
+          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-5">
+            {[
+              { label: "Rate", value: `${child.stats.rate}%`, tone: "text-emerald-700 bg-emerald-50" },
+              { label: "Present", value: String(child.stats.present), tone: "text-slate-700 bg-slate-50" },
+              { label: "Late", value: String(child.stats.late), tone: "text-amber-700 bg-amber-50" },
+              { label: "Absent", value: String(child.stats.absent), tone: "text-rose-700 bg-rose-50" },
+              { label: "Excused", value: String(child.stats.excused), tone: "text-sky-700 bg-sky-50" },
+            ].map((item) => (
+              <div key={item.label} className={`rounded-xl p-3 ${item.tone}`}>
+                <p className="text-lg font-black">{item.value}</p>
+                <p className="text-[10px] font-black uppercase">{item.label}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className={`mt-3 rounded-xl p-3 ring-1 ${insightToneClass(child.attendanceInsight.tone)}`}>
+            <div className="flex items-start gap-2">
+              <Info className="mt-0.5 h-4 w-4 shrink-0" />
+              <div>
+                <p className="text-sm font-black">{child.attendanceInsight.title}</p>
+                <p className="mt-1 text-xs font-semibold leading-relaxed">{child.attendanceInsight.detail}</p>
+              </div>
             </div>
           </div>
         </div>

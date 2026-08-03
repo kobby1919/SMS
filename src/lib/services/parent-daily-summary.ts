@@ -96,19 +96,49 @@ function buildAttendanceSummaryLines(events: SummaryEvent[], period: "daily" | "
   if (attendanceEvents.length === 0) return [];
 
   if (period === "daily") {
-    return attendanceEvents.slice(0, 6).map((event) => {
+    const grouped = new Map<string, SummaryEvent[]>();
+    for (const event of attendanceEvents) {
       const studentName = textFromPayload(event.payload, "studentName") ?? "Your child";
-      const status = attendanceStatusFromPayload(event.payload);
-      const statusLabel = status ? ATTENDANCE_STATUS_LABELS[status] : "Marked";
-      const subjectName = textFromPayload(event.payload, "subjectName");
-      const teacherName = textFromPayload(event.payload, "teacherName");
-      const arrivalTime = textFromPayload(event.payload, "arrivalTime");
-      const note = textFromPayload(event.payload, "note");
+      grouped.set(studentName, [...(grouped.get(studentName) ?? []), event]);
+    }
+
+    return Array.from(grouped.entries()).slice(0, 6).map(([studentName, studentEvents]) => {
+      const counts = { present: 0, absent: 0, late: 0, excused: 0 };
+      for (const event of studentEvents) {
+        const status = attendanceStatusFromPayload(event.payload);
+        if (status === "PRESENT") counts.present += 1;
+        if (status === "ABSENT") counts.absent += 1;
+        if (status === "LATE") counts.late += 1;
+        if (status === "EXCUSED") counts.excused += 1;
+      }
+
+      const overall = counts.absent > 0
+        ? "Absent needs attention"
+        : counts.late > 0
+          ? "Late recorded"
+          : counts.excused > 0
+            ? "Excused attendance"
+            : "Present";
+      const lessonLabel = studentEvents.length === 1 ? "lesson" : "lessons";
+      const details = studentEvents.slice(0, 4).map((event) => {
+        const status = attendanceStatusFromPayload(event.payload);
+        const statusLabel = status ? ATTENDANCE_STATUS_LABELS[status] : "Marked";
+        const subjectName = textFromPayload(event.payload, "subjectName") ?? "Lesson";
+        const teacherName = textFromPayload(event.payload, "teacherName");
+        const arrivalTime = textFromPayload(event.payload, "arrivalTime");
+        const note = textFromPayload(event.payload, "note");
+        return [
+          `- ${subjectName}: ${statusLabel}${arrivalTime ? ` at ${arrivalTime}` : ""}`,
+          teacherName ? `  Teacher: ${teacherName}` : null,
+          note ? `  Note: ${note}` : status === "ABSENT" || status === "LATE" ? "  Note: No reason provided yet." : null,
+        ].filter(Boolean).join("\n");
+      });
+
       return [
-        `${studentName}: ${statusLabel}${subjectName ? ` for ${subjectName}` : ""}${arrivalTime ? ` at ${arrivalTime}` : ""}.`,
-        teacherName ? `Teacher: ${teacherName}` : null,
-        note ? `Note: ${note}` : status === "ABSENT" || status === "LATE" ? "Note: No reason provided yet." : null,
-      ].filter(Boolean).join("\n");
+        `${studentName}: ${overall}.`,
+        `Marked lessons: ${studentEvents.length} ${lessonLabel}. Present: ${counts.present}. Late: ${counts.late}. Absent: ${counts.absent}. Excused: ${counts.excused}.`,
+        ...details,
+      ].join("\n");
     });
   }
 

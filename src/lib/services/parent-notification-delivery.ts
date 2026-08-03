@@ -177,8 +177,16 @@ function summaryLabel(notification: ParentNotification) {
     : "Daily School Update";
 }
 
-function dailySummaryText(notification: ParentNotification, branding: SchoolBranding, studentLabel: string) {
-  const label = summaryLabel(notification);
+function notificationLabel(notification: ParentNotification) {
+  if (notification.sourceModel === "ParentWeeklySummary" || notification.sourceModel === "ParentDailySummary") {
+    return summaryLabel(notification);
+  }
+  if (notification.type === "ATTENDANCE") return "Attendance Alert";
+  return "School Update";
+}
+
+function notificationText(notification: ParentNotification, branding: SchoolBranding, studentLabel: string) {
+  const label = notificationLabel(notification);
   return [
     `${branding.displayName}: ${label}`,
     studentLabel ? `Student: ${studentLabel}` : "",
@@ -191,13 +199,13 @@ function dailySummaryText(notification: ParentNotification, branding: SchoolBran
   ].join("\n");
 }
 
-function dailySummaryHtml(notification: ParentNotification, branding: SchoolBranding, studentLabel: string) {
+function notificationHtml(notification: ParentNotification, branding: SchoolBranding, studentLabel: string) {
   const body = escapeHtml(notification.body).replace(/\n/g, "<br />");
   const url = notificationUrl(notification);
   const schoolName = escapeHtml(branding.displayName);
   const safeStudentLabel = escapeHtml(studentLabel);
   const primaryColor = escapeHtml(branding.primaryColor);
-  const label = escapeHtml(summaryLabel(notification));
+  const label = escapeHtml(notificationLabel(notification));
 
   return `
     <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
@@ -233,9 +241,9 @@ async function sendThroughChannel(input: {
 
   const result = await sendEmail({
     to: input.recipient,
-    subject: `${input.branding.displayName}: ${summaryLabel(input.notification)}${input.studentLabel ? ` for ${input.studentLabel}` : ""}`,
-    text: dailySummaryText(input.notification, input.branding, input.studentLabel),
-    html: dailySummaryHtml(input.notification, input.branding, input.studentLabel),
+    subject: `${input.branding.displayName}: ${notificationLabel(input.notification)}${input.studentLabel ? ` for ${input.studentLabel}` : ""}`,
+    text: notificationText(input.notification, input.branding, input.studentLabel),
+    html: notificationHtml(input.notification, input.branding, input.studentLabel),
   });
 
   if (result.ok) {
@@ -335,6 +343,113 @@ export async function deliverParentDailySummary(input: {
       status: result.ok ? "SENT" : "FAILED",
       provider: result.provider,
       messagePreview: `${branding.displayName} ${summaryLabel(input.notification).toLowerCase()}: ${input.notification.body}`,
+      errorMessage: result.ok ? undefined : result.message,
+    });
+  }
+
+  return logDelivery({
+    schoolId: input.schoolId,
+    parentId: parent.id,
+    notificationId: input.notification.id,
+    channel: notificationPreference?.preferredChannel ?? "SMS",
+    status: "SKIPPED",
+    messagePreview: input.notification.body,
+    errorMessage: "No enabled delivery channel with a reachable parent contact.",
+  });
+}
+
+export async function deliverParentUrgentNotification(input: {
+  schoolId: string;
+  parentId: string;
+  notification: ParentNotification;
+}) {
+  const existingDelivery = await prisma.parentNotificationDeliveryLog.findFirst({
+    where: {
+      schoolId: input.schoolId,
+      parentId: input.parentId,
+      notificationId: input.notification.id,
+      status: "SENT",
+    },
+    select: { id: true },
+  });
+  if (existingDelivery) return null;
+
+  const [settings, parent, notificationPreference, branding] = await Promise.all([
+    getOrCreateSettings(input.schoolId),
+    prisma.parent.findFirst({
+      where: { id: input.parentId, schoolId: input.schoolId },
+      select: {
+        id: true,
+        email: true,
+        phone: true,
+        students: {
+          where: { id: input.notification.studentId ?? undefined },
+          select: { name: true, surname: true },
+          take: 1,
+        },
+      },
+    }),
+    getParentNotificationPreference({ parentId: input.parentId }),
+    getSchoolBranding(input.schoolId),
+  ]);
+
+  if (!parent) return null;
+
+  if (!settings.urgentAlertsImmediate) {
+    return logDelivery({
+      schoolId: input.schoolId,
+      parentId: parent.id,
+      notificationId: input.notification.id,
+      channel: notificationPreference?.preferredChannel ?? "SMS",
+      status: "SKIPPED",
+      messagePreview: input.notification.body,
+      errorMessage: "Immediate urgent alerts are disabled for this school.",
+    });
+  }
+
+  if (notificationPreference?.urgentAlertsEnabled === false) {
+    return logDelivery({
+      schoolId: input.schoolId,
+      parentId: parent.id,
+      notificationId: input.notification.id,
+      channel: notificationPreference.preferredChannel,
+      status: "SKIPPED",
+      messagePreview: input.notification.body,
+      errorMessage: "Urgent alerts disabled by parent preference.",
+    });
+  }
+
+  const parentWithPreference = { ...parent, notificationPreference };
+  const studentLabel = parent.students
+    .map((student) => `${student.name} ${student.surname}`)
+    .join(", ");
+
+  for (const channel of channelOrder(parentWithPreference)) {
+    if (!isChannelEnabled(channel, settings)) continue;
+    if (!isParentChannelEnabled(channel, notificationPreference)) continue;
+
+    const recipient = recipientForChannel(channel, parentWithPreference);
+    if (!recipient) continue;
+
+    const result = await sendThroughChannel({
+      channel,
+      recipient,
+      notification: input.notification,
+      branding,
+      studentLabel,
+    });
+
+    if (result.skipped) continue;
+
+    return logDelivery({
+      schoolId: input.schoolId,
+      parentId: parent.id,
+      notificationId: input.notification.id,
+      channel,
+      recipient,
+      status: result.ok ? "SENT" : "FAILED",
+      provider: result.provider,
+      messagePreview: `${branding.displayName} attendance alert: ${input.notification.body}`,
       errorMessage: result.ok ? undefined : result.message,
     });
   }

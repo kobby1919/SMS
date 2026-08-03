@@ -1,7 +1,7 @@
 import prisma from "@/src/lib/prisma";
 import { computeAggregate } from "@/src/lib/caGrades";
 import type { CalendarLesson } from "@/src/components/BigCalendar";
-import type { Term } from "@/src/generated/prisma";
+import type { AttendanceStatus, Term } from "@/src/generated/prisma";
 import {
   syncParentNotificationsFromSources,
   type ParentNotificationFeedItem,
@@ -98,6 +98,12 @@ export type ParentTrustScore = {
   }[];
 };
 
+export type ParentAttendanceInsight = {
+  tone: "good" | "warning" | "danger" | "neutral";
+  title: string;
+  detail: string;
+};
+
 function absenceStreak(records: { status: string }[]): number {
   let streak = 0;
   for (const record of records) {
@@ -105,6 +111,91 @@ function absenceStreak(records: { status: string }[]): number {
     streak += 1;
   }
   return streak;
+}
+
+function buildAttendanceInsight({
+  todayRecords,
+  weeklyLate,
+  absenceStreak,
+  rate,
+  total,
+}: {
+  todayRecords: { status: AttendanceStatus }[];
+  weeklyLate: number;
+  absenceStreak: number;
+  rate: number;
+  total: number;
+}): ParentAttendanceInsight {
+  const todayStatuses = todayRecords.map((record) => record.status);
+  const todayStatus = todayStatuses.includes("ABSENT")
+    ? "ABSENT"
+    : todayStatuses.includes("LATE")
+      ? "LATE"
+      : todayStatuses.includes("EXCUSED")
+        ? "EXCUSED"
+        : todayStatuses.at(0);
+
+  if (!todayStatus) {
+    return {
+      tone: "neutral",
+      title: "Not marked today",
+      detail: "The school has not published today's attendance yet.",
+    };
+  }
+
+  if (absenceStreak >= 3) {
+    return {
+      tone: "danger",
+      title: "Consecutive absence risk",
+      detail: `Absent for ${absenceStreak} recent school days in a row.`,
+    };
+  }
+
+  if (todayStatus === "ABSENT") {
+    return {
+      tone: "warning",
+      title: "Absent today",
+      detail: "The school has marked this child absent today.",
+    };
+  }
+
+  if (todayStatus === "LATE") {
+    return {
+      tone: "warning",
+      title: "Late today",
+      detail: weeklyLate >= 2 ? `Late ${weeklyLate} times in the last 7 days.` : "Arrival was marked late today.",
+    };
+  }
+
+  if (weeklyLate >= 2) {
+    return {
+      tone: "warning",
+      title: "Late pattern this week",
+      detail: `Late ${weeklyLate} times in the last 7 days.`,
+    };
+  }
+
+  if (total > 0 && rate >= 90) {
+    return {
+      tone: "good",
+      title: "Strong attendance",
+      detail: `${rate}% attendance rate over the last 30 days.`,
+    };
+  }
+
+  if (total > 0 && rate < 75) {
+    return {
+      tone: "warning",
+      title: "Attendance needs attention",
+      detail: `${rate}% attendance rate over the last 30 days.`,
+    };
+  }
+
+  return {
+    tone: "good",
+    title: "Attendance is being tracked",
+    detail: `${total} attendance records are available for the last 30 days.`,
+  };
 }
 
 export async function getParentDashboardData(userId: string, schoolId: string) {
@@ -155,7 +246,14 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     }),
     prisma.attendance.findMany({
       where: { schoolId, studentId: { in: childIds }, date: { gte: thirtyDaysAgo } },
-      include: { lesson: { include: { subject: { select: { name: true } } } } },
+      include: {
+        lesson: {
+          include: {
+            subject: { select: { name: true } },
+            teacher: { select: { name: true, surname: true } },
+          },
+        },
+      },
       orderBy: [{ studentId: "asc" }, { date: "desc" }],
     }),
     prisma.continuousAssessment.findMany({
@@ -389,6 +487,18 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     const late = childAttendance.filter((row) => row.status === "LATE").length;
     const excused = childAttendance.filter((row) => row.status === "EXCUSED").length;
     const total = childAttendance.length;
+    const rate = total > 0 ? Math.round((present / total) * 100) : 0;
+    const todayAttendance = childAttendance.filter(
+      (row) => row.date >= today && row.date <= todayEnd,
+    );
+    const weeklyLate = childAttendance.filter((row) => row.date >= sevenDaysAgo && row.status === "LATE").length;
+    const attendanceInsight = buildAttendanceInsight({
+      todayRecords: todayAttendance,
+      weeklyLate,
+      absenceStreak: streak,
+      rate,
+      total,
+    });
     const trendDiff = prevGroup && latestGroup && prevGroup.reportReadyRecords.length > 0 && latestGroup.reportReadyRecords.length > 0
       ? Math.round((latestGroup.avgScore - prevGroup.avgScore) * 10) / 10
       : 0;
@@ -665,9 +775,8 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       lessons: lessonsByClass.get(child.classId) ?? [],
       streak,
       isFlagged: streak >= 3,
-      todayAttendance: childAttendance.filter(
-        (row) => row.date >= today && row.date <= todayEnd,
-      ),
+      todayAttendance,
+      attendanceInsight,
       history: childAttendance,
       stats: {
         total,
@@ -675,7 +784,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
         absent,
         late,
         excused,
-        rate: total > 0 ? Math.round((present / total) * 100) : 0,
+        rate,
       },
       ca: {
         latestGroup,
