@@ -574,6 +574,16 @@ export const ParentDeliveryStatus: {
 
 export type ParentDeliveryStatus = (typeof ParentDeliveryStatus)[keyof typeof ParentDeliveryStatus]
 
+
+export const ParentSummaryCadence: {
+  DAILY: 'DAILY',
+  WEEKLY: 'WEEKLY',
+  BOTH: 'BOTH',
+  OFF: 'OFF'
+};
+
+export type ParentSummaryCadence = (typeof ParentSummaryCadence)[keyof typeof ParentSummaryCadence]
+
 }
 
 export type UserSex = $Enums.UserSex
@@ -695,6 +705,10 @@ export const ParentDeliveryChannel: typeof $Enums.ParentDeliveryChannel
 export type ParentDeliveryStatus = $Enums.ParentDeliveryStatus
 
 export const ParentDeliveryStatus: typeof $Enums.ParentDeliveryStatus
+
+export type ParentSummaryCadence = $Enums.ParentSummaryCadence
+
+export const ParentSummaryCadence: typeof $Enums.ParentSummaryCadence
 
 /**
  * ##  Prisma Client ʲˢ
@@ -14212,7 +14226,10 @@ export namespace Prisma {
     timezone: string | null
     openingTime: string | null
     closingTime: string | null
+    summaryCadence: $Enums.ParentSummaryCadence | null
     dailySummarySendTime: string | null
+    weeklySummarySendDay: string | null
+    weeklySummarySendTime: string | null
     emailEnabled: boolean | null
     smsEnabled: boolean | null
     whatsappEnabled: boolean | null
@@ -14220,6 +14237,7 @@ export namespace Prisma {
     quietHoursStart: string | null
     quietHoursEnd: string | null
     lastDailySummaryRunAt: Date | null
+    lastWeeklySummaryRunAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
     schoolId: string | null
@@ -14230,7 +14248,10 @@ export namespace Prisma {
     timezone: string | null
     openingTime: string | null
     closingTime: string | null
+    summaryCadence: $Enums.ParentSummaryCadence | null
     dailySummarySendTime: string | null
+    weeklySummarySendDay: string | null
+    weeklySummarySendTime: string | null
     emailEnabled: boolean | null
     smsEnabled: boolean | null
     whatsappEnabled: boolean | null
@@ -14238,6 +14259,7 @@ export namespace Prisma {
     quietHoursStart: string | null
     quietHoursEnd: string | null
     lastDailySummaryRunAt: Date | null
+    lastWeeklySummaryRunAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
     schoolId: string | null
@@ -14248,7 +14270,10 @@ export namespace Prisma {
     timezone: number
     openingTime: number
     closingTime: number
+    summaryCadence: number
     dailySummarySendTime: number
+    weeklySummarySendDay: number
+    weeklySummarySendTime: number
     activeDays: number
     emailEnabled: number
     smsEnabled: number
@@ -14257,6 +14282,7 @@ export namespace Prisma {
     quietHoursStart: number
     quietHoursEnd: number
     lastDailySummaryRunAt: number
+    lastWeeklySummaryRunAt: number
     createdAt: number
     updatedAt: number
     schoolId: number
@@ -14269,7 +14295,10 @@ export namespace Prisma {
     timezone?: true
     openingTime?: true
     closingTime?: true
+    summaryCadence?: true
     dailySummarySendTime?: true
+    weeklySummarySendDay?: true
+    weeklySummarySendTime?: true
     emailEnabled?: true
     smsEnabled?: true
     whatsappEnabled?: true
@@ -14277,6 +14306,7 @@ export namespace Prisma {
     quietHoursStart?: true
     quietHoursEnd?: true
     lastDailySummaryRunAt?: true
+    lastWeeklySummaryRunAt?: true
     createdAt?: true
     updatedAt?: true
     schoolId?: true
@@ -14287,7 +14317,10 @@ export namespace Prisma {
     timezone?: true
     openingTime?: true
     closingTime?: true
+    summaryCadence?: true
     dailySummarySendTime?: true
+    weeklySummarySendDay?: true
+    weeklySummarySendTime?: true
     emailEnabled?: true
     smsEnabled?: true
     whatsappEnabled?: true
@@ -14295,6 +14328,7 @@ export namespace Prisma {
     quietHoursStart?: true
     quietHoursEnd?: true
     lastDailySummaryRunAt?: true
+    lastWeeklySummaryRunAt?: true
     createdAt?: true
     updatedAt?: true
     schoolId?: true
@@ -14305,7 +14339,10 @@ export namespace Prisma {
     timezone?: true
     openingTime?: true
     closingTime?: true
+    summaryCadence?: true
     dailySummarySendTime?: true
+    weeklySummarySendDay?: true
+    weeklySummarySendTime?: true
     activeDays?: true
     emailEnabled?: true
     smsEnabled?: true
@@ -14314,6 +14351,7 @@ export namespace Prisma {
     quietHoursStart?: true
     quietHoursEnd?: true
     lastDailySummaryRunAt?: true
+    lastWeeklySummaryRunAt?: true
     createdAt?: true
     updatedAt?: true
     schoolId?: true
@@ -14397,7 +14435,10 @@ export namespace Prisma {
     timezone: string
     openingTime: string
     closingTime: string
+    summaryCadence: $Enums.ParentSummaryCadence
     dailySummarySendTime: string
+    weeklySummarySendDay: string
+    weeklySummarySendTime: string
     activeDays: string[]
     emailEnabled: boolean
     smsEnabled: boolean
@@ -14406,6 +14447,7 @@ export namespace Prisma {
     quietHoursStart: string
     quietHoursEnd: string
     lastDailySummaryRunAt: Date | null
+    lastWeeklySummaryRunAt: Date | null
     createdAt: Date
     updatedAt: Date
     schoolId: string
@@ -14433,7 +14475,10 @@ export namespace Prisma {
     timezone?: boolean
     openingTime?: boolean
     closingTime?: boolean
+    summaryCadence?: boolean
     dailySummarySendTime?: boolean
+    weeklySummarySendDay?: boolean
+    weeklySummarySendTime?: boolean
     activeDays?: boolean
     emailEnabled?: boolean
     smsEnabled?: boolean
@@ -14442,6 +14487,7 @@ export namespace Prisma {
     quietHoursStart?: boolean
     quietHoursEnd?: boolean
     lastDailySummaryRunAt?: boolean
+    lastWeeklySummaryRunAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     schoolId?: boolean
@@ -14453,7 +14499,10 @@ export namespace Prisma {
     timezone?: boolean
     openingTime?: boolean
     closingTime?: boolean
+    summaryCadence?: boolean
     dailySummarySendTime?: boolean
+    weeklySummarySendDay?: boolean
+    weeklySummarySendTime?: boolean
     activeDays?: boolean
     emailEnabled?: boolean
     smsEnabled?: boolean
@@ -14462,6 +14511,7 @@ export namespace Prisma {
     quietHoursStart?: boolean
     quietHoursEnd?: boolean
     lastDailySummaryRunAt?: boolean
+    lastWeeklySummaryRunAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     schoolId?: boolean
@@ -14473,7 +14523,10 @@ export namespace Prisma {
     timezone?: boolean
     openingTime?: boolean
     closingTime?: boolean
+    summaryCadence?: boolean
     dailySummarySendTime?: boolean
+    weeklySummarySendDay?: boolean
+    weeklySummarySendTime?: boolean
     activeDays?: boolean
     emailEnabled?: boolean
     smsEnabled?: boolean
@@ -14482,6 +14535,7 @@ export namespace Prisma {
     quietHoursStart?: boolean
     quietHoursEnd?: boolean
     lastDailySummaryRunAt?: boolean
+    lastWeeklySummaryRunAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     schoolId?: boolean
@@ -14493,7 +14547,10 @@ export namespace Prisma {
     timezone?: boolean
     openingTime?: boolean
     closingTime?: boolean
+    summaryCadence?: boolean
     dailySummarySendTime?: boolean
+    weeklySummarySendDay?: boolean
+    weeklySummarySendTime?: boolean
     activeDays?: boolean
     emailEnabled?: boolean
     smsEnabled?: boolean
@@ -14502,12 +14559,13 @@ export namespace Prisma {
     quietHoursStart?: boolean
     quietHoursEnd?: boolean
     lastDailySummaryRunAt?: boolean
+    lastWeeklySummaryRunAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     schoolId?: boolean
   }
 
-  export type SchoolNotificationSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "timezone" | "openingTime" | "closingTime" | "dailySummarySendTime" | "activeDays" | "emailEnabled" | "smsEnabled" | "whatsappEnabled" | "urgentAlertsImmediate" | "quietHoursStart" | "quietHoursEnd" | "lastDailySummaryRunAt" | "createdAt" | "updatedAt" | "schoolId", ExtArgs["result"]["schoolNotificationSetting"]>
+  export type SchoolNotificationSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "timezone" | "openingTime" | "closingTime" | "summaryCadence" | "dailySummarySendTime" | "weeklySummarySendDay" | "weeklySummarySendTime" | "activeDays" | "emailEnabled" | "smsEnabled" | "whatsappEnabled" | "urgentAlertsImmediate" | "quietHoursStart" | "quietHoursEnd" | "lastDailySummaryRunAt" | "lastWeeklySummaryRunAt" | "createdAt" | "updatedAt" | "schoolId", ExtArgs["result"]["schoolNotificationSetting"]>
   export type SchoolNotificationSettingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
   }
@@ -14528,7 +14586,10 @@ export namespace Prisma {
       timezone: string
       openingTime: string
       closingTime: string
+      summaryCadence: $Enums.ParentSummaryCadence
       dailySummarySendTime: string
+      weeklySummarySendDay: string
+      weeklySummarySendTime: string
       activeDays: string[]
       emailEnabled: boolean
       smsEnabled: boolean
@@ -14537,6 +14598,7 @@ export namespace Prisma {
       quietHoursStart: string
       quietHoursEnd: string
       lastDailySummaryRunAt: Date | null
+      lastWeeklySummaryRunAt: Date | null
       createdAt: Date
       updatedAt: Date
       schoolId: string
@@ -14968,7 +15030,10 @@ export namespace Prisma {
     readonly timezone: FieldRef<"SchoolNotificationSetting", 'String'>
     readonly openingTime: FieldRef<"SchoolNotificationSetting", 'String'>
     readonly closingTime: FieldRef<"SchoolNotificationSetting", 'String'>
+    readonly summaryCadence: FieldRef<"SchoolNotificationSetting", 'ParentSummaryCadence'>
     readonly dailySummarySendTime: FieldRef<"SchoolNotificationSetting", 'String'>
+    readonly weeklySummarySendDay: FieldRef<"SchoolNotificationSetting", 'String'>
+    readonly weeklySummarySendTime: FieldRef<"SchoolNotificationSetting", 'String'>
     readonly activeDays: FieldRef<"SchoolNotificationSetting", 'String[]'>
     readonly emailEnabled: FieldRef<"SchoolNotificationSetting", 'Boolean'>
     readonly smsEnabled: FieldRef<"SchoolNotificationSetting", 'Boolean'>
@@ -14977,6 +15042,7 @@ export namespace Prisma {
     readonly quietHoursStart: FieldRef<"SchoolNotificationSetting", 'String'>
     readonly quietHoursEnd: FieldRef<"SchoolNotificationSetting", 'String'>
     readonly lastDailySummaryRunAt: FieldRef<"SchoolNotificationSetting", 'DateTime'>
+    readonly lastWeeklySummaryRunAt: FieldRef<"SchoolNotificationSetting", 'DateTime'>
     readonly createdAt: FieldRef<"SchoolNotificationSetting", 'DateTime'>
     readonly updatedAt: FieldRef<"SchoolNotificationSetting", 'DateTime'>
     readonly schoolId: FieldRef<"SchoolNotificationSetting", 'String'>
@@ -15412,6 +15478,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceMinAggregateOutputType = {
     id: string | null
     dailySummaryEnabled: boolean | null
+    weeklySummaryEnabled: boolean | null
     urgentAlertsEnabled: boolean | null
     preferredChannel: $Enums.ParentDeliveryChannel | null
     fallbackChannel: $Enums.ParentDeliveryChannel | null
@@ -15427,6 +15494,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceMaxAggregateOutputType = {
     id: string | null
     dailySummaryEnabled: boolean | null
+    weeklySummaryEnabled: boolean | null
     urgentAlertsEnabled: boolean | null
     preferredChannel: $Enums.ParentDeliveryChannel | null
     fallbackChannel: $Enums.ParentDeliveryChannel | null
@@ -15442,6 +15510,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceCountAggregateOutputType = {
     id: number
     dailySummaryEnabled: number
+    weeklySummaryEnabled: number
     urgentAlertsEnabled: number
     preferredChannel: number
     fallbackChannel: number
@@ -15459,6 +15528,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceMinAggregateInputType = {
     id?: true
     dailySummaryEnabled?: true
+    weeklySummaryEnabled?: true
     urgentAlertsEnabled?: true
     preferredChannel?: true
     fallbackChannel?: true
@@ -15474,6 +15544,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceMaxAggregateInputType = {
     id?: true
     dailySummaryEnabled?: true
+    weeklySummaryEnabled?: true
     urgentAlertsEnabled?: true
     preferredChannel?: true
     fallbackChannel?: true
@@ -15489,6 +15560,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceCountAggregateInputType = {
     id?: true
     dailySummaryEnabled?: true
+    weeklySummaryEnabled?: true
     urgentAlertsEnabled?: true
     preferredChannel?: true
     fallbackChannel?: true
@@ -15577,6 +15649,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceGroupByOutputType = {
     id: string
     dailySummaryEnabled: boolean
+    weeklySummaryEnabled: boolean
     urgentAlertsEnabled: boolean
     preferredChannel: $Enums.ParentDeliveryChannel
     fallbackChannel: $Enums.ParentDeliveryChannel
@@ -15609,6 +15682,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     dailySummaryEnabled?: boolean
+    weeklySummaryEnabled?: boolean
     urgentAlertsEnabled?: boolean
     preferredChannel?: boolean
     fallbackChannel?: boolean
@@ -15626,6 +15700,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     dailySummaryEnabled?: boolean
+    weeklySummaryEnabled?: boolean
     urgentAlertsEnabled?: boolean
     preferredChannel?: boolean
     fallbackChannel?: boolean
@@ -15643,6 +15718,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     dailySummaryEnabled?: boolean
+    weeklySummaryEnabled?: boolean
     urgentAlertsEnabled?: boolean
     preferredChannel?: boolean
     fallbackChannel?: boolean
@@ -15660,6 +15736,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceSelectScalar = {
     id?: boolean
     dailySummaryEnabled?: boolean
+    weeklySummaryEnabled?: boolean
     urgentAlertsEnabled?: boolean
     preferredChannel?: boolean
     fallbackChannel?: boolean
@@ -15672,7 +15749,7 @@ export namespace Prisma {
     parentId?: boolean
   }
 
-  export type ParentNotificationPreferenceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "dailySummaryEnabled" | "urgentAlertsEnabled" | "preferredChannel" | "fallbackChannel" | "emailEnabled" | "smsEnabled" | "whatsappEnabled" | "createdAt" | "updatedAt" | "schoolId" | "parentId", ExtArgs["result"]["parentNotificationPreference"]>
+  export type ParentNotificationPreferenceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "dailySummaryEnabled" | "weeklySummaryEnabled" | "urgentAlertsEnabled" | "preferredChannel" | "fallbackChannel" | "emailEnabled" | "smsEnabled" | "whatsappEnabled" | "createdAt" | "updatedAt" | "schoolId" | "parentId", ExtArgs["result"]["parentNotificationPreference"]>
   export type ParentNotificationPreferenceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     parent?: boolean | ParentDefaultArgs<ExtArgs>
@@ -15695,6 +15772,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       dailySummaryEnabled: boolean
+      weeklySummaryEnabled: boolean
       urgentAlertsEnabled: boolean
       preferredChannel: $Enums.ParentDeliveryChannel
       fallbackChannel: $Enums.ParentDeliveryChannel
@@ -16132,6 +16210,7 @@ export namespace Prisma {
   interface ParentNotificationPreferenceFieldRefs {
     readonly id: FieldRef<"ParentNotificationPreference", 'String'>
     readonly dailySummaryEnabled: FieldRef<"ParentNotificationPreference", 'Boolean'>
+    readonly weeklySummaryEnabled: FieldRef<"ParentNotificationPreference", 'Boolean'>
     readonly urgentAlertsEnabled: FieldRef<"ParentNotificationPreference", 'Boolean'>
     readonly preferredChannel: FieldRef<"ParentNotificationPreference", 'ParentDeliveryChannel'>
     readonly fallbackChannel: FieldRef<"ParentNotificationPreference", 'ParentDeliveryChannel'>
@@ -62653,7 +62732,10 @@ export namespace Prisma {
     timezone: 'timezone',
     openingTime: 'openingTime',
     closingTime: 'closingTime',
+    summaryCadence: 'summaryCadence',
     dailySummarySendTime: 'dailySummarySendTime',
+    weeklySummarySendDay: 'weeklySummarySendDay',
+    weeklySummarySendTime: 'weeklySummarySendTime',
     activeDays: 'activeDays',
     emailEnabled: 'emailEnabled',
     smsEnabled: 'smsEnabled',
@@ -62662,6 +62744,7 @@ export namespace Prisma {
     quietHoursStart: 'quietHoursStart',
     quietHoursEnd: 'quietHoursEnd',
     lastDailySummaryRunAt: 'lastDailySummaryRunAt',
+    lastWeeklySummaryRunAt: 'lastWeeklySummaryRunAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     schoolId: 'schoolId'
@@ -62673,6 +62756,7 @@ export namespace Prisma {
   export const ParentNotificationPreferenceScalarFieldEnum: {
     id: 'id',
     dailySummaryEnabled: 'dailySummaryEnabled',
+    weeklySummaryEnabled: 'weeklySummaryEnabled',
     urgentAlertsEnabled: 'urgentAlertsEnabled',
     preferredChannel: 'preferredChannel',
     fallbackChannel: 'fallbackChannel',
@@ -63418,6 +63502,20 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ParentSummaryCadence'
+   */
+  export type EnumParentSummaryCadenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentSummaryCadence'>
+    
+
+
+  /**
+   * Reference to a field of type 'ParentSummaryCadence[]'
+   */
+  export type ListEnumParentSummaryCadenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentSummaryCadence[]'>
     
 
 
@@ -64507,7 +64605,10 @@ export namespace Prisma {
     timezone?: StringFilter<"SchoolNotificationSetting"> | string
     openingTime?: StringFilter<"SchoolNotificationSetting"> | string
     closingTime?: StringFilter<"SchoolNotificationSetting"> | string
+    summaryCadence?: EnumParentSummaryCadenceFilter<"SchoolNotificationSetting"> | $Enums.ParentSummaryCadence
     dailySummarySendTime?: StringFilter<"SchoolNotificationSetting"> | string
+    weeklySummarySendDay?: StringFilter<"SchoolNotificationSetting"> | string
+    weeklySummarySendTime?: StringFilter<"SchoolNotificationSetting"> | string
     activeDays?: StringNullableListFilter<"SchoolNotificationSetting">
     emailEnabled?: BoolFilter<"SchoolNotificationSetting"> | boolean
     smsEnabled?: BoolFilter<"SchoolNotificationSetting"> | boolean
@@ -64516,6 +64617,7 @@ export namespace Prisma {
     quietHoursStart?: StringFilter<"SchoolNotificationSetting"> | string
     quietHoursEnd?: StringFilter<"SchoolNotificationSetting"> | string
     lastDailySummaryRunAt?: DateTimeNullableFilter<"SchoolNotificationSetting"> | Date | string | null
+    lastWeeklySummaryRunAt?: DateTimeNullableFilter<"SchoolNotificationSetting"> | Date | string | null
     createdAt?: DateTimeFilter<"SchoolNotificationSetting"> | Date | string
     updatedAt?: DateTimeFilter<"SchoolNotificationSetting"> | Date | string
     schoolId?: StringFilter<"SchoolNotificationSetting"> | string
@@ -64527,7 +64629,10 @@ export namespace Prisma {
     timezone?: SortOrder
     openingTime?: SortOrder
     closingTime?: SortOrder
+    summaryCadence?: SortOrder
     dailySummarySendTime?: SortOrder
+    weeklySummarySendDay?: SortOrder
+    weeklySummarySendTime?: SortOrder
     activeDays?: SortOrder
     emailEnabled?: SortOrder
     smsEnabled?: SortOrder
@@ -64536,6 +64641,7 @@ export namespace Prisma {
     quietHoursStart?: SortOrder
     quietHoursEnd?: SortOrder
     lastDailySummaryRunAt?: SortOrderInput | SortOrder
+    lastWeeklySummaryRunAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     schoolId?: SortOrder
@@ -64551,7 +64657,10 @@ export namespace Prisma {
     timezone?: StringFilter<"SchoolNotificationSetting"> | string
     openingTime?: StringFilter<"SchoolNotificationSetting"> | string
     closingTime?: StringFilter<"SchoolNotificationSetting"> | string
+    summaryCadence?: EnumParentSummaryCadenceFilter<"SchoolNotificationSetting"> | $Enums.ParentSummaryCadence
     dailySummarySendTime?: StringFilter<"SchoolNotificationSetting"> | string
+    weeklySummarySendDay?: StringFilter<"SchoolNotificationSetting"> | string
+    weeklySummarySendTime?: StringFilter<"SchoolNotificationSetting"> | string
     activeDays?: StringNullableListFilter<"SchoolNotificationSetting">
     emailEnabled?: BoolFilter<"SchoolNotificationSetting"> | boolean
     smsEnabled?: BoolFilter<"SchoolNotificationSetting"> | boolean
@@ -64560,6 +64669,7 @@ export namespace Prisma {
     quietHoursStart?: StringFilter<"SchoolNotificationSetting"> | string
     quietHoursEnd?: StringFilter<"SchoolNotificationSetting"> | string
     lastDailySummaryRunAt?: DateTimeNullableFilter<"SchoolNotificationSetting"> | Date | string | null
+    lastWeeklySummaryRunAt?: DateTimeNullableFilter<"SchoolNotificationSetting"> | Date | string | null
     createdAt?: DateTimeFilter<"SchoolNotificationSetting"> | Date | string
     updatedAt?: DateTimeFilter<"SchoolNotificationSetting"> | Date | string
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
@@ -64570,7 +64680,10 @@ export namespace Prisma {
     timezone?: SortOrder
     openingTime?: SortOrder
     closingTime?: SortOrder
+    summaryCadence?: SortOrder
     dailySummarySendTime?: SortOrder
+    weeklySummarySendDay?: SortOrder
+    weeklySummarySendTime?: SortOrder
     activeDays?: SortOrder
     emailEnabled?: SortOrder
     smsEnabled?: SortOrder
@@ -64579,6 +64692,7 @@ export namespace Prisma {
     quietHoursStart?: SortOrder
     quietHoursEnd?: SortOrder
     lastDailySummaryRunAt?: SortOrderInput | SortOrder
+    lastWeeklySummaryRunAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     schoolId?: SortOrder
@@ -64595,7 +64709,10 @@ export namespace Prisma {
     timezone?: StringWithAggregatesFilter<"SchoolNotificationSetting"> | string
     openingTime?: StringWithAggregatesFilter<"SchoolNotificationSetting"> | string
     closingTime?: StringWithAggregatesFilter<"SchoolNotificationSetting"> | string
+    summaryCadence?: EnumParentSummaryCadenceWithAggregatesFilter<"SchoolNotificationSetting"> | $Enums.ParentSummaryCadence
     dailySummarySendTime?: StringWithAggregatesFilter<"SchoolNotificationSetting"> | string
+    weeklySummarySendDay?: StringWithAggregatesFilter<"SchoolNotificationSetting"> | string
+    weeklySummarySendTime?: StringWithAggregatesFilter<"SchoolNotificationSetting"> | string
     activeDays?: StringNullableListFilter<"SchoolNotificationSetting">
     emailEnabled?: BoolWithAggregatesFilter<"SchoolNotificationSetting"> | boolean
     smsEnabled?: BoolWithAggregatesFilter<"SchoolNotificationSetting"> | boolean
@@ -64604,6 +64721,7 @@ export namespace Prisma {
     quietHoursStart?: StringWithAggregatesFilter<"SchoolNotificationSetting"> | string
     quietHoursEnd?: StringWithAggregatesFilter<"SchoolNotificationSetting"> | string
     lastDailySummaryRunAt?: DateTimeNullableWithAggregatesFilter<"SchoolNotificationSetting"> | Date | string | null
+    lastWeeklySummaryRunAt?: DateTimeNullableWithAggregatesFilter<"SchoolNotificationSetting"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"SchoolNotificationSetting"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"SchoolNotificationSetting"> | Date | string
     schoolId?: StringWithAggregatesFilter<"SchoolNotificationSetting"> | string
@@ -64615,6 +64733,7 @@ export namespace Prisma {
     NOT?: ParentNotificationPreferenceWhereInput | ParentNotificationPreferenceWhereInput[]
     id?: StringFilter<"ParentNotificationPreference"> | string
     dailySummaryEnabled?: BoolFilter<"ParentNotificationPreference"> | boolean
+    weeklySummaryEnabled?: BoolFilter<"ParentNotificationPreference"> | boolean
     urgentAlertsEnabled?: BoolFilter<"ParentNotificationPreference"> | boolean
     preferredChannel?: EnumParentDeliveryChannelFilter<"ParentNotificationPreference"> | $Enums.ParentDeliveryChannel
     fallbackChannel?: EnumParentDeliveryChannelFilter<"ParentNotificationPreference"> | $Enums.ParentDeliveryChannel
@@ -64632,6 +64751,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceOrderByWithRelationInput = {
     id?: SortOrder
     dailySummaryEnabled?: SortOrder
+    weeklySummaryEnabled?: SortOrder
     urgentAlertsEnabled?: SortOrder
     preferredChannel?: SortOrder
     fallbackChannel?: SortOrder
@@ -64653,6 +64773,7 @@ export namespace Prisma {
     OR?: ParentNotificationPreferenceWhereInput[]
     NOT?: ParentNotificationPreferenceWhereInput | ParentNotificationPreferenceWhereInput[]
     dailySummaryEnabled?: BoolFilter<"ParentNotificationPreference"> | boolean
+    weeklySummaryEnabled?: BoolFilter<"ParentNotificationPreference"> | boolean
     urgentAlertsEnabled?: BoolFilter<"ParentNotificationPreference"> | boolean
     preferredChannel?: EnumParentDeliveryChannelFilter<"ParentNotificationPreference"> | $Enums.ParentDeliveryChannel
     fallbackChannel?: EnumParentDeliveryChannelFilter<"ParentNotificationPreference"> | $Enums.ParentDeliveryChannel
@@ -64669,6 +64790,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceOrderByWithAggregationInput = {
     id?: SortOrder
     dailySummaryEnabled?: SortOrder
+    weeklySummaryEnabled?: SortOrder
     urgentAlertsEnabled?: SortOrder
     preferredChannel?: SortOrder
     fallbackChannel?: SortOrder
@@ -64690,6 +64812,7 @@ export namespace Prisma {
     NOT?: ParentNotificationPreferenceScalarWhereWithAggregatesInput | ParentNotificationPreferenceScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"ParentNotificationPreference"> | string
     dailySummaryEnabled?: BoolWithAggregatesFilter<"ParentNotificationPreference"> | boolean
+    weeklySummaryEnabled?: BoolWithAggregatesFilter<"ParentNotificationPreference"> | boolean
     urgentAlertsEnabled?: BoolWithAggregatesFilter<"ParentNotificationPreference"> | boolean
     preferredChannel?: EnumParentDeliveryChannelWithAggregatesFilter<"ParentNotificationPreference"> | $Enums.ParentDeliveryChannel
     fallbackChannel?: EnumParentDeliveryChannelWithAggregatesFilter<"ParentNotificationPreference"> | $Enums.ParentDeliveryChannel
@@ -68860,7 +68983,10 @@ export namespace Prisma {
     timezone?: string
     openingTime?: string
     closingTime?: string
+    summaryCadence?: $Enums.ParentSummaryCadence
     dailySummarySendTime?: string
+    weeklySummarySendDay?: string
+    weeklySummarySendTime?: string
     activeDays?: SchoolNotificationSettingCreateactiveDaysInput | string[]
     emailEnabled?: boolean
     smsEnabled?: boolean
@@ -68869,6 +68995,7 @@ export namespace Prisma {
     quietHoursStart?: string
     quietHoursEnd?: string
     lastDailySummaryRunAt?: Date | string | null
+    lastWeeklySummaryRunAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     school: SchoolCreateNestedOneWithoutNotificationSettingsInput
@@ -68879,7 +69006,10 @@ export namespace Prisma {
     timezone?: string
     openingTime?: string
     closingTime?: string
+    summaryCadence?: $Enums.ParentSummaryCadence
     dailySummarySendTime?: string
+    weeklySummarySendDay?: string
+    weeklySummarySendTime?: string
     activeDays?: SchoolNotificationSettingCreateactiveDaysInput | string[]
     emailEnabled?: boolean
     smsEnabled?: boolean
@@ -68888,6 +69018,7 @@ export namespace Prisma {
     quietHoursStart?: string
     quietHoursEnd?: string
     lastDailySummaryRunAt?: Date | string | null
+    lastWeeklySummaryRunAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     schoolId: string
@@ -68898,7 +69029,10 @@ export namespace Prisma {
     timezone?: StringFieldUpdateOperationsInput | string
     openingTime?: StringFieldUpdateOperationsInput | string
     closingTime?: StringFieldUpdateOperationsInput | string
+    summaryCadence?: EnumParentSummaryCadenceFieldUpdateOperationsInput | $Enums.ParentSummaryCadence
     dailySummarySendTime?: StringFieldUpdateOperationsInput | string
+    weeklySummarySendDay?: StringFieldUpdateOperationsInput | string
+    weeklySummarySendTime?: StringFieldUpdateOperationsInput | string
     activeDays?: SchoolNotificationSettingUpdateactiveDaysInput | string[]
     emailEnabled?: BoolFieldUpdateOperationsInput | boolean
     smsEnabled?: BoolFieldUpdateOperationsInput | boolean
@@ -68907,6 +69041,7 @@ export namespace Prisma {
     quietHoursStart?: StringFieldUpdateOperationsInput | string
     quietHoursEnd?: StringFieldUpdateOperationsInput | string
     lastDailySummaryRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastWeeklySummaryRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutNotificationSettingsNestedInput
@@ -68917,7 +69052,10 @@ export namespace Prisma {
     timezone?: StringFieldUpdateOperationsInput | string
     openingTime?: StringFieldUpdateOperationsInput | string
     closingTime?: StringFieldUpdateOperationsInput | string
+    summaryCadence?: EnumParentSummaryCadenceFieldUpdateOperationsInput | $Enums.ParentSummaryCadence
     dailySummarySendTime?: StringFieldUpdateOperationsInput | string
+    weeklySummarySendDay?: StringFieldUpdateOperationsInput | string
+    weeklySummarySendTime?: StringFieldUpdateOperationsInput | string
     activeDays?: SchoolNotificationSettingUpdateactiveDaysInput | string[]
     emailEnabled?: BoolFieldUpdateOperationsInput | boolean
     smsEnabled?: BoolFieldUpdateOperationsInput | boolean
@@ -68926,6 +69064,7 @@ export namespace Prisma {
     quietHoursStart?: StringFieldUpdateOperationsInput | string
     quietHoursEnd?: StringFieldUpdateOperationsInput | string
     lastDailySummaryRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastWeeklySummaryRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -68936,7 +69075,10 @@ export namespace Prisma {
     timezone?: string
     openingTime?: string
     closingTime?: string
+    summaryCadence?: $Enums.ParentSummaryCadence
     dailySummarySendTime?: string
+    weeklySummarySendDay?: string
+    weeklySummarySendTime?: string
     activeDays?: SchoolNotificationSettingCreateactiveDaysInput | string[]
     emailEnabled?: boolean
     smsEnabled?: boolean
@@ -68945,6 +69087,7 @@ export namespace Prisma {
     quietHoursStart?: string
     quietHoursEnd?: string
     lastDailySummaryRunAt?: Date | string | null
+    lastWeeklySummaryRunAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     schoolId: string
@@ -68955,7 +69098,10 @@ export namespace Prisma {
     timezone?: StringFieldUpdateOperationsInput | string
     openingTime?: StringFieldUpdateOperationsInput | string
     closingTime?: StringFieldUpdateOperationsInput | string
+    summaryCadence?: EnumParentSummaryCadenceFieldUpdateOperationsInput | $Enums.ParentSummaryCadence
     dailySummarySendTime?: StringFieldUpdateOperationsInput | string
+    weeklySummarySendDay?: StringFieldUpdateOperationsInput | string
+    weeklySummarySendTime?: StringFieldUpdateOperationsInput | string
     activeDays?: SchoolNotificationSettingUpdateactiveDaysInput | string[]
     emailEnabled?: BoolFieldUpdateOperationsInput | boolean
     smsEnabled?: BoolFieldUpdateOperationsInput | boolean
@@ -68964,6 +69110,7 @@ export namespace Prisma {
     quietHoursStart?: StringFieldUpdateOperationsInput | string
     quietHoursEnd?: StringFieldUpdateOperationsInput | string
     lastDailySummaryRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastWeeklySummaryRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -68973,7 +69120,10 @@ export namespace Prisma {
     timezone?: StringFieldUpdateOperationsInput | string
     openingTime?: StringFieldUpdateOperationsInput | string
     closingTime?: StringFieldUpdateOperationsInput | string
+    summaryCadence?: EnumParentSummaryCadenceFieldUpdateOperationsInput | $Enums.ParentSummaryCadence
     dailySummarySendTime?: StringFieldUpdateOperationsInput | string
+    weeklySummarySendDay?: StringFieldUpdateOperationsInput | string
+    weeklySummarySendTime?: StringFieldUpdateOperationsInput | string
     activeDays?: SchoolNotificationSettingUpdateactiveDaysInput | string[]
     emailEnabled?: BoolFieldUpdateOperationsInput | boolean
     smsEnabled?: BoolFieldUpdateOperationsInput | boolean
@@ -68982,6 +69132,7 @@ export namespace Prisma {
     quietHoursStart?: StringFieldUpdateOperationsInput | string
     quietHoursEnd?: StringFieldUpdateOperationsInput | string
     lastDailySummaryRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastWeeklySummaryRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -68990,6 +69141,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceCreateInput = {
     id?: string
     dailySummaryEnabled?: boolean
+    weeklySummaryEnabled?: boolean
     urgentAlertsEnabled?: boolean
     preferredChannel?: $Enums.ParentDeliveryChannel
     fallbackChannel?: $Enums.ParentDeliveryChannel
@@ -69005,6 +69157,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceUncheckedCreateInput = {
     id?: string
     dailySummaryEnabled?: boolean
+    weeklySummaryEnabled?: boolean
     urgentAlertsEnabled?: boolean
     preferredChannel?: $Enums.ParentDeliveryChannel
     fallbackChannel?: $Enums.ParentDeliveryChannel
@@ -69020,6 +69173,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     dailySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
+    weeklySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
     urgentAlertsEnabled?: BoolFieldUpdateOperationsInput | boolean
     preferredChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
     fallbackChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
@@ -69035,6 +69189,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     dailySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
+    weeklySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
     urgentAlertsEnabled?: BoolFieldUpdateOperationsInput | boolean
     preferredChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
     fallbackChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
@@ -69050,6 +69205,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceCreateManyInput = {
     id?: string
     dailySummaryEnabled?: boolean
+    weeklySummaryEnabled?: boolean
     urgentAlertsEnabled?: boolean
     preferredChannel?: $Enums.ParentDeliveryChannel
     fallbackChannel?: $Enums.ParentDeliveryChannel
@@ -69065,6 +69221,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     dailySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
+    weeklySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
     urgentAlertsEnabled?: BoolFieldUpdateOperationsInput | boolean
     preferredChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
     fallbackChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
@@ -69078,6 +69235,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     dailySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
+    weeklySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
     urgentAlertsEnabled?: BoolFieldUpdateOperationsInput | boolean
     preferredChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
     fallbackChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
@@ -73371,6 +73529,13 @@ export namespace Prisma {
     schoolId?: SortOrder
   }
 
+  export type EnumParentSummaryCadenceFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentSummaryCadence | EnumParentSummaryCadenceFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentSummaryCadence[] | ListEnumParentSummaryCadenceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentSummaryCadence[] | ListEnumParentSummaryCadenceFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentSummaryCadenceFilter<$PrismaModel> | $Enums.ParentSummaryCadence
+  }
+
   export type StringNullableListFilter<$PrismaModel = never> = {
     equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     has?: string | StringFieldRefInput<$PrismaModel> | null
@@ -73389,7 +73554,10 @@ export namespace Prisma {
     timezone?: SortOrder
     openingTime?: SortOrder
     closingTime?: SortOrder
+    summaryCadence?: SortOrder
     dailySummarySendTime?: SortOrder
+    weeklySummarySendDay?: SortOrder
+    weeklySummarySendTime?: SortOrder
     activeDays?: SortOrder
     emailEnabled?: SortOrder
     smsEnabled?: SortOrder
@@ -73398,6 +73566,7 @@ export namespace Prisma {
     quietHoursStart?: SortOrder
     quietHoursEnd?: SortOrder
     lastDailySummaryRunAt?: SortOrder
+    lastWeeklySummaryRunAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     schoolId?: SortOrder
@@ -73408,7 +73577,10 @@ export namespace Prisma {
     timezone?: SortOrder
     openingTime?: SortOrder
     closingTime?: SortOrder
+    summaryCadence?: SortOrder
     dailySummarySendTime?: SortOrder
+    weeklySummarySendDay?: SortOrder
+    weeklySummarySendTime?: SortOrder
     emailEnabled?: SortOrder
     smsEnabled?: SortOrder
     whatsappEnabled?: SortOrder
@@ -73416,6 +73588,7 @@ export namespace Prisma {
     quietHoursStart?: SortOrder
     quietHoursEnd?: SortOrder
     lastDailySummaryRunAt?: SortOrder
+    lastWeeklySummaryRunAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     schoolId?: SortOrder
@@ -73426,7 +73599,10 @@ export namespace Prisma {
     timezone?: SortOrder
     openingTime?: SortOrder
     closingTime?: SortOrder
+    summaryCadence?: SortOrder
     dailySummarySendTime?: SortOrder
+    weeklySummarySendDay?: SortOrder
+    weeklySummarySendTime?: SortOrder
     emailEnabled?: SortOrder
     smsEnabled?: SortOrder
     whatsappEnabled?: SortOrder
@@ -73434,9 +73610,20 @@ export namespace Prisma {
     quietHoursStart?: SortOrder
     quietHoursEnd?: SortOrder
     lastDailySummaryRunAt?: SortOrder
+    lastWeeklySummaryRunAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     schoolId?: SortOrder
+  }
+
+  export type EnumParentSummaryCadenceWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentSummaryCadence | EnumParentSummaryCadenceFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentSummaryCadence[] | ListEnumParentSummaryCadenceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentSummaryCadence[] | ListEnumParentSummaryCadenceFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentSummaryCadenceWithAggregatesFilter<$PrismaModel> | $Enums.ParentSummaryCadence
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumParentSummaryCadenceFilter<$PrismaModel>
+    _max?: NestedEnumParentSummaryCadenceFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -73457,6 +73644,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceCountOrderByAggregateInput = {
     id?: SortOrder
     dailySummaryEnabled?: SortOrder
+    weeklySummaryEnabled?: SortOrder
     urgentAlertsEnabled?: SortOrder
     preferredChannel?: SortOrder
     fallbackChannel?: SortOrder
@@ -73472,6 +73660,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceMaxOrderByAggregateInput = {
     id?: SortOrder
     dailySummaryEnabled?: SortOrder
+    weeklySummaryEnabled?: SortOrder
     urgentAlertsEnabled?: SortOrder
     preferredChannel?: SortOrder
     fallbackChannel?: SortOrder
@@ -73487,6 +73676,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceMinOrderByAggregateInput = {
     id?: SortOrder
     dailySummaryEnabled?: SortOrder
+    weeklySummaryEnabled?: SortOrder
     urgentAlertsEnabled?: SortOrder
     preferredChannel?: SortOrder
     fallbackChannel?: SortOrder
@@ -79080,6 +79270,10 @@ export namespace Prisma {
     connect?: SchoolWhereUniqueInput
   }
 
+  export type EnumParentSummaryCadenceFieldUpdateOperationsInput = {
+    set?: $Enums.ParentSummaryCadence
+  }
+
   export type SchoolNotificationSettingUpdateactiveDaysInput = {
     set?: string[]
     push?: string | string[]
@@ -82355,9 +82549,26 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
+  export type NestedEnumParentSummaryCadenceFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentSummaryCadence | EnumParentSummaryCadenceFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentSummaryCadence[] | ListEnumParentSummaryCadenceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentSummaryCadence[] | ListEnumParentSummaryCadenceFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentSummaryCadenceFilter<$PrismaModel> | $Enums.ParentSummaryCadence
+  }
+
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedEnumParentSummaryCadenceWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentSummaryCadence | EnumParentSummaryCadenceFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentSummaryCadence[] | ListEnumParentSummaryCadenceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentSummaryCadence[] | ListEnumParentSummaryCadenceFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentSummaryCadenceWithAggregatesFilter<$PrismaModel> | $Enums.ParentSummaryCadence
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumParentSummaryCadenceFilter<$PrismaModel>
+    _max?: NestedEnumParentSummaryCadenceFilter<$PrismaModel>
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -84370,7 +84581,10 @@ export namespace Prisma {
     timezone?: string
     openingTime?: string
     closingTime?: string
+    summaryCadence?: $Enums.ParentSummaryCadence
     dailySummarySendTime?: string
+    weeklySummarySendDay?: string
+    weeklySummarySendTime?: string
     activeDays?: SchoolNotificationSettingCreateactiveDaysInput | string[]
     emailEnabled?: boolean
     smsEnabled?: boolean
@@ -84379,6 +84593,7 @@ export namespace Prisma {
     quietHoursStart?: string
     quietHoursEnd?: string
     lastDailySummaryRunAt?: Date | string | null
+    lastWeeklySummaryRunAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -84388,7 +84603,10 @@ export namespace Prisma {
     timezone?: string
     openingTime?: string
     closingTime?: string
+    summaryCadence?: $Enums.ParentSummaryCadence
     dailySummarySendTime?: string
+    weeklySummarySendDay?: string
+    weeklySummarySendTime?: string
     activeDays?: SchoolNotificationSettingCreateactiveDaysInput | string[]
     emailEnabled?: boolean
     smsEnabled?: boolean
@@ -84397,6 +84615,7 @@ export namespace Prisma {
     quietHoursStart?: string
     quietHoursEnd?: string
     lastDailySummaryRunAt?: Date | string | null
+    lastWeeklySummaryRunAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -84409,6 +84628,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceCreateWithoutSchoolInput = {
     id?: string
     dailySummaryEnabled?: boolean
+    weeklySummaryEnabled?: boolean
     urgentAlertsEnabled?: boolean
     preferredChannel?: $Enums.ParentDeliveryChannel
     fallbackChannel?: $Enums.ParentDeliveryChannel
@@ -84423,6 +84643,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceUncheckedCreateWithoutSchoolInput = {
     id?: string
     dailySummaryEnabled?: boolean
+    weeklySummaryEnabled?: boolean
     urgentAlertsEnabled?: boolean
     preferredChannel?: $Enums.ParentDeliveryChannel
     fallbackChannel?: $Enums.ParentDeliveryChannel
@@ -85690,7 +85911,10 @@ export namespace Prisma {
     timezone?: StringFieldUpdateOperationsInput | string
     openingTime?: StringFieldUpdateOperationsInput | string
     closingTime?: StringFieldUpdateOperationsInput | string
+    summaryCadence?: EnumParentSummaryCadenceFieldUpdateOperationsInput | $Enums.ParentSummaryCadence
     dailySummarySendTime?: StringFieldUpdateOperationsInput | string
+    weeklySummarySendDay?: StringFieldUpdateOperationsInput | string
+    weeklySummarySendTime?: StringFieldUpdateOperationsInput | string
     activeDays?: SchoolNotificationSettingUpdateactiveDaysInput | string[]
     emailEnabled?: BoolFieldUpdateOperationsInput | boolean
     smsEnabled?: BoolFieldUpdateOperationsInput | boolean
@@ -85699,6 +85923,7 @@ export namespace Prisma {
     quietHoursStart?: StringFieldUpdateOperationsInput | string
     quietHoursEnd?: StringFieldUpdateOperationsInput | string
     lastDailySummaryRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastWeeklySummaryRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -85708,7 +85933,10 @@ export namespace Prisma {
     timezone?: StringFieldUpdateOperationsInput | string
     openingTime?: StringFieldUpdateOperationsInput | string
     closingTime?: StringFieldUpdateOperationsInput | string
+    summaryCadence?: EnumParentSummaryCadenceFieldUpdateOperationsInput | $Enums.ParentSummaryCadence
     dailySummarySendTime?: StringFieldUpdateOperationsInput | string
+    weeklySummarySendDay?: StringFieldUpdateOperationsInput | string
+    weeklySummarySendTime?: StringFieldUpdateOperationsInput | string
     activeDays?: SchoolNotificationSettingUpdateactiveDaysInput | string[]
     emailEnabled?: BoolFieldUpdateOperationsInput | boolean
     smsEnabled?: BoolFieldUpdateOperationsInput | boolean
@@ -85717,6 +85945,7 @@ export namespace Prisma {
     quietHoursStart?: StringFieldUpdateOperationsInput | string
     quietHoursEnd?: StringFieldUpdateOperationsInput | string
     lastDailySummaryRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastWeeklySummaryRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -85743,6 +85972,7 @@ export namespace Prisma {
     NOT?: ParentNotificationPreferenceScalarWhereInput | ParentNotificationPreferenceScalarWhereInput[]
     id?: StringFilter<"ParentNotificationPreference"> | string
     dailySummaryEnabled?: BoolFilter<"ParentNotificationPreference"> | boolean
+    weeklySummaryEnabled?: BoolFilter<"ParentNotificationPreference"> | boolean
     urgentAlertsEnabled?: BoolFilter<"ParentNotificationPreference"> | boolean
     preferredChannel?: EnumParentDeliveryChannelFilter<"ParentNotificationPreference"> | $Enums.ParentDeliveryChannel
     fallbackChannel?: EnumParentDeliveryChannelFilter<"ParentNotificationPreference"> | $Enums.ParentDeliveryChannel
@@ -87993,6 +88223,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceCreateWithoutParentInput = {
     id?: string
     dailySummaryEnabled?: boolean
+    weeklySummaryEnabled?: boolean
     urgentAlertsEnabled?: boolean
     preferredChannel?: $Enums.ParentDeliveryChannel
     fallbackChannel?: $Enums.ParentDeliveryChannel
@@ -88007,6 +88238,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceUncheckedCreateWithoutParentInput = {
     id?: string
     dailySummaryEnabled?: boolean
+    weeklySummaryEnabled?: boolean
     urgentAlertsEnabled?: boolean
     preferredChannel?: $Enums.ParentDeliveryChannel
     fallbackChannel?: $Enums.ParentDeliveryChannel
@@ -88295,6 +88527,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceUpdateWithoutParentInput = {
     id?: StringFieldUpdateOperationsInput | string
     dailySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
+    weeklySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
     urgentAlertsEnabled?: BoolFieldUpdateOperationsInput | boolean
     preferredChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
     fallbackChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
@@ -88309,6 +88542,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceUncheckedUpdateWithoutParentInput = {
     id?: StringFieldUpdateOperationsInput | string
     dailySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
+    weeklySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
     urgentAlertsEnabled?: BoolFieldUpdateOperationsInput | boolean
     preferredChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
     fallbackChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
@@ -104883,6 +105117,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceCreateManySchoolInput = {
     id?: string
     dailySummaryEnabled?: boolean
+    weeklySummaryEnabled?: boolean
     urgentAlertsEnabled?: boolean
     preferredChannel?: $Enums.ParentDeliveryChannel
     fallbackChannel?: $Enums.ParentDeliveryChannel
@@ -106353,6 +106588,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceUpdateWithoutSchoolInput = {
     id?: StringFieldUpdateOperationsInput | string
     dailySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
+    weeklySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
     urgentAlertsEnabled?: BoolFieldUpdateOperationsInput | boolean
     preferredChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
     fallbackChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
@@ -106367,6 +106603,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceUncheckedUpdateWithoutSchoolInput = {
     id?: StringFieldUpdateOperationsInput | string
     dailySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
+    weeklySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
     urgentAlertsEnabled?: BoolFieldUpdateOperationsInput | boolean
     preferredChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
     fallbackChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
@@ -106381,6 +106618,7 @@ export namespace Prisma {
   export type ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolInput = {
     id?: StringFieldUpdateOperationsInput | string
     dailySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
+    weeklySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
     urgentAlertsEnabled?: BoolFieldUpdateOperationsInput | boolean
     preferredChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel
     fallbackChannel?: EnumParentDeliveryChannelFieldUpdateOperationsInput | $Enums.ParentDeliveryChannel

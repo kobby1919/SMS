@@ -5,14 +5,27 @@ const timeStringSchema = z
   .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Use HH:mm time format.");
 
 export const parentDeliveryChannelSchema = z.enum(["EMAIL", "SMS", "WHATSAPP"]);
+export const parentSummaryCadenceSchema = z.enum(["DAILY", "WEEKLY", "BOTH", "OFF"]);
+export const parentSummarySendDaySchema = z.enum([
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY",
+  "SUNDAY",
+]);
 
 export const schoolNotificationSettingsSchema = z.object({
   timezone: z.string().min(3).max(80).default("Africa/Accra"),
   openingTime: timeStringSchema,
   closingTime: timeStringSchema,
+  summaryCadence: parentSummaryCadenceSchema.default("WEEKLY"),
   dailySummarySendTime: timeStringSchema,
+  weeklySummarySendDay: parentSummarySendDaySchema.default("FRIDAY"),
+  weeklySummarySendTime: timeStringSchema,
   activeDays: z
-    .array(z.enum(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]))
+    .array(parentSummarySendDaySchema)
     .min(1, "Select at least one active day."),
   emailEnabled: z.boolean().default(true),
   smsEnabled: z.boolean().default(true),
@@ -24,6 +37,7 @@ export const schoolNotificationSettingsSchema = z.object({
 
 export const parentNotificationPreferenceSchema = z.object({
   dailySummaryEnabled: z.boolean().default(true),
+  weeklySummaryEnabled: z.boolean().default(true),
   urgentAlertsEnabled: z.boolean().default(true),
   preferredChannel: parentDeliveryChannelSchema,
   fallbackChannel: parentDeliveryChannelSchema,

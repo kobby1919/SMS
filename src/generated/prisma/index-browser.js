@@ -197,7 +197,10 @@ exports.Prisma.SchoolNotificationSettingScalarFieldEnum = {
   timezone: 'timezone',
   openingTime: 'openingTime',
   closingTime: 'closingTime',
+  summaryCadence: 'summaryCadence',
   dailySummarySendTime: 'dailySummarySendTime',
+  weeklySummarySendDay: 'weeklySummarySendDay',
+  weeklySummarySendTime: 'weeklySummarySendTime',
   activeDays: 'activeDays',
   emailEnabled: 'emailEnabled',
   smsEnabled: 'smsEnabled',
@@ -206,6 +209,7 @@ exports.Prisma.SchoolNotificationSettingScalarFieldEnum = {
   quietHoursStart: 'quietHoursStart',
   quietHoursEnd: 'quietHoursEnd',
   lastDailySummaryRunAt: 'lastDailySummaryRunAt',
+  lastWeeklySummaryRunAt: 'lastWeeklySummaryRunAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   schoolId: 'schoolId'
@@ -214,6 +218,7 @@ exports.Prisma.SchoolNotificationSettingScalarFieldEnum = {
 exports.Prisma.ParentNotificationPreferenceScalarFieldEnum = {
   id: 'id',
   dailySummaryEnabled: 'dailySummaryEnabled',
+  weeklySummaryEnabled: 'weeklySummaryEnabled',
   urgentAlertsEnabled: 'urgentAlertsEnabled',
   preferredChannel: 'preferredChannel',
   fallbackChannel: 'fallbackChannel',
@@ -762,6 +767,13 @@ exports.SchoolOnboardingStatus = exports.$Enums.SchoolOnboardingStatus = {
 exports.UserSex = exports.$Enums.UserSex = {
   MALE: 'MALE',
   FEMALE: 'FEMALE'
+};
+
+exports.ParentSummaryCadence = exports.$Enums.ParentSummaryCadence = {
+  DAILY: 'DAILY',
+  WEEKLY: 'WEEKLY',
+  BOTH: 'BOTH',
+  OFF: 'OFF'
 };
 
 exports.ParentDeliveryChannel = exports.$Enums.ParentDeliveryChannel = {

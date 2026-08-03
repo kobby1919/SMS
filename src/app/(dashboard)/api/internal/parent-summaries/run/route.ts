@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { runDueParentDailySummaries } from "@/src/lib/services/parent-notification-delivery";
+import {
+  runDueParentDailySummaries,
+  runDueParentWeeklySummaries,
+} from "@/src/lib/services/parent-notification-delivery";
 
 export async function POST(req: NextRequest) {
   const secret = process.env.PARENT_SUMMARY_WORKER_SECRET;
@@ -19,9 +22,39 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  const results = await runDueParentDailySummaries();
+  const force = req.nextUrl.searchParams.get("force") === "true";
+  const periodParam = req.nextUrl.searchParams.get("period");
+  const now = new Date();
+
+  if (periodParam === "daily") {
+    const results = await runDueParentDailySummaries(now, { force });
+    return NextResponse.json({
+      force,
+      period: "daily",
+      processedSchools: results.length,
+      results,
+    });
+  }
+
+  if (periodParam === "weekly") {
+    const results = await runDueParentWeeklySummaries(now, { force });
+    return NextResponse.json({
+      force,
+      period: "weekly",
+      processedSchools: results.length,
+      results,
+    });
+  }
+
+  const [dailyResults, weeklyResults] = await Promise.all([
+    runDueParentDailySummaries(now, { force }),
+    runDueParentWeeklySummaries(now, { force }),
+  ]);
+  const results = [...dailyResults, ...weeklyResults];
 
   return NextResponse.json({
+    force,
+    period: "auto",
     processedSchools: results.length,
     results,
   });

@@ -24,6 +24,7 @@ type ParentNotificationPreferenceInput = {
   schoolId: string;
   parentId: string;
   dailySummaryEnabled: boolean;
+  weeklySummaryEnabled: boolean;
   urgentAlertsEnabled: boolean;
   preferredChannel: ParentDeliveryChannel;
   fallbackChannel: ParentDeliveryChannel;
@@ -56,6 +57,7 @@ export async function getParentNotificationPreference(input: {
     SELECT
       "id",
       "dailySummaryEnabled",
+      "weeklySummaryEnabled",
       "urgentAlertsEnabled",
       "preferredChannel",
       "fallbackChannel",
@@ -77,6 +79,7 @@ export async function getParentNotificationPreference(input: {
 export async function upsertParentNotificationPreference(input: ParentNotificationPreferenceInput) {
   const updateData = {
     dailySummaryEnabled: input.dailySummaryEnabled,
+    weeklySummaryEnabled: input.weeklySummaryEnabled,
     urgentAlertsEnabled: input.urgentAlertsEnabled,
     preferredChannel: input.preferredChannel,
     fallbackChannel: input.fallbackChannel,
@@ -99,6 +102,7 @@ export async function upsertParentNotificationPreference(input: ParentNotificati
       UPDATE "ParentNotificationPreference"
       SET
         "dailySummaryEnabled" = ${input.dailySummaryEnabled},
+        "weeklySummaryEnabled" = ${input.weeklySummaryEnabled},
         "urgentAlertsEnabled" = ${input.urgentAlertsEnabled},
         "preferredChannel" = CAST(${input.preferredChannel} AS "ParentDeliveryChannel"),
         "fallbackChannel" = CAST(${input.fallbackChannel} AS "ParentDeliveryChannel"),
@@ -116,6 +120,7 @@ export async function upsertParentNotificationPreference(input: ParentNotificati
     INSERT INTO "ParentNotificationPreference" (
       "id",
       "dailySummaryEnabled",
+      "weeklySummaryEnabled",
       "urgentAlertsEnabled",
       "preferredChannel",
       "fallbackChannel",
@@ -130,6 +135,7 @@ export async function upsertParentNotificationPreference(input: ParentNotificati
     VALUES (
       ${id},
       ${input.dailySummaryEnabled},
+      ${input.weeklySummaryEnabled},
       ${input.urgentAlertsEnabled},
       CAST(${input.preferredChannel} AS "ParentDeliveryChannel"),
       CAST(${input.fallbackChannel} AS "ParentDeliveryChannel"),

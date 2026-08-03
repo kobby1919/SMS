@@ -251,6 +251,13 @@ enum ParentDeliveryStatus {
   SKIPPED
 }
 
+enum ParentSummaryCadence {
+  DAILY
+  WEEKLY
+  BOTH
+  OFF
+}
+
 // ─── EXISTING MODELS ─────────────────────────────────────────────────────────
 
 model School {
@@ -420,37 +427,42 @@ model Parent {
 }
 
 model SchoolNotificationSetting {
-  id                    String    @id @default(cuid())
-  timezone              String    @default("Africa/Accra")
-  openingTime           String    @default("07:30")
-  closingTime           String    @default("15:00")
-  dailySummarySendTime  String    @default("15:15")
-  activeDays            String[]  @default(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"])
-  emailEnabled          Boolean   @default(true)
-  smsEnabled            Boolean   @default(true)
-  whatsappEnabled       Boolean   @default(false)
-  urgentAlertsImmediate Boolean   @default(true)
-  quietHoursStart       String    @default("20:00")
-  quietHoursEnd         String    @default("06:00")
-  lastDailySummaryRunAt DateTime?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  id                     String               @id @default(cuid())
+  timezone               String               @default("Africa/Accra")
+  openingTime            String               @default("07:30")
+  closingTime            String               @default("15:00")
+  summaryCadence         ParentSummaryCadence @default(WEEKLY)
+  dailySummarySendTime   String               @default("15:15")
+  weeklySummarySendDay   String               @default("FRIDAY")
+  weeklySummarySendTime  String               @default("15:15")
+  activeDays             String[]             @default(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"])
+  emailEnabled           Boolean              @default(true)
+  smsEnabled             Boolean              @default(true)
+  whatsappEnabled        Boolean              @default(false)
+  urgentAlertsImmediate  Boolean              @default(true)
+  quietHoursStart        String               @default("20:00")
+  quietHoursEnd          String               @default("06:00")
+  lastDailySummaryRunAt  DateTime?
+  lastWeeklySummaryRunAt DateTime?
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
 
   schoolId String @unique
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
 model ParentNotificationPreference {
-  id                  String                @id @default(cuid())
-  dailySummaryEnabled Boolean               @default(true)
-  urgentAlertsEnabled Boolean               @default(true)
-  preferredChannel    ParentDeliveryChannel @default(WHATSAPP)
-  fallbackChannel     ParentDeliveryChannel @default(SMS)
-  emailEnabled        Boolean               @default(true)
-  smsEnabled          Boolean               @default(true)
-  whatsappEnabled     Boolean               @default(true)
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
+  id                   String                @id @default(cuid())
+  dailySummaryEnabled  Boolean               @default(true)
+  weeklySummaryEnabled Boolean               @default(true)
+  urgentAlertsEnabled  Boolean               @default(true)
+  preferredChannel     ParentDeliveryChannel @default(WHATSAPP)
+  fallbackChannel      ParentDeliveryChannel @default(SMS)
+  emailEnabled         Boolean               @default(true)
+  smsEnabled           Boolean               @default(true)
+  whatsappEnabled      Boolean               @default(true)
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
 
   schoolId String
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
@@ -460,6 +472,7 @@ model ParentNotificationPreference {
 
   @@index([schoolId, preferredChannel])
   @@index([schoolId, dailySummaryEnabled])
+  @@index([schoolId, weeklySummaryEnabled])
 }
 
 model ParentNotification {

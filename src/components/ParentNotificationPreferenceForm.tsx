@@ -86,6 +86,10 @@ export default function ParentNotificationPreferenceForm({
             Daily
           </label>
           <label className="flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2 text-xs font-black text-gray-600">
+            <input type="checkbox" name="weeklySummaryEnabled" defaultChecked={preference?.weeklySummaryEnabled ?? true} />
+            Weekly
+          </label>
+          <label className="flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2 text-xs font-black text-gray-600">
             <input type="checkbox" name="urgentAlertsEnabled" defaultChecked={preference?.urgentAlertsEnabled ?? true} />
             Urgent
           </label>

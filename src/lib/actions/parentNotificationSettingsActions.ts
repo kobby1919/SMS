@@ -25,7 +25,10 @@ export async function updateSchoolNotificationSettings(data: unknown) {
         timezone: formValue(data, "timezone", "Africa/Accra"),
         openingTime: formValue(data, "openingTime", "07:30"),
         closingTime: formValue(data, "closingTime", "15:00"),
+        summaryCadence: formValue(data, "summaryCadence", "WEEKLY"),
         dailySummarySendTime: formValue(data, "dailySummarySendTime", "15:15"),
+        weeklySummarySendDay: formValue(data, "weeklySummarySendDay", "FRIDAY"),
+        weeklySummarySendTime: formValue(data, "weeklySummarySendTime", "15:15"),
         activeDays: data.getAll("activeDays").map(String),
         emailEnabled: boolFromFormData(data, "emailEnabled"),
         smsEnabled: boolFromFormData(data, "smsEnabled"),
@@ -46,11 +49,35 @@ export async function updateSchoolNotificationSettings(data: unknown) {
   revalidatePath("/admin/notification-settings");
 }
 
+export type SchoolNotificationSettingsActionState = {
+  status: "idle" | "success" | "error";
+  message: string;
+};
+
+export async function updateSchoolNotificationSettingsWithState(
+  _state: SchoolNotificationSettingsActionState,
+  data: FormData,
+): Promise<SchoolNotificationSettingsActionState> {
+  try {
+    await updateSchoolNotificationSettings(data);
+    return {
+      status: "success",
+      message: "Notification settings saved successfully.",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Could not save notification settings.",
+    };
+  }
+}
+
 export async function updateParentNotificationPreference(data: unknown) {
   const { userId, schoolId } = await requireRole(["parent"]);
   const input = data instanceof FormData
     ? {
         dailySummaryEnabled: boolFromFormData(data, "dailySummaryEnabled"),
+        weeklySummaryEnabled: boolFromFormData(data, "weeklySummaryEnabled"),
         urgentAlertsEnabled: boolFromFormData(data, "urgentAlertsEnabled"),
         preferredChannel: formValue(data, "preferredChannel", "WHATSAPP"),
         fallbackChannel: formValue(data, "fallbackChannel", "SMS"),

@@ -3,9 +3,13 @@ import type {
   ParentDeliveryChannel,
   ParentNotification,
   ParentNotificationPreference,
+  ParentSummaryCadence,
   SchoolNotificationSetting,
 } from "@/src/generated/prisma";
-import { rebuildParentDailySummary } from "@/src/lib/services/parent-daily-summary";
+import {
+  rebuildParentDailySummary,
+  rebuildParentWeeklySummary,
+} from "@/src/lib/services/parent-daily-summary";
 import { getParentNotificationPreference } from "@/src/lib/services/parent-notification-preferences";
 import { appBaseUrl, sendEmail } from "@/src/lib/services/notifications";
 import {
@@ -18,7 +22,10 @@ const DEFAULT_SETTINGS = {
   timezone: "Africa/Accra",
   openingTime: "07:30",
   closingTime: "15:00",
+  summaryCadence: "WEEKLY" as ParentSummaryCadence,
   dailySummarySendTime: "15:15",
+  weeklySummarySendDay: "FRIDAY",
+  weeklySummarySendTime: "15:15",
   activeDays: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"],
   emailEnabled: true,
   smsEnabled: true,
@@ -39,6 +46,23 @@ function dateKey(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
+function weekWindow(date: Date) {
+  const start = new Date(date);
+  start.setHours(0, 0, 0, 0);
+  const day = start.getDay();
+  const daysFromMonday = day === 0 ? 6 : day - 1;
+  start.setDate(start.getDate() - daysFromMonday);
+  const end = new Date(start);
+  end.setDate(end.getDate() + 7);
+  return { start, end };
+}
+
+function dateRangeKey(start: Date, end: Date) {
+  const lastIncludedDay = new Date(end);
+  lastIncludedDay.setDate(lastIncludedDay.getDate() - 1);
+  return `${dateKey(start)}:${dateKey(lastIncludedDay)}`;
+}
+
 function timeToMinutes(time: string) {
   const [hour, minute] = time.split(":").map(Number);
   return hour * 60 + minute;
@@ -49,6 +73,14 @@ function dayName(date: Date) {
     weekday: "long",
     timeZone: "Africa/Accra",
   }).format(date).toUpperCase();
+}
+
+function cadenceAllowsDaily(cadence: ParentSummaryCadence) {
+  return cadence === "DAILY" || cadence === "BOTH";
+}
+
+function cadenceAllowsWeekly(cadence: ParentSummaryCadence) {
+  return cadence === "WEEKLY" || cadence === "BOTH";
 }
 
 function localTimeInMinutes(date: Date, timezone: string) {
@@ -139,9 +171,16 @@ function notificationUrl(notification: ParentNotification) {
   return `${appBaseUrl()}${href.startsWith("/") ? href : `/${href}`}`;
 }
 
+function summaryLabel(notification: ParentNotification) {
+  return notification.sourceModel === "ParentWeeklySummary"
+    ? "Weekly School Update"
+    : "Daily School Update";
+}
+
 function dailySummaryText(notification: ParentNotification, branding: SchoolBranding, studentLabel: string) {
+  const label = summaryLabel(notification);
   return [
-    `${branding.displayName}: Daily School Update`,
+    `${branding.displayName}: ${label}`,
     studentLabel ? `Student: ${studentLabel}` : "",
     "",
     notification.body,
@@ -158,11 +197,12 @@ function dailySummaryHtml(notification: ParentNotification, branding: SchoolBran
   const schoolName = escapeHtml(branding.displayName);
   const safeStudentLabel = escapeHtml(studentLabel);
   const primaryColor = escapeHtml(branding.primaryColor);
+  const label = escapeHtml(summaryLabel(notification));
 
   return `
     <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
       <p style="margin:0 0 6px;color:${primaryColor};font-weight:700">${schoolName}</p>
-      <h1 style="font-size:22px;margin:0 0 4px">Daily School Update</h1>
+      <h1 style="font-size:22px;margin:0 0 4px">${label}</h1>
       ${safeStudentLabel ? `<p style="margin:0 0 12px;color:#64748b;font-size:14px">For ${safeStudentLabel}</p>` : ""}
       <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin:0 0 16px">
         ${body}
@@ -193,7 +233,7 @@ async function sendThroughChannel(input: {
 
   const result = await sendEmail({
     to: input.recipient,
-    subject: `${input.branding.displayName}: Daily update${input.studentLabel ? ` for ${input.studentLabel}` : ""}`,
+    subject: `${input.branding.displayName}: ${summaryLabel(input.notification)}${input.studentLabel ? ` for ${input.studentLabel}` : ""}`,
     text: dailySummaryText(input.notification, input.branding, input.studentLabel),
     html: dailySummaryHtml(input.notification, input.branding, input.studentLabel),
   });
@@ -233,8 +273,11 @@ export async function deliverParentDailySummary(input: {
   const parentWithPreference = { ...parent, notificationPreference };
   const dayStart = new Date(input.notification.occurredAt);
   dayStart.setHours(0, 0, 0, 0);
+  if (input.notification.sourceModel === "ParentWeeklySummary") {
+    dayStart.setDate(dayStart.getDate() - 6);
+  }
   const dayEnd = new Date(dayStart);
-  dayEnd.setDate(dayEnd.getDate() + 1);
+  dayEnd.setDate(dayEnd.getDate() + (input.notification.sourceModel === "ParentWeeklySummary" ? 7 : 1));
   const students = await prisma.parentActivityEvent.findMany({
     where: {
       schoolId: input.schoolId,
@@ -249,15 +292,20 @@ export async function deliverParentDailySummary(input: {
     .filter(Boolean)
     .join(", ");
 
-  if (notificationPreference?.dailySummaryEnabled === false) {
+  const isWeeklySummary = input.notification.sourceModel === "ParentWeeklySummary";
+  const summaryEnabled = isWeeklySummary
+    ? notificationPreference?.weeklySummaryEnabled !== false
+    : notificationPreference?.dailySummaryEnabled !== false;
+
+  if (!summaryEnabled) {
     return logDelivery({
       schoolId: input.schoolId,
       parentId: parent.id,
       notificationId: input.notification.id,
-      channel: notificationPreference.preferredChannel,
+      channel: notificationPreference?.preferredChannel ?? "SMS",
       status: "SKIPPED",
       messagePreview: input.notification.body,
-      errorMessage: "Daily summaries disabled by parent preference.",
+      errorMessage: `${isWeeklySummary ? "Weekly" : "Daily"} summaries disabled by parent preference.`,
     });
   }
 
@@ -286,7 +334,7 @@ export async function deliverParentDailySummary(input: {
       recipient,
       status: result.ok ? "SENT" : "FAILED",
       provider: result.provider,
-      messagePreview: `${branding.displayName} daily update: ${input.notification.body}`,
+      messagePreview: `${branding.displayName} ${summaryLabel(input.notification).toLowerCase()}: ${input.notification.body}`,
       errorMessage: result.ok ? undefined : result.message,
     });
   }
@@ -335,7 +383,50 @@ async function processSchoolDailySummaries(schoolId: string, date: Date) {
   return { parentCount: parentIds.length, delivered };
 }
 
-export async function runDueParentDailySummaries(now = new Date()) {
+async function processSchoolWeeklySummaries(schoolId: string, date: Date, options: { force?: boolean } = {}) {
+  const { start, end } = weekWindow(date);
+  const parentIds = await prisma.parentActivityEvent.findMany({
+    where: {
+      schoolId,
+      occurredAt: { gte: start, lt: end },
+    },
+    distinct: ["parentId"],
+    select: { parentId: true },
+  });
+
+  let delivered = 0;
+  for (const row of parentIds) {
+    const existing = await prisma.parentNotification.findUnique({
+      where: {
+        schoolId_parentId_sourceKey: {
+          schoolId,
+          parentId: row.parentId,
+          sourceKey: `weekly-summary:${row.parentId}:${dateRangeKey(start, end)}`,
+        },
+      },
+      select: { id: true },
+    });
+    if (existing && !options.force) continue;
+
+    const notification = await rebuildParentWeeklySummary({
+      schoolId,
+      parentId: row.parentId,
+      date,
+    });
+    if (!notification) continue;
+    await deliverParentDailySummary({ schoolId, parentId: row.parentId, notification });
+    delivered += 1;
+  }
+
+  await prisma.schoolNotificationSetting.update({
+    where: { schoolId },
+    data: { lastWeeklySummaryRunAt: new Date() },
+  });
+
+  return { parentCount: parentIds.length, delivered };
+}
+
+export async function runDueParentDailySummaries(now = new Date(), options: { force?: boolean } = {}) {
   const schools = await prisma.school.findMany({ select: { id: true } });
   const settings = await Promise.all(
     schools.map((school) => getOrCreateSettings(school.id)),
@@ -343,16 +434,47 @@ export async function runDueParentDailySummaries(now = new Date()) {
 
   const results = [];
   for (const setting of settings) {
+    if (!options.force && !cadenceAllowsDaily(setting.summaryCadence)) continue;
+
     const currentDay = dayName(now);
-    if (!setting.activeDays.includes(currentDay)) continue;
+    if (!options.force && !setting.activeDays.includes(currentDay)) continue;
 
     const sendTimeReached = localTimeInMinutes(now, setting.timezone) >= timeToMinutes(setting.dailySummarySendTime);
-    if (!sendTimeReached) continue;
+    if (!options.force && !sendTimeReached) continue;
 
     const lastRunKey = setting.lastDailySummaryRunAt ? dateKey(setting.lastDailySummaryRunAt) : null;
-    if (lastRunKey === dateKey(now)) continue;
+    if (!options.force && lastRunKey === dateKey(now)) continue;
 
     const result = await processSchoolDailySummaries(setting.schoolId, now);
+    results.push({ schoolId: setting.schoolId, ...result });
+  }
+
+  return results;
+}
+
+export async function runDueParentWeeklySummaries(now = new Date(), options: { force?: boolean } = {}) {
+  const schools = await prisma.school.findMany({ select: { id: true } });
+  const settings = await Promise.all(
+    schools.map((school) => getOrCreateSettings(school.id)),
+  );
+
+  const results = [];
+  for (const setting of settings) {
+    if (!options.force && !cadenceAllowsWeekly(setting.summaryCadence)) continue;
+
+    const currentDay = dayName(now);
+    if (!options.force && currentDay !== setting.weeklySummarySendDay) continue;
+
+    const sendTimeReached = localTimeInMinutes(now, setting.timezone) >= timeToMinutes(setting.weeklySummarySendTime);
+    if (!options.force && !sendTimeReached) continue;
+
+    const { start, end } = weekWindow(now);
+    const lastWeeklyRun = setting.lastWeeklySummaryRunAt
+      ? dateRangeKey(weekWindow(setting.lastWeeklySummaryRunAt).start, weekWindow(setting.lastWeeklySummaryRunAt).end)
+      : null;
+    if (!options.force && lastWeeklyRun === dateRangeKey(start, end)) continue;
+
+    const result = await processSchoolWeeklySummaries(setting.schoolId, now, options);
     results.push({ schoolId: setting.schoolId, ...result });
   }
 
