@@ -281,6 +281,16 @@ export async function saveAttendance({
       ];
     }),
   );
+  const savedAttendanceRows = await prisma.attendance.findMany({
+    where: {
+      schoolId,
+      lessonId,
+      date: attendanceDate,
+      studentId: { in: studentIds },
+    },
+    select: { id: true, studentId: true },
+  });
+  const savedAttendanceByStudent = new Map(savedAttendanceRows.map((row) => [row.studentId, row.id]));
 
   const lessonForEvent = await prisma.lesson.findFirst({
     where: { id: lessonId, schoolId },
@@ -293,8 +303,19 @@ export async function saveAttendance({
 
   if (lessonForEvent) {
     const teacherName = `${lessonForEvent.teacher.name} ${lessonForEvent.teacher.surname}`;
+    await prisma.parentActivityEvent.deleteMany({
+      where: {
+        schoolId,
+        type: "ATTENDANCE",
+        sourceModel: "Attendance",
+        sourceKey: { startsWith: `attendance:${lessonId}:${attendanceDate.toISOString()}` },
+        studentId: { in: studentIds },
+      },
+    });
     await Promise.all(
       cleanedRecords.map((record) => {
+        const attendanceId = savedAttendanceByStudent.get(record.studentId);
+        if (!attendanceId) return Promise.resolve([]);
         const statusLabel = ATTENDANCE_STATUS_LABELS[record.status];
         const note = record.note;
         const needsReason = record.status === "ABSENT" || record.status === "LATE";
@@ -317,8 +338,8 @@ export async function saveAttendance({
           body,
           href: "/parent/updates",
           sourceModel: "Attendance",
-          sourceId: `${lessonId}:${record.studentId}:${attendanceDate.toISOString()}`,
-          sourceKey: `attendance:${lessonId}:${attendanceDate.toISOString()}`,
+          sourceId: String(attendanceId),
+          sourceKey: `attendance:${attendanceId}`,
           occurredAt: attendanceDate,
           payload: {
             status: record.status,
