@@ -179,7 +179,14 @@ function ChildrenSnapshot({
           ? child.academicProgress.averageCAMarks
           : null;
         const attendanceToday = child.todayAttendance.at(0)?.status ?? "Not marked";
-        const homeworkCount = child.homeworkSummary.dueSoon + child.homeworkSummary.overdue;
+        const homeworkAttentionCount = child.homeworkSummary.overdue + child.homeworkSummary.missing;
+        const homeworkLabel = homeworkAttentionCount > 0
+          ? `${homeworkAttentionCount} need attention`
+          : child.homeworkSummary.dueSoon > 0
+            ? `${child.homeworkSummary.dueSoon} due soon`
+            : child.homeworkSummary.submitted > 0
+              ? `${child.homeworkSummary.submitted} submitted`
+              : "No issue";
         const academicLabel = caAverage === null
           ? "CA building"
           : child.academicProgress.hasReportScores
@@ -218,7 +225,7 @@ function ChildrenSnapshot({
                   <p className="text-[10px] font-bold uppercase text-slate-400">Academics</p>
                 </div>
                 <div>
-                  <p className="text-sm font-black text-violet-700">{homeworkCount}</p>
+                  <p className="text-sm font-black text-violet-700">{homeworkLabel}</p>
                   <p className="text-[10px] font-bold uppercase text-slate-400">Homework</p>
                 </div>
                 <div>
@@ -244,7 +251,7 @@ function ChildrenSnapshot({
             </div>
 
             <p className="mt-4 rounded-xl border border-slate-100 bg-slate-50 px-3 py-3 text-xs font-semibold leading-relaxed text-slate-500">
-              Open this ward to see attendance, subject CA progress, fees, homework, notices, and where support may be needed.
+              Open this ward to see attendance, subject CA progress, fees, homework status, notices, and where support may be needed.
             </p>
 
             <div className="mt-4 flex flex-wrap gap-2">

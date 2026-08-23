@@ -52,6 +52,27 @@ function attendanceStatusMeta(status?: string) {
   }
 }
 
+function homeworkStatusMeta(status: string) {
+  switch (status) {
+    case "submitted":
+      return { label: "Submitted", className: "bg-emerald-50 text-emerald-700 ring-emerald-100" };
+    case "late":
+      return { label: "Submitted late", className: "bg-amber-50 text-amber-700 ring-amber-100" };
+    case "missing":
+      return { label: "Missing", className: "bg-rose-50 text-rose-700 ring-rose-100" };
+    case "excused":
+      return { label: "Excused", className: "bg-sky-50 text-sky-700 ring-sky-100" };
+    case "overdue":
+      return { label: "Overdue", className: "bg-rose-50 text-rose-700 ring-rose-100" };
+    case "due-soon":
+      return { label: "Due soon", className: "bg-violet-50 text-violet-700 ring-violet-100" };
+    case "upcoming":
+      return { label: "Upcoming", className: "bg-slate-50 text-slate-600 ring-slate-100" };
+    default:
+      return { label: "Pending", className: "bg-slate-50 text-slate-600 ring-slate-100" };
+  }
+}
+
 function insightToneClass(tone: string) {
   switch (tone) {
     case "good":
@@ -101,7 +122,14 @@ export default async function ParentChildCheckupPage({
   const notableTodayRecords = todayAttendanceRecords
     .filter((record) => record.status !== "PRESENT" || record.note || record.arrivalTime)
     .slice(0, 3);
-  const homeworkCount = child.homeworkSummary.dueSoon + child.homeworkSummary.overdue;
+  const homeworkAttentionCount = child.homeworkSummary.overdue + child.homeworkSummary.missing;
+  const homeworkLabel = homeworkAttentionCount > 0
+    ? `${homeworkAttentionCount} need attention`
+    : child.homeworkSummary.dueSoon > 0
+      ? `${child.homeworkSummary.dueSoon} due soon`
+      : child.homeworkSummary.submitted > 0
+        ? `${child.homeworkSummary.submitted} submitted`
+        : "No issue";
   const subjectTotal = child.academicProgress.expectedSubjects || child.academicProgress.subjects.length;
   const recentItems = child.activityFeed.slice(0, 5);
 
@@ -123,7 +151,7 @@ export default async function ParentChildCheckupPage({
           {[
             { label: "Today", value: attendanceToday, icon: <CheckCircle2 size={16} />, tone: "text-emerald-700 bg-emerald-50" },
             { label: "CA subjects", value: `${child.academicProgress.completedSubjects}/${subjectTotal}`, icon: <Award size={16} />, tone: "text-sky-700 bg-sky-50" },
-            { label: "Homework", value: String(homeworkCount), icon: <ClipboardList size={16} />, tone: "text-violet-700 bg-violet-50" },
+            { label: "Homework", value: homeworkLabel, icon: <ClipboardList size={16} />, tone: "text-violet-700 bg-violet-50" },
             { label: "Balance", value: formatGHS(child.financeSummary.outstanding), icon: <WalletCards size={16} />, tone: "text-amber-700 bg-amber-50" },
           ].map((item) => (
             <div key={item.label} className={`rounded-xl p-3 ${item.tone}`}>
@@ -291,18 +319,38 @@ export default async function ParentChildCheckupPage({
 
       <section className="grid gap-3 md:grid-cols-2">
         <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-          <h2 className="text-sm font-black text-gray-900">Homework</h2>
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h2 className="text-sm font-black text-gray-900">Homework</h2>
+              <p className="mt-1 text-xs font-semibold text-gray-400">Upcoming and checked work for this ward</p>
+            </div>
+            <span className="rounded-full bg-violet-50 px-2.5 py-1 text-[10px] font-black text-violet-700">
+              {child.homeworkSummary.submitted} submitted
+            </span>
+          </div>
           {child.homeworkSummary.assignments.length > 0 ? (
             <div className="mt-3 space-y-2">
-              {child.homeworkSummary.assignments.slice(0, 4).map((assignment) => (
-                <div key={assignment.id} className="rounded-xl bg-slate-50 px-3 py-2">
-                  <p className="text-sm font-black text-gray-900">{assignment.title}</p>
-                  <p className="text-xs font-semibold text-gray-500">{assignment.subjectName} - due {formatDate(assignment.dueDate)}</p>
+              {child.homeworkSummary.assignments.slice(0, 5).map((assignment) => {
+                const meta = homeworkStatusMeta(assignment.status);
+                return (
+                <div key={assignment.id} className="rounded-xl bg-slate-50 px-3 py-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-black text-gray-900">{assignment.title}</p>
+                      <p className="mt-1 text-xs font-semibold text-gray-500">
+                        {assignment.subjectName} - due {formatDate(assignment.dueDate)}
+                      </p>
+                    </div>
+                    <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-black ring-1 ${meta.className}`}>
+                      {meta.label}
+                    </span>
+                  </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
-            <p className="mt-3 text-sm font-semibold text-gray-400">No homework due soon.</p>
+            <p className="mt-3 text-sm font-semibold text-gray-400">No homework needing attention.</p>
           )}
         </div>
 

@@ -288,6 +288,37 @@ async function buildFinanceSummaryLines(schoolId: string, events: SummaryEvent[]
   });
 }
 
+const HOMEWORK_STATUS_LABELS: Record<string, string> = {
+  PENDING: "Pending",
+  SUBMITTED: "Submitted",
+  LATE: "Submitted late",
+  MISSING: "Missing",
+  EXCUSED: "Excused",
+};
+
+function buildHomeworkSummaryLines(events: SummaryEvent[]) {
+  const homeworkEvents = events.filter((event) => event.type === "ASSIGNMENT");
+  if (homeworkEvents.length === 0) return [];
+
+  return homeworkEvents.slice(0, 6).map((event) => {
+    const subjectName = textFromPayload(event.payload, "subjectName");
+    const assignmentTitle = textFromPayload(event.payload, "assignmentTitle");
+    const status = textFromPayload(event.payload, "status");
+    const note = textFromPayload(event.payload, "note");
+    const statusLabel = status ? HOMEWORK_STATUS_LABELS[status] ?? status : null;
+
+    if (!subjectName && !assignmentTitle && !statusLabel) {
+      return event.body;
+    }
+
+    return [
+      `${subjectName ?? "Homework"}${assignmentTitle ? `: ${assignmentTitle}` : ""}`,
+      statusLabel ? `Status: ${statusLabel}` : "Status: Assigned",
+      note ? `Note: ${note}` : null,
+    ].filter(Boolean).join("\n");
+  });
+}
+
 async function buildAcademicSummaryLines(
   _schoolId: string,
   events: SummaryEvent[],
@@ -475,10 +506,7 @@ async function rebuildParentSummary(input: {
   const periodLabel = input.period === "weekly" ? "this week" : "today";
   const academicLines = await buildAcademicSummaryLines(input.schoolId, uniqueEvents, periodLabel);
   const financeLines = await buildFinanceSummaryLines(input.schoolId, uniqueEvents);
-  const homeworkLines = uniqueEvents
-    .filter((event) => event.type === "ASSIGNMENT")
-    .slice(0, 3)
-    .map((event) => event.body);
+  const homeworkLines = buildHomeworkSummaryLines(uniqueEvents);
   const noticeLines = uniqueEvents
     .filter((event) => event.type === "ANNOUNCEMENT")
     .slice(0, 3)
