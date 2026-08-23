@@ -94,6 +94,11 @@ export type Exam = $Result.DefaultSelection<Prisma.$ExamPayload>
  */
 export type Assignment = $Result.DefaultSelection<Prisma.$AssignmentPayload>
 /**
+ * Model HomeworkSubmission
+ * 
+ */
+export type HomeworkSubmission = $Result.DefaultSelection<Prisma.$HomeworkSubmissionPayload>
+/**
  * Model Result
  * 
  */
@@ -590,6 +595,17 @@ export const ParentDeliveryStatus: {
 export type ParentDeliveryStatus = (typeof ParentDeliveryStatus)[keyof typeof ParentDeliveryStatus]
 
 
+export const HomeworkSubmissionStatus: {
+  PENDING: 'PENDING',
+  SUBMITTED: 'SUBMITTED',
+  LATE: 'LATE',
+  MISSING: 'MISSING',
+  EXCUSED: 'EXCUSED'
+};
+
+export type HomeworkSubmissionStatus = (typeof HomeworkSubmissionStatus)[keyof typeof HomeworkSubmissionStatus]
+
+
 export const ParentSummaryCadence: {
   DAILY: 'DAILY',
   WEEKLY: 'WEEKLY',
@@ -724,6 +740,10 @@ export const ParentDeliveryChannel: typeof $Enums.ParentDeliveryChannel
 export type ParentDeliveryStatus = $Enums.ParentDeliveryStatus
 
 export const ParentDeliveryStatus: typeof $Enums.ParentDeliveryStatus
+
+export type HomeworkSubmissionStatus = $Enums.HomeworkSubmissionStatus
+
+export const HomeworkSubmissionStatus: typeof $Enums.HomeworkSubmissionStatus
 
 export type ParentSummaryCadence = $Enums.ParentSummaryCadence
 
@@ -1009,6 +1029,16 @@ export class PrismaClient<
     * ```
     */
   get assignment(): Prisma.AssignmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.homeworkSubmission`: Exposes CRUD operations for the **HomeworkSubmission** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more HomeworkSubmissions
+    * const homeworkSubmissions = await prisma.homeworkSubmission.findMany()
+    * ```
+    */
+  get homeworkSubmission(): Prisma.HomeworkSubmissionDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.result`: Exposes CRUD operations for the **Result** model.
@@ -1759,6 +1789,7 @@ export namespace Prisma {
     Lesson: 'Lesson',
     Exam: 'Exam',
     Assignment: 'Assignment',
+    HomeworkSubmission: 'HomeworkSubmission',
     Result: 'Result',
     Attendance: 'Attendance',
     AttendanceAuditLog: 'AttendanceAuditLog',
@@ -1804,7 +1835,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "schoolNotificationSetting" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
+      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "schoolNotificationSetting" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2989,6 +3020,80 @@ export namespace Prisma {
           count: {
             args: Prisma.AssignmentCountArgs<ExtArgs>
             result: $Utils.Optional<AssignmentCountAggregateOutputType> | number
+          }
+        }
+      }
+      HomeworkSubmission: {
+        payload: Prisma.$HomeworkSubmissionPayload<ExtArgs>
+        fields: Prisma.HomeworkSubmissionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.HomeworkSubmissionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HomeworkSubmissionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.HomeworkSubmissionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HomeworkSubmissionPayload>
+          }
+          findFirst: {
+            args: Prisma.HomeworkSubmissionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HomeworkSubmissionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.HomeworkSubmissionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HomeworkSubmissionPayload>
+          }
+          findMany: {
+            args: Prisma.HomeworkSubmissionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HomeworkSubmissionPayload>[]
+          }
+          create: {
+            args: Prisma.HomeworkSubmissionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HomeworkSubmissionPayload>
+          }
+          createMany: {
+            args: Prisma.HomeworkSubmissionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.HomeworkSubmissionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HomeworkSubmissionPayload>[]
+          }
+          delete: {
+            args: Prisma.HomeworkSubmissionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HomeworkSubmissionPayload>
+          }
+          update: {
+            args: Prisma.HomeworkSubmissionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HomeworkSubmissionPayload>
+          }
+          deleteMany: {
+            args: Prisma.HomeworkSubmissionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.HomeworkSubmissionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.HomeworkSubmissionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HomeworkSubmissionPayload>[]
+          }
+          upsert: {
+            args: Prisma.HomeworkSubmissionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HomeworkSubmissionPayload>
+          }
+          aggregate: {
+            args: Prisma.HomeworkSubmissionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateHomeworkSubmission>
+          }
+          groupBy: {
+            args: Prisma.HomeworkSubmissionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<HomeworkSubmissionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.HomeworkSubmissionCountArgs<ExtArgs>
+            result: $Utils.Optional<HomeworkSubmissionCountAggregateOutputType> | number
           }
         }
       }
@@ -5336,6 +5441,7 @@ export namespace Prisma {
     lesson?: LessonOmit
     exam?: ExamOmit
     assignment?: AssignmentOmit
+    homeworkSubmission?: HomeworkSubmissionOmit
     result?: ResultOmit
     attendance?: AttendanceOmit
     attendanceAuditLog?: AttendanceAuditLogOmit
@@ -5456,6 +5562,7 @@ export namespace Prisma {
     lessons: number
     exams: number
     assignments: number
+    homeworkSubmissions: number
     results: number
     attendances: number
     attendanceAuditLogs: number
@@ -5499,6 +5606,7 @@ export namespace Prisma {
     lessons?: boolean | SchoolCountOutputTypeCountLessonsArgs
     exams?: boolean | SchoolCountOutputTypeCountExamsArgs
     assignments?: boolean | SchoolCountOutputTypeCountAssignmentsArgs
+    homeworkSubmissions?: boolean | SchoolCountOutputTypeCountHomeworkSubmissionsArgs
     results?: boolean | SchoolCountOutputTypeCountResultsArgs
     attendances?: boolean | SchoolCountOutputTypeCountAttendancesArgs
     attendanceAuditLogs?: boolean | SchoolCountOutputTypeCountAttendanceAuditLogsArgs
@@ -5610,6 +5718,13 @@ export namespace Prisma {
    */
   export type SchoolCountOutputTypeCountAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AssignmentWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountHomeworkSubmissionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HomeworkSubmissionWhereInput
   }
 
   /**
@@ -5834,6 +5949,7 @@ export namespace Prisma {
     continuousAssessments: number
     caActivityScores: number
     bills: number
+    homeworkSubmissions: number
     parentNotifications: number
     parentActivityEvents: number
     financeQueries: number
@@ -5846,6 +5962,7 @@ export namespace Prisma {
     continuousAssessments?: boolean | StudentCountOutputTypeCountContinuousAssessmentsArgs
     caActivityScores?: boolean | StudentCountOutputTypeCountCaActivityScoresArgs
     bills?: boolean | StudentCountOutputTypeCountBillsArgs
+    homeworkSubmissions?: boolean | StudentCountOutputTypeCountHomeworkSubmissionsArgs
     parentNotifications?: boolean | StudentCountOutputTypeCountParentNotificationsArgs
     parentActivityEvents?: boolean | StudentCountOutputTypeCountParentActivityEventsArgs
     financeQueries?: boolean | StudentCountOutputTypeCountFinanceQueriesArgs
@@ -5907,6 +6024,13 @@ export namespace Prisma {
   /**
    * StudentCountOutputType without action
    */
+  export type StudentCountOutputTypeCountHomeworkSubmissionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HomeworkSubmissionWhereInput
+  }
+
+  /**
+   * StudentCountOutputType without action
+   */
   export type StudentCountOutputTypeCountParentNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ParentNotificationWhereInput
   }
@@ -5938,6 +6062,7 @@ export namespace Prisma {
     caBuckets: number
     caActivities: number
     caActivityScores: number
+    checkedHomework: number
     parentActivityEvents: number
     syllabusTopicProgress: number
   }
@@ -5950,6 +6075,7 @@ export namespace Prisma {
     caBuckets?: boolean | TeacherCountOutputTypeCountCaBucketsArgs
     caActivities?: boolean | TeacherCountOutputTypeCountCaActivitiesArgs
     caActivityScores?: boolean | TeacherCountOutputTypeCountCaActivityScoresArgs
+    checkedHomework?: boolean | TeacherCountOutputTypeCountCheckedHomeworkArgs
     parentActivityEvents?: boolean | TeacherCountOutputTypeCountParentActivityEventsArgs
     syllabusTopicProgress?: boolean | TeacherCountOutputTypeCountSyllabusTopicProgressArgs
   }
@@ -6012,6 +6138,13 @@ export namespace Prisma {
    */
   export type TeacherCountOutputTypeCountCaActivityScoresArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CAActivityScoreWhereInput
+  }
+
+  /**
+   * TeacherCountOutputType without action
+   */
+  export type TeacherCountOutputTypeCountCheckedHomeworkArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HomeworkSubmissionWhereInput
   }
 
   /**
@@ -6450,10 +6583,12 @@ export namespace Prisma {
 
   export type AssignmentCountOutputType = {
     results: number
+    homeworkSubmissions: number
   }
 
   export type AssignmentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     results?: boolean | AssignmentCountOutputTypeCountResultsArgs
+    homeworkSubmissions?: boolean | AssignmentCountOutputTypeCountHomeworkSubmissionsArgs
   }
 
   // Custom InputTypes
@@ -6472,6 +6607,13 @@ export namespace Prisma {
    */
   export type AssignmentCountOutputTypeCountResultsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ResultWhereInput
+  }
+
+  /**
+   * AssignmentCountOutputType without action
+   */
+  export type AssignmentCountOutputTypeCountHomeworkSubmissionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HomeworkSubmissionWhereInput
   }
 
 
@@ -7073,6 +7215,7 @@ export namespace Prisma {
     lessons?: boolean | School$lessonsArgs<ExtArgs>
     exams?: boolean | School$examsArgs<ExtArgs>
     assignments?: boolean | School$assignmentsArgs<ExtArgs>
+    homeworkSubmissions?: boolean | School$homeworkSubmissionsArgs<ExtArgs>
     results?: boolean | School$resultsArgs<ExtArgs>
     attendances?: boolean | School$attendancesArgs<ExtArgs>
     attendanceAuditLogs?: boolean | School$attendanceAuditLogsArgs<ExtArgs>
@@ -7179,6 +7322,7 @@ export namespace Prisma {
     lessons?: boolean | School$lessonsArgs<ExtArgs>
     exams?: boolean | School$examsArgs<ExtArgs>
     assignments?: boolean | School$assignmentsArgs<ExtArgs>
+    homeworkSubmissions?: boolean | School$homeworkSubmissionsArgs<ExtArgs>
     results?: boolean | School$resultsArgs<ExtArgs>
     attendances?: boolean | School$attendancesArgs<ExtArgs>
     attendanceAuditLogs?: boolean | School$attendanceAuditLogsArgs<ExtArgs>
@@ -7228,6 +7372,7 @@ export namespace Prisma {
       lessons: Prisma.$LessonPayload<ExtArgs>[]
       exams: Prisma.$ExamPayload<ExtArgs>[]
       assignments: Prisma.$AssignmentPayload<ExtArgs>[]
+      homeworkSubmissions: Prisma.$HomeworkSubmissionPayload<ExtArgs>[]
       results: Prisma.$ResultPayload<ExtArgs>[]
       attendances: Prisma.$AttendancePayload<ExtArgs>[]
       attendanceAuditLogs: Prisma.$AttendanceAuditLogPayload<ExtArgs>[]
@@ -7682,6 +7827,7 @@ export namespace Prisma {
     lessons<T extends School$lessonsArgs<ExtArgs> = {}>(args?: Subset<T, School$lessonsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     exams<T extends School$examsArgs<ExtArgs> = {}>(args?: Subset<T, School$examsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     assignments<T extends School$assignmentsArgs<ExtArgs> = {}>(args?: Subset<T, School$assignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    homeworkSubmissions<T extends School$homeworkSubmissionsArgs<ExtArgs> = {}>(args?: Subset<T, School$homeworkSubmissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     results<T extends School$resultsArgs<ExtArgs> = {}>(args?: Subset<T, School$resultsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResultPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     attendances<T extends School$attendancesArgs<ExtArgs> = {}>(args?: Subset<T, School$attendancesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     attendanceAuditLogs<T extends School$attendanceAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$attendanceAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AttendanceAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -8389,6 +8535,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: AssignmentScalarFieldEnum | AssignmentScalarFieldEnum[]
+  }
+
+  /**
+   * School.homeworkSubmissions
+   */
+  export type School$homeworkSubmissionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HomeworkSubmission
+     */
+    select?: HomeworkSubmissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HomeworkSubmission
+     */
+    omit?: HomeworkSubmissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HomeworkSubmissionInclude<ExtArgs> | null
+    where?: HomeworkSubmissionWhereInput
+    orderBy?: HomeworkSubmissionOrderByWithRelationInput | HomeworkSubmissionOrderByWithRelationInput[]
+    cursor?: HomeworkSubmissionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: HomeworkSubmissionScalarFieldEnum | HomeworkSubmissionScalarFieldEnum[]
   }
 
   /**
@@ -10478,6 +10648,7 @@ export namespace Prisma {
     continuousAssessments?: boolean | Student$continuousAssessmentsArgs<ExtArgs>
     caActivityScores?: boolean | Student$caActivityScoresArgs<ExtArgs>
     bills?: boolean | Student$billsArgs<ExtArgs>
+    homeworkSubmissions?: boolean | Student$homeworkSubmissionsArgs<ExtArgs>
     parentNotifications?: boolean | Student$parentNotificationsArgs<ExtArgs>
     parentActivityEvents?: boolean | Student$parentActivityEventsArgs<ExtArgs>
     financeQueries?: boolean | Student$financeQueriesArgs<ExtArgs>
@@ -10558,6 +10729,7 @@ export namespace Prisma {
     continuousAssessments?: boolean | Student$continuousAssessmentsArgs<ExtArgs>
     caActivityScores?: boolean | Student$caActivityScoresArgs<ExtArgs>
     bills?: boolean | Student$billsArgs<ExtArgs>
+    homeworkSubmissions?: boolean | Student$homeworkSubmissionsArgs<ExtArgs>
     parentNotifications?: boolean | Student$parentNotificationsArgs<ExtArgs>
     parentActivityEvents?: boolean | Student$parentActivityEventsArgs<ExtArgs>
     financeQueries?: boolean | Student$financeQueriesArgs<ExtArgs>
@@ -10589,6 +10761,7 @@ export namespace Prisma {
       continuousAssessments: Prisma.$ContinuousAssessmentPayload<ExtArgs>[]
       caActivityScores: Prisma.$CAActivityScorePayload<ExtArgs>[]
       bills: Prisma.$StudentBillPayload<ExtArgs>[]
+      homeworkSubmissions: Prisma.$HomeworkSubmissionPayload<ExtArgs>[]
       parentNotifications: Prisma.$ParentNotificationPayload<ExtArgs>[]
       parentActivityEvents: Prisma.$ParentActivityEventPayload<ExtArgs>[]
       financeQueries: Prisma.$FinanceQueryPayload<ExtArgs>[]
@@ -11013,6 +11186,7 @@ export namespace Prisma {
     continuousAssessments<T extends Student$continuousAssessmentsArgs<ExtArgs> = {}>(args?: Subset<T, Student$continuousAssessmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     caActivityScores<T extends Student$caActivityScoresArgs<ExtArgs> = {}>(args?: Subset<T, Student$caActivityScoresArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CAActivityScorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     bills<T extends Student$billsArgs<ExtArgs> = {}>(args?: Subset<T, Student$billsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StudentBillPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    homeworkSubmissions<T extends Student$homeworkSubmissionsArgs<ExtArgs> = {}>(args?: Subset<T, Student$homeworkSubmissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentNotifications<T extends Student$parentNotificationsArgs<ExtArgs> = {}>(args?: Subset<T, Student$parentNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentActivityEvents<T extends Student$parentActivityEventsArgs<ExtArgs> = {}>(args?: Subset<T, Student$parentActivityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentActivityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     financeQueries<T extends Student$financeQueriesArgs<ExtArgs> = {}>(args?: Subset<T, Student$financeQueriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -11605,6 +11779,30 @@ export namespace Prisma {
   }
 
   /**
+   * Student.homeworkSubmissions
+   */
+  export type Student$homeworkSubmissionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HomeworkSubmission
+     */
+    select?: HomeworkSubmissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HomeworkSubmission
+     */
+    omit?: HomeworkSubmissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HomeworkSubmissionInclude<ExtArgs> | null
+    where?: HomeworkSubmissionWhereInput
+    orderBy?: HomeworkSubmissionOrderByWithRelationInput | HomeworkSubmissionOrderByWithRelationInput[]
+    cursor?: HomeworkSubmissionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: HomeworkSubmissionScalarFieldEnum | HomeworkSubmissionScalarFieldEnum[]
+  }
+
+  /**
    * Student.parentNotifications
    */
   export type Student$parentNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11965,6 +12163,7 @@ export namespace Prisma {
     caBuckets?: boolean | Teacher$caBucketsArgs<ExtArgs>
     caActivities?: boolean | Teacher$caActivitiesArgs<ExtArgs>
     caActivityScores?: boolean | Teacher$caActivityScoresArgs<ExtArgs>
+    checkedHomework?: boolean | Teacher$checkedHomeworkArgs<ExtArgs>
     parentActivityEvents?: boolean | Teacher$parentActivityEventsArgs<ExtArgs>
     syllabusTopicProgress?: boolean | Teacher$syllabusTopicProgressArgs<ExtArgs>
     _count?: boolean | TeacherCountOutputTypeDefaultArgs<ExtArgs>
@@ -12030,6 +12229,7 @@ export namespace Prisma {
     caBuckets?: boolean | Teacher$caBucketsArgs<ExtArgs>
     caActivities?: boolean | Teacher$caActivitiesArgs<ExtArgs>
     caActivityScores?: boolean | Teacher$caActivityScoresArgs<ExtArgs>
+    checkedHomework?: boolean | Teacher$checkedHomeworkArgs<ExtArgs>
     parentActivityEvents?: boolean | Teacher$parentActivityEventsArgs<ExtArgs>
     syllabusTopicProgress?: boolean | Teacher$syllabusTopicProgressArgs<ExtArgs>
     _count?: boolean | TeacherCountOutputTypeDefaultArgs<ExtArgs>
@@ -12052,6 +12252,7 @@ export namespace Prisma {
       caBuckets: Prisma.$CABucketPayload<ExtArgs>[]
       caActivities: Prisma.$CAActivityPayload<ExtArgs>[]
       caActivityScores: Prisma.$CAActivityScorePayload<ExtArgs>[]
+      checkedHomework: Prisma.$HomeworkSubmissionPayload<ExtArgs>[]
       parentActivityEvents: Prisma.$ParentActivityEventPayload<ExtArgs>[]
       syllabusTopicProgress: Prisma.$SyllabusTopicProgressPayload<ExtArgs>[]
     }
@@ -12471,6 +12672,7 @@ export namespace Prisma {
     caBuckets<T extends Teacher$caBucketsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$caBucketsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CABucketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     caActivities<T extends Teacher$caActivitiesArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$caActivitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CAActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     caActivityScores<T extends Teacher$caActivityScoresArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$caActivityScoresArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CAActivityScorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    checkedHomework<T extends Teacher$checkedHomeworkArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$checkedHomeworkArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentActivityEvents<T extends Teacher$parentActivityEventsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$parentActivityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentActivityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     syllabusTopicProgress<T extends Teacher$syllabusTopicProgressArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$syllabusTopicProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -13081,6 +13283,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: CAActivityScoreScalarFieldEnum | CAActivityScoreScalarFieldEnum[]
+  }
+
+  /**
+   * Teacher.checkedHomework
+   */
+  export type Teacher$checkedHomeworkArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HomeworkSubmission
+     */
+    select?: HomeworkSubmissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HomeworkSubmission
+     */
+    omit?: HomeworkSubmissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HomeworkSubmissionInclude<ExtArgs> | null
+    where?: HomeworkSubmissionWhereInput
+    orderBy?: HomeworkSubmissionOrderByWithRelationInput | HomeworkSubmissionOrderByWithRelationInput[]
+    cursor?: HomeworkSubmissionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: HomeworkSubmissionScalarFieldEnum | HomeworkSubmissionScalarFieldEnum[]
   }
 
   /**
@@ -27087,6 +27313,7 @@ export namespace Prisma {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     lesson?: boolean | LessonDefaultArgs<ExtArgs>
     results?: boolean | Assignment$resultsArgs<ExtArgs>
+    homeworkSubmissions?: boolean | Assignment$homeworkSubmissionsArgs<ExtArgs>
     _count?: boolean | AssignmentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["assignment"]>
 
@@ -27126,6 +27353,7 @@ export namespace Prisma {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     lesson?: boolean | LessonDefaultArgs<ExtArgs>
     results?: boolean | Assignment$resultsArgs<ExtArgs>
+    homeworkSubmissions?: boolean | Assignment$homeworkSubmissionsArgs<ExtArgs>
     _count?: boolean | AssignmentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type AssignmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -27143,6 +27371,7 @@ export namespace Prisma {
       school: Prisma.$SchoolPayload<ExtArgs>
       lesson: Prisma.$LessonPayload<ExtArgs>
       results: Prisma.$ResultPayload<ExtArgs>[]
+      homeworkSubmissions: Prisma.$HomeworkSubmissionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -27548,6 +27777,7 @@ export namespace Prisma {
     school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     lesson<T extends LessonDefaultArgs<ExtArgs> = {}>(args?: Subset<T, LessonDefaultArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     results<T extends Assignment$resultsArgs<ExtArgs> = {}>(args?: Subset<T, Assignment$resultsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResultPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    homeworkSubmissions<T extends Assignment$homeworkSubmissionsArgs<ExtArgs> = {}>(args?: Subset<T, Assignment$homeworkSubmissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -28008,6 +28238,30 @@ export namespace Prisma {
   }
 
   /**
+   * Assignment.homeworkSubmissions
+   */
+  export type Assignment$homeworkSubmissionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HomeworkSubmission
+     */
+    select?: HomeworkSubmissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HomeworkSubmission
+     */
+    omit?: HomeworkSubmissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HomeworkSubmissionInclude<ExtArgs> | null
+    where?: HomeworkSubmissionWhereInput
+    orderBy?: HomeworkSubmissionOrderByWithRelationInput | HomeworkSubmissionOrderByWithRelationInput[]
+    cursor?: HomeworkSubmissionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: HomeworkSubmissionScalarFieldEnum | HomeworkSubmissionScalarFieldEnum[]
+  }
+
+  /**
    * Assignment without action
    */
   export type AssignmentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -28023,6 +28277,1228 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: AssignmentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model HomeworkSubmission
+   */
+
+  export type AggregateHomeworkSubmission = {
+    _count: HomeworkSubmissionCountAggregateOutputType | null
+    _avg: HomeworkSubmissionAvgAggregateOutputType | null
+    _sum: HomeworkSubmissionSumAggregateOutputType | null
+    _min: HomeworkSubmissionMinAggregateOutputType | null
+    _max: HomeworkSubmissionMaxAggregateOutputType | null
+  }
+
+  export type HomeworkSubmissionAvgAggregateOutputType = {
+    id: number | null
+    assignmentId: number | null
+  }
+
+  export type HomeworkSubmissionSumAggregateOutputType = {
+    id: number | null
+    assignmentId: number | null
+  }
+
+  export type HomeworkSubmissionMinAggregateOutputType = {
+    id: number | null
+    status: $Enums.HomeworkSubmissionStatus | null
+    submittedAt: Date | null
+    checkedAt: Date | null
+    note: string | null
+    schoolId: string | null
+    assignmentId: number | null
+    studentId: string | null
+    checkedById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type HomeworkSubmissionMaxAggregateOutputType = {
+    id: number | null
+    status: $Enums.HomeworkSubmissionStatus | null
+    submittedAt: Date | null
+    checkedAt: Date | null
+    note: string | null
+    schoolId: string | null
+    assignmentId: number | null
+    studentId: string | null
+    checkedById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type HomeworkSubmissionCountAggregateOutputType = {
+    id: number
+    status: number
+    submittedAt: number
+    checkedAt: number
+    note: number
+    schoolId: number
+    assignmentId: number
+    studentId: number
+    checkedById: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type HomeworkSubmissionAvgAggregateInputType = {
+    id?: true
+    assignmentId?: true
+  }
+
+  export type HomeworkSubmissionSumAggregateInputType = {
+    id?: true
+    assignmentId?: true
+  }
+
+  export type HomeworkSubmissionMinAggregateInputType = {
+    id?: true
+    status?: true
+    submittedAt?: true
+    checkedAt?: true
+    note?: true
+    schoolId?: true
+    assignmentId?: true
+    studentId?: true
+    checkedById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type HomeworkSubmissionMaxAggregateInputType = {
+    id?: true
+    status?: true
+    submittedAt?: true
+    checkedAt?: true
+    note?: true
+    schoolId?: true
+    assignmentId?: true
+    studentId?: true
+    checkedById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type HomeworkSubmissionCountAggregateInputType = {
+    id?: true
+    status?: true
+    submittedAt?: true
+    checkedAt?: true
+    note?: true
+    schoolId?: true
+    assignmentId?: true
+    studentId?: true
+    checkedById?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type HomeworkSubmissionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which HomeworkSubmission to aggregate.
+     */
+    where?: HomeworkSubmissionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HomeworkSubmissions to fetch.
+     */
+    orderBy?: HomeworkSubmissionOrderByWithRelationInput | HomeworkSubmissionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: HomeworkSubmissionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HomeworkSubmissions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HomeworkSubmissions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned HomeworkSubmissions
+    **/
+    _count?: true | HomeworkSubmissionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: HomeworkSubmissionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: HomeworkSubmissionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: HomeworkSubmissionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: HomeworkSubmissionMaxAggregateInputType
+  }
+
+  export type GetHomeworkSubmissionAggregateType<T extends HomeworkSubmissionAggregateArgs> = {
+        [P in keyof T & keyof AggregateHomeworkSubmission]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateHomeworkSubmission[P]>
+      : GetScalarType<T[P], AggregateHomeworkSubmission[P]>
+  }
+
+
+
+
+  export type HomeworkSubmissionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HomeworkSubmissionWhereInput
+    orderBy?: HomeworkSubmissionOrderByWithAggregationInput | HomeworkSubmissionOrderByWithAggregationInput[]
+    by: HomeworkSubmissionScalarFieldEnum[] | HomeworkSubmissionScalarFieldEnum
+    having?: HomeworkSubmissionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: HomeworkSubmissionCountAggregateInputType | true
+    _avg?: HomeworkSubmissionAvgAggregateInputType
+    _sum?: HomeworkSubmissionSumAggregateInputType
+    _min?: HomeworkSubmissionMinAggregateInputType
+    _max?: HomeworkSubmissionMaxAggregateInputType
+  }
+
+  export type HomeworkSubmissionGroupByOutputType = {
+    id: number
+    status: $Enums.HomeworkSubmissionStatus
+    submittedAt: Date | null
+    checkedAt: Date | null
+    note: string | null
+    schoolId: string
+    assignmentId: number
+    studentId: string
+    checkedById: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: HomeworkSubmissionCountAggregateOutputType | null
+    _avg: HomeworkSubmissionAvgAggregateOutputType | null
+    _sum: HomeworkSubmissionSumAggregateOutputType | null
+    _min: HomeworkSubmissionMinAggregateOutputType | null
+    _max: HomeworkSubmissionMaxAggregateOutputType | null
+  }
+
+  type GetHomeworkSubmissionGroupByPayload<T extends HomeworkSubmissionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<HomeworkSubmissionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof HomeworkSubmissionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], HomeworkSubmissionGroupByOutputType[P]>
+            : GetScalarType<T[P], HomeworkSubmissionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type HomeworkSubmissionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    status?: boolean
+    submittedAt?: boolean
+    checkedAt?: boolean
+    note?: boolean
+    schoolId?: boolean
+    assignmentId?: boolean
+    studentId?: boolean
+    checkedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    assignment?: boolean | AssignmentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    checkedBy?: boolean | HomeworkSubmission$checkedByArgs<ExtArgs>
+  }, ExtArgs["result"]["homeworkSubmission"]>
+
+  export type HomeworkSubmissionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    status?: boolean
+    submittedAt?: boolean
+    checkedAt?: boolean
+    note?: boolean
+    schoolId?: boolean
+    assignmentId?: boolean
+    studentId?: boolean
+    checkedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    assignment?: boolean | AssignmentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    checkedBy?: boolean | HomeworkSubmission$checkedByArgs<ExtArgs>
+  }, ExtArgs["result"]["homeworkSubmission"]>
+
+  export type HomeworkSubmissionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    status?: boolean
+    submittedAt?: boolean
+    checkedAt?: boolean
+    note?: boolean
+    schoolId?: boolean
+    assignmentId?: boolean
+    studentId?: boolean
+    checkedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    assignment?: boolean | AssignmentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    checkedBy?: boolean | HomeworkSubmission$checkedByArgs<ExtArgs>
+  }, ExtArgs["result"]["homeworkSubmission"]>
+
+  export type HomeworkSubmissionSelectScalar = {
+    id?: boolean
+    status?: boolean
+    submittedAt?: boolean
+    checkedAt?: boolean
+    note?: boolean
+    schoolId?: boolean
+    assignmentId?: boolean
+    studentId?: boolean
+    checkedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type HomeworkSubmissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "submittedAt" | "checkedAt" | "note" | "schoolId" | "assignmentId" | "studentId" | "checkedById" | "createdAt" | "updatedAt", ExtArgs["result"]["homeworkSubmission"]>
+  export type HomeworkSubmissionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    assignment?: boolean | AssignmentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    checkedBy?: boolean | HomeworkSubmission$checkedByArgs<ExtArgs>
+  }
+  export type HomeworkSubmissionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    assignment?: boolean | AssignmentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    checkedBy?: boolean | HomeworkSubmission$checkedByArgs<ExtArgs>
+  }
+  export type HomeworkSubmissionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    assignment?: boolean | AssignmentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+    checkedBy?: boolean | HomeworkSubmission$checkedByArgs<ExtArgs>
+  }
+
+  export type $HomeworkSubmissionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "HomeworkSubmission"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      assignment: Prisma.$AssignmentPayload<ExtArgs>
+      student: Prisma.$StudentPayload<ExtArgs>
+      checkedBy: Prisma.$TeacherPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      status: $Enums.HomeworkSubmissionStatus
+      submittedAt: Date | null
+      checkedAt: Date | null
+      note: string | null
+      schoolId: string
+      assignmentId: number
+      studentId: string
+      checkedById: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["homeworkSubmission"]>
+    composites: {}
+  }
+
+  type HomeworkSubmissionGetPayload<S extends boolean | null | undefined | HomeworkSubmissionDefaultArgs> = $Result.GetResult<Prisma.$HomeworkSubmissionPayload, S>
+
+  type HomeworkSubmissionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<HomeworkSubmissionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: HomeworkSubmissionCountAggregateInputType | true
+    }
+
+  export interface HomeworkSubmissionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['HomeworkSubmission'], meta: { name: 'HomeworkSubmission' } }
+    /**
+     * Find zero or one HomeworkSubmission that matches the filter.
+     * @param {HomeworkSubmissionFindUniqueArgs} args - Arguments to find a HomeworkSubmission
+     * @example
+     * // Get one HomeworkSubmission
+     * const homeworkSubmission = await prisma.homeworkSubmission.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends HomeworkSubmissionFindUniqueArgs>(args: SelectSubset<T, HomeworkSubmissionFindUniqueArgs<ExtArgs>>): Prisma__HomeworkSubmissionClient<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one HomeworkSubmission that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {HomeworkSubmissionFindUniqueOrThrowArgs} args - Arguments to find a HomeworkSubmission
+     * @example
+     * // Get one HomeworkSubmission
+     * const homeworkSubmission = await prisma.homeworkSubmission.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends HomeworkSubmissionFindUniqueOrThrowArgs>(args: SelectSubset<T, HomeworkSubmissionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__HomeworkSubmissionClient<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first HomeworkSubmission that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HomeworkSubmissionFindFirstArgs} args - Arguments to find a HomeworkSubmission
+     * @example
+     * // Get one HomeworkSubmission
+     * const homeworkSubmission = await prisma.homeworkSubmission.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends HomeworkSubmissionFindFirstArgs>(args?: SelectSubset<T, HomeworkSubmissionFindFirstArgs<ExtArgs>>): Prisma__HomeworkSubmissionClient<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first HomeworkSubmission that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HomeworkSubmissionFindFirstOrThrowArgs} args - Arguments to find a HomeworkSubmission
+     * @example
+     * // Get one HomeworkSubmission
+     * const homeworkSubmission = await prisma.homeworkSubmission.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends HomeworkSubmissionFindFirstOrThrowArgs>(args?: SelectSubset<T, HomeworkSubmissionFindFirstOrThrowArgs<ExtArgs>>): Prisma__HomeworkSubmissionClient<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more HomeworkSubmissions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HomeworkSubmissionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all HomeworkSubmissions
+     * const homeworkSubmissions = await prisma.homeworkSubmission.findMany()
+     * 
+     * // Get first 10 HomeworkSubmissions
+     * const homeworkSubmissions = await prisma.homeworkSubmission.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const homeworkSubmissionWithIdOnly = await prisma.homeworkSubmission.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends HomeworkSubmissionFindManyArgs>(args?: SelectSubset<T, HomeworkSubmissionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a HomeworkSubmission.
+     * @param {HomeworkSubmissionCreateArgs} args - Arguments to create a HomeworkSubmission.
+     * @example
+     * // Create one HomeworkSubmission
+     * const HomeworkSubmission = await prisma.homeworkSubmission.create({
+     *   data: {
+     *     // ... data to create a HomeworkSubmission
+     *   }
+     * })
+     * 
+     */
+    create<T extends HomeworkSubmissionCreateArgs>(args: SelectSubset<T, HomeworkSubmissionCreateArgs<ExtArgs>>): Prisma__HomeworkSubmissionClient<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many HomeworkSubmissions.
+     * @param {HomeworkSubmissionCreateManyArgs} args - Arguments to create many HomeworkSubmissions.
+     * @example
+     * // Create many HomeworkSubmissions
+     * const homeworkSubmission = await prisma.homeworkSubmission.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends HomeworkSubmissionCreateManyArgs>(args?: SelectSubset<T, HomeworkSubmissionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many HomeworkSubmissions and returns the data saved in the database.
+     * @param {HomeworkSubmissionCreateManyAndReturnArgs} args - Arguments to create many HomeworkSubmissions.
+     * @example
+     * // Create many HomeworkSubmissions
+     * const homeworkSubmission = await prisma.homeworkSubmission.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many HomeworkSubmissions and only return the `id`
+     * const homeworkSubmissionWithIdOnly = await prisma.homeworkSubmission.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends HomeworkSubmissionCreateManyAndReturnArgs>(args?: SelectSubset<T, HomeworkSubmissionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a HomeworkSubmission.
+     * @param {HomeworkSubmissionDeleteArgs} args - Arguments to delete one HomeworkSubmission.
+     * @example
+     * // Delete one HomeworkSubmission
+     * const HomeworkSubmission = await prisma.homeworkSubmission.delete({
+     *   where: {
+     *     // ... filter to delete one HomeworkSubmission
+     *   }
+     * })
+     * 
+     */
+    delete<T extends HomeworkSubmissionDeleteArgs>(args: SelectSubset<T, HomeworkSubmissionDeleteArgs<ExtArgs>>): Prisma__HomeworkSubmissionClient<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one HomeworkSubmission.
+     * @param {HomeworkSubmissionUpdateArgs} args - Arguments to update one HomeworkSubmission.
+     * @example
+     * // Update one HomeworkSubmission
+     * const homeworkSubmission = await prisma.homeworkSubmission.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends HomeworkSubmissionUpdateArgs>(args: SelectSubset<T, HomeworkSubmissionUpdateArgs<ExtArgs>>): Prisma__HomeworkSubmissionClient<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more HomeworkSubmissions.
+     * @param {HomeworkSubmissionDeleteManyArgs} args - Arguments to filter HomeworkSubmissions to delete.
+     * @example
+     * // Delete a few HomeworkSubmissions
+     * const { count } = await prisma.homeworkSubmission.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends HomeworkSubmissionDeleteManyArgs>(args?: SelectSubset<T, HomeworkSubmissionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more HomeworkSubmissions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HomeworkSubmissionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many HomeworkSubmissions
+     * const homeworkSubmission = await prisma.homeworkSubmission.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends HomeworkSubmissionUpdateManyArgs>(args: SelectSubset<T, HomeworkSubmissionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more HomeworkSubmissions and returns the data updated in the database.
+     * @param {HomeworkSubmissionUpdateManyAndReturnArgs} args - Arguments to update many HomeworkSubmissions.
+     * @example
+     * // Update many HomeworkSubmissions
+     * const homeworkSubmission = await prisma.homeworkSubmission.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more HomeworkSubmissions and only return the `id`
+     * const homeworkSubmissionWithIdOnly = await prisma.homeworkSubmission.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends HomeworkSubmissionUpdateManyAndReturnArgs>(args: SelectSubset<T, HomeworkSubmissionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one HomeworkSubmission.
+     * @param {HomeworkSubmissionUpsertArgs} args - Arguments to update or create a HomeworkSubmission.
+     * @example
+     * // Update or create a HomeworkSubmission
+     * const homeworkSubmission = await prisma.homeworkSubmission.upsert({
+     *   create: {
+     *     // ... data to create a HomeworkSubmission
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the HomeworkSubmission we want to update
+     *   }
+     * })
+     */
+    upsert<T extends HomeworkSubmissionUpsertArgs>(args: SelectSubset<T, HomeworkSubmissionUpsertArgs<ExtArgs>>): Prisma__HomeworkSubmissionClient<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of HomeworkSubmissions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HomeworkSubmissionCountArgs} args - Arguments to filter HomeworkSubmissions to count.
+     * @example
+     * // Count the number of HomeworkSubmissions
+     * const count = await prisma.homeworkSubmission.count({
+     *   where: {
+     *     // ... the filter for the HomeworkSubmissions we want to count
+     *   }
+     * })
+    **/
+    count<T extends HomeworkSubmissionCountArgs>(
+      args?: Subset<T, HomeworkSubmissionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], HomeworkSubmissionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a HomeworkSubmission.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HomeworkSubmissionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends HomeworkSubmissionAggregateArgs>(args: Subset<T, HomeworkSubmissionAggregateArgs>): Prisma.PrismaPromise<GetHomeworkSubmissionAggregateType<T>>
+
+    /**
+     * Group by HomeworkSubmission.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HomeworkSubmissionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends HomeworkSubmissionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: HomeworkSubmissionGroupByArgs['orderBy'] }
+        : { orderBy?: HomeworkSubmissionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, HomeworkSubmissionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetHomeworkSubmissionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the HomeworkSubmission model
+   */
+  readonly fields: HomeworkSubmissionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for HomeworkSubmission.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__HomeworkSubmissionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    assignment<T extends AssignmentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AssignmentDefaultArgs<ExtArgs>>): Prisma__AssignmentClient<$Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    student<T extends StudentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StudentDefaultArgs<ExtArgs>>): Prisma__StudentClient<$Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    checkedBy<T extends HomeworkSubmission$checkedByArgs<ExtArgs> = {}>(args?: Subset<T, HomeworkSubmission$checkedByArgs<ExtArgs>>): Prisma__TeacherClient<$Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the HomeworkSubmission model
+   */
+  interface HomeworkSubmissionFieldRefs {
+    readonly id: FieldRef<"HomeworkSubmission", 'Int'>
+    readonly status: FieldRef<"HomeworkSubmission", 'HomeworkSubmissionStatus'>
+    readonly submittedAt: FieldRef<"HomeworkSubmission", 'DateTime'>
+    readonly checkedAt: FieldRef<"HomeworkSubmission", 'DateTime'>
+    readonly note: FieldRef<"HomeworkSubmission", 'String'>
+    readonly schoolId: FieldRef<"HomeworkSubmission", 'String'>
+    readonly assignmentId: FieldRef<"HomeworkSubmission", 'Int'>
+    readonly studentId: FieldRef<"HomeworkSubmission", 'String'>
+    readonly checkedById: FieldRef<"HomeworkSubmission", 'String'>
+    readonly createdAt: FieldRef<"HomeworkSubmission", 'DateTime'>
+    readonly updatedAt: FieldRef<"HomeworkSubmission", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * HomeworkSubmission findUnique
+   */
+  export type HomeworkSubmissionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HomeworkSubmission
+     */
+    select?: HomeworkSubmissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HomeworkSubmission
+     */
+    omit?: HomeworkSubmissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HomeworkSubmissionInclude<ExtArgs> | null
+    /**
+     * Filter, which HomeworkSubmission to fetch.
+     */
+    where: HomeworkSubmissionWhereUniqueInput
+  }
+
+  /**
+   * HomeworkSubmission findUniqueOrThrow
+   */
+  export type HomeworkSubmissionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HomeworkSubmission
+     */
+    select?: HomeworkSubmissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HomeworkSubmission
+     */
+    omit?: HomeworkSubmissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HomeworkSubmissionInclude<ExtArgs> | null
+    /**
+     * Filter, which HomeworkSubmission to fetch.
+     */
+    where: HomeworkSubmissionWhereUniqueInput
+  }
+
+  /**
+   * HomeworkSubmission findFirst
+   */
+  export type HomeworkSubmissionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HomeworkSubmission
+     */
+    select?: HomeworkSubmissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HomeworkSubmission
+     */
+    omit?: HomeworkSubmissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HomeworkSubmissionInclude<ExtArgs> | null
+    /**
+     * Filter, which HomeworkSubmission to fetch.
+     */
+    where?: HomeworkSubmissionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HomeworkSubmissions to fetch.
+     */
+    orderBy?: HomeworkSubmissionOrderByWithRelationInput | HomeworkSubmissionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for HomeworkSubmissions.
+     */
+    cursor?: HomeworkSubmissionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HomeworkSubmissions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HomeworkSubmissions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of HomeworkSubmissions.
+     */
+    distinct?: HomeworkSubmissionScalarFieldEnum | HomeworkSubmissionScalarFieldEnum[]
+  }
+
+  /**
+   * HomeworkSubmission findFirstOrThrow
+   */
+  export type HomeworkSubmissionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HomeworkSubmission
+     */
+    select?: HomeworkSubmissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HomeworkSubmission
+     */
+    omit?: HomeworkSubmissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HomeworkSubmissionInclude<ExtArgs> | null
+    /**
+     * Filter, which HomeworkSubmission to fetch.
+     */
+    where?: HomeworkSubmissionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HomeworkSubmissions to fetch.
+     */
+    orderBy?: HomeworkSubmissionOrderByWithRelationInput | HomeworkSubmissionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for HomeworkSubmissions.
+     */
+    cursor?: HomeworkSubmissionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HomeworkSubmissions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HomeworkSubmissions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of HomeworkSubmissions.
+     */
+    distinct?: HomeworkSubmissionScalarFieldEnum | HomeworkSubmissionScalarFieldEnum[]
+  }
+
+  /**
+   * HomeworkSubmission findMany
+   */
+  export type HomeworkSubmissionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HomeworkSubmission
+     */
+    select?: HomeworkSubmissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HomeworkSubmission
+     */
+    omit?: HomeworkSubmissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HomeworkSubmissionInclude<ExtArgs> | null
+    /**
+     * Filter, which HomeworkSubmissions to fetch.
+     */
+    where?: HomeworkSubmissionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HomeworkSubmissions to fetch.
+     */
+    orderBy?: HomeworkSubmissionOrderByWithRelationInput | HomeworkSubmissionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing HomeworkSubmissions.
+     */
+    cursor?: HomeworkSubmissionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HomeworkSubmissions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HomeworkSubmissions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of HomeworkSubmissions.
+     */
+    distinct?: HomeworkSubmissionScalarFieldEnum | HomeworkSubmissionScalarFieldEnum[]
+  }
+
+  /**
+   * HomeworkSubmission create
+   */
+  export type HomeworkSubmissionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HomeworkSubmission
+     */
+    select?: HomeworkSubmissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HomeworkSubmission
+     */
+    omit?: HomeworkSubmissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HomeworkSubmissionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a HomeworkSubmission.
+     */
+    data: XOR<HomeworkSubmissionCreateInput, HomeworkSubmissionUncheckedCreateInput>
+  }
+
+  /**
+   * HomeworkSubmission createMany
+   */
+  export type HomeworkSubmissionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many HomeworkSubmissions.
+     */
+    data: HomeworkSubmissionCreateManyInput | HomeworkSubmissionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * HomeworkSubmission createManyAndReturn
+   */
+  export type HomeworkSubmissionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HomeworkSubmission
+     */
+    select?: HomeworkSubmissionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the HomeworkSubmission
+     */
+    omit?: HomeworkSubmissionOmit<ExtArgs> | null
+    /**
+     * The data used to create many HomeworkSubmissions.
+     */
+    data: HomeworkSubmissionCreateManyInput | HomeworkSubmissionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HomeworkSubmissionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * HomeworkSubmission update
+   */
+  export type HomeworkSubmissionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HomeworkSubmission
+     */
+    select?: HomeworkSubmissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HomeworkSubmission
+     */
+    omit?: HomeworkSubmissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HomeworkSubmissionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a HomeworkSubmission.
+     */
+    data: XOR<HomeworkSubmissionUpdateInput, HomeworkSubmissionUncheckedUpdateInput>
+    /**
+     * Choose, which HomeworkSubmission to update.
+     */
+    where: HomeworkSubmissionWhereUniqueInput
+  }
+
+  /**
+   * HomeworkSubmission updateMany
+   */
+  export type HomeworkSubmissionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update HomeworkSubmissions.
+     */
+    data: XOR<HomeworkSubmissionUpdateManyMutationInput, HomeworkSubmissionUncheckedUpdateManyInput>
+    /**
+     * Filter which HomeworkSubmissions to update
+     */
+    where?: HomeworkSubmissionWhereInput
+    /**
+     * Limit how many HomeworkSubmissions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * HomeworkSubmission updateManyAndReturn
+   */
+  export type HomeworkSubmissionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HomeworkSubmission
+     */
+    select?: HomeworkSubmissionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the HomeworkSubmission
+     */
+    omit?: HomeworkSubmissionOmit<ExtArgs> | null
+    /**
+     * The data used to update HomeworkSubmissions.
+     */
+    data: XOR<HomeworkSubmissionUpdateManyMutationInput, HomeworkSubmissionUncheckedUpdateManyInput>
+    /**
+     * Filter which HomeworkSubmissions to update
+     */
+    where?: HomeworkSubmissionWhereInput
+    /**
+     * Limit how many HomeworkSubmissions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HomeworkSubmissionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * HomeworkSubmission upsert
+   */
+  export type HomeworkSubmissionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HomeworkSubmission
+     */
+    select?: HomeworkSubmissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HomeworkSubmission
+     */
+    omit?: HomeworkSubmissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HomeworkSubmissionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the HomeworkSubmission to update in case it exists.
+     */
+    where: HomeworkSubmissionWhereUniqueInput
+    /**
+     * In case the HomeworkSubmission found by the `where` argument doesn't exist, create a new HomeworkSubmission with this data.
+     */
+    create: XOR<HomeworkSubmissionCreateInput, HomeworkSubmissionUncheckedCreateInput>
+    /**
+     * In case the HomeworkSubmission was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<HomeworkSubmissionUpdateInput, HomeworkSubmissionUncheckedUpdateInput>
+  }
+
+  /**
+   * HomeworkSubmission delete
+   */
+  export type HomeworkSubmissionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HomeworkSubmission
+     */
+    select?: HomeworkSubmissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HomeworkSubmission
+     */
+    omit?: HomeworkSubmissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HomeworkSubmissionInclude<ExtArgs> | null
+    /**
+     * Filter which HomeworkSubmission to delete.
+     */
+    where: HomeworkSubmissionWhereUniqueInput
+  }
+
+  /**
+   * HomeworkSubmission deleteMany
+   */
+  export type HomeworkSubmissionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which HomeworkSubmissions to delete
+     */
+    where?: HomeworkSubmissionWhereInput
+    /**
+     * Limit how many HomeworkSubmissions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * HomeworkSubmission.checkedBy
+   */
+  export type HomeworkSubmission$checkedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Teacher
+     */
+    select?: TeacherSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Teacher
+     */
+    omit?: TeacherOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherInclude<ExtArgs> | null
+    where?: TeacherWhereInput
+  }
+
+  /**
+   * HomeworkSubmission without action
+   */
+  export type HomeworkSubmissionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HomeworkSubmission
+     */
+    select?: HomeworkSubmissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HomeworkSubmission
+     */
+    omit?: HomeworkSubmissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HomeworkSubmissionInclude<ExtArgs> | null
   }
 
 
@@ -64590,6 +66066,23 @@ export namespace Prisma {
   export type AssignmentScalarFieldEnum = (typeof AssignmentScalarFieldEnum)[keyof typeof AssignmentScalarFieldEnum]
 
 
+  export const HomeworkSubmissionScalarFieldEnum: {
+    id: 'id',
+    status: 'status',
+    submittedAt: 'submittedAt',
+    checkedAt: 'checkedAt',
+    note: 'note',
+    schoolId: 'schoolId',
+    assignmentId: 'assignmentId',
+    studentId: 'studentId',
+    checkedById: 'checkedById',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type HomeworkSubmissionScalarFieldEnum = (typeof HomeworkSubmissionScalarFieldEnum)[keyof typeof HomeworkSubmissionScalarFieldEnum]
+
+
   export const ResultScalarFieldEnum: {
     id: 'id',
     score: 'score',
@@ -65323,6 +66816,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'HomeworkSubmissionStatus'
+   */
+  export type EnumHomeworkSubmissionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HomeworkSubmissionStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'HomeworkSubmissionStatus[]'
+   */
+  export type ListEnumHomeworkSubmissionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HomeworkSubmissionStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'AttendanceStatus'
    */
   export type EnumAttendanceStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AttendanceStatus'>
@@ -65720,6 +67227,7 @@ export namespace Prisma {
     lessons?: LessonListRelationFilter
     exams?: ExamListRelationFilter
     assignments?: AssignmentListRelationFilter
+    homeworkSubmissions?: HomeworkSubmissionListRelationFilter
     results?: ResultListRelationFilter
     attendances?: AttendanceListRelationFilter
     attendanceAuditLogs?: AttendanceAuditLogListRelationFilter
@@ -65781,6 +67289,7 @@ export namespace Prisma {
     lessons?: LessonOrderByRelationAggregateInput
     exams?: ExamOrderByRelationAggregateInput
     assignments?: AssignmentOrderByRelationAggregateInput
+    homeworkSubmissions?: HomeworkSubmissionOrderByRelationAggregateInput
     results?: ResultOrderByRelationAggregateInput
     attendances?: AttendanceOrderByRelationAggregateInput
     attendanceAuditLogs?: AttendanceAuditLogOrderByRelationAggregateInput
@@ -65845,6 +67354,7 @@ export namespace Prisma {
     lessons?: LessonListRelationFilter
     exams?: ExamListRelationFilter
     assignments?: AssignmentListRelationFilter
+    homeworkSubmissions?: HomeworkSubmissionListRelationFilter
     results?: ResultListRelationFilter
     attendances?: AttendanceListRelationFilter
     attendanceAuditLogs?: AttendanceAuditLogListRelationFilter
@@ -65998,6 +67508,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentListRelationFilter
     caActivityScores?: CAActivityScoreListRelationFilter
     bills?: StudentBillListRelationFilter
+    homeworkSubmissions?: HomeworkSubmissionListRelationFilter
     parentNotifications?: ParentNotificationListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
     financeQueries?: FinanceQueryListRelationFilter
@@ -66029,6 +67540,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentOrderByRelationAggregateInput
     caActivityScores?: CAActivityScoreOrderByRelationAggregateInput
     bills?: StudentBillOrderByRelationAggregateInput
+    homeworkSubmissions?: HomeworkSubmissionOrderByRelationAggregateInput
     parentNotifications?: ParentNotificationOrderByRelationAggregateInput
     parentActivityEvents?: ParentActivityEventOrderByRelationAggregateInput
     financeQueries?: FinanceQueryOrderByRelationAggregateInput
@@ -66063,6 +67575,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentListRelationFilter
     caActivityScores?: CAActivityScoreListRelationFilter
     bills?: StudentBillListRelationFilter
+    homeworkSubmissions?: HomeworkSubmissionListRelationFilter
     parentNotifications?: ParentNotificationListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
     financeQueries?: FinanceQueryListRelationFilter
@@ -66137,6 +67650,7 @@ export namespace Prisma {
     caBuckets?: CABucketListRelationFilter
     caActivities?: CAActivityListRelationFilter
     caActivityScores?: CAActivityScoreListRelationFilter
+    checkedHomework?: HomeworkSubmissionListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
     syllabusTopicProgress?: SyllabusTopicProgressListRelationFilter
   }
@@ -66163,6 +67677,7 @@ export namespace Prisma {
     caBuckets?: CABucketOrderByRelationAggregateInput
     caActivities?: CAActivityOrderByRelationAggregateInput
     caActivityScores?: CAActivityScoreOrderByRelationAggregateInput
+    checkedHomework?: HomeworkSubmissionOrderByRelationAggregateInput
     parentActivityEvents?: ParentActivityEventOrderByRelationAggregateInput
     syllabusTopicProgress?: SyllabusTopicProgressOrderByRelationAggregateInput
   }
@@ -66192,6 +67707,7 @@ export namespace Prisma {
     caBuckets?: CABucketListRelationFilter
     caActivities?: CAActivityListRelationFilter
     caActivityScores?: CAActivityScoreListRelationFilter
+    checkedHomework?: HomeworkSubmissionListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
     syllabusTopicProgress?: SyllabusTopicProgressListRelationFilter
   }, "id" | "username">
@@ -67307,6 +68823,7 @@ export namespace Prisma {
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     lesson?: XOR<LessonScalarRelationFilter, LessonWhereInput>
     results?: ResultListRelationFilter
+    homeworkSubmissions?: HomeworkSubmissionListRelationFilter
   }
 
   export type AssignmentOrderByWithRelationInput = {
@@ -67319,6 +68836,7 @@ export namespace Prisma {
     school?: SchoolOrderByWithRelationInput
     lesson?: LessonOrderByWithRelationInput
     results?: ResultOrderByRelationAggregateInput
+    homeworkSubmissions?: HomeworkSubmissionOrderByRelationAggregateInput
   }
 
   export type AssignmentWhereUniqueInput = Prisma.AtLeast<{
@@ -67334,6 +68852,7 @@ export namespace Prisma {
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     lesson?: XOR<LessonScalarRelationFilter, LessonWhereInput>
     results?: ResultListRelationFilter
+    homeworkSubmissions?: HomeworkSubmissionListRelationFilter
   }, "id">
 
   export type AssignmentOrderByWithAggregationInput = {
@@ -67360,6 +68879,103 @@ export namespace Prisma {
     dueDate?: DateTimeWithAggregatesFilter<"Assignment"> | Date | string
     schoolId?: StringWithAggregatesFilter<"Assignment"> | string
     lessonId?: IntWithAggregatesFilter<"Assignment"> | number
+  }
+
+  export type HomeworkSubmissionWhereInput = {
+    AND?: HomeworkSubmissionWhereInput | HomeworkSubmissionWhereInput[]
+    OR?: HomeworkSubmissionWhereInput[]
+    NOT?: HomeworkSubmissionWhereInput | HomeworkSubmissionWhereInput[]
+    id?: IntFilter<"HomeworkSubmission"> | number
+    status?: EnumHomeworkSubmissionStatusFilter<"HomeworkSubmission"> | $Enums.HomeworkSubmissionStatus
+    submittedAt?: DateTimeNullableFilter<"HomeworkSubmission"> | Date | string | null
+    checkedAt?: DateTimeNullableFilter<"HomeworkSubmission"> | Date | string | null
+    note?: StringNullableFilter<"HomeworkSubmission"> | string | null
+    schoolId?: StringFilter<"HomeworkSubmission"> | string
+    assignmentId?: IntFilter<"HomeworkSubmission"> | number
+    studentId?: StringFilter<"HomeworkSubmission"> | string
+    checkedById?: StringNullableFilter<"HomeworkSubmission"> | string | null
+    createdAt?: DateTimeFilter<"HomeworkSubmission"> | Date | string
+    updatedAt?: DateTimeFilter<"HomeworkSubmission"> | Date | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    assignment?: XOR<AssignmentScalarRelationFilter, AssignmentWhereInput>
+    student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
+    checkedBy?: XOR<TeacherNullableScalarRelationFilter, TeacherWhereInput> | null
+  }
+
+  export type HomeworkSubmissionOrderByWithRelationInput = {
+    id?: SortOrder
+    status?: SortOrder
+    submittedAt?: SortOrderInput | SortOrder
+    checkedAt?: SortOrderInput | SortOrder
+    note?: SortOrderInput | SortOrder
+    schoolId?: SortOrder
+    assignmentId?: SortOrder
+    studentId?: SortOrder
+    checkedById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+    assignment?: AssignmentOrderByWithRelationInput
+    student?: StudentOrderByWithRelationInput
+    checkedBy?: TeacherOrderByWithRelationInput
+  }
+
+  export type HomeworkSubmissionWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    schoolId_assignmentId_studentId?: HomeworkSubmissionSchoolIdAssignmentIdStudentIdCompoundUniqueInput
+    AND?: HomeworkSubmissionWhereInput | HomeworkSubmissionWhereInput[]
+    OR?: HomeworkSubmissionWhereInput[]
+    NOT?: HomeworkSubmissionWhereInput | HomeworkSubmissionWhereInput[]
+    status?: EnumHomeworkSubmissionStatusFilter<"HomeworkSubmission"> | $Enums.HomeworkSubmissionStatus
+    submittedAt?: DateTimeNullableFilter<"HomeworkSubmission"> | Date | string | null
+    checkedAt?: DateTimeNullableFilter<"HomeworkSubmission"> | Date | string | null
+    note?: StringNullableFilter<"HomeworkSubmission"> | string | null
+    schoolId?: StringFilter<"HomeworkSubmission"> | string
+    assignmentId?: IntFilter<"HomeworkSubmission"> | number
+    studentId?: StringFilter<"HomeworkSubmission"> | string
+    checkedById?: StringNullableFilter<"HomeworkSubmission"> | string | null
+    createdAt?: DateTimeFilter<"HomeworkSubmission"> | Date | string
+    updatedAt?: DateTimeFilter<"HomeworkSubmission"> | Date | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    assignment?: XOR<AssignmentScalarRelationFilter, AssignmentWhereInput>
+    student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
+    checkedBy?: XOR<TeacherNullableScalarRelationFilter, TeacherWhereInput> | null
+  }, "id" | "schoolId_assignmentId_studentId">
+
+  export type HomeworkSubmissionOrderByWithAggregationInput = {
+    id?: SortOrder
+    status?: SortOrder
+    submittedAt?: SortOrderInput | SortOrder
+    checkedAt?: SortOrderInput | SortOrder
+    note?: SortOrderInput | SortOrder
+    schoolId?: SortOrder
+    assignmentId?: SortOrder
+    studentId?: SortOrder
+    checkedById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: HomeworkSubmissionCountOrderByAggregateInput
+    _avg?: HomeworkSubmissionAvgOrderByAggregateInput
+    _max?: HomeworkSubmissionMaxOrderByAggregateInput
+    _min?: HomeworkSubmissionMinOrderByAggregateInput
+    _sum?: HomeworkSubmissionSumOrderByAggregateInput
+  }
+
+  export type HomeworkSubmissionScalarWhereWithAggregatesInput = {
+    AND?: HomeworkSubmissionScalarWhereWithAggregatesInput | HomeworkSubmissionScalarWhereWithAggregatesInput[]
+    OR?: HomeworkSubmissionScalarWhereWithAggregatesInput[]
+    NOT?: HomeworkSubmissionScalarWhereWithAggregatesInput | HomeworkSubmissionScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"HomeworkSubmission"> | number
+    status?: EnumHomeworkSubmissionStatusWithAggregatesFilter<"HomeworkSubmission"> | $Enums.HomeworkSubmissionStatus
+    submittedAt?: DateTimeNullableWithAggregatesFilter<"HomeworkSubmission"> | Date | string | null
+    checkedAt?: DateTimeNullableWithAggregatesFilter<"HomeworkSubmission"> | Date | string | null
+    note?: StringNullableWithAggregatesFilter<"HomeworkSubmission"> | string | null
+    schoolId?: StringWithAggregatesFilter<"HomeworkSubmission"> | string
+    assignmentId?: IntWithAggregatesFilter<"HomeworkSubmission"> | number
+    studentId?: StringWithAggregatesFilter<"HomeworkSubmission"> | string
+    checkedById?: StringNullableWithAggregatesFilter<"HomeworkSubmission"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"HomeworkSubmission"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"HomeworkSubmission"> | Date | string
   }
 
   export type ResultWhereInput = {
@@ -70146,6 +71762,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -70207,6 +71824,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -70268,6 +71886,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -70329,6 +71948,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -70485,6 +72105,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
     bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
@@ -70512,6 +72133,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
@@ -70539,6 +72161,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
@@ -70566,6 +72189,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
@@ -70642,6 +72266,7 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
   }
@@ -70667,6 +72292,7 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
   }
@@ -70692,6 +72318,7 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
   }
@@ -70717,6 +72344,7 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
   }
@@ -71898,6 +73526,7 @@ export namespace Prisma {
     school?: SchoolCreateNestedOneWithoutAssignmentsInput
     lesson: LessonCreateNestedOneWithoutAssignmentsInput
     results?: ResultCreateNestedManyWithoutAssignmentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutAssignmentInput
   }
 
   export type AssignmentUncheckedCreateInput = {
@@ -71908,6 +73537,7 @@ export namespace Prisma {
     schoolId?: string
     lessonId: number
     results?: ResultUncheckedCreateNestedManyWithoutAssignmentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutAssignmentInput
   }
 
   export type AssignmentUpdateInput = {
@@ -71917,6 +73547,7 @@ export namespace Prisma {
     school?: SchoolUpdateOneRequiredWithoutAssignmentsNestedInput
     lesson?: LessonUpdateOneRequiredWithoutAssignmentsNestedInput
     results?: ResultUpdateManyWithoutAssignmentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutAssignmentNestedInput
   }
 
   export type AssignmentUncheckedUpdateInput = {
@@ -71927,6 +73558,7 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
     lessonId?: IntFieldUpdateOperationsInput | number
     results?: ResultUncheckedUpdateManyWithoutAssignmentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutAssignmentNestedInput
   }
 
   export type AssignmentCreateManyInput = {
@@ -71951,6 +73583,97 @@ export namespace Prisma {
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     lessonId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type HomeworkSubmissionCreateInput = {
+    status?: $Enums.HomeworkSubmissionStatus
+    submittedAt?: Date | string | null
+    checkedAt?: Date | string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutHomeworkSubmissionsInput
+    assignment: AssignmentCreateNestedOneWithoutHomeworkSubmissionsInput
+    student: StudentCreateNestedOneWithoutHomeworkSubmissionsInput
+    checkedBy?: TeacherCreateNestedOneWithoutCheckedHomeworkInput
+  }
+
+  export type HomeworkSubmissionUncheckedCreateInput = {
+    id?: number
+    status?: $Enums.HomeworkSubmissionStatus
+    submittedAt?: Date | string | null
+    checkedAt?: Date | string | null
+    note?: string | null
+    schoolId?: string
+    assignmentId: number
+    studentId: string
+    checkedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HomeworkSubmissionUpdateInput = {
+    status?: EnumHomeworkSubmissionStatusFieldUpdateOperationsInput | $Enums.HomeworkSubmissionStatus
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutHomeworkSubmissionsNestedInput
+    assignment?: AssignmentUpdateOneRequiredWithoutHomeworkSubmissionsNestedInput
+    student?: StudentUpdateOneRequiredWithoutHomeworkSubmissionsNestedInput
+    checkedBy?: TeacherUpdateOneWithoutCheckedHomeworkNestedInput
+  }
+
+  export type HomeworkSubmissionUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    status?: EnumHomeworkSubmissionStatusFieldUpdateOperationsInput | $Enums.HomeworkSubmissionStatus
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    assignmentId?: IntFieldUpdateOperationsInput | number
+    studentId?: StringFieldUpdateOperationsInput | string
+    checkedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HomeworkSubmissionCreateManyInput = {
+    id?: number
+    status?: $Enums.HomeworkSubmissionStatus
+    submittedAt?: Date | string | null
+    checkedAt?: Date | string | null
+    note?: string | null
+    schoolId?: string
+    assignmentId: number
+    studentId: string
+    checkedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HomeworkSubmissionUpdateManyMutationInput = {
+    status?: EnumHomeworkSubmissionStatusFieldUpdateOperationsInput | $Enums.HomeworkSubmissionStatus
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HomeworkSubmissionUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    status?: EnumHomeworkSubmissionStatusFieldUpdateOperationsInput | $Enums.HomeworkSubmissionStatus
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    assignmentId?: IntFieldUpdateOperationsInput | number
+    studentId?: StringFieldUpdateOperationsInput | string
+    checkedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ResultCreateInput = {
@@ -74888,6 +76611,12 @@ export namespace Prisma {
     none?: AssignmentWhereInput
   }
 
+  export type HomeworkSubmissionListRelationFilter = {
+    every?: HomeworkSubmissionWhereInput
+    some?: HomeworkSubmissionWhereInput
+    none?: HomeworkSubmissionWhereInput
+  }
+
   export type ResultListRelationFilter = {
     every?: ResultWhereInput
     some?: ResultWhereInput
@@ -75115,6 +76844,10 @@ export namespace Prisma {
   }
 
   export type AssignmentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type HomeworkSubmissionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -76343,6 +78076,91 @@ export namespace Prisma {
     lessonId?: SortOrder
   }
 
+  export type EnumHomeworkSubmissionStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.HomeworkSubmissionStatus | EnumHomeworkSubmissionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.HomeworkSubmissionStatus[] | ListEnumHomeworkSubmissionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.HomeworkSubmissionStatus[] | ListEnumHomeworkSubmissionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumHomeworkSubmissionStatusFilter<$PrismaModel> | $Enums.HomeworkSubmissionStatus
+  }
+
+  export type AssignmentScalarRelationFilter = {
+    is?: AssignmentWhereInput
+    isNot?: AssignmentWhereInput
+  }
+
+  export type StudentScalarRelationFilter = {
+    is?: StudentWhereInput
+    isNot?: StudentWhereInput
+  }
+
+  export type HomeworkSubmissionSchoolIdAssignmentIdStudentIdCompoundUniqueInput = {
+    schoolId: string
+    assignmentId: number
+    studentId: string
+  }
+
+  export type HomeworkSubmissionCountOrderByAggregateInput = {
+    id?: SortOrder
+    status?: SortOrder
+    submittedAt?: SortOrder
+    checkedAt?: SortOrder
+    note?: SortOrder
+    schoolId?: SortOrder
+    assignmentId?: SortOrder
+    studentId?: SortOrder
+    checkedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type HomeworkSubmissionAvgOrderByAggregateInput = {
+    id?: SortOrder
+    assignmentId?: SortOrder
+  }
+
+  export type HomeworkSubmissionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    status?: SortOrder
+    submittedAt?: SortOrder
+    checkedAt?: SortOrder
+    note?: SortOrder
+    schoolId?: SortOrder
+    assignmentId?: SortOrder
+    studentId?: SortOrder
+    checkedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type HomeworkSubmissionMinOrderByAggregateInput = {
+    id?: SortOrder
+    status?: SortOrder
+    submittedAt?: SortOrder
+    checkedAt?: SortOrder
+    note?: SortOrder
+    schoolId?: SortOrder
+    assignmentId?: SortOrder
+    studentId?: SortOrder
+    checkedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type HomeworkSubmissionSumOrderByAggregateInput = {
+    id?: SortOrder
+    assignmentId?: SortOrder
+  }
+
+  export type EnumHomeworkSubmissionStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.HomeworkSubmissionStatus | EnumHomeworkSubmissionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.HomeworkSubmissionStatus[] | ListEnumHomeworkSubmissionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.HomeworkSubmissionStatus[] | ListEnumHomeworkSubmissionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumHomeworkSubmissionStatusWithAggregatesFilter<$PrismaModel> | $Enums.HomeworkSubmissionStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumHomeworkSubmissionStatusFilter<$PrismaModel>
+    _max?: NestedEnumHomeworkSubmissionStatusFilter<$PrismaModel>
+  }
+
   export type IntNullableFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -76439,11 +78257,6 @@ export namespace Prisma {
     in?: $Enums.AttendanceFollowUpStatus[] | ListEnumAttendanceFollowUpStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.AttendanceFollowUpStatus[] | ListEnumAttendanceFollowUpStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumAttendanceFollowUpStatusFilter<$PrismaModel> | $Enums.AttendanceFollowUpStatus
-  }
-
-  export type StudentScalarRelationFilter = {
-    is?: StudentWhereInput
-    isNot?: StudentWhereInput
   }
 
   export type AttendanceSchoolIdStudentIdLessonIdDateCompoundUniqueInput = {
@@ -78812,6 +80625,13 @@ export namespace Prisma {
     connect?: AssignmentWhereUniqueInput | AssignmentWhereUniqueInput[]
   }
 
+  export type HomeworkSubmissionCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<HomeworkSubmissionCreateWithoutSchoolInput, HomeworkSubmissionUncheckedCreateWithoutSchoolInput> | HomeworkSubmissionCreateWithoutSchoolInput[] | HomeworkSubmissionUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: HomeworkSubmissionCreateOrConnectWithoutSchoolInput | HomeworkSubmissionCreateOrConnectWithoutSchoolInput[]
+    createMany?: HomeworkSubmissionCreateManySchoolInputEnvelope
+    connect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+  }
+
   export type ResultCreateNestedManyWithoutSchoolInput = {
     create?: XOR<ResultCreateWithoutSchoolInput, ResultUncheckedCreateWithoutSchoolInput> | ResultCreateWithoutSchoolInput[] | ResultUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: ResultCreateOrConnectWithoutSchoolInput | ResultCreateOrConnectWithoutSchoolInput[]
@@ -79096,6 +80916,13 @@ export namespace Prisma {
     connectOrCreate?: AssignmentCreateOrConnectWithoutSchoolInput | AssignmentCreateOrConnectWithoutSchoolInput[]
     createMany?: AssignmentCreateManySchoolInputEnvelope
     connect?: AssignmentWhereUniqueInput | AssignmentWhereUniqueInput[]
+  }
+
+  export type HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<HomeworkSubmissionCreateWithoutSchoolInput, HomeworkSubmissionUncheckedCreateWithoutSchoolInput> | HomeworkSubmissionCreateWithoutSchoolInput[] | HomeworkSubmissionUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: HomeworkSubmissionCreateOrConnectWithoutSchoolInput | HomeworkSubmissionCreateOrConnectWithoutSchoolInput[]
+    createMany?: HomeworkSubmissionCreateManySchoolInputEnvelope
+    connect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
   }
 
   export type ResultUncheckedCreateNestedManyWithoutSchoolInput = {
@@ -79472,6 +81299,20 @@ export namespace Prisma {
     update?: AssignmentUpdateWithWhereUniqueWithoutSchoolInput | AssignmentUpdateWithWhereUniqueWithoutSchoolInput[]
     updateMany?: AssignmentUpdateManyWithWhereWithoutSchoolInput | AssignmentUpdateManyWithWhereWithoutSchoolInput[]
     deleteMany?: AssignmentScalarWhereInput | AssignmentScalarWhereInput[]
+  }
+
+  export type HomeworkSubmissionUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<HomeworkSubmissionCreateWithoutSchoolInput, HomeworkSubmissionUncheckedCreateWithoutSchoolInput> | HomeworkSubmissionCreateWithoutSchoolInput[] | HomeworkSubmissionUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: HomeworkSubmissionCreateOrConnectWithoutSchoolInput | HomeworkSubmissionCreateOrConnectWithoutSchoolInput[]
+    upsert?: HomeworkSubmissionUpsertWithWhereUniqueWithoutSchoolInput | HomeworkSubmissionUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: HomeworkSubmissionCreateManySchoolInputEnvelope
+    set?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    disconnect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    delete?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    connect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    update?: HomeworkSubmissionUpdateWithWhereUniqueWithoutSchoolInput | HomeworkSubmissionUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: HomeworkSubmissionUpdateManyWithWhereWithoutSchoolInput | HomeworkSubmissionUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: HomeworkSubmissionScalarWhereInput | HomeworkSubmissionScalarWhereInput[]
   }
 
   export type ResultUpdateManyWithoutSchoolNestedInput = {
@@ -80044,6 +81885,20 @@ export namespace Prisma {
     deleteMany?: AssignmentScalarWhereInput | AssignmentScalarWhereInput[]
   }
 
+  export type HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<HomeworkSubmissionCreateWithoutSchoolInput, HomeworkSubmissionUncheckedCreateWithoutSchoolInput> | HomeworkSubmissionCreateWithoutSchoolInput[] | HomeworkSubmissionUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: HomeworkSubmissionCreateOrConnectWithoutSchoolInput | HomeworkSubmissionCreateOrConnectWithoutSchoolInput[]
+    upsert?: HomeworkSubmissionUpsertWithWhereUniqueWithoutSchoolInput | HomeworkSubmissionUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: HomeworkSubmissionCreateManySchoolInputEnvelope
+    set?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    disconnect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    delete?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    connect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    update?: HomeworkSubmissionUpdateWithWhereUniqueWithoutSchoolInput | HomeworkSubmissionUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: HomeworkSubmissionUpdateManyWithWhereWithoutSchoolInput | HomeworkSubmissionUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: HomeworkSubmissionScalarWhereInput | HomeworkSubmissionScalarWhereInput[]
+  }
+
   export type ResultUncheckedUpdateManyWithoutSchoolNestedInput = {
     create?: XOR<ResultCreateWithoutSchoolInput, ResultUncheckedCreateWithoutSchoolInput> | ResultCreateWithoutSchoolInput[] | ResultUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: ResultCreateOrConnectWithoutSchoolInput | ResultCreateOrConnectWithoutSchoolInput[]
@@ -80554,6 +82409,13 @@ export namespace Prisma {
     connect?: StudentBillWhereUniqueInput | StudentBillWhereUniqueInput[]
   }
 
+  export type HomeworkSubmissionCreateNestedManyWithoutStudentInput = {
+    create?: XOR<HomeworkSubmissionCreateWithoutStudentInput, HomeworkSubmissionUncheckedCreateWithoutStudentInput> | HomeworkSubmissionCreateWithoutStudentInput[] | HomeworkSubmissionUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: HomeworkSubmissionCreateOrConnectWithoutStudentInput | HomeworkSubmissionCreateOrConnectWithoutStudentInput[]
+    createMany?: HomeworkSubmissionCreateManyStudentInputEnvelope
+    connect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+  }
+
   export type ParentNotificationCreateNestedManyWithoutStudentInput = {
     create?: XOR<ParentNotificationCreateWithoutStudentInput, ParentNotificationUncheckedCreateWithoutStudentInput> | ParentNotificationCreateWithoutStudentInput[] | ParentNotificationUncheckedCreateWithoutStudentInput[]
     connectOrCreate?: ParentNotificationCreateOrConnectWithoutStudentInput | ParentNotificationCreateOrConnectWithoutStudentInput[]
@@ -80615,6 +82477,13 @@ export namespace Prisma {
     connectOrCreate?: StudentBillCreateOrConnectWithoutStudentInput | StudentBillCreateOrConnectWithoutStudentInput[]
     createMany?: StudentBillCreateManyStudentInputEnvelope
     connect?: StudentBillWhereUniqueInput | StudentBillWhereUniqueInput[]
+  }
+
+  export type HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput = {
+    create?: XOR<HomeworkSubmissionCreateWithoutStudentInput, HomeworkSubmissionUncheckedCreateWithoutStudentInput> | HomeworkSubmissionCreateWithoutStudentInput[] | HomeworkSubmissionUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: HomeworkSubmissionCreateOrConnectWithoutStudentInput | HomeworkSubmissionCreateOrConnectWithoutStudentInput[]
+    createMany?: HomeworkSubmissionCreateManyStudentInputEnvelope
+    connect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
   }
 
   export type ParentNotificationUncheckedCreateNestedManyWithoutStudentInput = {
@@ -80758,6 +82627,20 @@ export namespace Prisma {
     deleteMany?: StudentBillScalarWhereInput | StudentBillScalarWhereInput[]
   }
 
+  export type HomeworkSubmissionUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<HomeworkSubmissionCreateWithoutStudentInput, HomeworkSubmissionUncheckedCreateWithoutStudentInput> | HomeworkSubmissionCreateWithoutStudentInput[] | HomeworkSubmissionUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: HomeworkSubmissionCreateOrConnectWithoutStudentInput | HomeworkSubmissionCreateOrConnectWithoutStudentInput[]
+    upsert?: HomeworkSubmissionUpsertWithWhereUniqueWithoutStudentInput | HomeworkSubmissionUpsertWithWhereUniqueWithoutStudentInput[]
+    createMany?: HomeworkSubmissionCreateManyStudentInputEnvelope
+    set?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    disconnect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    delete?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    connect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    update?: HomeworkSubmissionUpdateWithWhereUniqueWithoutStudentInput | HomeworkSubmissionUpdateWithWhereUniqueWithoutStudentInput[]
+    updateMany?: HomeworkSubmissionUpdateManyWithWhereWithoutStudentInput | HomeworkSubmissionUpdateManyWithWhereWithoutStudentInput[]
+    deleteMany?: HomeworkSubmissionScalarWhereInput | HomeworkSubmissionScalarWhereInput[]
+  }
+
   export type ParentNotificationUpdateManyWithoutStudentNestedInput = {
     create?: XOR<ParentNotificationCreateWithoutStudentInput, ParentNotificationUncheckedCreateWithoutStudentInput> | ParentNotificationCreateWithoutStudentInput[] | ParentNotificationUncheckedCreateWithoutStudentInput[]
     connectOrCreate?: ParentNotificationCreateOrConnectWithoutStudentInput | ParentNotificationCreateOrConnectWithoutStudentInput[]
@@ -80892,6 +82775,20 @@ export namespace Prisma {
     deleteMany?: StudentBillScalarWhereInput | StudentBillScalarWhereInput[]
   }
 
+  export type HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<HomeworkSubmissionCreateWithoutStudentInput, HomeworkSubmissionUncheckedCreateWithoutStudentInput> | HomeworkSubmissionCreateWithoutStudentInput[] | HomeworkSubmissionUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: HomeworkSubmissionCreateOrConnectWithoutStudentInput | HomeworkSubmissionCreateOrConnectWithoutStudentInput[]
+    upsert?: HomeworkSubmissionUpsertWithWhereUniqueWithoutStudentInput | HomeworkSubmissionUpsertWithWhereUniqueWithoutStudentInput[]
+    createMany?: HomeworkSubmissionCreateManyStudentInputEnvelope
+    set?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    disconnect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    delete?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    connect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    update?: HomeworkSubmissionUpdateWithWhereUniqueWithoutStudentInput | HomeworkSubmissionUpdateWithWhereUniqueWithoutStudentInput[]
+    updateMany?: HomeworkSubmissionUpdateManyWithWhereWithoutStudentInput | HomeworkSubmissionUpdateManyWithWhereWithoutStudentInput[]
+    deleteMany?: HomeworkSubmissionScalarWhereInput | HomeworkSubmissionScalarWhereInput[]
+  }
+
   export type ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput = {
     create?: XOR<ParentNotificationCreateWithoutStudentInput, ParentNotificationUncheckedCreateWithoutStudentInput> | ParentNotificationCreateWithoutStudentInput[] | ParentNotificationUncheckedCreateWithoutStudentInput[]
     connectOrCreate?: ParentNotificationCreateOrConnectWithoutStudentInput | ParentNotificationCreateOrConnectWithoutStudentInput[]
@@ -80988,6 +82885,13 @@ export namespace Prisma {
     connect?: CAActivityScoreWhereUniqueInput | CAActivityScoreWhereUniqueInput[]
   }
 
+  export type HomeworkSubmissionCreateNestedManyWithoutCheckedByInput = {
+    create?: XOR<HomeworkSubmissionCreateWithoutCheckedByInput, HomeworkSubmissionUncheckedCreateWithoutCheckedByInput> | HomeworkSubmissionCreateWithoutCheckedByInput[] | HomeworkSubmissionUncheckedCreateWithoutCheckedByInput[]
+    connectOrCreate?: HomeworkSubmissionCreateOrConnectWithoutCheckedByInput | HomeworkSubmissionCreateOrConnectWithoutCheckedByInput[]
+    createMany?: HomeworkSubmissionCreateManyCheckedByInputEnvelope
+    connect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+  }
+
   export type ParentActivityEventCreateNestedManyWithoutTeacherInput = {
     create?: XOR<ParentActivityEventCreateWithoutTeacherInput, ParentActivityEventUncheckedCreateWithoutTeacherInput> | ParentActivityEventCreateWithoutTeacherInput[] | ParentActivityEventUncheckedCreateWithoutTeacherInput[]
     connectOrCreate?: ParentActivityEventCreateOrConnectWithoutTeacherInput | ParentActivityEventCreateOrConnectWithoutTeacherInput[]
@@ -81048,6 +82952,13 @@ export namespace Prisma {
     connectOrCreate?: CAActivityScoreCreateOrConnectWithoutTeacherInput | CAActivityScoreCreateOrConnectWithoutTeacherInput[]
     createMany?: CAActivityScoreCreateManyTeacherInputEnvelope
     connect?: CAActivityScoreWhereUniqueInput | CAActivityScoreWhereUniqueInput[]
+  }
+
+  export type HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput = {
+    create?: XOR<HomeworkSubmissionCreateWithoutCheckedByInput, HomeworkSubmissionUncheckedCreateWithoutCheckedByInput> | HomeworkSubmissionCreateWithoutCheckedByInput[] | HomeworkSubmissionUncheckedCreateWithoutCheckedByInput[]
+    connectOrCreate?: HomeworkSubmissionCreateOrConnectWithoutCheckedByInput | HomeworkSubmissionCreateOrConnectWithoutCheckedByInput[]
+    createMany?: HomeworkSubmissionCreateManyCheckedByInputEnvelope
+    connect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
   }
 
   export type ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput = {
@@ -81167,6 +83078,20 @@ export namespace Prisma {
     update?: CAActivityScoreUpdateWithWhereUniqueWithoutTeacherInput | CAActivityScoreUpdateWithWhereUniqueWithoutTeacherInput[]
     updateMany?: CAActivityScoreUpdateManyWithWhereWithoutTeacherInput | CAActivityScoreUpdateManyWithWhereWithoutTeacherInput[]
     deleteMany?: CAActivityScoreScalarWhereInput | CAActivityScoreScalarWhereInput[]
+  }
+
+  export type HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput = {
+    create?: XOR<HomeworkSubmissionCreateWithoutCheckedByInput, HomeworkSubmissionUncheckedCreateWithoutCheckedByInput> | HomeworkSubmissionCreateWithoutCheckedByInput[] | HomeworkSubmissionUncheckedCreateWithoutCheckedByInput[]
+    connectOrCreate?: HomeworkSubmissionCreateOrConnectWithoutCheckedByInput | HomeworkSubmissionCreateOrConnectWithoutCheckedByInput[]
+    upsert?: HomeworkSubmissionUpsertWithWhereUniqueWithoutCheckedByInput | HomeworkSubmissionUpsertWithWhereUniqueWithoutCheckedByInput[]
+    createMany?: HomeworkSubmissionCreateManyCheckedByInputEnvelope
+    set?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    disconnect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    delete?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    connect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    update?: HomeworkSubmissionUpdateWithWhereUniqueWithoutCheckedByInput | HomeworkSubmissionUpdateWithWhereUniqueWithoutCheckedByInput[]
+    updateMany?: HomeworkSubmissionUpdateManyWithWhereWithoutCheckedByInput | HomeworkSubmissionUpdateManyWithWhereWithoutCheckedByInput[]
+    deleteMany?: HomeworkSubmissionScalarWhereInput | HomeworkSubmissionScalarWhereInput[]
   }
 
   export type ParentActivityEventUpdateManyWithoutTeacherNestedInput = {
@@ -81292,6 +83217,20 @@ export namespace Prisma {
     update?: CAActivityScoreUpdateWithWhereUniqueWithoutTeacherInput | CAActivityScoreUpdateWithWhereUniqueWithoutTeacherInput[]
     updateMany?: CAActivityScoreUpdateManyWithWhereWithoutTeacherInput | CAActivityScoreUpdateManyWithWhereWithoutTeacherInput[]
     deleteMany?: CAActivityScoreScalarWhereInput | CAActivityScoreScalarWhereInput[]
+  }
+
+  export type HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput = {
+    create?: XOR<HomeworkSubmissionCreateWithoutCheckedByInput, HomeworkSubmissionUncheckedCreateWithoutCheckedByInput> | HomeworkSubmissionCreateWithoutCheckedByInput[] | HomeworkSubmissionUncheckedCreateWithoutCheckedByInput[]
+    connectOrCreate?: HomeworkSubmissionCreateOrConnectWithoutCheckedByInput | HomeworkSubmissionCreateOrConnectWithoutCheckedByInput[]
+    upsert?: HomeworkSubmissionUpsertWithWhereUniqueWithoutCheckedByInput | HomeworkSubmissionUpsertWithWhereUniqueWithoutCheckedByInput[]
+    createMany?: HomeworkSubmissionCreateManyCheckedByInputEnvelope
+    set?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    disconnect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    delete?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    connect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    update?: HomeworkSubmissionUpdateWithWhereUniqueWithoutCheckedByInput | HomeworkSubmissionUpdateWithWhereUniqueWithoutCheckedByInput[]
+    updateMany?: HomeworkSubmissionUpdateManyWithWhereWithoutCheckedByInput | HomeworkSubmissionUpdateManyWithWhereWithoutCheckedByInput[]
+    deleteMany?: HomeworkSubmissionScalarWhereInput | HomeworkSubmissionScalarWhereInput[]
   }
 
   export type ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput = {
@@ -82984,11 +84923,25 @@ export namespace Prisma {
     connect?: ResultWhereUniqueInput | ResultWhereUniqueInput[]
   }
 
+  export type HomeworkSubmissionCreateNestedManyWithoutAssignmentInput = {
+    create?: XOR<HomeworkSubmissionCreateWithoutAssignmentInput, HomeworkSubmissionUncheckedCreateWithoutAssignmentInput> | HomeworkSubmissionCreateWithoutAssignmentInput[] | HomeworkSubmissionUncheckedCreateWithoutAssignmentInput[]
+    connectOrCreate?: HomeworkSubmissionCreateOrConnectWithoutAssignmentInput | HomeworkSubmissionCreateOrConnectWithoutAssignmentInput[]
+    createMany?: HomeworkSubmissionCreateManyAssignmentInputEnvelope
+    connect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+  }
+
   export type ResultUncheckedCreateNestedManyWithoutAssignmentInput = {
     create?: XOR<ResultCreateWithoutAssignmentInput, ResultUncheckedCreateWithoutAssignmentInput> | ResultCreateWithoutAssignmentInput[] | ResultUncheckedCreateWithoutAssignmentInput[]
     connectOrCreate?: ResultCreateOrConnectWithoutAssignmentInput | ResultCreateOrConnectWithoutAssignmentInput[]
     createMany?: ResultCreateManyAssignmentInputEnvelope
     connect?: ResultWhereUniqueInput | ResultWhereUniqueInput[]
+  }
+
+  export type HomeworkSubmissionUncheckedCreateNestedManyWithoutAssignmentInput = {
+    create?: XOR<HomeworkSubmissionCreateWithoutAssignmentInput, HomeworkSubmissionUncheckedCreateWithoutAssignmentInput> | HomeworkSubmissionCreateWithoutAssignmentInput[] | HomeworkSubmissionUncheckedCreateWithoutAssignmentInput[]
+    connectOrCreate?: HomeworkSubmissionCreateOrConnectWithoutAssignmentInput | HomeworkSubmissionCreateOrConnectWithoutAssignmentInput[]
+    createMany?: HomeworkSubmissionCreateManyAssignmentInputEnvelope
+    connect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
   }
 
   export type SchoolUpdateOneRequiredWithoutAssignmentsNestedInput = {
@@ -83021,6 +84974,20 @@ export namespace Prisma {
     deleteMany?: ResultScalarWhereInput | ResultScalarWhereInput[]
   }
 
+  export type HomeworkSubmissionUpdateManyWithoutAssignmentNestedInput = {
+    create?: XOR<HomeworkSubmissionCreateWithoutAssignmentInput, HomeworkSubmissionUncheckedCreateWithoutAssignmentInput> | HomeworkSubmissionCreateWithoutAssignmentInput[] | HomeworkSubmissionUncheckedCreateWithoutAssignmentInput[]
+    connectOrCreate?: HomeworkSubmissionCreateOrConnectWithoutAssignmentInput | HomeworkSubmissionCreateOrConnectWithoutAssignmentInput[]
+    upsert?: HomeworkSubmissionUpsertWithWhereUniqueWithoutAssignmentInput | HomeworkSubmissionUpsertWithWhereUniqueWithoutAssignmentInput[]
+    createMany?: HomeworkSubmissionCreateManyAssignmentInputEnvelope
+    set?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    disconnect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    delete?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    connect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    update?: HomeworkSubmissionUpdateWithWhereUniqueWithoutAssignmentInput | HomeworkSubmissionUpdateWithWhereUniqueWithoutAssignmentInput[]
+    updateMany?: HomeworkSubmissionUpdateManyWithWhereWithoutAssignmentInput | HomeworkSubmissionUpdateManyWithWhereWithoutAssignmentInput[]
+    deleteMany?: HomeworkSubmissionScalarWhereInput | HomeworkSubmissionScalarWhereInput[]
+  }
+
   export type ResultUncheckedUpdateManyWithoutAssignmentNestedInput = {
     create?: XOR<ResultCreateWithoutAssignmentInput, ResultUncheckedCreateWithoutAssignmentInput> | ResultCreateWithoutAssignmentInput[] | ResultUncheckedCreateWithoutAssignmentInput[]
     connectOrCreate?: ResultCreateOrConnectWithoutAssignmentInput | ResultCreateOrConnectWithoutAssignmentInput[]
@@ -83033,6 +85000,82 @@ export namespace Prisma {
     update?: ResultUpdateWithWhereUniqueWithoutAssignmentInput | ResultUpdateWithWhereUniqueWithoutAssignmentInput[]
     updateMany?: ResultUpdateManyWithWhereWithoutAssignmentInput | ResultUpdateManyWithWhereWithoutAssignmentInput[]
     deleteMany?: ResultScalarWhereInput | ResultScalarWhereInput[]
+  }
+
+  export type HomeworkSubmissionUncheckedUpdateManyWithoutAssignmentNestedInput = {
+    create?: XOR<HomeworkSubmissionCreateWithoutAssignmentInput, HomeworkSubmissionUncheckedCreateWithoutAssignmentInput> | HomeworkSubmissionCreateWithoutAssignmentInput[] | HomeworkSubmissionUncheckedCreateWithoutAssignmentInput[]
+    connectOrCreate?: HomeworkSubmissionCreateOrConnectWithoutAssignmentInput | HomeworkSubmissionCreateOrConnectWithoutAssignmentInput[]
+    upsert?: HomeworkSubmissionUpsertWithWhereUniqueWithoutAssignmentInput | HomeworkSubmissionUpsertWithWhereUniqueWithoutAssignmentInput[]
+    createMany?: HomeworkSubmissionCreateManyAssignmentInputEnvelope
+    set?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    disconnect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    delete?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    connect?: HomeworkSubmissionWhereUniqueInput | HomeworkSubmissionWhereUniqueInput[]
+    update?: HomeworkSubmissionUpdateWithWhereUniqueWithoutAssignmentInput | HomeworkSubmissionUpdateWithWhereUniqueWithoutAssignmentInput[]
+    updateMany?: HomeworkSubmissionUpdateManyWithWhereWithoutAssignmentInput | HomeworkSubmissionUpdateManyWithWhereWithoutAssignmentInput[]
+    deleteMany?: HomeworkSubmissionScalarWhereInput | HomeworkSubmissionScalarWhereInput[]
+  }
+
+  export type SchoolCreateNestedOneWithoutHomeworkSubmissionsInput = {
+    create?: XOR<SchoolCreateWithoutHomeworkSubmissionsInput, SchoolUncheckedCreateWithoutHomeworkSubmissionsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutHomeworkSubmissionsInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type AssignmentCreateNestedOneWithoutHomeworkSubmissionsInput = {
+    create?: XOR<AssignmentCreateWithoutHomeworkSubmissionsInput, AssignmentUncheckedCreateWithoutHomeworkSubmissionsInput>
+    connectOrCreate?: AssignmentCreateOrConnectWithoutHomeworkSubmissionsInput
+    connect?: AssignmentWhereUniqueInput
+  }
+
+  export type StudentCreateNestedOneWithoutHomeworkSubmissionsInput = {
+    create?: XOR<StudentCreateWithoutHomeworkSubmissionsInput, StudentUncheckedCreateWithoutHomeworkSubmissionsInput>
+    connectOrCreate?: StudentCreateOrConnectWithoutHomeworkSubmissionsInput
+    connect?: StudentWhereUniqueInput
+  }
+
+  export type TeacherCreateNestedOneWithoutCheckedHomeworkInput = {
+    create?: XOR<TeacherCreateWithoutCheckedHomeworkInput, TeacherUncheckedCreateWithoutCheckedHomeworkInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutCheckedHomeworkInput
+    connect?: TeacherWhereUniqueInput
+  }
+
+  export type EnumHomeworkSubmissionStatusFieldUpdateOperationsInput = {
+    set?: $Enums.HomeworkSubmissionStatus
+  }
+
+  export type SchoolUpdateOneRequiredWithoutHomeworkSubmissionsNestedInput = {
+    create?: XOR<SchoolCreateWithoutHomeworkSubmissionsInput, SchoolUncheckedCreateWithoutHomeworkSubmissionsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutHomeworkSubmissionsInput
+    upsert?: SchoolUpsertWithoutHomeworkSubmissionsInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutHomeworkSubmissionsInput, SchoolUpdateWithoutHomeworkSubmissionsInput>, SchoolUncheckedUpdateWithoutHomeworkSubmissionsInput>
+  }
+
+  export type AssignmentUpdateOneRequiredWithoutHomeworkSubmissionsNestedInput = {
+    create?: XOR<AssignmentCreateWithoutHomeworkSubmissionsInput, AssignmentUncheckedCreateWithoutHomeworkSubmissionsInput>
+    connectOrCreate?: AssignmentCreateOrConnectWithoutHomeworkSubmissionsInput
+    upsert?: AssignmentUpsertWithoutHomeworkSubmissionsInput
+    connect?: AssignmentWhereUniqueInput
+    update?: XOR<XOR<AssignmentUpdateToOneWithWhereWithoutHomeworkSubmissionsInput, AssignmentUpdateWithoutHomeworkSubmissionsInput>, AssignmentUncheckedUpdateWithoutHomeworkSubmissionsInput>
+  }
+
+  export type StudentUpdateOneRequiredWithoutHomeworkSubmissionsNestedInput = {
+    create?: XOR<StudentCreateWithoutHomeworkSubmissionsInput, StudentUncheckedCreateWithoutHomeworkSubmissionsInput>
+    connectOrCreate?: StudentCreateOrConnectWithoutHomeworkSubmissionsInput
+    upsert?: StudentUpsertWithoutHomeworkSubmissionsInput
+    connect?: StudentWhereUniqueInput
+    update?: XOR<XOR<StudentUpdateToOneWithWhereWithoutHomeworkSubmissionsInput, StudentUpdateWithoutHomeworkSubmissionsInput>, StudentUncheckedUpdateWithoutHomeworkSubmissionsInput>
+  }
+
+  export type TeacherUpdateOneWithoutCheckedHomeworkNestedInput = {
+    create?: XOR<TeacherCreateWithoutCheckedHomeworkInput, TeacherUncheckedCreateWithoutCheckedHomeworkInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutCheckedHomeworkInput
+    upsert?: TeacherUpsertWithoutCheckedHomeworkInput
+    disconnect?: TeacherWhereInput | boolean
+    delete?: TeacherWhereInput | boolean
+    connect?: TeacherWhereUniqueInput
+    update?: XOR<XOR<TeacherUpdateToOneWithWhereWithoutCheckedHomeworkInput, TeacherUpdateWithoutCheckedHomeworkInput>, TeacherUncheckedUpdateWithoutCheckedHomeworkInput>
   }
 
   export type SchoolCreateNestedOneWithoutResultsInput = {
@@ -85163,6 +87206,23 @@ export namespace Prisma {
     _max?: NestedEnumDayFilter<$PrismaModel>
   }
 
+  export type NestedEnumHomeworkSubmissionStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.HomeworkSubmissionStatus | EnumHomeworkSubmissionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.HomeworkSubmissionStatus[] | ListEnumHomeworkSubmissionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.HomeworkSubmissionStatus[] | ListEnumHomeworkSubmissionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumHomeworkSubmissionStatusFilter<$PrismaModel> | $Enums.HomeworkSubmissionStatus
+  }
+
+  export type NestedEnumHomeworkSubmissionStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.HomeworkSubmissionStatus | EnumHomeworkSubmissionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.HomeworkSubmissionStatus[] | ListEnumHomeworkSubmissionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.HomeworkSubmissionStatus[] | ListEnumHomeworkSubmissionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumHomeworkSubmissionStatusWithAggregatesFilter<$PrismaModel> | $Enums.HomeworkSubmissionStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumHomeworkSubmissionStatusFilter<$PrismaModel>
+    _max?: NestedEnumHomeworkSubmissionStatusFilter<$PrismaModel>
+  }
+
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -85783,6 +87843,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
     bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
@@ -85809,6 +87870,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
@@ -85844,6 +87906,7 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
   }
@@ -85868,6 +87931,7 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
   }
@@ -86101,6 +88165,7 @@ export namespace Prisma {
     dueDate: Date | string
     lesson: LessonCreateNestedOneWithoutAssignmentsInput
     results?: ResultCreateNestedManyWithoutAssignmentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutAssignmentInput
   }
 
   export type AssignmentUncheckedCreateWithoutSchoolInput = {
@@ -86110,6 +88175,7 @@ export namespace Prisma {
     dueDate: Date | string
     lessonId: number
     results?: ResultUncheckedCreateNestedManyWithoutAssignmentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutAssignmentInput
   }
 
   export type AssignmentCreateOrConnectWithoutSchoolInput = {
@@ -86119,6 +88185,41 @@ export namespace Prisma {
 
   export type AssignmentCreateManySchoolInputEnvelope = {
     data: AssignmentCreateManySchoolInput | AssignmentCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type HomeworkSubmissionCreateWithoutSchoolInput = {
+    status?: $Enums.HomeworkSubmissionStatus
+    submittedAt?: Date | string | null
+    checkedAt?: Date | string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    assignment: AssignmentCreateNestedOneWithoutHomeworkSubmissionsInput
+    student: StudentCreateNestedOneWithoutHomeworkSubmissionsInput
+    checkedBy?: TeacherCreateNestedOneWithoutCheckedHomeworkInput
+  }
+
+  export type HomeworkSubmissionUncheckedCreateWithoutSchoolInput = {
+    id?: number
+    status?: $Enums.HomeworkSubmissionStatus
+    submittedAt?: Date | string | null
+    checkedAt?: Date | string | null
+    note?: string | null
+    assignmentId: number
+    studentId: string
+    checkedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HomeworkSubmissionCreateOrConnectWithoutSchoolInput = {
+    where: HomeworkSubmissionWhereUniqueInput
+    create: XOR<HomeworkSubmissionCreateWithoutSchoolInput, HomeworkSubmissionUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type HomeworkSubmissionCreateManySchoolInputEnvelope = {
+    data: HomeworkSubmissionCreateManySchoolInput | HomeworkSubmissionCreateManySchoolInput[]
     skipDuplicates?: boolean
   }
 
@@ -87591,6 +89692,39 @@ export namespace Prisma {
     lessonId?: IntFilter<"Assignment"> | number
   }
 
+  export type HomeworkSubmissionUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: HomeworkSubmissionWhereUniqueInput
+    update: XOR<HomeworkSubmissionUpdateWithoutSchoolInput, HomeworkSubmissionUncheckedUpdateWithoutSchoolInput>
+    create: XOR<HomeworkSubmissionCreateWithoutSchoolInput, HomeworkSubmissionUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type HomeworkSubmissionUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: HomeworkSubmissionWhereUniqueInput
+    data: XOR<HomeworkSubmissionUpdateWithoutSchoolInput, HomeworkSubmissionUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type HomeworkSubmissionUpdateManyWithWhereWithoutSchoolInput = {
+    where: HomeworkSubmissionScalarWhereInput
+    data: XOR<HomeworkSubmissionUpdateManyMutationInput, HomeworkSubmissionUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type HomeworkSubmissionScalarWhereInput = {
+    AND?: HomeworkSubmissionScalarWhereInput | HomeworkSubmissionScalarWhereInput[]
+    OR?: HomeworkSubmissionScalarWhereInput[]
+    NOT?: HomeworkSubmissionScalarWhereInput | HomeworkSubmissionScalarWhereInput[]
+    id?: IntFilter<"HomeworkSubmission"> | number
+    status?: EnumHomeworkSubmissionStatusFilter<"HomeworkSubmission"> | $Enums.HomeworkSubmissionStatus
+    submittedAt?: DateTimeNullableFilter<"HomeworkSubmission"> | Date | string | null
+    checkedAt?: DateTimeNullableFilter<"HomeworkSubmission"> | Date | string | null
+    note?: StringNullableFilter<"HomeworkSubmission"> | string | null
+    schoolId?: StringFilter<"HomeworkSubmission"> | string
+    assignmentId?: IntFilter<"HomeworkSubmission"> | number
+    studentId?: StringFilter<"HomeworkSubmission"> | string
+    checkedById?: StringNullableFilter<"HomeworkSubmission"> | string | null
+    createdAt?: DateTimeFilter<"HomeworkSubmission"> | Date | string
+    updatedAt?: DateTimeFilter<"HomeworkSubmission"> | Date | string
+  }
+
   export type ResultUpsertWithWhereUniqueWithoutSchoolInput = {
     where: ResultWhereUniqueInput
     update: XOR<ResultUpdateWithoutSchoolInput, ResultUncheckedUpdateWithoutSchoolInput>
@@ -88682,6 +90816,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -88742,6 +90877,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -88818,6 +90954,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -88878,6 +91015,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -88938,6 +91076,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -88998,6 +91137,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -89388,6 +91528,41 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type HomeworkSubmissionCreateWithoutStudentInput = {
+    status?: $Enums.HomeworkSubmissionStatus
+    submittedAt?: Date | string | null
+    checkedAt?: Date | string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutHomeworkSubmissionsInput
+    assignment: AssignmentCreateNestedOneWithoutHomeworkSubmissionsInput
+    checkedBy?: TeacherCreateNestedOneWithoutCheckedHomeworkInput
+  }
+
+  export type HomeworkSubmissionUncheckedCreateWithoutStudentInput = {
+    id?: number
+    status?: $Enums.HomeworkSubmissionStatus
+    submittedAt?: Date | string | null
+    checkedAt?: Date | string | null
+    note?: string | null
+    schoolId?: string
+    assignmentId: number
+    checkedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HomeworkSubmissionCreateOrConnectWithoutStudentInput = {
+    where: HomeworkSubmissionWhereUniqueInput
+    create: XOR<HomeworkSubmissionCreateWithoutStudentInput, HomeworkSubmissionUncheckedCreateWithoutStudentInput>
+  }
+
+  export type HomeworkSubmissionCreateManyStudentInputEnvelope = {
+    data: HomeworkSubmissionCreateManyStudentInput | HomeworkSubmissionCreateManyStudentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ParentNotificationCreateWithoutStudentInput = {
     id?: string
     type: $Enums.ParentNotificationType
@@ -89561,6 +91736,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -89621,6 +91797,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -89869,6 +92046,22 @@ export namespace Prisma {
     data: XOR<StudentBillUpdateManyMutationInput, StudentBillUncheckedUpdateManyWithoutStudentInput>
   }
 
+  export type HomeworkSubmissionUpsertWithWhereUniqueWithoutStudentInput = {
+    where: HomeworkSubmissionWhereUniqueInput
+    update: XOR<HomeworkSubmissionUpdateWithoutStudentInput, HomeworkSubmissionUncheckedUpdateWithoutStudentInput>
+    create: XOR<HomeworkSubmissionCreateWithoutStudentInput, HomeworkSubmissionUncheckedCreateWithoutStudentInput>
+  }
+
+  export type HomeworkSubmissionUpdateWithWhereUniqueWithoutStudentInput = {
+    where: HomeworkSubmissionWhereUniqueInput
+    data: XOR<HomeworkSubmissionUpdateWithoutStudentInput, HomeworkSubmissionUncheckedUpdateWithoutStudentInput>
+  }
+
+  export type HomeworkSubmissionUpdateManyWithWhereWithoutStudentInput = {
+    where: HomeworkSubmissionScalarWhereInput
+    data: XOR<HomeworkSubmissionUpdateManyMutationInput, HomeworkSubmissionUncheckedUpdateManyWithoutStudentInput>
+  }
+
   export type ParentNotificationUpsertWithWhereUniqueWithoutStudentInput = {
     where: ParentNotificationWhereUniqueInput
     update: XOR<ParentNotificationUpdateWithoutStudentInput, ParentNotificationUncheckedUpdateWithoutStudentInput>
@@ -89944,6 +92137,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -90004,6 +92198,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -90320,6 +92515,41 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type HomeworkSubmissionCreateWithoutCheckedByInput = {
+    status?: $Enums.HomeworkSubmissionStatus
+    submittedAt?: Date | string | null
+    checkedAt?: Date | string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutHomeworkSubmissionsInput
+    assignment: AssignmentCreateNestedOneWithoutHomeworkSubmissionsInput
+    student: StudentCreateNestedOneWithoutHomeworkSubmissionsInput
+  }
+
+  export type HomeworkSubmissionUncheckedCreateWithoutCheckedByInput = {
+    id?: number
+    status?: $Enums.HomeworkSubmissionStatus
+    submittedAt?: Date | string | null
+    checkedAt?: Date | string | null
+    note?: string | null
+    schoolId?: string
+    assignmentId: number
+    studentId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HomeworkSubmissionCreateOrConnectWithoutCheckedByInput = {
+    where: HomeworkSubmissionWhereUniqueInput
+    create: XOR<HomeworkSubmissionCreateWithoutCheckedByInput, HomeworkSubmissionUncheckedCreateWithoutCheckedByInput>
+  }
+
+  export type HomeworkSubmissionCreateManyCheckedByInputEnvelope = {
+    data: HomeworkSubmissionCreateManyCheckedByInput | HomeworkSubmissionCreateManyCheckedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ParentActivityEventCreateWithoutTeacherInput = {
     id?: string
     type: $Enums.ParentNotificationType
@@ -90431,6 +92661,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -90491,6 +92722,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -90636,6 +92868,22 @@ export namespace Prisma {
     data: XOR<CAActivityScoreUpdateManyMutationInput, CAActivityScoreUncheckedUpdateManyWithoutTeacherInput>
   }
 
+  export type HomeworkSubmissionUpsertWithWhereUniqueWithoutCheckedByInput = {
+    where: HomeworkSubmissionWhereUniqueInput
+    update: XOR<HomeworkSubmissionUpdateWithoutCheckedByInput, HomeworkSubmissionUncheckedUpdateWithoutCheckedByInput>
+    create: XOR<HomeworkSubmissionCreateWithoutCheckedByInput, HomeworkSubmissionUncheckedCreateWithoutCheckedByInput>
+  }
+
+  export type HomeworkSubmissionUpdateWithWhereUniqueWithoutCheckedByInput = {
+    where: HomeworkSubmissionWhereUniqueInput
+    data: XOR<HomeworkSubmissionUpdateWithoutCheckedByInput, HomeworkSubmissionUncheckedUpdateWithoutCheckedByInput>
+  }
+
+  export type HomeworkSubmissionUpdateManyWithWhereWithoutCheckedByInput = {
+    where: HomeworkSubmissionScalarWhereInput
+    data: XOR<HomeworkSubmissionUpdateManyMutationInput, HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByInput>
+  }
+
   export type ParentActivityEventUpsertWithWhereUniqueWithoutTeacherInput = {
     where: ParentActivityEventWhereUniqueInput
     update: XOR<ParentActivityEventUpdateWithoutTeacherInput, ParentActivityEventUncheckedUpdateWithoutTeacherInput>
@@ -90695,6 +92943,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -90755,6 +93004,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -90814,6 +93064,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
     bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
@@ -90840,6 +93091,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
@@ -91103,6 +93355,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -91163,6 +93416,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -91345,6 +93599,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -91405,6 +93660,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -91481,6 +93737,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -91541,6 +93798,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -91601,6 +93859,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -91661,6 +93920,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -91776,6 +94036,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -91836,6 +94097,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -91941,6 +94203,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -92001,6 +94264,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -92099,6 +94363,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
     bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
   }
@@ -92125,6 +94390,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
   }
@@ -92213,6 +94479,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -92273,6 +94540,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -92383,6 +94651,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
   }
@@ -92409,6 +94678,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
   }
@@ -92457,6 +94727,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -92517,6 +94788,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -92677,6 +94949,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -92737,6 +95010,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -92893,6 +95167,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -92953,6 +95228,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -93051,6 +95327,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
     bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
   }
@@ -93077,6 +95354,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
   }
@@ -93107,6 +95385,7 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
   }
 
@@ -93131,6 +95410,7 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -93178,6 +95458,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -93238,6 +95519,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -93348,6 +95630,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
   }
@@ -93374,6 +95657,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
   }
@@ -93410,6 +95694,7 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
   }
 
@@ -93434,6 +95719,7 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -93464,6 +95750,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -93524,6 +95811,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -93583,6 +95871,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
     bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
@@ -93609,6 +95898,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
@@ -93783,6 +96073,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -93843,6 +96134,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -93967,6 +96259,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -94027,6 +96320,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -94085,6 +96379,7 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
   }
@@ -94109,6 +96404,7 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
   }
@@ -94178,6 +96474,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
     bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
@@ -94204,6 +96501,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
@@ -94499,6 +96797,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -94559,6 +96858,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -94623,6 +96923,7 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
   }
@@ -94647,6 +96948,7 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
   }
@@ -94836,6 +97138,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -94896,6 +97199,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -94954,6 +97258,7 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
   }
@@ -94978,6 +97283,7 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
   }
@@ -95236,6 +97542,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -95296,6 +97603,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -95452,6 +97760,7 @@ export namespace Prisma {
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -95512,6 +97821,7 @@ export namespace Prisma {
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -95634,6 +97944,7 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
   }
@@ -95658,6 +97969,7 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
   }
@@ -95700,6 +98012,7 @@ export namespace Prisma {
     dueDate: Date | string
     school?: SchoolCreateNestedOneWithoutAssignmentsInput
     results?: ResultCreateNestedManyWithoutAssignmentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutAssignmentInput
   }
 
   export type AssignmentUncheckedCreateWithoutLessonInput = {
@@ -95709,6 +98022,7 @@ export namespace Prisma {
     dueDate: Date | string
     schoolId?: string
     results?: ResultUncheckedCreateNestedManyWithoutAssignmentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutAssignmentInput
   }
 
   export type AssignmentCreateOrConnectWithoutLessonInput = {
@@ -95852,6 +98166,7 @@ export namespace Prisma {
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -95912,6 +98227,7 @@ export namespace Prisma {
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -96052,6 +98368,7 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
   }
@@ -96076,6 +98393,7 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
   }
@@ -96171,6 +98489,7 @@ export namespace Prisma {
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -96231,6 +98550,7 @@ export namespace Prisma {
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -96370,6 +98690,7 @@ export namespace Prisma {
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -96430,6 +98751,7 @@ export namespace Prisma {
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -96546,6 +98868,7 @@ export namespace Prisma {
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -96606,6 +98929,7 @@ export namespace Prisma {
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -96707,6 +99031,41 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type HomeworkSubmissionCreateWithoutAssignmentInput = {
+    status?: $Enums.HomeworkSubmissionStatus
+    submittedAt?: Date | string | null
+    checkedAt?: Date | string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutHomeworkSubmissionsInput
+    student: StudentCreateNestedOneWithoutHomeworkSubmissionsInput
+    checkedBy?: TeacherCreateNestedOneWithoutCheckedHomeworkInput
+  }
+
+  export type HomeworkSubmissionUncheckedCreateWithoutAssignmentInput = {
+    id?: number
+    status?: $Enums.HomeworkSubmissionStatus
+    submittedAt?: Date | string | null
+    checkedAt?: Date | string | null
+    note?: string | null
+    schoolId?: string
+    studentId: string
+    checkedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HomeworkSubmissionCreateOrConnectWithoutAssignmentInput = {
+    where: HomeworkSubmissionWhereUniqueInput
+    create: XOR<HomeworkSubmissionCreateWithoutAssignmentInput, HomeworkSubmissionUncheckedCreateWithoutAssignmentInput>
+  }
+
+  export type HomeworkSubmissionCreateManyAssignmentInputEnvelope = {
+    data: HomeworkSubmissionCreateManyAssignmentInput | HomeworkSubmissionCreateManyAssignmentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SchoolUpsertWithoutAssignmentsInput = {
     update: XOR<SchoolUpdateWithoutAssignmentsInput, SchoolUncheckedUpdateWithoutAssignmentsInput>
     create: XOR<SchoolCreateWithoutAssignmentsInput, SchoolUncheckedCreateWithoutAssignmentsInput>
@@ -96745,6 +99104,7 @@ export namespace Prisma {
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -96805,6 +99165,7 @@ export namespace Prisma {
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -96894,6 +99255,576 @@ export namespace Prisma {
     data: XOR<ResultUpdateManyMutationInput, ResultUncheckedUpdateManyWithoutAssignmentInput>
   }
 
+  export type HomeworkSubmissionUpsertWithWhereUniqueWithoutAssignmentInput = {
+    where: HomeworkSubmissionWhereUniqueInput
+    update: XOR<HomeworkSubmissionUpdateWithoutAssignmentInput, HomeworkSubmissionUncheckedUpdateWithoutAssignmentInput>
+    create: XOR<HomeworkSubmissionCreateWithoutAssignmentInput, HomeworkSubmissionUncheckedCreateWithoutAssignmentInput>
+  }
+
+  export type HomeworkSubmissionUpdateWithWhereUniqueWithoutAssignmentInput = {
+    where: HomeworkSubmissionWhereUniqueInput
+    data: XOR<HomeworkSubmissionUpdateWithoutAssignmentInput, HomeworkSubmissionUncheckedUpdateWithoutAssignmentInput>
+  }
+
+  export type HomeworkSubmissionUpdateManyWithWhereWithoutAssignmentInput = {
+    where: HomeworkSubmissionScalarWhereInput
+    data: XOR<HomeworkSubmissionUpdateManyMutationInput, HomeworkSubmissionUncheckedUpdateManyWithoutAssignmentInput>
+  }
+
+  export type SchoolCreateWithoutHomeworkSubmissionsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutHomeworkSubmissionsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutHomeworkSubmissionsInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutHomeworkSubmissionsInput, SchoolUncheckedCreateWithoutHomeworkSubmissionsInput>
+  }
+
+  export type AssignmentCreateWithoutHomeworkSubmissionsInput = {
+    title: string
+    startDate: Date | string
+    dueDate: Date | string
+    school?: SchoolCreateNestedOneWithoutAssignmentsInput
+    lesson: LessonCreateNestedOneWithoutAssignmentsInput
+    results?: ResultCreateNestedManyWithoutAssignmentInput
+  }
+
+  export type AssignmentUncheckedCreateWithoutHomeworkSubmissionsInput = {
+    id?: number
+    title: string
+    startDate: Date | string
+    dueDate: Date | string
+    schoolId?: string
+    lessonId: number
+    results?: ResultUncheckedCreateNestedManyWithoutAssignmentInput
+  }
+
+  export type AssignmentCreateOrConnectWithoutHomeworkSubmissionsInput = {
+    where: AssignmentWhereUniqueInput
+    create: XOR<AssignmentCreateWithoutHomeworkSubmissionsInput, AssignmentUncheckedCreateWithoutHomeworkSubmissionsInput>
+  }
+
+  export type StudentCreateWithoutHomeworkSubmissionsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutStudentsInput
+    parent: ParentCreateNestedOneWithoutStudentsInput
+    class: ClassCreateNestedOneWithoutStudentsInput
+    grade: GradeCreateNestedOneWithoutStudentsInput
+    attendances?: AttendanceCreateNestedManyWithoutStudentInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutStudentInput
+    results?: ResultCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
+    bills?: StudentBillCreateNestedManyWithoutStudentInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentUncheckedCreateWithoutHomeworkSubmissionsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    schoolId?: string
+    parentId: string
+    classId: number
+    gradeId: number
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutStudentInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    results?: ResultUncheckedCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
+    bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentCreateOrConnectWithoutHomeworkSubmissionsInput = {
+    where: StudentWhereUniqueInput
+    create: XOR<StudentCreateWithoutHomeworkSubmissionsInput, StudentUncheckedCreateWithoutHomeworkSubmissionsInput>
+  }
+
+  export type TeacherCreateWithoutCheckedHomeworkInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    school?: SchoolCreateNestedOneWithoutTeachersInput
+    subjects?: SubjectCreateNestedManyWithoutTeachersInput
+    lessons?: LessonCreateNestedManyWithoutTeacherInput
+    classes?: ClassCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
+    caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
+    caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherUncheckedCreateWithoutCheckedHomeworkInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    schoolId?: string
+    subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherCreateOrConnectWithoutCheckedHomeworkInput = {
+    where: TeacherWhereUniqueInput
+    create: XOR<TeacherCreateWithoutCheckedHomeworkInput, TeacherUncheckedCreateWithoutCheckedHomeworkInput>
+  }
+
+  export type SchoolUpsertWithoutHomeworkSubmissionsInput = {
+    update: XOR<SchoolUpdateWithoutHomeworkSubmissionsInput, SchoolUncheckedUpdateWithoutHomeworkSubmissionsInput>
+    create: XOR<SchoolCreateWithoutHomeworkSubmissionsInput, SchoolUncheckedCreateWithoutHomeworkSubmissionsInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutHomeworkSubmissionsInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutHomeworkSubmissionsInput, SchoolUncheckedUpdateWithoutHomeworkSubmissionsInput>
+  }
+
+  export type SchoolUpdateWithoutHomeworkSubmissionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutHomeworkSubmissionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type AssignmentUpsertWithoutHomeworkSubmissionsInput = {
+    update: XOR<AssignmentUpdateWithoutHomeworkSubmissionsInput, AssignmentUncheckedUpdateWithoutHomeworkSubmissionsInput>
+    create: XOR<AssignmentCreateWithoutHomeworkSubmissionsInput, AssignmentUncheckedCreateWithoutHomeworkSubmissionsInput>
+    where?: AssignmentWhereInput
+  }
+
+  export type AssignmentUpdateToOneWithWhereWithoutHomeworkSubmissionsInput = {
+    where?: AssignmentWhereInput
+    data: XOR<AssignmentUpdateWithoutHomeworkSubmissionsInput, AssignmentUncheckedUpdateWithoutHomeworkSubmissionsInput>
+  }
+
+  export type AssignmentUpdateWithoutHomeworkSubmissionsInput = {
+    title?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutAssignmentsNestedInput
+    lesson?: LessonUpdateOneRequiredWithoutAssignmentsNestedInput
+    results?: ResultUpdateManyWithoutAssignmentNestedInput
+  }
+
+  export type AssignmentUncheckedUpdateWithoutHomeworkSubmissionsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    lessonId?: IntFieldUpdateOperationsInput | number
+    results?: ResultUncheckedUpdateManyWithoutAssignmentNestedInput
+  }
+
+  export type StudentUpsertWithoutHomeworkSubmissionsInput = {
+    update: XOR<StudentUpdateWithoutHomeworkSubmissionsInput, StudentUncheckedUpdateWithoutHomeworkSubmissionsInput>
+    create: XOR<StudentCreateWithoutHomeworkSubmissionsInput, StudentUncheckedCreateWithoutHomeworkSubmissionsInput>
+    where?: StudentWhereInput
+  }
+
+  export type StudentUpdateToOneWithWhereWithoutHomeworkSubmissionsInput = {
+    where?: StudentWhereInput
+    data: XOR<StudentUpdateWithoutHomeworkSubmissionsInput, StudentUncheckedUpdateWithoutHomeworkSubmissionsInput>
+  }
+
+  export type StudentUpdateWithoutHomeworkSubmissionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
+    parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
+    class?: ClassUpdateOneRequiredWithoutStudentsNestedInput
+    grade?: GradeUpdateOneRequiredWithoutStudentsNestedInput
+    attendances?: AttendanceUpdateManyWithoutStudentNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutStudentNestedInput
+    results?: ResultUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
+    bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
+  }
+
+  export type StudentUncheckedUpdateWithoutHomeworkSubmissionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    classId?: IntFieldUpdateOperationsInput | number
+    gradeId?: IntFieldUpdateOperationsInput | number
+    attendances?: AttendanceUncheckedUpdateManyWithoutStudentNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    results?: ResultUncheckedUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
+    bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
+  }
+
+  export type TeacherUpsertWithoutCheckedHomeworkInput = {
+    update: XOR<TeacherUpdateWithoutCheckedHomeworkInput, TeacherUncheckedUpdateWithoutCheckedHomeworkInput>
+    create: XOR<TeacherCreateWithoutCheckedHomeworkInput, TeacherUncheckedCreateWithoutCheckedHomeworkInput>
+    where?: TeacherWhereInput
+  }
+
+  export type TeacherUpdateToOneWithWhereWithoutCheckedHomeworkInput = {
+    where?: TeacherWhereInput
+    data: XOR<TeacherUpdateWithoutCheckedHomeworkInput, TeacherUncheckedUpdateWithoutCheckedHomeworkInput>
+  }
+
+  export type TeacherUpdateWithoutCheckedHomeworkInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
+    subjects?: SubjectUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
+    caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
+    caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+  }
+
+  export type TeacherUncheckedUpdateWithoutCheckedHomeworkInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    schoolId?: StringFieldUpdateOperationsInput | string
+    subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+  }
+
   export type SchoolCreateWithoutResultsInput = {
     id: string
     name: string
@@ -96922,6 +99853,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
     events?: EventCreateNestedManyWithoutSchoolInput
@@ -96982,6 +99914,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     events?: EventUncheckedCreateNestedManyWithoutSchoolInput
@@ -97047,6 +99980,7 @@ export namespace Prisma {
     dueDate: Date | string
     school?: SchoolCreateNestedOneWithoutAssignmentsInput
     lesson: LessonCreateNestedOneWithoutAssignmentsInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutAssignmentInput
   }
 
   export type AssignmentUncheckedCreateWithoutResultsInput = {
@@ -97056,6 +99990,7 @@ export namespace Prisma {
     dueDate: Date | string
     schoolId?: string
     lessonId: number
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutAssignmentInput
   }
 
   export type AssignmentCreateOrConnectWithoutResultsInput = {
@@ -97084,6 +100019,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
     bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
@@ -97110,6 +100046,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
@@ -97159,6 +100096,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
     events?: EventUpdateManyWithoutSchoolNestedInput
@@ -97219,6 +100157,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
@@ -97296,6 +100235,7 @@ export namespace Prisma {
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutAssignmentsNestedInput
     lesson?: LessonUpdateOneRequiredWithoutAssignmentsNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutAssignmentNestedInput
   }
 
   export type AssignmentUncheckedUpdateWithoutResultsInput = {
@@ -97305,6 +100245,7 @@ export namespace Prisma {
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     lessonId?: IntFieldUpdateOperationsInput | number
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutAssignmentNestedInput
   }
 
   export type StudentUpsertWithoutResultsInput = {
@@ -97339,6 +100280,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
@@ -97365,6 +100307,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
@@ -97398,6 +100341,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
     events?: EventCreateNestedManyWithoutSchoolInput
@@ -97458,6 +100402,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     events?: EventUncheckedCreateNestedManyWithoutSchoolInput
@@ -97516,6 +100461,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
     bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
@@ -97542,6 +100488,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
@@ -97673,6 +100620,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
     events?: EventUpdateManyWithoutSchoolNestedInput
@@ -97733,6 +100681,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
@@ -97797,6 +100746,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
@@ -97823,6 +100773,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
@@ -97912,6 +100863,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     events?: EventCreateNestedManyWithoutSchoolInput
@@ -97972,6 +100924,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     events?: EventUncheckedCreateNestedManyWithoutSchoolInput
@@ -98070,6 +101023,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
     bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
@@ -98096,6 +101050,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
@@ -98179,6 +101134,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     events?: EventUpdateManyWithoutSchoolNestedInput
@@ -98239,6 +101195,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
@@ -98349,6 +101306,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
@@ -98375,6 +101333,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
@@ -98448,6 +101407,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -98508,6 +101468,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -98622,6 +101583,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -98682,6 +101644,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -98786,6 +101749,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -98846,6 +101810,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -98960,6 +101925,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -99020,6 +101986,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -99124,6 +102091,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -99184,6 +102152,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -99260,6 +102229,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -99320,6 +102290,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -99380,6 +102351,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -99440,6 +102412,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -99561,6 +102534,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
     caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
   }
@@ -99585,6 +102559,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
   }
@@ -99678,6 +102653,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -99738,6 +102714,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -99877,6 +102854,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
     caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
   }
@@ -99901,6 +102879,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
   }
@@ -99949,6 +102928,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -100009,6 +102989,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -100170,6 +103151,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
     caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
   }
@@ -100194,6 +103176,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
   }
@@ -100275,6 +103258,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -100335,6 +103319,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -100520,6 +103505,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
     caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
   }
@@ -100544,6 +103530,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
     caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
   }
@@ -100592,6 +103579,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -100652,6 +103640,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -100750,6 +103739,7 @@ export namespace Prisma {
     results?: ResultCreateNestedManyWithoutStudentInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
     bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
@@ -100776,6 +103766,7 @@ export namespace Prisma {
     results?: ResultUncheckedCreateNestedManyWithoutStudentInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
@@ -100806,6 +103797,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
     caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
   }
@@ -100830,6 +103822,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
   }
@@ -100878,6 +103871,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -100938,6 +103932,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -101048,6 +104043,7 @@ export namespace Prisma {
     results?: ResultUpdateManyWithoutStudentNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
@@ -101074,6 +104070,7 @@ export namespace Prisma {
     results?: ResultUncheckedUpdateManyWithoutStudentNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
@@ -101110,6 +104107,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
     caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
   }
@@ -101134,6 +104132,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
     caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
   }
@@ -101166,6 +104165,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -101226,6 +104226,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -101302,6 +104303,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -101362,6 +104364,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -101422,6 +104425,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -101482,6 +104486,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -101540,6 +104545,7 @@ export namespace Prisma {
     results?: ResultCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
     bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
@@ -101566,6 +104572,7 @@ export namespace Prisma {
     results?: ResultUncheckedCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
@@ -101596,6 +104603,7 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
   }
@@ -101620,6 +104628,7 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
   }
@@ -101732,6 +104741,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -101792,6 +104802,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -101856,6 +104867,7 @@ export namespace Prisma {
     results?: ResultUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
@@ -101882,6 +104894,7 @@ export namespace Prisma {
     results?: ResultUncheckedUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
@@ -101918,6 +104931,7 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
   }
@@ -101942,6 +104956,7 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
   }
@@ -102050,6 +105065,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -102110,6 +105126,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -102275,6 +105292,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -102335,6 +105353,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -102602,6 +105621,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -102662,6 +105682,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -102792,6 +105813,7 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
   }
 
@@ -102816,6 +105838,7 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -102863,6 +105886,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -102923,6 +105947,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -103071,6 +106096,7 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
   }
 
@@ -103095,6 +106121,7 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -103126,6 +106153,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -103186,6 +106214,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -103366,6 +106395,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -103426,6 +106456,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -103706,6 +106737,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -103766,6 +106798,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -103824,6 +106857,7 @@ export namespace Prisma {
     results?: ResultCreateNestedManyWithoutStudentInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
@@ -103850,6 +106884,7 @@ export namespace Prisma {
     results?: ResultUncheckedCreateNestedManyWithoutStudentInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
@@ -104099,6 +107134,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -104159,6 +107195,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -104223,6 +107260,7 @@ export namespace Prisma {
     results?: ResultUpdateManyWithoutStudentNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
@@ -104249,6 +107287,7 @@ export namespace Prisma {
     results?: ResultUncheckedUpdateManyWithoutStudentNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
@@ -104542,6 +107581,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -104602,6 +107642,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -104821,6 +107862,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -104881,6 +107923,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -105049,6 +108092,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -105109,6 +108153,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -105231,6 +108276,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -105291,6 +108337,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -105403,6 +108450,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -105463,6 +108511,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -105583,6 +108632,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -105643,6 +108693,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -105753,6 +108804,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -105813,6 +108865,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -105889,6 +108942,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -105949,6 +109003,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -106009,6 +109064,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -106069,6 +109125,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -106145,6 +109202,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -106205,6 +109263,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -106265,6 +109324,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -106325,6 +109385,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -106423,6 +109484,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
     bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
   }
@@ -106449,6 +109511,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
   }
@@ -106587,6 +109650,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -106647,6 +109711,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -106757,6 +109822,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
   }
@@ -106783,6 +109849,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
   }
@@ -106917,6 +109984,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -106977,6 +110045,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -107053,6 +110122,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -107113,6 +110183,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -107173,6 +110244,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -107233,6 +110305,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -107355,6 +110428,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -107415,6 +110489,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -107527,6 +110602,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -107587,6 +110663,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -107663,6 +110740,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -107723,6 +110801,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -107783,6 +110862,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -107843,6 +110923,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -107919,6 +111000,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -107979,6 +111061,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -108039,6 +111122,7 @@ export namespace Prisma {
     lessons?: LessonCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
@@ -108099,6 +111183,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
@@ -108175,6 +111260,7 @@ export namespace Prisma {
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
@@ -108235,6 +111321,7 @@ export namespace Prisma {
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
@@ -108360,6 +111447,19 @@ export namespace Prisma {
     startDate: Date | string
     dueDate: Date | string
     lessonId: number
+  }
+
+  export type HomeworkSubmissionCreateManySchoolInput = {
+    id?: number
+    status?: $Enums.HomeworkSubmissionStatus
+    submittedAt?: Date | string | null
+    checkedAt?: Date | string | null
+    note?: string | null
+    assignmentId: number
+    studentId: string
+    checkedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ResultCreateManySchoolInput = {
@@ -108807,6 +111907,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
@@ -108833,6 +111934,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
@@ -108875,6 +111977,7 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
   }
@@ -108899,6 +112002,7 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
   }
@@ -109127,6 +112231,7 @@ export namespace Prisma {
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     lesson?: LessonUpdateOneRequiredWithoutAssignmentsNestedInput
     results?: ResultUpdateManyWithoutAssignmentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutAssignmentNestedInput
   }
 
   export type AssignmentUncheckedUpdateWithoutSchoolInput = {
@@ -109136,6 +112241,7 @@ export namespace Prisma {
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     lessonId?: IntFieldUpdateOperationsInput | number
     results?: ResultUncheckedUpdateManyWithoutAssignmentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutAssignmentNestedInput
   }
 
   export type AssignmentUncheckedUpdateManyWithoutSchoolInput = {
@@ -109144,6 +112250,44 @@ export namespace Prisma {
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     lessonId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type HomeworkSubmissionUpdateWithoutSchoolInput = {
+    status?: EnumHomeworkSubmissionStatusFieldUpdateOperationsInput | $Enums.HomeworkSubmissionStatus
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assignment?: AssignmentUpdateOneRequiredWithoutHomeworkSubmissionsNestedInput
+    student?: StudentUpdateOneRequiredWithoutHomeworkSubmissionsNestedInput
+    checkedBy?: TeacherUpdateOneWithoutCheckedHomeworkNestedInput
+  }
+
+  export type HomeworkSubmissionUncheckedUpdateWithoutSchoolInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    status?: EnumHomeworkSubmissionStatusFieldUpdateOperationsInput | $Enums.HomeworkSubmissionStatus
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    assignmentId?: IntFieldUpdateOperationsInput | number
+    studentId?: StringFieldUpdateOperationsInput | string
+    checkedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HomeworkSubmissionUncheckedUpdateManyWithoutSchoolInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    status?: EnumHomeworkSubmissionStatusFieldUpdateOperationsInput | $Enums.HomeworkSubmissionStatus
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    assignmentId?: IntFieldUpdateOperationsInput | number
+    studentId?: StringFieldUpdateOperationsInput | string
+    checkedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ResultUpdateWithoutSchoolInput = {
@@ -110473,6 +113617,19 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type HomeworkSubmissionCreateManyStudentInput = {
+    id?: number
+    status?: $Enums.HomeworkSubmissionStatus
+    submittedAt?: Date | string | null
+    checkedAt?: Date | string | null
+    note?: string | null
+    schoolId?: string
+    assignmentId: number
+    checkedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type ParentNotificationCreateManyStudentInput = {
     id?: string
     type: $Enums.ParentNotificationType
@@ -110809,6 +113966,44 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type HomeworkSubmissionUpdateWithoutStudentInput = {
+    status?: EnumHomeworkSubmissionStatusFieldUpdateOperationsInput | $Enums.HomeworkSubmissionStatus
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutHomeworkSubmissionsNestedInput
+    assignment?: AssignmentUpdateOneRequiredWithoutHomeworkSubmissionsNestedInput
+    checkedBy?: TeacherUpdateOneWithoutCheckedHomeworkNestedInput
+  }
+
+  export type HomeworkSubmissionUncheckedUpdateWithoutStudentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    status?: EnumHomeworkSubmissionStatusFieldUpdateOperationsInput | $Enums.HomeworkSubmissionStatus
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    assignmentId?: IntFieldUpdateOperationsInput | number
+    checkedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HomeworkSubmissionUncheckedUpdateManyWithoutStudentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    status?: EnumHomeworkSubmissionStatusFieldUpdateOperationsInput | $Enums.HomeworkSubmissionStatus
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    assignmentId?: IntFieldUpdateOperationsInput | number
+    checkedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ParentNotificationUpdateWithoutStudentInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumParentNotificationTypeFieldUpdateOperationsInput | $Enums.ParentNotificationType
@@ -111046,6 +114241,19 @@ export namespace Prisma {
     comment?: string | null
     schoolId?: string
     activityId: number
+    studentId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HomeworkSubmissionCreateManyCheckedByInput = {
+    id?: number
+    status?: $Enums.HomeworkSubmissionStatus
+    submittedAt?: Date | string | null
+    checkedAt?: Date | string | null
+    note?: string | null
+    schoolId?: string
+    assignmentId: number
     studentId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -111382,6 +114590,44 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type HomeworkSubmissionUpdateWithoutCheckedByInput = {
+    status?: EnumHomeworkSubmissionStatusFieldUpdateOperationsInput | $Enums.HomeworkSubmissionStatus
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutHomeworkSubmissionsNestedInput
+    assignment?: AssignmentUpdateOneRequiredWithoutHomeworkSubmissionsNestedInput
+    student?: StudentUpdateOneRequiredWithoutHomeworkSubmissionsNestedInput
+  }
+
+  export type HomeworkSubmissionUncheckedUpdateWithoutCheckedByInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    status?: EnumHomeworkSubmissionStatusFieldUpdateOperationsInput | $Enums.HomeworkSubmissionStatus
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    assignmentId?: IntFieldUpdateOperationsInput | number
+    studentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    status?: EnumHomeworkSubmissionStatusFieldUpdateOperationsInput | $Enums.HomeworkSubmissionStatus
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    assignmentId?: IntFieldUpdateOperationsInput | number
+    studentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ParentActivityEventUpdateWithoutTeacherInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumParentNotificationTypeFieldUpdateOperationsInput | $Enums.ParentNotificationType
@@ -111567,6 +114813,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
@@ -111593,6 +114840,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
@@ -111951,6 +115199,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
@@ -111977,6 +115226,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
@@ -112295,6 +115545,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
@@ -112321,6 +115572,7 @@ export namespace Prisma {
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
@@ -112677,6 +115929,7 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
   }
@@ -112701,6 +115954,7 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
   }
@@ -113041,6 +116295,7 @@ export namespace Prisma {
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutAssignmentsNestedInput
     results?: ResultUpdateManyWithoutAssignmentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutAssignmentNestedInput
   }
 
   export type AssignmentUncheckedUpdateWithoutLessonInput = {
@@ -113050,6 +116305,7 @@ export namespace Prisma {
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     results?: ResultUncheckedUpdateManyWithoutAssignmentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutAssignmentNestedInput
   }
 
   export type AssignmentUncheckedUpdateManyWithoutLessonInput = {
@@ -113218,6 +116474,19 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type HomeworkSubmissionCreateManyAssignmentInput = {
+    id?: number
+    status?: $Enums.HomeworkSubmissionStatus
+    submittedAt?: Date | string | null
+    checkedAt?: Date | string | null
+    note?: string | null
+    schoolId?: string
+    studentId: string
+    checkedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type ResultUpdateWithoutAssignmentInput = {
     score?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -113243,6 +116512,44 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
     examId?: NullableIntFieldUpdateOperationsInput | number | null
     studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HomeworkSubmissionUpdateWithoutAssignmentInput = {
+    status?: EnumHomeworkSubmissionStatusFieldUpdateOperationsInput | $Enums.HomeworkSubmissionStatus
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutHomeworkSubmissionsNestedInput
+    student?: StudentUpdateOneRequiredWithoutHomeworkSubmissionsNestedInput
+    checkedBy?: TeacherUpdateOneWithoutCheckedHomeworkNestedInput
+  }
+
+  export type HomeworkSubmissionUncheckedUpdateWithoutAssignmentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    status?: EnumHomeworkSubmissionStatusFieldUpdateOperationsInput | $Enums.HomeworkSubmissionStatus
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    checkedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HomeworkSubmissionUncheckedUpdateManyWithoutAssignmentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    status?: EnumHomeworkSubmissionStatusFieldUpdateOperationsInput | $Enums.HomeworkSubmissionStatus
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    checkedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

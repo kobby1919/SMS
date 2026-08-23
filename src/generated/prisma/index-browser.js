@@ -338,6 +338,20 @@ exports.Prisma.AssignmentScalarFieldEnum = {
   lessonId: 'lessonId'
 };
 
+exports.Prisma.HomeworkSubmissionScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  submittedAt: 'submittedAt',
+  checkedAt: 'checkedAt',
+  note: 'note',
+  schoolId: 'schoolId',
+  assignmentId: 'assignmentId',
+  studentId: 'studentId',
+  checkedById: 'checkedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ResultScalarFieldEnum = {
   id: 'id',
   score: 'score',
@@ -838,6 +852,14 @@ exports.Day = exports.$Enums.Day = {
   FRIDAY: 'FRIDAY'
 };
 
+exports.HomeworkSubmissionStatus = exports.$Enums.HomeworkSubmissionStatus = {
+  PENDING: 'PENDING',
+  SUBMITTED: 'SUBMITTED',
+  LATE: 'LATE',
+  MISSING: 'MISSING',
+  EXCUSED: 'EXCUSED'
+};
+
 exports.AttendanceStatus = exports.$Enums.AttendanceStatus = {
   PRESENT: 'PRESENT',
   ABSENT: 'ABSENT',
@@ -1054,6 +1076,7 @@ exports.Prisma.ModelName = {
   Lesson: 'Lesson',
   Exam: 'Exam',
   Assignment: 'Assignment',
+  HomeworkSubmission: 'HomeworkSubmission',
   Result: 'Result',
   Attendance: 'Attendance',
   AttendanceAuditLog: 'AttendanceAuditLog',

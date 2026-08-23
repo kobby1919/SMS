@@ -64,12 +64,14 @@ export type ParentFinanceSummary = {
 export type ParentHomeworkSummary = {
   dueSoon: number;
   overdue: number;
+  submitted: number;
+  missing: number;
   assignments: {
     id: number;
     title: string;
     subjectName: string;
     dueDate: Date;
-    status: "overdue" | "due-soon" | "upcoming";
+    status: "pending" | "submitted" | "late" | "missing" | "excused" | "overdue" | "due-soon" | "upcoming";
   }[];
 };
 
@@ -235,7 +237,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  const [lessons, attendance, assessments, caActivityScores, classCounts, assignments, announcements, bills, payments, caConfigs] = await Promise.all([
+  const [lessons, attendance, assessments, caActivityScores, classCounts, assignments, homeworkSubmissions, announcements, bills, payments, caConfigs] = await Promise.all([
     prisma.lesson.findMany({
       where: { schoolId, classId: { in: classIds } },
       include: {
@@ -296,6 +298,29 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       },
       orderBy: { dueDate: "asc" },
       take: 20,
+    }),
+    prisma.homeworkSubmission.findMany({
+      where: {
+        schoolId,
+        studentId: { in: childIds },
+        assignment: { dueDate: { gte: twoWeeksAgo, lte: twoWeeksFromNow } },
+      },
+      include: {
+        assignment: {
+          select: {
+            id: true,
+            title: true,
+            dueDate: true,
+            lesson: {
+              select: {
+                subject: { select: { name: true } },
+              },
+            },
+          },
+        },
+      },
+      orderBy: [{ status: "asc" }, { assignment: { dueDate: "asc" } }],
+      take: 60,
     }),
     prisma.announcement.findMany({
       where: {
@@ -389,11 +414,11 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     rows.set(lesson.subject.id, lesson.subject.name);
     subjectIdsByClass.set(lesson.classId, rows);
   }
-  const assignmentsByClass = new Map<number, typeof assignments>();
-  for (const assignment of assignments) {
-    const rows = assignmentsByClass.get(assignment.lesson.classId) ?? [];
-    rows.push(assignment);
-    assignmentsByClass.set(assignment.lesson.classId, rows);
+  const homeworkSubmissionsByStudent = new Map<string, typeof homeworkSubmissions>();
+  for (const submission of homeworkSubmissions) {
+    const rows = homeworkSubmissionsByStudent.get(submission.studentId) ?? [];
+    rows.push(submission);
+    homeworkSubmissionsByStudent.set(submission.studentId, rows);
   }
   const billsByStudent = new Map<string, typeof bills>();
   for (const bill of bills) {
@@ -481,7 +506,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     const streak = absenceStreak(childAttendance.slice(0, 7));
     const childBills = billsByStudent.get(child.id) ?? [];
     const childPayments = paymentsByStudent.get(child.id) ?? [];
-    const childAssignments = assignmentsByClass.get(child.classId) ?? [];
+    const childHomeworkSubmissions = homeworkSubmissionsByStudent.get(child.id) ?? [];
     const present = childAttendance.filter((row) => row.status === "PRESENT").length;
     const absent = childAttendance.filter((row) => row.status === "ABSENT").length;
     const late = childAttendance.filter((row) => row.status === "LATE").length;
@@ -650,19 +675,36 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
         : undefined,
     };
     const homeworkSummary: ParentHomeworkSummary = {
-      dueSoon: childAssignments.filter((assignment) => assignment.dueDate >= today && assignment.dueDate <= twoWeeksFromNow).length,
-      overdue: childAssignments.filter((assignment) => assignment.dueDate < today).length,
-      assignments: childAssignments.slice(0, 5).map((assignment) => ({
-        id: assignment.id,
-        title: assignment.title,
-        subjectName: assignment.lesson.subject.name,
-        dueDate: assignment.dueDate,
+      dueSoon: childHomeworkSubmissions.filter((submission) =>
+        submission.assignment.dueDate >= today &&
+        submission.assignment.dueDate <= twoWeeksFromNow &&
+        submission.status === "PENDING",
+      ).length,
+      overdue: childHomeworkSubmissions.filter((submission) =>
+        submission.assignment.dueDate < today &&
+        submission.status === "PENDING",
+      ).length,
+      submitted: childHomeworkSubmissions.filter((submission) => submission.status === "SUBMITTED").length,
+      missing: childHomeworkSubmissions.filter((submission) => submission.status === "MISSING").length,
+      assignments: childHomeworkSubmissions.slice(0, 5).map((submission) => ({
+        id: submission.assignment.id,
+        title: submission.assignment.title,
+        subjectName: submission.assignment.lesson.subject.name,
+        dueDate: submission.assignment.dueDate,
         status:
-          assignment.dueDate < today
-            ? "overdue"
-            : assignment.dueDate <= twoWeeksFromNow
-              ? "due-soon"
-              : "upcoming",
+          submission.status === "SUBMITTED"
+            ? "submitted"
+            : submission.status === "LATE"
+              ? "late"
+              : submission.status === "MISSING"
+                ? "missing"
+                : submission.status === "EXCUSED"
+                  ? "excused"
+                  : submission.assignment.dueDate < today
+                    ? "overdue"
+                    : submission.assignment.dueDate <= twoWeeksFromNow
+                      ? "due-soon"
+                      : "upcoming",
       })),
     };
     const childAnnouncements = announcements.filter(

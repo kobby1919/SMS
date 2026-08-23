@@ -3,18 +3,20 @@
 // src/lib/actions/actions.ts
 
 import prisma from "@/src/lib/prisma";
-import { requireRole } from "@/src/lib/authz";
+import { AuthorizationError, requireRole } from "@/src/lib/authz";
 import { requireResourceAccess } from "@/src/lib/authz";
 import { assertSameSchool } from "@/src/lib/tenant";
 import { revalidatePath } from "next/cache";
 import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
+import { markHomeworkSubmission, syncHomeworkSubmissionsForAssignment } from "@/src/lib/services/homework";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   assignmentFormSchema,
   classCreateSchema,
   classUpdateSchema,
   examFormSchema,
+  homeworkSubmissionSchema,
   numericIdSchema,
   resultFormSchema,
   stringIdActionSchema,
@@ -327,6 +329,7 @@ export async function createAssignment(data: AssignmentFormData): Promise<void> 
   });
 
   const dueFmt = new Intl.DateTimeFormat("en-GH", { day: "numeric", month: "long", year: "numeric" }).format(new Date(parsed.dueDate));
+  await syncHomeworkSubmissionsForAssignment(assignment.id, ctx.schoolId);
 
   await prisma.announcement.create({
     data: {
@@ -348,6 +351,7 @@ export async function createAssignment(data: AssignmentFormData): Promise<void> 
     sourceModel: "Assignment",
     sourceId: String(assignment.id),
     sourceKey: `assignment:${assignment.id}:created`,
+    teacherId: ctx.role === "teacher" ? ctx.userId : null,
     occurredAt: new Date(),
     payload: {
       assignmentTitle: parsed.title,
@@ -389,6 +393,7 @@ export async function updateAssignment(data: AssignmentFormData): Promise<void> 
   });
 
   const dueFmt = new Intl.DateTimeFormat("en-GH", { day: "numeric", month: "long", year: "numeric" }).format(new Date(data.dueDate));
+  await syncHomeworkSubmissionsForAssignment(assignment.id, ctx.schoolId);
 
   const announcementData = {
     schoolId:    ctx.schoolId,
@@ -421,6 +426,7 @@ export async function updateAssignment(data: AssignmentFormData): Promise<void> 
     sourceModel: "Assignment",
     sourceId: String(assignment.id),
     sourceKey: `assignment:${assignment.id}:updated:${new Date(parsed.dueDate).getTime()}`,
+    teacherId: ctx.role === "teacher" ? ctx.userId : null,
     occurredAt: new Date(),
     payload: {
       assignmentTitle: parsed.title,
@@ -440,6 +446,79 @@ export async function deleteAssignment(id: number): Promise<void> {
   await prisma.assignment.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/assignments");
   revalidateDashboard(schoolId);
+}
+
+export type HomeworkSubmissionFormData = {
+  assignmentId: number;
+  studentId: string;
+  status: "PENDING" | "SUBMITTED" | "LATE" | "MISSING" | "EXCUSED";
+  submittedAt?: string | null;
+  note?: string | null;
+};
+
+export async function updateHomeworkSubmission(data: HomeworkSubmissionFormData): Promise<void> {
+  const parsed = parseActionInput(homeworkSubmissionSchema, data);
+  const ctx = await requireAdminOrTeacher();
+
+  const assignment = await prisma.assignment.findFirst({
+    where: { id: parsed.assignmentId, schoolId: ctx.schoolId },
+    include: {
+      lesson: {
+        select: {
+          teacherId: true,
+          classId: true,
+          subject: { select: { name: true } },
+          teacher: { select: { name: true, surname: true } },
+        },
+      },
+    },
+  });
+  const assignmentInSchool = requireResourceAccess(assignment, ctx);
+
+  if (ctx.role === "teacher" && assignmentInSchool.lesson.teacherId !== ctx.userId) {
+    throw new AuthorizationError("You can only update homework for your assigned lesson.", 403);
+  }
+
+  const submission = await markHomeworkSubmission({
+    schoolId: ctx.schoolId,
+    assignmentId: parsed.assignmentId,
+    studentId: parsed.studentId,
+    status: parsed.status,
+    checkedById: ctx.role === "teacher" ? ctx.userId : null,
+    submittedAt: parsed.submittedAt ? new Date(parsed.submittedAt) : null,
+    note: parsed.note ?? null,
+  });
+
+  const statusLabel = parsed.status.toLowerCase().replace(/_/g, " ");
+  await recordParentActivityEvents({
+    schoolId: ctx.schoolId,
+    studentIds: [parsed.studentId],
+    teacherId: ctx.role === "teacher" ? ctx.userId : assignmentInSchool.lesson.teacherId,
+    type: "ASSIGNMENT",
+    title: `${assignmentInSchool.lesson.subject.name} homework ${statusLabel}`,
+    body: [
+      `${assignmentInSchool.lesson.subject.name}: ${assignmentInSchool.title}`,
+      `Status: ${statusLabel}`,
+      `Teacher: ${assignmentInSchool.lesson.teacher.name} ${assignmentInSchool.lesson.teacher.surname}`,
+      parsed.note ? `Note: ${parsed.note}` : null,
+    ].filter(Boolean).join("\n"),
+    href: "/list/assignments",
+    sourceModel: "HomeworkSubmission",
+    sourceId: String(submission.id),
+    sourceKey: `homework-submission:${submission.id}`,
+    occurredAt: submission.checkedAt ?? new Date(),
+    payload: {
+      assignmentTitle: assignmentInSchool.title,
+      subjectName: assignmentInSchool.lesson.subject.name,
+      status: parsed.status,
+      note: parsed.note ?? null,
+    },
+  });
+
+  revalidatePath("/list/assignments");
+  revalidatePath("/parent");
+  revalidatePath("/parent/updates");
+  revalidateDashboard(ctx.schoolId);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

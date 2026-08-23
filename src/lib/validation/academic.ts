@@ -59,6 +59,14 @@ export const resultFormSchema = z.object({
   message: "Select an exam or assignment",
 });
 
+export const homeworkSubmissionSchema = z.object({
+  assignmentId: positiveIntSchema,
+  studentId: nonEmptyStringSchema,
+  status: z.enum(["PENDING", "SUBMITTED", "LATE", "MISSING", "EXCUSED"]),
+  submittedAt: isoDateStringSchema.nullable().optional(),
+  note: z.string().trim().max(500).nullable().optional(),
+});
+
 export const reportCardPdfQuerySchema = z.object({
   studentId: nonEmptyStringSchema,
   term: termSchema.default("TERM_2"),

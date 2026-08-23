@@ -258,6 +258,14 @@ enum ParentDeliveryStatus {
   SKIPPED
 }
 
+enum HomeworkSubmissionStatus {
+  PENDING
+  SUBMITTED
+  LATE
+  MISSING
+  EXCUSED
+}
+
 enum ParentSummaryCadence {
   DAILY
   WEEKLY
@@ -296,6 +304,7 @@ model School {
   lessons               Lesson[]
   exams                 Exam[]
   assignments           Assignment[]
+  homeworkSubmissions   HomeworkSubmission[]
   results               Result[]
   attendances           Attendance[]
   attendanceAuditLogs   AttendanceAuditLog[]
@@ -368,6 +377,7 @@ model Student {
   continuousAssessments ContinuousAssessment[]
   caActivityScores      CAActivityScore[]
   bills                 StudentBill[]
+  homeworkSubmissions   HomeworkSubmission[]
   parentNotifications   ParentNotification[]
   parentActivityEvents  ParentActivityEvent[]
   financeQueries        FinanceQuery[]
@@ -404,6 +414,7 @@ model Teacher {
   caBuckets             CABucket[]
   caActivities          CAActivity[]
   caActivityScores      CAActivityScore[]
+  checkedHomework       HomeworkSubmission[]    @relation("HomeworkCheckedBy")
   parentActivityEvents  ParentActivityEvent[]
   syllabusTopicProgress SyllabusTopicProgress[]
 
@@ -698,9 +709,39 @@ model Assignment {
   lessonId Int
   lesson   Lesson   @relation(fields: [lessonId], references: [id])
   results  Result[]
+  homeworkSubmissions HomeworkSubmission[]
 
   @@index([schoolId, dueDate])
   @@index([schoolId, lessonId])
+}
+
+model HomeworkSubmission {
+  id          Int                      @id @default(autoincrement())
+  status      HomeworkSubmissionStatus @default(PENDING)
+  submittedAt DateTime?
+  checkedAt   DateTime?
+  note        String?
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  assignmentId Int
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  checkedById String?
+  checkedBy   Teacher? @relation("HomeworkCheckedBy", fields: [checkedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, assignmentId, studentId])
+  @@index([schoolId, studentId, status])
+  @@index([schoolId, assignmentId, status])
+  @@index([schoolId, checkedAt])
+  @@index([schoolId, checkedById])
 }
 
 model Result {
