@@ -228,6 +228,12 @@ export async function syncParentNotificationsFromSources({
             month: "short",
             year: "numeric",
           })}.`,
+        payload: {
+          assignmentTitle: assignment.title,
+          subjectName: assignment.lesson.subject.name,
+          dueDate: assignment.dueDate.toISOString(),
+          status: "PENDING",
+        },
         href: "/list/assignments",
         occurredAt: assignment.dueDate,
         studentId: child.id,

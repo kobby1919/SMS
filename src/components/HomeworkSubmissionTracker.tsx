@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { CheckCircle2, Clock, Loader2, RotateCcw, XCircle } from "lucide-react";
-import { updateHomeworkSubmission } from "@/src/lib/actions/actions";
+import { updateHomeworkSubmission, updateHomeworkSubmissionsBulk } from "@/src/lib/actions/actions";
 
 type HomeworkStatus = "PENDING" | "SUBMITTED" | "LATE" | "MISSING" | "EXCUSED";
 
@@ -41,6 +41,7 @@ export default function HomeworkSubmissionTracker({
 }) {
   const [submissions, setSubmissions] = useState(initialSubmissions);
   const [activeStudentId, setActiveStudentId] = useState<string | null>(null);
+  const [bulkStatus, setBulkStatus] = useState<HomeworkStatus | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -91,6 +92,44 @@ export default function HomeworkSubmissionTracker({
     });
   };
 
+  const markPending = (nextStatus: HomeworkStatus) => {
+    const statusToSave =
+      nextStatus === "SUBMITTED" && new Date(dueDate) < new Date()
+        ? "LATE"
+        : nextStatus;
+
+    setBulkStatus(statusToSave);
+    setActiveStudentId(null);
+    setMessage(null);
+    setError(null);
+
+    startTransition(async () => {
+      try {
+        const result = await updateHomeworkSubmissionsBulk({
+          assignmentId,
+          status: statusToSave,
+          onlyPending: true,
+        });
+        setSubmissions((current) =>
+          current.map((submission) =>
+            submission.status === "PENDING"
+              ? { ...submission, status: statusToSave, checkedAt: new Date().toISOString() }
+              : submission,
+          ),
+        );
+        setMessage(
+          result.updated > 0
+            ? `${result.updated} pending record${result.updated === 1 ? "" : "s"} updated.`
+            : "No pending homework records to update.",
+        );
+      } catch (caught) {
+        setError(caught instanceof Error ? caught.message : "Could not update homework records.");
+      } finally {
+        setBulkStatus(null);
+      }
+    });
+  };
+
   if (submissions.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-3 text-xs font-semibold text-slate-400">
@@ -107,6 +146,24 @@ export default function HomeworkSubmissionTracker({
           <p className="text-xs font-semibold text-slate-500">
             {counts.SUBMITTED + counts.LATE} submitted · {counts.MISSING} missing · {counts.PENDING} pending
           </p>
+        </div>
+        <div className="flex flex-wrap gap-1">
+          <button
+            type="button"
+            disabled={isPending || counts.PENDING === 0}
+            onClick={() => markPending("SUBMITTED")}
+            className="rounded-lg bg-emerald-600 px-2.5 py-1.5 text-[11px] font-black text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {bulkStatus === "SUBMITTED" || bulkStatus === "LATE" ? "Saving..." : "Mark pending submitted"}
+          </button>
+          <button
+            type="button"
+            disabled={isPending || counts.PENDING === 0}
+            onClick={() => markPending("MISSING")}
+            className="rounded-lg bg-rose-50 px-2.5 py-1.5 text-[11px] font-black text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {bulkStatus === "MISSING" ? "Saving..." : "Mark pending missing"}
+          </button>
         </div>
         {(message || error) && (
           <p className={`text-xs font-bold ${error ? "text-rose-600" : "text-emerald-600"}`}>

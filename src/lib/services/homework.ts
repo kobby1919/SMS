@@ -117,3 +117,55 @@ export async function markHomeworkSubmission(params: {
     },
   });
 }
+
+export async function markHomeworkSubmissionsForAssignment(params: {
+  schoolId: string;
+  assignmentId: number;
+  status: HomeworkSubmissionStatus;
+  checkedById?: string | null;
+  submittedAt?: Date | null;
+  note?: string | null;
+  onlyPending?: boolean;
+}) {
+  const targetSubmissions = await prisma.homeworkSubmission.findMany({
+    where: {
+      schoolId: params.schoolId,
+      assignmentId: params.assignmentId,
+      ...(params.onlyPending === false ? {} : { status: "PENDING" }),
+    },
+    select: {
+      id: true,
+      studentId: true,
+    },
+  });
+
+  if (targetSubmissions.length === 0) return [];
+
+  const submissionIds = targetSubmissions.map((submission) => submission.id);
+  const now = new Date();
+
+  await prisma.homeworkSubmission.updateMany({
+    where: {
+      schoolId: params.schoolId,
+      id: { in: submissionIds },
+    },
+    data: {
+      status: params.status,
+      checkedById: params.checkedById ?? null,
+      submittedAt: params.submittedAt ?? null,
+      checkedAt: now,
+      note: params.note?.trim() || null,
+    },
+  });
+
+  return prisma.homeworkSubmission.findMany({
+    where: {
+      schoolId: params.schoolId,
+      id: { in: submissionIds },
+    },
+    include: {
+      student: { select: { id: true, name: true, surname: true } },
+    },
+    orderBy: [{ student: { surname: "asc" } }, { student: { name: "asc" } }],
+  });
+}

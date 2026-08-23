@@ -9,13 +9,18 @@ import { assertSameSchool } from "@/src/lib/tenant";
 import { revalidatePath } from "next/cache";
 import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
-import { markHomeworkSubmission, syncHomeworkSubmissionsForAssignment } from "@/src/lib/services/homework";
+import {
+  markHomeworkSubmission,
+  markHomeworkSubmissionsForAssignment,
+  syncHomeworkSubmissionsForAssignment,
+} from "@/src/lib/services/homework";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   assignmentFormSchema,
   classCreateSchema,
   classUpdateSchema,
   examFormSchema,
+  homeworkBulkSubmissionSchema,
   homeworkSubmissionSchema,
   numericIdSchema,
   resultFormSchema,
@@ -456,12 +461,11 @@ export type HomeworkSubmissionFormData = {
   note?: string | null;
 };
 
-export async function updateHomeworkSubmission(data: HomeworkSubmissionFormData): Promise<void> {
-  const parsed = parseActionInput(homeworkSubmissionSchema, data);
-  const ctx = await requireAdminOrTeacher();
+type AssignmentWithHomeworkAccess = NonNullable<Awaited<ReturnType<typeof getAssignmentForHomeworkAccess>>>;
 
-  const assignment = await prisma.assignment.findFirst({
-    where: { id: parsed.assignmentId, schoolId: ctx.schoolId },
+async function getAssignmentForHomeworkAccess(assignmentId: number, schoolId: string) {
+  return prisma.assignment.findFirst({
+    where: { id: assignmentId, schoolId },
     include: {
       lesson: {
         select: {
@@ -473,11 +477,24 @@ export async function updateHomeworkSubmission(data: HomeworkSubmissionFormData)
       },
     },
   });
-  const assignmentInSchool = requireResourceAccess(assignment, ctx);
+}
 
-  if (ctx.role === "teacher" && assignmentInSchool.lesson.teacherId !== ctx.userId) {
+function requireHomeworkTeacherAccess(
+  assignment: AssignmentWithHomeworkAccess,
+  ctx: Awaited<ReturnType<typeof requireAdminOrTeacher>>,
+) {
+  if (ctx.role === "teacher" && assignment.lesson.teacherId !== ctx.userId) {
     throw new AuthorizationError("You can only update homework for your assigned lesson.", 403);
   }
+}
+
+export async function updateHomeworkSubmission(data: HomeworkSubmissionFormData): Promise<void> {
+  const parsed = parseActionInput(homeworkSubmissionSchema, data);
+  const ctx = await requireAdminOrTeacher();
+
+  const assignment = await getAssignmentForHomeworkAccess(parsed.assignmentId, ctx.schoolId);
+  const assignmentInSchool = requireResourceAccess(assignment, ctx);
+  requireHomeworkTeacherAccess(assignmentInSchool, ctx);
 
   const submission = await markHomeworkSubmission({
     schoolId: ctx.schoolId,
@@ -519,6 +536,70 @@ export async function updateHomeworkSubmission(data: HomeworkSubmissionFormData)
   revalidatePath("/parent");
   revalidatePath("/parent/updates");
   revalidateDashboard(ctx.schoolId);
+}
+
+export type HomeworkBulkSubmissionFormData = {
+  assignmentId: number;
+  status: "PENDING" | "SUBMITTED" | "LATE" | "MISSING" | "EXCUSED";
+  onlyPending?: boolean;
+  note?: string | null;
+};
+
+export async function updateHomeworkSubmissionsBulk(data: HomeworkBulkSubmissionFormData): Promise<{ updated: number }> {
+  const parsed = parseActionInput(homeworkBulkSubmissionSchema, data);
+  const ctx = await requireAdminOrTeacher();
+  const assignment = await getAssignmentForHomeworkAccess(parsed.assignmentId, ctx.schoolId);
+  const assignmentInSchool = requireResourceAccess(assignment, ctx);
+  requireHomeworkTeacherAccess(assignmentInSchool, ctx);
+
+  const effectiveStatus = parsed.status === "SUBMITTED" && assignmentInSchool.dueDate < new Date()
+    ? "LATE"
+    : parsed.status;
+
+  const submissions = await markHomeworkSubmissionsForAssignment({
+    schoolId: ctx.schoolId,
+    assignmentId: parsed.assignmentId,
+    status: effectiveStatus,
+    checkedById: ctx.role === "teacher" ? ctx.userId : null,
+    submittedAt: effectiveStatus === "SUBMITTED" || effectiveStatus === "LATE" ? new Date() : null,
+    onlyPending: parsed.onlyPending,
+    note: parsed.note ?? null,
+  });
+
+  if (submissions.length > 0) {
+    const statusLabel = effectiveStatus.toLowerCase().replace(/_/g, " ");
+    await recordParentActivityEvents({
+      schoolId: ctx.schoolId,
+      studentIds: submissions.map((submission) => submission.studentId),
+      teacherId: ctx.role === "teacher" ? ctx.userId : assignmentInSchool.lesson.teacherId,
+      type: "ASSIGNMENT",
+      title: `${assignmentInSchool.lesson.subject.name} homework ${statusLabel}`,
+      body: [
+        `${assignmentInSchool.lesson.subject.name}: ${assignmentInSchool.title}`,
+        `Status: ${statusLabel}`,
+        `Teacher: ${assignmentInSchool.lesson.teacher.name} ${assignmentInSchool.lesson.teacher.surname}`,
+        parsed.note ? `Note: ${parsed.note}` : null,
+      ].filter(Boolean).join("\n"),
+      href: "/list/assignments",
+      sourceModel: "HomeworkSubmission",
+      sourceId: String(parsed.assignmentId),
+      sourceKey: `homework-submission-bulk:${parsed.assignmentId}:${effectiveStatus}:${Date.now()}`,
+      occurredAt: new Date(),
+      payload: {
+        assignmentTitle: assignmentInSchool.title,
+        subjectName: assignmentInSchool.lesson.subject.name,
+        status: effectiveStatus,
+        note: parsed.note ?? null,
+      },
+    });
+  }
+
+  revalidatePath("/list/assignments");
+  revalidatePath("/parent");
+  revalidatePath("/parent/updates");
+  revalidateDashboard(ctx.schoolId);
+
+  return { updated: submissions.length };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

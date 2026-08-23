@@ -67,6 +67,13 @@ export const homeworkSubmissionSchema = z.object({
   note: z.string().trim().max(500).nullable().optional(),
 });
 
+export const homeworkBulkSubmissionSchema = z.object({
+  assignmentId: positiveIntSchema,
+  status: z.enum(["PENDING", "SUBMITTED", "LATE", "MISSING", "EXCUSED"]),
+  onlyPending: z.boolean().optional().default(true),
+  note: z.string().trim().max(500).nullable().optional(),
+});
+
 export const reportCardPdfQuerySchema = z.object({
   studentId: nonEmptyStringSchema,
   term: termSchema.default("TERM_2"),
