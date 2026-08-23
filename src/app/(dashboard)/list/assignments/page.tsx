@@ -1,5 +1,6 @@
 // src/app/(dashboard)/list/assignments/page.tsx
 
+import { Fragment } from "react";
 import Pagination from "@/src/components/pagination";
 import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
@@ -12,6 +13,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
+import HomeworkSubmissionTracker from "@/src/components/HomeworkSubmissionTracker";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import type { Prisma } from "@/src/generated/prisma";
@@ -46,6 +48,9 @@ const AssignmentListPage = async ({
   const p = page ? parseInt(page) : 1;
   const activeTab = tab === "past" ? "past" : "upcoming";
   const now = new Date();
+  // Only TEACHERS can create/update/delete assignments and check homework.
+  // Admin has read-only oversight.
+  const canManage = role === "teacher";
 
   const lessonQuery: Prisma.LessonWhereInput = {};
 
@@ -92,6 +97,12 @@ const AssignmentListPage = async ({
               class: { select: { name: true } },
             },
           },
+          homeworkSubmissions: {
+            include: {
+              student: { select: { id: true, name: true, surname: true } },
+            },
+            orderBy: [{ student: { surname: "asc" } }, { student: { name: "asc" } }],
+          },
         },
         orderBy:
           activeTab === "upcoming" ? { dueDate: "asc" } : { dueDate: "desc" },
@@ -113,11 +124,6 @@ const AssignmentListPage = async ({
     ]);
 
   const totalCount = activeTab === "upcoming" ? upcomingCount : pastCount;
-
-  // ── Access rules ─────────────────────────────────────────────────────────
-  // Only TEACHERS can create/update/delete assignments
-  // Admin has read-only oversight — they should not give assignments
-  const canManage = role === "teacher";
 
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
@@ -277,72 +283,90 @@ const AssignmentListPage = async ({
                 </tr>
               ) : (
                 assignments.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="hover:bg-indigo-50/30 transition-colors group"
-                  >
-                    <td className="px-5 py-4">
-                      <p className="font-bold text-sm text-gray-800">
-                        {item.lesson.subject?.name}
-                      </p>
-                      <p className="text-[11px] text-gray-400 mt-0.5 truncate max-w-[200px]">
-                        {item.title}
-                      </p>
-                    </td>
-                    <td className="px-4 py-4 hidden sm:table-cell">
-                      <span className="text-xs font-bold px-2 py-1 bg-indigo-50 text-indigo-600 rounded-lg">
-                        {item.lesson.class.name}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 hidden md:table-cell">
-                      <span className="text-sm text-gray-500">
-                        {item.lesson.teacher.name} {item.lesson.teacher.surname}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 hidden md:table-cell">
-                      <span className="text-sm text-gray-400">
-                        {new Intl.DateTimeFormat("en-GH", {
-                          day: "numeric",
-                          month: "short",
-                        }).format(item.startDate)}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4">
-                      <span className="text-sm font-semibold text-gray-700">
-                        {new Intl.DateTimeFormat("en-GH", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        }).format(item.dueDate)}
-                      </span>
-                    </td>
-                    {activeTab === "upcoming" && (
-                      <td className="px-4 py-4">
-                        <span
-                          className={`text-[11px] font-black px-2.5 py-1 rounded-lg ${getCountdownColor(item.dueDate)}`}
-                        >
-                          {getCountdown(item.dueDate)}
+                  <Fragment key={item.id}>
+                    <tr className="hover:bg-indigo-50/30 transition-colors group">
+                      <td className="px-5 py-4">
+                        <p className="font-bold text-sm text-gray-800">
+                          {item.lesson.subject?.name}
+                        </p>
+                        <p className="text-[11px] text-gray-400 mt-0.5 truncate max-w-[200px]">
+                          {item.title}
+                        </p>
+                      </td>
+                      <td className="px-4 py-4 hidden sm:table-cell">
+                        <span className="text-xs font-bold px-2 py-1 bg-indigo-50 text-indigo-600 rounded-lg">
+                          {item.lesson.class.name}
                         </span>
                       </td>
-                    )}
-                    {canManage && (
-                      <td className="px-5 py-4 sticky right-0 bg-white group-hover:bg-indigo-50/30 transition-colors">
-                        <div className="flex items-center justify-end gap-2">
-                          {/* Pass lessonId explicitly so update form can pre-select */}
-                          <FormModal
-                            table="assignment"
-                            type="update"
-                            data={{ ...item, lessonId: item.lesson.id }}
-                          />
-                          <FormModal
-                            table="assignment"
-                            type="delete"
-                            id={item.id}
-                          />
-                        </div>
+                      <td className="px-4 py-4 hidden md:table-cell">
+                        <span className="text-sm text-gray-500">
+                          {item.lesson.teacher.name} {item.lesson.teacher.surname}
+                        </span>
                       </td>
+                      <td className="px-4 py-4 hidden md:table-cell">
+                        <span className="text-sm text-gray-400">
+                          {new Intl.DateTimeFormat("en-GH", {
+                            day: "numeric",
+                            month: "short",
+                          }).format(item.startDate)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <span className="text-sm font-semibold text-gray-700">
+                          {new Intl.DateTimeFormat("en-GH", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          }).format(item.dueDate)}
+                        </span>
+                      </td>
+                      {activeTab === "upcoming" && (
+                        <td className="px-4 py-4">
+                          <span
+                            className={`text-[11px] font-black px-2.5 py-1 rounded-lg ${getCountdownColor(item.dueDate)}`}
+                          >
+                            {getCountdown(item.dueDate)}
+                          </span>
+                        </td>
+                      )}
+                      {canManage && (
+                        <td className="px-5 py-4 sticky right-0 bg-white group-hover:bg-indigo-50/30 transition-colors">
+                          <div className="flex items-center justify-end gap-2">
+                            <FormModal
+                              table="assignment"
+                              type="update"
+                              data={{ ...item, lessonId: item.lesson.id }}
+                            />
+                            <FormModal
+                              table="assignment"
+                              type="delete"
+                              id={item.id}
+                            />
+                          </div>
+                        </td>
+                      )}
+                    </tr>
+                    {canManage && (
+                      <tr>
+                        <td
+                          colSpan={activeTab === "upcoming" ? 7 : 6}
+                          className="bg-white px-5 pb-4"
+                        >
+                          <HomeworkSubmissionTracker
+                            assignmentId={item.id}
+                            dueDate={item.dueDate.toISOString()}
+                            initialSubmissions={item.homeworkSubmissions.map((submission) => ({
+                              id: submission.id,
+                              status: submission.status,
+                              studentId: submission.studentId,
+                              studentName: `${submission.student.name} ${submission.student.surname}`,
+                              checkedAt: submission.checkedAt?.toISOString() ?? null,
+                            }))}
+                          />
+                        </td>
+                      </tr>
                     )}
-                  </tr>
+                  </Fragment>
                 ))
               )}
             </tbody>
