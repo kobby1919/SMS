@@ -16,6 +16,7 @@ import {
 } from "@/src/lib/services/homework";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
+  announcementFormSchema,
   assignmentFormSchema,
   classCreateSchema,
   classUpdateSchema,
@@ -53,6 +54,16 @@ export async function deleteLesson(id: number) {
   revalidatePath("/admin/timetable");
   revalidateReferenceData(schoolId, "timetable");
   revalidateDashboard(schoolId);
+}
+
+async function getClassInSchool(classId: number | null | undefined, schoolId: string) {
+  if (!classId) return null;
+  const klass = await prisma.class.findFirst({
+    where: { id: classId, schoolId },
+    select: { id: true, schoolId: true, name: true },
+  });
+  assertSameSchool(klass, schoolId);
+  return klass;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -178,6 +189,130 @@ export async function deleteStudent(id: string) {
   await prisma.student.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/students");
   revalidateReferenceData(schoolId, "students");
+  revalidateDashboard(schoolId);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ANNOUNCEMENT / NOTICE
+// ═══════════════════════════════════════════════════════════════════════════════
+export type AnnouncementFormData = {
+  id?: number;
+  title: string;
+  description: string;
+  date: string;
+  classId?: number | null;
+  priority?: "NORMAL" | "IMPORTANT" | "URGENT";
+  expiresAt?: string | null;
+};
+
+function noticePriorityLabel(priority: "NORMAL" | "IMPORTANT" | "URGENT") {
+  if (priority === "URGENT") return "Urgent";
+  if (priority === "IMPORTANT") return "Important";
+  return "Notice";
+}
+
+export async function createAnnouncement(data: AnnouncementFormData): Promise<void> {
+  const parsed = parseActionInput(announcementFormSchema, data);
+  const ctx = await requireAdmin();
+  const klass = await getClassInSchool(parsed.classId, ctx.schoolId);
+
+  const announcement = await prisma.announcement.create({
+    data: {
+      schoolId: ctx.schoolId,
+      title: parsed.title,
+      description: parsed.description,
+      date: new Date(parsed.date),
+      classId: klass?.id ?? null,
+      priority: parsed.priority,
+      expiresAt: parsed.expiresAt ? new Date(parsed.expiresAt) : null,
+    },
+  });
+
+  await recordParentActivityEvents({
+    schoolId: ctx.schoolId,
+    classId: announcement.classId,
+    type: "ANNOUNCEMENT",
+    title: `${noticePriorityLabel(announcement.priority)}: ${announcement.title}`,
+    body: [
+      announcement.description,
+      klass ? `Audience: ${klass.name}` : "Audience: Whole school",
+      `Priority: ${noticePriorityLabel(announcement.priority)}`,
+    ].join("\n"),
+    href: "/list/announcements",
+    sourceModel: "Announcement",
+    sourceId: String(announcement.id),
+    sourceKey: `announcement:${announcement.id}:${announcement.priority}`,
+    occurredAt: announcement.date,
+    payload: {
+      title: announcement.title,
+      audience: klass?.name ?? "Whole school",
+      priority: announcement.priority,
+      expiresAt: announcement.expiresAt?.toISOString() ?? null,
+    },
+  });
+
+  revalidatePath("/list/announcements");
+  revalidatePath("/parent");
+  revalidatePath("/parent/updates");
+  revalidateDashboard(ctx.schoolId);
+}
+
+export async function updateAnnouncement(data: AnnouncementFormData): Promise<void> {
+  if (!data.id) throw new Error("Announcement ID required for update.");
+  const parsed = parseActionInput(announcementFormSchema, data);
+  const ctx = await requireAdmin();
+  const existing = await prisma.announcement.findFirst({ where: { id: data.id, schoolId: ctx.schoolId } });
+  requireResourceAccess(existing, ctx);
+  const klass = await getClassInSchool(parsed.classId, ctx.schoolId);
+
+  const announcement = await prisma.announcement.update({
+    where: { id: data.id },
+    data: {
+      title: parsed.title,
+      description: parsed.description,
+      date: new Date(parsed.date),
+      classId: klass?.id ?? null,
+      priority: parsed.priority,
+      expiresAt: parsed.expiresAt ? new Date(parsed.expiresAt) : null,
+    },
+  });
+
+  await recordParentActivityEvents({
+    schoolId: ctx.schoolId,
+    classId: announcement.classId,
+    type: "ANNOUNCEMENT",
+    title: `${noticePriorityLabel(announcement.priority)} updated: ${announcement.title}`,
+    body: [
+      announcement.description,
+      klass ? `Audience: ${klass.name}` : "Audience: Whole school",
+      `Priority: ${noticePriorityLabel(announcement.priority)}`,
+    ].join("\n"),
+    href: "/list/announcements",
+    sourceModel: "Announcement",
+    sourceId: String(announcement.id),
+    sourceKey: `announcement:${announcement.id}:updated:${Date.now()}`,
+    occurredAt: new Date(),
+    payload: {
+      title: announcement.title,
+      audience: klass?.name ?? "Whole school",
+      priority: announcement.priority,
+      expiresAt: announcement.expiresAt?.toISOString() ?? null,
+    },
+  });
+
+  revalidatePath("/list/announcements");
+  revalidatePath("/parent");
+  revalidatePath("/parent/updates");
+  revalidateDashboard(ctx.schoolId);
+}
+
+export async function deleteAnnouncement(id: number): Promise<void> {
+  ({ id } = parseActionInput(numericIdSchema, { id }));
+  const { schoolId } = await requireAdmin();
+  await prisma.announcement.deleteMany({ where: { id, schoolId } });
+  revalidatePath("/list/announcements");
+  revalidatePath("/parent");
+  revalidatePath("/parent/updates");
   revalidateDashboard(schoolId);
 }
 

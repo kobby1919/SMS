@@ -49,6 +49,22 @@ export const assignmentFormSchema = z.object({
   dueDate: isoDateStringSchema,
 });
 
+export const announcementFormSchema = z.object({
+  id: positiveIntSchema.optional(),
+  title: nonEmptyStringSchema.max(140),
+  description: nonEmptyStringSchema.max(2000),
+  date: isoDateStringSchema,
+  classId: positiveIntSchema.nullable().optional(),
+  priority: z.enum(["NORMAL", "IMPORTANT", "URGENT"]).default("NORMAL"),
+  expiresAt: isoDateStringSchema.nullable().optional(),
+}).refine((data) => {
+  if (!data.expiresAt) return true;
+  return new Date(data.expiresAt) >= new Date(data.date);
+}, {
+  message: "Expiry date must be on or after the notice date.",
+  path: ["expiresAt"],
+});
+
 export const resultFormSchema = z.object({
   id: positiveIntSchema.optional(),
   score: z.coerce.number().int().min(0).max(100),

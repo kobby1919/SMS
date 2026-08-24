@@ -319,6 +319,26 @@ function buildHomeworkSummaryLines(events: SummaryEvent[]) {
   });
 }
 
+function buildNoticeSummaryLines(events: SummaryEvent[]) {
+  const noticeEvents = events.filter((event) => event.type === "ANNOUNCEMENT");
+  if (noticeEvents.length === 0) return [];
+
+  return noticeEvents.slice(0, 6).map((event) => {
+    const title = textFromPayload(event.payload, "title") ?? event.title;
+    const priority = textFromPayload(event.payload, "priority") ?? "NORMAL";
+    const audience = textFromPayload(event.payload, "audience");
+    const priorityLabel = priority === "URGENT" ? "Urgent" : priority === "IMPORTANT" ? "Important" : "Normal";
+    const bodyLine = event.body.split("\n").map((line) => line.trim()).filter(Boolean)[0];
+
+    return [
+      title,
+      bodyLine && bodyLine !== title ? bodyLine : null,
+      audience ? `Audience: ${audience}` : null,
+      `Priority: ${priorityLabel}`,
+    ].filter(Boolean).join("\n");
+  });
+}
+
 async function buildAcademicSummaryLines(
   _schoolId: string,
   events: SummaryEvent[],
@@ -507,10 +527,7 @@ async function rebuildParentSummary(input: {
   const academicLines = await buildAcademicSummaryLines(input.schoolId, uniqueEvents, periodLabel);
   const financeLines = await buildFinanceSummaryLines(input.schoolId, uniqueEvents);
   const homeworkLines = buildHomeworkSummaryLines(uniqueEvents);
-  const noticeLines = uniqueEvents
-    .filter((event) => event.type === "ANNOUNCEMENT")
-    .slice(0, 3)
-    .map((event) => event.body);
+  const noticeLines = buildNoticeSummaryLines(uniqueEvents);
   const attendanceLines = buildAttendanceSummaryLines(uniqueEvents, input.period);
   const summaryBits = [
     `${uniqueEvents.length} school update${uniqueEvents.length === 1 ? "" : "s"}`,

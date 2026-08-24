@@ -416,6 +416,8 @@ exports.Prisma.AnnouncementScalarFieldEnum = {
   title: 'title',
   description: 'description',
   date: 'date',
+  priority: 'priority',
+  expiresAt: 'expiresAt',
   schoolId: 'schoolId',
   classId: 'classId'
 };
@@ -872,6 +874,12 @@ exports.AttendanceFollowUpStatus = exports.$Enums.AttendanceFollowUpStatus = {
   PENDING_REASON: 'PENDING_REASON',
   REASON_PROVIDED: 'REASON_PROVIDED',
   RESOLVED: 'RESOLVED'
+};
+
+exports.AnnouncementPriority = exports.$Enums.AnnouncementPriority = {
+  NORMAL: 'NORMAL',
+  IMPORTANT: 'IMPORTANT',
+  URGENT: 'URGENT'
 };
 
 exports.CAActivityType = exports.$Enums.CAActivityType = {

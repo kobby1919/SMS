@@ -7,7 +7,13 @@ import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import { requirePageSession } from "@/src/lib/authz";
-import { ArrowUpDown, Filter, Megaphone } from "lucide-react";
+import { AlertTriangle, ArrowUpDown, Filter, Megaphone } from "lucide-react";
+
+const priorityMeta = {
+  NORMAL: { label: "Normal", className: "bg-slate-50 text-slate-600" },
+  IMPORTANT: { label: "Important", className: "bg-amber-50 text-amber-700" },
+  URGENT: { label: "Urgent", className: "bg-rose-50 text-rose-700" },
+} as const;
 
 const AnnouncementListPage = async ({
   searchParams,
@@ -34,17 +40,27 @@ const AnnouncementListPage = async ({
     }
   }
 
-   // ROLE CONDITIONS
-
-  const roleConditions = {
-    teacher: { lessons: { some: { teacherId: currentUserId! } } },
-    student: { students: { some: { id: currentUserId! } } },
-    parent: { students: { some: { parentId: currentUserId! } } },
-  };
   query.OR = [
-    { classId: null },
-    { class: roleConditions[role as keyof typeof roleConditions] || {} },
+    { expiresAt: null },
+    { expiresAt: { gte: new Date() } },
   ];
+
+  // ROLE CONDITIONS
+  if (role !== "admin") {
+    const roleConditions = {
+      teacher: { lessons: { some: { teacherId: currentUserId! } } },
+      student: { students: { some: { id: currentUserId! } } },
+      parent: { students: { some: { parentId: currentUserId! } } },
+    };
+    query.AND = [
+      {
+        OR: [
+          { classId: null },
+          { class: roleConditions[role as keyof typeof roleConditions] || {} },
+        ],
+      },
+    ];
+  }
 
 
   const [announcements, count] = await Promise.all([
@@ -53,6 +69,7 @@ const AnnouncementListPage = async ({
       include: {
         class: true,
       },
+      orderBy: [{ priority: "desc" }, { date: "desc" }],
       take: ITEM_PER_PAGE,
       skip: ITEM_PER_PAGE * (p - 1),
     }),
@@ -71,7 +88,7 @@ const AnnouncementListPage = async ({
               Announcements
             </h1>
             <p className="text-sm text-gray-400 mt-0.5 font-medium">
-              {count} announcements published
+              {count} active notice{count === 1 ? "" : "s"} published
             </p>
           </div>
 
@@ -135,19 +152,40 @@ const AnnouncementListPage = async ({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {announcements.map((item) => (
+              {announcements.map((item) => {
+                const meta = priorityMeta[item.priority];
+                const expired = item.expiresAt ? item.expiresAt < new Date() : false;
+                return (
                 <tr
                   key={item.id}
                   className="hover:bg-indigo-50/30 transition-colors duration-150 group"
                 >
                   <td className="px-5 py-4 font-bold text-sm text-gray-800">
-                    {item.title}
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        {item.priority === "URGENT" && <AlertTriangle size={14} className="text-rose-600" />}
+                        <span>{item.title}</span>
+                      </div>
+                      <p className="line-clamp-2 text-xs font-semibold text-gray-400">{item.description}</p>
+                    </div>
                   </td>
                   <td className="px-4 py-4 text-sm text-gray-500">
-                    {item.class?.name || "-"}
+                    <div className="flex flex-col gap-1">
+                      <span className="font-semibold">{item.class?.name || "Whole school"}</span>
+                      <span className={`w-fit rounded-full px-2 py-0.5 text-[10px] font-black ${meta.className}`}>
+                        {meta.label}
+                      </span>
+                    </div>
                   </td>
                   <td className="px-4 py-4 hidden md:table-cell text-sm text-gray-500">
-                    {new Intl.DateTimeFormat("en-US").format(item?.date)}
+                    <div className="flex flex-col">
+                      <span>{new Intl.DateTimeFormat("en-GH").format(item.date)}</span>
+                      {item.expiresAt && (
+                        <span className={`text-xs font-semibold ${expired ? "text-rose-500" : "text-gray-400"}`}>
+                          Expires {new Intl.DateTimeFormat("en-GH").format(item.expiresAt)}
+                        </span>
+                      )}
+                    </div>
                   </td>
                   
                   {/* ── CONDITIONALLY RENDER ACTIONS DATA CELL ── */}
@@ -168,7 +206,8 @@ const AnnouncementListPage = async ({
                     </td>
                   )}
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>

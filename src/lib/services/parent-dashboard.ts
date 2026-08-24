@@ -326,9 +326,12 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       where: {
         schoolId,
         date: { gte: thirtyDaysAgo },
-        OR: [{ classId: null }, { classId: { in: classIds } }],
+        AND: [
+          { OR: [{ classId: null }, { classId: { in: classIds } }] },
+          { OR: [{ expiresAt: null }, { expiresAt: { gte: today } }] },
+        ],
       },
-      orderBy: { date: "desc" },
+      orderBy: [{ priority: "desc" }, { date: "desc" }],
       take: 20,
     }),
     prisma.studentBill.findMany({

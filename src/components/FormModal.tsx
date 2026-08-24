@@ -15,6 +15,7 @@ import {
   deleteExam,
   deleteResult,
   deleteAssignment,
+  deleteAnnouncement,
 } from "@/src/lib/actions/actions";
 
 const Skeleton = () => (
@@ -49,6 +50,9 @@ const ResultForm = dynamic(() => import("./ResultForm"), {
   loading: () => <Skeleton />,
 });
 const AssignmentForm = dynamic(() => import("./AssignmentForm"), {
+  loading: () => <Skeleton />,
+});
+const AnnouncementForm = dynamic(() => import("./AnnouncementForm"), {
   loading: () => <Skeleton />,
 });
 
@@ -88,6 +92,9 @@ const forms: Record<
   assignment: (type, data, onSuccess) => (
     <AssignmentForm type={type} data={data as React.ComponentProps<typeof AssignmentForm>["data"]} onSuccess={onSuccess} />
   ),
+  announcement: (type, data, onSuccess) => (
+    <AnnouncementForm type={type} data={data as React.ComponentProps<typeof AnnouncementForm>["data"]} onSuccess={onSuccess} />
+  ),
 };
 
 // ─── Delete action registry ───────────────────────────────────────────────────
@@ -101,6 +108,7 @@ const deleteActions: Partial<Record<string, (id: number | string) => Promise<voi
   exam: (id) => deleteExam(Number(id)),
   result: (id) => deleteResult(Number(id)),
   assignment: (id) => deleteAssignment(Number(id)),
+  announcement: (id) => deleteAnnouncement(Number(id)),
 };
 
 // ─── Modal width per table ────────────────────────────────────────────────────
@@ -109,6 +117,7 @@ const modalWidths: Partial<Record<string, string>> = {
   exam: "max-w-[95%] md:max-w-[640px]",
   result: "max-w-[95%] md:max-w-[660px]",
   assignment: "max-w-[95%] md:max-w-[640px]",
+  announcement: "max-w-[95%] md:max-w-[680px]",
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────

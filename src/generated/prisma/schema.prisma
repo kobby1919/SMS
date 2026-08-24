@@ -258,6 +258,12 @@ enum ParentDeliveryStatus {
   SKIPPED
 }
 
+enum AnnouncementPriority {
+  NORMAL
+  IMPORTANT
+  URGENT
+}
+
 enum HomeworkSubmissionStatus {
   PENDING
   SUBMITTED
@@ -854,10 +860,12 @@ model Event {
 }
 
 model Announcement {
-  id          Int      @id @default(autoincrement())
+  id          Int                  @id @default(autoincrement())
   title       String
   description String
   date        DateTime
+  priority    AnnouncementPriority @default(NORMAL)
+  expiresAt   DateTime?
 
   schoolId String @default("default-school")
   school   School @relation(fields: [schoolId], references: [id])
@@ -867,6 +875,8 @@ model Announcement {
 
   @@index([schoolId, date])
   @@index([schoolId, classId])
+  @@index([schoolId, priority, date])
+  @@index([schoolId, expiresAt])
 }
 
 // ─── CA MODELS ───────────────────────────────────────────────────────────────

@@ -595,6 +595,15 @@ export const ParentDeliveryStatus: {
 export type ParentDeliveryStatus = (typeof ParentDeliveryStatus)[keyof typeof ParentDeliveryStatus]
 
 
+export const AnnouncementPriority: {
+  NORMAL: 'NORMAL',
+  IMPORTANT: 'IMPORTANT',
+  URGENT: 'URGENT'
+};
+
+export type AnnouncementPriority = (typeof AnnouncementPriority)[keyof typeof AnnouncementPriority]
+
+
 export const HomeworkSubmissionStatus: {
   PENDING: 'PENDING',
   SUBMITTED: 'SUBMITTED',
@@ -740,6 +749,10 @@ export const ParentDeliveryChannel: typeof $Enums.ParentDeliveryChannel
 export type ParentDeliveryStatus = $Enums.ParentDeliveryStatus
 
 export const ParentDeliveryStatus: typeof $Enums.ParentDeliveryStatus
+
+export type AnnouncementPriority = $Enums.AnnouncementPriority
+
+export const AnnouncementPriority: typeof $Enums.AnnouncementPriority
 
 export type HomeworkSubmissionStatus = $Enums.HomeworkSubmissionStatus
 
@@ -34531,6 +34544,8 @@ export namespace Prisma {
     title: string | null
     description: string | null
     date: Date | null
+    priority: $Enums.AnnouncementPriority | null
+    expiresAt: Date | null
     schoolId: string | null
     classId: number | null
   }
@@ -34540,6 +34555,8 @@ export namespace Prisma {
     title: string | null
     description: string | null
     date: Date | null
+    priority: $Enums.AnnouncementPriority | null
+    expiresAt: Date | null
     schoolId: string | null
     classId: number | null
   }
@@ -34549,6 +34566,8 @@ export namespace Prisma {
     title: number
     description: number
     date: number
+    priority: number
+    expiresAt: number
     schoolId: number
     classId: number
     _all: number
@@ -34570,6 +34589,8 @@ export namespace Prisma {
     title?: true
     description?: true
     date?: true
+    priority?: true
+    expiresAt?: true
     schoolId?: true
     classId?: true
   }
@@ -34579,6 +34600,8 @@ export namespace Prisma {
     title?: true
     description?: true
     date?: true
+    priority?: true
+    expiresAt?: true
     schoolId?: true
     classId?: true
   }
@@ -34588,6 +34611,8 @@ export namespace Prisma {
     title?: true
     description?: true
     date?: true
+    priority?: true
+    expiresAt?: true
     schoolId?: true
     classId?: true
     _all?: true
@@ -34684,6 +34709,8 @@ export namespace Prisma {
     title: string
     description: string
     date: Date
+    priority: $Enums.AnnouncementPriority
+    expiresAt: Date | null
     schoolId: string
     classId: number | null
     _count: AnnouncementCountAggregateOutputType | null
@@ -34712,6 +34739,8 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     date?: boolean
+    priority?: boolean
+    expiresAt?: boolean
     schoolId?: boolean
     classId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
@@ -34723,6 +34752,8 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     date?: boolean
+    priority?: boolean
+    expiresAt?: boolean
     schoolId?: boolean
     classId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
@@ -34734,6 +34765,8 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     date?: boolean
+    priority?: boolean
+    expiresAt?: boolean
     schoolId?: boolean
     classId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
@@ -34745,11 +34778,13 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     date?: boolean
+    priority?: boolean
+    expiresAt?: boolean
     schoolId?: boolean
     classId?: boolean
   }
 
-  export type AnnouncementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "date" | "schoolId" | "classId", ExtArgs["result"]["announcement"]>
+  export type AnnouncementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "date" | "priority" | "expiresAt" | "schoolId" | "classId", ExtArgs["result"]["announcement"]>
   export type AnnouncementInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     class?: boolean | Announcement$classArgs<ExtArgs>
@@ -34774,6 +34809,8 @@ export namespace Prisma {
       title: string
       description: string
       date: Date
+      priority: $Enums.AnnouncementPriority
+      expiresAt: Date | null
       schoolId: string
       classId: number | null
     }, ExtArgs["result"]["announcement"]>
@@ -35205,6 +35242,8 @@ export namespace Prisma {
     readonly title: FieldRef<"Announcement", 'String'>
     readonly description: FieldRef<"Announcement", 'String'>
     readonly date: FieldRef<"Announcement", 'DateTime'>
+    readonly priority: FieldRef<"Announcement", 'AnnouncementPriority'>
+    readonly expiresAt: FieldRef<"Announcement", 'DateTime'>
     readonly schoolId: FieldRef<"Announcement", 'String'>
     readonly classId: FieldRef<"Announcement", 'Int'>
   }
@@ -66159,6 +66198,8 @@ export namespace Prisma {
     title: 'title',
     description: 'description',
     date: 'date',
+    priority: 'priority',
+    expiresAt: 'expiresAt',
     schoolId: 'schoolId',
     classId: 'classId'
   };
@@ -66854,6 +66895,20 @@ export namespace Prisma {
    * Reference to a field of type 'AttendanceFollowUpStatus[]'
    */
   export type ListEnumAttendanceFollowUpStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AttendanceFollowUpStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'AnnouncementPriority'
+   */
+  export type EnumAnnouncementPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnnouncementPriority'>
+    
+
+
+  /**
+   * Reference to a field of type 'AnnouncementPriority[]'
+   */
+  export type ListEnumAnnouncementPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnnouncementPriority[]'>
     
 
 
@@ -69380,6 +69435,8 @@ export namespace Prisma {
     title?: StringFilter<"Announcement"> | string
     description?: StringFilter<"Announcement"> | string
     date?: DateTimeFilter<"Announcement"> | Date | string
+    priority?: EnumAnnouncementPriorityFilter<"Announcement"> | $Enums.AnnouncementPriority
+    expiresAt?: DateTimeNullableFilter<"Announcement"> | Date | string | null
     schoolId?: StringFilter<"Announcement"> | string
     classId?: IntNullableFilter<"Announcement"> | number | null
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
@@ -69391,6 +69448,8 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     date?: SortOrder
+    priority?: SortOrder
+    expiresAt?: SortOrderInput | SortOrder
     schoolId?: SortOrder
     classId?: SortOrderInput | SortOrder
     school?: SchoolOrderByWithRelationInput
@@ -69405,6 +69464,8 @@ export namespace Prisma {
     title?: StringFilter<"Announcement"> | string
     description?: StringFilter<"Announcement"> | string
     date?: DateTimeFilter<"Announcement"> | Date | string
+    priority?: EnumAnnouncementPriorityFilter<"Announcement"> | $Enums.AnnouncementPriority
+    expiresAt?: DateTimeNullableFilter<"Announcement"> | Date | string | null
     schoolId?: StringFilter<"Announcement"> | string
     classId?: IntNullableFilter<"Announcement"> | number | null
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
@@ -69416,6 +69477,8 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     date?: SortOrder
+    priority?: SortOrder
+    expiresAt?: SortOrderInput | SortOrder
     schoolId?: SortOrder
     classId?: SortOrderInput | SortOrder
     _count?: AnnouncementCountOrderByAggregateInput
@@ -69433,6 +69496,8 @@ export namespace Prisma {
     title?: StringWithAggregatesFilter<"Announcement"> | string
     description?: StringWithAggregatesFilter<"Announcement"> | string
     date?: DateTimeWithAggregatesFilter<"Announcement"> | Date | string
+    priority?: EnumAnnouncementPriorityWithAggregatesFilter<"Announcement"> | $Enums.AnnouncementPriority
+    expiresAt?: DateTimeNullableWithAggregatesFilter<"Announcement"> | Date | string | null
     schoolId?: StringWithAggregatesFilter<"Announcement"> | string
     classId?: IntNullableWithAggregatesFilter<"Announcement"> | number | null
   }
@@ -74075,6 +74140,8 @@ export namespace Prisma {
     title: string
     description: string
     date: Date | string
+    priority?: $Enums.AnnouncementPriority
+    expiresAt?: Date | string | null
     school?: SchoolCreateNestedOneWithoutAnnouncementsInput
     class?: ClassCreateNestedOneWithoutAnnouncementsInput
   }
@@ -74084,6 +74151,8 @@ export namespace Prisma {
     title: string
     description: string
     date: Date | string
+    priority?: $Enums.AnnouncementPriority
+    expiresAt?: Date | string | null
     schoolId?: string
     classId?: number | null
   }
@@ -74092,6 +74161,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    priority?: EnumAnnouncementPriorityFieldUpdateOperationsInput | $Enums.AnnouncementPriority
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     school?: SchoolUpdateOneRequiredWithoutAnnouncementsNestedInput
     class?: ClassUpdateOneWithoutAnnouncementsNestedInput
   }
@@ -74101,6 +74172,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    priority?: EnumAnnouncementPriorityFieldUpdateOperationsInput | $Enums.AnnouncementPriority
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     classId?: NullableIntFieldUpdateOperationsInput | number | null
   }
@@ -74110,6 +74183,8 @@ export namespace Prisma {
     title: string
     description: string
     date: Date | string
+    priority?: $Enums.AnnouncementPriority
+    expiresAt?: Date | string | null
     schoolId?: string
     classId?: number | null
   }
@@ -74118,6 +74193,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    priority?: EnumAnnouncementPriorityFieldUpdateOperationsInput | $Enums.AnnouncementPriority
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type AnnouncementUncheckedUpdateManyInput = {
@@ -74125,6 +74202,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    priority?: EnumAnnouncementPriorityFieldUpdateOperationsInput | $Enums.AnnouncementPriority
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
     classId?: NullableIntFieldUpdateOperationsInput | number | null
   }
@@ -78511,11 +78590,20 @@ export namespace Prisma {
     classId?: SortOrder
   }
 
+  export type EnumAnnouncementPriorityFilter<$PrismaModel = never> = {
+    equals?: $Enums.AnnouncementPriority | EnumAnnouncementPriorityFieldRefInput<$PrismaModel>
+    in?: $Enums.AnnouncementPriority[] | ListEnumAnnouncementPriorityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AnnouncementPriority[] | ListEnumAnnouncementPriorityFieldRefInput<$PrismaModel>
+    not?: NestedEnumAnnouncementPriorityFilter<$PrismaModel> | $Enums.AnnouncementPriority
+  }
+
   export type AnnouncementCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
     date?: SortOrder
+    priority?: SortOrder
+    expiresAt?: SortOrder
     schoolId?: SortOrder
     classId?: SortOrder
   }
@@ -78530,6 +78618,8 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     date?: SortOrder
+    priority?: SortOrder
+    expiresAt?: SortOrder
     schoolId?: SortOrder
     classId?: SortOrder
   }
@@ -78539,6 +78629,8 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     date?: SortOrder
+    priority?: SortOrder
+    expiresAt?: SortOrder
     schoolId?: SortOrder
     classId?: SortOrder
   }
@@ -78546,6 +78638,16 @@ export namespace Prisma {
   export type AnnouncementSumOrderByAggregateInput = {
     id?: SortOrder
     classId?: SortOrder
+  }
+
+  export type EnumAnnouncementPriorityWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AnnouncementPriority | EnumAnnouncementPriorityFieldRefInput<$PrismaModel>
+    in?: $Enums.AnnouncementPriority[] | ListEnumAnnouncementPriorityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AnnouncementPriority[] | ListEnumAnnouncementPriorityFieldRefInput<$PrismaModel>
+    not?: NestedEnumAnnouncementPriorityWithAggregatesFilter<$PrismaModel> | $Enums.AnnouncementPriority
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAnnouncementPriorityFilter<$PrismaModel>
+    _max?: NestedEnumAnnouncementPriorityFilter<$PrismaModel>
   }
 
   export type FloatFilter<$PrismaModel = never> = {
@@ -85352,6 +85454,10 @@ export namespace Prisma {
     connect?: ClassWhereUniqueInput
   }
 
+  export type EnumAnnouncementPriorityFieldUpdateOperationsInput = {
+    set?: $Enums.AnnouncementPriority
+  }
+
   export type SchoolUpdateOneRequiredWithoutAnnouncementsNestedInput = {
     create?: XOR<SchoolCreateWithoutAnnouncementsInput, SchoolUncheckedCreateWithoutAnnouncementsInput>
     connectOrCreate?: SchoolCreateOrConnectWithoutAnnouncementsInput
@@ -87318,6 +87424,23 @@ export namespace Prisma {
     _max?: NestedEnumAttendanceFollowUpStatusNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumAnnouncementPriorityFilter<$PrismaModel = never> = {
+    equals?: $Enums.AnnouncementPriority | EnumAnnouncementPriorityFieldRefInput<$PrismaModel>
+    in?: $Enums.AnnouncementPriority[] | ListEnumAnnouncementPriorityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AnnouncementPriority[] | ListEnumAnnouncementPriorityFieldRefInput<$PrismaModel>
+    not?: NestedEnumAnnouncementPriorityFilter<$PrismaModel> | $Enums.AnnouncementPriority
+  }
+
+  export type NestedEnumAnnouncementPriorityWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AnnouncementPriority | EnumAnnouncementPriorityFieldRefInput<$PrismaModel>
+    in?: $Enums.AnnouncementPriority[] | ListEnumAnnouncementPriorityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AnnouncementPriority[] | ListEnumAnnouncementPriorityFieldRefInput<$PrismaModel>
+    not?: NestedEnumAnnouncementPriorityWithAggregatesFilter<$PrismaModel> | $Enums.AnnouncementPriority
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAnnouncementPriorityFilter<$PrismaModel>
+    _max?: NestedEnumAnnouncementPriorityFilter<$PrismaModel>
+  }
+
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -88376,6 +88499,8 @@ export namespace Prisma {
     title: string
     description: string
     date: Date | string
+    priority?: $Enums.AnnouncementPriority
+    expiresAt?: Date | string | null
     class?: ClassCreateNestedOneWithoutAnnouncementsInput
   }
 
@@ -88384,6 +88509,8 @@ export namespace Prisma {
     title: string
     description: string
     date: Date | string
+    priority?: $Enums.AnnouncementPriority
+    expiresAt?: Date | string | null
     classId?: number | null
   }
 
@@ -89884,6 +90011,8 @@ export namespace Prisma {
     title?: StringFilter<"Announcement"> | string
     description?: StringFilter<"Announcement"> | string
     date?: DateTimeFilter<"Announcement"> | Date | string
+    priority?: EnumAnnouncementPriorityFilter<"Announcement"> | $Enums.AnnouncementPriority
+    expiresAt?: DateTimeNullableFilter<"Announcement"> | Date | string | null
     schoolId?: StringFilter<"Announcement"> | string
     classId?: IntNullableFilter<"Announcement"> | number | null
   }
@@ -96572,6 +96701,8 @@ export namespace Prisma {
     title: string
     description: string
     date: Date | string
+    priority?: $Enums.AnnouncementPriority
+    expiresAt?: Date | string | null
     school?: SchoolCreateNestedOneWithoutAnnouncementsInput
   }
 
@@ -96580,6 +96711,8 @@ export namespace Prisma {
     title: string
     description: string
     date: Date | string
+    priority?: $Enums.AnnouncementPriority
+    expiresAt?: Date | string | null
     schoolId?: string
   }
 
@@ -111522,6 +111655,8 @@ export namespace Prisma {
     title: string
     description: string
     date: Date | string
+    priority?: $Enums.AnnouncementPriority
+    expiresAt?: Date | string | null
     classId?: number | null
   }
 
@@ -112458,6 +112593,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    priority?: EnumAnnouncementPriorityFieldUpdateOperationsInput | $Enums.AnnouncementPriority
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     class?: ClassUpdateOneWithoutAnnouncementsNestedInput
   }
 
@@ -112466,6 +112603,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    priority?: EnumAnnouncementPriorityFieldUpdateOperationsInput | $Enums.AnnouncementPriority
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     classId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
@@ -112474,6 +112613,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    priority?: EnumAnnouncementPriorityFieldUpdateOperationsInput | $Enums.AnnouncementPriority
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     classId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
@@ -115418,6 +115559,8 @@ export namespace Prisma {
     title: string
     description: string
     date: Date | string
+    priority?: $Enums.AnnouncementPriority
+    expiresAt?: Date | string | null
     schoolId?: string
   }
 
@@ -115625,6 +115768,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    priority?: EnumAnnouncementPriorityFieldUpdateOperationsInput | $Enums.AnnouncementPriority
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     school?: SchoolUpdateOneRequiredWithoutAnnouncementsNestedInput
   }
 
@@ -115633,6 +115778,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    priority?: EnumAnnouncementPriorityFieldUpdateOperationsInput | $Enums.AnnouncementPriority
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -115641,6 +115788,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    priority?: EnumAnnouncementPriorityFieldUpdateOperationsInput | $Enums.AnnouncementPriority
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
   }
 

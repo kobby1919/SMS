@@ -130,6 +130,8 @@ export async function syncParentNotificationsFromSources({
     description: string;
     date: Date;
     classId: number | null;
+    priority?: "NORMAL" | "IMPORTANT" | "URGENT";
+    expiresAt?: Date | null;
   }>;
   bills: Array<{
     id: number;
@@ -248,13 +250,28 @@ export async function syncParentNotificationsFromSources({
           sourceModel: "Announcement",
           sourceId: String(announcement.id),
           type: "ANNOUNCEMENT" as const,
-          priority: "NORMAL" as const,
-          title: announcement.title,
-          body: announcement.description,
+          priority: announcement.priority === "URGENT" ? ("HIGH" as const) : announcement.priority === "IMPORTANT" ? ("NORMAL" as const) : ("LOW" as const),
+          title: announcement.priority === "URGENT"
+            ? `Urgent: ${announcement.title}`
+            : announcement.priority === "IMPORTANT"
+              ? `Important: ${announcement.title}`
+              : announcement.title,
+          body: [
+            announcement.description,
+            `Audience: ${announcement.classId === null ? "Whole school" : "Class notice"}`,
+            `Priority: ${announcement.priority === "URGENT" ? "Urgent" : announcement.priority === "IMPORTANT" ? "Important" : "Normal"}`,
+          ].join("\n"),
+          payload: {
+            title: announcement.title,
+            priority: announcement.priority ?? "NORMAL",
+            audience: announcement.classId === null ? "Whole school" : "Class notice",
+            expiresAt: announcement.expiresAt?.toISOString() ?? null,
+          },
           href: "/list/announcements",
           occurredAt: announcement.date,
           studentId: child.id,
-          shouldCreateNotification: true,
+          shouldCreateNotification: announcement.priority === "URGENT",
+          deliverImmediately: announcement.priority === "URGENT",
         })),
     ),
     ...bills.map((bill) => ({

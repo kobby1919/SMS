@@ -1,13 +1,20 @@
 import prisma from "@/src/lib/prisma";
 import { requirePageSession } from "@/src/lib/authz";
 import type { Prisma } from "@/src/generated/prisma";
-import { Megaphone } from "lucide-react";
+import Link from "next/link";
+import { AlertTriangle, Megaphone } from "lucide-react";
 
 const colorMap = [
   "bg-jaySkyLight border-l-4 border-jaySky",
   "bg-jayPurpleLight border-l-4 border-jayPurple",
   "bg-jayYellowLight border-l-4 border-jayYellow",
 ];
+
+const priorityMeta = {
+  NORMAL: { label: "Normal", className: "text-slate-500 bg-white" },
+  IMPORTANT: { label: "Important", className: "text-amber-700 bg-amber-50" },
+  URGENT: { label: "Urgent", className: "text-rose-700 bg-rose-50" },
+} as const;
 
 const Announcements = async () => {
   const { userId, role, schoolId } = await requirePageSession();
@@ -45,8 +52,18 @@ const Announcements = async () => {
   // admin: where = {} → fetches everything
 
   const announcements = await prisma.announcement.findMany({
-    where,
-    orderBy: { date: "desc" },
+    where: {
+      AND: [
+        where,
+        {
+          OR: [
+            { expiresAt: null },
+            { expiresAt: { gte: new Date() } },
+          ],
+        },
+      ],
+    },
+    orderBy: [{ priority: "desc" }, { date: "desc" }],
     take: 3,
     include: { class: { select: { name: true } } },
   });
@@ -58,7 +75,9 @@ const Announcements = async () => {
     <div className="bg-white p-5 rounded-2xl shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h1 className="font-nunito font-extrabold text-lg text-gray-800">Announcements</h1>
-        <span className="text-xs text-jayPurple font-semibold cursor-pointer hover:underline">View All</span>
+        <Link href="/list/announcements" className="text-xs text-jayPurple font-semibold hover:underline">
+          View All
+        </Link>
       </div>
 
       {announcements.length === 0 ? (
@@ -71,8 +90,14 @@ const Announcements = async () => {
           {announcements.map((a, i) => (
             <div key={a.id} className={`rounded-xl p-4 ${colorMap[i % colorMap.length]}`}>
               <div className="flex items-center justify-between mb-1 gap-2">
-                <h2 className="font-semibold text-sm text-gray-700 truncate">{a.title}</h2>
+                <h2 className="font-semibold text-sm text-gray-700 truncate flex items-center gap-1.5">
+                  {a.priority === "URGENT" && <AlertTriangle size={13} className="text-rose-600" />}
+                  {a.title}
+                </h2>
                 <div className="flex items-center gap-1.5 shrink-0">
+                  <span className={`text-[10px] font-semibold rounded-full px-2 py-0.5 ${priorityMeta[a.priority].className}`}>
+                    {priorityMeta[a.priority].label}
+                  </span>
                   {a.class && (
                     <span className="text-[10px] font-semibold text-jayPurple bg-white rounded-full px-2 py-0.5">
                       {a.class.name}
