@@ -330,7 +330,7 @@ function ParentActionCues({ cues }: { cues: (ParentActionCue & { childName?: str
   );
 }
 
-const ParentPage = async () => {
+export default async function Page() {
   const { userId, schoolId } = await requirePageSession(["parent"]);
   const [{ parent, childrenData, activityFeed, riskAlerts }, branding] = await Promise.all([
     getParentDashboardData(userId, schoolId),
@@ -379,6 +379,4 @@ const ParentPage = async () => {
       </section>
     </div>
   );
-};
-
-export default ParentPage;
+}
