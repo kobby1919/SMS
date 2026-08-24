@@ -8,6 +8,8 @@ import {
   Clock3,
   ClipboardList,
   Info,
+  Mail,
+  Phone,
   WalletCards,
 } from "lucide-react";
 import { requirePageSession } from "@/src/lib/authz";
@@ -70,6 +72,23 @@ function homeworkStatusMeta(status: string) {
       return { label: "Upcoming", className: "bg-slate-50 text-slate-600 ring-slate-100" };
     default:
       return { label: "Pending", className: "bg-slate-50 text-slate-600 ring-slate-100" };
+  }
+}
+
+function actionCueToneClass(tone: string) {
+  switch (tone) {
+    case "blue":
+      return "bg-sky-50 text-sky-800 ring-sky-100";
+    case "emerald":
+      return "bg-emerald-50 text-emerald-800 ring-emerald-100";
+    case "amber":
+      return "bg-amber-50 text-amber-800 ring-amber-100";
+    case "rose":
+      return "bg-rose-50 text-rose-800 ring-rose-100";
+    case "violet":
+      return "bg-violet-50 text-violet-800 ring-violet-100";
+    default:
+      return "bg-slate-50 text-slate-700 ring-slate-100";
   }
 }
 
@@ -165,7 +184,26 @@ export default async function ParentChildCheckupPage({
         </div>
       </section>
 
-      <section className="rounded-2xl border border-sky-100 bg-sky-50/70 p-4 shadow-sm">
+      {child.actionCues.length > 0 && (
+        <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-sm font-black text-gray-900">Suggested next steps</h2>
+              <p className="mt-1 text-xs font-semibold text-gray-400">Simple actions based on what the school has recorded.</p>
+            </div>
+          </div>
+          <div className="mt-3 grid gap-2 md:grid-cols-2">
+            {child.actionCues.map((cue) => (
+              <Link key={cue.id} href={cue.href} className={`rounded-xl p-3 text-sm ring-1 transition hover:scale-[1.01] ${actionCueToneClass(cue.tone)}`}>
+                <p className="font-black">{cue.label}</p>
+                <p className="mt-1 text-xs font-semibold leading-relaxed opacity-80">{cue.detail}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section id="academics" className="rounded-2xl border border-sky-100 bg-sky-50/70 p-4 shadow-sm">
         <div className="flex items-start justify-between gap-3">
           <div>
             <h2 className="text-sm font-black text-slate-900">Current CA by subject</h2>
@@ -207,7 +245,7 @@ export default async function ParentChildCheckupPage({
       </section>
 
       <section className="grid gap-3 md:grid-cols-2">
-        <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+        <div id="attendance" className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
           <div className="flex items-start justify-between gap-3">
             <div>
               <h2 className="text-sm font-black text-gray-900">Attendance</h2>
@@ -318,7 +356,7 @@ export default async function ParentChildCheckupPage({
       </section>
 
       <section className="grid gap-3 md:grid-cols-2">
-        <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+        <div id="homework" className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
           <div className="flex items-start justify-between gap-3">
             <div>
               <h2 className="text-sm font-black text-gray-900">Homework</h2>
@@ -354,6 +392,47 @@ export default async function ParentChildCheckupPage({
           )}
         </div>
 
+        <div id="teachers" className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+          <h2 className="text-sm font-black text-gray-900">Teacher contacts</h2>
+          <p className="mt-1 text-xs font-semibold text-gray-400">Use these when the school has shared a contact for this ward&apos;s teachers.</p>
+          {child.communicationSummary.teacherContacts.length > 0 ? (
+            <div className="mt-3 space-y-2">
+              {child.communicationSummary.teacherContacts.map((teacher) => (
+                <div key={teacher.id} className="rounded-xl bg-slate-50 px-3 py-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-black text-gray-900">{teacher.name}</p>
+                      <p className="mt-1 text-xs font-semibold text-gray-500">
+                        {teacher.subjectNames.join(", ")}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 flex-wrap gap-2">
+                      {teacher.phone && (
+                        <a href={`tel:${teacher.phone}`} className="inline-flex items-center gap-1 rounded-lg bg-white px-2.5 py-1.5 text-xs font-black text-emerald-700 ring-1 ring-emerald-100">
+                          <Phone size={13} />
+                          Call
+                        </a>
+                      )}
+                      {teacher.email && (
+                        <a href={`mailto:${teacher.email}`} className="inline-flex items-center gap-1 rounded-lg bg-white px-2.5 py-1.5 text-xs font-black text-sky-700 ring-1 ring-sky-100">
+                          <Mail size={13} />
+                          Email
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-3 rounded-xl bg-slate-50 px-3 py-3 text-sm font-semibold text-gray-400">
+              Teacher contacts have not been shared yet. Please contact the school office.
+            </p>
+          )}
+        </div>
+      </section>
+
+      <section className="grid gap-3 md:grid-cols-2">
         <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
           <h2 className="text-sm font-black text-gray-900">Recent activity</h2>
           {recentItems.length > 0 ? (

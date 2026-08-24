@@ -11,6 +11,7 @@ import {
 import { requirePageSession } from "@/src/lib/authz";
 import {
   getParentDashboardData,
+  type ParentActionCue,
   type ParentActivityFeedItem,
   type ParentRiskAlert,
 } from "@/src/lib/services/parent-dashboard";
@@ -62,6 +63,23 @@ function getPreviewLines(summary?: ParentActivityFeedItem) {
     .map((line) => line.trim())
     .filter(Boolean)
     .slice(0, 3);
+}
+
+function actionCueToneClass(tone: string) {
+  switch (tone) {
+    case "blue":
+      return "bg-sky-50 text-sky-800 ring-sky-100";
+    case "emerald":
+      return "bg-emerald-50 text-emerald-800 ring-emerald-100";
+    case "amber":
+      return "bg-amber-50 text-amber-800 ring-amber-100";
+    case "rose":
+      return "bg-rose-50 text-rose-800 ring-rose-100";
+    case "violet":
+      return "bg-violet-50 text-violet-800 ring-violet-100";
+    default:
+      return "bg-slate-50 text-slate-700 ring-slate-100";
+  }
 }
 
 function formatGHS(amount: number) {
@@ -293,6 +311,25 @@ function UrgentAlerts({ alerts }: { alerts: ParentRiskAlert[] }) {
   );
 }
 
+function ParentActionCues({ cues }: { cues: (ParentActionCue & { childName?: string })[] }) {
+  if (cues.length === 0) return null;
+
+  return (
+    <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+      <h2 className="text-sm font-black text-gray-900">What to do next</h2>
+      <p className="mt-1 text-xs font-semibold text-gray-400">A short action list based on today&apos;s school records.</p>
+      <div className="mt-3 grid gap-2 md:grid-cols-2">
+        {cues.slice(0, 4).map((cue) => (
+          <Link key={cue.id} href={cue.href} className={`rounded-xl p-3 ring-1 transition hover:scale-[1.01] ${actionCueToneClass(cue.tone)}`}>
+            <p className="text-sm font-black">{cue.childName ? `${cue.childName}: ${cue.label}` : cue.label}</p>
+            <p className="mt-1 text-xs font-semibold leading-relaxed opacity-80">{cue.detail}</p>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 const ParentPage = async () => {
   const { userId, schoolId } = await requirePageSession(["parent"]);
   const [{ parent, childrenData, activityFeed, riskAlerts }, branding] = await Promise.all([
@@ -301,6 +338,12 @@ const ParentPage = async () => {
   ]);
   const childCount = parent?.students.length ?? 0;
   const parentName = parent ? `${parent.name} ${parent.surname}` : "Parent";
+  const actionCues = childrenData.flatMap((child) =>
+    child.actionCues.map((cue) => ({
+      ...cue,
+      childName: `${child.name} ${child.surname}`,
+    })),
+  );
 
   return (
     <div className="flex flex-col gap-5 p-4">
@@ -314,6 +357,7 @@ const ParentPage = async () => {
 
       <TodayUpdateCard items={activityFeed} schoolName={branding.displayName} />
       <UrgentAlerts alerts={riskAlerts} />
+      <ParentActionCues cues={actionCues} />
       <ChildrenSnapshot childrenData={childrenData} />
 
       <section className="grid gap-3 sm:grid-cols-3">

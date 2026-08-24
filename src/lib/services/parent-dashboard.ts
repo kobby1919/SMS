@@ -48,6 +48,14 @@ export type ParentRiskAlert = {
   href: string;
 };
 
+export type ParentActionCue = {
+  id: string;
+  label: string;
+  detail: string;
+  href: string;
+  tone: "blue" | "emerald" | "amber" | "rose" | "violet" | "slate";
+};
+
 export type ParentFinanceSummary = {
   totalBilled: number;
   totalPaid: number;
@@ -77,6 +85,13 @@ export type ParentHomeworkSummary = {
 
 export type ParentCommunicationSummary = {
   teacherNames: string[];
+  teacherContacts: {
+    id: string;
+    name: string;
+    subjectNames: string[];
+    phone?: string | null;
+    email?: string | null;
+  }[];
   latestAnnouncement?: {
     title: string;
     date: Date;
@@ -242,7 +257,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       where: { schoolId, classId: { in: classIds } },
       include: {
         subject: { select: { id: true, name: true } },
-        teacher: { select: { name: true, surname: true } },
+        teacher: { select: { id: true, name: true, surname: true, phone: true, email: true } },
       },
       orderBy: [{ day: "asc" }, { startTime: "asc" }],
     }),
@@ -252,7 +267,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
         lesson: {
           include: {
             subject: { select: { name: true } },
-            teacher: { select: { name: true, surname: true } },
+            teacher: { select: { name: true, surname: true, phone: true, email: true } },
           },
         },
       },
@@ -436,10 +451,27 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     paymentsByStudent.set(payment.studentBill.studentId, rows);
   }
   const teacherNamesByClass = new Map<number, Set<string>>();
+  const teacherContactsByClass = new Map<
+    number,
+    Map<string, { id: string; name: string; subjectNames: Set<string>; phone?: string | null; email?: string | null }>
+  >();
   for (const lesson of lessons) {
     const rows = teacherNamesByClass.get(lesson.classId) ?? new Set<string>();
-    rows.add(`${lesson.teacher.name} ${lesson.teacher.surname}`);
+    const teacherName = `${lesson.teacher.name} ${lesson.teacher.surname}`;
+    rows.add(teacherName);
     teacherNamesByClass.set(lesson.classId, rows);
+
+    const classContacts = teacherContactsByClass.get(lesson.classId) ?? new Map();
+    const teacher = classContacts.get(lesson.teacher.id) ?? {
+      id: lesson.teacher.id,
+      name: teacherName,
+      subjectNames: new Set<string>(),
+      phone: lesson.teacher.phone,
+      email: lesson.teacher.email,
+    };
+    teacher.subjectNames.add(lesson.subject.name);
+    classContacts.set(lesson.teacher.id, teacher);
+    teacherContactsByClass.set(lesson.classId, classContacts);
   }
 
   const activityFeed = await syncParentNotificationsFromSources({
@@ -715,6 +747,15 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     );
     const communicationSummary: ParentCommunicationSummary = {
       teacherNames: Array.from(teacherNamesByClass.get(child.classId) ?? []).slice(0, 4),
+      teacherContacts: Array.from(teacherContactsByClass.get(child.classId)?.values() ?? [])
+        .map((teacher) => ({
+          id: teacher.id,
+          name: teacher.name,
+          subjectNames: Array.from(teacher.subjectNames).sort(),
+          phone: teacher.phone,
+          email: teacher.email,
+        }))
+        .slice(0, 6),
       latestAnnouncement: childAnnouncements[0]
         ? { title: childAnnouncements[0].title, date: childAnnouncements[0].date }
         : undefined,
@@ -810,6 +851,64 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
           }]
         : []),
     ];
+    const actionCues: ParentActionCue[] = [
+      ...(todayAttendance.length === 0
+        ? [{
+            id: `attendance-pending-${child.id}`,
+            label: "Check attendance later",
+            detail: "Attendance has not been marked today yet.",
+            href: `/parent/children/${child.id}`,
+            tone: "slate" as const,
+          }]
+        : []),
+      ...(weeklyLate >= 2 || streak >= 2
+        ? [{
+            id: `attendance-contact-${child.id}`,
+            label: "Contact class teacher",
+            detail: weeklyLate >= 2
+              ? `${child.name} has been late ${weeklyLate} times in the last 7 days.`
+              : `${child.name} has repeated absence needing follow-up.`,
+            href: `/parent/children/${child.id}#teachers`,
+            tone: "amber" as const,
+          }]
+        : []),
+      ...(academicProgress.focusSubjects.length > 0
+        ? [{
+            id: `academic-support-${child.id}`,
+            label: "Review academic support",
+            detail: `${child.name} may need help in ${academicProgress.focusSubjects.map((subject) => subject.subjectName).join(", ")}.`,
+            href: `/parent/children/${child.id}#academics`,
+            tone: "blue" as const,
+          }]
+        : []),
+      ...(homeworkSummary.overdue + homeworkSummary.missing > 0
+        ? [{
+            id: `homework-followup-${child.id}`,
+            label: "Follow up on homework",
+            detail: `${homeworkSummary.overdue + homeworkSummary.missing} homework item${homeworkSummary.overdue + homeworkSummary.missing === 1 ? "" : "s"} need attention.`,
+            href: `/parent/children/${child.id}#homework`,
+            tone: "violet" as const,
+          }]
+        : []),
+      ...(financeSummary.outstanding > 0
+        ? [{
+            id: `fees-action-${child.id}`,
+            label: "Review fees",
+            detail: `Outstanding balance is GHS ${financeSummary.outstanding.toFixed(2)}.`,
+            href: "/parent/finance",
+            tone: "amber" as const,
+          }]
+        : []),
+      ...(childAnnouncements.some((announcement) => announcement.priority === "URGENT")
+        ? [{
+            id: `urgent-notice-${child.id}`,
+            label: "Read urgent notice",
+            detail: "There is an urgent school notice for this ward.",
+            href: "/parent/updates",
+            tone: "rose" as const,
+          }]
+        : []),
+    ].slice(0, 5);
 
     return {
       id: child.id,
@@ -848,6 +947,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       communicationSummary,
       weeklyDigest,
       trustScore,
+      actionCues,
       riskAlerts,
       activityFeed: activityFeed.filter((item) => !item.childId || item.childId === child.id).slice(0, 8),
     };
