@@ -44,7 +44,9 @@ function formatSummaryDate(date: Date) {
 function uniqueEventsBySource<T extends { type: string; body: string; sourceModel: string; sourceId: string; sourceKey?: string }>(events: T[]) {
   const seen = new Set<string>();
   return events.filter((event) => {
-    const key = event.sourceKey || `${event.sourceModel}:${event.sourceId}` || `${event.type}:${event.body}`;
+    const key = event.type === "ATTENDANCE" && event.sourceModel === "Attendance"
+      ? `${event.sourceModel}:${event.sourceId}`
+      : event.sourceKey || `${event.sourceModel}:${event.sourceId}` || `${event.type}:${event.body}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;

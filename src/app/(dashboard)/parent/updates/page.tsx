@@ -93,6 +93,9 @@ function eventDedupeKey(event: {
   sourceId: string;
   sourceKey?: string;
 }) {
+  if (event.type === "ATTENDANCE" && event.sourceModel === "Attendance") {
+    return `${event.sourceModel}:${event.sourceId}`;
+  }
   return event.sourceKey || `${event.sourceModel}:${event.sourceId}` || `${event.type}:${event.body}`;
 }
 

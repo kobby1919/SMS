@@ -167,6 +167,12 @@ export async function saveAttendance({
 }) {
   const attendanceDate = new Date(date);
   attendanceDate.setHours(12, 0, 0, 0);
+  const dayStart = new Date(attendanceDate);
+  dayStart.setHours(0, 0, 0, 0);
+  const dayEnd = new Date(attendanceDate);
+  dayEnd.setHours(23, 59, 59, 999);
+  const attendanceDayKey = dayStart.toISOString().slice(0, 10);
+  const attendanceEventBaseKey = `attendance:${lessonId}:${attendanceDayKey}`;
   const studentIds = [...new Set(records.map((record) => record.studentId))];
 
   if (studentIds.length !== records.length) {
@@ -213,80 +219,104 @@ export async function saveAttendance({
     where: {
       schoolId,
       lessonId,
-      date: attendanceDate,
+      date: { gte: dayStart, lte: dayEnd },
       studentId: { in: studentIds },
     },
+    orderBy: [
+      { updatedAt: "desc" },
+      { id: "desc" },
+    ],
   });
-  const existingByStudent = new Map(existingRecords.map((record) => [record.studentId, record]));
+  const existingByStudent = new Map<string, typeof existingRecords[number]>();
+  const duplicateAttendanceIds: number[] = [];
+  for (const record of existingRecords) {
+    if (!existingByStudent.has(record.studentId)) {
+      existingByStudent.set(record.studentId, record);
+    } else {
+      duplicateAttendanceIds.push(record.id);
+    }
+  }
 
   await prisma.$transaction(
-    cleanedRecords.flatMap((record) => {
-      const existing = existingByStudent.get(record.studentId);
-      const nextData = {
-        schoolId,
-        studentId: record.studentId,
-        lessonId,
-        date: attendanceDate,
-        status: record.status,
-        present: record.status === "PRESENT",
-        note: record.note,
-        arrivalTime: record.arrivalTime,
-        followUpStatus: record.followUpStatus,
-      };
+    [
+      ...(duplicateAttendanceIds.length
+        ? [
+            prisma.attendance.deleteMany({
+              where: {
+                schoolId,
+                id: { in: duplicateAttendanceIds },
+              },
+            }),
+      ]
+        : []),
+      ...cleanedRecords.flatMap((record) => {
+        const existing = existingByStudent.get(record.studentId);
+        const nextData = {
+          schoolId,
+          studentId: record.studentId,
+          lessonId,
+          date: attendanceDate,
+          status: record.status,
+          present: record.status === "PRESENT",
+          note: record.note,
+          arrivalTime: record.arrivalTime,
+          followUpStatus: record.followUpStatus,
+        };
 
-      if (!existing) {
+        if (!existing) {
+          return [
+            prisma.attendance.create({ data: nextData }),
+          ];
+        }
+
+        const changed = existing.status !== record.status ||
+          (existing.note ?? null) !== record.note ||
+          (existing.arrivalTime ?? null) !== record.arrivalTime ||
+          existing.followUpStatus !== record.followUpStatus;
+
+        if (!changed) return [];
+
         return [
-          prisma.attendance.create({ data: nextData }),
+          prisma.attendance.update({
+            where: { id: existing.id },
+            data: {
+              status: record.status,
+              present: record.status === "PRESENT",
+              note: record.note,
+              arrivalTime: record.arrivalTime,
+              followUpStatus: record.followUpStatus,
+              correctionCount: { increment: 1 },
+              lastCorrectedAt: new Date(),
+            },
+          }),
+          prisma.attendanceAuditLog.create({
+            data: {
+              schoolId,
+              attendanceId: existing.id,
+              studentId: record.studentId,
+              lessonId,
+              actorId,
+              action: selectedDay < today ? "PAST_ATTENDANCE_CORRECTED" : "ATTENDANCE_CORRECTED",
+              previousStatus: existing.status,
+              newStatus: record.status,
+              previousNote: existing.note,
+              newNote: record.note,
+              previousArrivalTime: existing.arrivalTime,
+              newArrivalTime: record.arrivalTime,
+              previousFollowUp: existing.followUpStatus,
+              newFollowUp: record.followUpStatus,
+              reason: record.note ?? "No note provided.",
+            },
+          }),
         ];
-      }
-
-      const changed = existing.status !== record.status ||
-        (existing.note ?? null) !== record.note ||
-        (existing.arrivalTime ?? null) !== record.arrivalTime ||
-        existing.followUpStatus !== record.followUpStatus;
-
-      if (!changed) return [];
-
-      return [
-        prisma.attendance.update({
-          where: { id: existing.id },
-          data: {
-            status: record.status,
-            present: record.status === "PRESENT",
-            note: record.note,
-            arrivalTime: record.arrivalTime,
-            followUpStatus: record.followUpStatus,
-            correctionCount: { increment: 1 },
-            lastCorrectedAt: new Date(),
-          },
-        }),
-        prisma.attendanceAuditLog.create({
-          data: {
-            schoolId,
-            attendanceId: existing.id,
-            studentId: record.studentId,
-            lessonId,
-            actorId,
-            action: selectedDay < today ? "PAST_ATTENDANCE_CORRECTED" : "ATTENDANCE_CORRECTED",
-            previousStatus: existing.status,
-            newStatus: record.status,
-            previousNote: existing.note,
-            newNote: record.note,
-            previousArrivalTime: existing.arrivalTime,
-            newArrivalTime: record.arrivalTime,
-            previousFollowUp: existing.followUpStatus,
-            newFollowUp: record.followUpStatus,
-            reason: record.note ?? "No note provided.",
-          },
-        }),
-      ];
-    }),
+      }),
+    ],
   );
   const savedAttendanceRows = await prisma.attendance.findMany({
     where: {
       schoolId,
       lessonId,
-      date: attendanceDate,
+      date: { gte: dayStart, lte: dayEnd },
       studentId: { in: studentIds },
     },
     select: { id: true, studentId: true },
@@ -304,13 +334,28 @@ export async function saveAttendance({
 
   if (lessonForEvent) {
     const teacherName = `${lessonForEvent.teacher.name} ${lessonForEvent.teacher.surname}`;
-    const attendanceSourceKeys = savedAttendanceRows.map((row) => `attendance:${row.id}`);
+    const attendanceSourceKeys = studentIds.map((studentId) => `${attendanceEventBaseKey}:${studentId}`);
     await prisma.parentActivityEvent.deleteMany({
       where: {
         schoolId,
         type: "ATTENDANCE",
         sourceModel: "Attendance",
-        sourceKey: { in: attendanceSourceKeys },
+        OR: [
+          { sourceKey: { in: attendanceSourceKeys } },
+          { sourceId: { in: savedAttendanceRows.map((row) => String(row.id)) } },
+        ],
+        studentId: { in: studentIds },
+      },
+    });
+    await prisma.parentNotification.deleteMany({
+      where: {
+        schoolId,
+        type: "ATTENDANCE",
+        sourceModel: "Attendance",
+        OR: [
+          { sourceKey: { in: attendanceSourceKeys } },
+          { sourceId: { in: savedAttendanceRows.map((row) => String(row.id)) } },
+        ],
         studentId: { in: studentIds },
       },
     });
@@ -343,7 +388,7 @@ export async function saveAttendance({
           href: "/parent/updates",
           sourceModel: "Attendance",
           sourceId: String(attendanceId),
-          sourceKey: `attendance:${attendanceId}`,
+          sourceKey: attendanceEventBaseKey,
           occurredAt: attendanceDate,
           payload: {
             studentName,

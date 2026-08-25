@@ -90,6 +90,7 @@ export async function syncParentNotificationsFromSources({
   attendance: Array<{
     id: number;
     studentId: string;
+    lessonId: number;
     status: string;
     note: string | null;
     arrivalTime?: string | null;
@@ -179,8 +180,11 @@ export async function syncParentNotificationsFromSources({
         ? `${record.lesson.teacher.name} ${record.lesson.teacher.surname}`
         : null;
       const note = record.note ?? (record.status === "ABSENT" ? "No reason provided yet." : null);
+      const attendanceDay = new Date(record.date);
+      attendanceDay.setHours(0, 0, 0, 0);
+      const attendanceSourceKey = `attendance:${record.lessonId}:${attendanceDay.toISOString().slice(0, 10)}:${record.studentId}`;
       return {
-        sourceKey: `attendance:${record.id}`,
+        sourceKey: attendanceSourceKey,
         sourceModel: "Attendance",
         sourceId: String(record.id),
         type: "ATTENDANCE" as const,
