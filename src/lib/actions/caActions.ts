@@ -85,6 +85,8 @@ async function requireCAAccess(classId: number): Promise<{ userId: string; schoo
 
 export type CAConfigInput = {
   academicYear:    string;
+  currentTerm?:    Term;
+  isActive?:       boolean;
   classworkWeight: number;
   examWeight:      number;
 };
@@ -93,18 +95,31 @@ export async function upsertCAConfig(data: CAConfigInput) {
   const { schoolId } = await requireRole(["admin"]);
   const parsed = parseActionInput(caConfigSchema, data);
 
-  const config = await prisma.cAConfig.upsert({
-    where: { schoolId_academicYear: { schoolId, academicYear: parsed.academicYear } },
-    create: {
-      schoolId,
-      academicYear:    parsed.academicYear,
-      classworkWeight: parsed.classworkWeight,
-      examWeight:      parsed.examWeight,
-    },
-    update: {
-      classworkWeight: parsed.classworkWeight,
-      examWeight:      parsed.examWeight,
-    },
+  const config = await prisma.$transaction(async (tx) => {
+    if (parsed.isActive) {
+      await tx.cAConfig.updateMany({
+        where: { schoolId, academicYear: { not: parsed.academicYear } },
+        data: { isActive: false },
+      });
+    }
+
+    return tx.cAConfig.upsert({
+      where: { schoolId_academicYear: { schoolId, academicYear: parsed.academicYear } },
+      create: {
+        schoolId,
+        academicYear:    parsed.academicYear,
+        currentTerm:     parsed.currentTerm,
+        isActive:        parsed.isActive,
+        classworkWeight: parsed.classworkWeight,
+        examWeight:      parsed.examWeight,
+      },
+      update: {
+        currentTerm:     parsed.currentTerm,
+        isActive:        parsed.isActive,
+        classworkWeight: parsed.classworkWeight,
+        examWeight:      parsed.examWeight,
+      },
+    });
   });
 
   revalidatePath("/list/ca");

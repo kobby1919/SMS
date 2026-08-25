@@ -66,6 +66,8 @@ type Props = {
   students:     Student[];
   subjects:     Subject[];
   academicYears: string[];
+  activeTerm: Term;
+  activeYear: string;
   existingCA?:  ExistingCA[]; // pre-loaded when editing
   activityCAProgress?: ActivityCAProgress[];
   activityCAContexts?: ActivityCAContext[];
@@ -127,11 +129,11 @@ function ScorePreview({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const CAEntryForm = ({
-  classId, className, students, subjects, academicYears, existingCA = [], activityCAProgress = [], activityCAContexts = [], onSuccess,
+  classId, className, students, subjects, academicYears, activeTerm, activeYear, existingCA = [], activityCAProgress = [], activityCAContexts = [], onSuccess,
 }: Props) => {
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | "">("");
-  const [selectedTerm,      setSelectedTerm]      = useState<Term>("TERM_2");
-  const [selectedYear,      setSelectedYear]      = useState(academicYears[0] ?? "2024/25");
+  const [selectedTerm,      setSelectedTerm]      = useState<Term>(activeTerm);
+  const [selectedYear,      setSelectedYear]      = useState(activeYear || academicYears[0] || "2025/26");
   const [caConfig,          setCAConfig]          = useState<{ classworkWeight: number; examWeight: number } | null>(null);
   const [configLoading,     setConfigLoading]     = useState(true);
   const [rowEdits,          setRowEdits]          = useState<Record<string, RowEdit>>({});

@@ -12,6 +12,7 @@ import { parseSearchParams } from "@/src/lib/validation/parse";
 import { documentTag } from "@/src/lib/cacheTags";
 import { getCachedDocument } from "@/src/lib/services/document-cache";
 import { getSchoolBranding } from "@/src/lib/services/school-branding";
+import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import {
   renderToBuffer,
   Document,
@@ -374,7 +375,7 @@ export async function GET(req: NextRequest) {
 
     const parsed = parseSearchParams(reportCardPdfQuerySchema, req.nextUrl.searchParams);
     if (!parsed.ok) return parsed.response;
-    const { studentId, term, year: academicYear } = parsed.data;
+    const { studentId, year: academicYear } = parsed.data;
 
     // Load student
     const student = await prisma.student.findFirst({
@@ -403,8 +404,12 @@ export async function GET(req: NextRequest) {
     }
 
     // Config
-    const configs    = await prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } });
-    const activeYear = academicYear || configs[0]?.academicYear || "2024/25";
+    const [configs, activePeriod] = await Promise.all([
+      prisma.cAConfig.findMany({ where: { schoolId }, orderBy: [{ isActive: "desc" }, { academicYear: "desc" }] }),
+      getActiveAcademicPeriod(schoolId),
+    ]);
+    const term = parsed.data.term ?? activePeriod.currentTerm;
+    const activeYear = academicYear || activePeriod.academicYear || configs[0]?.academicYear || "2025/26";
     const config     = configs.find((c) => c.academicYear === activeYear);
     const cwWeight   = config?.classworkWeight ?? 30;
     const exWeight   = config?.examWeight      ?? 70;

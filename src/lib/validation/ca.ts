@@ -20,6 +20,8 @@ export const caBucketAggregationModeSchema = z.enum([
 
 export const caConfigSchema = z.object({
   academicYear: nonEmptyStringSchema,
+  currentTerm: termSchema.default("TERM_1"),
+  isActive: z.coerce.boolean().default(false),
   classworkWeight: z.coerce.number().min(0).max(100),
   examWeight: z.coerce.number().min(0).max(100),
 }).refine((d) => d.classworkWeight + d.examWeight === 100, {

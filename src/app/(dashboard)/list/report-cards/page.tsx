@@ -22,35 +22,15 @@ import {
 } from "@/src/lib/caGrades";
 import ReportCardFilters from "@/src/components/ReportCardFilters";
 import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
+import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import type { Term } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
 
-const DEFAULT_TERM: Term = "TERM_1";
 const VALID_TERMS = new Set<Term>(["TERM_1", "TERM_2", "TERM_3"]);
 
 function termFromParam(value?: string): Term | null {
   return value && VALID_TERMS.has(value as Term) ? value as Term : null;
-}
-
-async function findLatestCAContext(input: {
-  schoolId: string;
-  studentIds?: string[];
-  classId?: number;
-  academicYear?: string;
-}) {
-  if (input.studentIds && input.studentIds.length === 0) return null;
-
-  return prisma.continuousAssessment.findFirst({
-    where: {
-      schoolId: input.schoolId,
-      ...(input.studentIds ? { studentId: { in: input.studentIds } } : {}),
-      ...(input.classId ? { classId: input.classId } : {}),
-      ...(input.academicYear ? { academicYear: input.academicYear } : {}),
-    },
-    select: { term: true, academicYear: true },
-    orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-  });
 }
 
 const ReportCardListPage = async ({
@@ -65,13 +45,11 @@ const ReportCardListPage = async ({
   const requestedTerm = termFromParam(params.term);
   const selectedYear = params.year ?? "";
   const selectedChildId = params.childId;
+  const activePeriod = await getActiveAcademicPeriod(schoolId);
 
   if (role === "student") {
-    const latestContext = !requestedTerm || !selectedYear
-      ? await findLatestCAContext({ schoolId, studentIds: [userId], academicYear: selectedYear || undefined })
-      : null;
-    const selectedTerm = requestedTerm ?? latestContext?.term ?? DEFAULT_TERM;
-    const activeYear = selectedYear || latestContext?.academicYear || "";
+    const selectedTerm = requestedTerm ?? activePeriod.currentTerm;
+    const activeYear = selectedYear || activePeriod.academicYear;
     redirect(
       `/list/report-cards/${userId}?term=${selectedTerm}&year=${activeYear}`,
     );
@@ -100,11 +78,8 @@ const ReportCardListPage = async ({
       : children;
     const safeVisibleChildren = visibleChildren.length > 0 ? visibleChildren : children;
     const childIds = safeVisibleChildren.map((child) => child.id);
-    const latestContext = !requestedTerm || !selectedYear
-      ? await findLatestCAContext({ schoolId, studentIds: childIds, academicYear: selectedYear || undefined })
-      : null;
-    const selectedTerm = requestedTerm ?? latestContext?.term ?? DEFAULT_TERM;
-    const activeYear = selectedYear || latestContext?.academicYear || configs[0]?.academicYear || "2025/26";
+    const selectedTerm = requestedTerm ?? activePeriod.currentTerm;
+    const activeYear = selectedYear || activePeriod.academicYear || configs[0]?.academicYear || "2025/26";
     const config = configs.find((item) => item.academicYear === activeYear);
     const cwWeight = config?.classworkWeight ?? 30;
     const classIds = [...new Set(safeVisibleChildren.map((child) => child.classId))];
@@ -315,11 +290,8 @@ const ReportCardListPage = async ({
     configs.length > 0
       ? configs.map((c) => c.academicYear)
       : ["2024/25", "2025/26"];
-  const latestContext = !requestedTerm || !selectedYear
-    ? await findLatestCAContext({ schoolId, classId: activeClass.id, academicYear: selectedYear || undefined })
-    : null;
-  const selectedTerm = requestedTerm ?? latestContext?.term ?? DEFAULT_TERM;
-  const activeYear = selectedYear || latestContext?.academicYear || academicYears[0] || "2025/26";
+  const selectedTerm = requestedTerm ?? activePeriod.currentTerm;
+  const activeYear = selectedYear || activePeriod.academicYear || academicYears[0] || "2025/26";
 
   // ── Config for this year ──────────────────────────────────────────────────
   const config = await prisma.cAConfig.findUnique({

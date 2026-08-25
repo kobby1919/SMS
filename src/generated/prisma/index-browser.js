@@ -425,9 +425,12 @@ exports.Prisma.AnnouncementScalarFieldEnum = {
 exports.Prisma.CAConfigScalarFieldEnum = {
   id: 'id',
   academicYear: 'academicYear',
+  currentTerm: 'currentTerm',
+  isActive: 'isActive',
   classworkWeight: 'classworkWeight',
   examWeight: 'examWeight',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   schoolId: 'schoolId'
 };
 
@@ -882,6 +885,12 @@ exports.AnnouncementPriority = exports.$Enums.AnnouncementPriority = {
   URGENT: 'URGENT'
 };
 
+exports.Term = exports.$Enums.Term = {
+  TERM_1: 'TERM_1',
+  TERM_2: 'TERM_2',
+  TERM_3: 'TERM_3'
+};
+
 exports.CAActivityType = exports.$Enums.CAActivityType = {
   MIDTERM_EXAM: 'MIDTERM_EXAM',
   CLASS_TEST: 'CLASS_TEST',
@@ -897,12 +906,6 @@ exports.CAActivityType = exports.$Enums.CAActivityType = {
 exports.CABucketAggregationMode = exports.$Enums.CABucketAggregationMode = {
   AVERAGE_TO_BUCKET: 'AVERAGE_TO_BUCKET',
   SUM_ACTIVITIES: 'SUM_ACTIVITIES'
-};
-
-exports.Term = exports.$Enums.Term = {
-  TERM_1: 'TERM_1',
-  TERM_2: 'TERM_2',
-  TERM_3: 'TERM_3'
 };
 
 exports.SyllabusStatus = exports.$Enums.SyllabusStatus = {

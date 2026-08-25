@@ -884,14 +884,18 @@ model Announcement {
 model CAConfig {
   id              Int      @id @default(autoincrement())
   academicYear    String
+  currentTerm     Term     @default(TERM_1)
+  isActive        Boolean  @default(false)
   classworkWeight Float    @default(30.0)
   examWeight      Float    @default(70.0)
   createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   schoolId String @default("default-school")
   school   School @relation(fields: [schoolId], references: [id])
 
   @@unique([schoolId, academicYear])
+  @@index([schoolId, isActive])
 }
 
 model CABucket {

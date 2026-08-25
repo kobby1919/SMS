@@ -92,7 +92,7 @@ export const homeworkBulkSubmissionSchema = z.object({
 
 export const reportCardPdfQuerySchema = z.object({
   studentId: nonEmptyStringSchema,
-  term: termSchema.default("TERM_2"),
+  term: termSchema.optional(),
   year: z.string().trim().max(20).optional().default(""),
 });
 

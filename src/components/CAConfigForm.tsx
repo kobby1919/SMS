@@ -6,10 +6,14 @@
 import { useState, useTransition } from "react";
 import { upsertCAConfig } from "@/src/lib/actions/caActions";
 import { CheckCircle2, AlertCircle, Loader2, Plus } from "lucide-react";
+import { TERM_LABELS } from "@/src/lib/caGrades";
+import type { Term } from "@/src/generated/prisma";
 
 type Config = {
   id:              number;
   academicYear:    string;
+  currentTerm:     Term;
+  isActive:        boolean;
   classworkWeight: number;
   examWeight:      number;
 };
@@ -20,6 +24,8 @@ type Props = {
 
 const CAConfigForm = ({ existingConfigs }: Props) => {
   const [academicYear,    setAcademicYear]    = useState("");
+  const [currentTerm,     setCurrentTerm]     = useState<Term>("TERM_1");
+  const [isActive,        setIsActive]        = useState(existingConfigs.length === 0);
   const [classworkWeight, setClassworkWeight] = useState(30);
   const [examWeight,      setExamWeight]      = useState(70);
   const [error,           setError]           = useState<string | null>(null);
@@ -36,6 +42,8 @@ const CAConfigForm = ({ existingConfigs }: Props) => {
   // Load existing config for editing
   const loadExisting = (config: Config) => {
     setAcademicYear(config.academicYear);
+    setCurrentTerm(config.currentTerm);
+    setIsActive(config.isActive);
     setClassworkWeight(config.classworkWeight);
     setExamWeight(config.examWeight);
   };
@@ -55,9 +63,11 @@ const CAConfigForm = ({ existingConfigs }: Props) => {
 
     startTransition(async () => {
       try {
-        await upsertCAConfig({ academicYear: academicYear.trim(), classworkWeight, examWeight });
+        await upsertCAConfig({ academicYear: academicYear.trim(), currentTerm, isActive, classworkWeight, examWeight });
         setSuccess(`Configuration for ${academicYear} saved successfully!`);
         setAcademicYear("");
+        setCurrentTerm("TERM_1");
+        setIsActive(existingConfigs.length === 0);
         setClassworkWeight(30);
         setExamWeight(70);
       } catch (e: unknown) {
@@ -112,18 +122,49 @@ const CAConfigForm = ({ existingConfigs }: Props) => {
       )}
 
       {/* Academic year input */}
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-black uppercase tracking-wider text-gray-500">
-          Academic Year
-        </label>
-        <input
-          type="text"
-          placeholder="e.g. 2025/26"
-          value={academicYear}
-          onChange={(e) => setAcademicYear(e.target.value)}
-          className="ring-[1.5px] ring-gray-200 p-3 rounded-xl text-sm font-semibold text-gray-700 focus:ring-indigo-500 outline-none"
-        />
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-black uppercase tracking-wider text-gray-500">
+            Academic Year
+          </label>
+          <input
+            type="text"
+            placeholder="e.g. 2025/26"
+            value={academicYear}
+            onChange={(e) => setAcademicYear(e.target.value)}
+            className="rounded-xl p-3 text-sm font-semibold text-gray-700 outline-none ring-[1.5px] ring-gray-200 focus:ring-indigo-500"
+          />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-black uppercase tracking-wider text-gray-500">
+            Current Term
+          </label>
+          <select
+            value={currentTerm}
+            onChange={(e) => setCurrentTerm(e.target.value as Term)}
+            className="rounded-xl bg-white p-3 text-sm font-semibold text-gray-700 outline-none ring-[1.5px] ring-gray-200 focus:ring-indigo-500"
+          >
+            {Object.entries(TERM_LABELS).map(([value, label]) => (
+              <option key={value} value={value}>{label}</option>
+            ))}
+          </select>
+        </div>
       </div>
+
+      <label className="flex items-start gap-3 rounded-2xl border border-indigo-100 bg-indigo-50 p-3">
+        <input
+          type="checkbox"
+          checked={isActive}
+          onChange={(e) => setIsActive(e.target.checked)}
+          className="mt-1 h-4 w-4 accent-indigo-600"
+        />
+        <span>
+          <span className="block text-sm font-black text-indigo-900">Make this the active academic period</span>
+          <span className="mt-0.5 block text-xs font-semibold leading-relaxed text-indigo-700">
+            Teacher CA entry, parent report summaries, and student report pages will use this academic year and term by default.
+          </span>
+        </span>
+      </label>
 
       {/* Classwork weight slider */}
       <div className="flex flex-col gap-2">

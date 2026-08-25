@@ -5,6 +5,7 @@ import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import CAConfigForm from "@/src/components/CAConfigForm";
 import { Settings2, Info } from "lucide-react";
+import { TERM_LABELS } from "@/src/lib/caGrades";
 
 export const dynamic = "force-dynamic";
 
@@ -60,6 +61,8 @@ const CAConfigPage = async () => {
         <CAConfigForm existingConfigs={configs.map((c) => ({
           id:              c.id,
           academicYear:    c.academicYear,
+          currentTerm:     c.currentTerm,
+          isActive:        c.isActive,
           classworkWeight: c.classworkWeight,
           examWeight:      c.examWeight,
         }))} />
@@ -73,11 +76,18 @@ const CAConfigPage = async () => {
           </div>
           <div className="divide-y divide-gray-50">
             {configs.map((c) => (
-              <div key={c.id} className="flex items-center justify-between px-5 py-4">
+              <div key={c.id} className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="font-bold text-gray-800">{c.academicYear}</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-bold text-gray-800">{c.academicYear}</p>
+                    {c.isActive && (
+                      <span className="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-black uppercase text-emerald-700">
+                        Active
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-gray-400 mt-0.5">
-                    Classwork: {c.classworkWeight}% · Exam: {c.examWeight}%
+                    Current term: {TERM_LABELS[c.currentTerm]} · Classwork: {c.classworkWeight}% · Exam: {c.examWeight}%
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

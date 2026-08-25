@@ -35711,27 +35711,36 @@ export namespace Prisma {
   export type CAConfigMinAggregateOutputType = {
     id: number | null
     academicYear: string | null
+    currentTerm: $Enums.Term | null
+    isActive: boolean | null
     classworkWeight: number | null
     examWeight: number | null
     createdAt: Date | null
+    updatedAt: Date | null
     schoolId: string | null
   }
 
   export type CAConfigMaxAggregateOutputType = {
     id: number | null
     academicYear: string | null
+    currentTerm: $Enums.Term | null
+    isActive: boolean | null
     classworkWeight: number | null
     examWeight: number | null
     createdAt: Date | null
+    updatedAt: Date | null
     schoolId: string | null
   }
 
   export type CAConfigCountAggregateOutputType = {
     id: number
     academicYear: number
+    currentTerm: number
+    isActive: number
     classworkWeight: number
     examWeight: number
     createdAt: number
+    updatedAt: number
     schoolId: number
     _all: number
   }
@@ -35752,27 +35761,36 @@ export namespace Prisma {
   export type CAConfigMinAggregateInputType = {
     id?: true
     academicYear?: true
+    currentTerm?: true
+    isActive?: true
     classworkWeight?: true
     examWeight?: true
     createdAt?: true
+    updatedAt?: true
     schoolId?: true
   }
 
   export type CAConfigMaxAggregateInputType = {
     id?: true
     academicYear?: true
+    currentTerm?: true
+    isActive?: true
     classworkWeight?: true
     examWeight?: true
     createdAt?: true
+    updatedAt?: true
     schoolId?: true
   }
 
   export type CAConfigCountAggregateInputType = {
     id?: true
     academicYear?: true
+    currentTerm?: true
+    isActive?: true
     classworkWeight?: true
     examWeight?: true
     createdAt?: true
+    updatedAt?: true
     schoolId?: true
     _all?: true
   }
@@ -35866,9 +35884,12 @@ export namespace Prisma {
   export type CAConfigGroupByOutputType = {
     id: number
     academicYear: string
+    currentTerm: $Enums.Term
+    isActive: boolean
     classworkWeight: number
     examWeight: number
     createdAt: Date
+    updatedAt: Date
     schoolId: string
     _count: CAConfigCountAggregateOutputType | null
     _avg: CAConfigAvgAggregateOutputType | null
@@ -35894,9 +35915,12 @@ export namespace Prisma {
   export type CAConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     academicYear?: boolean
+    currentTerm?: boolean
+    isActive?: boolean
     classworkWeight?: boolean
     examWeight?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     schoolId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["cAConfig"]>
@@ -35904,9 +35928,12 @@ export namespace Prisma {
   export type CAConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     academicYear?: boolean
+    currentTerm?: boolean
+    isActive?: boolean
     classworkWeight?: boolean
     examWeight?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     schoolId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["cAConfig"]>
@@ -35914,9 +35941,12 @@ export namespace Prisma {
   export type CAConfigSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     academicYear?: boolean
+    currentTerm?: boolean
+    isActive?: boolean
     classworkWeight?: boolean
     examWeight?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     schoolId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["cAConfig"]>
@@ -35924,13 +35954,16 @@ export namespace Prisma {
   export type CAConfigSelectScalar = {
     id?: boolean
     academicYear?: boolean
+    currentTerm?: boolean
+    isActive?: boolean
     classworkWeight?: boolean
     examWeight?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     schoolId?: boolean
   }
 
-  export type CAConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "academicYear" | "classworkWeight" | "examWeight" | "createdAt" | "schoolId", ExtArgs["result"]["cAConfig"]>
+  export type CAConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "academicYear" | "currentTerm" | "isActive" | "classworkWeight" | "examWeight" | "createdAt" | "updatedAt" | "schoolId", ExtArgs["result"]["cAConfig"]>
   export type CAConfigInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
   }
@@ -35949,9 +35982,12 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       academicYear: string
+      currentTerm: $Enums.Term
+      isActive: boolean
       classworkWeight: number
       examWeight: number
       createdAt: Date
+      updatedAt: Date
       schoolId: string
     }, ExtArgs["result"]["cAConfig"]>
     composites: {}
@@ -36379,9 +36415,12 @@ export namespace Prisma {
   interface CAConfigFieldRefs {
     readonly id: FieldRef<"CAConfig", 'Int'>
     readonly academicYear: FieldRef<"CAConfig", 'String'>
+    readonly currentTerm: FieldRef<"CAConfig", 'Term'>
+    readonly isActive: FieldRef<"CAConfig", 'Boolean'>
     readonly classworkWeight: FieldRef<"CAConfig", 'Float'>
     readonly examWeight: FieldRef<"CAConfig", 'Float'>
     readonly createdAt: FieldRef<"CAConfig", 'DateTime'>
+    readonly updatedAt: FieldRef<"CAConfig", 'DateTime'>
     readonly schoolId: FieldRef<"CAConfig", 'String'>
   }
     
@@ -66210,9 +66249,12 @@ export namespace Prisma {
   export const CAConfigScalarFieldEnum: {
     id: 'id',
     academicYear: 'academicYear',
+    currentTerm: 'currentTerm',
+    isActive: 'isActive',
     classworkWeight: 'classworkWeight',
     examWeight: 'examWeight',
     createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
     schoolId: 'schoolId'
   };
 
@@ -66913,6 +66955,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Term'
+   */
+  export type EnumTermFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Term'>
+    
+
+
+  /**
+   * Reference to a field of type 'Term[]'
+   */
+  export type ListEnumTermFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Term[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -66965,20 +67021,6 @@ export namespace Prisma {
    * Reference to a field of type 'Decimal[]'
    */
   export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Term'
-   */
-  export type EnumTermFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Term'>
-    
-
-
-  /**
-   * Reference to a field of type 'Term[]'
-   */
-  export type ListEnumTermFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Term[]'>
     
 
 
@@ -69508,9 +69550,12 @@ export namespace Prisma {
     NOT?: CAConfigWhereInput | CAConfigWhereInput[]
     id?: IntFilter<"CAConfig"> | number
     academicYear?: StringFilter<"CAConfig"> | string
+    currentTerm?: EnumTermFilter<"CAConfig"> | $Enums.Term
+    isActive?: BoolFilter<"CAConfig"> | boolean
     classworkWeight?: FloatFilter<"CAConfig"> | number
     examWeight?: FloatFilter<"CAConfig"> | number
     createdAt?: DateTimeFilter<"CAConfig"> | Date | string
+    updatedAt?: DateTimeFilter<"CAConfig"> | Date | string
     schoolId?: StringFilter<"CAConfig"> | string
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
   }
@@ -69518,9 +69563,12 @@ export namespace Prisma {
   export type CAConfigOrderByWithRelationInput = {
     id?: SortOrder
     academicYear?: SortOrder
+    currentTerm?: SortOrder
+    isActive?: SortOrder
     classworkWeight?: SortOrder
     examWeight?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     schoolId?: SortOrder
     school?: SchoolOrderByWithRelationInput
   }
@@ -69532,9 +69580,12 @@ export namespace Prisma {
     OR?: CAConfigWhereInput[]
     NOT?: CAConfigWhereInput | CAConfigWhereInput[]
     academicYear?: StringFilter<"CAConfig"> | string
+    currentTerm?: EnumTermFilter<"CAConfig"> | $Enums.Term
+    isActive?: BoolFilter<"CAConfig"> | boolean
     classworkWeight?: FloatFilter<"CAConfig"> | number
     examWeight?: FloatFilter<"CAConfig"> | number
     createdAt?: DateTimeFilter<"CAConfig"> | Date | string
+    updatedAt?: DateTimeFilter<"CAConfig"> | Date | string
     schoolId?: StringFilter<"CAConfig"> | string
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
   }, "id" | "schoolId_academicYear">
@@ -69542,9 +69593,12 @@ export namespace Prisma {
   export type CAConfigOrderByWithAggregationInput = {
     id?: SortOrder
     academicYear?: SortOrder
+    currentTerm?: SortOrder
+    isActive?: SortOrder
     classworkWeight?: SortOrder
     examWeight?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     schoolId?: SortOrder
     _count?: CAConfigCountOrderByAggregateInput
     _avg?: CAConfigAvgOrderByAggregateInput
@@ -69559,9 +69613,12 @@ export namespace Prisma {
     NOT?: CAConfigScalarWhereWithAggregatesInput | CAConfigScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"CAConfig"> | number
     academicYear?: StringWithAggregatesFilter<"CAConfig"> | string
+    currentTerm?: EnumTermWithAggregatesFilter<"CAConfig"> | $Enums.Term
+    isActive?: BoolWithAggregatesFilter<"CAConfig"> | boolean
     classworkWeight?: FloatWithAggregatesFilter<"CAConfig"> | number
     examWeight?: FloatWithAggregatesFilter<"CAConfig"> | number
     createdAt?: DateTimeWithAggregatesFilter<"CAConfig"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"CAConfig"> | Date | string
     schoolId?: StringWithAggregatesFilter<"CAConfig"> | string
   }
 
@@ -74210,60 +74267,81 @@ export namespace Prisma {
 
   export type CAConfigCreateInput = {
     academicYear: string
+    currentTerm?: $Enums.Term
+    isActive?: boolean
     classworkWeight?: number
     examWeight?: number
     createdAt?: Date | string
+    updatedAt?: Date | string
     school?: SchoolCreateNestedOneWithoutCaConfigsInput
   }
 
   export type CAConfigUncheckedCreateInput = {
     id?: number
     academicYear: string
+    currentTerm?: $Enums.Term
+    isActive?: boolean
     classworkWeight?: number
     examWeight?: number
     createdAt?: Date | string
+    updatedAt?: Date | string
     schoolId?: string
   }
 
   export type CAConfigUpdateInput = {
     academicYear?: StringFieldUpdateOperationsInput | string
+    currentTerm?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     classworkWeight?: FloatFieldUpdateOperationsInput | number
     examWeight?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutCaConfigsNestedInput
   }
 
   export type CAConfigUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     academicYear?: StringFieldUpdateOperationsInput | string
+    currentTerm?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     classworkWeight?: FloatFieldUpdateOperationsInput | number
     examWeight?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
   }
 
   export type CAConfigCreateManyInput = {
     id?: number
     academicYear: string
+    currentTerm?: $Enums.Term
+    isActive?: boolean
     classworkWeight?: number
     examWeight?: number
     createdAt?: Date | string
+    updatedAt?: Date | string
     schoolId?: string
   }
 
   export type CAConfigUpdateManyMutationInput = {
     academicYear?: StringFieldUpdateOperationsInput | string
+    currentTerm?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     classworkWeight?: FloatFieldUpdateOperationsInput | number
     examWeight?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CAConfigUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     academicYear?: StringFieldUpdateOperationsInput | string
+    currentTerm?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     classworkWeight?: FloatFieldUpdateOperationsInput | number
     examWeight?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -78650,6 +78728,13 @@ export namespace Prisma {
     _max?: NestedEnumAnnouncementPriorityFilter<$PrismaModel>
   }
 
+  export type EnumTermFilter<$PrismaModel = never> = {
+    equals?: $Enums.Term | EnumTermFieldRefInput<$PrismaModel>
+    in?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
+    not?: NestedEnumTermFilter<$PrismaModel> | $Enums.Term
+  }
+
   export type FloatFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -78669,9 +78754,12 @@ export namespace Prisma {
   export type CAConfigCountOrderByAggregateInput = {
     id?: SortOrder
     academicYear?: SortOrder
+    currentTerm?: SortOrder
+    isActive?: SortOrder
     classworkWeight?: SortOrder
     examWeight?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     schoolId?: SortOrder
   }
 
@@ -78684,18 +78772,24 @@ export namespace Prisma {
   export type CAConfigMaxOrderByAggregateInput = {
     id?: SortOrder
     academicYear?: SortOrder
+    currentTerm?: SortOrder
+    isActive?: SortOrder
     classworkWeight?: SortOrder
     examWeight?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     schoolId?: SortOrder
   }
 
   export type CAConfigMinOrderByAggregateInput = {
     id?: SortOrder
     academicYear?: SortOrder
+    currentTerm?: SortOrder
+    isActive?: SortOrder
     classworkWeight?: SortOrder
     examWeight?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     schoolId?: SortOrder
   }
 
@@ -78703,6 +78797,16 @@ export namespace Prisma {
     id?: SortOrder
     classworkWeight?: SortOrder
     examWeight?: SortOrder
+  }
+
+  export type EnumTermWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Term | EnumTermFieldRefInput<$PrismaModel>
+    in?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
+    not?: NestedEnumTermWithAggregatesFilter<$PrismaModel> | $Enums.Term
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTermFilter<$PrismaModel>
+    _max?: NestedEnumTermFilter<$PrismaModel>
   }
 
   export type FloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -78744,13 +78848,6 @@ export namespace Prisma {
     gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
-  }
-
-  export type EnumTermFilter<$PrismaModel = never> = {
-    equals?: $Enums.Term | EnumTermFieldRefInput<$PrismaModel>
-    in?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
-    not?: NestedEnumTermFilter<$PrismaModel> | $Enums.Term
   }
 
   export type CABucketSchoolIdClassIdSubjectIdTermAcademicYearNameCompoundUniqueInput = {
@@ -78866,16 +78963,6 @@ export namespace Prisma {
     _sum?: NestedDecimalFilter<$PrismaModel>
     _min?: NestedDecimalFilter<$PrismaModel>
     _max?: NestedDecimalFilter<$PrismaModel>
-  }
-
-  export type EnumTermWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Term | EnumTermFieldRefInput<$PrismaModel>
-    in?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
-    not?: NestedEnumTermWithAggregatesFilter<$PrismaModel> | $Enums.Term
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumTermFilter<$PrismaModel>
-    _max?: NestedEnumTermFilter<$PrismaModel>
   }
 
   export type DecimalNullableFilter<$PrismaModel = never> = {
@@ -85482,6 +85569,10 @@ export namespace Prisma {
     connect?: SchoolWhereUniqueInput
   }
 
+  export type EnumTermFieldUpdateOperationsInput = {
+    set?: $Enums.Term
+  }
+
   export type FloatFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -85550,10 +85641,6 @@ export namespace Prisma {
     decrement?: Decimal | DecimalJsLike | number | string
     multiply?: Decimal | DecimalJsLike | number | string
     divide?: Decimal | DecimalJsLike | number | string
-  }
-
-  export type EnumTermFieldUpdateOperationsInput = {
-    set?: $Enums.Term
   }
 
   export type SchoolUpdateOneRequiredWithoutCaBucketsNestedInput = {
@@ -87441,6 +87528,23 @@ export namespace Prisma {
     _max?: NestedEnumAnnouncementPriorityFilter<$PrismaModel>
   }
 
+  export type NestedEnumTermFilter<$PrismaModel = never> = {
+    equals?: $Enums.Term | EnumTermFieldRefInput<$PrismaModel>
+    in?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
+    not?: NestedEnumTermFilter<$PrismaModel> | $Enums.Term
+  }
+
+  export type NestedEnumTermWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Term | EnumTermFieldRefInput<$PrismaModel>
+    in?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
+    not?: NestedEnumTermWithAggregatesFilter<$PrismaModel> | $Enums.Term
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTermFilter<$PrismaModel>
+    _max?: NestedEnumTermFilter<$PrismaModel>
+  }
+
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -87482,13 +87586,6 @@ export namespace Prisma {
     not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
   }
 
-  export type NestedEnumTermFilter<$PrismaModel = never> = {
-    equals?: $Enums.Term | EnumTermFieldRefInput<$PrismaModel>
-    in?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
-    not?: NestedEnumTermFilter<$PrismaModel> | $Enums.Term
-  }
-
   export type NestedEnumCAActivityTypeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.CAActivityType | EnumCAActivityTypeFieldRefInput<$PrismaModel>
     in?: $Enums.CAActivityType[] | ListEnumCAActivityTypeFieldRefInput<$PrismaModel>
@@ -87523,16 +87620,6 @@ export namespace Prisma {
     _sum?: NestedDecimalFilter<$PrismaModel>
     _min?: NestedDecimalFilter<$PrismaModel>
     _max?: NestedDecimalFilter<$PrismaModel>
-  }
-
-  export type NestedEnumTermWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Term | EnumTermFieldRefInput<$PrismaModel>
-    in?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Term[] | ListEnumTermFieldRefInput<$PrismaModel>
-    not?: NestedEnumTermWithAggregatesFilter<$PrismaModel> | $Enums.Term
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumTermFilter<$PrismaModel>
-    _max?: NestedEnumTermFilter<$PrismaModel>
   }
 
   export type NestedDecimalNullableFilter<$PrismaModel = never> = {
@@ -88526,17 +88613,23 @@ export namespace Prisma {
 
   export type CAConfigCreateWithoutSchoolInput = {
     academicYear: string
+    currentTerm?: $Enums.Term
+    isActive?: boolean
     classworkWeight?: number
     examWeight?: number
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type CAConfigUncheckedCreateWithoutSchoolInput = {
     id?: number
     academicYear: string
+    currentTerm?: $Enums.Term
+    isActive?: boolean
     classworkWeight?: number
     examWeight?: number
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type CAConfigCreateOrConnectWithoutSchoolInput = {
@@ -90039,9 +90132,12 @@ export namespace Prisma {
     NOT?: CAConfigScalarWhereInput | CAConfigScalarWhereInput[]
     id?: IntFilter<"CAConfig"> | number
     academicYear?: StringFilter<"CAConfig"> | string
+    currentTerm?: EnumTermFilter<"CAConfig"> | $Enums.Term
+    isActive?: BoolFilter<"CAConfig"> | boolean
     classworkWeight?: FloatFilter<"CAConfig"> | number
     examWeight?: FloatFilter<"CAConfig"> | number
     createdAt?: DateTimeFilter<"CAConfig"> | Date | string
+    updatedAt?: DateTimeFilter<"CAConfig"> | Date | string
     schoolId?: StringFilter<"CAConfig"> | string
   }
 
@@ -111663,9 +111759,12 @@ export namespace Prisma {
   export type CAConfigCreateManySchoolInput = {
     id?: number
     academicYear: string
+    currentTerm?: $Enums.Term
+    isActive?: boolean
     classworkWeight?: number
     examWeight?: number
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type CABucketCreateManySchoolInput = {
@@ -112620,25 +112719,34 @@ export namespace Prisma {
 
   export type CAConfigUpdateWithoutSchoolInput = {
     academicYear?: StringFieldUpdateOperationsInput | string
+    currentTerm?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     classworkWeight?: FloatFieldUpdateOperationsInput | number
     examWeight?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CAConfigUncheckedUpdateWithoutSchoolInput = {
     id?: IntFieldUpdateOperationsInput | number
     academicYear?: StringFieldUpdateOperationsInput | string
+    currentTerm?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     classworkWeight?: FloatFieldUpdateOperationsInput | number
     examWeight?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CAConfigUncheckedUpdateManyWithoutSchoolInput = {
     id?: IntFieldUpdateOperationsInput | number
     academicYear?: StringFieldUpdateOperationsInput | string
+    currentTerm?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     classworkWeight?: FloatFieldUpdateOperationsInput | number
     examWeight?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CABucketUpdateWithoutSchoolInput = {

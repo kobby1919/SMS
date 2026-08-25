@@ -76,6 +76,8 @@ type Props = {
   students: Student[];
   subjects: Subject[];
   academicYears: string[];
+  activeTerm: Term;
+  activeYear: string;
   buckets: Bucket[];
   canLock?: boolean;
 };
@@ -104,13 +106,15 @@ const CAActivityManager = ({
   students,
   subjects,
   academicYears,
+  activeTerm,
+  activeYear,
   buckets,
   canLock = false,
 }: Props) => {
   const router = useRouter();
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | "">(subjects[0]?.id ?? "");
-  const [selectedTerm, setSelectedTerm] = useState<Term>("TERM_2");
-  const [selectedYear, setSelectedYear] = useState(academicYears[0] ?? "2025/26");
+  const [selectedTerm, setSelectedTerm] = useState<Term>(activeTerm);
+  const [selectedYear, setSelectedYear] = useState(activeYear || academicYears[0] || "2025/26");
   const [bucketName, setBucketName] = useState("Midterm Exam");
   const [bucketType, setBucketType] = useState<CAActivityType>("MIDTERM_EXAM");
   const [aggregationMode, setAggregationMode] = useState<CABucketAggregationMode>("AVERAGE_TO_BUCKET");

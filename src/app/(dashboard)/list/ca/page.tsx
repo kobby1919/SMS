@@ -8,6 +8,7 @@ import prisma from "@/src/lib/prisma";
 import CAEntryForm from "@/src/components/CAEntryForm";
 import CAClassSummary from "@/src/components/CAClassSummary";
 import CAActivityManager from "@/src/components/CAActivityManager";
+import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { getSubjectCAProgress } from "@/src/lib/services/ca-activity";
 import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 import { ClipboardList, AlertTriangle, BookOpen, Users, Layers3 } from "lucide-react";
@@ -123,14 +124,17 @@ const CAPage = async ({
   });
 
   // ── Academic years from CA configs ────────────────────────────────────────
-  const configs = await prisma.cAConfig.findMany({
-    where: { schoolId },
-    orderBy: { academicYear: "desc" },
-  });
+  const [configs, activePeriod] = await Promise.all([
+    prisma.cAConfig.findMany({
+      where: { schoolId },
+      orderBy: [{ isActive: "desc" }, { academicYear: "desc" }],
+    }),
+    getActiveAcademicPeriod(schoolId),
+  ]);
   const academicYears =
     configs.length > 0
       ? configs.map((c) => c.academicYear)
-      : ["2025/26", "2026/27"];
+      : [activePeriod.academicYear, "2026/27"];
 
   const caBuckets = await prisma.cABucket.findMany({
     where: {
@@ -310,6 +314,8 @@ const CAPage = async ({
                 students={students}
                 subjects={subjects}
                 academicYears={academicYears}
+                activeTerm={activePeriod.currentTerm}
+                activeYear={activePeriod.academicYear}
                 existingCA={existingCA.map((ca) => ({
                   studentId: ca.studentId,
                   subjectId: ca.subjectId,
@@ -329,6 +335,8 @@ const CAPage = async ({
                 students={students}
                 subjects={subjects}
                 academicYears={academicYears}
+                activeTerm={activePeriod.currentTerm}
+                activeYear={activePeriod.academicYear}
                 canLock={role === "admin"}
                 buckets={caBuckets.map((bucket) => ({
                   id: bucket.id,
