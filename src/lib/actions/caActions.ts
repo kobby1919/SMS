@@ -349,28 +349,10 @@ export async function bulkUpsertCA(
         term,
         academicYear,
       });
-      const useActivityCA = progress.totalAllocatedMarks > 0;
-      const classworkScore = useActivityCA ? progress.earnedMarks : row.classworkScore;
-      const examScore = useActivityCA ? Math.min(row.examScore, config.examWeight) : row.examScore;
-      let totalScore: number;
-      let grade: string;
-      let gradePoint: number;
-      if (useActivityCA) {
-        totalScore = Math.round((classworkScore + examScore) * 100) / 100;
-        const gradeInfo = await getBECEGrade(totalScore);
-        grade = gradeInfo.grade;
-        gradePoint = gradeInfo.gradePoint;
-      } else {
-        const computed = await computeCA(
-          classworkScore,
-          examScore,
-          config.classworkWeight,
-          config.examWeight,
-        );
-        totalScore = computed.totalScore;
-        grade = computed.grade;
-        gradePoint = computed.gradePoint;
-      }
+      const classworkScore = progress.earnedMarks;
+      const examScore = Math.min(row.examScore, config.examWeight);
+      const totalScore = Math.round((classworkScore + examScore) * 100) / 100;
+      const { grade, gradePoint } = await getBECEGrade(totalScore);
 
       return prisma.continuousAssessment.upsert({
         where: {

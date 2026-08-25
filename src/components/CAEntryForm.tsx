@@ -100,7 +100,7 @@ const buildRows = (
     );
     return {
       studentId:      student.id,
-      classworkScore: activityCAEnabled ? String(activityProgress?.classworkScore ?? 0) : existing ? String(existing.classworkScore) : "",
+      classworkScore: String(activityProgress?.classworkScore ?? 0),
       examScore:      existing ? String(existing.examScore)      : "",
       remarks:        existing ? existing.remarks                : "",
     };
@@ -159,7 +159,8 @@ const CAEntryForm = ({
 
   const cwWeight = caConfig?.classworkWeight ?? 30;
   const exWeight = caConfig?.examWeight      ?? 70;
-  const activityCAEnabled = activityCAContexts.some(
+  const activityCAEnabled = true;
+  const hasActivityStructure = activityCAContexts.some(
     (context) =>
       context.subjectId === selectedSubjectId &&
       context.term === selectedTerm &&
@@ -357,18 +358,17 @@ const CAEntryForm = ({
           ) : (
             <p className="text-xs text-indigo-700 font-semibold">
               CA Weights for <span className="font-black">{selectedYear}</span>:&nbsp;
-              Classwork = <span className="font-black">{cwWeight}%</span> &nbsp;·&nbsp;
-              Exam = <span className="font-black">{exWeight}%</span>
+              CA = <span className="font-black">{cwWeight} marks</span> &nbsp;·&nbsp;
+              Exam = <span className="font-black">{exWeight} marks</span>
             </p>
           )}
         </div>
       )}
 
-      {activityCAEnabled && (
-        <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
-          Activity-based CA is active for this subject. Edujay has locked manual CA entry here. The CA values below are computed from recorded activities; teachers should enter only exam scores on this screen.
-        </div>
-      )}
+      <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
+        Manual CA entry is locked. Edujay fetches CA from recorded activities and teachers enter only exam scores here.
+        {!hasActivityStructure && selectedSubjectId ? " No CA bucket exists for this subject yet, so CA will show 0 until activities are created and scored." : ""}
+      </div>
 
       {/* Progress indicator */}
       <div className="flex items-center gap-3">
