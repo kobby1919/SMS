@@ -129,17 +129,17 @@ function ScorePreview({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const CAEntryForm = ({
-  classId, className, students, subjects, academicYears, activeTerm, activeYear, existingCA = [], activityCAProgress = [], activityCAContexts = [], onSuccess,
+  classId, className, students, subjects, activeTerm, activeYear, existingCA = [], activityCAProgress = [], activityCAContexts = [], onSuccess,
 }: Props) => {
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | "">("");
-  const [selectedTerm,      setSelectedTerm]      = useState<Term>(activeTerm);
-  const [selectedYear,      setSelectedYear]      = useState(activeYear || academicYears[0] || "2025/26");
   const [caConfig,          setCAConfig]          = useState<{ classworkWeight: number; examWeight: number } | null>(null);
   const [configLoading,     setConfigLoading]     = useState(true);
   const [rowEdits,          setRowEdits]          = useState<Record<string, RowEdit>>({});
   const [apiError,          setApiError]          = useState<string | null>(null);
   const [success,           setSuccess]           = useState(false);
   const [isPending,         startTransition]      = useTransition();
+  const selectedTerm = activeTerm;
+  const selectedYear = activeYear || "2025/26";
 
   // Load CA config when year changes
   useEffect(() => {
@@ -312,7 +312,7 @@ const CAEntryForm = ({
       )}
 
       {/* Context selectors */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
         {/* Subject */}
         <div className="flex flex-col gap-1.5">
@@ -337,44 +337,14 @@ const CAEntryForm = ({
           </div>
         </div>
 
-        {/* Term */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-gray-500 font-black uppercase tracking-wider">Term</label>
-          <div className="relative">
-            <select
-              value={selectedTerm}
-              onChange={(e) => {
-                setSelectedTerm(e.target.value as Term);
-                setRowEdits({});
-              }}
-              className="w-full appearance-none ring-[1.5px] ring-gray-200 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 focus:ring-indigo-500 outline-none bg-white pr-8"
-            >
-              {Object.entries(TERM_LABELS).map(([val, label]) => (
-                <option key={val} value={val}>{label}</option>
-              ))}
-            </select>
-            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          <span className="text-xs text-gray-500 font-black uppercase tracking-wider">Active Period</span>
+          <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2.5 text-sm font-black text-emerald-700">
+            {selectedYear} · {TERM_LABELS[selectedTerm]}
           </div>
-        </div>
-
-        {/* Academic year */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-gray-500 font-black uppercase tracking-wider">Academic Year</label>
-          <div className="relative">
-            <select
-              value={selectedYear}
-              onChange={(e) => {
-                setSelectedYear(e.target.value);
-                setConfigLoading(true);
-              }}
-              className="w-full appearance-none ring-[1.5px] ring-gray-200 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 focus:ring-indigo-500 outline-none bg-white pr-8"
-            >
-              {academicYears.map((y) => (
-                <option key={y} value={y}>{y}</option>
-              ))}
-            </select>
-            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-          </div>
+          <p className="text-[11px] font-semibold text-gray-400">
+            Set by admin. Teachers cannot change term or academic year here.
+          </p>
         </div>
       </div>
 

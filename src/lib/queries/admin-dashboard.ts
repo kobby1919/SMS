@@ -1,10 +1,9 @@
 import prisma from "@/src/lib/prisma";
-import { unstable_cache } from "next/cache";
-import { dashboardTag } from "@/src/lib/cacheTags";
 import {
   getFlaggedAttendanceStudents,
   normalizeAttendanceStatusCounts,
 } from "@/src/lib/services/attendance";
+import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 
 const DAY_ENUM_MAP: Record<number, string> = {
   1: "MONDAY",
@@ -168,6 +167,7 @@ export async function getAdminDashboardData(
   const yearEnd = new Date(currentYear, 11, 31, 23, 59, 59, 999);
   const absenceWindowStart = startOfDay(new Date(now));
   absenceWindowStart.setDate(absenceWindowStart.getDate() - 30);
+  const activePeriod = await getActiveAcademicPeriod(schoolId);
 
   const [
     adminCount,
@@ -210,13 +210,30 @@ export async function getAdminDashboardData(
       _count: { _all: true },
     }),
     prisma.student.count({ where: tenantWhere }),
-    prisma.continuousAssessment.count({ where: tenantWhere }),
-    prisma.cAConfig.count({ where: tenantWhere }),
+    prisma.continuousAssessment.count({
+      where: {
+        ...tenantWhere,
+        term: activePeriod.currentTerm,
+        academicYear: activePeriod.academicYear,
+      },
+    }),
+    prisma.cAConfig.count({
+      where: {
+        ...tenantWhere,
+        isActive: true,
+        academicYear: activePeriod.academicYear,
+        currentTerm: activePeriod.currentTerm,
+      },
+    }),
     prisma.syllabus.count({ where: tenantWhere }),
     prisma.syllabus.count({ where: { ...tenantWhere, status: "PUBLISHED" } }),
     prisma.continuousAssessment.aggregate({
       _avg: { totalScore: true },
-      where: tenantWhere,
+      where: {
+        ...tenantWhere,
+        term: activePeriod.currentTerm,
+        academicYear: activePeriod.academicYear,
+      },
     }),
     prisma.attendance.findMany({
       where: {
@@ -314,10 +331,5 @@ export async function getAdminDashboardData(
 export async function getCachedAdminDashboardData(
   schoolId: string,
 ): Promise<AdminDashboardData> {
-  const dayKey = new Date().toISOString().slice(0, 10);
-  return unstable_cache(
-    () => getAdminDashboardData(schoolId),
-    ["dashboard", "admin", schoolId, dayKey],
-    { revalidate: 30, tags: [dashboardTag(schoolId, "admin")] },
-  )();
+  return getAdminDashboardData(schoolId);
 }

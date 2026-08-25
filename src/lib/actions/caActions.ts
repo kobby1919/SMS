@@ -32,6 +32,7 @@ import {
   recordCAActivityGivenEvents,
   recordCAActivityScoreEvents,
 } from "@/src/lib/services/parent-daily-summary";
+import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 
 // ─── Ghana BECE Grading System ────────────────────────────────────────────────
 // Score ranges → letter grade + grade point
@@ -60,10 +61,10 @@ export async function getGradeLabel(grade: string): Promise<string> {
 }
 
 // ─── Auth: only class supervisor / admin may write CA records ─────────────────
-async function requireCAAccess(classId: number): Promise<{ userId: string; schoolId: string }> {
+async function requireCAAccess(classId: number): Promise<{ userId: string; role: string; schoolId: string }> {
   const { userId, role, schoolId } = await requireRole(["admin", "teacher"]);
 
-  if (role === "admin") return { userId, schoolId };
+  if (role === "admin") return { userId, role, schoolId };
 
   if (role === "teacher") {
     const cls = await prisma.class.findFirst({
@@ -73,10 +74,31 @@ async function requireCAAccess(classId: number): Promise<{ userId: string; schoo
     if (cls?.supervisorId !== userId) {
       throw new Error("Only the class supervisor can manage CA records for this class.");
     }
-    return { userId, schoolId };
+    return { userId, role, schoolId };
   }
 
   throw new Error("Unauthorized");
+}
+
+async function assertTeacherUsesActivePeriod({
+  schoolId,
+  role,
+  term,
+  academicYear,
+}: {
+  schoolId: string;
+  role: string;
+  term: Term;
+  academicYear: string;
+}) {
+  if (role !== "teacher") return;
+
+  const activePeriod = await getActiveAcademicPeriod(schoolId);
+  if (term !== activePeriod.currentTerm || academicYear !== activePeriod.academicYear) {
+    throw new Error(
+      `Teachers can only work in the active academic period: ${activePeriod.academicYear} ${activePeriod.currentTerm.replace("_", " ")}. Ask an admin to change the school period if needed.`,
+    );
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -178,7 +200,8 @@ async function computeCA(
 
 export async function createCA(data: CAInput) {
   const parsed = parseActionInput(caRecordSchema, data);
-  const { userId: teacherId, schoolId } = await requireCAAccess(parsed.classId);
+  const { userId: teacherId, role, schoolId } = await requireCAAccess(parsed.classId);
+  await assertTeacherUsesActivePeriod({ schoolId, role, term: parsed.term, academicYear: parsed.academicYear });
 
   // Get active config
   const config = await prisma.cAConfig.findUnique({
@@ -226,7 +249,8 @@ export async function createCA(data: CAInput) {
 export async function updateCA(data: CAInput) {
   if (!data.id) throw new Error("CA ID required for update.");
   const parsed = parseActionInput(caRecordUpdateSchema, data);
-  const { userId: teacherId, schoolId } = await requireCAAccess(parsed.classId);
+  const { userId: teacherId, role, schoolId } = await requireCAAccess(parsed.classId);
+  await assertTeacherUsesActivePeriod({ schoolId, role, term: parsed.term, academicYear: parsed.academicYear });
 
   const config = await prisma.cAConfig.findUnique({
     where: { schoolId_academicYear: { schoolId, academicYear: parsed.academicYear } },
@@ -305,7 +329,8 @@ export async function bulkUpsertCA(
   classId = parsed.classId;
   term = parsed.term;
   academicYear = parsed.academicYear;
-  const { userId: teacherId, schoolId } = await requireCAAccess(classId);
+  const { userId: teacherId, role, schoolId } = await requireCAAccess(classId);
+  await assertTeacherUsesActivePeriod({ schoolId, role, term, academicYear });
 
   const config = await prisma.cAConfig.findUnique({
     where: { schoolId_academicYear: { schoolId, academicYear } },
@@ -418,6 +443,12 @@ export async function createCABucketAction(data: {
     classId: parsed.classId,
     subjectId: parsed.subjectId,
   });
+  await assertTeacherUsesActivePeriod({
+    schoolId,
+    role,
+    term: parsed.term,
+    academicYear: parsed.academicYear,
+  });
 
   const bucket = await createCABucket({
     schoolId,
@@ -462,7 +493,7 @@ export async function createCAActivityAction(data: {
 
   const bucket = await prisma.cABucket.findFirst({
     where: { id: parsed.bucketId, schoolId },
-    select: { classId: true, subjectId: true },
+    select: { classId: true, subjectId: true, term: true, academicYear: true },
   });
   if (!bucket) throw new Error("CA bucket not found.");
 
@@ -472,6 +503,12 @@ export async function createCAActivityAction(data: {
     schoolId,
     classId: bucket.classId,
     subjectId: bucket.subjectId,
+  });
+  await assertTeacherUsesActivePeriod({
+    schoolId,
+    role: "teacher",
+    term: bucket.term,
+    academicYear: bucket.academicYear,
   });
 
   const activity = await createCAActivity({
@@ -520,7 +557,11 @@ export async function bulkUpsertCAActivityScores(data: {
 
   const activity = await prisma.cAActivity.findFirst({
     where: { id: parsed.activityId, schoolId },
-    select: { classId: true, subjectId: true },
+    select: {
+      classId: true,
+      subjectId: true,
+      bucket: { select: { term: true, academicYear: true } },
+    },
   });
   if (!activity) throw new Error("CA activity not found.");
 
@@ -530,6 +571,12 @@ export async function bulkUpsertCAActivityScores(data: {
     schoolId,
     classId: activity.classId,
     subjectId: activity.subjectId,
+  });
+  await assertTeacherUsesActivePeriod({
+    schoolId,
+    role: "teacher",
+    term: activity.bucket.term,
+    academicYear: activity.bucket.academicYear,
   });
 
   const writeResults = await Promise.all(

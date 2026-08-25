@@ -105,7 +105,6 @@ const CAActivityManager = ({
   className,
   students,
   subjects,
-  academicYears,
   activeTerm,
   activeYear,
   buckets,
@@ -113,8 +112,8 @@ const CAActivityManager = ({
 }: Props) => {
   const router = useRouter();
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | "">(subjects[0]?.id ?? "");
-  const [selectedTerm, setSelectedTerm] = useState<Term>(activeTerm);
-  const [selectedYear, setSelectedYear] = useState(activeYear || academicYears[0] || "2025/26");
+  const selectedTerm = activeTerm;
+  const selectedYear = activeYear || "2025/26";
   const [bucketName, setBucketName] = useState("Midterm Exam");
   const [bucketType, setBucketType] = useState<CAActivityType>("MIDTERM_EXAM");
   const [aggregationMode, setAggregationMode] = useState<CABucketAggregationMode>("AVERAGE_TO_BUCKET");
@@ -318,7 +317,7 @@ const CAActivityManager = ({
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <label className="flex flex-col gap-1.5">
           <span className="text-xs text-gray-500 font-black uppercase tracking-wider flex items-center gap-1.5">
             <BookOpen size={11} /> Subject
@@ -339,31 +338,15 @@ const CAActivityManager = ({
           </select>
         </label>
 
-        <label className="flex flex-col gap-1.5">
-          <span className="text-xs text-gray-500 font-black uppercase tracking-wider">Term</span>
-          <select
-            value={selectedTerm}
-            onChange={(event) => setSelectedTerm(event.target.value as Term)}
-            className="w-full ring-[1.5px] ring-gray-200 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 focus:ring-indigo-500 outline-none bg-white"
-          >
-            {Object.entries(TERM_LABELS).map(([value, label]) => (
-              <option key={value} value={value}>{label}</option>
-            ))}
-          </select>
-        </label>
-
-        <label className="flex flex-col gap-1.5">
-          <span className="text-xs text-gray-500 font-black uppercase tracking-wider">Academic Year</span>
-          <select
-            value={selectedYear}
-            onChange={(event) => setSelectedYear(event.target.value)}
-            className="w-full ring-[1.5px] ring-gray-200 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 focus:ring-indigo-500 outline-none bg-white"
-          >
-            {academicYears.map((year) => (
-              <option key={year} value={year}>{year}</option>
-            ))}
-          </select>
-        </label>
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs text-gray-500 font-black uppercase tracking-wider">Active Period</span>
+          <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2.5 text-sm font-black text-emerald-700">
+            {selectedYear} · {TERM_LABELS[selectedTerm]}
+          </div>
+          <p className="text-[11px] font-semibold text-gray-400">
+            Set by admin. Buckets and activities are created only for this period.
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
