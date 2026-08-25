@@ -100,6 +100,10 @@ function formatMark(value: number) {
   return Number.isInteger(value) ? String(value) : value.toFixed(2);
 }
 
+function roundMark(value: number) {
+  return Math.round(value * 100) / 100;
+}
+
 const CAActivityManager = ({
   classId,
   className,
@@ -152,6 +156,53 @@ const CAActivityManager = ({
   );
 
   const usedAllocation = scopedBuckets.reduce((sum, bucket) => sum + bucket.allocationMarks, 0);
+
+  const getCurrentSubjectCAForStudent = (studentId: string) => {
+    const earnedMarks = scopedBuckets.reduce((subjectTotal, bucket) => {
+      const scoredActivities = bucket.activities
+        .map((activity) => {
+          const savedScore = activity.scores.find((score) => score.studentId === studentId);
+          const draftScore =
+            selectedActivity?.id === activity.id && scoreEdits[studentId] !== undefined
+              ? scoreEdits[studentId]
+              : undefined;
+          const rawValue = draftScore !== undefined ? draftScore : savedScore ? String(savedScore.rawScore) : "";
+          if (rawValue === "") return null;
+
+          const rawScore = Number(rawValue);
+          if (Number.isNaN(rawScore) || activity.rawMaxScore <= 0) return null;
+
+          const allocation =
+            bucket.aggregationMode === "SUM_ACTIVITIES"
+              ? activity.allocationMarks ?? 0
+              : bucket.allocationMarks;
+
+          return {
+            rawScore,
+            rawMaxScore: activity.rawMaxScore,
+            earnedMarks: roundMark((rawScore / activity.rawMaxScore) * allocation),
+          };
+        })
+        .filter((activity): activity is { rawScore: number; rawMaxScore: number; earnedMarks: number } => activity !== null);
+
+      if (scoredActivities.length === 0) return subjectTotal;
+
+      if (bucket.aggregationMode === "SUM_ACTIVITIES") {
+        return subjectTotal + Math.min(
+          scoredActivities.reduce((sum, activity) => sum + activity.earnedMarks, 0),
+          bucket.allocationMarks,
+        );
+      }
+
+      const averagePercentage =
+        scoredActivities.reduce((sum, activity) => sum + (activity.rawScore / activity.rawMaxScore) * 100, 0) /
+        scoredActivities.length;
+
+      return subjectTotal + roundMark((averagePercentage / 100) * bucket.allocationMarks);
+    }, 0);
+
+    return roundMark(earnedMarks);
+  };
 
   useEffect(() => {
     if (!selectedActivity) {
@@ -634,16 +685,16 @@ const CAActivityManager = ({
           </p>
         ) : (
           <div className="overflow-x-auto rounded-2xl border border-gray-100">
+            <div className="grid min-w-[560px] grid-cols-[2fr_1fr_1fr] gap-3 border-b border-gray-100 bg-gray-50 px-4 py-3">
+              <span className="text-xs font-black uppercase tracking-wider text-gray-400">Student</span>
+              <span className="text-xs font-black uppercase tracking-wider text-gray-400">Raw Score</span>
+              <span className="text-right text-xs font-black uppercase tracking-wider text-gray-400">Current Subject CA</span>
+            </div>
             <div className="min-w-[560px] divide-y divide-gray-50">
               {students.map((student) => {
                 const savedScore = selectedActivity.scores.find((score) => score.studentId === student.id);
                 const value = scoreEdits[student.id] ?? (savedScore ? String(savedScore.rawScore) : "");
-                const raw = Number(value);
-                const markPreview = value === "" || Number.isNaN(raw)
-                  ? null
-                  : selectedBucket?.aggregationMode === "SUM_ACTIVITIES" && selectedActivity.allocationMarks
-                    ? (raw / selectedActivity.rawMaxScore) * selectedActivity.allocationMarks
-                    : (raw / selectedActivity.rawMaxScore) * (selectedBucket?.allocationMarks ?? 0);
+                const currentSubjectCA = getCurrentSubjectCAForStudent(student.id);
 
                 return (
                   <div key={student.id} className="grid grid-cols-[2fr_1fr_1fr] items-center gap-3 px-4 py-3">
@@ -664,7 +715,7 @@ const CAActivityManager = ({
                       className="w-full rounded-xl border border-gray-200 px-3 py-2 text-center text-sm font-black text-gray-800 outline-none focus:border-indigo-500 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                     <p className="text-right text-xs font-black text-indigo-600">
-                      {markPreview === null ? "—" : `${formatMark(markPreview)} CA marks`}
+                      {formatMark(currentSubjectCA)} current CA
                     </p>
                   </div>
                 );
