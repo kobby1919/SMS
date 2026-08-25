@@ -590,13 +590,22 @@ export async function bulkUpsertCAActivityScores(data: {
       })
     : [];
 
+  if (changedScores.length > 0) {
+    await prisma.cAActivity.update({
+      where: { id: parsed.activityId, schoolId },
+      data: { isLocked: true },
+    });
+  }
+
   await logCAAudit({
     schoolId,
     actorId: userId,
-    action: "CA_ACTIVITY_SCORES_UPSERTED",
+    action: changedScores.length > 0 ? "CA_ACTIVITY_SCORES_SUBMITTED_AND_LOCKED" : "CA_ACTIVITY_SCORES_UNCHANGED",
     entityType: "CAActivity",
     entityId: parsed.activityId,
-    message: `${allScores.length} student score${allScores.length === 1 ? "" : "s"} submitted for a CA activity.`,
+    message: changedScores.length > 0
+      ? `${allScores.length} student score${allScores.length === 1 ? "" : "s"} submitted and the CA activity was locked.`
+      : "No score changes detected for this CA activity.",
     metadata: {
       scoreIds: allScores.map((score) => score.id),
       changedScoreIds: changedScores.map((score) => score.id),

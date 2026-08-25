@@ -142,6 +142,10 @@ const CAActivityManager = ({
   const selectedBucket = scopedBuckets.find((bucket) => bucket.id === selectedBucketId) ?? scopedBuckets[0];
   const activities = selectedBucket?.activities ?? [];
   const selectedActivity = activities.find((activity) => activity.id === selectedActivityId) ?? activities[0];
+  const selectedActivityHasScores = Boolean(selectedActivity && selectedActivity.scores.length > 0);
+  const selectedActivityLockedForEntry = Boolean(
+    selectedActivity?.isLocked || selectedActivityHasScores || selectedBucket?.isLocked,
+  );
 
   const usedAllocation = scopedBuckets.reduce((sum, bucket) => sum + bucket.allocationMarks, 0);
 
@@ -221,8 +225,8 @@ const CAActivityManager = ({
       setError("Select an activity first.");
       return;
     }
-    if (selectedActivity.isLocked || selectedBucket?.isLocked) {
-      setError("This CA activity is locked. Admin correction is required before changing scores.");
+    if (selectedActivityLockedForEntry) {
+      setError("Scores for this CA activity have already been saved. Corrections must go through an admin-approved correction process.");
       return;
     }
 
@@ -251,7 +255,7 @@ const CAActivityManager = ({
             result.eventCount > 0
               ? `${result.eventCount} parent update${result.eventCount === 1 ? "" : "s"} prepared.`
               : "No parent update was needed."
-          } Score fields cleared for the next activity.`,
+          } This activity is now locked to protect the record.`,
         );
       }
       setScoreEdits({});
@@ -590,15 +594,20 @@ const CAActivityManager = ({
                 ? `${selectedActivity.title} · raw score out of ${formatMark(selectedActivity.rawMaxScore)}`
                 : "Select an activity to enter marks"}
             </p>
+            {selectedActivityLockedForEntry && selectedActivity && (
+              <p className="mt-1 text-[11px] font-semibold text-amber-600">
+                Scores have already been saved for this activity. Ask an admin to approve any correction.
+              </p>
+            )}
           </div>
           <button
             type="button"
             onClick={handleSaveScores}
-            disabled={pendingAction !== null || !selectedActivity || selectedActivity.isLocked || Boolean(selectedBucket?.isLocked)}
+            disabled={pendingAction !== null || !selectedActivity || selectedActivityLockedForEntry}
             className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-black text-white hover:bg-emerald-700 disabled:opacity-50"
           >
             {pendingAction === "scores" ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
-            {pendingAction === "scores" ? "Saving Scores..." : "Save Scores"}
+            {pendingAction === "scores" ? "Saving Scores..." : selectedActivityLockedForEntry ? "Scores Locked" : "Save Scores"}
           </button>
         </div>
 
@@ -630,10 +639,11 @@ const CAActivityManager = ({
                       max={selectedActivity.rawMaxScore}
                       step={0.5}
                       value={value}
+                      disabled={selectedActivityLockedForEntry}
                       onChange={(event) =>
                         setScoreEdits((prev) => ({ ...prev, [student.id]: event.target.value }))
                       }
-                      className="w-full rounded-xl border border-gray-200 px-3 py-2 text-center text-sm font-black text-gray-800 outline-none focus:border-indigo-500"
+                      className="w-full rounded-xl border border-gray-200 px-3 py-2 text-center text-sm font-black text-gray-800 outline-none focus:border-indigo-500 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                     <p className="text-right text-xs font-black text-indigo-600">
                       {markPreview === null ? "—" : `${formatMark(markPreview)} CA marks`}
