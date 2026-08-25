@@ -91,13 +91,9 @@ function eventDedupeKey(event: {
   body: string;
   sourceModel: string;
   sourceId: string;
+  sourceKey?: string;
 }) {
-  return event.sourceModel === "Attendance" ||
-    event.sourceModel === "CAActivityScore" ||
-    event.sourceModel === "ContinuousAssessment" ||
-    event.sourceModel === "Payment"
-    ? `${event.sourceModel}:${event.sourceId}`
-    : `${event.type}:${event.body}`;
+  return event.sourceKey || `${event.sourceModel}:${event.sourceId}` || `${event.type}:${event.body}`;
 }
 
 function dedupeEvents<T extends {
@@ -105,6 +101,7 @@ function dedupeEvents<T extends {
   body: string;
   sourceModel: string;
   sourceId: string;
+  sourceKey?: string;
 }>(events: T[]) {
   const seen = new Set<string>();
   return events.filter((event) => {

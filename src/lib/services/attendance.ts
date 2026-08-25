@@ -202,11 +202,12 @@ export async function saveAttendance({
 
   const validStudents = await prisma.student.findMany({
     where: { schoolId, classId: lesson.classId, id: { in: studentIds } },
-    select: { id: true },
+    select: { id: true, name: true, surname: true },
   });
   if (validStudents.length !== studentIds.length) {
     throw new Error("One or more students do not belong to this lesson's class.");
   }
+  const validStudentById = new Map(validStudents.map((student) => [student.id, student]));
 
   const existingRecords = await prisma.attendance.findMany({
     where: {
@@ -303,12 +304,13 @@ export async function saveAttendance({
 
   if (lessonForEvent) {
     const teacherName = `${lessonForEvent.teacher.name} ${lessonForEvent.teacher.surname}`;
+    const attendanceSourceKeys = savedAttendanceRows.map((row) => `attendance:${row.id}`);
     await prisma.parentActivityEvent.deleteMany({
       where: {
         schoolId,
         type: "ATTENDANCE",
         sourceModel: "Attendance",
-        sourceKey: { startsWith: `attendance:${lessonId}:${attendanceDate.toISOString()}` },
+        sourceKey: { in: attendanceSourceKeys },
         studentId: { in: studentIds },
       },
     });
@@ -316,6 +318,8 @@ export async function saveAttendance({
       cleanedRecords.map((record) => {
         const attendanceId = savedAttendanceByStudent.get(record.studentId);
         if (!attendanceId) return Promise.resolve([]);
+        const student = validStudentById.get(record.studentId);
+        const studentName = student ? `${student.name} ${student.surname}` : "Your child";
         const statusLabel = ATTENDANCE_STATUS_LABELS[record.status];
         const note = record.note;
         const needsReason = record.status === "ABSENT" || record.status === "LATE";
@@ -342,6 +346,7 @@ export async function saveAttendance({
           sourceKey: `attendance:${attendanceId}`,
           occurredAt: attendanceDate,
           payload: {
+            studentName,
             status: record.status,
             statusLabel,
             note: note ?? null,

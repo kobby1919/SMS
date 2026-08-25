@@ -41,12 +41,10 @@ function formatSummaryDate(date: Date) {
   });
 }
 
-function uniqueEventsByBody<T extends { type: string; body: string; sourceModel: string; sourceId: string }>(events: T[]) {
+function uniqueEventsBySource<T extends { type: string; body: string; sourceModel: string; sourceId: string; sourceKey?: string }>(events: T[]) {
   const seen = new Set<string>();
   return events.filter((event) => {
-    const key = event.sourceModel === "CAActivityScore"
-      ? `${event.sourceModel}:${event.sourceId}`
-      : `${event.type}:${event.body}`;
+    const key = event.sourceKey || `${event.sourceModel}:${event.sourceId}` || `${event.type}:${event.body}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
@@ -65,6 +63,7 @@ type SummaryEvent = {
   payload?: unknown;
   sourceModel: string;
   sourceId: string;
+  sourceKey: string;
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -499,7 +498,7 @@ async function rebuildParentSummary(input: {
     orderBy: [{ occurredAt: "asc" }, { createdAt: "asc" }],
   });
 
-  const uniqueEvents = uniqueEventsByBody(events);
+  const uniqueEvents = uniqueEventsBySource(events);
 
   if (uniqueEvents.length === 0) {
     const sourceKey = input.period === "weekly"

@@ -100,6 +100,18 @@ const formatTime = (iso: string) => {
   return `${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}`;
 };
 
+const getApiErrorMessage = (data: unknown) => {
+  if (!data || typeof data !== "object") return "Failed to save attendance.";
+  const payload = data as { error?: unknown; issues?: unknown };
+  if (payload.issues && typeof payload.issues === "object") {
+    const firstIssue = Object.values(payload.issues as Record<string, unknown>)
+      .flatMap((value) => Array.isArray(value) ? value : [])
+      .find((value): value is string => typeof value === "string" && value.trim().length > 0);
+    if (firstIssue) return firstIssue;
+  }
+  return typeof payload.error === "string" ? payload.error : "Failed to save attendance.";
+};
+
 // ─── Component ────────────────────────────────────────────────────────────────
 const AttendanceTaker = ({
   teacherLessons,
@@ -226,7 +238,7 @@ const AttendanceTaker = ({
         }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error ?? "Failed to save."); return; }
+      if (!res.ok) { setError(getApiErrorMessage(data)); return; }
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch {

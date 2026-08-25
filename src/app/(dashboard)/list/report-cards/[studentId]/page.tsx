@@ -14,6 +14,12 @@ import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 export const dynamic = "force-dynamic";
 
 type CATrend = "up" | "down" | "steady" | "new";
+const DEFAULT_TERM: Term = "TERM_1";
+const VALID_TERMS = new Set<Term>(["TERM_1", "TERM_2", "TERM_3"]);
+
+function termFromParam(value?: string): Term | null {
+  return value && VALID_TERMS.has(value as Term) ? value as Term : null;
+}
 
 const ReportCardPage = async ({
   params,
@@ -27,8 +33,8 @@ const ReportCardPage = async ({
 
   const { studentId } = await params;
   const sp            = await searchParams;
-  const term          = (sp.term ?? "TERM_2") as Term;
-  const academicYear  = sp.year ?? "";
+  const requestedTerm = termFromParam(sp.term);
+  const requestedYear = sp.year ?? "";
   const openedCAScoreId = sp.caScoreId ? Number(sp.caScoreId) : null;
 
   // ── Load student ──────────────────────────────────────────────────────────
@@ -55,7 +61,20 @@ const ReportCardPage = async ({
     prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } }),
     getSchoolBranding(schoolId),
   ]);
-  const activeYear   = academicYear || configs[0]?.academicYear || "2024/25";
+  const latestContext = !requestedTerm || !requestedYear
+    ? await prisma.continuousAssessment.findFirst({
+        where: {
+          schoolId,
+          studentId,
+          classId: student.classId,
+          ...(requestedYear ? { academicYear: requestedYear } : {}),
+        },
+        select: { term: true, academicYear: true },
+        orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+      })
+    : null;
+  const term = requestedTerm ?? latestContext?.term ?? DEFAULT_TERM;
+  const activeYear   = requestedYear || latestContext?.academicYear || configs[0]?.academicYear || "2025/26";
   const config       = configs.find((c) => c.academicYear === activeYear);
   const cwWeight     = config?.classworkWeight ?? 30;
   const exWeight     = config?.examWeight      ?? 70;

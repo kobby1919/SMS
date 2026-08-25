@@ -26,6 +26,33 @@ import type { Term } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
 
+const DEFAULT_TERM: Term = "TERM_1";
+const VALID_TERMS = new Set<Term>(["TERM_1", "TERM_2", "TERM_3"]);
+
+function termFromParam(value?: string): Term | null {
+  return value && VALID_TERMS.has(value as Term) ? value as Term : null;
+}
+
+async function findLatestCAContext(input: {
+  schoolId: string;
+  studentIds?: string[];
+  classId?: number;
+  academicYear?: string;
+}) {
+  if (input.studentIds && input.studentIds.length === 0) return null;
+
+  return prisma.continuousAssessment.findFirst({
+    where: {
+      schoolId: input.schoolId,
+      ...(input.studentIds ? { studentId: { in: input.studentIds } } : {}),
+      ...(input.classId ? { classId: input.classId } : {}),
+      ...(input.academicYear ? { academicYear: input.academicYear } : {}),
+    },
+    select: { term: true, academicYear: true },
+    orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+  });
+}
+
 const ReportCardListPage = async ({
   searchParams,
 }: {
@@ -35,13 +62,18 @@ const ReportCardListPage = async ({
 
   const params = await searchParams;
   const selectedClassId = params.classId ? parseInt(params.classId) : null;
-  const selectedTerm = params.term ?? "TERM_2";
+  const requestedTerm = termFromParam(params.term);
   const selectedYear = params.year ?? "";
   const selectedChildId = params.childId;
 
   if (role === "student") {
+    const latestContext = !requestedTerm || !selectedYear
+      ? await findLatestCAContext({ schoolId, studentIds: [userId], academicYear: selectedYear || undefined })
+      : null;
+    const selectedTerm = requestedTerm ?? latestContext?.term ?? DEFAULT_TERM;
+    const activeYear = selectedYear || latestContext?.academicYear || "";
     redirect(
-      `/list/report-cards/${userId}?term=${selectedTerm}&year=${selectedYear}`,
+      `/list/report-cards/${userId}?term=${selectedTerm}&year=${activeYear}`,
     );
   }
   // 3. Handle Parent with Multiple Children
@@ -63,14 +95,18 @@ const ReportCardListPage = async ({
     ]);
 
     if (children.length === 0) redirect("/");
-    const activeYear = selectedYear || configs[0]?.academicYear || "2024/25";
-    const config = configs.find((item) => item.academicYear === activeYear);
-    const cwWeight = config?.classworkWeight ?? 30;
     const visibleChildren = selectedChildId
       ? children.filter((child) => child.id === selectedChildId)
       : children;
     const safeVisibleChildren = visibleChildren.length > 0 ? visibleChildren : children;
     const childIds = safeVisibleChildren.map((child) => child.id);
+    const latestContext = !requestedTerm || !selectedYear
+      ? await findLatestCAContext({ schoolId, studentIds: childIds, academicYear: selectedYear || undefined })
+      : null;
+    const selectedTerm = requestedTerm ?? latestContext?.term ?? DEFAULT_TERM;
+    const activeYear = selectedYear || latestContext?.academicYear || configs[0]?.academicYear || "2025/26";
+    const config = configs.find((item) => item.academicYear === activeYear);
+    const cwWeight = config?.classworkWeight ?? 30;
     const classIds = [...new Set(safeVisibleChildren.map((child) => child.classId))];
     const [caRecords, subjectsByClass] = await Promise.all([
       prisma.continuousAssessment.findMany({
@@ -87,7 +123,7 @@ const ReportCardListPage = async ({
     ]);
 
     return (
-      <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
+      <div className="m-3 mt-0 flex flex-1 flex-col gap-4 sm:m-4 sm:mt-0">
         <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
@@ -153,7 +189,7 @@ const ReportCardListPage = async ({
                   </span>
                 </div>
 
-                <div className="mt-4 grid grid-cols-3 gap-2">
+                <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
                   <div className="rounded-xl bg-sky-50 p-3 text-sky-700">
                     <p className="text-sm font-black">{caStarted}/{subjectTotal || caStarted}</p>
                     <p className="text-[10px] font-black uppercase">CA started</p>
@@ -174,7 +210,7 @@ const ReportCardListPage = async ({
                   </div>
                   <div className="divide-y divide-gray-50">
                     {subjectRows.length > 0 ? subjectRows.map(({ subjectId, subjectName, record }) => (
-                      <div key={subjectId} className="flex items-center justify-between gap-3 px-3 py-2">
+                      <div key={subjectId} className="flex flex-col gap-1 px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                         <div className="min-w-0">
                           <p className="truncate text-xs font-black text-gray-900">{subjectName}</p>
                           <p className="text-[10px] font-semibold text-gray-400">
@@ -191,24 +227,24 @@ const ReportCardListPage = async ({
                   </div>
                 </div>
 
-                <div className="mt-4 flex flex-wrap gap-2">
+                <div className="mt-4 grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
                   <Link
                     href={`/list/report-cards/${child.id}?term=${selectedTerm}&year=${activeYear}&classId=${child.classId}`}
-                    className="rounded-xl bg-slate-900 px-3 py-2 text-xs font-black text-white"
+                    className="rounded-xl bg-slate-900 px-3 py-2 text-center text-xs font-black text-white"
                   >
                     Open full report
                   </Link>
                   {selectedChildId && (
                     <Link
                       href="/list/report-cards"
-                      className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-black text-gray-600"
+                      className="rounded-xl border border-gray-200 px-3 py-2 text-center text-xs font-black text-gray-600"
                     >
                       Show all wards
                     </Link>
                   )}
                   <Link
                     href={`/parent/children/${child.id}`}
-                    className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-black text-gray-600"
+                    className="rounded-xl border border-gray-200 px-3 py-2 text-center text-xs font-black text-gray-600"
                   >
                     Open ward checkup
                   </Link>
@@ -279,7 +315,11 @@ const ReportCardListPage = async ({
     configs.length > 0
       ? configs.map((c) => c.academicYear)
       : ["2024/25", "2025/26"];
-  const activeYear = selectedYear || academicYears[0] || "2024/25";
+  const latestContext = !requestedTerm || !selectedYear
+    ? await findLatestCAContext({ schoolId, classId: activeClass.id, academicYear: selectedYear || undefined })
+    : null;
+  const selectedTerm = requestedTerm ?? latestContext?.term ?? DEFAULT_TERM;
+  const activeYear = selectedYear || latestContext?.academicYear || academicYears[0] || "2025/26";
 
   // ── Config for this year ──────────────────────────────────────────────────
   const config = await prisma.cAConfig.findUnique({

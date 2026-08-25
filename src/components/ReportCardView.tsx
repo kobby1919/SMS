@@ -255,16 +255,16 @@ const ReportCardView = ({
       : undefined;
 
   return (
-    <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
+    <div className="m-3 mt-0 flex flex-1 flex-col gap-4 sm:m-4 sm:mt-0">
       {/* ── Action bar ── */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <Link
           href="/list/report-cards"
           className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-gray-700 transition-colors"
         >
-          <ArrowLeft size={16} /> Back to class
+          <ArrowLeft size={16} /> {role === "parent" ? "Back to results" : "Back to report cards"}
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {/* Role badge */}
           <span
             className={`text-xs font-bold px-3 py-1.5 rounded-xl border
@@ -726,15 +726,15 @@ const ReportCardView = ({
             ].map((s) => (
               <div
                 key={s.label}
-                className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-3"
+                className="flex min-w-0 items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4"
               >
                 <div
                   className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${s.color}`}
                 >
                   {s.icon}
                 </div>
-                <div>
-                  <p className="text-lg font-black text-gray-800 leading-none">
+                <div className="min-w-0">
+                  <p className="break-words text-lg font-black leading-none text-gray-800">
                     {s.value}
                   </p>
                   <p className="text-[10px] font-bold text-gray-400 mt-0.5">
@@ -776,7 +776,7 @@ const ReportCardView = ({
                 {attendanceRate}%
               </span>
             </div>
-            <div className="flex gap-4 text-[10px] font-bold text-gray-500">
+            <div className="flex flex-wrap gap-3 text-[10px] font-bold text-gray-500 sm:gap-4">
               {[
                 {
                   label: `Present: ${attendance.present}`,
@@ -867,7 +867,7 @@ const ReportCardView = ({
             })()}
 
           {/* Signatures */}
-          <div className="grid grid-cols-3 gap-6 pt-6 border-t border-gray-100">
+          <div className="grid grid-cols-1 gap-6 border-t border-gray-100 pt-6 sm:grid-cols-3">
             {[
               "Class Teacher",
               "Head Teacher / Principal",
@@ -883,7 +883,7 @@ const ReportCardView = ({
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+          <div className="flex flex-col gap-1 border-t border-gray-100 pt-2 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-[9px] text-gray-300 font-semibold">
               Generated{" "}
               {new Date().toLocaleDateString("en-GH", {
@@ -892,7 +892,7 @@ const ReportCardView = ({
                 year: "numeric",
               })}
             </p>
-            <p className="text-[9px] text-gray-300 font-semibold">
+            <p className="text-[9px] font-semibold text-gray-300 sm:text-right">
               {branding.shortName} - {student.surname.toUpperCase()}, {student.name}{" "}
               - {classInfo.name} - {TERM_LABELS[term]} {academicYear}
             </p>
