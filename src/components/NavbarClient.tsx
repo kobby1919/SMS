@@ -11,7 +11,6 @@ import {
   ChevronDown,
   FileText,
   GraduationCap,
-  HelpCircle,
   Home,
   Menu,
   MessageCircle,
@@ -379,14 +378,7 @@ const NavbarClient = ({ user, parentContext }: NavbarClientProps) => {
             </span>
           </div>
 
-          <div className="flex items-center gap-2 rounded-full border border-gray-100 bg-white px-1.5 py-1 shadow-sm">
-            <Link
-              href={isParent ? "/parent/updates#preferences" : "/"}
-              className="hidden h-7 w-7 items-center justify-center rounded-full text-gray-400 transition hover:bg-gray-50 hover:text-blue-700 sm:flex"
-              aria-label={isParent ? "Notification preferences" : "Edujay home"}
-            >
-              {isParent ? <Settings size={15} /> : <HelpCircle size={15} />}
-            </Link>
+          <div className="flex items-center rounded-full border border-gray-100 bg-white px-1.5 py-1 shadow-sm">
             <UserButtonWrapper />
           </div>
         </div>
