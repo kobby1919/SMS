@@ -27,7 +27,7 @@ export default async function DashboardLayout({
       </div>
 
       <div className="flex-1 min-w-0 h-full bg-[#F7F8FA] overflow-y-auto overflow-x-hidden">
-        <Navbar role={session.role} />
+        <Navbar role={session.role} userId={session.userId} schoolId={session.schoolId} />
         {children}
       </div>
     </div>

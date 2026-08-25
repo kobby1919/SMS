@@ -18,3 +18,20 @@ export async function markParentNotificationsRead() {
 
   revalidatePath("/parent");
 }
+
+export async function markParentNotificationRead(notificationId: string) {
+  const { userId, schoolId } = await requireRole(["parent"]);
+
+  await prisma.parentNotification.updateMany({
+    where: {
+      id: notificationId,
+      schoolId,
+      parentId: userId,
+      readAt: null,
+    },
+    data: { readAt: new Date() },
+  });
+
+  revalidatePath("/parent");
+  revalidatePath("/parent/updates");
+}
