@@ -102,7 +102,13 @@ const formatTime = (iso: string) => {
 
 const getApiErrorMessage = (data: unknown) => {
   if (!data || typeof data !== "object") return "Failed to save attendance.";
-  const payload = data as { error?: unknown; issues?: unknown };
+  const payload = data as { error?: unknown; issues?: unknown; issueDetails?: unknown };
+  if (payload.issueDetails && typeof payload.issueDetails === "object") {
+    const firstIssue = Object.values(payload.issueDetails as Record<string, unknown>)
+      .flatMap((value) => Array.isArray(value) ? value : [])
+      .find((value): value is string => typeof value === "string" && value.trim().length > 0);
+    if (firstIssue) return firstIssue;
+  }
   if (payload.issues && typeof payload.issues === "object") {
     const firstIssue = Object.values(payload.issues as Record<string, unknown>)
       .flatMap((value) => Array.isArray(value) ? value : [])
@@ -149,12 +155,20 @@ const AttendanceTaker = ({
   const isToday    = dateStr === todayStr;
   const isPastDate = dateStr < todayStr;
 
+  const defaultRecordFor = (studentId: string): AttendanceRecord => ({
+    studentId,
+    status: "PRESENT",
+    note: "",
+    arrivalTime: "",
+  });
+
   // ── Mark single student ──────────────────────────────────────────────────
   const markStudent = (studentId: string, status: AttendanceRecord["status"]) => {
     setAttendance((prev) => ({
       ...prev,
       [studentId]: {
-        ...prev[studentId],
+        ...(prev[studentId] ?? defaultRecordFor(studentId)),
+        studentId,
         status,
         arrivalTime: status === "LATE" ? prev[studentId]?.arrivalTime ?? "" : "",
       },
@@ -167,14 +181,14 @@ const AttendanceTaker = ({
   const setNote = (studentId: string, note: string) => {
     setAttendance((prev) => ({
       ...prev,
-      [studentId]: { ...prev[studentId], note },
+      [studentId]: { ...(prev[studentId] ?? defaultRecordFor(studentId)), studentId, note },
     }));
   };
 
   const setArrivalTime = (studentId: string, arrivalTime: string) => {
     setAttendance((prev) => ({
       ...prev,
-      [studentId]: { ...prev[studentId], arrivalTime },
+      [studentId]: { ...(prev[studentId] ?? defaultRecordFor(studentId)), studentId, arrivalTime },
     }));
   };
 
@@ -204,7 +218,17 @@ const AttendanceTaker = ({
   // ── Submit ───────────────────────────────────────────────────────────────
   const handleSubmit = async () => {
     if (!selectedLessonId) return;
-    const lateWithoutNote = Object.values(attendance).find(
+    const records = students.map((student) => {
+      const record = attendance[student.id] ?? defaultRecordFor(student.id);
+      return {
+        studentId: student.id,
+        status: record.status ?? "PRESENT",
+        note: record.note?.trim() || null,
+        arrivalTime: record.status === "LATE" ? record.arrivalTime?.trim() || null : null,
+      };
+    });
+
+    const lateWithoutNote = records.find(
       (record) => record.status === "LATE" && !record.note?.trim(),
     );
     if (lateWithoutNote) {
@@ -212,7 +236,7 @@ const AttendanceTaker = ({
       setNoteTarget(lateWithoutNote.studentId);
       return;
     }
-    const lateWithoutArrivalTime = Object.values(attendance).find(
+    const lateWithoutArrivalTime = records.find(
       (record) => record.status === "LATE" && !record.arrivalTime?.trim(),
     );
     if (lateWithoutArrivalTime) {
@@ -230,11 +254,7 @@ const AttendanceTaker = ({
         body: JSON.stringify({
           lessonId: selectedLessonId,
           date:     dateStr,
-          records:  Object.values(attendance).map((record) => ({
-            ...record,
-            note: record.note?.trim() || null,
-            arrivalTime: record.status === "LATE" ? record.arrivalTime?.trim() || null : null,
-          })),
+          records,
         }),
       });
       const data = await res.json();

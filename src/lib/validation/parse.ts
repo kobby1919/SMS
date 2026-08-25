@@ -8,12 +8,19 @@ export type ParseResult<T> =
 export function parseBody<T>(schema: z.ZodType<T>, body: unknown): ParseResult<T> {
   const result = schema.safeParse(body);
   if (!result.success) {
+    const issuesByPath = result.error.issues.reduce<Record<string, string[]>>((acc, issue) => {
+      const key = issue.path.length > 0 ? issue.path.join(".") : "_form";
+      acc[key] = [...(acc[key] ?? []), issue.message];
+      return acc;
+    }, {});
+
     return {
       ok: false,
       response: NextResponse.json(
         {
           error: "Validation failed",
           issues: result.error.flatten().fieldErrors,
+          issueDetails: issuesByPath,
         },
         { status: 400 },
       ),
