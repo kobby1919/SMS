@@ -524,6 +524,7 @@ export async function createCAActivityAction(data: {
   });
 
   revalidatePath("/list/ca");
+  revalidatePath("/list/ca", "page");
   revalidatePath("/parent");
   revalidatePath("/teacher");
   revalidateDashboard(schoolId);
@@ -614,6 +615,7 @@ export async function bulkUpsertCAActivityScores(data: {
   });
 
   revalidatePath("/list/ca");
+  revalidatePath("/list/ca", "page");
   revalidatePath("/parent");
   revalidatePath("/teacher");
   revalidateDashboard(schoolId);

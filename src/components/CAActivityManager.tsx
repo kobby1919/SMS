@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   AlertCircle,
@@ -124,6 +124,7 @@ const CAActivityManager = ({
   const [activityAllocation, setActivityAllocation] = useState("");
   const [selectedActivityId, setSelectedActivityId] = useState<number | "">("");
   const [scoreEdits, setScoreEdits] = useState<Record<string, string>>({});
+  const [locallyLockedActivityIds, setLocallyLockedActivityIds] = useState<Set<number>>(new Set());
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<string | null>(null);
@@ -144,10 +145,26 @@ const CAActivityManager = ({
   const selectedActivity = activities.find((activity) => activity.id === selectedActivityId) ?? activities[0];
   const selectedActivityHasScores = Boolean(selectedActivity && selectedActivity.scores.length > 0);
   const selectedActivityLockedForEntry = Boolean(
-    selectedActivity?.isLocked || selectedActivityHasScores || selectedBucket?.isLocked,
+    selectedActivity?.isLocked ||
+      selectedActivityHasScores ||
+      (selectedActivity ? locallyLockedActivityIds.has(selectedActivity.id) : false) ||
+      selectedBucket?.isLocked,
   );
 
   const usedAllocation = scopedBuckets.reduce((sum, bucket) => sum + bucket.allocationMarks, 0);
+
+  useEffect(() => {
+    if (!selectedActivity) {
+      setScoreEdits({});
+      return;
+    }
+
+    setScoreEdits(
+      Object.fromEntries(
+        selectedActivity.scores.map((score) => [score.studentId, String(score.rawScore)]),
+      ),
+    );
+  }, [selectedActivity?.id, selectedActivity?.scores]);
 
   const handleCreateBucket = async () => {
     if (pendingAction) return;
@@ -250,6 +267,7 @@ const CAActivityManager = ({
       if (result.changedCount === 0) {
         setMessage("No score changes detected. Nothing new was sent to parents.");
       } else {
+        setLocallyLockedActivityIds((current) => new Set(current).add(selectedActivity.id));
         setMessage(
           `Scores saved successfully. Updated ${result.changedCount} of ${result.count} score${result.count === 1 ? "" : "s"}. ${
             result.eventCount > 0
@@ -258,7 +276,6 @@ const CAActivityManager = ({
           } This activity is now locked to protect the record.`,
         );
       }
-      setScoreEdits({});
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save scores.");
@@ -619,7 +636,8 @@ const CAActivityManager = ({
           <div className="overflow-x-auto rounded-2xl border border-gray-100">
             <div className="min-w-[560px] divide-y divide-gray-50">
               {students.map((student) => {
-                const value = scoreEdits[student.id] ?? "";
+                const savedScore = selectedActivity.scores.find((score) => score.studentId === student.id);
+                const value = scoreEdits[student.id] ?? (savedScore ? String(savedScore.rawScore) : "");
                 const raw = Number(value);
                 const markPreview = value === "" || Number.isNaN(raw)
                   ? null
