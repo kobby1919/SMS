@@ -226,7 +226,7 @@ const ReportCardPage = async ({
     const previous = previousCABySubject.get(ca.subjectId);
     const latest = latestCABySubject.get(ca.subjectId);
     const caChange = previous
-      ? Math.round((ca.classworkScore - previous.classworkScore) * 10) / 10
+      ? Math.round((ca.classworkScore - previous.classworkScore) * 100) / 100
       : 0;
     const caTrend: CATrend = previous
       ? caChange > 0

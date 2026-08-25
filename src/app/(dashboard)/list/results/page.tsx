@@ -10,6 +10,7 @@ import { ScrollText, TrendingUp, Award, CheckCircle2 } from "lucide-react";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import { getGradeBandByGrade, TERM_LABELS } from "@/src/lib/caGrades";
+import { formatMark } from "@/src/lib/formatters/marks";
 import Link from "next/link";
 import type { Prisma, Term } from "@/src/generated/prisma";
 
@@ -330,7 +331,7 @@ const ResultListPage = async ({
                         <p className="font-bold text-sm text-gray-700">{item.subject.name}</p>
                       </td>
                       <td className="px-4 py-4 text-center">
-                        <span className="text-sm font-semibold text-gray-600">{item.classworkScore.toFixed(1)}</span>
+                        <span className="text-sm font-semibold text-gray-600">{formatMark(item.classworkScore)}</span>
                       </td>
                       <td className="px-4 py-4 text-center">
                         <span className="text-sm font-semibold text-gray-600">{item.examScore.toFixed(1)}</span>

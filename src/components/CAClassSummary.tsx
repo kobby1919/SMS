@@ -6,6 +6,7 @@
 
 import { useMemo, useState } from "react";
 import { getGradeBandByGrade, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
+import { formatMark } from "@/src/lib/formatters/marks";
 import { Trophy, Medal, TrendingUp, ChevronDown } from "lucide-react";
 
 type CARecord = {
@@ -273,7 +274,7 @@ const CAClassSummary = ({ className, students, subjects, caRecords }: Props) => 
                             </span>
                           )}
                           <span className="text-[9px] font-semibold text-gray-400">
-                            CA {Math.round(rec.classworkScore * 10) / 10} + {reportReady ? `Exam ${Math.round(rec.examScore * 10) / 10}` : "Exam pending"}
+                            CA {formatMark(rec.classworkScore)} + {reportReady ? `Exam ${formatMark(rec.examScore)}` : "Exam pending"}
                           </span>
                           {reportReady && pos && <PositionBadge pos={pos} />}
                         </div>

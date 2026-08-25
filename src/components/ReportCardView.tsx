@@ -15,6 +15,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { getGradeBandByGrade, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
+import { formatMark } from "@/src/lib/formatters/marks";
 import Link from "next/link";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -470,9 +471,9 @@ const ReportCardView = ({
                   const percent = Math.min(100, Math.round((row.classworkScore / Math.max(cwWeight, 1)) * 100));
                   const trendLabel =
                     row.caTrend === "up"
-                      ? `Improving by ${Math.abs(row.caChange)}`
+                      ? `Improving by ${formatMark(Math.abs(row.caChange))}`
                       : row.caTrend === "down"
-                        ? `Dropping by ${Math.abs(row.caChange)}`
+                        ? `Dropping by ${formatMark(Math.abs(row.caChange))}`
                         : row.caTrend === "steady"
                           ? "Steady"
                           : "New CA record";
@@ -489,7 +490,7 @@ const ReportCardView = ({
                         <div>
                           <p className="text-sm font-black text-gray-900">{row.name}</p>
                         <p className="mt-0.5 text-xs font-semibold text-gray-400">
-                          CA {row.classworkScore.toFixed(1)} / {cwWeight}
+                          CA {formatMark(row.classworkScore)} / {formatMark(cwWeight)}
                         </p>
                         {row.hasNewerCARecord && (
                           <p className="mt-1 text-[10px] font-black uppercase tracking-wide text-amber-600">
@@ -562,7 +563,7 @@ const ReportCardView = ({
                             {row.name}
                           </td>
                           <td className="px-3 py-3 text-center font-semibold text-gray-600">
-                            {row.classworkScore.toFixed(1)}
+                            {formatMark(row.classworkScore)}
                           </td>
                           <td className="px-3 py-3 text-center font-semibold text-gray-600">
                             {row.examScore.toFixed(1)}

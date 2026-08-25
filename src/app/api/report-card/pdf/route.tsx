@@ -13,6 +13,7 @@ import { documentTag } from "@/src/lib/cacheTags";
 import { getCachedDocument } from "@/src/lib/services/document-cache";
 import { getSchoolBranding } from "@/src/lib/services/school-branding";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
+import { formatMark } from "@/src/lib/formatters/marks";
 import {
   renderToBuffer,
   Document,
@@ -254,7 +255,7 @@ function ReportCardPDF(p: PDFProps) {
           {p.subjectRows.map((row, i) => (
             <View key={row.name} style={i % 2 === 0 ? S.tRow : S.tRowAlt}>
               <Text style={S.cSubject}>{row.name}</Text>
-              <Text style={S.cNum}>{row.classworkScore.toFixed(1)}</Text>
+              <Text style={S.cNum}>{formatMark(row.classworkScore)}</Text>
               <Text style={S.cNum}>{row.examScore.toFixed(1)}</Text>
               <Text style={[S.cNum,   { color: gradeColor(row.grade), fontFamily: "Helvetica-Bold" }]}>{row.totalScore.toFixed(1)}</Text>
               <Text style={[S.cGrade, { color: gradeColor(row.grade) }]}>{row.grade}</Text>

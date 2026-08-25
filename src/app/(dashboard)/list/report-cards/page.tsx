@@ -23,6 +23,7 @@ import {
 import ReportCardFilters from "@/src/components/ReportCardFilters";
 import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
+import { formatMark } from "@/src/lib/formatters/marks";
 import type { Term } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
@@ -135,7 +136,7 @@ const ReportCardListPage = async ({
             const caStarted = records.length;
             const subjectTotal = subjectRows.length;
             const avgCA = caStarted
-              ? Math.round((records.reduce((sum, record) => sum + record.classworkScore, 0) / caStarted) * 10) / 10
+              ? records.reduce((sum, record) => sum + record.classworkScore, 0) / caStarted
               : 0;
 
             return (
@@ -174,7 +175,7 @@ const ReportCardListPage = async ({
                     <p className="text-[10px] font-black uppercase">Reports ready</p>
                   </div>
                   <div className="rounded-xl bg-slate-50 p-3 text-slate-700">
-                    <p className="text-sm font-black">{avgCA}/{cwWeight}</p>
+                    <p className="text-sm font-black">{formatMark(avgCA)}/{formatMark(cwWeight)}</p>
                     <p className="text-[10px] font-black uppercase">Avg CA</p>
                   </div>
                 </div>
@@ -193,7 +194,7 @@ const ReportCardListPage = async ({
                           </p>
                         </div>
                         <p className="shrink-0 text-xs font-black text-sky-700">
-                          {record ? `${Math.round(record.classworkScore * 10) / 10}/${cwWeight}` : "-"}
+                          {record ? `${formatMark(record.classworkScore)}/${formatMark(cwWeight)}` : "-"}
                         </p>
                       </div>
                     )) : (
