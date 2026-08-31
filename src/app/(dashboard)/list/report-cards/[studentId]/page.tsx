@@ -48,14 +48,6 @@ const ReportCardPage = async ({
   });
   if (!student) notFound();
 
-  // ── Authorization ─────────────────────────────────────────────────────────
-  if (role === "student"  && userId !== studentId)            redirect("/");
-  if (role === "parent"   && student.parent && userId !== student.parentId) redirect("/");
-  if (role === "teacher") {
-    const cls = await prisma.class.findFirst({ where: { id: student.classId, schoolId }, select: { supervisorId: true } });
-    if (cls?.supervisorId !== userId) redirect("/");
-  }
-
   // ── Academic year fallback ────────────────────────────────────────────────
   const [configs, branding, activePeriod] = await Promise.all([
     prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } }),
@@ -68,6 +60,43 @@ const ReportCardPage = async ({
   const cwWeight     = config?.classworkWeight ?? 30;
   const exWeight     = config?.examWeight      ?? 70;
 
+  // ── Subjects on timetable for this class ──────────────────────────────────
+  const subjectsByClass = await listClassSubjectsFromTimetable(schoolId, [student.classId]);
+  const timetableSubjects = subjectsByClass.get(student.classId) ?? new Map<number, string>();
+
+  const teacherSubjectIds = new Set<number>();
+  const isClassSupervisor =
+    role === "teacher" && student.class.supervisor?.id === userId;
+
+  if (role === "teacher") {
+    const teacherLessons = await prisma.lesson.findMany({
+      where: { schoolId, classId: student.classId, teacherId: userId },
+      select: { subjectId: true },
+    });
+    for (const lesson of teacherLessons) {
+      teacherSubjectIds.add(lesson.subjectId);
+    }
+  }
+
+  // ── Authorization ─────────────────────────────────────────────────────────
+  if (role === "student" && userId !== studentId) redirect("/");
+  if (role === "parent" && userId !== student.parentId) redirect("/");
+  if (role === "teacher" && !isClassSupervisor && teacherSubjectIds.size === 0) {
+    redirect("/");
+  }
+
+  const visibleSubjectIds =
+    role === "teacher" && !isClassSupervisor ? teacherSubjectIds : null;
+  const visibleTimetableSubjects =
+    visibleSubjectIds === null
+      ? timetableSubjects
+      : new Map(
+          Array.from(timetableSubjects.entries()).filter(([subjectId]) =>
+            visibleSubjectIds.has(subjectId),
+          ),
+        );
+  const timetableSubjectIds = Array.from(visibleTimetableSubjects.keys());
+
   // ── CA records for this student this term ─────────────────────────────────
   const caRecords = await prisma.continuousAssessment.findMany({
     where: {
@@ -76,6 +105,9 @@ const ReportCardPage = async ({
       classId:      student.classId,
       term,
       academicYear: activeYear,
+      ...(timetableSubjectIds.length > 0
+        ? { subjectId: { in: timetableSubjectIds } }
+        : {}),
     },
     include: {
       subject: { select: { id: true, name: true } },
@@ -88,6 +120,9 @@ const ReportCardPage = async ({
       schoolId,
       studentId,
       classId: student.classId,
+      ...(timetableSubjectIds.length > 0
+        ? { subjectId: { in: timetableSubjectIds } }
+        : {}),
       OR: [
         { academicYear: { not: activeYear } },
         { term: { not: term } },
@@ -111,6 +146,9 @@ const ReportCardPage = async ({
       schoolId,
       studentId,
       classId: student.classId,
+      ...(timetableSubjectIds.length > 0
+        ? { subjectId: { in: timetableSubjectIds } }
+        : {}),
     },
     select: {
       subjectId: true,
@@ -135,6 +173,9 @@ const ReportCardPage = async ({
           studentId,
           activity: {
             classId: student.classId,
+            ...(timetableSubjectIds.length > 0
+              ? { subjectId: { in: timetableSubjectIds } }
+              : {}),
             bucket: {
               term,
               academicYear: activeYear,
@@ -171,10 +212,6 @@ const ReportCardPage = async ({
       })
     : null;
 
-  // ── Subjects on timetable for this class ──────────────────────────────────
-  const subjectsByClass = await listClassSubjectsFromTimetable(schoolId, [student.classId]);
-  const timetableSubjects = subjectsByClass.get(student.classId) ?? new Map<number, string>();
-
   // ── All CA records for this class/term/year (to compute class positions) ──
   const classCARecords = await prisma.continuousAssessment.findMany({
     where: {
@@ -182,6 +219,9 @@ const ReportCardPage = async ({
       classId:      student.classId,
       term,
       academicYear: activeYear,
+      ...(timetableSubjectIds.length > 0
+        ? { subjectId: { in: timetableSubjectIds } }
+        : {}),
     },
     select: {
       studentId:  true,
@@ -194,7 +234,7 @@ const ReportCardPage = async ({
 
   // ── Compute per-subject positions ─────────────────────────────────────────
   const subjectPositions: Record<number, number> = {};
-  for (const [subjectId] of timetableSubjects) {
+  for (const [subjectId] of visibleTimetableSubjects) {
     const subjectScores = classCARecords
       .filter((r) => r.subjectId === subjectId && r.examScore > 0)
       .sort((a, b) => b.totalScore - a.totalScore);
@@ -219,9 +259,40 @@ const ReportCardPage = async ({
   const positionIndex = classAggregates.findIndex((c) => c.studentId === studentId);
   const overallPosition = positionIndex >= 0 ? positionIndex + 1 : 0;
   const classSize       = (await prisma.student.count({ where: { schoolId, classId: student.classId } }));
+  const publication = await prisma.reportCardPublication.findUnique({
+    where: {
+      schoolId_classId_term_academicYear: {
+        schoolId,
+        classId: student.classId,
+        term,
+        academicYear: activeYear,
+      },
+    },
+    select: { status: true, publishedAt: true },
+  });
 
   // ── Build subject rows ────────────────────────────────────────────────────
-  const subjectRows = caRecords.map((ca) => {
+  const caRecordsBySubject = new Map(caRecords.map((ca) => [ca.subjectId, ca]));
+  const subjectRows = Array.from(visibleTimetableSubjects.entries()).map(([subjectId, subjectName]) => {
+    const ca = caRecordsBySubject.get(subjectId);
+    if (!ca) {
+      return {
+        id: subjectId,
+        name: subjectName,
+        classworkScore: 0,
+        examScore: 0,
+        totalScore: 0,
+        grade: "F9",
+        gradePoint: 9,
+        isComplete: false,
+        caChange: 0,
+        caTrend: "new" as CATrend,
+        hasNewerCARecord: false,
+        label: "CA not started",
+        position: 0,
+        remarks: "No CA records have been entered for this subject yet.",
+      };
+    }
     const band = getGradeBandByGrade(ca.grade);
     const previous = previousCABySubject.get(ca.subjectId);
     const latest = latestCABySubject.get(ca.subjectId);
@@ -237,7 +308,7 @@ const ReportCardPage = async ({
       : "new";
     return {
       id:             ca.subject.id,
-      name:           ca.subject.name,
+      name:           subjectName,
       classworkScore: ca.classworkScore,
       examScore:      ca.examScore,
       totalScore:     ca.totalScore,
@@ -338,6 +409,10 @@ const ReportCardPage = async ({
         total:   presentCount + absentCount + lateCount,
       }}
       role={role ?? "admin"}
+      publication={{
+        isPublished: publication?.status === "PUBLISHED",
+        publishedAt: publication?.publishedAt,
+      }}
     />
   );
 };

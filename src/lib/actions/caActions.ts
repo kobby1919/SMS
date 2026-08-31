@@ -16,6 +16,8 @@ import {
   caConfigSchema,
   caRecordSchema,
   caRecordUpdateSchema,
+  examEntryWindowSchema,
+  reportPublicationSchema,
 } from "@/src/lib/validation/ca";
 import { nonEmptyStringSchema, positiveIntSchema } from "@/src/lib/validation/common";
 import type { Term } from "@/src/generated/prisma";
@@ -33,6 +35,7 @@ import {
   recordCAActivityScoreEvents,
 } from "@/src/lib/services/parent-daily-summary";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
+import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 
 // ─── Ghana BECE Grading System ────────────────────────────────────────────────
 // Score ranges → letter grade + grade point
@@ -98,6 +101,29 @@ async function assertTeacherUsesActivePeriod({
     throw new Error(
       `Teachers can only work in the active academic period: ${activePeriod.academicYear} ${activePeriod.currentTerm.replace("_", " ")}. Ask an admin to change the school period if needed.`,
     );
+  }
+}
+
+async function assertExamEntryOpen(input: {
+  schoolId: string;
+  classId: number;
+  term: Term;
+  academicYear: string;
+}) {
+  const window = await prisma.examEntryWindow.findUnique({
+    where: {
+      schoolId_classId_term_academicYear: {
+        schoolId: input.schoolId,
+        classId: input.classId,
+        term: input.term,
+        academicYear: input.academicYear,
+      },
+    },
+    select: { status: true },
+  });
+
+  if (window?.status !== "OPEN") {
+    throw new Error("Exam entry is locked for this class period. Ask an admin to open exam entry before saving exam scores.");
   }
 }
 
@@ -212,6 +238,14 @@ export async function createCA(data: CAInput) {
       `No CA configuration found for ${parsed.academicYear}. Ask your admin to set it up.`
     );
   }
+  if (parsed.examScore > 0) {
+    await assertExamEntryOpen({
+      schoolId,
+      classId: parsed.classId,
+      term: parsed.term,
+      academicYear: parsed.academicYear,
+    });
+  }
 
   const { totalScore, grade, gradePoint } = await computeCA(
     parsed.classworkScore,
@@ -256,6 +290,14 @@ export async function updateCA(data: CAInput) {
     where: { schoolId_academicYear: { schoolId, academicYear: parsed.academicYear } },
   });
   if (!config) throw new Error(`No CA configuration found for ${parsed.academicYear}.`);
+  if (parsed.examScore > 0) {
+    await assertExamEntryOpen({
+      schoolId,
+      classId: parsed.classId,
+      term: parsed.term,
+      academicYear: parsed.academicYear,
+    });
+  }
 
   const { totalScore, grade, gradePoint } = await computeCA(
     parsed.classworkScore,
@@ -337,6 +379,9 @@ export async function bulkUpsertCA(
   });
   if (!config) {
     throw new Error(`No CA configuration found for ${academicYear}. Ask your admin to set it up.`);
+  }
+  if (rows.some((row) => row.examScore > 0)) {
+    await assertExamEntryOpen({ schoolId, classId, term, academicYear });
   }
 
   const results = await Promise.all(
@@ -669,4 +714,288 @@ export async function lockCAActivityAction(activityId: number) {
   revalidatePath("/list/ca");
   revalidateDashboard(schoolId);
   return { id: activity.id };
+}
+
+export async function publishClassReportCardsAction(data: {
+  classId: number;
+  term: Term;
+  academicYear: string;
+  notes?: string;
+}) {
+  const parsed = parseActionInput(reportPublicationSchema, data);
+  const { userId, schoolId } = await requireRole(["admin"]);
+
+  const cls = await prisma.class.findFirst({
+    where: { id: parsed.classId, schoolId },
+    select: { id: true, name: true },
+  });
+  if (!cls) throw new Error("Class not found.");
+
+  const examWindow = await prisma.examEntryWindow.findUnique({
+    where: {
+      schoolId_classId_term_academicYear: {
+        schoolId,
+        classId: parsed.classId,
+        term: parsed.term,
+        academicYear: parsed.academicYear,
+      },
+    },
+    select: { status: true },
+  });
+  if (!examWindow || examWindow.status === "LOCKED") {
+    throw new Error("Open exam entry before publishing report cards for this class period.");
+  }
+
+  const subjectsByClass = await listClassSubjectsFromTimetable(schoolId, [parsed.classId]);
+  const subjectIds = Array.from(subjectsByClass.get(parsed.classId)?.keys() ?? []);
+  if (subjectIds.length === 0) {
+    throw new Error("This class has no timetable subjects. Add subjects to the timetable before publishing reports.");
+  }
+
+  const students = await prisma.student.findMany({
+    where: { schoolId, classId: parsed.classId },
+    select: { id: true },
+  });
+  if (students.length === 0) {
+    throw new Error("This class has no students to publish report cards for.");
+  }
+
+  const caRecords = await prisma.continuousAssessment.findMany({
+    where: {
+      schoolId,
+      classId: parsed.classId,
+      term: parsed.term,
+      academicYear: parsed.academicYear,
+      subjectId: { in: subjectIds },
+    },
+    select: { studentId: true, subjectId: true, examScore: true },
+  });
+
+  const readyKeys = new Set(
+    caRecords
+      .filter((record) => record.examScore > 0)
+      .map((record) => `${record.studentId}:${record.subjectId}`),
+  );
+  const missingCount = students.reduce((count, student) => {
+    return count + subjectIds.filter((subjectId) => !readyKeys.has(`${student.id}:${subjectId}`)).length;
+  }, 0);
+
+  if (missingCount > 0) {
+    throw new Error(
+      `Cannot publish yet. ${missingCount} student-subject report entry${missingCount === 1 ? " is" : " entries are"} still missing exam scores.`,
+    );
+  }
+
+  const publication = await prisma.reportCardPublication.upsert({
+    where: {
+      schoolId_classId_term_academicYear: {
+        schoolId,
+        classId: parsed.classId,
+        term: parsed.term,
+        academicYear: parsed.academicYear,
+      },
+    },
+    create: {
+      schoolId,
+      classId: parsed.classId,
+      term: parsed.term,
+      academicYear: parsed.academicYear,
+      status: "PUBLISHED",
+      notes: parsed.notes,
+      publishedBy: userId,
+    },
+    update: {
+      status: "PUBLISHED",
+      notes: parsed.notes,
+      publishedAt: new Date(),
+      publishedBy: userId,
+      unpublishedAt: null,
+      unpublishedBy: null,
+    },
+  });
+
+  await logCAAudit({
+    schoolId,
+    actorId: userId,
+    action: "REPORT_CARDS_PUBLISHED",
+    entityType: "ReportCardPublication",
+    entityId: publication.id,
+    message: `${cls.name} report cards were published for ${parsed.academicYear} ${parsed.term.replace("_", " ")}.`,
+    metadata: {
+      classId: parsed.classId,
+      term: parsed.term,
+      academicYear: parsed.academicYear,
+      studentCount: students.length,
+      subjectCount: subjectIds.length,
+      notes: parsed.notes,
+    },
+  });
+
+  revalidatePath("/list/report-cards");
+  revalidatePath("/parent");
+  revalidateDashboard(schoolId);
+  revalidateDocument(schoolId, "report-card");
+  return { id: publication.id };
+}
+
+export async function unpublishClassReportCardsAction(data: {
+  classId: number;
+  term: Term;
+  academicYear: string;
+  notes?: string;
+}) {
+  const parsed = parseActionInput(reportPublicationSchema, data);
+  const { userId, schoolId } = await requireRole(["admin"]);
+
+  const publication = await prisma.reportCardPublication.findUnique({
+    where: {
+      schoolId_classId_term_academicYear: {
+        schoolId,
+        classId: parsed.classId,
+        term: parsed.term,
+        academicYear: parsed.academicYear,
+      },
+    },
+    include: { class: { select: { name: true } } },
+  });
+  if (!publication) throw new Error("No published report-card record exists for this class period.");
+
+  const updated = await prisma.reportCardPublication.update({
+    where: { id: publication.id, schoolId },
+    data: {
+      status: "UNPUBLISHED",
+      notes: parsed.notes,
+      unpublishedAt: new Date(),
+      unpublishedBy: userId,
+    },
+  });
+
+  await logCAAudit({
+    schoolId,
+    actorId: userId,
+    action: "REPORT_CARDS_UNPUBLISHED",
+    entityType: "ReportCardPublication",
+    entityId: publication.id,
+    message: `${publication.class.name} report cards were unpublished for ${parsed.academicYear} ${parsed.term.replace("_", " ")}.`,
+    metadata: {
+      classId: parsed.classId,
+      term: parsed.term,
+      academicYear: parsed.academicYear,
+      notes: parsed.notes,
+    },
+  });
+
+  revalidatePath("/list/report-cards");
+  revalidatePath("/parent");
+  revalidateDashboard(schoolId);
+  revalidateDocument(schoolId, "report-card");
+  return { id: updated.id };
+}
+
+export async function openExamEntryWindowAction(data: {
+  classId: number;
+  term: Term;
+  academicYear: string;
+  notes?: string;
+}) {
+  const parsed = parseActionInput(examEntryWindowSchema, data);
+  const { userId, schoolId } = await requireRole(["admin"]);
+
+  const cls = await prisma.class.findFirst({
+    where: { id: parsed.classId, schoolId },
+    select: { id: true, name: true },
+  });
+  if (!cls) throw new Error("Class not found.");
+
+  const window = await prisma.examEntryWindow.upsert({
+    where: {
+      schoolId_classId_term_academicYear: {
+        schoolId,
+        classId: parsed.classId,
+        term: parsed.term,
+        academicYear: parsed.academicYear,
+      },
+    },
+    create: {
+      schoolId,
+      classId: parsed.classId,
+      term: parsed.term,
+      academicYear: parsed.academicYear,
+      status: "OPEN",
+      openedAt: new Date(),
+      openedBy: userId,
+      notes: parsed.notes,
+    },
+    update: {
+      status: "OPEN",
+      openedAt: new Date(),
+      openedBy: userId,
+      closedAt: null,
+      closedBy: null,
+      notes: parsed.notes,
+    },
+  });
+
+  await logCAAudit({
+    schoolId,
+    actorId: userId,
+    action: "EXAM_ENTRY_OPENED",
+    entityType: "ExamEntryWindow",
+    entityId: window.id,
+    message: `${cls.name} exam entry was opened for ${parsed.academicYear} ${parsed.term.replace("_", " ")}.`,
+    metadata: parsed,
+  });
+
+  revalidatePath("/list/ca");
+  revalidatePath("/list/report-cards");
+  revalidateDashboard(schoolId);
+  return { id: window.id };
+}
+
+export async function closeExamEntryWindowAction(data: {
+  classId: number;
+  term: Term;
+  academicYear: string;
+  notes?: string;
+}) {
+  const parsed = parseActionInput(examEntryWindowSchema, data);
+  const { userId, schoolId } = await requireRole(["admin"]);
+
+  const window = await prisma.examEntryWindow.findUnique({
+    where: {
+      schoolId_classId_term_academicYear: {
+        schoolId,
+        classId: parsed.classId,
+        term: parsed.term,
+        academicYear: parsed.academicYear,
+      },
+    },
+    include: { class: { select: { name: true } } },
+  });
+  if (!window) throw new Error("Exam entry window not found.");
+
+  const updated = await prisma.examEntryWindow.update({
+    where: { id: window.id, schoolId },
+    data: {
+      status: "CLOSED",
+      closedAt: new Date(),
+      closedBy: userId,
+      notes: parsed.notes,
+    },
+  });
+
+  await logCAAudit({
+    schoolId,
+    actorId: userId,
+    action: "EXAM_ENTRY_CLOSED",
+    entityType: "ExamEntryWindow",
+    entityId: window.id,
+    message: `${window.class.name} exam entry was closed for ${parsed.academicYear} ${parsed.term.replace("_", " ")}.`,
+    metadata: parsed,
+  });
+
+  revalidatePath("/list/ca");
+  revalidatePath("/list/report-cards");
+  revalidateDashboard(schoolId);
+  return { id: updated.id };
 }

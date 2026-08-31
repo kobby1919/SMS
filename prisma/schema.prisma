@@ -229,6 +229,17 @@ enum CABucketAggregationMode {
   SUM_ACTIVITIES
 }
 
+enum ReportPublicationStatus {
+  PUBLISHED
+  UNPUBLISHED
+}
+
+enum ExamEntryStatus {
+  LOCKED
+  OPEN
+  CLOSED
+}
+
 enum ParentNotificationType {
   DAILY_SUMMARY
   ATTENDANCE
@@ -322,6 +333,8 @@ model School {
   caActivityScores      CAActivityScore[]
   caAuditLogs           CAAuditLog[]
   continuousAssessments ContinuousAssessment[]
+  reportPublications    ReportCardPublication[]
+  examEntryWindows      ExamEntryWindow[]
   syllabi               Syllabus[]
   syllabusTopicProgress SyllabusTopicProgress[]
   feeStructures         FeeStructure[]
@@ -632,6 +645,8 @@ model Class {
   caBuckets             CABucket[]
   caActivities          CAActivity[]
   continuousAssessments ContinuousAssessment[]
+  reportPublications    ReportCardPublication[]
+  examEntryWindows      ExamEntryWindow[]
   syllabusTopicProgress SyllabusTopicProgress[]
 
   @@unique([schoolId, name])
@@ -1046,6 +1061,56 @@ model ContinuousAssessment {
   @@unique([schoolId, studentId, subjectId, classId, term, academicYear])
   @@index([schoolId, studentId])
   @@index([schoolId, classId, term, academicYear])
+}
+
+model ReportCardPublication {
+  id           Int                     @id @default(autoincrement())
+  academicYear String
+  term         Term
+  status       ReportPublicationStatus @default(PUBLISHED)
+  notes        String?
+  publishedAt  DateTime                @default(now())
+  publishedBy  String
+  unpublishedAt DateTime?
+  unpublishedBy String?
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  classId Int
+  class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, classId, term, academicYear])
+  @@index([schoolId, status, publishedAt])
+  @@index([schoolId, classId, status])
+}
+
+model ExamEntryWindow {
+  id           Int             @id @default(autoincrement())
+  academicYear String
+  term         Term
+  status       ExamEntryStatus @default(LOCKED)
+  openedAt     DateTime?
+  openedBy     String?
+  closedAt     DateTime?
+  closedBy     String?
+  notes        String?
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  classId Int
+  class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, classId, term, academicYear])
+  @@index([schoolId, classId, status])
+  @@index([schoolId, status, updatedAt])
 }
 
 // ─── SYLLABUS MODELS ─────────────────────────────────────────────────────────

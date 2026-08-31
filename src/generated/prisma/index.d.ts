@@ -154,6 +154,16 @@ export type CAAuditLog = $Result.DefaultSelection<Prisma.$CAAuditLogPayload>
  */
 export type ContinuousAssessment = $Result.DefaultSelection<Prisma.$ContinuousAssessmentPayload>
 /**
+ * Model ReportCardPublication
+ * 
+ */
+export type ReportCardPublication = $Result.DefaultSelection<Prisma.$ReportCardPublicationPayload>
+/**
+ * Model ExamEntryWindow
+ * 
+ */
+export type ExamEntryWindow = $Result.DefaultSelection<Prisma.$ExamEntryWindowPayload>
+/**
  * Model Syllabus
  * 
  */
@@ -554,6 +564,23 @@ export const CABucketAggregationMode: {
 export type CABucketAggregationMode = (typeof CABucketAggregationMode)[keyof typeof CABucketAggregationMode]
 
 
+export const ReportPublicationStatus: {
+  PUBLISHED: 'PUBLISHED',
+  UNPUBLISHED: 'UNPUBLISHED'
+};
+
+export type ReportPublicationStatus = (typeof ReportPublicationStatus)[keyof typeof ReportPublicationStatus]
+
+
+export const ExamEntryStatus: {
+  LOCKED: 'LOCKED',
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED'
+};
+
+export type ExamEntryStatus = (typeof ExamEntryStatus)[keyof typeof ExamEntryStatus]
+
+
 export const ParentNotificationType: {
   DAILY_SUMMARY: 'DAILY_SUMMARY',
   ATTENDANCE: 'ATTENDANCE',
@@ -733,6 +760,14 @@ export const CAActivityType: typeof $Enums.CAActivityType
 export type CABucketAggregationMode = $Enums.CABucketAggregationMode
 
 export const CABucketAggregationMode: typeof $Enums.CABucketAggregationMode
+
+export type ReportPublicationStatus = $Enums.ReportPublicationStatus
+
+export const ReportPublicationStatus: typeof $Enums.ReportPublicationStatus
+
+export type ExamEntryStatus = $Enums.ExamEntryStatus
+
+export const ExamEntryStatus: typeof $Enums.ExamEntryStatus
 
 export type ParentNotificationType = $Enums.ParentNotificationType
 
@@ -1162,6 +1197,26 @@ export class PrismaClient<
     * ```
     */
   get continuousAssessment(): Prisma.ContinuousAssessmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.reportCardPublication`: Exposes CRUD operations for the **ReportCardPublication** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ReportCardPublications
+    * const reportCardPublications = await prisma.reportCardPublication.findMany()
+    * ```
+    */
+  get reportCardPublication(): Prisma.ReportCardPublicationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.examEntryWindow`: Exposes CRUD operations for the **ExamEntryWindow** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ExamEntryWindows
+    * const examEntryWindows = await prisma.examEntryWindow.findMany()
+    * ```
+    */
+  get examEntryWindow(): Prisma.ExamEntryWindowDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.syllabus`: Exposes CRUD operations for the **Syllabus** model.
@@ -1814,6 +1869,8 @@ export namespace Prisma {
     CAActivityScore: 'CAActivityScore',
     CAAuditLog: 'CAAuditLog',
     ContinuousAssessment: 'ContinuousAssessment',
+    ReportCardPublication: 'ReportCardPublication',
+    ExamEntryWindow: 'ExamEntryWindow',
     Syllabus: 'Syllabus',
     SyllabusTopic: 'SyllabusTopic',
     SyllabusTopicProgress: 'SyllabusTopicProgress',
@@ -1848,7 +1905,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "schoolNotificationSetting" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
+      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "schoolNotificationSetting" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3924,6 +3981,154 @@ export namespace Prisma {
           }
         }
       }
+      ReportCardPublication: {
+        payload: Prisma.$ReportCardPublicationPayload<ExtArgs>
+        fields: Prisma.ReportCardPublicationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ReportCardPublicationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReportCardPublicationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ReportCardPublicationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReportCardPublicationPayload>
+          }
+          findFirst: {
+            args: Prisma.ReportCardPublicationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReportCardPublicationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ReportCardPublicationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReportCardPublicationPayload>
+          }
+          findMany: {
+            args: Prisma.ReportCardPublicationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReportCardPublicationPayload>[]
+          }
+          create: {
+            args: Prisma.ReportCardPublicationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReportCardPublicationPayload>
+          }
+          createMany: {
+            args: Prisma.ReportCardPublicationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ReportCardPublicationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReportCardPublicationPayload>[]
+          }
+          delete: {
+            args: Prisma.ReportCardPublicationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReportCardPublicationPayload>
+          }
+          update: {
+            args: Prisma.ReportCardPublicationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReportCardPublicationPayload>
+          }
+          deleteMany: {
+            args: Prisma.ReportCardPublicationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ReportCardPublicationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ReportCardPublicationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReportCardPublicationPayload>[]
+          }
+          upsert: {
+            args: Prisma.ReportCardPublicationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReportCardPublicationPayload>
+          }
+          aggregate: {
+            args: Prisma.ReportCardPublicationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateReportCardPublication>
+          }
+          groupBy: {
+            args: Prisma.ReportCardPublicationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ReportCardPublicationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ReportCardPublicationCountArgs<ExtArgs>
+            result: $Utils.Optional<ReportCardPublicationCountAggregateOutputType> | number
+          }
+        }
+      }
+      ExamEntryWindow: {
+        payload: Prisma.$ExamEntryWindowPayload<ExtArgs>
+        fields: Prisma.ExamEntryWindowFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ExamEntryWindowFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExamEntryWindowPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ExamEntryWindowFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExamEntryWindowPayload>
+          }
+          findFirst: {
+            args: Prisma.ExamEntryWindowFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExamEntryWindowPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ExamEntryWindowFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExamEntryWindowPayload>
+          }
+          findMany: {
+            args: Prisma.ExamEntryWindowFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExamEntryWindowPayload>[]
+          }
+          create: {
+            args: Prisma.ExamEntryWindowCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExamEntryWindowPayload>
+          }
+          createMany: {
+            args: Prisma.ExamEntryWindowCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ExamEntryWindowCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExamEntryWindowPayload>[]
+          }
+          delete: {
+            args: Prisma.ExamEntryWindowDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExamEntryWindowPayload>
+          }
+          update: {
+            args: Prisma.ExamEntryWindowUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExamEntryWindowPayload>
+          }
+          deleteMany: {
+            args: Prisma.ExamEntryWindowDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ExamEntryWindowUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ExamEntryWindowUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExamEntryWindowPayload>[]
+          }
+          upsert: {
+            args: Prisma.ExamEntryWindowUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExamEntryWindowPayload>
+          }
+          aggregate: {
+            args: Prisma.ExamEntryWindowAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateExamEntryWindow>
+          }
+          groupBy: {
+            args: Prisma.ExamEntryWindowGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ExamEntryWindowGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ExamEntryWindowCountArgs<ExtArgs>
+            result: $Utils.Optional<ExamEntryWindowCountAggregateOutputType> | number
+          }
+        }
+      }
       Syllabus: {
         payload: Prisma.$SyllabusPayload<ExtArgs>
         fields: Prisma.SyllabusFieldRefs
@@ -5466,6 +5671,8 @@ export namespace Prisma {
     cAActivityScore?: CAActivityScoreOmit
     cAAuditLog?: CAAuditLogOmit
     continuousAssessment?: ContinuousAssessmentOmit
+    reportCardPublication?: ReportCardPublicationOmit
+    examEntryWindow?: ExamEntryWindowOmit
     syllabus?: SyllabusOmit
     syllabusTopic?: SyllabusTopicOmit
     syllabusTopicProgress?: SyllabusTopicProgressOmit
@@ -5587,6 +5794,8 @@ export namespace Prisma {
     caActivityScores: number
     caAuditLogs: number
     continuousAssessments: number
+    reportPublications: number
+    examEntryWindows: number
     syllabi: number
     syllabusTopicProgress: number
     feeStructures: number
@@ -5631,6 +5840,8 @@ export namespace Prisma {
     caActivityScores?: boolean | SchoolCountOutputTypeCountCaActivityScoresArgs
     caAuditLogs?: boolean | SchoolCountOutputTypeCountCaAuditLogsArgs
     continuousAssessments?: boolean | SchoolCountOutputTypeCountContinuousAssessmentsArgs
+    reportPublications?: boolean | SchoolCountOutputTypeCountReportPublicationsArgs
+    examEntryWindows?: boolean | SchoolCountOutputTypeCountExamEntryWindowsArgs
     syllabi?: boolean | SchoolCountOutputTypeCountSyllabiArgs
     syllabusTopicProgress?: boolean | SchoolCountOutputTypeCountSyllabusTopicProgressArgs
     feeStructures?: boolean | SchoolCountOutputTypeCountFeeStructuresArgs
@@ -5815,6 +6026,20 @@ export namespace Prisma {
    */
   export type SchoolCountOutputTypeCountContinuousAssessmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ContinuousAssessmentWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountReportPublicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ReportCardPublicationWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountExamEntryWindowsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ExamEntryWindowWhereInput
   }
 
   /**
@@ -6343,6 +6568,8 @@ export namespace Prisma {
     caBuckets: number
     caActivities: number
     continuousAssessments: number
+    reportPublications: number
+    examEntryWindows: number
     syllabusTopicProgress: number
   }
 
@@ -6354,6 +6581,8 @@ export namespace Prisma {
     caBuckets?: boolean | ClassCountOutputTypeCountCaBucketsArgs
     caActivities?: boolean | ClassCountOutputTypeCountCaActivitiesArgs
     continuousAssessments?: boolean | ClassCountOutputTypeCountContinuousAssessmentsArgs
+    reportPublications?: boolean | ClassCountOutputTypeCountReportPublicationsArgs
+    examEntryWindows?: boolean | ClassCountOutputTypeCountExamEntryWindowsArgs
     syllabusTopicProgress?: boolean | ClassCountOutputTypeCountSyllabusTopicProgressArgs
   }
 
@@ -6415,6 +6644,20 @@ export namespace Prisma {
    */
   export type ClassCountOutputTypeCountContinuousAssessmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ContinuousAssessmentWhereInput
+  }
+
+  /**
+   * ClassCountOutputType without action
+   */
+  export type ClassCountOutputTypeCountReportPublicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ReportCardPublicationWhereInput
+  }
+
+  /**
+   * ClassCountOutputType without action
+   */
+  export type ClassCountOutputTypeCountExamEntryWindowsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ExamEntryWindowWhereInput
   }
 
   /**
@@ -7240,6 +7483,8 @@ export namespace Prisma {
     caActivityScores?: boolean | School$caActivityScoresArgs<ExtArgs>
     caAuditLogs?: boolean | School$caAuditLogsArgs<ExtArgs>
     continuousAssessments?: boolean | School$continuousAssessmentsArgs<ExtArgs>
+    reportPublications?: boolean | School$reportPublicationsArgs<ExtArgs>
+    examEntryWindows?: boolean | School$examEntryWindowsArgs<ExtArgs>
     syllabi?: boolean | School$syllabiArgs<ExtArgs>
     syllabusTopicProgress?: boolean | School$syllabusTopicProgressArgs<ExtArgs>
     feeStructures?: boolean | School$feeStructuresArgs<ExtArgs>
@@ -7347,6 +7592,8 @@ export namespace Prisma {
     caActivityScores?: boolean | School$caActivityScoresArgs<ExtArgs>
     caAuditLogs?: boolean | School$caAuditLogsArgs<ExtArgs>
     continuousAssessments?: boolean | School$continuousAssessmentsArgs<ExtArgs>
+    reportPublications?: boolean | School$reportPublicationsArgs<ExtArgs>
+    examEntryWindows?: boolean | School$examEntryWindowsArgs<ExtArgs>
     syllabi?: boolean | School$syllabiArgs<ExtArgs>
     syllabusTopicProgress?: boolean | School$syllabusTopicProgressArgs<ExtArgs>
     feeStructures?: boolean | School$feeStructuresArgs<ExtArgs>
@@ -7397,6 +7644,8 @@ export namespace Prisma {
       caActivityScores: Prisma.$CAActivityScorePayload<ExtArgs>[]
       caAuditLogs: Prisma.$CAAuditLogPayload<ExtArgs>[]
       continuousAssessments: Prisma.$ContinuousAssessmentPayload<ExtArgs>[]
+      reportPublications: Prisma.$ReportCardPublicationPayload<ExtArgs>[]
+      examEntryWindows: Prisma.$ExamEntryWindowPayload<ExtArgs>[]
       syllabi: Prisma.$SyllabusPayload<ExtArgs>[]
       syllabusTopicProgress: Prisma.$SyllabusTopicProgressPayload<ExtArgs>[]
       feeStructures: Prisma.$FeeStructurePayload<ExtArgs>[]
@@ -7852,6 +8101,8 @@ export namespace Prisma {
     caActivityScores<T extends School$caActivityScoresArgs<ExtArgs> = {}>(args?: Subset<T, School$caActivityScoresArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CAActivityScorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     caAuditLogs<T extends School$caAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$caAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CAAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     continuousAssessments<T extends School$continuousAssessmentsArgs<ExtArgs> = {}>(args?: Subset<T, School$continuousAssessmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    reportPublications<T extends School$reportPublicationsArgs<ExtArgs> = {}>(args?: Subset<T, School$reportPublicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReportCardPublicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    examEntryWindows<T extends School$examEntryWindowsArgs<ExtArgs> = {}>(args?: Subset<T, School$examEntryWindowsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExamEntryWindowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     syllabi<T extends School$syllabiArgs<ExtArgs> = {}>(args?: Subset<T, School$syllabiArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     syllabusTopicProgress<T extends School$syllabusTopicProgressArgs<ExtArgs> = {}>(args?: Subset<T, School$syllabusTopicProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     feeStructures<T extends School$feeStructuresArgs<ExtArgs> = {}>(args?: Subset<T, School$feeStructuresArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeeStructurePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -8836,6 +9087,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ContinuousAssessmentScalarFieldEnum | ContinuousAssessmentScalarFieldEnum[]
+  }
+
+  /**
+   * School.reportPublications
+   */
+  export type School$reportPublicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReportCardPublication
+     */
+    select?: ReportCardPublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReportCardPublication
+     */
+    omit?: ReportCardPublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReportCardPublicationInclude<ExtArgs> | null
+    where?: ReportCardPublicationWhereInput
+    orderBy?: ReportCardPublicationOrderByWithRelationInput | ReportCardPublicationOrderByWithRelationInput[]
+    cursor?: ReportCardPublicationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ReportCardPublicationScalarFieldEnum | ReportCardPublicationScalarFieldEnum[]
+  }
+
+  /**
+   * School.examEntryWindows
+   */
+  export type School$examEntryWindowsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExamEntryWindow
+     */
+    select?: ExamEntryWindowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExamEntryWindow
+     */
+    omit?: ExamEntryWindowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExamEntryWindowInclude<ExtArgs> | null
+    where?: ExamEntryWindowWhereInput
+    orderBy?: ExamEntryWindowOrderByWithRelationInput | ExamEntryWindowOrderByWithRelationInput[]
+    cursor?: ExamEntryWindowWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ExamEntryWindowScalarFieldEnum | ExamEntryWindowScalarFieldEnum[]
   }
 
   /**
@@ -22265,6 +22564,8 @@ export namespace Prisma {
     caBuckets?: boolean | Class$caBucketsArgs<ExtArgs>
     caActivities?: boolean | Class$caActivitiesArgs<ExtArgs>
     continuousAssessments?: boolean | Class$continuousAssessmentsArgs<ExtArgs>
+    reportPublications?: boolean | Class$reportPublicationsArgs<ExtArgs>
+    examEntryWindows?: boolean | Class$examEntryWindowsArgs<ExtArgs>
     syllabusTopicProgress?: boolean | Class$syllabusTopicProgressArgs<ExtArgs>
     _count?: boolean | ClassCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["class"]>
@@ -22317,6 +22618,8 @@ export namespace Prisma {
     caBuckets?: boolean | Class$caBucketsArgs<ExtArgs>
     caActivities?: boolean | Class$caActivitiesArgs<ExtArgs>
     continuousAssessments?: boolean | Class$continuousAssessmentsArgs<ExtArgs>
+    reportPublications?: boolean | Class$reportPublicationsArgs<ExtArgs>
+    examEntryWindows?: boolean | Class$examEntryWindowsArgs<ExtArgs>
     syllabusTopicProgress?: boolean | Class$syllabusTopicProgressArgs<ExtArgs>
     _count?: boolean | ClassCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -22344,6 +22647,8 @@ export namespace Prisma {
       caBuckets: Prisma.$CABucketPayload<ExtArgs>[]
       caActivities: Prisma.$CAActivityPayload<ExtArgs>[]
       continuousAssessments: Prisma.$ContinuousAssessmentPayload<ExtArgs>[]
+      reportPublications: Prisma.$ReportCardPublicationPayload<ExtArgs>[]
+      examEntryWindows: Prisma.$ExamEntryWindowPayload<ExtArgs>[]
       syllabusTopicProgress: Prisma.$SyllabusTopicProgressPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -22758,6 +23063,8 @@ export namespace Prisma {
     caBuckets<T extends Class$caBucketsArgs<ExtArgs> = {}>(args?: Subset<T, Class$caBucketsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CABucketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     caActivities<T extends Class$caActivitiesArgs<ExtArgs> = {}>(args?: Subset<T, Class$caActivitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CAActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     continuousAssessments<T extends Class$continuousAssessmentsArgs<ExtArgs> = {}>(args?: Subset<T, Class$continuousAssessmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContinuousAssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    reportPublications<T extends Class$reportPublicationsArgs<ExtArgs> = {}>(args?: Subset<T, Class$reportPublicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReportCardPublicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    examEntryWindows<T extends Class$examEntryWindowsArgs<ExtArgs> = {}>(args?: Subset<T, Class$examEntryWindowsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExamEntryWindowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     syllabusTopicProgress<T extends Class$syllabusTopicProgressArgs<ExtArgs> = {}>(args?: Subset<T, Class$syllabusTopicProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -23380,6 +23687,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ContinuousAssessmentScalarFieldEnum | ContinuousAssessmentScalarFieldEnum[]
+  }
+
+  /**
+   * Class.reportPublications
+   */
+  export type Class$reportPublicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReportCardPublication
+     */
+    select?: ReportCardPublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReportCardPublication
+     */
+    omit?: ReportCardPublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReportCardPublicationInclude<ExtArgs> | null
+    where?: ReportCardPublicationWhereInput
+    orderBy?: ReportCardPublicationOrderByWithRelationInput | ReportCardPublicationOrderByWithRelationInput[]
+    cursor?: ReportCardPublicationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ReportCardPublicationScalarFieldEnum | ReportCardPublicationScalarFieldEnum[]
+  }
+
+  /**
+   * Class.examEntryWindows
+   */
+  export type Class$examEntryWindowsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExamEntryWindow
+     */
+    select?: ExamEntryWindowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExamEntryWindow
+     */
+    omit?: ExamEntryWindowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExamEntryWindowInclude<ExtArgs> | null
+    where?: ExamEntryWindowWhereInput
+    orderBy?: ExamEntryWindowOrderByWithRelationInput | ExamEntryWindowOrderByWithRelationInput[]
+    cursor?: ExamEntryWindowWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ExamEntryWindowScalarFieldEnum | ExamEntryWindowScalarFieldEnum[]
   }
 
   /**
@@ -43123,6 +43478,2432 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ContinuousAssessmentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ReportCardPublication
+   */
+
+  export type AggregateReportCardPublication = {
+    _count: ReportCardPublicationCountAggregateOutputType | null
+    _avg: ReportCardPublicationAvgAggregateOutputType | null
+    _sum: ReportCardPublicationSumAggregateOutputType | null
+    _min: ReportCardPublicationMinAggregateOutputType | null
+    _max: ReportCardPublicationMaxAggregateOutputType | null
+  }
+
+  export type ReportCardPublicationAvgAggregateOutputType = {
+    id: number | null
+    classId: number | null
+  }
+
+  export type ReportCardPublicationSumAggregateOutputType = {
+    id: number | null
+    classId: number | null
+  }
+
+  export type ReportCardPublicationMinAggregateOutputType = {
+    id: number | null
+    academicYear: string | null
+    term: $Enums.Term | null
+    status: $Enums.ReportPublicationStatus | null
+    notes: string | null
+    publishedAt: Date | null
+    publishedBy: string | null
+    unpublishedAt: Date | null
+    unpublishedBy: string | null
+    schoolId: string | null
+    classId: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ReportCardPublicationMaxAggregateOutputType = {
+    id: number | null
+    academicYear: string | null
+    term: $Enums.Term | null
+    status: $Enums.ReportPublicationStatus | null
+    notes: string | null
+    publishedAt: Date | null
+    publishedBy: string | null
+    unpublishedAt: Date | null
+    unpublishedBy: string | null
+    schoolId: string | null
+    classId: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ReportCardPublicationCountAggregateOutputType = {
+    id: number
+    academicYear: number
+    term: number
+    status: number
+    notes: number
+    publishedAt: number
+    publishedBy: number
+    unpublishedAt: number
+    unpublishedBy: number
+    schoolId: number
+    classId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ReportCardPublicationAvgAggregateInputType = {
+    id?: true
+    classId?: true
+  }
+
+  export type ReportCardPublicationSumAggregateInputType = {
+    id?: true
+    classId?: true
+  }
+
+  export type ReportCardPublicationMinAggregateInputType = {
+    id?: true
+    academicYear?: true
+    term?: true
+    status?: true
+    notes?: true
+    publishedAt?: true
+    publishedBy?: true
+    unpublishedAt?: true
+    unpublishedBy?: true
+    schoolId?: true
+    classId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ReportCardPublicationMaxAggregateInputType = {
+    id?: true
+    academicYear?: true
+    term?: true
+    status?: true
+    notes?: true
+    publishedAt?: true
+    publishedBy?: true
+    unpublishedAt?: true
+    unpublishedBy?: true
+    schoolId?: true
+    classId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ReportCardPublicationCountAggregateInputType = {
+    id?: true
+    academicYear?: true
+    term?: true
+    status?: true
+    notes?: true
+    publishedAt?: true
+    publishedBy?: true
+    unpublishedAt?: true
+    unpublishedBy?: true
+    schoolId?: true
+    classId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ReportCardPublicationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ReportCardPublication to aggregate.
+     */
+    where?: ReportCardPublicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ReportCardPublications to fetch.
+     */
+    orderBy?: ReportCardPublicationOrderByWithRelationInput | ReportCardPublicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ReportCardPublicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ReportCardPublications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ReportCardPublications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ReportCardPublications
+    **/
+    _count?: true | ReportCardPublicationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ReportCardPublicationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ReportCardPublicationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ReportCardPublicationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ReportCardPublicationMaxAggregateInputType
+  }
+
+  export type GetReportCardPublicationAggregateType<T extends ReportCardPublicationAggregateArgs> = {
+        [P in keyof T & keyof AggregateReportCardPublication]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateReportCardPublication[P]>
+      : GetScalarType<T[P], AggregateReportCardPublication[P]>
+  }
+
+
+
+
+  export type ReportCardPublicationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ReportCardPublicationWhereInput
+    orderBy?: ReportCardPublicationOrderByWithAggregationInput | ReportCardPublicationOrderByWithAggregationInput[]
+    by: ReportCardPublicationScalarFieldEnum[] | ReportCardPublicationScalarFieldEnum
+    having?: ReportCardPublicationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ReportCardPublicationCountAggregateInputType | true
+    _avg?: ReportCardPublicationAvgAggregateInputType
+    _sum?: ReportCardPublicationSumAggregateInputType
+    _min?: ReportCardPublicationMinAggregateInputType
+    _max?: ReportCardPublicationMaxAggregateInputType
+  }
+
+  export type ReportCardPublicationGroupByOutputType = {
+    id: number
+    academicYear: string
+    term: $Enums.Term
+    status: $Enums.ReportPublicationStatus
+    notes: string | null
+    publishedAt: Date
+    publishedBy: string
+    unpublishedAt: Date | null
+    unpublishedBy: string | null
+    schoolId: string
+    classId: number
+    createdAt: Date
+    updatedAt: Date
+    _count: ReportCardPublicationCountAggregateOutputType | null
+    _avg: ReportCardPublicationAvgAggregateOutputType | null
+    _sum: ReportCardPublicationSumAggregateOutputType | null
+    _min: ReportCardPublicationMinAggregateOutputType | null
+    _max: ReportCardPublicationMaxAggregateOutputType | null
+  }
+
+  type GetReportCardPublicationGroupByPayload<T extends ReportCardPublicationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ReportCardPublicationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ReportCardPublicationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ReportCardPublicationGroupByOutputType[P]>
+            : GetScalarType<T[P], ReportCardPublicationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ReportCardPublicationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    academicYear?: boolean
+    term?: boolean
+    status?: boolean
+    notes?: boolean
+    publishedAt?: boolean
+    publishedBy?: boolean
+    unpublishedAt?: boolean
+    unpublishedBy?: boolean
+    schoolId?: boolean
+    classId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["reportCardPublication"]>
+
+  export type ReportCardPublicationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    academicYear?: boolean
+    term?: boolean
+    status?: boolean
+    notes?: boolean
+    publishedAt?: boolean
+    publishedBy?: boolean
+    unpublishedAt?: boolean
+    unpublishedBy?: boolean
+    schoolId?: boolean
+    classId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["reportCardPublication"]>
+
+  export type ReportCardPublicationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    academicYear?: boolean
+    term?: boolean
+    status?: boolean
+    notes?: boolean
+    publishedAt?: boolean
+    publishedBy?: boolean
+    unpublishedAt?: boolean
+    unpublishedBy?: boolean
+    schoolId?: boolean
+    classId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["reportCardPublication"]>
+
+  export type ReportCardPublicationSelectScalar = {
+    id?: boolean
+    academicYear?: boolean
+    term?: boolean
+    status?: boolean
+    notes?: boolean
+    publishedAt?: boolean
+    publishedBy?: boolean
+    unpublishedAt?: boolean
+    unpublishedBy?: boolean
+    schoolId?: boolean
+    classId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ReportCardPublicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "academicYear" | "term" | "status" | "notes" | "publishedAt" | "publishedBy" | "unpublishedAt" | "unpublishedBy" | "schoolId" | "classId" | "createdAt" | "updatedAt", ExtArgs["result"]["reportCardPublication"]>
+  export type ReportCardPublicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }
+  export type ReportCardPublicationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }
+  export type ReportCardPublicationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }
+
+  export type $ReportCardPublicationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ReportCardPublication"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      class: Prisma.$ClassPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      academicYear: string
+      term: $Enums.Term
+      status: $Enums.ReportPublicationStatus
+      notes: string | null
+      publishedAt: Date
+      publishedBy: string
+      unpublishedAt: Date | null
+      unpublishedBy: string | null
+      schoolId: string
+      classId: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["reportCardPublication"]>
+    composites: {}
+  }
+
+  type ReportCardPublicationGetPayload<S extends boolean | null | undefined | ReportCardPublicationDefaultArgs> = $Result.GetResult<Prisma.$ReportCardPublicationPayload, S>
+
+  type ReportCardPublicationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ReportCardPublicationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ReportCardPublicationCountAggregateInputType | true
+    }
+
+  export interface ReportCardPublicationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ReportCardPublication'], meta: { name: 'ReportCardPublication' } }
+    /**
+     * Find zero or one ReportCardPublication that matches the filter.
+     * @param {ReportCardPublicationFindUniqueArgs} args - Arguments to find a ReportCardPublication
+     * @example
+     * // Get one ReportCardPublication
+     * const reportCardPublication = await prisma.reportCardPublication.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ReportCardPublicationFindUniqueArgs>(args: SelectSubset<T, ReportCardPublicationFindUniqueArgs<ExtArgs>>): Prisma__ReportCardPublicationClient<$Result.GetResult<Prisma.$ReportCardPublicationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ReportCardPublication that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ReportCardPublicationFindUniqueOrThrowArgs} args - Arguments to find a ReportCardPublication
+     * @example
+     * // Get one ReportCardPublication
+     * const reportCardPublication = await prisma.reportCardPublication.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ReportCardPublicationFindUniqueOrThrowArgs>(args: SelectSubset<T, ReportCardPublicationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ReportCardPublicationClient<$Result.GetResult<Prisma.$ReportCardPublicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ReportCardPublication that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReportCardPublicationFindFirstArgs} args - Arguments to find a ReportCardPublication
+     * @example
+     * // Get one ReportCardPublication
+     * const reportCardPublication = await prisma.reportCardPublication.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ReportCardPublicationFindFirstArgs>(args?: SelectSubset<T, ReportCardPublicationFindFirstArgs<ExtArgs>>): Prisma__ReportCardPublicationClient<$Result.GetResult<Prisma.$ReportCardPublicationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ReportCardPublication that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReportCardPublicationFindFirstOrThrowArgs} args - Arguments to find a ReportCardPublication
+     * @example
+     * // Get one ReportCardPublication
+     * const reportCardPublication = await prisma.reportCardPublication.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ReportCardPublicationFindFirstOrThrowArgs>(args?: SelectSubset<T, ReportCardPublicationFindFirstOrThrowArgs<ExtArgs>>): Prisma__ReportCardPublicationClient<$Result.GetResult<Prisma.$ReportCardPublicationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ReportCardPublications that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReportCardPublicationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ReportCardPublications
+     * const reportCardPublications = await prisma.reportCardPublication.findMany()
+     * 
+     * // Get first 10 ReportCardPublications
+     * const reportCardPublications = await prisma.reportCardPublication.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const reportCardPublicationWithIdOnly = await prisma.reportCardPublication.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ReportCardPublicationFindManyArgs>(args?: SelectSubset<T, ReportCardPublicationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReportCardPublicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ReportCardPublication.
+     * @param {ReportCardPublicationCreateArgs} args - Arguments to create a ReportCardPublication.
+     * @example
+     * // Create one ReportCardPublication
+     * const ReportCardPublication = await prisma.reportCardPublication.create({
+     *   data: {
+     *     // ... data to create a ReportCardPublication
+     *   }
+     * })
+     * 
+     */
+    create<T extends ReportCardPublicationCreateArgs>(args: SelectSubset<T, ReportCardPublicationCreateArgs<ExtArgs>>): Prisma__ReportCardPublicationClient<$Result.GetResult<Prisma.$ReportCardPublicationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ReportCardPublications.
+     * @param {ReportCardPublicationCreateManyArgs} args - Arguments to create many ReportCardPublications.
+     * @example
+     * // Create many ReportCardPublications
+     * const reportCardPublication = await prisma.reportCardPublication.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ReportCardPublicationCreateManyArgs>(args?: SelectSubset<T, ReportCardPublicationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ReportCardPublications and returns the data saved in the database.
+     * @param {ReportCardPublicationCreateManyAndReturnArgs} args - Arguments to create many ReportCardPublications.
+     * @example
+     * // Create many ReportCardPublications
+     * const reportCardPublication = await prisma.reportCardPublication.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ReportCardPublications and only return the `id`
+     * const reportCardPublicationWithIdOnly = await prisma.reportCardPublication.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ReportCardPublicationCreateManyAndReturnArgs>(args?: SelectSubset<T, ReportCardPublicationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReportCardPublicationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ReportCardPublication.
+     * @param {ReportCardPublicationDeleteArgs} args - Arguments to delete one ReportCardPublication.
+     * @example
+     * // Delete one ReportCardPublication
+     * const ReportCardPublication = await prisma.reportCardPublication.delete({
+     *   where: {
+     *     // ... filter to delete one ReportCardPublication
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ReportCardPublicationDeleteArgs>(args: SelectSubset<T, ReportCardPublicationDeleteArgs<ExtArgs>>): Prisma__ReportCardPublicationClient<$Result.GetResult<Prisma.$ReportCardPublicationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ReportCardPublication.
+     * @param {ReportCardPublicationUpdateArgs} args - Arguments to update one ReportCardPublication.
+     * @example
+     * // Update one ReportCardPublication
+     * const reportCardPublication = await prisma.reportCardPublication.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ReportCardPublicationUpdateArgs>(args: SelectSubset<T, ReportCardPublicationUpdateArgs<ExtArgs>>): Prisma__ReportCardPublicationClient<$Result.GetResult<Prisma.$ReportCardPublicationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ReportCardPublications.
+     * @param {ReportCardPublicationDeleteManyArgs} args - Arguments to filter ReportCardPublications to delete.
+     * @example
+     * // Delete a few ReportCardPublications
+     * const { count } = await prisma.reportCardPublication.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ReportCardPublicationDeleteManyArgs>(args?: SelectSubset<T, ReportCardPublicationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ReportCardPublications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReportCardPublicationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ReportCardPublications
+     * const reportCardPublication = await prisma.reportCardPublication.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ReportCardPublicationUpdateManyArgs>(args: SelectSubset<T, ReportCardPublicationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ReportCardPublications and returns the data updated in the database.
+     * @param {ReportCardPublicationUpdateManyAndReturnArgs} args - Arguments to update many ReportCardPublications.
+     * @example
+     * // Update many ReportCardPublications
+     * const reportCardPublication = await prisma.reportCardPublication.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ReportCardPublications and only return the `id`
+     * const reportCardPublicationWithIdOnly = await prisma.reportCardPublication.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ReportCardPublicationUpdateManyAndReturnArgs>(args: SelectSubset<T, ReportCardPublicationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReportCardPublicationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ReportCardPublication.
+     * @param {ReportCardPublicationUpsertArgs} args - Arguments to update or create a ReportCardPublication.
+     * @example
+     * // Update or create a ReportCardPublication
+     * const reportCardPublication = await prisma.reportCardPublication.upsert({
+     *   create: {
+     *     // ... data to create a ReportCardPublication
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ReportCardPublication we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ReportCardPublicationUpsertArgs>(args: SelectSubset<T, ReportCardPublicationUpsertArgs<ExtArgs>>): Prisma__ReportCardPublicationClient<$Result.GetResult<Prisma.$ReportCardPublicationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ReportCardPublications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReportCardPublicationCountArgs} args - Arguments to filter ReportCardPublications to count.
+     * @example
+     * // Count the number of ReportCardPublications
+     * const count = await prisma.reportCardPublication.count({
+     *   where: {
+     *     // ... the filter for the ReportCardPublications we want to count
+     *   }
+     * })
+    **/
+    count<T extends ReportCardPublicationCountArgs>(
+      args?: Subset<T, ReportCardPublicationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ReportCardPublicationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ReportCardPublication.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReportCardPublicationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ReportCardPublicationAggregateArgs>(args: Subset<T, ReportCardPublicationAggregateArgs>): Prisma.PrismaPromise<GetReportCardPublicationAggregateType<T>>
+
+    /**
+     * Group by ReportCardPublication.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReportCardPublicationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ReportCardPublicationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ReportCardPublicationGroupByArgs['orderBy'] }
+        : { orderBy?: ReportCardPublicationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ReportCardPublicationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetReportCardPublicationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ReportCardPublication model
+   */
+  readonly fields: ReportCardPublicationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ReportCardPublication.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ReportCardPublicationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    class<T extends ClassDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClassDefaultArgs<ExtArgs>>): Prisma__ClassClient<$Result.GetResult<Prisma.$ClassPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ReportCardPublication model
+   */
+  interface ReportCardPublicationFieldRefs {
+    readonly id: FieldRef<"ReportCardPublication", 'Int'>
+    readonly academicYear: FieldRef<"ReportCardPublication", 'String'>
+    readonly term: FieldRef<"ReportCardPublication", 'Term'>
+    readonly status: FieldRef<"ReportCardPublication", 'ReportPublicationStatus'>
+    readonly notes: FieldRef<"ReportCardPublication", 'String'>
+    readonly publishedAt: FieldRef<"ReportCardPublication", 'DateTime'>
+    readonly publishedBy: FieldRef<"ReportCardPublication", 'String'>
+    readonly unpublishedAt: FieldRef<"ReportCardPublication", 'DateTime'>
+    readonly unpublishedBy: FieldRef<"ReportCardPublication", 'String'>
+    readonly schoolId: FieldRef<"ReportCardPublication", 'String'>
+    readonly classId: FieldRef<"ReportCardPublication", 'Int'>
+    readonly createdAt: FieldRef<"ReportCardPublication", 'DateTime'>
+    readonly updatedAt: FieldRef<"ReportCardPublication", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ReportCardPublication findUnique
+   */
+  export type ReportCardPublicationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReportCardPublication
+     */
+    select?: ReportCardPublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReportCardPublication
+     */
+    omit?: ReportCardPublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReportCardPublicationInclude<ExtArgs> | null
+    /**
+     * Filter, which ReportCardPublication to fetch.
+     */
+    where: ReportCardPublicationWhereUniqueInput
+  }
+
+  /**
+   * ReportCardPublication findUniqueOrThrow
+   */
+  export type ReportCardPublicationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReportCardPublication
+     */
+    select?: ReportCardPublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReportCardPublication
+     */
+    omit?: ReportCardPublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReportCardPublicationInclude<ExtArgs> | null
+    /**
+     * Filter, which ReportCardPublication to fetch.
+     */
+    where: ReportCardPublicationWhereUniqueInput
+  }
+
+  /**
+   * ReportCardPublication findFirst
+   */
+  export type ReportCardPublicationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReportCardPublication
+     */
+    select?: ReportCardPublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReportCardPublication
+     */
+    omit?: ReportCardPublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReportCardPublicationInclude<ExtArgs> | null
+    /**
+     * Filter, which ReportCardPublication to fetch.
+     */
+    where?: ReportCardPublicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ReportCardPublications to fetch.
+     */
+    orderBy?: ReportCardPublicationOrderByWithRelationInput | ReportCardPublicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ReportCardPublications.
+     */
+    cursor?: ReportCardPublicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ReportCardPublications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ReportCardPublications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ReportCardPublications.
+     */
+    distinct?: ReportCardPublicationScalarFieldEnum | ReportCardPublicationScalarFieldEnum[]
+  }
+
+  /**
+   * ReportCardPublication findFirstOrThrow
+   */
+  export type ReportCardPublicationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReportCardPublication
+     */
+    select?: ReportCardPublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReportCardPublication
+     */
+    omit?: ReportCardPublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReportCardPublicationInclude<ExtArgs> | null
+    /**
+     * Filter, which ReportCardPublication to fetch.
+     */
+    where?: ReportCardPublicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ReportCardPublications to fetch.
+     */
+    orderBy?: ReportCardPublicationOrderByWithRelationInput | ReportCardPublicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ReportCardPublications.
+     */
+    cursor?: ReportCardPublicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ReportCardPublications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ReportCardPublications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ReportCardPublications.
+     */
+    distinct?: ReportCardPublicationScalarFieldEnum | ReportCardPublicationScalarFieldEnum[]
+  }
+
+  /**
+   * ReportCardPublication findMany
+   */
+  export type ReportCardPublicationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReportCardPublication
+     */
+    select?: ReportCardPublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReportCardPublication
+     */
+    omit?: ReportCardPublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReportCardPublicationInclude<ExtArgs> | null
+    /**
+     * Filter, which ReportCardPublications to fetch.
+     */
+    where?: ReportCardPublicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ReportCardPublications to fetch.
+     */
+    orderBy?: ReportCardPublicationOrderByWithRelationInput | ReportCardPublicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ReportCardPublications.
+     */
+    cursor?: ReportCardPublicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ReportCardPublications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ReportCardPublications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ReportCardPublications.
+     */
+    distinct?: ReportCardPublicationScalarFieldEnum | ReportCardPublicationScalarFieldEnum[]
+  }
+
+  /**
+   * ReportCardPublication create
+   */
+  export type ReportCardPublicationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReportCardPublication
+     */
+    select?: ReportCardPublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReportCardPublication
+     */
+    omit?: ReportCardPublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReportCardPublicationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ReportCardPublication.
+     */
+    data: XOR<ReportCardPublicationCreateInput, ReportCardPublicationUncheckedCreateInput>
+  }
+
+  /**
+   * ReportCardPublication createMany
+   */
+  export type ReportCardPublicationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ReportCardPublications.
+     */
+    data: ReportCardPublicationCreateManyInput | ReportCardPublicationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ReportCardPublication createManyAndReturn
+   */
+  export type ReportCardPublicationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReportCardPublication
+     */
+    select?: ReportCardPublicationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReportCardPublication
+     */
+    omit?: ReportCardPublicationOmit<ExtArgs> | null
+    /**
+     * The data used to create many ReportCardPublications.
+     */
+    data: ReportCardPublicationCreateManyInput | ReportCardPublicationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReportCardPublicationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ReportCardPublication update
+   */
+  export type ReportCardPublicationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReportCardPublication
+     */
+    select?: ReportCardPublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReportCardPublication
+     */
+    omit?: ReportCardPublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReportCardPublicationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ReportCardPublication.
+     */
+    data: XOR<ReportCardPublicationUpdateInput, ReportCardPublicationUncheckedUpdateInput>
+    /**
+     * Choose, which ReportCardPublication to update.
+     */
+    where: ReportCardPublicationWhereUniqueInput
+  }
+
+  /**
+   * ReportCardPublication updateMany
+   */
+  export type ReportCardPublicationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ReportCardPublications.
+     */
+    data: XOR<ReportCardPublicationUpdateManyMutationInput, ReportCardPublicationUncheckedUpdateManyInput>
+    /**
+     * Filter which ReportCardPublications to update
+     */
+    where?: ReportCardPublicationWhereInput
+    /**
+     * Limit how many ReportCardPublications to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ReportCardPublication updateManyAndReturn
+   */
+  export type ReportCardPublicationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReportCardPublication
+     */
+    select?: ReportCardPublicationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReportCardPublication
+     */
+    omit?: ReportCardPublicationOmit<ExtArgs> | null
+    /**
+     * The data used to update ReportCardPublications.
+     */
+    data: XOR<ReportCardPublicationUpdateManyMutationInput, ReportCardPublicationUncheckedUpdateManyInput>
+    /**
+     * Filter which ReportCardPublications to update
+     */
+    where?: ReportCardPublicationWhereInput
+    /**
+     * Limit how many ReportCardPublications to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReportCardPublicationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ReportCardPublication upsert
+   */
+  export type ReportCardPublicationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReportCardPublication
+     */
+    select?: ReportCardPublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReportCardPublication
+     */
+    omit?: ReportCardPublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReportCardPublicationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ReportCardPublication to update in case it exists.
+     */
+    where: ReportCardPublicationWhereUniqueInput
+    /**
+     * In case the ReportCardPublication found by the `where` argument doesn't exist, create a new ReportCardPublication with this data.
+     */
+    create: XOR<ReportCardPublicationCreateInput, ReportCardPublicationUncheckedCreateInput>
+    /**
+     * In case the ReportCardPublication was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ReportCardPublicationUpdateInput, ReportCardPublicationUncheckedUpdateInput>
+  }
+
+  /**
+   * ReportCardPublication delete
+   */
+  export type ReportCardPublicationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReportCardPublication
+     */
+    select?: ReportCardPublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReportCardPublication
+     */
+    omit?: ReportCardPublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReportCardPublicationInclude<ExtArgs> | null
+    /**
+     * Filter which ReportCardPublication to delete.
+     */
+    where: ReportCardPublicationWhereUniqueInput
+  }
+
+  /**
+   * ReportCardPublication deleteMany
+   */
+  export type ReportCardPublicationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ReportCardPublications to delete
+     */
+    where?: ReportCardPublicationWhereInput
+    /**
+     * Limit how many ReportCardPublications to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ReportCardPublication without action
+   */
+  export type ReportCardPublicationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReportCardPublication
+     */
+    select?: ReportCardPublicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReportCardPublication
+     */
+    omit?: ReportCardPublicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReportCardPublicationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ExamEntryWindow
+   */
+
+  export type AggregateExamEntryWindow = {
+    _count: ExamEntryWindowCountAggregateOutputType | null
+    _avg: ExamEntryWindowAvgAggregateOutputType | null
+    _sum: ExamEntryWindowSumAggregateOutputType | null
+    _min: ExamEntryWindowMinAggregateOutputType | null
+    _max: ExamEntryWindowMaxAggregateOutputType | null
+  }
+
+  export type ExamEntryWindowAvgAggregateOutputType = {
+    id: number | null
+    classId: number | null
+  }
+
+  export type ExamEntryWindowSumAggregateOutputType = {
+    id: number | null
+    classId: number | null
+  }
+
+  export type ExamEntryWindowMinAggregateOutputType = {
+    id: number | null
+    academicYear: string | null
+    term: $Enums.Term | null
+    status: $Enums.ExamEntryStatus | null
+    openedAt: Date | null
+    openedBy: string | null
+    closedAt: Date | null
+    closedBy: string | null
+    notes: string | null
+    schoolId: string | null
+    classId: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ExamEntryWindowMaxAggregateOutputType = {
+    id: number | null
+    academicYear: string | null
+    term: $Enums.Term | null
+    status: $Enums.ExamEntryStatus | null
+    openedAt: Date | null
+    openedBy: string | null
+    closedAt: Date | null
+    closedBy: string | null
+    notes: string | null
+    schoolId: string | null
+    classId: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ExamEntryWindowCountAggregateOutputType = {
+    id: number
+    academicYear: number
+    term: number
+    status: number
+    openedAt: number
+    openedBy: number
+    closedAt: number
+    closedBy: number
+    notes: number
+    schoolId: number
+    classId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ExamEntryWindowAvgAggregateInputType = {
+    id?: true
+    classId?: true
+  }
+
+  export type ExamEntryWindowSumAggregateInputType = {
+    id?: true
+    classId?: true
+  }
+
+  export type ExamEntryWindowMinAggregateInputType = {
+    id?: true
+    academicYear?: true
+    term?: true
+    status?: true
+    openedAt?: true
+    openedBy?: true
+    closedAt?: true
+    closedBy?: true
+    notes?: true
+    schoolId?: true
+    classId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ExamEntryWindowMaxAggregateInputType = {
+    id?: true
+    academicYear?: true
+    term?: true
+    status?: true
+    openedAt?: true
+    openedBy?: true
+    closedAt?: true
+    closedBy?: true
+    notes?: true
+    schoolId?: true
+    classId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ExamEntryWindowCountAggregateInputType = {
+    id?: true
+    academicYear?: true
+    term?: true
+    status?: true
+    openedAt?: true
+    openedBy?: true
+    closedAt?: true
+    closedBy?: true
+    notes?: true
+    schoolId?: true
+    classId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ExamEntryWindowAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ExamEntryWindow to aggregate.
+     */
+    where?: ExamEntryWindowWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ExamEntryWindows to fetch.
+     */
+    orderBy?: ExamEntryWindowOrderByWithRelationInput | ExamEntryWindowOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ExamEntryWindowWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ExamEntryWindows from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ExamEntryWindows.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ExamEntryWindows
+    **/
+    _count?: true | ExamEntryWindowCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ExamEntryWindowAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ExamEntryWindowSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ExamEntryWindowMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ExamEntryWindowMaxAggregateInputType
+  }
+
+  export type GetExamEntryWindowAggregateType<T extends ExamEntryWindowAggregateArgs> = {
+        [P in keyof T & keyof AggregateExamEntryWindow]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateExamEntryWindow[P]>
+      : GetScalarType<T[P], AggregateExamEntryWindow[P]>
+  }
+
+
+
+
+  export type ExamEntryWindowGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ExamEntryWindowWhereInput
+    orderBy?: ExamEntryWindowOrderByWithAggregationInput | ExamEntryWindowOrderByWithAggregationInput[]
+    by: ExamEntryWindowScalarFieldEnum[] | ExamEntryWindowScalarFieldEnum
+    having?: ExamEntryWindowScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ExamEntryWindowCountAggregateInputType | true
+    _avg?: ExamEntryWindowAvgAggregateInputType
+    _sum?: ExamEntryWindowSumAggregateInputType
+    _min?: ExamEntryWindowMinAggregateInputType
+    _max?: ExamEntryWindowMaxAggregateInputType
+  }
+
+  export type ExamEntryWindowGroupByOutputType = {
+    id: number
+    academicYear: string
+    term: $Enums.Term
+    status: $Enums.ExamEntryStatus
+    openedAt: Date | null
+    openedBy: string | null
+    closedAt: Date | null
+    closedBy: string | null
+    notes: string | null
+    schoolId: string
+    classId: number
+    createdAt: Date
+    updatedAt: Date
+    _count: ExamEntryWindowCountAggregateOutputType | null
+    _avg: ExamEntryWindowAvgAggregateOutputType | null
+    _sum: ExamEntryWindowSumAggregateOutputType | null
+    _min: ExamEntryWindowMinAggregateOutputType | null
+    _max: ExamEntryWindowMaxAggregateOutputType | null
+  }
+
+  type GetExamEntryWindowGroupByPayload<T extends ExamEntryWindowGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ExamEntryWindowGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ExamEntryWindowGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ExamEntryWindowGroupByOutputType[P]>
+            : GetScalarType<T[P], ExamEntryWindowGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ExamEntryWindowSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    academicYear?: boolean
+    term?: boolean
+    status?: boolean
+    openedAt?: boolean
+    openedBy?: boolean
+    closedAt?: boolean
+    closedBy?: boolean
+    notes?: boolean
+    schoolId?: boolean
+    classId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["examEntryWindow"]>
+
+  export type ExamEntryWindowSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    academicYear?: boolean
+    term?: boolean
+    status?: boolean
+    openedAt?: boolean
+    openedBy?: boolean
+    closedAt?: boolean
+    closedBy?: boolean
+    notes?: boolean
+    schoolId?: boolean
+    classId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["examEntryWindow"]>
+
+  export type ExamEntryWindowSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    academicYear?: boolean
+    term?: boolean
+    status?: boolean
+    openedAt?: boolean
+    openedBy?: boolean
+    closedAt?: boolean
+    closedBy?: boolean
+    notes?: boolean
+    schoolId?: boolean
+    classId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["examEntryWindow"]>
+
+  export type ExamEntryWindowSelectScalar = {
+    id?: boolean
+    academicYear?: boolean
+    term?: boolean
+    status?: boolean
+    openedAt?: boolean
+    openedBy?: boolean
+    closedAt?: boolean
+    closedBy?: boolean
+    notes?: boolean
+    schoolId?: boolean
+    classId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ExamEntryWindowOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "academicYear" | "term" | "status" | "openedAt" | "openedBy" | "closedAt" | "closedBy" | "notes" | "schoolId" | "classId" | "createdAt" | "updatedAt", ExtArgs["result"]["examEntryWindow"]>
+  export type ExamEntryWindowInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }
+  export type ExamEntryWindowIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }
+  export type ExamEntryWindowIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    class?: boolean | ClassDefaultArgs<ExtArgs>
+  }
+
+  export type $ExamEntryWindowPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ExamEntryWindow"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      class: Prisma.$ClassPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      academicYear: string
+      term: $Enums.Term
+      status: $Enums.ExamEntryStatus
+      openedAt: Date | null
+      openedBy: string | null
+      closedAt: Date | null
+      closedBy: string | null
+      notes: string | null
+      schoolId: string
+      classId: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["examEntryWindow"]>
+    composites: {}
+  }
+
+  type ExamEntryWindowGetPayload<S extends boolean | null | undefined | ExamEntryWindowDefaultArgs> = $Result.GetResult<Prisma.$ExamEntryWindowPayload, S>
+
+  type ExamEntryWindowCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ExamEntryWindowFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ExamEntryWindowCountAggregateInputType | true
+    }
+
+  export interface ExamEntryWindowDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ExamEntryWindow'], meta: { name: 'ExamEntryWindow' } }
+    /**
+     * Find zero or one ExamEntryWindow that matches the filter.
+     * @param {ExamEntryWindowFindUniqueArgs} args - Arguments to find a ExamEntryWindow
+     * @example
+     * // Get one ExamEntryWindow
+     * const examEntryWindow = await prisma.examEntryWindow.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ExamEntryWindowFindUniqueArgs>(args: SelectSubset<T, ExamEntryWindowFindUniqueArgs<ExtArgs>>): Prisma__ExamEntryWindowClient<$Result.GetResult<Prisma.$ExamEntryWindowPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ExamEntryWindow that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ExamEntryWindowFindUniqueOrThrowArgs} args - Arguments to find a ExamEntryWindow
+     * @example
+     * // Get one ExamEntryWindow
+     * const examEntryWindow = await prisma.examEntryWindow.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ExamEntryWindowFindUniqueOrThrowArgs>(args: SelectSubset<T, ExamEntryWindowFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ExamEntryWindowClient<$Result.GetResult<Prisma.$ExamEntryWindowPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ExamEntryWindow that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExamEntryWindowFindFirstArgs} args - Arguments to find a ExamEntryWindow
+     * @example
+     * // Get one ExamEntryWindow
+     * const examEntryWindow = await prisma.examEntryWindow.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ExamEntryWindowFindFirstArgs>(args?: SelectSubset<T, ExamEntryWindowFindFirstArgs<ExtArgs>>): Prisma__ExamEntryWindowClient<$Result.GetResult<Prisma.$ExamEntryWindowPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ExamEntryWindow that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExamEntryWindowFindFirstOrThrowArgs} args - Arguments to find a ExamEntryWindow
+     * @example
+     * // Get one ExamEntryWindow
+     * const examEntryWindow = await prisma.examEntryWindow.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ExamEntryWindowFindFirstOrThrowArgs>(args?: SelectSubset<T, ExamEntryWindowFindFirstOrThrowArgs<ExtArgs>>): Prisma__ExamEntryWindowClient<$Result.GetResult<Prisma.$ExamEntryWindowPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ExamEntryWindows that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExamEntryWindowFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ExamEntryWindows
+     * const examEntryWindows = await prisma.examEntryWindow.findMany()
+     * 
+     * // Get first 10 ExamEntryWindows
+     * const examEntryWindows = await prisma.examEntryWindow.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const examEntryWindowWithIdOnly = await prisma.examEntryWindow.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ExamEntryWindowFindManyArgs>(args?: SelectSubset<T, ExamEntryWindowFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExamEntryWindowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ExamEntryWindow.
+     * @param {ExamEntryWindowCreateArgs} args - Arguments to create a ExamEntryWindow.
+     * @example
+     * // Create one ExamEntryWindow
+     * const ExamEntryWindow = await prisma.examEntryWindow.create({
+     *   data: {
+     *     // ... data to create a ExamEntryWindow
+     *   }
+     * })
+     * 
+     */
+    create<T extends ExamEntryWindowCreateArgs>(args: SelectSubset<T, ExamEntryWindowCreateArgs<ExtArgs>>): Prisma__ExamEntryWindowClient<$Result.GetResult<Prisma.$ExamEntryWindowPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ExamEntryWindows.
+     * @param {ExamEntryWindowCreateManyArgs} args - Arguments to create many ExamEntryWindows.
+     * @example
+     * // Create many ExamEntryWindows
+     * const examEntryWindow = await prisma.examEntryWindow.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ExamEntryWindowCreateManyArgs>(args?: SelectSubset<T, ExamEntryWindowCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ExamEntryWindows and returns the data saved in the database.
+     * @param {ExamEntryWindowCreateManyAndReturnArgs} args - Arguments to create many ExamEntryWindows.
+     * @example
+     * // Create many ExamEntryWindows
+     * const examEntryWindow = await prisma.examEntryWindow.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ExamEntryWindows and only return the `id`
+     * const examEntryWindowWithIdOnly = await prisma.examEntryWindow.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ExamEntryWindowCreateManyAndReturnArgs>(args?: SelectSubset<T, ExamEntryWindowCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExamEntryWindowPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ExamEntryWindow.
+     * @param {ExamEntryWindowDeleteArgs} args - Arguments to delete one ExamEntryWindow.
+     * @example
+     * // Delete one ExamEntryWindow
+     * const ExamEntryWindow = await prisma.examEntryWindow.delete({
+     *   where: {
+     *     // ... filter to delete one ExamEntryWindow
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ExamEntryWindowDeleteArgs>(args: SelectSubset<T, ExamEntryWindowDeleteArgs<ExtArgs>>): Prisma__ExamEntryWindowClient<$Result.GetResult<Prisma.$ExamEntryWindowPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ExamEntryWindow.
+     * @param {ExamEntryWindowUpdateArgs} args - Arguments to update one ExamEntryWindow.
+     * @example
+     * // Update one ExamEntryWindow
+     * const examEntryWindow = await prisma.examEntryWindow.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ExamEntryWindowUpdateArgs>(args: SelectSubset<T, ExamEntryWindowUpdateArgs<ExtArgs>>): Prisma__ExamEntryWindowClient<$Result.GetResult<Prisma.$ExamEntryWindowPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ExamEntryWindows.
+     * @param {ExamEntryWindowDeleteManyArgs} args - Arguments to filter ExamEntryWindows to delete.
+     * @example
+     * // Delete a few ExamEntryWindows
+     * const { count } = await prisma.examEntryWindow.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ExamEntryWindowDeleteManyArgs>(args?: SelectSubset<T, ExamEntryWindowDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ExamEntryWindows.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExamEntryWindowUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ExamEntryWindows
+     * const examEntryWindow = await prisma.examEntryWindow.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ExamEntryWindowUpdateManyArgs>(args: SelectSubset<T, ExamEntryWindowUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ExamEntryWindows and returns the data updated in the database.
+     * @param {ExamEntryWindowUpdateManyAndReturnArgs} args - Arguments to update many ExamEntryWindows.
+     * @example
+     * // Update many ExamEntryWindows
+     * const examEntryWindow = await prisma.examEntryWindow.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ExamEntryWindows and only return the `id`
+     * const examEntryWindowWithIdOnly = await prisma.examEntryWindow.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ExamEntryWindowUpdateManyAndReturnArgs>(args: SelectSubset<T, ExamEntryWindowUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExamEntryWindowPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ExamEntryWindow.
+     * @param {ExamEntryWindowUpsertArgs} args - Arguments to update or create a ExamEntryWindow.
+     * @example
+     * // Update or create a ExamEntryWindow
+     * const examEntryWindow = await prisma.examEntryWindow.upsert({
+     *   create: {
+     *     // ... data to create a ExamEntryWindow
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ExamEntryWindow we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ExamEntryWindowUpsertArgs>(args: SelectSubset<T, ExamEntryWindowUpsertArgs<ExtArgs>>): Prisma__ExamEntryWindowClient<$Result.GetResult<Prisma.$ExamEntryWindowPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ExamEntryWindows.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExamEntryWindowCountArgs} args - Arguments to filter ExamEntryWindows to count.
+     * @example
+     * // Count the number of ExamEntryWindows
+     * const count = await prisma.examEntryWindow.count({
+     *   where: {
+     *     // ... the filter for the ExamEntryWindows we want to count
+     *   }
+     * })
+    **/
+    count<T extends ExamEntryWindowCountArgs>(
+      args?: Subset<T, ExamEntryWindowCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ExamEntryWindowCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ExamEntryWindow.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExamEntryWindowAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ExamEntryWindowAggregateArgs>(args: Subset<T, ExamEntryWindowAggregateArgs>): Prisma.PrismaPromise<GetExamEntryWindowAggregateType<T>>
+
+    /**
+     * Group by ExamEntryWindow.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExamEntryWindowGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ExamEntryWindowGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ExamEntryWindowGroupByArgs['orderBy'] }
+        : { orderBy?: ExamEntryWindowGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ExamEntryWindowGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetExamEntryWindowGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ExamEntryWindow model
+   */
+  readonly fields: ExamEntryWindowFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ExamEntryWindow.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ExamEntryWindowClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    class<T extends ClassDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClassDefaultArgs<ExtArgs>>): Prisma__ClassClient<$Result.GetResult<Prisma.$ClassPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ExamEntryWindow model
+   */
+  interface ExamEntryWindowFieldRefs {
+    readonly id: FieldRef<"ExamEntryWindow", 'Int'>
+    readonly academicYear: FieldRef<"ExamEntryWindow", 'String'>
+    readonly term: FieldRef<"ExamEntryWindow", 'Term'>
+    readonly status: FieldRef<"ExamEntryWindow", 'ExamEntryStatus'>
+    readonly openedAt: FieldRef<"ExamEntryWindow", 'DateTime'>
+    readonly openedBy: FieldRef<"ExamEntryWindow", 'String'>
+    readonly closedAt: FieldRef<"ExamEntryWindow", 'DateTime'>
+    readonly closedBy: FieldRef<"ExamEntryWindow", 'String'>
+    readonly notes: FieldRef<"ExamEntryWindow", 'String'>
+    readonly schoolId: FieldRef<"ExamEntryWindow", 'String'>
+    readonly classId: FieldRef<"ExamEntryWindow", 'Int'>
+    readonly createdAt: FieldRef<"ExamEntryWindow", 'DateTime'>
+    readonly updatedAt: FieldRef<"ExamEntryWindow", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ExamEntryWindow findUnique
+   */
+  export type ExamEntryWindowFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExamEntryWindow
+     */
+    select?: ExamEntryWindowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExamEntryWindow
+     */
+    omit?: ExamEntryWindowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExamEntryWindowInclude<ExtArgs> | null
+    /**
+     * Filter, which ExamEntryWindow to fetch.
+     */
+    where: ExamEntryWindowWhereUniqueInput
+  }
+
+  /**
+   * ExamEntryWindow findUniqueOrThrow
+   */
+  export type ExamEntryWindowFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExamEntryWindow
+     */
+    select?: ExamEntryWindowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExamEntryWindow
+     */
+    omit?: ExamEntryWindowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExamEntryWindowInclude<ExtArgs> | null
+    /**
+     * Filter, which ExamEntryWindow to fetch.
+     */
+    where: ExamEntryWindowWhereUniqueInput
+  }
+
+  /**
+   * ExamEntryWindow findFirst
+   */
+  export type ExamEntryWindowFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExamEntryWindow
+     */
+    select?: ExamEntryWindowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExamEntryWindow
+     */
+    omit?: ExamEntryWindowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExamEntryWindowInclude<ExtArgs> | null
+    /**
+     * Filter, which ExamEntryWindow to fetch.
+     */
+    where?: ExamEntryWindowWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ExamEntryWindows to fetch.
+     */
+    orderBy?: ExamEntryWindowOrderByWithRelationInput | ExamEntryWindowOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ExamEntryWindows.
+     */
+    cursor?: ExamEntryWindowWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ExamEntryWindows from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ExamEntryWindows.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ExamEntryWindows.
+     */
+    distinct?: ExamEntryWindowScalarFieldEnum | ExamEntryWindowScalarFieldEnum[]
+  }
+
+  /**
+   * ExamEntryWindow findFirstOrThrow
+   */
+  export type ExamEntryWindowFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExamEntryWindow
+     */
+    select?: ExamEntryWindowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExamEntryWindow
+     */
+    omit?: ExamEntryWindowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExamEntryWindowInclude<ExtArgs> | null
+    /**
+     * Filter, which ExamEntryWindow to fetch.
+     */
+    where?: ExamEntryWindowWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ExamEntryWindows to fetch.
+     */
+    orderBy?: ExamEntryWindowOrderByWithRelationInput | ExamEntryWindowOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ExamEntryWindows.
+     */
+    cursor?: ExamEntryWindowWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ExamEntryWindows from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ExamEntryWindows.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ExamEntryWindows.
+     */
+    distinct?: ExamEntryWindowScalarFieldEnum | ExamEntryWindowScalarFieldEnum[]
+  }
+
+  /**
+   * ExamEntryWindow findMany
+   */
+  export type ExamEntryWindowFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExamEntryWindow
+     */
+    select?: ExamEntryWindowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExamEntryWindow
+     */
+    omit?: ExamEntryWindowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExamEntryWindowInclude<ExtArgs> | null
+    /**
+     * Filter, which ExamEntryWindows to fetch.
+     */
+    where?: ExamEntryWindowWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ExamEntryWindows to fetch.
+     */
+    orderBy?: ExamEntryWindowOrderByWithRelationInput | ExamEntryWindowOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ExamEntryWindows.
+     */
+    cursor?: ExamEntryWindowWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ExamEntryWindows from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ExamEntryWindows.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ExamEntryWindows.
+     */
+    distinct?: ExamEntryWindowScalarFieldEnum | ExamEntryWindowScalarFieldEnum[]
+  }
+
+  /**
+   * ExamEntryWindow create
+   */
+  export type ExamEntryWindowCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExamEntryWindow
+     */
+    select?: ExamEntryWindowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExamEntryWindow
+     */
+    omit?: ExamEntryWindowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExamEntryWindowInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ExamEntryWindow.
+     */
+    data: XOR<ExamEntryWindowCreateInput, ExamEntryWindowUncheckedCreateInput>
+  }
+
+  /**
+   * ExamEntryWindow createMany
+   */
+  export type ExamEntryWindowCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ExamEntryWindows.
+     */
+    data: ExamEntryWindowCreateManyInput | ExamEntryWindowCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ExamEntryWindow createManyAndReturn
+   */
+  export type ExamEntryWindowCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExamEntryWindow
+     */
+    select?: ExamEntryWindowSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExamEntryWindow
+     */
+    omit?: ExamEntryWindowOmit<ExtArgs> | null
+    /**
+     * The data used to create many ExamEntryWindows.
+     */
+    data: ExamEntryWindowCreateManyInput | ExamEntryWindowCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExamEntryWindowIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ExamEntryWindow update
+   */
+  export type ExamEntryWindowUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExamEntryWindow
+     */
+    select?: ExamEntryWindowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExamEntryWindow
+     */
+    omit?: ExamEntryWindowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExamEntryWindowInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ExamEntryWindow.
+     */
+    data: XOR<ExamEntryWindowUpdateInput, ExamEntryWindowUncheckedUpdateInput>
+    /**
+     * Choose, which ExamEntryWindow to update.
+     */
+    where: ExamEntryWindowWhereUniqueInput
+  }
+
+  /**
+   * ExamEntryWindow updateMany
+   */
+  export type ExamEntryWindowUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ExamEntryWindows.
+     */
+    data: XOR<ExamEntryWindowUpdateManyMutationInput, ExamEntryWindowUncheckedUpdateManyInput>
+    /**
+     * Filter which ExamEntryWindows to update
+     */
+    where?: ExamEntryWindowWhereInput
+    /**
+     * Limit how many ExamEntryWindows to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ExamEntryWindow updateManyAndReturn
+   */
+  export type ExamEntryWindowUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExamEntryWindow
+     */
+    select?: ExamEntryWindowSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExamEntryWindow
+     */
+    omit?: ExamEntryWindowOmit<ExtArgs> | null
+    /**
+     * The data used to update ExamEntryWindows.
+     */
+    data: XOR<ExamEntryWindowUpdateManyMutationInput, ExamEntryWindowUncheckedUpdateManyInput>
+    /**
+     * Filter which ExamEntryWindows to update
+     */
+    where?: ExamEntryWindowWhereInput
+    /**
+     * Limit how many ExamEntryWindows to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExamEntryWindowIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ExamEntryWindow upsert
+   */
+  export type ExamEntryWindowUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExamEntryWindow
+     */
+    select?: ExamEntryWindowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExamEntryWindow
+     */
+    omit?: ExamEntryWindowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExamEntryWindowInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ExamEntryWindow to update in case it exists.
+     */
+    where: ExamEntryWindowWhereUniqueInput
+    /**
+     * In case the ExamEntryWindow found by the `where` argument doesn't exist, create a new ExamEntryWindow with this data.
+     */
+    create: XOR<ExamEntryWindowCreateInput, ExamEntryWindowUncheckedCreateInput>
+    /**
+     * In case the ExamEntryWindow was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ExamEntryWindowUpdateInput, ExamEntryWindowUncheckedUpdateInput>
+  }
+
+  /**
+   * ExamEntryWindow delete
+   */
+  export type ExamEntryWindowDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExamEntryWindow
+     */
+    select?: ExamEntryWindowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExamEntryWindow
+     */
+    omit?: ExamEntryWindowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExamEntryWindowInclude<ExtArgs> | null
+    /**
+     * Filter which ExamEntryWindow to delete.
+     */
+    where: ExamEntryWindowWhereUniqueInput
+  }
+
+  /**
+   * ExamEntryWindow deleteMany
+   */
+  export type ExamEntryWindowDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ExamEntryWindows to delete
+     */
+    where?: ExamEntryWindowWhereInput
+    /**
+     * Limit how many ExamEntryWindows to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ExamEntryWindow without action
+   */
+  export type ExamEntryWindowDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExamEntryWindow
+     */
+    select?: ExamEntryWindowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExamEntryWindow
+     */
+    omit?: ExamEntryWindowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExamEntryWindowInclude<ExtArgs> | null
   }
 
 
@@ -66357,6 +69138,44 @@ export namespace Prisma {
   export type ContinuousAssessmentScalarFieldEnum = (typeof ContinuousAssessmentScalarFieldEnum)[keyof typeof ContinuousAssessmentScalarFieldEnum]
 
 
+  export const ReportCardPublicationScalarFieldEnum: {
+    id: 'id',
+    academicYear: 'academicYear',
+    term: 'term',
+    status: 'status',
+    notes: 'notes',
+    publishedAt: 'publishedAt',
+    publishedBy: 'publishedBy',
+    unpublishedAt: 'unpublishedAt',
+    unpublishedBy: 'unpublishedBy',
+    schoolId: 'schoolId',
+    classId: 'classId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ReportCardPublicationScalarFieldEnum = (typeof ReportCardPublicationScalarFieldEnum)[keyof typeof ReportCardPublicationScalarFieldEnum]
+
+
+  export const ExamEntryWindowScalarFieldEnum: {
+    id: 'id',
+    academicYear: 'academicYear',
+    term: 'term',
+    status: 'status',
+    openedAt: 'openedAt',
+    openedBy: 'openedBy',
+    closedAt: 'closedAt',
+    closedBy: 'closedBy',
+    notes: 'notes',
+    schoolId: 'schoolId',
+    classId: 'classId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ExamEntryWindowScalarFieldEnum = (typeof ExamEntryWindowScalarFieldEnum)[keyof typeof ExamEntryWindowScalarFieldEnum]
+
+
   export const SyllabusScalarFieldEnum: {
     id: 'id',
     description: 'description',
@@ -67025,6 +69844,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ReportPublicationStatus'
+   */
+  export type EnumReportPublicationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportPublicationStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ReportPublicationStatus[]'
+   */
+  export type ListEnumReportPublicationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportPublicationStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ExamEntryStatus'
+   */
+  export type EnumExamEntryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ExamEntryStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ExamEntryStatus[]'
+   */
+  export type ListEnumExamEntryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ExamEntryStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'SyllabusStatus'
    */
   export type EnumSyllabusStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SyllabusStatus'>
@@ -67336,6 +70183,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreListRelationFilter
     caAuditLogs?: CAAuditLogListRelationFilter
     continuousAssessments?: ContinuousAssessmentListRelationFilter
+    reportPublications?: ReportCardPublicationListRelationFilter
+    examEntryWindows?: ExamEntryWindowListRelationFilter
     syllabi?: SyllabusListRelationFilter
     syllabusTopicProgress?: SyllabusTopicProgressListRelationFilter
     feeStructures?: FeeStructureListRelationFilter
@@ -67398,6 +70247,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreOrderByRelationAggregateInput
     caAuditLogs?: CAAuditLogOrderByRelationAggregateInput
     continuousAssessments?: ContinuousAssessmentOrderByRelationAggregateInput
+    reportPublications?: ReportCardPublicationOrderByRelationAggregateInput
+    examEntryWindows?: ExamEntryWindowOrderByRelationAggregateInput
     syllabi?: SyllabusOrderByRelationAggregateInput
     syllabusTopicProgress?: SyllabusTopicProgressOrderByRelationAggregateInput
     feeStructures?: FeeStructureOrderByRelationAggregateInput
@@ -67463,6 +70314,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreListRelationFilter
     caAuditLogs?: CAAuditLogListRelationFilter
     continuousAssessments?: ContinuousAssessmentListRelationFilter
+    reportPublications?: ReportCardPublicationListRelationFilter
+    examEntryWindows?: ExamEntryWindowListRelationFilter
     syllabi?: SyllabusListRelationFilter
     syllabusTopicProgress?: SyllabusTopicProgressListRelationFilter
     feeStructures?: FeeStructureListRelationFilter
@@ -68598,6 +71451,8 @@ export namespace Prisma {
     caBuckets?: CABucketListRelationFilter
     caActivities?: CAActivityListRelationFilter
     continuousAssessments?: ContinuousAssessmentListRelationFilter
+    reportPublications?: ReportCardPublicationListRelationFilter
+    examEntryWindows?: ExamEntryWindowListRelationFilter
     syllabusTopicProgress?: SyllabusTopicProgressListRelationFilter
   }
 
@@ -68619,6 +71474,8 @@ export namespace Prisma {
     caBuckets?: CABucketOrderByRelationAggregateInput
     caActivities?: CAActivityOrderByRelationAggregateInput
     continuousAssessments?: ContinuousAssessmentOrderByRelationAggregateInput
+    reportPublications?: ReportCardPublicationOrderByRelationAggregateInput
+    examEntryWindows?: ExamEntryWindowOrderByRelationAggregateInput
     syllabusTopicProgress?: SyllabusTopicProgressOrderByRelationAggregateInput
   }
 
@@ -68644,6 +71501,8 @@ export namespace Prisma {
     caBuckets?: CABucketListRelationFilter
     caActivities?: CAActivityListRelationFilter
     continuousAssessments?: ContinuousAssessmentListRelationFilter
+    reportPublications?: ReportCardPublicationListRelationFilter
+    examEntryWindows?: ExamEntryWindowListRelationFilter
     syllabusTopicProgress?: SyllabusTopicProgressListRelationFilter
   }, "id" | "schoolId_name">
 
@@ -70162,6 +73021,208 @@ export namespace Prisma {
     configId?: IntNullableWithAggregatesFilter<"ContinuousAssessment"> | number | null
     createdAt?: DateTimeWithAggregatesFilter<"ContinuousAssessment"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ContinuousAssessment"> | Date | string
+  }
+
+  export type ReportCardPublicationWhereInput = {
+    AND?: ReportCardPublicationWhereInput | ReportCardPublicationWhereInput[]
+    OR?: ReportCardPublicationWhereInput[]
+    NOT?: ReportCardPublicationWhereInput | ReportCardPublicationWhereInput[]
+    id?: IntFilter<"ReportCardPublication"> | number
+    academicYear?: StringFilter<"ReportCardPublication"> | string
+    term?: EnumTermFilter<"ReportCardPublication"> | $Enums.Term
+    status?: EnumReportPublicationStatusFilter<"ReportCardPublication"> | $Enums.ReportPublicationStatus
+    notes?: StringNullableFilter<"ReportCardPublication"> | string | null
+    publishedAt?: DateTimeFilter<"ReportCardPublication"> | Date | string
+    publishedBy?: StringFilter<"ReportCardPublication"> | string
+    unpublishedAt?: DateTimeNullableFilter<"ReportCardPublication"> | Date | string | null
+    unpublishedBy?: StringNullableFilter<"ReportCardPublication"> | string | null
+    schoolId?: StringFilter<"ReportCardPublication"> | string
+    classId?: IntFilter<"ReportCardPublication"> | number
+    createdAt?: DateTimeFilter<"ReportCardPublication"> | Date | string
+    updatedAt?: DateTimeFilter<"ReportCardPublication"> | Date | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    class?: XOR<ClassScalarRelationFilter, ClassWhereInput>
+  }
+
+  export type ReportCardPublicationOrderByWithRelationInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    term?: SortOrder
+    status?: SortOrder
+    notes?: SortOrderInput | SortOrder
+    publishedAt?: SortOrder
+    publishedBy?: SortOrder
+    unpublishedAt?: SortOrderInput | SortOrder
+    unpublishedBy?: SortOrderInput | SortOrder
+    schoolId?: SortOrder
+    classId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+    class?: ClassOrderByWithRelationInput
+  }
+
+  export type ReportCardPublicationWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    schoolId_classId_term_academicYear?: ReportCardPublicationSchoolIdClassIdTermAcademicYearCompoundUniqueInput
+    AND?: ReportCardPublicationWhereInput | ReportCardPublicationWhereInput[]
+    OR?: ReportCardPublicationWhereInput[]
+    NOT?: ReportCardPublicationWhereInput | ReportCardPublicationWhereInput[]
+    academicYear?: StringFilter<"ReportCardPublication"> | string
+    term?: EnumTermFilter<"ReportCardPublication"> | $Enums.Term
+    status?: EnumReportPublicationStatusFilter<"ReportCardPublication"> | $Enums.ReportPublicationStatus
+    notes?: StringNullableFilter<"ReportCardPublication"> | string | null
+    publishedAt?: DateTimeFilter<"ReportCardPublication"> | Date | string
+    publishedBy?: StringFilter<"ReportCardPublication"> | string
+    unpublishedAt?: DateTimeNullableFilter<"ReportCardPublication"> | Date | string | null
+    unpublishedBy?: StringNullableFilter<"ReportCardPublication"> | string | null
+    schoolId?: StringFilter<"ReportCardPublication"> | string
+    classId?: IntFilter<"ReportCardPublication"> | number
+    createdAt?: DateTimeFilter<"ReportCardPublication"> | Date | string
+    updatedAt?: DateTimeFilter<"ReportCardPublication"> | Date | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    class?: XOR<ClassScalarRelationFilter, ClassWhereInput>
+  }, "id" | "schoolId_classId_term_academicYear">
+
+  export type ReportCardPublicationOrderByWithAggregationInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    term?: SortOrder
+    status?: SortOrder
+    notes?: SortOrderInput | SortOrder
+    publishedAt?: SortOrder
+    publishedBy?: SortOrder
+    unpublishedAt?: SortOrderInput | SortOrder
+    unpublishedBy?: SortOrderInput | SortOrder
+    schoolId?: SortOrder
+    classId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ReportCardPublicationCountOrderByAggregateInput
+    _avg?: ReportCardPublicationAvgOrderByAggregateInput
+    _max?: ReportCardPublicationMaxOrderByAggregateInput
+    _min?: ReportCardPublicationMinOrderByAggregateInput
+    _sum?: ReportCardPublicationSumOrderByAggregateInput
+  }
+
+  export type ReportCardPublicationScalarWhereWithAggregatesInput = {
+    AND?: ReportCardPublicationScalarWhereWithAggregatesInput | ReportCardPublicationScalarWhereWithAggregatesInput[]
+    OR?: ReportCardPublicationScalarWhereWithAggregatesInput[]
+    NOT?: ReportCardPublicationScalarWhereWithAggregatesInput | ReportCardPublicationScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"ReportCardPublication"> | number
+    academicYear?: StringWithAggregatesFilter<"ReportCardPublication"> | string
+    term?: EnumTermWithAggregatesFilter<"ReportCardPublication"> | $Enums.Term
+    status?: EnumReportPublicationStatusWithAggregatesFilter<"ReportCardPublication"> | $Enums.ReportPublicationStatus
+    notes?: StringNullableWithAggregatesFilter<"ReportCardPublication"> | string | null
+    publishedAt?: DateTimeWithAggregatesFilter<"ReportCardPublication"> | Date | string
+    publishedBy?: StringWithAggregatesFilter<"ReportCardPublication"> | string
+    unpublishedAt?: DateTimeNullableWithAggregatesFilter<"ReportCardPublication"> | Date | string | null
+    unpublishedBy?: StringNullableWithAggregatesFilter<"ReportCardPublication"> | string | null
+    schoolId?: StringWithAggregatesFilter<"ReportCardPublication"> | string
+    classId?: IntWithAggregatesFilter<"ReportCardPublication"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"ReportCardPublication"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ReportCardPublication"> | Date | string
+  }
+
+  export type ExamEntryWindowWhereInput = {
+    AND?: ExamEntryWindowWhereInput | ExamEntryWindowWhereInput[]
+    OR?: ExamEntryWindowWhereInput[]
+    NOT?: ExamEntryWindowWhereInput | ExamEntryWindowWhereInput[]
+    id?: IntFilter<"ExamEntryWindow"> | number
+    academicYear?: StringFilter<"ExamEntryWindow"> | string
+    term?: EnumTermFilter<"ExamEntryWindow"> | $Enums.Term
+    status?: EnumExamEntryStatusFilter<"ExamEntryWindow"> | $Enums.ExamEntryStatus
+    openedAt?: DateTimeNullableFilter<"ExamEntryWindow"> | Date | string | null
+    openedBy?: StringNullableFilter<"ExamEntryWindow"> | string | null
+    closedAt?: DateTimeNullableFilter<"ExamEntryWindow"> | Date | string | null
+    closedBy?: StringNullableFilter<"ExamEntryWindow"> | string | null
+    notes?: StringNullableFilter<"ExamEntryWindow"> | string | null
+    schoolId?: StringFilter<"ExamEntryWindow"> | string
+    classId?: IntFilter<"ExamEntryWindow"> | number
+    createdAt?: DateTimeFilter<"ExamEntryWindow"> | Date | string
+    updatedAt?: DateTimeFilter<"ExamEntryWindow"> | Date | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    class?: XOR<ClassScalarRelationFilter, ClassWhereInput>
+  }
+
+  export type ExamEntryWindowOrderByWithRelationInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    term?: SortOrder
+    status?: SortOrder
+    openedAt?: SortOrderInput | SortOrder
+    openedBy?: SortOrderInput | SortOrder
+    closedAt?: SortOrderInput | SortOrder
+    closedBy?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    schoolId?: SortOrder
+    classId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+    class?: ClassOrderByWithRelationInput
+  }
+
+  export type ExamEntryWindowWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    schoolId_classId_term_academicYear?: ExamEntryWindowSchoolIdClassIdTermAcademicYearCompoundUniqueInput
+    AND?: ExamEntryWindowWhereInput | ExamEntryWindowWhereInput[]
+    OR?: ExamEntryWindowWhereInput[]
+    NOT?: ExamEntryWindowWhereInput | ExamEntryWindowWhereInput[]
+    academicYear?: StringFilter<"ExamEntryWindow"> | string
+    term?: EnumTermFilter<"ExamEntryWindow"> | $Enums.Term
+    status?: EnumExamEntryStatusFilter<"ExamEntryWindow"> | $Enums.ExamEntryStatus
+    openedAt?: DateTimeNullableFilter<"ExamEntryWindow"> | Date | string | null
+    openedBy?: StringNullableFilter<"ExamEntryWindow"> | string | null
+    closedAt?: DateTimeNullableFilter<"ExamEntryWindow"> | Date | string | null
+    closedBy?: StringNullableFilter<"ExamEntryWindow"> | string | null
+    notes?: StringNullableFilter<"ExamEntryWindow"> | string | null
+    schoolId?: StringFilter<"ExamEntryWindow"> | string
+    classId?: IntFilter<"ExamEntryWindow"> | number
+    createdAt?: DateTimeFilter<"ExamEntryWindow"> | Date | string
+    updatedAt?: DateTimeFilter<"ExamEntryWindow"> | Date | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    class?: XOR<ClassScalarRelationFilter, ClassWhereInput>
+  }, "id" | "schoolId_classId_term_academicYear">
+
+  export type ExamEntryWindowOrderByWithAggregationInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    term?: SortOrder
+    status?: SortOrder
+    openedAt?: SortOrderInput | SortOrder
+    openedBy?: SortOrderInput | SortOrder
+    closedAt?: SortOrderInput | SortOrder
+    closedBy?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    schoolId?: SortOrder
+    classId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ExamEntryWindowCountOrderByAggregateInput
+    _avg?: ExamEntryWindowAvgOrderByAggregateInput
+    _max?: ExamEntryWindowMaxOrderByAggregateInput
+    _min?: ExamEntryWindowMinOrderByAggregateInput
+    _sum?: ExamEntryWindowSumOrderByAggregateInput
+  }
+
+  export type ExamEntryWindowScalarWhereWithAggregatesInput = {
+    AND?: ExamEntryWindowScalarWhereWithAggregatesInput | ExamEntryWindowScalarWhereWithAggregatesInput[]
+    OR?: ExamEntryWindowScalarWhereWithAggregatesInput[]
+    NOT?: ExamEntryWindowScalarWhereWithAggregatesInput | ExamEntryWindowScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"ExamEntryWindow"> | number
+    academicYear?: StringWithAggregatesFilter<"ExamEntryWindow"> | string
+    term?: EnumTermWithAggregatesFilter<"ExamEntryWindow"> | $Enums.Term
+    status?: EnumExamEntryStatusWithAggregatesFilter<"ExamEntryWindow"> | $Enums.ExamEntryStatus
+    openedAt?: DateTimeNullableWithAggregatesFilter<"ExamEntryWindow"> | Date | string | null
+    openedBy?: StringNullableWithAggregatesFilter<"ExamEntryWindow"> | string | null
+    closedAt?: DateTimeNullableWithAggregatesFilter<"ExamEntryWindow"> | Date | string | null
+    closedBy?: StringNullableWithAggregatesFilter<"ExamEntryWindow"> | string | null
+    notes?: StringNullableWithAggregatesFilter<"ExamEntryWindow"> | string | null
+    schoolId?: StringWithAggregatesFilter<"ExamEntryWindow"> | string
+    classId?: IntWithAggregatesFilter<"ExamEntryWindow"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"ExamEntryWindow"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ExamEntryWindow"> | Date | string
   }
 
   export type SyllabusWhereInput = {
@@ -71896,6 +74957,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -71958,6 +75021,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -72020,6 +75085,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -72082,6 +75149,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -73342,6 +76411,8 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutClassInput
     caActivities?: CAActivityCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
@@ -73360,6 +76431,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutClassInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
@@ -73377,6 +76450,8 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
@@ -73395,6 +76470,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
@@ -74882,6 +77959,220 @@ export namespace Prisma {
     gradePoint?: IntFieldUpdateOperationsInput | number
     remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ReportCardPublicationCreateInput = {
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ReportPublicationStatus
+    notes?: string | null
+    publishedAt?: Date | string
+    publishedBy: string
+    unpublishedAt?: Date | string | null
+    unpublishedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutReportPublicationsInput
+    class: ClassCreateNestedOneWithoutReportPublicationsInput
+  }
+
+  export type ReportCardPublicationUncheckedCreateInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ReportPublicationStatus
+    notes?: string | null
+    publishedAt?: Date | string
+    publishedBy: string
+    unpublishedAt?: Date | string | null
+    unpublishedBy?: string | null
+    schoolId?: string
+    classId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ReportCardPublicationUpdateInput = {
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    publishedBy?: StringFieldUpdateOperationsInput | string
+    unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutReportPublicationsNestedInput
+    class?: ClassUpdateOneRequiredWithoutReportPublicationsNestedInput
+  }
+
+  export type ReportCardPublicationUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    publishedBy?: StringFieldUpdateOperationsInput | string
+    unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    classId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ReportCardPublicationCreateManyInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ReportPublicationStatus
+    notes?: string | null
+    publishedAt?: Date | string
+    publishedBy: string
+    unpublishedAt?: Date | string | null
+    unpublishedBy?: string | null
+    schoolId?: string
+    classId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ReportCardPublicationUpdateManyMutationInput = {
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    publishedBy?: StringFieldUpdateOperationsInput | string
+    unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ReportCardPublicationUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    publishedBy?: StringFieldUpdateOperationsInput | string
+    unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    classId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExamEntryWindowCreateInput = {
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ExamEntryStatus
+    openedAt?: Date | string | null
+    openedBy?: string | null
+    closedAt?: Date | string | null
+    closedBy?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutExamEntryWindowsInput
+    class: ClassCreateNestedOneWithoutExamEntryWindowsInput
+  }
+
+  export type ExamEntryWindowUncheckedCreateInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ExamEntryStatus
+    openedAt?: Date | string | null
+    openedBy?: string | null
+    closedAt?: Date | string | null
+    closedBy?: string | null
+    notes?: string | null
+    schoolId?: string
+    classId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ExamEntryWindowUpdateInput = {
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumExamEntryStatusFieldUpdateOperationsInput | $Enums.ExamEntryStatus
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutExamEntryWindowsNestedInput
+    class?: ClassUpdateOneRequiredWithoutExamEntryWindowsNestedInput
+  }
+
+  export type ExamEntryWindowUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumExamEntryStatusFieldUpdateOperationsInput | $Enums.ExamEntryStatus
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    classId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExamEntryWindowCreateManyInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ExamEntryStatus
+    openedAt?: Date | string | null
+    openedBy?: string | null
+    closedAt?: Date | string | null
+    closedBy?: string | null
+    notes?: string | null
+    schoolId?: string
+    classId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ExamEntryWindowUpdateManyMutationInput = {
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumExamEntryStatusFieldUpdateOperationsInput | $Enums.ExamEntryStatus
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExamEntryWindowUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumExamEntryStatusFieldUpdateOperationsInput | $Enums.ExamEntryStatus
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    classId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -76840,6 +80131,18 @@ export namespace Prisma {
     none?: ContinuousAssessmentWhereInput
   }
 
+  export type ReportCardPublicationListRelationFilter = {
+    every?: ReportCardPublicationWhereInput
+    some?: ReportCardPublicationWhereInput
+    none?: ReportCardPublicationWhereInput
+  }
+
+  export type ExamEntryWindowListRelationFilter = {
+    every?: ExamEntryWindowWhereInput
+    some?: ExamEntryWindowWhereInput
+    none?: ExamEntryWindowWhereInput
+  }
+
   export type SyllabusListRelationFilter = {
     every?: SyllabusWhereInput
     some?: SyllabusWhereInput
@@ -77049,6 +80352,14 @@ export namespace Prisma {
   }
 
   export type ContinuousAssessmentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ReportCardPublicationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ExamEntryWindowOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -79273,6 +82584,170 @@ export namespace Prisma {
     configId?: SortOrder
   }
 
+  export type EnumReportPublicationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportPublicationStatus | EnumReportPublicationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportPublicationStatus[] | ListEnumReportPublicationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportPublicationStatus[] | ListEnumReportPublicationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportPublicationStatusFilter<$PrismaModel> | $Enums.ReportPublicationStatus
+  }
+
+  export type ReportCardPublicationSchoolIdClassIdTermAcademicYearCompoundUniqueInput = {
+    schoolId: string
+    classId: number
+    term: $Enums.Term
+    academicYear: string
+  }
+
+  export type ReportCardPublicationCountOrderByAggregateInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    term?: SortOrder
+    status?: SortOrder
+    notes?: SortOrder
+    publishedAt?: SortOrder
+    publishedBy?: SortOrder
+    unpublishedAt?: SortOrder
+    unpublishedBy?: SortOrder
+    schoolId?: SortOrder
+    classId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ReportCardPublicationAvgOrderByAggregateInput = {
+    id?: SortOrder
+    classId?: SortOrder
+  }
+
+  export type ReportCardPublicationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    term?: SortOrder
+    status?: SortOrder
+    notes?: SortOrder
+    publishedAt?: SortOrder
+    publishedBy?: SortOrder
+    unpublishedAt?: SortOrder
+    unpublishedBy?: SortOrder
+    schoolId?: SortOrder
+    classId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ReportCardPublicationMinOrderByAggregateInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    term?: SortOrder
+    status?: SortOrder
+    notes?: SortOrder
+    publishedAt?: SortOrder
+    publishedBy?: SortOrder
+    unpublishedAt?: SortOrder
+    unpublishedBy?: SortOrder
+    schoolId?: SortOrder
+    classId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ReportCardPublicationSumOrderByAggregateInput = {
+    id?: SortOrder
+    classId?: SortOrder
+  }
+
+  export type EnumReportPublicationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportPublicationStatus | EnumReportPublicationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportPublicationStatus[] | ListEnumReportPublicationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportPublicationStatus[] | ListEnumReportPublicationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportPublicationStatusWithAggregatesFilter<$PrismaModel> | $Enums.ReportPublicationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReportPublicationStatusFilter<$PrismaModel>
+    _max?: NestedEnumReportPublicationStatusFilter<$PrismaModel>
+  }
+
+  export type EnumExamEntryStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ExamEntryStatus | EnumExamEntryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ExamEntryStatus[] | ListEnumExamEntryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ExamEntryStatus[] | ListEnumExamEntryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumExamEntryStatusFilter<$PrismaModel> | $Enums.ExamEntryStatus
+  }
+
+  export type ExamEntryWindowSchoolIdClassIdTermAcademicYearCompoundUniqueInput = {
+    schoolId: string
+    classId: number
+    term: $Enums.Term
+    academicYear: string
+  }
+
+  export type ExamEntryWindowCountOrderByAggregateInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    term?: SortOrder
+    status?: SortOrder
+    openedAt?: SortOrder
+    openedBy?: SortOrder
+    closedAt?: SortOrder
+    closedBy?: SortOrder
+    notes?: SortOrder
+    schoolId?: SortOrder
+    classId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ExamEntryWindowAvgOrderByAggregateInput = {
+    id?: SortOrder
+    classId?: SortOrder
+  }
+
+  export type ExamEntryWindowMaxOrderByAggregateInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    term?: SortOrder
+    status?: SortOrder
+    openedAt?: SortOrder
+    openedBy?: SortOrder
+    closedAt?: SortOrder
+    closedBy?: SortOrder
+    notes?: SortOrder
+    schoolId?: SortOrder
+    classId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ExamEntryWindowMinOrderByAggregateInput = {
+    id?: SortOrder
+    academicYear?: SortOrder
+    term?: SortOrder
+    status?: SortOrder
+    openedAt?: SortOrder
+    openedBy?: SortOrder
+    closedAt?: SortOrder
+    closedBy?: SortOrder
+    notes?: SortOrder
+    schoolId?: SortOrder
+    classId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ExamEntryWindowSumOrderByAggregateInput = {
+    id?: SortOrder
+    classId?: SortOrder
+  }
+
+  export type EnumExamEntryStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ExamEntryStatus | EnumExamEntryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ExamEntryStatus[] | ListEnumExamEntryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ExamEntryStatus[] | ListEnumExamEntryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumExamEntryStatusWithAggregatesFilter<$PrismaModel> | $Enums.ExamEntryStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumExamEntryStatusFilter<$PrismaModel>
+    _max?: NestedEnumExamEntryStatusFilter<$PrismaModel>
+  }
+
   export type EnumSyllabusStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.SyllabusStatus | EnumSyllabusStatusFieldRefInput<$PrismaModel>
     in?: $Enums.SyllabusStatus[] | ListEnumSyllabusStatusFieldRefInput<$PrismaModel>
@@ -80898,6 +84373,20 @@ export namespace Prisma {
     connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
   }
 
+  export type ReportCardPublicationCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<ReportCardPublicationCreateWithoutSchoolInput, ReportCardPublicationUncheckedCreateWithoutSchoolInput> | ReportCardPublicationCreateWithoutSchoolInput[] | ReportCardPublicationUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ReportCardPublicationCreateOrConnectWithoutSchoolInput | ReportCardPublicationCreateOrConnectWithoutSchoolInput[]
+    createMany?: ReportCardPublicationCreateManySchoolInputEnvelope
+    connect?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+  }
+
+  export type ExamEntryWindowCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<ExamEntryWindowCreateWithoutSchoolInput, ExamEntryWindowUncheckedCreateWithoutSchoolInput> | ExamEntryWindowCreateWithoutSchoolInput[] | ExamEntryWindowUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ExamEntryWindowCreateOrConnectWithoutSchoolInput | ExamEntryWindowCreateOrConnectWithoutSchoolInput[]
+    createMany?: ExamEntryWindowCreateManySchoolInputEnvelope
+    connect?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+  }
+
   export type SyllabusCreateNestedManyWithoutSchoolInput = {
     create?: XOR<SyllabusCreateWithoutSchoolInput, SyllabusUncheckedCreateWithoutSchoolInput> | SyllabusCreateWithoutSchoolInput[] | SyllabusUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: SyllabusCreateOrConnectWithoutSchoolInput | SyllabusCreateOrConnectWithoutSchoolInput[]
@@ -81189,6 +84678,20 @@ export namespace Prisma {
     connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutSchoolInput | ContinuousAssessmentCreateOrConnectWithoutSchoolInput[]
     createMany?: ContinuousAssessmentCreateManySchoolInputEnvelope
     connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+  }
+
+  export type ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<ReportCardPublicationCreateWithoutSchoolInput, ReportCardPublicationUncheckedCreateWithoutSchoolInput> | ReportCardPublicationCreateWithoutSchoolInput[] | ReportCardPublicationUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ReportCardPublicationCreateOrConnectWithoutSchoolInput | ReportCardPublicationCreateOrConnectWithoutSchoolInput[]
+    createMany?: ReportCardPublicationCreateManySchoolInputEnvelope
+    connect?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+  }
+
+  export type ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<ExamEntryWindowCreateWithoutSchoolInput, ExamEntryWindowUncheckedCreateWithoutSchoolInput> | ExamEntryWindowCreateWithoutSchoolInput[] | ExamEntryWindowUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ExamEntryWindowCreateOrConnectWithoutSchoolInput | ExamEntryWindowCreateOrConnectWithoutSchoolInput[]
+    createMany?: ExamEntryWindowCreateManySchoolInputEnvelope
+    connect?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
   }
 
   export type SyllabusUncheckedCreateNestedManyWithoutSchoolInput = {
@@ -81656,6 +85159,34 @@ export namespace Prisma {
     update?: ContinuousAssessmentUpdateWithWhereUniqueWithoutSchoolInput | ContinuousAssessmentUpdateWithWhereUniqueWithoutSchoolInput[]
     updateMany?: ContinuousAssessmentUpdateManyWithWhereWithoutSchoolInput | ContinuousAssessmentUpdateManyWithWhereWithoutSchoolInput[]
     deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
+  }
+
+  export type ReportCardPublicationUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<ReportCardPublicationCreateWithoutSchoolInput, ReportCardPublicationUncheckedCreateWithoutSchoolInput> | ReportCardPublicationCreateWithoutSchoolInput[] | ReportCardPublicationUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ReportCardPublicationCreateOrConnectWithoutSchoolInput | ReportCardPublicationCreateOrConnectWithoutSchoolInput[]
+    upsert?: ReportCardPublicationUpsertWithWhereUniqueWithoutSchoolInput | ReportCardPublicationUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: ReportCardPublicationCreateManySchoolInputEnvelope
+    set?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+    disconnect?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+    delete?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+    connect?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+    update?: ReportCardPublicationUpdateWithWhereUniqueWithoutSchoolInput | ReportCardPublicationUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: ReportCardPublicationUpdateManyWithWhereWithoutSchoolInput | ReportCardPublicationUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: ReportCardPublicationScalarWhereInput | ReportCardPublicationScalarWhereInput[]
+  }
+
+  export type ExamEntryWindowUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<ExamEntryWindowCreateWithoutSchoolInput, ExamEntryWindowUncheckedCreateWithoutSchoolInput> | ExamEntryWindowCreateWithoutSchoolInput[] | ExamEntryWindowUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ExamEntryWindowCreateOrConnectWithoutSchoolInput | ExamEntryWindowCreateOrConnectWithoutSchoolInput[]
+    upsert?: ExamEntryWindowUpsertWithWhereUniqueWithoutSchoolInput | ExamEntryWindowUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: ExamEntryWindowCreateManySchoolInputEnvelope
+    set?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+    disconnect?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+    delete?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+    connect?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+    update?: ExamEntryWindowUpdateWithWhereUniqueWithoutSchoolInput | ExamEntryWindowUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: ExamEntryWindowUpdateManyWithWhereWithoutSchoolInput | ExamEntryWindowUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: ExamEntryWindowScalarWhereInput | ExamEntryWindowScalarWhereInput[]
   }
 
   export type SyllabusUpdateManyWithoutSchoolNestedInput = {
@@ -82240,6 +85771,34 @@ export namespace Prisma {
     update?: ContinuousAssessmentUpdateWithWhereUniqueWithoutSchoolInput | ContinuousAssessmentUpdateWithWhereUniqueWithoutSchoolInput[]
     updateMany?: ContinuousAssessmentUpdateManyWithWhereWithoutSchoolInput | ContinuousAssessmentUpdateManyWithWhereWithoutSchoolInput[]
     deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
+  }
+
+  export type ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<ReportCardPublicationCreateWithoutSchoolInput, ReportCardPublicationUncheckedCreateWithoutSchoolInput> | ReportCardPublicationCreateWithoutSchoolInput[] | ReportCardPublicationUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ReportCardPublicationCreateOrConnectWithoutSchoolInput | ReportCardPublicationCreateOrConnectWithoutSchoolInput[]
+    upsert?: ReportCardPublicationUpsertWithWhereUniqueWithoutSchoolInput | ReportCardPublicationUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: ReportCardPublicationCreateManySchoolInputEnvelope
+    set?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+    disconnect?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+    delete?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+    connect?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+    update?: ReportCardPublicationUpdateWithWhereUniqueWithoutSchoolInput | ReportCardPublicationUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: ReportCardPublicationUpdateManyWithWhereWithoutSchoolInput | ReportCardPublicationUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: ReportCardPublicationScalarWhereInput | ReportCardPublicationScalarWhereInput[]
+  }
+
+  export type ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<ExamEntryWindowCreateWithoutSchoolInput, ExamEntryWindowUncheckedCreateWithoutSchoolInput> | ExamEntryWindowCreateWithoutSchoolInput[] | ExamEntryWindowUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ExamEntryWindowCreateOrConnectWithoutSchoolInput | ExamEntryWindowCreateOrConnectWithoutSchoolInput[]
+    upsert?: ExamEntryWindowUpsertWithWhereUniqueWithoutSchoolInput | ExamEntryWindowUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: ExamEntryWindowCreateManySchoolInputEnvelope
+    set?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+    disconnect?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+    delete?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+    connect?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+    update?: ExamEntryWindowUpdateWithWhereUniqueWithoutSchoolInput | ExamEntryWindowUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: ExamEntryWindowUpdateManyWithWhereWithoutSchoolInput | ExamEntryWindowUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: ExamEntryWindowScalarWhereInput | ExamEntryWindowScalarWhereInput[]
   }
 
   export type SyllabusUncheckedUpdateManyWithoutSchoolNestedInput = {
@@ -84220,6 +87779,20 @@ export namespace Prisma {
     connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
   }
 
+  export type ReportCardPublicationCreateNestedManyWithoutClassInput = {
+    create?: XOR<ReportCardPublicationCreateWithoutClassInput, ReportCardPublicationUncheckedCreateWithoutClassInput> | ReportCardPublicationCreateWithoutClassInput[] | ReportCardPublicationUncheckedCreateWithoutClassInput[]
+    connectOrCreate?: ReportCardPublicationCreateOrConnectWithoutClassInput | ReportCardPublicationCreateOrConnectWithoutClassInput[]
+    createMany?: ReportCardPublicationCreateManyClassInputEnvelope
+    connect?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+  }
+
+  export type ExamEntryWindowCreateNestedManyWithoutClassInput = {
+    create?: XOR<ExamEntryWindowCreateWithoutClassInput, ExamEntryWindowUncheckedCreateWithoutClassInput> | ExamEntryWindowCreateWithoutClassInput[] | ExamEntryWindowUncheckedCreateWithoutClassInput[]
+    connectOrCreate?: ExamEntryWindowCreateOrConnectWithoutClassInput | ExamEntryWindowCreateOrConnectWithoutClassInput[]
+    createMany?: ExamEntryWindowCreateManyClassInputEnvelope
+    connect?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+  }
+
   export type SyllabusTopicProgressCreateNestedManyWithoutClassInput = {
     create?: XOR<SyllabusTopicProgressCreateWithoutClassInput, SyllabusTopicProgressUncheckedCreateWithoutClassInput> | SyllabusTopicProgressCreateWithoutClassInput[] | SyllabusTopicProgressUncheckedCreateWithoutClassInput[]
     connectOrCreate?: SyllabusTopicProgressCreateOrConnectWithoutClassInput | SyllabusTopicProgressCreateOrConnectWithoutClassInput[]
@@ -84274,6 +87847,20 @@ export namespace Prisma {
     connectOrCreate?: ContinuousAssessmentCreateOrConnectWithoutClassInput | ContinuousAssessmentCreateOrConnectWithoutClassInput[]
     createMany?: ContinuousAssessmentCreateManyClassInputEnvelope
     connect?: ContinuousAssessmentWhereUniqueInput | ContinuousAssessmentWhereUniqueInput[]
+  }
+
+  export type ReportCardPublicationUncheckedCreateNestedManyWithoutClassInput = {
+    create?: XOR<ReportCardPublicationCreateWithoutClassInput, ReportCardPublicationUncheckedCreateWithoutClassInput> | ReportCardPublicationCreateWithoutClassInput[] | ReportCardPublicationUncheckedCreateWithoutClassInput[]
+    connectOrCreate?: ReportCardPublicationCreateOrConnectWithoutClassInput | ReportCardPublicationCreateOrConnectWithoutClassInput[]
+    createMany?: ReportCardPublicationCreateManyClassInputEnvelope
+    connect?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+  }
+
+  export type ExamEntryWindowUncheckedCreateNestedManyWithoutClassInput = {
+    create?: XOR<ExamEntryWindowCreateWithoutClassInput, ExamEntryWindowUncheckedCreateWithoutClassInput> | ExamEntryWindowCreateWithoutClassInput[] | ExamEntryWindowUncheckedCreateWithoutClassInput[]
+    connectOrCreate?: ExamEntryWindowCreateOrConnectWithoutClassInput | ExamEntryWindowCreateOrConnectWithoutClassInput[]
+    createMany?: ExamEntryWindowCreateManyClassInputEnvelope
+    connect?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
   }
 
   export type SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput = {
@@ -84407,6 +87994,34 @@ export namespace Prisma {
     deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
   }
 
+  export type ReportCardPublicationUpdateManyWithoutClassNestedInput = {
+    create?: XOR<ReportCardPublicationCreateWithoutClassInput, ReportCardPublicationUncheckedCreateWithoutClassInput> | ReportCardPublicationCreateWithoutClassInput[] | ReportCardPublicationUncheckedCreateWithoutClassInput[]
+    connectOrCreate?: ReportCardPublicationCreateOrConnectWithoutClassInput | ReportCardPublicationCreateOrConnectWithoutClassInput[]
+    upsert?: ReportCardPublicationUpsertWithWhereUniqueWithoutClassInput | ReportCardPublicationUpsertWithWhereUniqueWithoutClassInput[]
+    createMany?: ReportCardPublicationCreateManyClassInputEnvelope
+    set?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+    disconnect?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+    delete?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+    connect?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+    update?: ReportCardPublicationUpdateWithWhereUniqueWithoutClassInput | ReportCardPublicationUpdateWithWhereUniqueWithoutClassInput[]
+    updateMany?: ReportCardPublicationUpdateManyWithWhereWithoutClassInput | ReportCardPublicationUpdateManyWithWhereWithoutClassInput[]
+    deleteMany?: ReportCardPublicationScalarWhereInput | ReportCardPublicationScalarWhereInput[]
+  }
+
+  export type ExamEntryWindowUpdateManyWithoutClassNestedInput = {
+    create?: XOR<ExamEntryWindowCreateWithoutClassInput, ExamEntryWindowUncheckedCreateWithoutClassInput> | ExamEntryWindowCreateWithoutClassInput[] | ExamEntryWindowUncheckedCreateWithoutClassInput[]
+    connectOrCreate?: ExamEntryWindowCreateOrConnectWithoutClassInput | ExamEntryWindowCreateOrConnectWithoutClassInput[]
+    upsert?: ExamEntryWindowUpsertWithWhereUniqueWithoutClassInput | ExamEntryWindowUpsertWithWhereUniqueWithoutClassInput[]
+    createMany?: ExamEntryWindowCreateManyClassInputEnvelope
+    set?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+    disconnect?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+    delete?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+    connect?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+    update?: ExamEntryWindowUpdateWithWhereUniqueWithoutClassInput | ExamEntryWindowUpdateWithWhereUniqueWithoutClassInput[]
+    updateMany?: ExamEntryWindowUpdateManyWithWhereWithoutClassInput | ExamEntryWindowUpdateManyWithWhereWithoutClassInput[]
+    deleteMany?: ExamEntryWindowScalarWhereInput | ExamEntryWindowScalarWhereInput[]
+  }
+
   export type SyllabusTopicProgressUpdateManyWithoutClassNestedInput = {
     create?: XOR<SyllabusTopicProgressCreateWithoutClassInput, SyllabusTopicProgressUncheckedCreateWithoutClassInput> | SyllabusTopicProgressCreateWithoutClassInput[] | SyllabusTopicProgressUncheckedCreateWithoutClassInput[]
     connectOrCreate?: SyllabusTopicProgressCreateOrConnectWithoutClassInput | SyllabusTopicProgressCreateOrConnectWithoutClassInput[]
@@ -84517,6 +88132,34 @@ export namespace Prisma {
     update?: ContinuousAssessmentUpdateWithWhereUniqueWithoutClassInput | ContinuousAssessmentUpdateWithWhereUniqueWithoutClassInput[]
     updateMany?: ContinuousAssessmentUpdateManyWithWhereWithoutClassInput | ContinuousAssessmentUpdateManyWithWhereWithoutClassInput[]
     deleteMany?: ContinuousAssessmentScalarWhereInput | ContinuousAssessmentScalarWhereInput[]
+  }
+
+  export type ReportCardPublicationUncheckedUpdateManyWithoutClassNestedInput = {
+    create?: XOR<ReportCardPublicationCreateWithoutClassInput, ReportCardPublicationUncheckedCreateWithoutClassInput> | ReportCardPublicationCreateWithoutClassInput[] | ReportCardPublicationUncheckedCreateWithoutClassInput[]
+    connectOrCreate?: ReportCardPublicationCreateOrConnectWithoutClassInput | ReportCardPublicationCreateOrConnectWithoutClassInput[]
+    upsert?: ReportCardPublicationUpsertWithWhereUniqueWithoutClassInput | ReportCardPublicationUpsertWithWhereUniqueWithoutClassInput[]
+    createMany?: ReportCardPublicationCreateManyClassInputEnvelope
+    set?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+    disconnect?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+    delete?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+    connect?: ReportCardPublicationWhereUniqueInput | ReportCardPublicationWhereUniqueInput[]
+    update?: ReportCardPublicationUpdateWithWhereUniqueWithoutClassInput | ReportCardPublicationUpdateWithWhereUniqueWithoutClassInput[]
+    updateMany?: ReportCardPublicationUpdateManyWithWhereWithoutClassInput | ReportCardPublicationUpdateManyWithWhereWithoutClassInput[]
+    deleteMany?: ReportCardPublicationScalarWhereInput | ReportCardPublicationScalarWhereInput[]
+  }
+
+  export type ExamEntryWindowUncheckedUpdateManyWithoutClassNestedInput = {
+    create?: XOR<ExamEntryWindowCreateWithoutClassInput, ExamEntryWindowUncheckedCreateWithoutClassInput> | ExamEntryWindowCreateWithoutClassInput[] | ExamEntryWindowUncheckedCreateWithoutClassInput[]
+    connectOrCreate?: ExamEntryWindowCreateOrConnectWithoutClassInput | ExamEntryWindowCreateOrConnectWithoutClassInput[]
+    upsert?: ExamEntryWindowUpsertWithWhereUniqueWithoutClassInput | ExamEntryWindowUpsertWithWhereUniqueWithoutClassInput[]
+    createMany?: ExamEntryWindowCreateManyClassInputEnvelope
+    set?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+    disconnect?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+    delete?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+    connect?: ExamEntryWindowWhereUniqueInput | ExamEntryWindowWhereUniqueInput[]
+    update?: ExamEntryWindowUpdateWithWhereUniqueWithoutClassInput | ExamEntryWindowUpdateWithWhereUniqueWithoutClassInput[]
+    updateMany?: ExamEntryWindowUpdateManyWithWhereWithoutClassInput | ExamEntryWindowUpdateManyWithWhereWithoutClassInput[]
+    deleteMany?: ExamEntryWindowScalarWhereInput | ExamEntryWindowScalarWhereInput[]
   }
 
   export type SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput = {
@@ -85963,6 +89606,70 @@ export namespace Prisma {
     upsert?: ClassUpsertWithoutContinuousAssessmentsInput
     connect?: ClassWhereUniqueInput
     update?: XOR<XOR<ClassUpdateToOneWithWhereWithoutContinuousAssessmentsInput, ClassUpdateWithoutContinuousAssessmentsInput>, ClassUncheckedUpdateWithoutContinuousAssessmentsInput>
+  }
+
+  export type SchoolCreateNestedOneWithoutReportPublicationsInput = {
+    create?: XOR<SchoolCreateWithoutReportPublicationsInput, SchoolUncheckedCreateWithoutReportPublicationsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutReportPublicationsInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type ClassCreateNestedOneWithoutReportPublicationsInput = {
+    create?: XOR<ClassCreateWithoutReportPublicationsInput, ClassUncheckedCreateWithoutReportPublicationsInput>
+    connectOrCreate?: ClassCreateOrConnectWithoutReportPublicationsInput
+    connect?: ClassWhereUniqueInput
+  }
+
+  export type EnumReportPublicationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ReportPublicationStatus
+  }
+
+  export type SchoolUpdateOneRequiredWithoutReportPublicationsNestedInput = {
+    create?: XOR<SchoolCreateWithoutReportPublicationsInput, SchoolUncheckedCreateWithoutReportPublicationsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutReportPublicationsInput
+    upsert?: SchoolUpsertWithoutReportPublicationsInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutReportPublicationsInput, SchoolUpdateWithoutReportPublicationsInput>, SchoolUncheckedUpdateWithoutReportPublicationsInput>
+  }
+
+  export type ClassUpdateOneRequiredWithoutReportPublicationsNestedInput = {
+    create?: XOR<ClassCreateWithoutReportPublicationsInput, ClassUncheckedCreateWithoutReportPublicationsInput>
+    connectOrCreate?: ClassCreateOrConnectWithoutReportPublicationsInput
+    upsert?: ClassUpsertWithoutReportPublicationsInput
+    connect?: ClassWhereUniqueInput
+    update?: XOR<XOR<ClassUpdateToOneWithWhereWithoutReportPublicationsInput, ClassUpdateWithoutReportPublicationsInput>, ClassUncheckedUpdateWithoutReportPublicationsInput>
+  }
+
+  export type SchoolCreateNestedOneWithoutExamEntryWindowsInput = {
+    create?: XOR<SchoolCreateWithoutExamEntryWindowsInput, SchoolUncheckedCreateWithoutExamEntryWindowsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutExamEntryWindowsInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type ClassCreateNestedOneWithoutExamEntryWindowsInput = {
+    create?: XOR<ClassCreateWithoutExamEntryWindowsInput, ClassUncheckedCreateWithoutExamEntryWindowsInput>
+    connectOrCreate?: ClassCreateOrConnectWithoutExamEntryWindowsInput
+    connect?: ClassWhereUniqueInput
+  }
+
+  export type EnumExamEntryStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ExamEntryStatus
+  }
+
+  export type SchoolUpdateOneRequiredWithoutExamEntryWindowsNestedInput = {
+    create?: XOR<SchoolCreateWithoutExamEntryWindowsInput, SchoolUncheckedCreateWithoutExamEntryWindowsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutExamEntryWindowsInput
+    upsert?: SchoolUpsertWithoutExamEntryWindowsInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutExamEntryWindowsInput, SchoolUpdateWithoutExamEntryWindowsInput>, SchoolUncheckedUpdateWithoutExamEntryWindowsInput>
+  }
+
+  export type ClassUpdateOneRequiredWithoutExamEntryWindowsNestedInput = {
+    create?: XOR<ClassCreateWithoutExamEntryWindowsInput, ClassUncheckedCreateWithoutExamEntryWindowsInput>
+    connectOrCreate?: ClassCreateOrConnectWithoutExamEntryWindowsInput
+    upsert?: ClassUpsertWithoutExamEntryWindowsInput
+    connect?: ClassWhereUniqueInput
+    update?: XOR<XOR<ClassUpdateToOneWithWhereWithoutExamEntryWindowsInput, ClassUpdateWithoutExamEntryWindowsInput>, ClassUncheckedUpdateWithoutExamEntryWindowsInput>
   }
 
   export type SchoolCreateNestedOneWithoutSyllabiInput = {
@@ -87649,6 +91356,40 @@ export namespace Prisma {
     _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumReportPublicationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportPublicationStatus | EnumReportPublicationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportPublicationStatus[] | ListEnumReportPublicationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportPublicationStatus[] | ListEnumReportPublicationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportPublicationStatusFilter<$PrismaModel> | $Enums.ReportPublicationStatus
+  }
+
+  export type NestedEnumReportPublicationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportPublicationStatus | EnumReportPublicationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportPublicationStatus[] | ListEnumReportPublicationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportPublicationStatus[] | ListEnumReportPublicationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportPublicationStatusWithAggregatesFilter<$PrismaModel> | $Enums.ReportPublicationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReportPublicationStatusFilter<$PrismaModel>
+    _max?: NestedEnumReportPublicationStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumExamEntryStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ExamEntryStatus | EnumExamEntryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ExamEntryStatus[] | ListEnumExamEntryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ExamEntryStatus[] | ListEnumExamEntryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumExamEntryStatusFilter<$PrismaModel> | $Enums.ExamEntryStatus
+  }
+
+  export type NestedEnumExamEntryStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ExamEntryStatus | EnumExamEntryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ExamEntryStatus[] | ListEnumExamEntryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ExamEntryStatus[] | ListEnumExamEntryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumExamEntryStatusWithAggregatesFilter<$PrismaModel> | $Enums.ExamEntryStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumExamEntryStatusFilter<$PrismaModel>
+    _max?: NestedEnumExamEntryStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumSyllabusStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.SyllabusStatus | EnumSyllabusStatusFieldRefInput<$PrismaModel>
     in?: $Enums.SyllabusStatus[] | ListEnumSyllabusStatusFieldRefInput<$PrismaModel>
@@ -88242,6 +91983,8 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutClassInput
     caActivities?: CAActivityCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
@@ -88259,6 +92002,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutClassInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
@@ -88840,6 +92585,84 @@ export namespace Prisma {
 
   export type ContinuousAssessmentCreateManySchoolInputEnvelope = {
     data: ContinuousAssessmentCreateManySchoolInput | ContinuousAssessmentCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ReportCardPublicationCreateWithoutSchoolInput = {
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ReportPublicationStatus
+    notes?: string | null
+    publishedAt?: Date | string
+    publishedBy: string
+    unpublishedAt?: Date | string | null
+    unpublishedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    class: ClassCreateNestedOneWithoutReportPublicationsInput
+  }
+
+  export type ReportCardPublicationUncheckedCreateWithoutSchoolInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ReportPublicationStatus
+    notes?: string | null
+    publishedAt?: Date | string
+    publishedBy: string
+    unpublishedAt?: Date | string | null
+    unpublishedBy?: string | null
+    classId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ReportCardPublicationCreateOrConnectWithoutSchoolInput = {
+    where: ReportCardPublicationWhereUniqueInput
+    create: XOR<ReportCardPublicationCreateWithoutSchoolInput, ReportCardPublicationUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type ReportCardPublicationCreateManySchoolInputEnvelope = {
+    data: ReportCardPublicationCreateManySchoolInput | ReportCardPublicationCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ExamEntryWindowCreateWithoutSchoolInput = {
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ExamEntryStatus
+    openedAt?: Date | string | null
+    openedBy?: string | null
+    closedAt?: Date | string | null
+    closedBy?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    class: ClassCreateNestedOneWithoutExamEntryWindowsInput
+  }
+
+  export type ExamEntryWindowUncheckedCreateWithoutSchoolInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ExamEntryStatus
+    openedAt?: Date | string | null
+    openedBy?: string | null
+    closedAt?: Date | string | null
+    closedBy?: string | null
+    notes?: string | null
+    classId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ExamEntryWindowCreateOrConnectWithoutSchoolInput = {
+    where: ExamEntryWindowWhereUniqueInput
+    create: XOR<ExamEntryWindowCreateWithoutSchoolInput, ExamEntryWindowUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type ExamEntryWindowCreateManySchoolInputEnvelope = {
+    data: ExamEntryWindowCreateManySchoolInput | ExamEntryWindowCreateManySchoolInput[]
     skipDuplicates?: boolean
   }
 
@@ -90317,6 +94140,76 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"ContinuousAssessment"> | Date | string
   }
 
+  export type ReportCardPublicationUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: ReportCardPublicationWhereUniqueInput
+    update: XOR<ReportCardPublicationUpdateWithoutSchoolInput, ReportCardPublicationUncheckedUpdateWithoutSchoolInput>
+    create: XOR<ReportCardPublicationCreateWithoutSchoolInput, ReportCardPublicationUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type ReportCardPublicationUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: ReportCardPublicationWhereUniqueInput
+    data: XOR<ReportCardPublicationUpdateWithoutSchoolInput, ReportCardPublicationUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type ReportCardPublicationUpdateManyWithWhereWithoutSchoolInput = {
+    where: ReportCardPublicationScalarWhereInput
+    data: XOR<ReportCardPublicationUpdateManyMutationInput, ReportCardPublicationUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type ReportCardPublicationScalarWhereInput = {
+    AND?: ReportCardPublicationScalarWhereInput | ReportCardPublicationScalarWhereInput[]
+    OR?: ReportCardPublicationScalarWhereInput[]
+    NOT?: ReportCardPublicationScalarWhereInput | ReportCardPublicationScalarWhereInput[]
+    id?: IntFilter<"ReportCardPublication"> | number
+    academicYear?: StringFilter<"ReportCardPublication"> | string
+    term?: EnumTermFilter<"ReportCardPublication"> | $Enums.Term
+    status?: EnumReportPublicationStatusFilter<"ReportCardPublication"> | $Enums.ReportPublicationStatus
+    notes?: StringNullableFilter<"ReportCardPublication"> | string | null
+    publishedAt?: DateTimeFilter<"ReportCardPublication"> | Date | string
+    publishedBy?: StringFilter<"ReportCardPublication"> | string
+    unpublishedAt?: DateTimeNullableFilter<"ReportCardPublication"> | Date | string | null
+    unpublishedBy?: StringNullableFilter<"ReportCardPublication"> | string | null
+    schoolId?: StringFilter<"ReportCardPublication"> | string
+    classId?: IntFilter<"ReportCardPublication"> | number
+    createdAt?: DateTimeFilter<"ReportCardPublication"> | Date | string
+    updatedAt?: DateTimeFilter<"ReportCardPublication"> | Date | string
+  }
+
+  export type ExamEntryWindowUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: ExamEntryWindowWhereUniqueInput
+    update: XOR<ExamEntryWindowUpdateWithoutSchoolInput, ExamEntryWindowUncheckedUpdateWithoutSchoolInput>
+    create: XOR<ExamEntryWindowCreateWithoutSchoolInput, ExamEntryWindowUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type ExamEntryWindowUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: ExamEntryWindowWhereUniqueInput
+    data: XOR<ExamEntryWindowUpdateWithoutSchoolInput, ExamEntryWindowUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type ExamEntryWindowUpdateManyWithWhereWithoutSchoolInput = {
+    where: ExamEntryWindowScalarWhereInput
+    data: XOR<ExamEntryWindowUpdateManyMutationInput, ExamEntryWindowUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type ExamEntryWindowScalarWhereInput = {
+    AND?: ExamEntryWindowScalarWhereInput | ExamEntryWindowScalarWhereInput[]
+    OR?: ExamEntryWindowScalarWhereInput[]
+    NOT?: ExamEntryWindowScalarWhereInput | ExamEntryWindowScalarWhereInput[]
+    id?: IntFilter<"ExamEntryWindow"> | number
+    academicYear?: StringFilter<"ExamEntryWindow"> | string
+    term?: EnumTermFilter<"ExamEntryWindow"> | $Enums.Term
+    status?: EnumExamEntryStatusFilter<"ExamEntryWindow"> | $Enums.ExamEntryStatus
+    openedAt?: DateTimeNullableFilter<"ExamEntryWindow"> | Date | string | null
+    openedBy?: StringNullableFilter<"ExamEntryWindow"> | string | null
+    closedAt?: DateTimeNullableFilter<"ExamEntryWindow"> | Date | string | null
+    closedBy?: StringNullableFilter<"ExamEntryWindow"> | string | null
+    notes?: StringNullableFilter<"ExamEntryWindow"> | string | null
+    schoolId?: StringFilter<"ExamEntryWindow"> | string
+    classId?: IntFilter<"ExamEntryWindow"> | number
+    createdAt?: DateTimeFilter<"ExamEntryWindow"> | Date | string
+    updatedAt?: DateTimeFilter<"ExamEntryWindow"> | Date | string
+  }
+
   export type SyllabusUpsertWithWhereUniqueWithoutSchoolInput = {
     where: SyllabusWhereUniqueInput
     update: XOR<SyllabusUpdateWithoutSchoolInput, SyllabusUncheckedUpdateWithoutSchoolInput>
@@ -91053,6 +94946,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -91114,6 +95009,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -91191,6 +95088,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -91252,6 +95151,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -91313,6 +95214,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -91374,6 +95277,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -91453,6 +95358,8 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutClassInput
     caActivities?: CAActivityCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
@@ -91470,6 +95377,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutClassInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
@@ -91973,6 +95882,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -92034,6 +95945,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -92125,6 +96038,8 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
@@ -92142,6 +96057,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
@@ -92374,6 +96291,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -92435,6 +96354,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -92540,6 +96461,8 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutClassInput
     caActivities?: CAActivityCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
@@ -92557,6 +96480,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutClassInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
@@ -92898,6 +96823,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -92959,6 +96886,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -93180,6 +97109,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -93241,6 +97172,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -93592,6 +97525,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -93653,6 +97588,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -93836,6 +97773,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -93897,6 +97836,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -93974,6 +97915,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -94035,6 +97978,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -94096,6 +98041,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -94157,6 +98104,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -94273,6 +98222,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -94334,6 +98285,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -94440,6 +98393,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -94501,6 +98456,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -94716,6 +98673,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -94777,6 +98736,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -94964,6 +98925,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -95025,6 +98988,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -95186,6 +99151,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -95247,6 +99214,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -95404,6 +99373,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -95465,6 +99436,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -95695,6 +99668,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -95756,6 +99731,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -95987,6 +99964,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -96048,6 +100027,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -96152,6 +100133,8 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutClassInput
     caActivities?: CAActivityCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
@@ -96169,6 +100152,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutClassInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
@@ -96310,6 +100295,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -96371,6 +100358,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -96496,6 +100485,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -96557,6 +100548,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -96959,6 +100952,84 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ReportCardPublicationCreateWithoutClassInput = {
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ReportPublicationStatus
+    notes?: string | null
+    publishedAt?: Date | string
+    publishedBy: string
+    unpublishedAt?: Date | string | null
+    unpublishedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutReportPublicationsInput
+  }
+
+  export type ReportCardPublicationUncheckedCreateWithoutClassInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ReportPublicationStatus
+    notes?: string | null
+    publishedAt?: Date | string
+    publishedBy: string
+    unpublishedAt?: Date | string | null
+    unpublishedBy?: string | null
+    schoolId?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ReportCardPublicationCreateOrConnectWithoutClassInput = {
+    where: ReportCardPublicationWhereUniqueInput
+    create: XOR<ReportCardPublicationCreateWithoutClassInput, ReportCardPublicationUncheckedCreateWithoutClassInput>
+  }
+
+  export type ReportCardPublicationCreateManyClassInputEnvelope = {
+    data: ReportCardPublicationCreateManyClassInput | ReportCardPublicationCreateManyClassInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ExamEntryWindowCreateWithoutClassInput = {
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ExamEntryStatus
+    openedAt?: Date | string | null
+    openedBy?: string | null
+    closedAt?: Date | string | null
+    closedBy?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutExamEntryWindowsInput
+  }
+
+  export type ExamEntryWindowUncheckedCreateWithoutClassInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ExamEntryStatus
+    openedAt?: Date | string | null
+    openedBy?: string | null
+    closedAt?: Date | string | null
+    closedBy?: string | null
+    notes?: string | null
+    schoolId?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ExamEntryWindowCreateOrConnectWithoutClassInput = {
+    where: ExamEntryWindowWhereUniqueInput
+    create: XOR<ExamEntryWindowCreateWithoutClassInput, ExamEntryWindowUncheckedCreateWithoutClassInput>
+  }
+
+  export type ExamEntryWindowCreateManyClassInputEnvelope = {
+    data: ExamEntryWindowCreateManyClassInput | ExamEntryWindowCreateManyClassInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SyllabusTopicProgressCreateWithoutClassInput = {
     coveredDate?: Date | string
     notes?: string | null
@@ -97038,6 +101109,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -97099,6 +101172,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -97324,6 +101399,38 @@ export namespace Prisma {
     data: XOR<ContinuousAssessmentUpdateManyMutationInput, ContinuousAssessmentUncheckedUpdateManyWithoutClassInput>
   }
 
+  export type ReportCardPublicationUpsertWithWhereUniqueWithoutClassInput = {
+    where: ReportCardPublicationWhereUniqueInput
+    update: XOR<ReportCardPublicationUpdateWithoutClassInput, ReportCardPublicationUncheckedUpdateWithoutClassInput>
+    create: XOR<ReportCardPublicationCreateWithoutClassInput, ReportCardPublicationUncheckedCreateWithoutClassInput>
+  }
+
+  export type ReportCardPublicationUpdateWithWhereUniqueWithoutClassInput = {
+    where: ReportCardPublicationWhereUniqueInput
+    data: XOR<ReportCardPublicationUpdateWithoutClassInput, ReportCardPublicationUncheckedUpdateWithoutClassInput>
+  }
+
+  export type ReportCardPublicationUpdateManyWithWhereWithoutClassInput = {
+    where: ReportCardPublicationScalarWhereInput
+    data: XOR<ReportCardPublicationUpdateManyMutationInput, ReportCardPublicationUncheckedUpdateManyWithoutClassInput>
+  }
+
+  export type ExamEntryWindowUpsertWithWhereUniqueWithoutClassInput = {
+    where: ExamEntryWindowWhereUniqueInput
+    update: XOR<ExamEntryWindowUpdateWithoutClassInput, ExamEntryWindowUncheckedUpdateWithoutClassInput>
+    create: XOR<ExamEntryWindowCreateWithoutClassInput, ExamEntryWindowUncheckedCreateWithoutClassInput>
+  }
+
+  export type ExamEntryWindowUpdateWithWhereUniqueWithoutClassInput = {
+    where: ExamEntryWindowWhereUniqueInput
+    data: XOR<ExamEntryWindowUpdateWithoutClassInput, ExamEntryWindowUncheckedUpdateWithoutClassInput>
+  }
+
+  export type ExamEntryWindowUpdateManyWithWhereWithoutClassInput = {
+    where: ExamEntryWindowScalarWhereInput
+    data: XOR<ExamEntryWindowUpdateManyMutationInput, ExamEntryWindowUncheckedUpdateManyWithoutClassInput>
+  }
+
   export type SyllabusTopicProgressUpsertWithWhereUniqueWithoutClassInput = {
     where: SyllabusTopicProgressWhereUniqueInput
     update: XOR<SyllabusTopicProgressUpdateWithoutClassInput, SyllabusTopicProgressUncheckedUpdateWithoutClassInput>
@@ -97379,6 +101486,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -97440,6 +101549,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -97783,6 +101894,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -97844,6 +101957,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -98001,6 +102116,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -98062,6 +102179,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -98128,6 +102247,8 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutClassInput
     caActivities?: CAActivityCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
@@ -98145,6 +102266,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutClassInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
@@ -98407,6 +102530,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -98468,6 +102593,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -98546,6 +102673,8 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
@@ -98563,6 +102692,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
@@ -98730,6 +102861,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -98791,6 +102924,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -98931,6 +103066,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -98992,6 +103129,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -99109,6 +103248,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -99170,6 +103311,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -99345,6 +103488,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -99406,6 +103551,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -99539,6 +103686,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -99600,6 +103749,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -99815,6 +103966,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -99876,6 +104029,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -100093,6 +104248,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -100154,6 +104311,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -100336,6 +104495,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -100397,6 +104558,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -100581,6 +104744,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -100642,6 +104807,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -100860,6 +105027,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -100921,6 +105090,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -101103,6 +105274,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -101164,6 +105337,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -101374,6 +105549,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -101435,6 +105612,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -101647,6 +105826,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -101708,6 +105889,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -101748,6 +105931,8 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutClassInput
     caActivities?: CAActivityCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
@@ -101765,6 +105950,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutClassInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
@@ -101823,6 +106010,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -101884,6 +106073,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -101930,6 +106121,8 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
@@ -101947,6 +106140,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
@@ -101989,6 +106184,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -102050,6 +106247,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -102090,6 +106289,8 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutClassInput
     caActivities?: CAActivityCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
@@ -102107,6 +106308,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutClassInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
@@ -102165,6 +106368,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -102226,6 +106431,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -102272,6 +106479,8 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
@@ -102289,6 +106498,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
@@ -102331,6 +106542,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -102392,6 +106605,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -102469,6 +106684,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -102530,6 +106747,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -102591,6 +106810,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -102652,6 +106873,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -102692,6 +106915,8 @@ export namespace Prisma {
     announcements?: AnnouncementCreateNestedManyWithoutClassInput
     caActivities?: CAActivityCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
@@ -102709,6 +106934,8 @@ export namespace Prisma {
     announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
@@ -102893,6 +107120,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -102954,6 +107183,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -103000,6 +107231,8 @@ export namespace Prisma {
     announcements?: AnnouncementUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
@@ -103017,6 +107250,8 @@ export namespace Prisma {
     announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
@@ -103168,6 +107403,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -103229,6 +107466,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -103309,6 +107548,8 @@ export namespace Prisma {
     announcements?: AnnouncementCreateNestedManyWithoutClassInput
     caBuckets?: CABucketCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
@@ -103326,6 +107567,8 @@ export namespace Prisma {
     announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
@@ -103498,6 +107741,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -103559,6 +107804,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -103651,6 +107898,8 @@ export namespace Prisma {
     announcements?: AnnouncementUpdateManyWithoutClassNestedInput
     caBuckets?: CABucketUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
@@ -103668,6 +107917,8 @@ export namespace Prisma {
     announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
     caBuckets?: CABucketUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
@@ -103819,6 +108070,8 @@ export namespace Prisma {
     caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -103880,6 +108133,8 @@ export namespace Prisma {
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -104111,6 +108366,8 @@ export namespace Prisma {
     caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -104172,6 +108429,8 @@ export namespace Prisma {
     caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -104405,6 +108664,8 @@ export namespace Prisma {
     caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -104466,6 +108727,8 @@ export namespace Prisma {
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -104543,6 +108806,8 @@ export namespace Prisma {
     caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -104604,6 +108869,8 @@ export namespace Prisma {
     caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -104665,6 +108932,8 @@ export namespace Prisma {
     caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -104726,6 +108995,8 @@ export namespace Prisma {
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -104906,6 +109177,8 @@ export namespace Prisma {
     announcements?: AnnouncementCreateNestedManyWithoutClassInput
     caBuckets?: CABucketCreateNestedManyWithoutClassInput
     caActivities?: CAActivityCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
   }
 
@@ -104923,6 +109196,8 @@ export namespace Prisma {
     announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutClassInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutClassInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
   }
 
@@ -104981,6 +109256,8 @@ export namespace Prisma {
     caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -105042,6 +109319,8 @@ export namespace Prisma {
     caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -105246,6 +109525,8 @@ export namespace Prisma {
     announcements?: AnnouncementUpdateManyWithoutClassNestedInput
     caBuckets?: CABucketUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
@@ -105263,6 +109544,724 @@ export namespace Prisma {
     announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
     caBuckets?: CABucketUncheckedUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
+  }
+
+  export type SchoolCreateWithoutReportPublicationsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutReportPublicationsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutReportPublicationsInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutReportPublicationsInput, SchoolUncheckedCreateWithoutReportPublicationsInput>
+  }
+
+  export type ClassCreateWithoutReportPublicationsInput = {
+    name: string
+    capacity: number
+    section?: string | null
+    school?: SchoolCreateNestedOneWithoutClassesInput
+    supervisor?: TeacherCreateNestedOneWithoutClassesInput
+    lessons?: LessonCreateNestedManyWithoutClassInput
+    students?: StudentCreateNestedManyWithoutClassInput
+    grade: GradeCreateNestedOneWithoutClassesInput
+    events?: EventCreateNestedManyWithoutClassInput
+    announcements?: AnnouncementCreateNestedManyWithoutClassInput
+    caBuckets?: CABucketCreateNestedManyWithoutClassInput
+    caActivities?: CAActivityCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
+  }
+
+  export type ClassUncheckedCreateWithoutReportPublicationsInput = {
+    id?: number
+    name: string
+    capacity: number
+    section?: string | null
+    schoolId?: string
+    supervisorId?: string | null
+    gradeId: number
+    lessons?: LessonUncheckedCreateNestedManyWithoutClassInput
+    students?: StudentUncheckedCreateNestedManyWithoutClassInput
+    events?: EventUncheckedCreateNestedManyWithoutClassInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutClassInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
+  }
+
+  export type ClassCreateOrConnectWithoutReportPublicationsInput = {
+    where: ClassWhereUniqueInput
+    create: XOR<ClassCreateWithoutReportPublicationsInput, ClassUncheckedCreateWithoutReportPublicationsInput>
+  }
+
+  export type SchoolUpsertWithoutReportPublicationsInput = {
+    update: XOR<SchoolUpdateWithoutReportPublicationsInput, SchoolUncheckedUpdateWithoutReportPublicationsInput>
+    create: XOR<SchoolCreateWithoutReportPublicationsInput, SchoolUncheckedCreateWithoutReportPublicationsInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutReportPublicationsInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutReportPublicationsInput, SchoolUncheckedUpdateWithoutReportPublicationsInput>
+  }
+
+  export type SchoolUpdateWithoutReportPublicationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutReportPublicationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type ClassUpsertWithoutReportPublicationsInput = {
+    update: XOR<ClassUpdateWithoutReportPublicationsInput, ClassUncheckedUpdateWithoutReportPublicationsInput>
+    create: XOR<ClassCreateWithoutReportPublicationsInput, ClassUncheckedCreateWithoutReportPublicationsInput>
+    where?: ClassWhereInput
+  }
+
+  export type ClassUpdateToOneWithWhereWithoutReportPublicationsInput = {
+    where?: ClassWhereInput
+    data: XOR<ClassUpdateWithoutReportPublicationsInput, ClassUncheckedUpdateWithoutReportPublicationsInput>
+  }
+
+  export type ClassUpdateWithoutReportPublicationsInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
+    school?: SchoolUpdateOneRequiredWithoutClassesNestedInput
+    supervisor?: TeacherUpdateOneWithoutClassesNestedInput
+    lessons?: LessonUpdateManyWithoutClassNestedInput
+    students?: StudentUpdateManyWithoutClassNestedInput
+    grade?: GradeUpdateOneRequiredWithoutClassesNestedInput
+    events?: EventUpdateManyWithoutClassNestedInput
+    announcements?: AnnouncementUpdateManyWithoutClassNestedInput
+    caBuckets?: CABucketUpdateManyWithoutClassNestedInput
+    caActivities?: CAActivityUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
+  }
+
+  export type ClassUncheckedUpdateWithoutReportPublicationsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+    gradeId?: IntFieldUpdateOperationsInput | number
+    lessons?: LessonUncheckedUpdateManyWithoutClassNestedInput
+    students?: StudentUncheckedUpdateManyWithoutClassNestedInput
+    events?: EventUncheckedUpdateManyWithoutClassNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutClassNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
+  }
+
+  export type SchoolCreateWithoutExamEntryWindowsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutExamEntryWindowsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutExamEntryWindowsInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutExamEntryWindowsInput, SchoolUncheckedCreateWithoutExamEntryWindowsInput>
+  }
+
+  export type ClassCreateWithoutExamEntryWindowsInput = {
+    name: string
+    capacity: number
+    section?: string | null
+    school?: SchoolCreateNestedOneWithoutClassesInput
+    supervisor?: TeacherCreateNestedOneWithoutClassesInput
+    lessons?: LessonCreateNestedManyWithoutClassInput
+    students?: StudentCreateNestedManyWithoutClassInput
+    grade: GradeCreateNestedOneWithoutClassesInput
+    events?: EventCreateNestedManyWithoutClassInput
+    announcements?: AnnouncementCreateNestedManyWithoutClassInput
+    caBuckets?: CABucketCreateNestedManyWithoutClassInput
+    caActivities?: CAActivityCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutClassInput
+  }
+
+  export type ClassUncheckedCreateWithoutExamEntryWindowsInput = {
+    id?: number
+    name: string
+    capacity: number
+    section?: string | null
+    schoolId?: string
+    supervisorId?: string | null
+    gradeId: number
+    lessons?: LessonUncheckedCreateNestedManyWithoutClassInput
+    students?: StudentUncheckedCreateNestedManyWithoutClassInput
+    events?: EventUncheckedCreateNestedManyWithoutClassInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutClassInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutClassInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutClassInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutClassInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutClassInput
+  }
+
+  export type ClassCreateOrConnectWithoutExamEntryWindowsInput = {
+    where: ClassWhereUniqueInput
+    create: XOR<ClassCreateWithoutExamEntryWindowsInput, ClassUncheckedCreateWithoutExamEntryWindowsInput>
+  }
+
+  export type SchoolUpsertWithoutExamEntryWindowsInput = {
+    update: XOR<SchoolUpdateWithoutExamEntryWindowsInput, SchoolUncheckedUpdateWithoutExamEntryWindowsInput>
+    create: XOR<SchoolCreateWithoutExamEntryWindowsInput, SchoolUncheckedCreateWithoutExamEntryWindowsInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutExamEntryWindowsInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutExamEntryWindowsInput, SchoolUncheckedUpdateWithoutExamEntryWindowsInput>
+  }
+
+  export type SchoolUpdateWithoutExamEntryWindowsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutExamEntryWindowsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type ClassUpsertWithoutExamEntryWindowsInput = {
+    update: XOR<ClassUpdateWithoutExamEntryWindowsInput, ClassUncheckedUpdateWithoutExamEntryWindowsInput>
+    create: XOR<ClassCreateWithoutExamEntryWindowsInput, ClassUncheckedCreateWithoutExamEntryWindowsInput>
+    where?: ClassWhereInput
+  }
+
+  export type ClassUpdateToOneWithWhereWithoutExamEntryWindowsInput = {
+    where?: ClassWhereInput
+    data: XOR<ClassUpdateWithoutExamEntryWindowsInput, ClassUncheckedUpdateWithoutExamEntryWindowsInput>
+  }
+
+  export type ClassUpdateWithoutExamEntryWindowsInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
+    school?: SchoolUpdateOneRequiredWithoutClassesNestedInput
+    supervisor?: TeacherUpdateOneWithoutClassesNestedInput
+    lessons?: LessonUpdateManyWithoutClassNestedInput
+    students?: StudentUpdateManyWithoutClassNestedInput
+    grade?: GradeUpdateOneRequiredWithoutClassesNestedInput
+    events?: EventUpdateManyWithoutClassNestedInput
+    announcements?: AnnouncementUpdateManyWithoutClassNestedInput
+    caBuckets?: CABucketUpdateManyWithoutClassNestedInput
+    caActivities?: CAActivityUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutClassNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
+  }
+
+  export type ClassUncheckedUpdateWithoutExamEntryWindowsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    section?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+    gradeId?: IntFieldUpdateOperationsInput | number
+    lessons?: LessonUncheckedUpdateManyWithoutClassNestedInput
+    students?: StudentUncheckedUpdateManyWithoutClassNestedInput
+    events?: EventUncheckedUpdateManyWithoutClassNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutClassNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutClassNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutClassNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
@@ -105306,6 +110305,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
     studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
@@ -105367,6 +110368,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
     studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
@@ -105533,6 +110536,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
     studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
@@ -105594,6 +110599,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
     studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
@@ -105862,6 +110869,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
     studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
@@ -105923,6 +110932,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
     studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
@@ -105997,6 +111008,8 @@ export namespace Prisma {
     caBuckets?: CABucketCreateNestedManyWithoutClassInput
     caActivities?: CAActivityCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutClassInput
   }
 
   export type ClassUncheckedCreateWithoutSyllabusTopicProgressInput = {
@@ -106014,6 +111027,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedCreateNestedManyWithoutClassInput
     caActivities?: CAActivityUncheckedCreateNestedManyWithoutClassInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutClassInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutClassInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutClassInput
   }
 
   export type ClassCreateOrConnectWithoutSyllabusTopicProgressInput = {
@@ -106127,6 +111142,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
     studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
@@ -106188,6 +111205,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
     studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
@@ -106274,6 +111293,8 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutClassNestedInput
   }
 
   export type ClassUncheckedUpdateWithoutSyllabusTopicProgressInput = {
@@ -106291,6 +111312,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutClassNestedInput
   }
 
   export type TeacherUpsertWithoutSyllabusTopicProgressInput = {
@@ -106394,6 +111417,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
@@ -106455,6 +111480,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
@@ -106636,6 +111663,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
@@ -106697,6 +111726,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
@@ -106978,6 +112009,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -107039,6 +112072,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -107375,6 +112410,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -107436,6 +112473,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -107822,6 +112861,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -107883,6 +112924,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -108103,6 +113146,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -108164,6 +113209,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -108333,6 +113380,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -108394,6 +113443,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -108517,6 +113568,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -108578,6 +113631,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -108691,6 +113746,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -108752,6 +113809,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -108873,6 +113932,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -108934,6 +113995,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -109045,6 +114108,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -109106,6 +114171,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -109183,6 +114250,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -109244,6 +114313,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -109305,6 +114376,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -109366,6 +114439,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -109443,6 +114518,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -109504,6 +114581,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -109565,6 +114644,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -109626,6 +114707,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -109891,6 +114974,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -109952,6 +115037,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -110225,6 +115312,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -110286,6 +115375,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -110363,6 +115454,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -110424,6 +115517,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -110485,6 +115580,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -110546,6 +115643,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -110669,6 +115768,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -110730,6 +115831,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -110843,6 +115946,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -110904,6 +116009,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -110981,6 +116088,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -111042,6 +116151,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -111103,6 +116214,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -111164,6 +116277,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -111241,6 +116356,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -111302,6 +116419,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -111363,6 +116482,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
@@ -111424,6 +116545,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
     caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
     syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
     feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
@@ -111501,6 +116624,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
@@ -111562,6 +116687,8 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
     caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
     syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
     feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
@@ -111839,6 +116966,36 @@ export namespace Prisma {
     gradePoint?: number
     remarks?: string
     configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ReportCardPublicationCreateManySchoolInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ReportPublicationStatus
+    notes?: string | null
+    publishedAt?: Date | string
+    publishedBy: string
+    unpublishedAt?: Date | string | null
+    unpublishedBy?: string | null
+    classId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ExamEntryWindowCreateManySchoolInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ExamEntryStatus
+    openedAt?: Date | string | null
+    openedBy?: string | null
+    closedAt?: Date | string | null
+    closedBy?: string | null
+    notes?: string | null
+    classId: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -112339,6 +117496,8 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
@@ -112356,6 +117515,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
@@ -112972,6 +118133,94 @@ export namespace Prisma {
     gradePoint?: IntFieldUpdateOperationsInput | number
     remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ReportCardPublicationUpdateWithoutSchoolInput = {
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    publishedBy?: StringFieldUpdateOperationsInput | string
+    unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    class?: ClassUpdateOneRequiredWithoutReportPublicationsNestedInput
+  }
+
+  export type ReportCardPublicationUncheckedUpdateWithoutSchoolInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    publishedBy?: StringFieldUpdateOperationsInput | string
+    unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    classId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ReportCardPublicationUncheckedUpdateManyWithoutSchoolInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    publishedBy?: StringFieldUpdateOperationsInput | string
+    unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    classId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExamEntryWindowUpdateWithoutSchoolInput = {
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumExamEntryStatusFieldUpdateOperationsInput | $Enums.ExamEntryStatus
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    class?: ClassUpdateOneRequiredWithoutExamEntryWindowsNestedInput
+  }
+
+  export type ExamEntryWindowUncheckedUpdateWithoutSchoolInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumExamEntryStatusFieldUpdateOperationsInput | $Enums.ExamEntryStatus
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    classId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExamEntryWindowUncheckedUpdateManyWithoutSchoolInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumExamEntryStatusFieldUpdateOperationsInput | $Enums.ExamEntryStatus
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    classId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -114615,6 +119864,8 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
@@ -114632,6 +119883,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
@@ -115511,6 +120764,8 @@ export namespace Prisma {
     caBuckets?: CABucketUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutClassNestedInput
   }
 
@@ -115528,6 +120783,8 @@ export namespace Prisma {
     caBuckets?: CABucketUncheckedUpdateManyWithoutClassNestedInput
     caActivities?: CAActivityUncheckedUpdateManyWithoutClassNestedInput
     continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutClassNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutClassNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutClassNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutClassNestedInput
   }
 
@@ -115721,6 +120978,36 @@ export namespace Prisma {
     gradePoint?: number
     remarks?: string
     configId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ReportCardPublicationCreateManyClassInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ReportPublicationStatus
+    notes?: string | null
+    publishedAt?: Date | string
+    publishedBy: string
+    unpublishedAt?: Date | string | null
+    unpublishedBy?: string | null
+    schoolId?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ExamEntryWindowCreateManyClassInput = {
+    id?: number
+    academicYear: string
+    term: $Enums.Term
+    status?: $Enums.ExamEntryStatus
+    openedAt?: Date | string | null
+    openedBy?: string | null
+    closedAt?: Date | string | null
+    closedBy?: string | null
+    notes?: string | null
+    schoolId?: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -116057,6 +121344,94 @@ export namespace Prisma {
     gradePoint?: IntFieldUpdateOperationsInput | number
     remarks?: StringFieldUpdateOperationsInput | string
     configId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ReportCardPublicationUpdateWithoutClassInput = {
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    publishedBy?: StringFieldUpdateOperationsInput | string
+    unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutReportPublicationsNestedInput
+  }
+
+  export type ReportCardPublicationUncheckedUpdateWithoutClassInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    publishedBy?: StringFieldUpdateOperationsInput | string
+    unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ReportCardPublicationUncheckedUpdateManyWithoutClassInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    publishedBy?: StringFieldUpdateOperationsInput | string
+    unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExamEntryWindowUpdateWithoutClassInput = {
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumExamEntryStatusFieldUpdateOperationsInput | $Enums.ExamEntryStatus
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutExamEntryWindowsNestedInput
+  }
+
+  export type ExamEntryWindowUncheckedUpdateWithoutClassInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumExamEntryStatusFieldUpdateOperationsInput | $Enums.ExamEntryStatus
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExamEntryWindowUncheckedUpdateManyWithoutClassInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    academicYear?: StringFieldUpdateOperationsInput | string
+    term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
+    status?: EnumExamEntryStatusFieldUpdateOperationsInput | $Enums.ExamEntryStatus
+    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

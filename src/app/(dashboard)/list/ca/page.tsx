@@ -8,6 +8,7 @@ import prisma from "@/src/lib/prisma";
 import CAEntryForm from "@/src/components/CAEntryForm";
 import CAClassSummary from "@/src/components/CAClassSummary";
 import CAActivityManager from "@/src/components/CAActivityManager";
+import ExamEntryWindowControls from "@/src/components/ExamEntryWindowControls";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { getSubjectCAProgress } from "@/src/lib/services/ca-activity";
 import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
@@ -136,6 +137,18 @@ const CAPage = async ({
       ? configs.map((c) => c.academicYear)
       : [activePeriod.academicYear, "2026/27"];
 
+  const examEntryWindow = await prisma.examEntryWindow.findUnique({
+    where: {
+      schoolId_classId_term_academicYear: {
+        schoolId,
+        classId: activeClass.id,
+        term: activePeriod.currentTerm,
+        academicYear: activePeriod.academicYear,
+      },
+    },
+    select: { status: true },
+  });
+
   const caBuckets = await prisma.cABucket.findMany({
     where: {
       schoolId,
@@ -260,6 +273,15 @@ const CAPage = async ({
         </div>
       )}
 
+      <ExamEntryWindowControls
+        classId={activeClass.id}
+        className={activeClass.name}
+        term={activePeriod.currentTerm}
+        academicYear={activePeriod.academicYear}
+        status={examEntryWindow?.status ?? "LOCKED"}
+        role={role}
+      />
+
       <div className="flex gap-4 flex-col lg:flex-row">
         {/* ── Sidebar: class selector ── */}
         <div className="w-full lg:w-56 shrink-0">
@@ -316,6 +338,7 @@ const CAPage = async ({
                 academicYears={academicYears}
                 activeTerm={activePeriod.currentTerm}
                 activeYear={activePeriod.academicYear}
+                examEntryStatus={examEntryWindow?.status ?? "LOCKED"}
                 existingCA={existingCA.map((ca) => ({
                   studentId: ca.studentId,
                   subjectId: ca.subjectId,

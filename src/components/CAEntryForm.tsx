@@ -12,7 +12,7 @@ import {
 import { bulkUpsertCA } from "@/src/lib/actions/caActions";
 import { getGradeBand, TERM_LABELS } from "@/src/lib/caGrades";
 import { formatMark } from "@/src/lib/formatters/marks";
-import type { Term } from "@/src/generated/prisma";
+import type { ExamEntryStatus, Term } from "@/src/generated/prisma";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -68,6 +68,7 @@ type Props = {
   academicYears: string[];
   activeTerm: Term;
   activeYear: string;
+  examEntryStatus: ExamEntryStatus | "LOCKED";
   existingCA?:  ExistingCA[]; // pre-loaded when editing
   activityCAProgress?: ActivityCAProgress[];
   activityCAContexts?: ActivityCAContext[];
@@ -129,7 +130,7 @@ function ScorePreview({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const CAEntryForm = ({
-  classId, className, students, subjects, activeTerm, activeYear, existingCA = [], activityCAProgress = [], activityCAContexts = [], onSuccess,
+  classId, className, students, subjects, activeTerm, activeYear, examEntryStatus, existingCA = [], activityCAProgress = [], activityCAContexts = [], onSuccess,
 }: Props) => {
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | "">("");
   const [caConfig,          setCAConfig]          = useState<{ classworkWeight: number; examWeight: number } | null>(null);
@@ -140,6 +141,7 @@ const CAEntryForm = ({
   const [isPending,         startTransition]      = useTransition();
   const selectedTerm = activeTerm;
   const selectedYear = activeYear || "2025/26";
+  const examEntryOpen = examEntryStatus === "OPEN";
 
   // Load CA config when year changes
   useEffect(() => {
@@ -196,6 +198,10 @@ const CAEntryForm = ({
     }
     if (!caConfig) {
       setApiError("CA configuration not loaded. Please wait or refresh.");
+      return;
+    }
+    if (!examEntryOpen) {
+      setApiError("Exam entry is locked for this class period. Ask an admin to open exam entry before saving exam scores.");
       return;
     }
 
@@ -370,6 +376,12 @@ const CAEntryForm = ({
         {!hasActivityStructure && selectedSubjectId ? " No CA bucket exists for this subject yet, so CA will show 0 until activities are created and scored." : ""}
       </div>
 
+      {!examEntryOpen && (
+        <div className="rounded-xl border border-amber-100 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-700">
+          Exam score entry is locked by admin. You can continue recording CA activities, but exam scores can only be saved after admin opens exam entry for this class.
+        </div>
+      )}
+
       {/* Progress indicator */}
       <div className="flex items-center gap-3">
         <Users size={13} className="text-gray-400" />
@@ -461,7 +473,12 @@ const CAEntryForm = ({
                     placeholder="—"
                     value={row.examScore}
                     onChange={(e) => updateRow(idx, "examScore", e.target.value)}
-                    className="ring-[1.5px] ring-gray-200 p-2 rounded-xl text-sm font-bold text-gray-800 text-center focus:ring-indigo-500 outline-none transition-all w-full"
+                    disabled={!examEntryOpen}
+                    className={`ring-[1.5px] p-2 rounded-xl text-sm font-bold text-center outline-none transition-all w-full ${
+                      examEntryOpen
+                        ? "ring-gray-200 text-gray-800 focus:ring-indigo-500"
+                        : "ring-amber-100 bg-amber-50 text-amber-400 cursor-not-allowed"
+                    }`}
                   />
 
                   {/* Live grade preview */}
@@ -511,7 +528,8 @@ const CAEntryForm = ({
               )
             )
           }
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-100 text-gray-600 text-sm font-bold hover:bg-gray-200 transition-colors"
+          disabled={isPending}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-100 text-gray-600 text-sm font-bold hover:bg-gray-200 transition-colors disabled:opacity-50"
         >
           <RefreshCw size={13} /> Clear
         </button>
@@ -519,7 +537,7 @@ const CAEntryForm = ({
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={isPending || !selectedSubjectId}
+          disabled={isPending || !selectedSubjectId || !examEntryOpen}
           className="flex-1 bg-indigo-600 text-white py-2.5 rounded-xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
         >
           {isPending ? (

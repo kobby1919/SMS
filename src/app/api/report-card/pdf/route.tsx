@@ -14,6 +14,7 @@ import { getCachedDocument } from "@/src/lib/services/document-cache";
 import { getSchoolBranding } from "@/src/lib/services/school-branding";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { formatMark } from "@/src/lib/formatters/marks";
+import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 import {
   renderToBuffer,
   Document,
@@ -394,16 +395,6 @@ export async function GET(req: NextRequest) {
     });
     if (!student) return new NextResponse("Student not found", { status: 404 });
 
-    // Auth guard
-    if (role === "student" && userId !== studentId)
-      return new NextResponse("Forbidden", { status: 403 });
-    if (role === "parent" && student.parentId !== userId)
-      return new NextResponse("Forbidden", { status: 403 });
-    if (role === "teacher") {
-      const cls = await prisma.class.findFirst({ where: { id: student.classId, schoolId }, select: { supervisorId: true } });
-      if (cls?.supervisorId !== userId) return new NextResponse("Forbidden", { status: 403 });
-    }
-
     // Config
     const [configs, activePeriod] = await Promise.all([
       prisma.cAConfig.findMany({ where: { schoolId }, orderBy: [{ isActive: "desc" }, { academicYear: "desc" }] }),
@@ -415,23 +406,77 @@ export async function GET(req: NextRequest) {
     const cwWeight   = config?.classworkWeight ?? 30;
     const exWeight   = config?.examWeight      ?? 70;
 
+    const subjectsByClass = await listClassSubjectsFromTimetable(schoolId, [student.classId]);
+    const timetableSubjects = subjectsByClass.get(student.classId) ?? new Map<number, string>();
+    const teacherSubjectIds = new Set<number>();
+    const isClassSupervisor =
+      role === "teacher" && student.class.supervisorId === userId;
+
+    if (role === "teacher") {
+      const teacherLessons = await prisma.lesson.findMany({
+        where: { schoolId, classId: student.classId, teacherId: userId },
+        select: { subjectId: true },
+      });
+      for (const lesson of teacherLessons) {
+        teacherSubjectIds.add(lesson.subjectId);
+      }
+    }
+
+    // Auth guard
+    if (role === "student" && userId !== studentId)
+      return new NextResponse("Forbidden", { status: 403 });
+    if (role === "parent" && student.parentId !== userId)
+      return new NextResponse("Forbidden", { status: 403 });
+    if (role === "teacher" && !isClassSupervisor && teacherSubjectIds.size === 0) {
+      return new NextResponse("Forbidden", { status: 403 });
+    }
+
+    const visibleSubjectIds =
+      role === "teacher" && !isClassSupervisor ? teacherSubjectIds : null;
+    const visibleTimetableSubjects =
+      visibleSubjectIds === null
+        ? timetableSubjects
+        : new Map(
+            Array.from(timetableSubjects.entries()).filter(([subjectId]) =>
+              visibleSubjectIds.has(subjectId),
+            ),
+          );
+    const timetableSubjectIds = Array.from(visibleTimetableSubjects.keys());
+
     // CA records for this student
     const caRecords = await prisma.continuousAssessment.findMany({
-      where: { schoolId, studentId, classId: student.classId, term, academicYear: activeYear },
+      where: {
+        schoolId,
+        studentId,
+        classId: student.classId,
+        term,
+        academicYear: activeYear,
+        ...(timetableSubjectIds.length > 0
+          ? { subjectId: { in: timetableSubjectIds } }
+          : {}),
+      },
       include: { subject: { select: { name: true } } },
       orderBy: { subject: { name: "asc" } },
     });
 
     // All class CA records (for positions)
     const classCA = await prisma.continuousAssessment.findMany({
-      where:  { schoolId, classId: student.classId, term, academicYear: activeYear },
-      select: { studentId: true, subjectId: true, totalScore: true, gradePoint: true },
+      where: {
+        schoolId,
+        classId: student.classId,
+        term,
+        academicYear: activeYear,
+        ...(timetableSubjectIds.length > 0
+          ? { subjectId: { in: timetableSubjectIds } }
+          : {}),
+      },
+      select: { studentId: true, subjectId: true, totalScore: true, gradePoint: true, examScore: true },
     });
 
     // Per-subject position
     const subjectPositions: Record<number, number> = {};
     for (const sid of [...new Set(classCA.map((r) => r.subjectId))]) {
-      const sorted = classCA.filter((r) => r.subjectId === sid).sort((a, b) => b.totalScore - a.totalScore);
+      const sorted = classCA.filter((r) => r.subjectId === sid && r.examScore > 0).sort((a, b) => b.totalScore - a.totalScore);
       const idx    = sorted.findIndex((r) => r.studentId === studentId);
       subjectPositions[sid] = idx >= 0 ? idx + 1 : 0;
     }
@@ -440,6 +485,7 @@ export async function GET(req: NextRequest) {
     const gpMap: Record<string, number[]> = {};
     for (const r of classCA) {
       if (!gpMap[r.studentId]) gpMap[r.studentId] = [];
+      if (r.examScore <= 0) continue;
       gpMap[r.studentId].push(r.gradePoint);
     }
     const sorted          = Object.entries(gpMap).map(([sid, gps]) => ({ sid, agg: computeAggregate(gps) })).sort((a, b) => a.agg - b.agg);
@@ -447,23 +493,59 @@ export async function GET(req: NextRequest) {
     const classSize       = await prisma.student.count({ where: { schoolId, classId: student.classId } });
 
     // Build subject rows
-    const subjectRows: SubjectRow[] = caRecords.map((ca) => ({
-      name:           ca.subject.name,
+    const caRecordsBySubject = new Map(caRecords.map((ca) => [ca.subjectId, ca]));
+    const subjectRows: SubjectRow[] = Array.from(visibleTimetableSubjects.entries()).map(([subjectId, subjectName]) => {
+      const ca = caRecordsBySubject.get(subjectId);
+      if (!ca) {
+        return {
+          name: subjectName,
+          classworkScore: 0,
+          examScore: 0,
+          totalScore: 0,
+          grade: "F9",
+          position: 0,
+          remarks: "No CA records have been entered for this subject yet.",
+        };
+      }
+      return {
+      name:           subjectName,
       classworkScore: ca.classworkScore,
       examScore:      ca.examScore,
       totalScore:     ca.totalScore,
       grade:          ca.grade,
       position:       subjectPositions[ca.subjectId] ?? 0,
       remarks:        ca.remarks,
-    }));
+      };
+    });
 
     // Stats
-    const gps         = caRecords.map((r) => r.gradePoint);
-    const scores      = caRecords.map((r) => r.totalScore);
+    const completedCA = caRecords.filter((r) => r.examScore > 0);
+    const gps         = completedCA.map((r) => r.gradePoint);
+    const scores      = completedCA.map((r) => r.totalScore);
     const aggregate   = computeAggregate(gps);
     const avgScore    = scores.length > 0 ? Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 10) / 10 : 0;
     const totalRaw    = scores.reduce((a, b) => a + b, 0);
     const totalPossible = scores.length * 100;
+    const reportReady = subjectRows.length > 0 && subjectRows.every((row) => row.examScore > 0);
+    const publication = await prisma.reportCardPublication.findUnique({
+      where: {
+        schoolId_classId_term_academicYear: {
+          schoolId,
+          classId: student.classId,
+          term,
+          academicYear: activeYear,
+        },
+      },
+      select: { status: true },
+    });
+
+    if (!reportReady) {
+      return new NextResponse("Report card is not ready because one or more exam scores are missing.", { status: 409 });
+    }
+
+    if ((role === "parent" || role === "student") && publication?.status !== "PUBLISHED") {
+      return new NextResponse("Report card is awaiting school approval.", { status: 403 });
+    }
 
     // Attendance
     const attendPresent = student.attendances.filter((a) => a.status === "PRESENT").length;

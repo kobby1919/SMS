@@ -515,6 +515,38 @@ exports.Prisma.ContinuousAssessmentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ReportCardPublicationScalarFieldEnum = {
+  id: 'id',
+  academicYear: 'academicYear',
+  term: 'term',
+  status: 'status',
+  notes: 'notes',
+  publishedAt: 'publishedAt',
+  publishedBy: 'publishedBy',
+  unpublishedAt: 'unpublishedAt',
+  unpublishedBy: 'unpublishedBy',
+  schoolId: 'schoolId',
+  classId: 'classId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ExamEntryWindowScalarFieldEnum = {
+  id: 'id',
+  academicYear: 'academicYear',
+  term: 'term',
+  status: 'status',
+  openedAt: 'openedAt',
+  openedBy: 'openedBy',
+  closedAt: 'closedAt',
+  closedBy: 'closedBy',
+  notes: 'notes',
+  schoolId: 'schoolId',
+  classId: 'classId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SyllabusScalarFieldEnum = {
   id: 'id',
   description: 'description',
@@ -908,6 +940,17 @@ exports.CABucketAggregationMode = exports.$Enums.CABucketAggregationMode = {
   SUM_ACTIVITIES: 'SUM_ACTIVITIES'
 };
 
+exports.ReportPublicationStatus = exports.$Enums.ReportPublicationStatus = {
+  PUBLISHED: 'PUBLISHED',
+  UNPUBLISHED: 'UNPUBLISHED'
+};
+
+exports.ExamEntryStatus = exports.$Enums.ExamEntryStatus = {
+  LOCKED: 'LOCKED',
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED'
+};
+
 exports.SyllabusStatus = exports.$Enums.SyllabusStatus = {
   DRAFT: 'DRAFT',
   PUBLISHED: 'PUBLISHED'
@@ -1099,6 +1142,8 @@ exports.Prisma.ModelName = {
   CAActivityScore: 'CAActivityScore',
   CAAuditLog: 'CAAuditLog',
   ContinuousAssessment: 'ContinuousAssessment',
+  ReportCardPublication: 'ReportCardPublication',
+  ExamEntryWindow: 'ExamEntryWindow',
   Syllabus: 'Syllabus',
   SyllabusTopic: 'SyllabusTopic',
   SyllabusTopicProgress: 'SyllabusTopicProgress',

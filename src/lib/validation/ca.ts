@@ -99,3 +99,17 @@ export const caBulkActivityScoreSchema = z.object({
     comment: z.string().trim().max(300).optional(),
   })).min(1).max(500),
 });
+
+export const reportPublicationSchema = z.object({
+  classId: positiveIntSchema,
+  term: termSchema,
+  academicYear: nonEmptyStringSchema,
+  notes: z.string().trim().max(500).optional(),
+});
+
+export const examEntryWindowSchema = z.object({
+  classId: positiveIntSchema,
+  term: termSchema,
+  academicYear: nonEmptyStringSchema,
+  notes: z.string().trim().max(500).optional(),
+});

@@ -81,6 +81,10 @@ type Props = {
   };
   attendance: { present: number; absent: number; late: number; total: number };
   role: string;
+  publication: {
+    isPublished: boolean;
+    publishedAt?: Date | null;
+  };
 };
 
 // ─── Performance narrative ─────────────────────────────────────────────────────
@@ -228,8 +232,11 @@ const ReportCardView = ({
   overallStats,
   attendance,
   role,
+  publication,
 }: Props) => {
-  const reportReady = overallStats.subjectCount > 0;
+  const reportReady =
+    subjectRows.length > 0 && overallStats.pendingSubjectCount === 0;
+  const canDownload = reportReady && publication.isPublished;
   const narrative = reportReady
     ? getPerformanceNarrative(
         overallStats.aggregate,
@@ -285,7 +292,7 @@ const ReportCardView = ({
                   ? "Teacher View"
                   : "Admin View"}
           </span>
-          {reportReady ? (
+          {canDownload ? (
             <DownloadButton
               studentId={student.id}
               term={term}
@@ -298,7 +305,7 @@ const ReportCardView = ({
               disabled
               className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-400 rounded-xl text-sm font-bold"
             >
-              <Download size={14} /> PDF pending exams
+              <Download size={14} /> {reportReady ? "PDF pending approval" : "PDF pending exams"}
             </button>
           )}
         </div>
@@ -428,6 +435,18 @@ const ReportCardView = ({
           {!reportReady && (
             <div className="rounded-xl border border-sky-100 bg-sky-50 px-4 py-3 text-sm font-semibold text-sky-800">
               CA is currently being built from teacher activity entries. Exam scores have not been recorded yet, so this page is a progress view, not a final report card.
+            </div>
+          )}
+
+          {reportReady && !publication.isPublished && (
+            <div className="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
+              Report scores are complete, but the final report card is waiting for admin approval before parents can download it.
+            </div>
+          )}
+
+          {reportReady && publication.isPublished && (
+            <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">
+              This final report card has been approved and published by the school.
             </div>
           )}
 

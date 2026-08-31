@@ -12,15 +12,12 @@ import {
   ChevronRight,
   CheckCircle2,
   Clock,
-  Trophy,
 } from "lucide-react";
 import {
-  getGradeBandByGrade,
-  computeAggregate,
-  ordinal,
   TERM_LABELS,
 } from "@/src/lib/caGrades";
 import ReportCardFilters from "@/src/components/ReportCardFilters";
+import ReportPublicationControls from "@/src/components/ReportPublicationControls";
 import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { formatMark } from "@/src/lib/formatters/marks";
@@ -34,6 +31,12 @@ function termFromParam(value?: string): Term | null {
   return value && VALID_TERMS.has(value as Term) ? value as Term : null;
 }
 
+function intFromParam(value?: string) {
+  if (!value) return null;
+  const parsed = Number.parseInt(value, 10);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
 const ReportCardListPage = async ({
   searchParams,
 }: {
@@ -42,7 +45,7 @@ const ReportCardListPage = async ({
   const { userId, role, schoolId } = await requirePageSession();
 
   const params = await searchParams;
-  const selectedClassId = params.classId ? parseInt(params.classId) : null;
+  const selectedClassId = intFromParam(params.classId);
   const requestedTerm = termFromParam(params.term);
   const selectedYear = params.year ?? "";
   const selectedChildId = params.childId;
@@ -84,7 +87,7 @@ const ReportCardListPage = async ({
     const config = configs.find((item) => item.academicYear === activeYear);
     const cwWeight = config?.classworkWeight ?? 30;
     const classIds = [...new Set(safeVisibleChildren.map((child) => child.classId))];
-    const [caRecords, subjectsByClass] = await Promise.all([
+    const [caRecords, subjectsByClass, publications] = await Promise.all([
       prisma.continuousAssessment.findMany({
         where: {
           schoolId,
@@ -96,7 +99,18 @@ const ReportCardListPage = async ({
         orderBy: { subject: { name: "asc" } },
       }),
       listClassSubjectsFromTimetable(schoolId, classIds),
+      prisma.reportCardPublication.findMany({
+        where: {
+          schoolId,
+          classId: { in: classIds },
+          term: selectedTerm as Term,
+          academicYear: activeYear,
+          status: "PUBLISHED",
+        },
+        select: { classId: true },
+      }),
     ]);
+    const publishedClassIds = new Set(publications.map((publication) => publication.classId));
 
     return (
       <div className="m-3 mt-0 flex flex-1 flex-col gap-4 sm:m-4 sm:mt-0">
@@ -135,6 +149,7 @@ const ReportCardListPage = async ({
             const reportReady = records.filter((record) => record.examScore > 0);
             const caStarted = records.length;
             const subjectTotal = subjectRows.length;
+            const isPublished = publishedClassIds.has(child.classId);
             const avgCA = caStarted
               ? records.reduce((sum, record) => sum + record.classworkScore, 0) / caStarted
               : 0;
@@ -172,7 +187,7 @@ const ReportCardListPage = async ({
                   </div>
                   <div className="rounded-xl bg-blue-50 p-3 text-blue-700">
                     <p className="text-sm font-black">{reportReady.length}/{subjectTotal || reportReady.length}</p>
-                    <p className="text-[10px] font-black uppercase">Reports ready</p>
+                    <p className="text-[10px] font-black uppercase">{isPublished ? "Reports ready" : "Awaiting approval"}</p>
                   </div>
                   <div className="rounded-xl bg-slate-50 p-3 text-slate-700">
                     <p className="text-sm font-black">{formatMark(avgCA)}/{formatMark(cwWeight)}</p>
@@ -191,6 +206,7 @@ const ReportCardListPage = async ({
                           <p className="truncate text-xs font-black text-gray-900">{subjectName}</p>
                           <p className="text-[10px] font-semibold text-gray-400">
                             {record?.examScore && record.examScore > 0 ? "Report score ready" : record ? "CA building, exam pending" : "No CA yet"}
+                            {record?.examScore && record.examScore > 0 && !isPublished ? " · awaiting school approval" : ""}
                           </p>
                         </div>
                         <p className="shrink-0 text-xs font-black text-sky-700">
@@ -240,7 +256,7 @@ const ReportCardListPage = async ({
     );
   }
 
-  // 3. Admin/Teacher Check (Only they see the list view)
+  // 3. Admin/Teacher Check (Only they see the class report builder)
   if (role !== "admin" && role !== "teacher") {
     redirect("/");
   }
@@ -254,7 +270,10 @@ const ReportCardListPage = async ({
           include: { grade: { select: { level: true } } },
         })
       : await prisma.class.findMany({
-          where: { schoolId, supervisorId: userId },
+          where: {
+            schoolId,
+            lessons: { some: { teacherId: userId } },
+          },
           orderBy: { name: "asc" },
           include: { grade: { select: { level: true } } },
         });
@@ -270,7 +289,7 @@ const ReportCardListPage = async ({
         </h2>
         <p className="text-sm text-gray-400 max-w-xs">
           {role === "teacher"
-            ? "You are not assigned as supervisor to any class."
+            ? "No timetable classes are assigned to you yet."
             : "No classes exist yet."}
         </p>
       </div>
@@ -307,22 +326,6 @@ const ReportCardListPage = async ({
   });
 
   // ── CA records for this class / term / year ───────────────────────────────
-  const caRecords = await prisma.continuousAssessment.findMany({
-    where: {
-      classId: activeClass.id,
-      schoolId,
-      term: selectedTerm as Term,
-      academicYear: activeYear,
-    },
-    select: {
-      studentId: true,
-      subjectId: true,
-      totalScore: true,
-      grade: true,
-      gradePoint: true,
-    },
-  });
-
   // ── Subjects for this class (from timetable) ──────────────────────────────
   const lessons = await prisma.lesson.findMany({
     where: { schoolId, classId: activeClass.id },
@@ -334,6 +337,35 @@ const ReportCardListPage = async ({
       subjectMap.set(l.subject.id, l.subject.name);
   }
   const totalSubjects = subjectMap.size;
+  const subjectIds = Array.from(subjectMap.keys());
+
+  const [caRecords, publication] = await Promise.all([
+    prisma.continuousAssessment.findMany({
+      where: {
+        classId: activeClass.id,
+        schoolId,
+        term: selectedTerm as Term,
+        academicYear: activeYear,
+        ...(subjectIds.length > 0 ? { subjectId: { in: subjectIds } } : {}),
+      },
+      select: {
+        studentId: true,
+        subjectId: true,
+        classworkScore: true,
+        examScore: true,
+      },
+    }),
+    prisma.reportCardPublication.findUnique({
+      where: {
+        schoolId_classId_term_academicYear: {
+          schoolId,
+          classId: activeClass.id,
+          term: selectedTerm as Term,
+          academicYear: activeYear,
+        },
+      },
+    }),
+  ]);
 
   // ── Per-student summary ───────────────────────────────────────────────────
   type StudentRow = {
@@ -342,22 +374,19 @@ const ReportCardListPage = async ({
     surname: string;
     img: string | null;
     subjectsDone: number;
-    totalScore: number;
-    aggregate: number;
-    gradePoints: number[];
-    topGrade: string;
-    complete: boolean;
+    reportsReady: number;
+    status: "not_started" | "building" | "ready";
   };
 
   const studentRows: StudentRow[] = students.map((s) => {
     const records = caRecords.filter((r) => r.studentId === s.id);
-    const gps = records.map((r) => r.gradePoint);
-    const scores = records.map((r) => r.totalScore);
-    const avg =
-      scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
-    const agg = computeAggregate(gps);
-    const top =
-      records.sort((a, b) => a.gradePoint - b.gradePoint)[0]?.grade ?? "—";
+    const reportsReady = records.filter((r) => r.examScore > 0).length;
+    const status =
+      totalSubjects > 0 && reportsReady >= totalSubjects
+        ? "ready"
+        : records.length > 0
+          ? "building"
+          : "not_started";
 
     return {
       id: s.id,
@@ -365,21 +394,26 @@ const ReportCardListPage = async ({
       surname: s.surname,
       img: s.img,
       subjectsDone: records.length,
-      totalScore: Math.round(avg * 10) / 10,
-      aggregate: agg,
-      gradePoints: gps,
-      topGrade: top,
-      complete: records.length >= totalSubjects && totalSubjects > 0,
+      reportsReady,
+      status,
     };
   });
 
-  // Sort by aggregate ascending (lower = better), then avg descending
-  const sorted = [...studentRows].sort((a, b) => {
-    if (a.aggregate !== b.aggregate) return a.aggregate - b.aggregate;
-    return b.totalScore - a.totalScore;
-  });
+  const sorted = [...studentRows].sort((a, b) =>
+    `${a.surname} ${a.name}`.localeCompare(`${b.surname} ${b.name}`),
+  );
 
-  const completeCount = studentRows.filter((s) => s.complete).length;
+  const completeCount = studentRows.filter((s) => s.status === "ready").length;
+  const buildingCount = studentRows.filter((s) => s.status === "building").length;
+  const readyKeys = new Set(
+    caRecords
+      .filter((record) => record.examScore > 0)
+      .map((record) => `${record.studentId}:${record.subjectId}`),
+  );
+  const missingReportEntries = students.reduce((count, student) => {
+    return count + subjectIds.filter((subjectId) => !readyKeys.has(`${student.id}:${subjectId}`)).length;
+  }, 0);
+  const isPublished = publication?.status === "PUBLISHED";
 
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
@@ -392,7 +426,7 @@ const ReportCardListPage = async ({
             </div>
             <div>
               <h1 className="text-xl font-black text-gray-800 tracking-tight">
-                Report Cards
+                Class Report Builder
               </h1>
               <p className="text-sm text-gray-400 mt-0.5 font-medium">
                 {activeClass.name} · {TERM_LABELS[selectedTerm]} · {activeYear}
@@ -423,13 +457,13 @@ const ReportCardListPage = async ({
             color: "bg-indigo-50 text-indigo-600",
           },
           {
-            label: "Complete",
+            label: "Ready",
             value: completeCount,
             color: "bg-emerald-50 text-emerald-600",
           },
           {
-            label: "Pending",
-            value: students.length - completeCount,
+            label: "Building",
+            value: buildingCount,
             color: "bg-amber-50 text-amber-600",
           },
           {
@@ -452,6 +486,31 @@ const ReportCardListPage = async ({
         ))}
       </div>
 
+      {role === "admin" && (
+        <ReportPublicationControls
+          classId={activeClass.id}
+          term={selectedTerm}
+          academicYear={activeYear}
+          isPublished={isPublished}
+          canPublish={students.length > 0 && totalSubjects > 0 && missingReportEntries === 0}
+          missingCount={missingReportEntries}
+          studentCount={students.length}
+          subjectCount={totalSubjects}
+        />
+      )}
+
+      {role === "teacher" && (
+        <div className={`rounded-2xl border p-4 text-xs font-semibold ${
+          isPublished
+            ? "border-emerald-100 bg-emerald-50 text-emerald-700"
+            : "border-amber-100 bg-amber-50 text-amber-700"
+        }`}>
+          {isPublished
+            ? "Admin has published this class report set. Parents can now view and download final reports."
+            : "This class report set is still awaiting admin approval. Teachers can preview records, but parents cannot download final reports yet."}
+        </div>
+      )}
+
       {/* Config warning */}
       {!config && (
         <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-2xl">
@@ -472,7 +531,7 @@ const ReportCardListPage = async ({
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between">
           <p className="text-xs font-black uppercase tracking-wider text-gray-400">
-            All Students — ranked by aggregate
+            Students in this class
           </p>
           <p className="text-xs text-gray-400 font-semibold">
             {completeCount}/{students.length} ready
@@ -489,33 +548,25 @@ const ReportCardListPage = async ({
             </div>
           ) : (
             sorted.map((s, idx) => {
-              const position = idx + 1;
-              const band =
-                s.totalScore > 0 ? getGradeBandByGrade(s.topGrade) : null;
-              const isTop3 = position <= 3 && s.complete;
+              const statusLabel =
+                s.status === "ready"
+                  ? "Report ready"
+                  : s.status === "building"
+                    ? "CA building, exam pending"
+                    : "No CA yet";
+              const statusClass =
+                s.status === "ready"
+                  ? "text-emerald-600"
+                  : s.status === "building"
+                    ? "text-amber-600"
+                    : "text-gray-400";
 
               return (
                 <div
                   key={s.id}
                   className={`flex items-center gap-4 px-5 py-4 transition-colors group
-                    ${isTop3 ? "bg-amber-50/40" : "hover:bg-gray-50/60"}`}
+                    hover:bg-gray-50/60`}
                 >
-                  {/* Position */}
-                  <div
-                    className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm font-black shrink-0
-                    ${
-                      position === 1 && s.complete
-                        ? "bg-amber-100 text-amber-700"
-                        : position === 2 && s.complete
-                          ? "bg-slate-100 text-slate-600"
-                          : position === 3 && s.complete
-                            ? "bg-orange-100 text-orange-700"
-                            : "bg-gray-100 text-gray-400"
-                    }`}
-                  >
-                    {isTop3 ? <Trophy size={14} /> : position}
-                  </div>
-
                   {/* Avatar */}
                   <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-sm font-black text-indigo-600 shrink-0">
                     {s.img ? (
@@ -538,75 +589,37 @@ const ReportCardListPage = async ({
                       {s.surname} {s.name}
                     </p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      {s.complete ? (
-                        <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-600">
-                          <CheckCircle2 size={10} /> Complete
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1 text-[10px] font-bold text-amber-500">
-                          <Clock size={10} /> {s.subjectsDone}/{totalSubjects}{" "}
-                          subjects
-                        </span>
-                      )}
+                      <span className={`flex items-center gap-1 text-[10px] font-bold ${statusClass}`}>
+                        {s.status === "ready" ? <CheckCircle2 size={10} /> : <Clock size={10} />}
+                        {statusLabel}
+                      </span>
                     </div>
                   </div>
 
-                  {/* Scores */}
-                  {s.subjectsDone > 0 && (
-                    <div className="hidden sm:flex items-center gap-4">
-                      <div className="text-right">
-                        <p className="text-xs text-gray-400 font-semibold">
-                          Avg Score
-                        </p>
-                        <p className="text-sm font-black text-gray-800">
-                          {s.totalScore}%
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-gray-400 font-semibold">
-                          Aggregate
-                        </p>
-                        <p className="text-sm font-black text-gray-800">
-                          {s.aggregate}
-                        </p>
-                      </div>
-                      {band && (
-                        <div
-                          className={`px-2.5 py-1 rounded-xl border text-xs font-black ${band.bg} ${band.color} ${band.border}`}
-                        >
-                          {s.topGrade}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  <div className="hidden sm:block text-right">
+                    <p className="text-xs text-gray-400 font-semibold">
+                      Progress
+                    </p>
+                    <p className="text-sm font-black text-gray-800">
+                      {s.subjectsDone}/{totalSubjects || 0} CA
+                    </p>
+                  </div>
+                  <div className="hidden md:block text-right">
+                    <p className="text-xs text-gray-400 font-semibold">
+                      Exams
+                    </p>
+                    <p className="text-sm font-black text-gray-800">
+                      {s.reportsReady}/{totalSubjects || 0} ready
+                    </p>
+                  </div>
 
-                  {/* Position badge */}
-                  {s.complete && (
-                    <div className="hidden md:block text-right">
-                      <p className="text-xs text-gray-400 font-semibold">
-                        Position
-                      </p>
-                      <p className="text-sm font-black text-gray-800">
-                        {ordinal(position)}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* View report card link */}
                   <Link
                     href={`/list/report-cards/${s.id}?term=${selectedTerm}&year=${activeYear}&classId=${activeClass.id}`}
-                    className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all shrink-0
-                      ${
-                        s.complete
-                          ? "bg-violet-600 text-white hover:bg-violet-700 shadow-sm"
-                          : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-                      }`}
+                    aria-label={`Open report card for ${s.name} ${s.surname}`}
+                    title={`Open report card for ${s.name} ${s.surname}`}
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white transition-colors hover:bg-slate-800"
                   >
-                    <FileText size={12} />
-                    <span className="hidden sm:inline">
-                      {s.complete ? "View Report" : "Incomplete"}
-                    </span>
-                    <ChevronRight size={12} />
+                    <ChevronRight size={16} />
                   </Link>
                 </div>
               );
