@@ -47,6 +47,9 @@ export const assignmentFormSchema = z.object({
   lessonId: positiveIntSchema,
   startDate: isoDateStringSchema,
   dueDate: isoDateStringSchema,
+}).refine((data) => new Date(data.dueDate) >= new Date(data.startDate), {
+  message: "Due date cannot be before the assigned date.",
+  path: ["dueDate"],
 });
 
 export const announcementFormSchema = z.object({

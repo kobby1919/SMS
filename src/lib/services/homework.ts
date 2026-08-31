@@ -9,6 +9,34 @@ type HomeworkSubmissionSyncResult = {
   studentCount: number;
 };
 
+type HomeworkMarkResult = {
+  submission: Awaited<ReturnType<typeof prisma.homeworkSubmission.findFirstOrThrow>>;
+  changed: boolean;
+  previousStatus: HomeworkSubmissionStatus | null;
+  effectiveStatus: HomeworkSubmissionStatus;
+};
+
+function endOfDueDate(dueDate: Date) {
+  const end = new Date(dueDate);
+  end.setHours(23, 59, 59, 999);
+  return end;
+}
+
+function isPastHomeworkDeadline(dueDate: Date, now = new Date()) {
+  return endOfDueDate(dueDate) < now;
+}
+
+function normalizeHomeworkStatus(status: HomeworkSubmissionStatus, dueDate: Date, now = new Date()) {
+  if (status === "SUBMITTED" && isPastHomeworkDeadline(dueDate, now)) {
+    return "LATE";
+  }
+  return status;
+}
+
+function notesMatch(left?: string | null, right?: string | null) {
+  return (left?.trim() || null) === (right?.trim() || null);
+}
+
 export async function syncHomeworkSubmissionsForAssignment(
   assignmentId: number,
   schoolId: string,
@@ -67,7 +95,8 @@ export async function markHomeworkSubmission(params: {
   checkedById?: string | null;
   submittedAt?: Date | null;
   note?: string | null;
-}) {
+}): Promise<HomeworkMarkResult> {
+  const now = new Date();
   const assignment = await prisma.assignment.findFirst({
     where: {
       id: params.assignmentId,
@@ -83,14 +112,54 @@ export async function markHomeworkSubmission(params: {
         },
       },
     },
-    select: { id: true },
+    select: { id: true, dueDate: true },
   });
 
   if (!assignment) {
     throw new Error("Student is not part of the class for this homework.");
   }
 
-  return prisma.homeworkSubmission.upsert({
+  const effectiveStatus = normalizeHomeworkStatus(params.status, assignment.dueDate, now);
+  const note = params.note?.trim() || null;
+  const existing = await prisma.homeworkSubmission.findUnique({
+    where: {
+      schoolId_assignmentId_studentId: {
+        schoolId: params.schoolId,
+        assignmentId: params.assignmentId,
+        studentId: params.studentId,
+      },
+    },
+  });
+
+  if (
+    existing?.checkedAt &&
+    existing.status !== "PENDING" &&
+    existing.status !== effectiveStatus &&
+    !note
+  ) {
+    throw new Error("Add a reason before correcting an already checked homework record.");
+  }
+
+  const submittedAt =
+    effectiveStatus === "SUBMITTED" || effectiveStatus === "LATE"
+      ? params.submittedAt ?? existing?.submittedAt ?? now
+      : null;
+
+  if (
+    existing &&
+    existing.status === effectiveStatus &&
+    notesMatch(existing.note, note) &&
+    ((existing.submittedAt?.getTime() ?? null) === (submittedAt?.getTime() ?? null))
+  ) {
+    return {
+      submission: existing,
+      changed: false,
+      previousStatus: existing.status,
+      effectiveStatus,
+    };
+  }
+
+  const submission = await prisma.homeworkSubmission.upsert({
     where: {
       schoolId_assignmentId_studentId: {
         schoolId: params.schoolId,
@@ -102,20 +171,27 @@ export async function markHomeworkSubmission(params: {
       schoolId: params.schoolId,
       assignmentId: params.assignmentId,
       studentId: params.studentId,
-      status: params.status,
+      status: effectiveStatus,
       checkedById: params.checkedById ?? null,
-      submittedAt: params.submittedAt ?? null,
-      checkedAt: new Date(),
-      note: params.note?.trim() || null,
+      submittedAt,
+      checkedAt: now,
+      note,
     },
     update: {
-      status: params.status,
+      status: effectiveStatus,
       checkedById: params.checkedById ?? null,
-      submittedAt: params.submittedAt ?? null,
-      checkedAt: new Date(),
-      note: params.note?.trim() || null,
+      submittedAt,
+      checkedAt: now,
+      note,
     },
   });
+
+  return {
+    submission,
+    changed: true,
+    previousStatus: existing?.status ?? null,
+    effectiveStatus,
+  };
 }
 
 export async function markHomeworkSubmissionsForAssignment(params: {
@@ -127,6 +203,17 @@ export async function markHomeworkSubmissionsForAssignment(params: {
   note?: string | null;
   onlyPending?: boolean;
 }) {
+  const now = new Date();
+  const assignment = await prisma.assignment.findFirst({
+    where: { id: params.assignmentId, schoolId: params.schoolId },
+    select: { dueDate: true },
+  });
+
+  if (!assignment) {
+    throw new Error("Assignment not found for this school.");
+  }
+
+  const effectiveStatus = normalizeHomeworkStatus(params.status, assignment.dueDate, now);
   const targetSubmissions = await prisma.homeworkSubmission.findMany({
     where: {
       schoolId: params.schoolId,
@@ -142,7 +229,6 @@ export async function markHomeworkSubmissionsForAssignment(params: {
   if (targetSubmissions.length === 0) return [];
 
   const submissionIds = targetSubmissions.map((submission) => submission.id);
-  const now = new Date();
 
   await prisma.homeworkSubmission.updateMany({
     where: {
@@ -150,9 +236,12 @@ export async function markHomeworkSubmissionsForAssignment(params: {
       id: { in: submissionIds },
     },
     data: {
-      status: params.status,
+      status: effectiveStatus,
       checkedById: params.checkedById ?? null,
-      submittedAt: params.submittedAt ?? null,
+      submittedAt:
+        effectiveStatus === "SUBMITTED" || effectiveStatus === "LATE"
+          ? params.submittedAt ?? now
+          : null,
       checkedAt: now,
       note: params.note?.trim() || null,
     },

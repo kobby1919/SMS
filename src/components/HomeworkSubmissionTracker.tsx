@@ -30,6 +30,14 @@ const statusTone: Record<HomeworkStatus, string> = {
   EXCUSED: "bg-blue-50 text-blue-700",
 };
 
+const finalStatuses = new Set<HomeworkStatus>(["SUBMITTED", "LATE", "MISSING", "EXCUSED"]);
+
+function isPastDeadline(dueDate: string) {
+  const end = new Date(dueDate);
+  end.setHours(23, 59, 59, 999);
+  return end < new Date();
+}
+
 export default function HomeworkSubmissionTracker({
   assignmentId,
   dueDate,
@@ -45,6 +53,7 @@ export default function HomeworkSubmissionTracker({
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const deadlinePassed = isPastDeadline(dueDate);
 
   const counts = useMemo(() => {
     return submissions.reduce(
@@ -57,10 +66,30 @@ export default function HomeworkSubmissionTracker({
   }, [submissions]);
 
   const mark = (studentId: string, nextStatus: HomeworkStatus) => {
+    const currentSubmission = submissions.find((submission) => submission.studentId === studentId);
+    if (!currentSubmission || currentSubmission.status === nextStatus) {
+      setMessage("No change detected. This record already has that status.");
+      setError(null);
+      return;
+    }
+
     const statusToSave =
-      nextStatus === "SUBMITTED" && new Date(dueDate) < new Date()
+      nextStatus === "SUBMITTED" && deadlinePassed
         ? "LATE"
         : nextStatus;
+    const needsReason =
+      currentSubmission.checkedAt !== null &&
+      finalStatuses.has(currentSubmission.status) &&
+      currentSubmission.status !== statusToSave;
+    const note = needsReason
+      ? window.prompt("Give a short reason for correcting this homework record.")?.trim()
+      : "";
+
+    if (needsReason && !note) {
+      setError("A reason is required before correcting an already checked homework record.");
+      setMessage(null);
+      return;
+    }
 
     setActiveStudentId(studentId);
     setMessage(null);
@@ -68,22 +97,25 @@ export default function HomeworkSubmissionTracker({
 
     startTransition(async () => {
       try {
-        await updateHomeworkSubmission({
+        const result = await updateHomeworkSubmission({
           assignmentId,
           studentId,
           status: statusToSave,
           submittedAt: statusToSave === "SUBMITTED" || statusToSave === "LATE"
             ? new Date().toISOString()
             : null,
+          note: note || null,
         });
         setSubmissions((current) =>
           current.map((submission) =>
             submission.studentId === studentId
-              ? { ...submission, status: statusToSave, checkedAt: new Date().toISOString() }
+              ? result.changed
+                ? { ...submission, status: result.status, checkedAt: new Date().toISOString() }
+                : submission
               : submission,
           ),
         );
-        setMessage("Homework status saved.");
+        setMessage(result.message);
       } catch (caught) {
         setError(caught instanceof Error ? caught.message : "Could not save homework status.");
       } finally {
@@ -94,7 +126,7 @@ export default function HomeworkSubmissionTracker({
 
   const markPending = (nextStatus: HomeworkStatus) => {
     const statusToSave =
-      nextStatus === "SUBMITTED" && new Date(dueDate) < new Date()
+      nextStatus === "SUBMITTED" && deadlinePassed
         ? "LATE"
         : nextStatus;
 
@@ -146,15 +178,24 @@ export default function HomeworkSubmissionTracker({
           <p className="text-xs font-semibold text-slate-500">
             {counts.SUBMITTED + counts.LATE} submitted · {counts.MISSING} missing · {counts.PENDING} pending
           </p>
+          {deadlinePassed && (
+            <p className="mt-1 text-[11px] font-semibold text-amber-600">
+              Deadline passed. New submissions are saved as late.
+            </p>
+          )}
         </div>
-        <div className="flex flex-wrap gap-1">
+        <div className="grid grid-cols-1 gap-1 sm:flex sm:flex-wrap">
           <button
             type="button"
             disabled={isPending || counts.PENDING === 0}
             onClick={() => markPending("SUBMITTED")}
             className="rounded-lg bg-emerald-600 px-2.5 py-1.5 text-[11px] font-black text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {bulkStatus === "SUBMITTED" || bulkStatus === "LATE" ? "Saving..." : "Mark pending submitted"}
+            {bulkStatus === "SUBMITTED" || bulkStatus === "LATE"
+              ? "Saving..."
+              : deadlinePassed
+                ? "Mark pending late"
+                : "Mark pending submitted"}
           </button>
           <button
             type="button"
@@ -175,6 +216,8 @@ export default function HomeworkSubmissionTracker({
       <div className="mt-3 grid gap-2">
         {submissions.map((submission) => {
           const saving = isPending && activeStudentId === submission.studentId;
+          const buttonDisabled = (status: HomeworkStatus) => saving || submission.status === status;
+          const submittedTitle = deadlinePassed ? "Mark late submission" : "Mark submitted";
           return (
             <div
               key={submission.id}
@@ -189,16 +232,16 @@ export default function HomeworkSubmissionTracker({
               <div className="grid grid-cols-4 gap-1 sm:flex sm:items-center">
                 <button
                   type="button"
-                  disabled={saving}
+                  disabled={buttonDisabled(deadlinePassed ? "LATE" : "SUBMITTED")}
                   onClick={() => mark(submission.studentId, "SUBMITTED")}
                   className="inline-flex h-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 transition hover:bg-emerald-100 disabled:opacity-50"
-                  title="Mark submitted"
+                  title={submittedTitle}
                 >
                   {saving ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
                 </button>
                 <button
                   type="button"
-                  disabled={saving}
+                  disabled={buttonDisabled("MISSING")}
                   onClick={() => mark(submission.studentId, "MISSING")}
                   className="inline-flex h-8 items-center justify-center rounded-lg bg-rose-50 text-rose-700 transition hover:bg-rose-100 disabled:opacity-50"
                   title="Mark missing"
@@ -207,7 +250,7 @@ export default function HomeworkSubmissionTracker({
                 </button>
                 <button
                   type="button"
-                  disabled={saving}
+                  disabled={buttonDisabled("EXCUSED")}
                   onClick={() => mark(submission.studentId, "EXCUSED")}
                   className="inline-flex h-8 items-center justify-center rounded-lg bg-blue-50 text-blue-700 transition hover:bg-blue-100 disabled:opacity-50"
                   title="Mark excused"
@@ -216,7 +259,7 @@ export default function HomeworkSubmissionTracker({
                 </button>
                 <button
                   type="button"
-                  disabled={saving}
+                  disabled={buttonDisabled("PENDING")}
                   onClick={() => mark(submission.studentId, "PENDING")}
                   className="inline-flex h-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600 transition hover:bg-slate-200 disabled:opacity-50"
                   title="Reset to pending"

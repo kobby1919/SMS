@@ -596,6 +596,12 @@ export type HomeworkSubmissionFormData = {
   note?: string | null;
 };
 
+export type HomeworkSubmissionActionResult = {
+  changed: boolean;
+  status: "PENDING" | "SUBMITTED" | "LATE" | "MISSING" | "EXCUSED";
+  message: string;
+};
+
 type AssignmentWithHomeworkAccess = NonNullable<Awaited<ReturnType<typeof getAssignmentForHomeworkAccess>>>;
 
 async function getAssignmentForHomeworkAccess(assignmentId: number, schoolId: string) {
@@ -623,7 +629,7 @@ function requireHomeworkTeacherAccess(
   }
 }
 
-export async function updateHomeworkSubmission(data: HomeworkSubmissionFormData): Promise<void> {
+export async function updateHomeworkSubmission(data: HomeworkSubmissionFormData): Promise<HomeworkSubmissionActionResult> {
   const parsed = parseActionInput(homeworkSubmissionSchema, data);
   const ctx = await requireAdminOrTeacher();
 
@@ -631,7 +637,7 @@ export async function updateHomeworkSubmission(data: HomeworkSubmissionFormData)
   const assignmentInSchool = requireResourceAccess(assignment, ctx);
   requireHomeworkTeacherAccess(assignmentInSchool, ctx);
 
-  const submission = await markHomeworkSubmission({
+  const result = await markHomeworkSubmission({
     schoolId: ctx.schoolId,
     assignmentId: parsed.assignmentId,
     studentId: parsed.studentId,
@@ -640,37 +646,51 @@ export async function updateHomeworkSubmission(data: HomeworkSubmissionFormData)
     submittedAt: parsed.submittedAt ? new Date(parsed.submittedAt) : null,
     note: parsed.note ?? null,
   });
+  const submission = result.submission;
+  const effectiveStatus = result.effectiveStatus;
 
-  const statusLabel = parsed.status.toLowerCase().replace(/_/g, " ");
-  await recordParentActivityEvents({
-    schoolId: ctx.schoolId,
-    studentIds: [parsed.studentId],
-    teacherId: ctx.role === "teacher" ? ctx.userId : assignmentInSchool.lesson.teacherId,
-    type: "ASSIGNMENT",
-    title: `${assignmentInSchool.lesson.subject.name} homework ${statusLabel}`,
-    body: [
-      `${assignmentInSchool.lesson.subject.name}: ${assignmentInSchool.title}`,
-      `Status: ${statusLabel}`,
-      `Teacher: ${assignmentInSchool.lesson.teacher.name} ${assignmentInSchool.lesson.teacher.surname}`,
-      parsed.note ? `Note: ${parsed.note}` : null,
-    ].filter(Boolean).join("\n"),
-    href: "/list/assignments",
-    sourceModel: "HomeworkSubmission",
-    sourceId: String(submission.id),
-    sourceKey: `homework-submission:${submission.id}`,
-    occurredAt: submission.checkedAt ?? new Date(),
-    payload: {
-      assignmentTitle: assignmentInSchool.title,
-      subjectName: assignmentInSchool.lesson.subject.name,
-      status: parsed.status,
-      note: parsed.note ?? null,
-    },
-  });
+  if (result.changed) {
+    const statusLabel = effectiveStatus.toLowerCase().replace(/_/g, " ");
+    await recordParentActivityEvents({
+      schoolId: ctx.schoolId,
+      studentIds: [parsed.studentId],
+      teacherId: ctx.role === "teacher" ? ctx.userId : assignmentInSchool.lesson.teacherId,
+      type: "ASSIGNMENT",
+      title: `${assignmentInSchool.lesson.subject.name} homework ${statusLabel}`,
+      body: [
+        `${assignmentInSchool.lesson.subject.name}: ${assignmentInSchool.title}`,
+        `Status: ${statusLabel}`,
+        `Teacher: ${assignmentInSchool.lesson.teacher.name} ${assignmentInSchool.lesson.teacher.surname}`,
+        parsed.note ? `Note: ${parsed.note}` : null,
+      ].filter(Boolean).join("\n"),
+      href: "/list/assignments",
+      sourceModel: "HomeworkSubmission",
+      sourceId: String(submission.id),
+      sourceKey: `homework-submission:${submission.id}:${effectiveStatus}:${submission.checkedAt?.getTime() ?? Date.now()}`,
+      occurredAt: submission.checkedAt ?? new Date(),
+      payload: {
+        assignmentTitle: assignmentInSchool.title,
+        subjectName: assignmentInSchool.lesson.subject.name,
+        status: effectiveStatus,
+        note: parsed.note ?? null,
+      },
+    });
+  }
 
   revalidatePath("/list/assignments");
   revalidatePath("/parent");
   revalidatePath("/parent/updates");
   revalidateDashboard(ctx.schoolId);
+
+  return {
+    changed: result.changed,
+    status: effectiveStatus,
+    message: result.changed
+      ? effectiveStatus === "LATE" && parsed.status === "SUBMITTED"
+        ? "Deadline has passed, so this was saved as late."
+        : "Homework status saved."
+      : "No change detected. This record was already saved.",
+  };
 }
 
 export type HomeworkBulkSubmissionFormData = {
@@ -687,9 +707,12 @@ export async function updateHomeworkSubmissionsBulk(data: HomeworkBulkSubmission
   const assignmentInSchool = requireResourceAccess(assignment, ctx);
   requireHomeworkTeacherAccess(assignmentInSchool, ctx);
 
-  const effectiveStatus = parsed.status === "SUBMITTED" && assignmentInSchool.dueDate < new Date()
-    ? "LATE"
-    : parsed.status;
+  const isPastDeadline = (() => {
+    const end = new Date(assignmentInSchool.dueDate);
+    end.setHours(23, 59, 59, 999);
+    return end < new Date();
+  })();
+  const effectiveStatus = parsed.status === "SUBMITTED" && isPastDeadline ? "LATE" : parsed.status;
 
   const submissions = await markHomeworkSubmissionsForAssignment({
     schoolId: ctx.schoolId,
