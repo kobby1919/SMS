@@ -3,6 +3,7 @@
 import prisma from "@/src/lib/prisma";
 import { requirePageSession } from "@/src/lib/authz";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   CheckCircle2, XCircle, Clock, FileCheck,
   AlertTriangle, Users, CalendarDays, TrendingUp,
@@ -21,6 +22,10 @@ const AttendanceListPage = async ({
   searchParams: Promise<{ classId?: string; date?: string; status?: string }>;
 }) => {
   const { role, schoolId } = await requirePageSession();
+
+  if (role === "teacher") {
+    redirect("/list/attendance/take");
+  }
 
   const params = await searchParams;
   const today  = new Date();

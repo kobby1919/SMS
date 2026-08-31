@@ -72,7 +72,7 @@ const teacherMenuItems = [
       {
         icon: UserCheck,
         label: "Attendance",
-        href: "/list/attendance",
+        href: "/list/attendance/take",
         visible: ["teacher"],
       },
       {
