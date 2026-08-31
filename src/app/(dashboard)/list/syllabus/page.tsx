@@ -28,14 +28,32 @@ const SyllabusListPage = async ({
   const filterYear    = sp.year    as string | undefined;
   const filterStatus  = sp.status  as string | undefined;
 
-  // For teachers: only show syllabi for subjects they teach
+  // For teachers: the timetable is the source of truth for subject/class ownership.
   let teacherSubjectIds: number[] | undefined;
+  let teacherGradeIds: number[] | undefined;
+  let teacherSyllabusPairs: { subjectId: number; gradeId: number }[] | undefined;
   if (role === "teacher") {
-    const teacher = await prisma.teacher.findFirst({
-      where:  { id: userId, schoolId },
-      select: { subjects: { select: { id: true } } },
+    const lessons = await prisma.lesson.findMany({
+      where: { teacherId: userId, schoolId },
+      select: {
+        subjectId: true,
+        class: { select: { gradeId: true } },
+      },
     });
-    teacherSubjectIds = teacher?.subjects.map((s) => s.id) ?? [];
+    const pairKeys = new Set<string>();
+    teacherSyllabusPairs = lessons
+      .map((lesson) => ({
+        subjectId: lesson.subjectId,
+        gradeId: lesson.class.gradeId,
+      }))
+      .filter((pair) => {
+        const key = `${pair.subjectId}:${pair.gradeId}`;
+        if (pairKeys.has(key)) return false;
+        pairKeys.add(key);
+        return true;
+      });
+    teacherSubjectIds = [...new Set(teacherSyllabusPairs.map((pair) => pair.subjectId))];
+    teacherGradeIds = [...new Set(teacherSyllabusPairs.map((pair) => pair.gradeId))];
   }
 
   const where: Prisma.SyllabusWhereInput = { schoolId };
@@ -44,7 +62,17 @@ const SyllabusListPage = async ({
   if (filterTerm)                where.term      = filterTerm as Term;
   if (filterYear)                where.academicYear = filterYear;
   if (filterStatus)              where.status    = filterStatus as SyllabusStatus;
-  if (teacherSubjectIds)         where.subjectId = { in: teacherSubjectIds };
+  if (role === "teacher" && !filterStatus) where.status = "PUBLISHED";
+  if (teacherSyllabusPairs) {
+    if (teacherSyllabusPairs.length === 0) {
+      where.id = { in: [] };
+    } else {
+      where.OR = teacherSyllabusPairs.map((pair) => ({
+        subjectId: pair.subjectId,
+        gradeId: pair.gradeId,
+      }));
+    }
+  }
 
   const syllabi = await prisma.syllabus.findMany({
     where,
@@ -61,8 +89,14 @@ const SyllabusListPage = async ({
     orderBy: [{ grade: { order: "asc" } }, { subject: { name: "asc" } }, { term: "asc" }],
   });
 
-  const subjects = await prisma.subject.findMany({ where: { schoolId }, orderBy: { name: "asc" } });
-  const grades   = await prisma.grade.findMany({ where: { schoolId }, orderBy: { order: "asc" } });
+  const subjects = await prisma.subject.findMany({
+    where: { schoolId, ...(teacherSubjectIds ? { id: { in: teacherSubjectIds } } : {}) },
+    orderBy: { name: "asc" },
+  });
+  const grades   = await prisma.grade.findMany({
+    where: { schoolId, ...(teacherGradeIds ? { id: { in: teacherGradeIds } } : {}) },
+    orderBy: { order: "asc" },
+  });
   const configs  = await prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } });
   const years    = configs.map((c) => c.academicYear);
 
@@ -70,7 +104,7 @@ const SyllabusListPage = async ({
   const totalDraft     = syllabi.filter((s) => s.status === "DRAFT").length;
 
   return (
-    <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
+    <div className="flex-1 m-3 mt-0 flex flex-col gap-4 sm:m-4 sm:mt-0">
 
       {/* Header */}
       <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
@@ -80,16 +114,20 @@ const SyllabusListPage = async ({
               <BookMarked size={20} className="text-violet-600" />
             </div>
             <div>
-              <h1 className="text-xl font-black text-gray-800 tracking-tight">Syllabi</h1>
+              <h1 className="text-xl font-black text-gray-800 tracking-tight">
+                {role === "teacher" ? "My Teaching Guide" : "Syllabi"}
+              </h1>
               <p className="text-sm text-gray-400 mt-0.5 font-medium">
-                {syllabi.length} syllabi · {totalPublished} published · {totalDraft} draft
+                {role === "teacher"
+                  ? `${syllabi.length} published guide${syllabi.length !== 1 ? "s" : ""} from your timetable`
+                  : `${syllabi.length} syllabi · ${totalPublished} published · ${totalDraft} draft`}
               </p>
             </div>
           </div>
           {role === "admin" && (
             <Link
               href="/list/syllabus/new"
-              className="flex items-center gap-2 px-4 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-bold hover:bg-violet-700 transition-colors shadow-sm shrink-0"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-violet-700 sm:w-auto sm:shrink-0"
             >
               <Plus size={16} /> New Syllabus
             </Link>
@@ -103,7 +141,7 @@ const SyllabusListPage = async ({
           <Filter size={13} className="text-gray-400" />
           <p className="text-xs font-black uppercase tracking-wider text-gray-400">Filters</p>
         </div>
-        <form className="flex flex-wrap gap-2">
+        <form className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:flex lg:flex-wrap">
           <select name="subject" defaultValue={filterSubject ?? ""} className="appearance-none ring-[1.5px] ring-gray-200 px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 outline-none bg-white">
             <option value="">All Subjects</option>
             {subjects.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
@@ -125,10 +163,10 @@ const SyllabusListPage = async ({
             <option value="DRAFT">Draft</option>
             <option value="PUBLISHED">Published</option>
           </select>
-          <button type="submit" className="px-4 py-2 bg-violet-600 text-white rounded-xl text-sm font-bold hover:bg-violet-700 transition-colors">
+          <button type="submit" className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-violet-700">
             Apply
           </button>
-          <Link href="/list/syllabus" className="px-4 py-2 bg-gray-100 text-gray-600 rounded-xl text-sm font-bold hover:bg-gray-200 transition-colors">
+          <Link href="/list/syllabus" className="rounded-xl bg-gray-100 px-4 py-2 text-center text-sm font-bold text-gray-600 transition-colors hover:bg-gray-200">
             Clear
           </Link>
         </form>
@@ -138,7 +176,9 @@ const SyllabusListPage = async ({
       {syllabi.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-16 text-center">
           <BookMarked size={32} className="text-gray-200 mx-auto mb-3" />
-          <p className="text-sm font-bold text-gray-400">No syllabi found</p>
+          <p className="text-sm font-bold text-gray-400">
+            {role === "teacher" ? "No published teaching guides are linked to your timetable yet" : "No syllabi found"}
+          </p>
           {role === "admin" && (
             <Link href="/list/syllabus/new" className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-violet-600 hover:text-violet-700">
               <Plus size={13} /> Create your first syllabus

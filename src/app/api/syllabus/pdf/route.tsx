@@ -385,19 +385,34 @@ export async function GET(req: NextRequest) {
 
     if (!syllabus) return new NextResponse("Syllabus not found", { status: 404 });
 
-    // For teachers: verify they teach this subject
+    let teacherClassIds: number[] | null = null;
+
+    // For teachers: verify they teach this syllabus subject/grade through the timetable.
     if (role === "teacher") {
-      const teacher = await prisma.teacher.findFirst({
-        where:  { id: userId, schoolId },
-        select: { subjects: { select: { id: true } } },
+      const teacherClasses = await prisma.class.findMany({
+        where: {
+          schoolId,
+          gradeId: syllabus.gradeId,
+          lessons: {
+            some: {
+              teacherId: userId,
+              subjectId: syllabus.subjectId,
+            },
+          },
+        },
+        select: { id: true },
       });
-      const teachesSubject = teacher?.subjects.some((s) => s.id === syllabus.subjectId);
-      if (!teachesSubject) return new NextResponse("Forbidden", { status: 403 });
+      teacherClassIds = teacherClasses.map((cls) => cls.id);
+      if (teacherClassIds.length === 0) return new NextResponse("Forbidden", { status: 403 });
     }
 
     // Grade classes for progress summary
     const gradeClasses = await prisma.class.findMany({
-      where:  { schoolId, gradeId: syllabus.gradeId },
+      where:  {
+        schoolId,
+        gradeId: syllabus.gradeId,
+        ...(teacherClassIds ? { id: { in: teacherClassIds } } : {}),
+      },
       select: { id: true, name: true },
       orderBy: { name: "asc" },
     });

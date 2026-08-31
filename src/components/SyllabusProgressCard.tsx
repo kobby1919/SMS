@@ -36,20 +36,25 @@ const SyllabusProgressCard = ({
   );
   const [showNotes,  setShowNotes]  = useState<Record<number, boolean>>({});
   const [error,      setError]      = useState<string | null>(null);
+  const [success,    setSuccess]    = useState<string | null>(null);
   const [isPending,  startTransition] = useTransition();
 
   const isCovered = (classId: number) => coveredIds.includes(classId);
 
   const toggle = (classId: number) => {
     setError(null);
+    setSuccess(null);
     startTransition(async () => {
       try {
+        const className = teacherClasses.find((cls) => cls.id === classId)?.name ?? "Class";
         if (isCovered(classId)) {
           await unmarkTopicCovered(topicId, classId);
           setCoveredIds((prev) => prev.filter((id) => id !== classId));
+          setSuccess(`${className} marked as not covered.`);
         } else {
           await markTopicCovered(topicId, classId, notes[classId] ?? "");
           setCoveredIds((prev) => [...prev, classId]);
+          setSuccess(`${className} marked as covered.`);
         }
       } catch (e: unknown) {
         setError(e instanceof Error ? e.message : "Failed to update progress.");
@@ -58,10 +63,13 @@ const SyllabusProgressCard = ({
   };
 
   const saveNote = (classId: number) => {
+    setError(null);
+    setSuccess(null);
     startTransition(async () => {
       try {
         await markTopicCovered(topicId, classId, notes[classId] ?? "");
         setShowNotes((prev) => ({ ...prev, [classId]: false }));
+        setSuccess("Progress note saved.");
       } catch (e: unknown) {
         setError(e instanceof Error ? e.message : "Failed to save note.");
       }
@@ -77,6 +85,9 @@ const SyllabusProgressCard = ({
       {error && (
         <p className="text-xs text-rose-500 font-semibold mb-2">{error}</p>
       )}
+      {success && (
+        <p className="text-xs text-emerald-600 font-semibold mb-2">{success}</p>
+      )}
 
       <div className="flex flex-col gap-2">
         {teacherClasses.map((cls) => {
@@ -86,7 +97,7 @@ const SyllabusProgressCard = ({
 
           return (
             <div key={cls.id} className={`rounded-xl border transition-colors ${covered ? "bg-emerald-50 border-emerald-200" : "bg-gray-50 border-gray-200"}`}>
-              <div className="flex items-center gap-3 px-4 py-3">
+              <div className="flex items-center gap-3 px-3 py-3 sm:px-4">
                 {/* Toggle button */}
                 <button
                   type="button"
@@ -128,7 +139,7 @@ const SyllabusProgressCard = ({
 
               {/* Note input */}
               {noteOpen && (
-                <div className="px-4 pb-3 flex gap-2">
+                <div className="flex flex-col gap-2 px-3 pb-3 sm:flex-row sm:px-4">
                   <input
                     type="text"
                     value={notes[cls.id] ?? ""}
@@ -141,7 +152,7 @@ const SyllabusProgressCard = ({
                       type="button"
                       onClick={() => saveNote(cls.id)}
                       disabled={isPending}
-                      className="px-3 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                      className="rounded-xl bg-indigo-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
                     >
                       Save
                     </button>

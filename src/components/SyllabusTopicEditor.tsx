@@ -6,7 +6,7 @@
 import { useState, useTransition } from "react";
 import {
   Plus, Trash2, ChevronUp, ChevronDown, Save,
-  Loader2, AlertCircle, CheckCircle2, Globe, Lock, X,
+  Loader2, AlertCircle, CheckCircle2, Globe, Lock, X, Wand2,
 } from "lucide-react";
 import {
   upsertSyllabusTopic,
@@ -94,7 +94,7 @@ function TagInput({
 // ─── Empty topic factory ──────────────────────────────────────────────────────
 function emptyTopic(order: number): Topic {
   return {
-    weekNumber: 1, durationWeeks: 1, order,
+    weekNumber: order, durationWeeks: 1, order,
     title: "", subtopics: [], objectives: [], coreCompetencies: [], teachingResources: "",
   };
 }
@@ -108,6 +108,9 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
   const [toast,     setToast]     = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
+  const completeTopics = topics.filter((topic) => topic.title.trim()).length;
+  const unsavedTopics = topics.filter((topic) => !topic.id).length;
+
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 2500);
@@ -118,6 +121,14 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
     const newTopic = emptyTopic(topics.length + 1);
     setTopics([...topics, newTopic]);
     setEditing(topics.length); // open the new one immediately
+  };
+
+  const planTwelveWeeks = () => {
+    if (topics.length > 0) return;
+    const planned = Array.from({ length: 12 }, (_, index) => emptyTopic(index + 1));
+    setTopics(planned);
+    setEditing(0);
+    showToast("12 weekly slots added. Fill the titles, then save each topic.");
   };
 
   // ── Update local state for a topic field ──────────────────────────────────
@@ -137,7 +148,7 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
 
     startTransition(async () => {
       try {
-        await upsertSyllabusTopic({
+        const saved = await upsertSyllabusTopic({
           id:                t.id,
           syllabusId,
           weekNumber:        t.weekNumber,
@@ -148,6 +159,11 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
           objectives:        t.objectives,
           coreCompetencies:  t.coreCompetencies,
           teachingResources: t.teachingResources,
+        });
+        setTopics((prev) => {
+          const next = [...prev];
+          next[idx] = { ...next[idx], id: saved.id, order: idx + 1 };
+          return next;
         });
         showToast("Topic saved ✓");
         setEditing(null);
@@ -220,8 +236,23 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
             {status === "PUBLISHED" ? "Published" : "Draft"}
           </span>
           <span className="text-xs text-gray-400 font-semibold">{topics.length} topic{topics.length !== 1 ? "s" : ""}</span>
+          {topics.length > 0 && (
+            <span className="hidden text-xs font-semibold text-gray-400 sm:inline">
+              {completeTopics}/{topics.length} titled
+              {unsavedTopics > 0 ? ` · ${unsavedTopics} unsaved` : ""}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2">
+          {topics.length === 0 && (
+            <button
+              type="button"
+              onClick={planTwelveWeeks}
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl text-sm font-bold hover:bg-indigo-100 transition-colors"
+            >
+              <Wand2 size={14} /> Plan 12 Weeks
+            </button>
+          )}
           <button
             type="button"
             onClick={togglePublish}
@@ -264,14 +295,23 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
       {topics.length === 0 && (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
           <p className="text-sm font-bold text-gray-400 mb-2">No topics yet</p>
-          <p className="text-xs text-gray-300 mb-4">Click &quot;Add Topic&quot; to get started.</p>
-          <button
-            type="button"
-            onClick={addTopic}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-xl text-sm font-bold hover:bg-violet-700 transition-colors"
-          >
-            <Plus size={14} /> Add First Topic
-          </button>
+          <p className="text-xs text-gray-300 mb-4">Start with one topic, or create weekly slots for a full term.</p>
+          <div className="flex flex-col justify-center gap-2 sm:flex-row">
+            <button
+              type="button"
+              onClick={addTopic}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-xl text-sm font-bold hover:bg-violet-700 transition-colors"
+            >
+              <Plus size={14} /> Add First Topic
+            </button>
+            <button
+              type="button"
+              onClick={planTwelveWeeks}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl text-sm font-bold hover:bg-indigo-100 transition-colors"
+            >
+              <Wand2 size={14} /> Plan 12 Weeks
+            </button>
+          </div>
         </div>
       )}
 
@@ -354,6 +394,7 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
                       <input
                         type="number"
                         min={1}
+                        max={16}
                         value={topic.weekNumber}
                         onChange={(e) => updateLocal(idx, "weekNumber", parseInt(e.target.value) || 1)}
                         className="ring-[1.5px] ring-gray-200 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 focus:ring-violet-500 outline-none"
@@ -364,6 +405,7 @@ const SyllabusTopicEditor = ({ syllabusId, syllabusStatus, initialTopics }: Prop
                       <input
                         type="number"
                         min={1}
+                        max={16}
                         value={topic.durationWeeks}
                         onChange={(e) => updateLocal(idx, "durationWeeks", parseInt(e.target.value) || 1)}
                         className="ring-[1.5px] ring-gray-200 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 focus:ring-violet-500 outline-none"

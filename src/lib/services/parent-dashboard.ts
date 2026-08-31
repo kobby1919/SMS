@@ -6,6 +6,7 @@ import {
   syncParentNotificationsFromSources,
   type ParentNotificationFeedItem,
 } from "@/src/lib/services/parent-notifications";
+import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 
 export type ParentActivityFeedItem = ParentNotificationFeedItem;
 
@@ -35,6 +36,22 @@ export type ParentAcademicProgress = {
   trendDiff: number;
   subjects: ParentAcademicProgressSubject[];
   focusSubjects: ParentAcademicProgressSubject[];
+};
+
+export type ParentLearningProgressSubject = {
+  syllabusId: number;
+  subjectName: string;
+  currentTopics: string[];
+  nextTopic: string | null;
+  coveredTopics: number;
+  totalTopics: number;
+  progressPct: number;
+  status: "not-started" | "learning-now" | "behind" | "on-track" | "completed";
+};
+
+export type ParentLearningProgress = {
+  currentWeek: number;
+  subjects: ParentLearningProgressSubject[];
 };
 
 export type ParentRiskAlert = {
@@ -215,13 +232,33 @@ function buildAttendanceInsight({
   };
 }
 
+function startMonthForTerm(term: string) {
+  if (term === "TERM_1") return 8;
+  if (term === "TERM_2") return 0;
+  return 4;
+}
+
+function currentSyllabusWeek(term: string, academicYear: string) {
+  const startYear = Number.parseInt(academicYear.split("/")[0], 10);
+  const now = new Date();
+  const fallbackYear = Number.isFinite(startYear) ? startYear : now.getFullYear();
+  const termStart = new Date(fallbackYear, startMonthForTerm(term), 1);
+  const diffMs = now.getTime() - termStart.getTime();
+  const week = Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000)) + 1;
+  return Math.max(1, Math.min(16, week));
+}
+
+function topicEndWeek(topic: { weekNumber: number; durationWeeks: number }) {
+  return topic.weekNumber + topic.durationWeeks - 1;
+}
+
 export async function getParentDashboardData(userId: string, schoolId: string) {
   const parent = await prisma.parent.findFirst({
     where: { id: userId, schoolId },
     include: {
       students: {
         where: { schoolId },
-        include: { class: { select: { id: true, name: true } } },
+        include: { class: { select: { id: true, name: true, gradeId: true } } },
         orderBy: { name: "asc" },
       },
     },
@@ -252,7 +289,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  const [lessons, attendance, assessments, caActivityScores, classCounts, assignments, homeworkSubmissions, announcements, bills, payments, caConfigs] = await Promise.all([
+  const [lessons, attendance, assessments, caActivityScores, classCounts, assignments, homeworkSubmissions, announcements, bills, payments, caConfigs, activePeriod] = await Promise.all([
     prisma.lesson.findMany({
       where: { schoolId, classId: { in: classIds } },
       include: {
@@ -381,8 +418,38 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       where: { schoolId },
       select: { academicYear: true, classworkWeight: true },
     }),
+    getActiveAcademicPeriod(schoolId),
   ]);
   const caConfigByYear = new Map(caConfigs.map((config) => [config.academicYear, config]));
+  const syllabusWeek = currentSyllabusWeek(activePeriod.currentTerm, activePeriod.academicYear);
+  const gradeIds = [...new Set(children.map((child) => child.class.gradeId))];
+  const publishedSyllabi = gradeIds.length
+    ? await prisma.syllabus.findMany({
+        where: {
+          schoolId,
+          status: "PUBLISHED",
+          term: activePeriod.currentTerm,
+          academicYear: activePeriod.academicYear,
+          gradeId: { in: gradeIds },
+        },
+        include: {
+          subject: { select: { id: true, name: true } },
+          topics: {
+            select: {
+              id: true,
+              title: true,
+              weekNumber: true,
+              durationWeeks: true,
+              progress: {
+                where: { schoolId, classId: { in: classIds } },
+                select: { classId: true },
+              },
+            },
+            orderBy: { order: "asc" },
+          },
+        },
+      })
+    : [];
 
   const lessonsByClass = new Map<number, CalendarLesson[]>();
   for (const lesson of lessons) {
@@ -689,6 +756,46 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
         .filter((subject) => subject.isMature && (subject.status !== "strong" || subject.trend === "down"))
         .slice(0, 3),
     };
+    const childSyllabi = publishedSyllabi.filter((syllabus) =>
+      syllabus.gradeId === child.class.gradeId &&
+      expectedSubjects.has(syllabus.subjectId),
+    );
+    const learningProgress: ParentLearningProgress = {
+      currentWeek: syllabusWeek,
+      subjects: childSyllabi.map((syllabus) => {
+        const coveredTopicIds = new Set(
+          syllabus.topics
+            .filter((topic) => topic.progress.some((progress) => progress.classId === child.classId))
+            .map((topic) => topic.id),
+        );
+        const currentTopics = syllabus.topics
+          .filter((topic) => topic.weekNumber <= syllabusWeek && topicEndWeek(topic) >= syllabusWeek)
+          .map((topic) => topic.title);
+        const overdueCount = syllabus.topics.filter(
+          (topic) => topicEndWeek(topic) < syllabusWeek && !coveredTopicIds.has(topic.id),
+        ).length;
+        const nextTopic = syllabus.topics.find((topic) => !coveredTopicIds.has(topic.id)) ?? null;
+        const totalTopics = syllabus.topics.length;
+        const coveredTopics = coveredTopicIds.size;
+        const status =
+          totalTopics === 0 ? "not-started" :
+          coveredTopics >= totalTopics ? "completed" :
+          overdueCount > 0 ? "behind" :
+          currentTopics.length > 0 ? "learning-now" :
+          "on-track";
+
+        return {
+          syllabusId: syllabus.id,
+          subjectName: syllabus.subject.name,
+          currentTopics,
+          nextTopic: nextTopic?.title ?? null,
+          coveredTopics,
+          totalTopics,
+          progressPct: totalTopics > 0 ? Math.round((coveredTopics / totalTopics) * 100) : 0,
+          status,
+        };
+      }),
+    };
     const financeSummary: ParentFinanceSummary = {
       totalBilled: childBills.reduce((sum, bill) => sum + Number(bill.totalAmount), 0),
       totalPaid: childBills.reduce((sum, bill) => sum + Number(bill.amountPaid), 0),
@@ -942,6 +1049,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
         weakSubject: sortedByGradePoint.at(-1) ?? null,
       },
       academicProgress,
+      learningProgress,
       financeSummary,
       homeworkSummary,
       communicationSummary,

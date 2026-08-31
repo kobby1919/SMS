@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   Award,
   BellRing,
+  BookOpenCheck,
   CheckCircle2,
   Clock3,
   ClipboardList,
@@ -102,6 +103,21 @@ function insightToneClass(tone: string) {
       return "bg-rose-50 text-rose-700 ring-rose-100";
     default:
       return "bg-slate-50 text-slate-600 ring-slate-100";
+  }
+}
+
+function learningStatusMeta(status: string) {
+  switch (status) {
+    case "completed":
+      return { label: "Completed", className: "bg-emerald-50 text-emerald-700 ring-emerald-100" };
+    case "behind":
+      return { label: "Needs follow-up", className: "bg-amber-50 text-amber-700 ring-amber-100" };
+    case "learning-now":
+      return { label: "Learning now", className: "bg-sky-50 text-sky-700 ring-sky-100" };
+    case "on-track":
+      return { label: "On track", className: "bg-indigo-50 text-indigo-700 ring-indigo-100" };
+    default:
+      return { label: "Not started", className: "bg-slate-50 text-slate-600 ring-slate-100" };
   }
 }
 
@@ -242,6 +258,60 @@ export default async function ParentChildCheckupPage({
             </p>
           )}
         </div>
+      </section>
+
+      <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <BookOpenCheck size={16} className="text-emerald-600" />
+              <h2 className="text-sm font-black text-gray-900">Learning this term</h2>
+            </div>
+            <p className="mt-1 text-xs font-semibold leading-relaxed text-gray-400">
+              Simple syllabus progress from the school&apos;s published teaching guide.
+            </p>
+          </div>
+          <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-black text-emerald-700">
+            Week {child.learningProgress.currentWeek}
+          </span>
+        </div>
+
+        {child.learningProgress.subjects.length > 0 ? (
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {child.learningProgress.subjects.map((subject) => {
+              const meta = learningStatusMeta(subject.status);
+              const currentTopicLabel = subject.currentTopics.length > 0
+                ? subject.currentTopics.join(", ")
+                : subject.nextTopic ?? "Waiting for the next topic";
+              return (
+                <div key={subject.syllabusId} className="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-black text-gray-900">{subject.subjectName}</p>
+                      <p className="mt-1 line-clamp-2 text-xs font-semibold leading-relaxed text-gray-500">
+                        This week: {currentTopicLabel}
+                      </p>
+                    </div>
+                    <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-black ring-1 ${meta.className}`}>
+                      {meta.label}
+                    </span>
+                  </div>
+                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-white">
+                    <div className="h-full rounded-full bg-emerald-500" style={{ width: `${subject.progressPct}%` }} />
+                  </div>
+                  <p className="mt-1.5 text-[10px] font-bold text-gray-400">
+                    {subject.coveredTopics}/{subject.totalTopics} topics covered
+                    {subject.nextTopic ? ` · Next: ${subject.nextTopic}` : ""}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="mt-4 rounded-xl bg-slate-50 px-3 py-4 text-sm font-semibold text-gray-400">
+            No published learning guide is available for this ward&apos;s class yet.
+          </p>
+        )}
       </section>
 
       <section className="grid gap-3 md:grid-cols-2">
