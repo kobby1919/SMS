@@ -116,12 +116,6 @@ const teacherMenuItems = [
     title: "School",
     items: [
       {
-        icon: GraduationCap,
-        label: "Exams",
-        href: "/list/exams",
-        visible: ["teacher"],
-      },
-      {
         icon: Megaphone,
         label: "Notices",
         href: "/list/announcements",
