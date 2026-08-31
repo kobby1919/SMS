@@ -103,10 +103,10 @@ const TakeAttendancePage = async ({
   }
 
   return (
-    <div className="flex-1 m-4 mt-0">
+    <div className="flex-1 m-3 mt-0 sm:m-4 sm:mt-0">
       {isWeekend ? (
         <div className="flex flex-col items-center justify-center h-[50vh] bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
-          <div className="text-4xl mb-4">🏖️</div>
+          <div className="mb-4 text-4xl" aria-hidden="true">--</div>
           <h2 className="text-xl font-bold text-gray-800">It&apos;s the Weekend!</h2>
           <p className="text-gray-500 max-w-xs mt-2">
             No lessons are scheduled for {dayOfWeekStr.toLowerCase()}. You can only take attendance on school days (Mon-Fri).

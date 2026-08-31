@@ -27,7 +27,7 @@ const SingleStudentPage = async ({
   params: Promise<{ id: string }>;
 }) => {
   const { id }   = await params;
-  const { role, schoolId } = await requirePageSession();
+  const { userId, role, schoolId } = await requirePageSession();
 
   const student = await prisma.student.findFirst({
     where:   { id, schoolId },
@@ -52,6 +52,10 @@ const SingleStudentPage = async ({
   });
 
   if (!student) notFound();
+
+  if (role === "teacher" && !student.class.lessons.some((lesson) => lesson.teacherId === userId)) {
+    notFound();
+  }
 
   // ── Calendar lessons ───────────────────────────────────────────────────────
   const calendarLessons: CalendarLesson[] = student.class.lessons.map((l) => ({

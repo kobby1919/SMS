@@ -400,10 +400,9 @@ const CAEntryForm = ({
           No students in this class.
         </div>
       ) : (
-        <div className="border border-gray-100 rounded-2xl overflow-hidden">
-          <div className="w-full overflow-x-auto">
+        <div className="overflow-hidden rounded-2xl border border-gray-100">
           {/* Table header */}
-          <div className="grid min-w-[720px] grid-cols-[2fr_1fr_1fr_1fr_2fr] gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
+          <div className="hidden grid-cols-[2fr_1fr_1fr_1fr_2fr] gap-2 border-b border-gray-100 bg-gray-50 px-4 py-3 sm:grid">
             <span className="text-xs font-black uppercase tracking-wider text-gray-400">Student</span>
             <span className="text-xs font-black uppercase tracking-wider text-gray-400">
               {activityCAEnabled ? `Auto CA (${cwWeight})` : `Classwork (${cwWeight}%)`}
@@ -416,7 +415,7 @@ const CAEntryForm = ({
           </div>
 
           {/* Rows */}
-          <div className="min-w-[720px] divide-y divide-gray-50 max-h-[420px] overflow-y-auto">
+          <div className="divide-y divide-gray-50 sm:max-h-[420px] sm:overflow-y-auto">
             {rows.map((row, idx) => {
               const student = students[idx];
               const cw = parseFloat(row.classworkScore);
@@ -426,7 +425,7 @@ const CAEntryForm = ({
               return (
                 <div
                   key={row.studentId}
-                  className="grid grid-cols-[2fr_1fr_1fr_1fr_2fr] gap-2 px-4 py-3 items-center hover:bg-gray-50/50 transition-colors"
+                  className="grid grid-cols-1 gap-3 px-4 py-4 transition-colors hover:bg-gray-50/50 sm:grid-cols-[2fr_1fr_1fr_1fr_2fr] sm:items-center sm:gap-2 sm:py-3"
                 >
                   {/* Student name */}
                   <div className="flex items-center gap-2.5 min-w-0">
@@ -442,47 +441,66 @@ const CAEntryForm = ({
 
                   {/* Classwork score */}
                   {activityCAEnabled ? (
-                    <div className="w-full rounded-xl bg-emerald-50 p-2 text-center text-sm font-black text-emerald-700 ring-[1.5px] ring-emerald-100">
-                      {formatMark(Number.isNaN(cw) ? 0 : cw)}
-                      <span className="ml-0.5 text-[10px] font-bold text-emerald-500">/{cwWeight}</span>
+                    <div>
+                      <span className="mb-1 block text-[10px] font-black uppercase tracking-wider text-gray-400 sm:hidden">
+                        Auto CA
+                      </span>
+                      <div className="w-full rounded-xl bg-emerald-50 p-2 text-center text-sm font-black text-emerald-700 ring-[1.5px] ring-emerald-100">
+                        {formatMark(Number.isNaN(cw) ? 0 : cw)}
+                        <span className="ml-0.5 text-[10px] font-bold text-emerald-500">/{cwWeight}</span>
+                      </div>
                     </div>
                   ) : (
-                  <input
-                    type="number"
-                    min={0}
-                    max={activityCAEnabled ? cwWeight : 100}
-                    step={0.5}
-                    placeholder="—"
-                    value={row.classworkScore}
-                    onChange={(e) => updateRow(idx, "classworkScore", e.target.value)}
-                    disabled={activityCAEnabled}
-                    className={`ring-[1.5px] p-2 rounded-xl text-sm font-bold text-center outline-none transition-all w-full ${
-                      activityCAEnabled
-                        ? "ring-emerald-100 bg-emerald-50 text-emerald-700"
-                        : "ring-gray-200 text-gray-800 focus:ring-indigo-500"
-                    }`}
-                  />
+                    <label className="block">
+                      <span className="mb-1 block text-[10px] font-black uppercase tracking-wider text-gray-400 sm:hidden">
+                        Classwork
+                      </span>
+                      <input
+                        type="number"
+                        min={0}
+                        max={activityCAEnabled ? cwWeight : 100}
+                        step={0.5}
+                        placeholder="—"
+                        value={row.classworkScore}
+                        onChange={(e) => updateRow(idx, "classworkScore", e.target.value)}
+                        disabled={activityCAEnabled}
+                        className={`ring-[1.5px] p-2 rounded-xl text-sm font-bold text-center outline-none transition-all w-full ${
+                          activityCAEnabled
+                            ? "ring-emerald-100 bg-emerald-50 text-emerald-700"
+                            : "ring-gray-200 text-gray-800 focus:ring-indigo-500"
+                        }`}
+                      />
+                    </label>
                   )}
 
                   {/* Exam score */}
-                  <input
-                    type="number"
-                    min={0}
-                    max={activityCAEnabled ? exWeight : 100}
-                    step={0.5}
-                    placeholder="—"
-                    value={row.examScore}
-                    onChange={(e) => updateRow(idx, "examScore", e.target.value)}
-                    disabled={!examEntryOpen}
-                    className={`ring-[1.5px] p-2 rounded-xl text-sm font-bold text-center outline-none transition-all w-full ${
-                      examEntryOpen
-                        ? "ring-gray-200 text-gray-800 focus:ring-indigo-500"
-                        : "ring-amber-100 bg-amber-50 text-amber-400 cursor-not-allowed"
-                    }`}
-                  />
+                  <label className="block">
+                    <span className="mb-1 block text-[10px] font-black uppercase tracking-wider text-gray-400 sm:hidden">
+                      Exam
+                    </span>
+                    <input
+                      type="number"
+                      min={0}
+                      max={activityCAEnabled ? exWeight : 100}
+                      step={0.5}
+                      placeholder="—"
+                      value={row.examScore}
+                      onChange={(e) => updateRow(idx, "examScore", e.target.value)}
+                      disabled={!examEntryOpen}
+                      className={`ring-[1.5px] p-2 rounded-xl text-sm font-bold text-center outline-none transition-all w-full ${
+                        examEntryOpen
+                          ? "ring-gray-200 text-gray-800 focus:ring-indigo-500"
+                          : "ring-amber-100 bg-amber-50 text-amber-400 cursor-not-allowed"
+                      }`}
+                    />
+                  </label>
 
                   {/* Live grade preview */}
-                  <div className="flex justify-center">
+                  <div>
+                    <span className="mb-1 block text-[10px] font-black uppercase tracking-wider text-gray-400 sm:hidden">
+                      Total / Grade
+                    </span>
+                    <div className="flex justify-start sm:justify-center">
                     {bothValid && caConfig ? (
                       <ScorePreview
                         classwork={cw} exam={ex}
@@ -493,27 +511,32 @@ const CAEntryForm = ({
                     ) : (
                       <span className="text-xs text-gray-300 font-bold">—</span>
                     )}
+                    </div>
                   </div>
 
                   {/* Remarks */}
-                  <input
-                    type="text"
-                    placeholder="Optional note…"
-                    value={row.remarks}
-                    maxLength={120}
-                    onChange={(e) => updateRow(idx, "remarks", e.target.value)}
-                    className="ring-[1.5px] ring-gray-100 p-2 rounded-xl text-xs text-gray-600 focus:ring-indigo-500 outline-none transition-all w-full"
-                  />
+                  <label className="block">
+                    <span className="mb-1 block text-[10px] font-black uppercase tracking-wider text-gray-400 sm:hidden">
+                      Remarks
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="Optional note…"
+                      value={row.remarks}
+                      maxLength={120}
+                      onChange={(e) => updateRow(idx, "remarks", e.target.value)}
+                      className="ring-[1.5px] ring-gray-100 p-2 rounded-xl text-xs text-gray-600 focus:ring-indigo-500 outline-none transition-all w-full"
+                    />
+                  </label>
                 </div>
               );
             })}
-          </div>
           </div>
         </div>
       )}
 
       {/* Actions */}
-      <div className="flex items-center gap-3 pt-2">
+      <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center">
         <button
           type="button"
           onClick={() =>
@@ -529,7 +552,7 @@ const CAEntryForm = ({
             )
           }
           disabled={isPending}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-100 text-gray-600 text-sm font-bold hover:bg-gray-200 transition-colors disabled:opacity-50"
+          className="flex items-center justify-center gap-2 rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-200 disabled:opacity-50 sm:w-auto"
         >
           <RefreshCw size={13} /> Clear
         </button>

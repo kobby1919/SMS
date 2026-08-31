@@ -59,6 +59,78 @@ const parentMenuItems = [
   },
 ];
 
+const teacherMenuItems = [
+  {
+    title: "Work",
+    items: [
+      {
+        icon: LayoutDashboard,
+        label: "Dashboard",
+        href: "/teacher",
+        visible: ["teacher"],
+      },
+      {
+        icon: UserCheck,
+        label: "Attendance",
+        href: "/list/attendance",
+        visible: ["teacher"],
+      },
+      {
+        icon: Star,
+        label: "Assessment",
+        href: "/list/ca",
+        visible: ["teacher"],
+      },
+      {
+        icon: ClipboardList,
+        label: "Homework",
+        href: "/list/assignments",
+        visible: ["teacher"],
+      },
+    ],
+  },
+  {
+    title: "Classroom",
+    items: [
+      {
+        icon: UsersRound,
+        label: "Students",
+        href: "/list/students",
+        visible: ["teacher"],
+      },
+      {
+        icon: ScrollText,
+        label: "Syllabus",
+        href: "/list/syllabus",
+        visible: ["teacher"],
+      },
+      {
+        icon: FileText,
+        label: "Report Cards",
+        href: "/list/report-cards",
+        visible: ["teacher"],
+      },
+    ],
+  },
+  {
+    title: "School",
+    items: [
+      {
+        icon: GraduationCap,
+        label: "Exams",
+        href: "/list/exams",
+        visible: ["teacher"],
+      },
+      {
+        icon: Megaphone,
+        label: "Notices",
+        href: "/list/announcements",
+        visible: ["teacher"],
+      },
+    ],
+  },
+];
+
 const menuItems = [
   {
     title: "Overview",
@@ -250,7 +322,10 @@ const menuItems = [
 
 const MenuClient = ({ role }: { role: string }) => {
   const pathname = usePathname();
-  const visibleMenuItems = role === "parent" ? parentMenuItems : menuItems;
+  const visibleMenuItems =
+    role === "parent" ? parentMenuItems :
+    role === "teacher" ? teacherMenuItems :
+    menuItems;
 
   return (
     <div className="mt-4 text-sm flex flex-col gap-0.5">

@@ -310,7 +310,7 @@ const AttendanceTaker = ({
                 router.push(url);
               });
             }}
-            className="px-3 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-300 transition-all"
+            className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-300 sm:w-auto"
           />
         </div>
       </div>
@@ -390,14 +390,14 @@ const AttendanceTaker = ({
                   </div>
 
                   {/* Bulk mark buttons */}
-                  <div className="flex gap-2 flex-wrap">
+                  <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
                     {(["PRESENT", "ABSENT", "LATE", "EXCUSED"] as const).map((status) => {
                       const cfg = STATUS_CONFIG[status];
                       return (
                         <button
                           key={status}
                           onClick={() => markAll(status)}
-                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${cfg.bg} ${cfg.text} hover:opacity-90`}
+                          className={`flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold transition-all ${cfg.bg} ${cfg.text} hover:opacity-90`}
                         >
                           {cfg.icon}
                           All {cfg.label}
@@ -461,7 +461,7 @@ const AttendanceTaker = ({
                           ${status === "ABSENT" ? "bg-rose-50/30" : status === "LATE" ? "bg-amber-50/30" : ""}`}
                         >
                           {/* Avatar */}
-                          <div className="relative shrink-0">
+                          <div className="relative shrink-0 self-start sm:self-auto">
                             <Image
                               src={student.img || "/noAvatar.png"}
                               alt={student.name}
@@ -495,7 +495,7 @@ const AttendanceTaker = ({
                           </div>
 
                           {/* Status buttons */}
-                          <div className="flex gap-1.5 shrink-0 self-stretch sm:self-auto justify-between sm:justify-start">
+                          <div className="grid grid-cols-5 gap-1.5 self-stretch sm:flex sm:shrink-0 sm:self-auto sm:justify-start">
                             {(["PRESENT", "ABSENT", "LATE", "EXCUSED"] as const).map((s) => {
                               const c      = STATUS_CONFIG[s];
                               const active = status === s;
@@ -504,7 +504,7 @@ const AttendanceTaker = ({
                                   key={s}
                                   onClick={() => markStudent(student.id, s)}
                                   title={c.label}
-                                  className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all
+                                  className={`flex h-9 w-full items-center justify-center rounded-lg text-xs font-black transition-all sm:h-8 sm:w-8
                                     ${active
                                       ? `${c.bg} ${c.text} ring-2 ${c.ring} shadow-sm`
                                       : "bg-gray-100 text-gray-400 hover:bg-gray-200"}`}
@@ -517,11 +517,11 @@ const AttendanceTaker = ({
                             {/* Note button */}
                             <button
                               onClick={() => setNoteTarget(isNoting ? null : student.id)}
-                              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all
+                              className={`flex h-9 w-full items-center justify-center rounded-lg transition-all sm:h-8 sm:w-8
                                 ${isNoting ? "bg-indigo-100 text-indigo-600" : "bg-gray-100 text-gray-400 hover:bg-gray-200"}`}
                               title="Add note"
                             >
-                              <span className="text-xs">📝</span>
+                              <FileCheck size={12} />
                             </button>
                           </div>
                         </div>

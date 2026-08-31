@@ -212,7 +212,7 @@ const CAPage = async ({
   ).flat();
 
   return (
-    <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
+    <div className="flex-1 m-3 mt-0 flex flex-col gap-4 sm:m-4 sm:mt-0">
       {/* ── Page Header ── */}
       <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -233,7 +233,7 @@ const CAPage = async ({
           </div>
 
           {/* View toggle */}
-          <div className="flex bg-gray-100 p-1 rounded-xl gap-1">
+          <div className="grid w-full grid-cols-3 gap-1 rounded-xl bg-gray-100 p-1 sm:flex sm:w-auto">
             {[
               { key: "entry", label: "Entry", icon: <BookOpen size={13} /> },
               { key: "activity", label: "Activity CA", icon: <Layers3 size={13} /> },
@@ -242,7 +242,7 @@ const CAPage = async ({
               <a
                 key={tab.key}
                 href={`/list/ca?classId=${activeClass.id}&view=${tab.key}`}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-bold transition-all
+                className={`flex items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-xs font-bold transition-all sm:px-4 sm:text-sm
                   ${
                     viewMode === tab.key
                       ? "bg-white text-indigo-600 shadow-sm"
@@ -328,7 +328,7 @@ const CAPage = async ({
 
         {/* ── Main content ── */}
         <div className="flex-1 min-w-0">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6">
             {viewMode === "entry" ? (
               <CAEntryForm
                 classId={activeClass.id}

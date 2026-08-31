@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { TERM_LABELS } from "@/src/lib/caGrades";
 
 type Props = {
@@ -19,19 +19,21 @@ export default function ReportCardFilters({
   activeYear,
 }: Props) {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set(key, value);
-    router.push(`?${params.toString()}`);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    router.refresh();
   };
 
   return (
     <div className="grid w-full grid-cols-1 gap-2 sm:w-auto sm:grid-cols-3">
       {/* Class Filter */}
       <select
-        value={activeClassId}
+        value={String(activeClassId)}
         onChange={(e) => updateFilter("classId", e.target.value)}
         className="w-full appearance-none rounded-xl bg-white px-3 py-2 text-sm font-semibold text-gray-700 outline-none ring-[1.5px] ring-gray-200"
       >
