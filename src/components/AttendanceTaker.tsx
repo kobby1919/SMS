@@ -129,6 +129,37 @@ const accountabilityClassName = (status?: AttendanceAccountabilityStatus) => {
   return "bg-sky-50 text-sky-700";
 };
 
+type LessonUiGroup = "open" | "upcoming" | "submitted" | "issue";
+
+function getLessonUiGroup(lesson: TeacherLesson, now = new Date()): LessonUiGroup {
+  const status = lesson.accountability?.status;
+  if (status === "COMPLETED" || status === "COMPLETED_LATE") return "submitted";
+  if (status === "MISSED" || status === "ESCALATED" || status === "CANCELLED") return "issue";
+  if (lesson.accountability?.openAt && now < new Date(lesson.accountability.openAt)) {
+    return "upcoming";
+  }
+  return "open";
+}
+
+const lessonGroupMeta: Record<LessonUiGroup, { title: string; empty: string }> = {
+  open: {
+    title: "Open now",
+    empty: "No attendance is open right now.",
+  },
+  upcoming: {
+    title: "Upcoming",
+    empty: "No upcoming lessons for this day.",
+  },
+  submitted: {
+    title: "Submitted",
+    empty: "No submitted attendance yet.",
+  },
+  issue: {
+    title: "Late / Missed",
+    empty: "No late or missed attendance.",
+  },
+};
+
 const getApiErrorMessage = (data: unknown) => {
   if (!data || typeof data !== "object") return "Failed to save attendance.";
   const payload = data as { error?: unknown; issues?: unknown; issueDetails?: unknown };
@@ -156,6 +187,7 @@ const AttendanceTaker = ({
   existingAttendance,
   dateStr,
   todayStr,
+  role,
 }: Props) => {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -186,15 +218,25 @@ const AttendanceTaker = ({
   const selectedLessonAccountability = teacherLessons.find(
     (lesson) => lesson.id === selectedLessonId,
   )?.accountability;
-  const selectedLessonWindowClosed =
-    selectedLessonAccountability?.status === "MISSED" ||
-    selectedLessonAccountability?.status === "ESCALATED" ||
-    selectedLessonAccountability?.status === "CANCELLED";
-  const selectedLessonNotOpenYet =
-    selectedLessonAccountability?.status === "PENDING" &&
-    new Date() < new Date(selectedLessonAccountability.openAt);
+  const selectedTeacherLesson = teacherLessons.find((lesson) => lesson.id === selectedLessonId);
+  const selectedLessonGroup = selectedTeacherLesson ? getLessonUiGroup(selectedTeacherLesson) : null;
+  const selectedLessonWindowClosed = selectedLessonGroup === "issue";
+  const selectedLessonNotOpenYet = selectedLessonGroup === "upcoming";
+  const selectedLessonSubmitted = selectedLessonGroup === "submitted";
   const selectedLessonLockedForTeacher =
-    selectedLessonWindowClosed || selectedLessonNotOpenYet;
+    role === "teacher" && (selectedLessonWindowClosed || selectedLessonNotOpenYet || selectedLessonSubmitted);
+  const lessonGroups = teacherLessons.reduce(
+    (groups, lesson) => {
+      groups[getLessonUiGroup(lesson)].push(lesson);
+      return groups;
+    },
+    {
+      open: [] as TeacherLesson[],
+      upcoming: [] as TeacherLesson[],
+      submitted: [] as TeacherLesson[],
+      issue: [] as TeacherLesson[],
+    },
+  );
 
   const defaultRecordFor = (studentId: string): AttendanceRecord => ({
     studentId,
@@ -205,6 +247,7 @@ const AttendanceTaker = ({
 
   // ── Mark single student ──────────────────────────────────────────────────
   const markStudent = (studentId: string, status: AttendanceRecord["status"]) => {
+    if (selectedLessonLockedForTeacher) return;
     setAttendance((prev) => ({
       ...prev,
       [studentId]: {
@@ -220,6 +263,7 @@ const AttendanceTaker = ({
   };
 
   const setNote = (studentId: string, note: string) => {
+    if (selectedLessonLockedForTeacher) return;
     setAttendance((prev) => ({
       ...prev,
       [studentId]: { ...(prev[studentId] ?? defaultRecordFor(studentId)), studentId, note },
@@ -227,6 +271,7 @@ const AttendanceTaker = ({
   };
 
   const setArrivalTime = (studentId: string, arrivalTime: string) => {
+    if (selectedLessonLockedForTeacher) return;
     setAttendance((prev) => ({
       ...prev,
       [studentId]: { ...(prev[studentId] ?? defaultRecordFor(studentId)), studentId, arrivalTime },
@@ -235,6 +280,7 @@ const AttendanceTaker = ({
 
   // ── Bulk mark all ────────────────────────────────────────────────────────
   const markAll = (status: AttendanceRecord["status"]) => {
+    if (selectedLessonLockedForTeacher) return;
     const updated: Record<string, AttendanceRecord> = {};
     students.forEach((s) => {
       updated[s.id] = {
@@ -376,32 +422,77 @@ const AttendanceTaker = ({
               </div>
             ) : (
               <div className="divide-y divide-gray-50">
-                {teacherLessons.map((lesson) => {
-                  const isSelected = selectedLessonId === lesson.id;
+                {(["open", "upcoming", "submitted", "issue"] as const).map((group) => {
+                  const lessons = lessonGroups[group];
+                  if (lessons.length === 0) return null;
+
                   return (
-                    <button
-                      key={lesson.id}
-                      onClick={() => goToLesson(lesson.id)}
-                      className={`w-full flex items-center gap-3 px-4 py-3.5 text-left transition-all
-                        ${isSelected
-                          ? "bg-emerald-50 border-l-4 border-emerald-500"
-                          : "hover:bg-gray-50 border-l-4 border-transparent"}`}
-                    >
-                      <div className="flex-1 min-w-0">
-                        <p className={`font-bold text-sm truncate ${isSelected ? "text-emerald-700" : "text-gray-800"}`}>
-                          {lesson.subjectName}
+                    <section key={group} className="py-2">
+                      <div className="flex items-center justify-between px-4 py-2">
+                        <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">
+                          {lessonGroupMeta[group].title}
                         </p>
-                        <p className={`text-xs font-semibold mt-0.5 ${isSelected ? "text-emerald-600" : "text-gray-400"}`}>
-                          {lesson.className} · {formatTime(lesson.startTime)}–{formatTime(lesson.endTime)}
-                        </p>
-                        <span
-                          className={`mt-2 inline-flex rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${accountabilityClassName(lesson.accountability?.status)}`}
-                        >
-                          {accountabilityLabel(lesson)}
+                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-black text-gray-500">
+                          {lessons.length}
                         </span>
                       </div>
-                      <ChevronRight size={14} className={isSelected ? "text-emerald-500" : "text-gray-300"} />
-                    </button>
+                      <div className="space-y-1">
+                        {lessons.map((lesson) => {
+                          const isSelected = selectedLessonId === lesson.id;
+                          const lessonGroup = getLessonUiGroup(lesson);
+                          const disabledForTeacher =
+                            role === "teacher" && lessonGroup !== "open";
+                          const disabledReason =
+                            lessonGroup === "upcoming"
+                              ? `Opens at ${lesson.accountability?.openAt ? formatTime(lesson.accountability.openAt) : formatTime(lesson.startTime)}`
+                              : lessonGroup === "submitted"
+                                ? "Already submitted"
+                                : lessonGroup === "issue"
+                                  ? "Admin correction needed"
+                                  : null;
+
+                          return (
+                            <button
+                              key={lesson.id}
+                              type="button"
+                              disabled={disabledForTeacher}
+                              onClick={() => goToLesson(lesson.id)}
+                              className={`mx-2 flex w-[calc(100%-1rem)] items-center gap-3 rounded-xl px-3 py-3 text-left transition-all disabled:cursor-not-allowed
+                                ${isSelected
+                                  ? "bg-emerald-50 ring-1 ring-emerald-100"
+                                  : disabledForTeacher
+                                    ? "bg-gray-50 opacity-75"
+                                    : "hover:bg-gray-50"}`}
+                            >
+                              <div className="flex-1 min-w-0">
+                                <p className={`font-bold text-sm truncate ${isSelected ? "text-emerald-700" : "text-gray-800"}`}>
+                                  {lesson.subjectName}
+                                </p>
+                                <p className={`text-xs font-semibold mt-0.5 ${isSelected ? "text-emerald-600" : "text-gray-400"}`}>
+                                  {lesson.className} · {formatTime(lesson.startTime)}–{formatTime(lesson.endTime)}
+                                </p>
+                                <div className="mt-2 flex flex-wrap items-center gap-2">
+                                  <span
+                                    className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${accountabilityClassName(lesson.accountability?.status)}`}
+                                  >
+                                    {accountabilityLabel(lesson)}
+                                  </span>
+                                  {disabledReason && (
+                                    <span className="text-[10px] font-bold text-gray-400">
+                                      {disabledReason}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <ChevronRight
+                                size={14}
+                                className={disabledForTeacher ? "text-gray-200" : isSelected ? "text-emerald-500" : "text-gray-300"}
+                              />
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </section>
                   );
                 })}
               </div>
@@ -443,6 +534,7 @@ const AttendanceTaker = ({
                         <button
                           key={status}
                           onClick={() => markAll(status)}
+                          disabled={selectedLessonLockedForTeacher}
                           className={`flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold transition-all ${cfg.bg} ${cfg.text} hover:opacity-90`}
                         >
                           {cfg.icon}
@@ -549,6 +641,7 @@ const AttendanceTaker = ({
                                 <button
                                   key={s}
                                   onClick={() => markStudent(student.id, s)}
+                                  disabled={selectedLessonLockedForTeacher}
                                   title={c.label}
                                   className={`flex h-9 w-full items-center justify-center rounded-lg text-xs font-black transition-all sm:h-8 sm:w-8
                                     ${active
@@ -563,6 +656,7 @@ const AttendanceTaker = ({
                             {/* Note button */}
                             <button
                               onClick={() => setNoteTarget(isNoting ? null : student.id)}
+                              disabled={selectedLessonLockedForTeacher}
                               className={`flex h-9 w-full items-center justify-center rounded-lg transition-all sm:h-8 sm:w-8
                                 ${isNoting ? "bg-indigo-100 text-indigo-600" : "bg-gray-100 text-gray-400 hover:bg-gray-200"}`}
                               title="Add note"
@@ -587,6 +681,7 @@ const AttendanceTaker = ({
                                     type="time"
                                     value={record?.arrivalTime ?? ""}
                                     onChange={(e) => setArrivalTime(student.id, e.target.value)}
+                                    disabled={selectedLessonLockedForTeacher}
                                     className="w-full px-3 py-2 text-xs rounded-lg border border-amber-200 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-300 text-gray-700"
                                     aria-label={`Arrival time for ${student.name} ${student.surname}`}
                                   />
@@ -596,6 +691,7 @@ const AttendanceTaker = ({
                                   placeholder={status === "LATE" ? "Reason for lateness" : "Add a note (e.g. sick, left early, parent called)"}
                                   value={record?.note ?? ""}
                                   onChange={(e) => setNote(student.id, e.target.value)}
+                                  disabled={selectedLessonLockedForTeacher}
                                   className="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 text-gray-700"
                                   autoFocus
                                 />
@@ -616,7 +712,9 @@ const AttendanceTaker = ({
                     ? "Attendance window closed. Ask an admin to approve correction."
                     : selectedLessonNotOpenYet
                       ? `Attendance opens at ${selectedLessonAccountability?.openAt ? formatTime(selectedLessonAccountability.openAt) : "the scheduled time"}.`
-                      : `${Object.values(attendance).filter((r) => r.status !== "PRESENT").length} exception${Object.values(attendance).filter((r) => r.status !== "PRESENT").length !== 1 ? "s" : ""} marked`}
+                      : selectedLessonSubmitted
+                        ? "Attendance already submitted. Corrections will go through approval."
+                        : `${Object.values(attendance).filter((r) => r.status !== "PRESENT").length} exception${Object.values(attendance).filter((r) => r.status !== "PRESENT").length !== 1 ? "s" : ""} marked`}
                 </p>
                 <button
                   onClick={handleSubmit}
