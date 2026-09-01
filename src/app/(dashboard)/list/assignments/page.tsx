@@ -48,9 +48,12 @@ const AssignmentListPage = async ({
   const p = page ? parseInt(page) : 1;
   const activeTab = tab === "past" ? "past" : "upcoming";
   const now = new Date();
+  const todayStart = new Date(now);
+  todayStart.setHours(0, 0, 0, 0);
   // Only TEACHERS can create/update/delete assignments and check homework.
   // Admin has read-only oversight.
   const canManage = role === "teacher";
+  const tableColumnCount = activeTab === "upcoming" ? (canManage ? 7 : 6) : 5;
 
   const lessonQuery: Prisma.LessonWhereInput = {};
 
@@ -80,7 +83,7 @@ const AssignmentListPage = async ({
   const baseWhere = { schoolId, lesson: lessonQuery };
   const dateFilter = {
     ...baseWhere,
-    dueDate: activeTab === "upcoming" ? { gte: now } : { lt: now },
+    dueDate: activeTab === "upcoming" ? { gte: todayStart } : { lt: todayStart },
   };
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 86400000);
 
@@ -110,15 +113,15 @@ const AssignmentListPage = async ({
         skip: ITEM_PER_PAGE * (p - 1),
       }),
       prisma.assignment.count({
-        where: { ...baseWhere, dueDate: { gte: now } },
+        where: { ...baseWhere, dueDate: { gte: todayStart } },
       }),
       prisma.assignment.count({
-        where: { ...baseWhere, dueDate: { lt: now } },
+        where: { ...baseWhere, dueDate: { lt: todayStart } },
       }),
       prisma.assignment.count({
         where: {
           ...baseWhere,
-          dueDate: { lt: now, gte: thirtyDaysAgo },
+          dueDate: { lt: todayStart, gte: thirtyDaysAgo },
         },
       }),
     ]);
@@ -260,7 +263,7 @@ const AssignmentListPage = async ({
                     Status
                   </th>
                 )}
-                {canManage && (
+                {canManage && activeTab === "upcoming" && (
                   <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 sticky right-0 bg-gray-50/60">
                     Actions
                   </th>
@@ -270,7 +273,7 @@ const AssignmentListPage = async ({
             <tbody className="divide-y divide-gray-50">
               {assignments.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-16">
+                  <td colSpan={tableColumnCount} className="text-center py-16">
                     <Briefcase
                       size={32}
                       className="text-gray-200 mx-auto mb-3"
@@ -282,7 +285,12 @@ const AssignmentListPage = async ({
                   </td>
                 </tr>
               ) : (
-                assignments.map((item) => (
+                assignments.map((item) => {
+                  const assignmentLockedForEdit = item.homeworkSubmissions.some(
+                    (submission) => submission.checkedAt || submission.status !== "PENDING",
+                  );
+
+                  return (
                   <Fragment key={item.id}>
                     <tr className="hover:bg-indigo-50/30 transition-colors group">
                       <td className="px-5 py-4">
@@ -329,19 +337,20 @@ const AssignmentListPage = async ({
                           </span>
                         </td>
                       )}
-                      {canManage && (
+                      {canManage && activeTab === "upcoming" && (
                         <td className="px-5 py-4 sticky right-0 bg-white group-hover:bg-indigo-50/30 transition-colors">
                           <div className="flex items-center justify-end gap-2">
-                            <FormModal
-                              table="assignment"
-                              type="update"
-                              data={{ ...item, lessonId: item.lesson.id }}
-                            />
-                            <FormModal
-                              table="assignment"
-                              type="delete"
-                              id={item.id}
-                            />
+                            {assignmentLockedForEdit ? (
+                              <span className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-[11px] font-black uppercase tracking-wide text-gray-400">
+                                Locked
+                              </span>
+                            ) : (
+                              <FormModal
+                                table="assignment"
+                                type="update"
+                                data={{ ...item, lessonId: item.lesson.id }}
+                              />
+                            )}
                           </div>
                         </td>
                       )}
@@ -349,7 +358,7 @@ const AssignmentListPage = async ({
                     {canManage && (
                       <tr>
                         <td
-                          colSpan={activeTab === "upcoming" ? 7 : 6}
+                          colSpan={tableColumnCount}
                           className="bg-white px-5 pb-4"
                         >
                           <HomeworkSubmissionTracker
@@ -367,7 +376,8 @@ const AssignmentListPage = async ({
                       </tr>
                     )}
                   </Fragment>
-                ))
+                  );
+                })
               )}
             </tbody>
           </table>

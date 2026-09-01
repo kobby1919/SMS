@@ -509,8 +509,26 @@ export async function updateAssignment(data: AssignmentFormData): Promise<void> 
   if (!data.id) throw new Error("Assignment ID required for update.");
   const parsed = parseActionInput(assignmentFormSchema, data);
   const ctx = await requireAdminOrTeacher();
-  const existing = await prisma.assignment.findFirst({ where: { id: data.id, schoolId: ctx.schoolId } });
-  requireResourceAccess(existing, ctx);
+  const existing = await prisma.assignment.findFirst({
+    where: { id: data.id, schoolId: ctx.schoolId },
+    include: {
+      homeworkSubmissions: {
+        select: { status: true, checkedAt: true },
+      },
+    },
+  });
+  const existingInSchool = requireResourceAccess(existing, ctx);
+  const existingDueEnd = new Date(existingInSchool.dueDate);
+  existingDueEnd.setHours(23, 59, 59, 999);
+  if (existingDueEnd < new Date()) {
+    throw new Error("Past homework cannot be updated. Create a new homework if the class needs another task.");
+  }
+  const hasCheckedHomework = existingInSchool.homeworkSubmissions.some(
+    (submission) => submission.checkedAt || submission.status !== "PENDING",
+  );
+  if (hasCheckedHomework) {
+    throw new Error("This homework already has student checks, so its details cannot be edited.");
+  }
   await getLessonInSchool(parsed.lessonId, ctx.schoolId);
 
   const assignment = await prisma.assignment.update({
@@ -582,10 +600,8 @@ export async function updateAssignment(data: AssignmentFormData): Promise<void> 
 
 export async function deleteAssignment(id: number): Promise<void> {
   ({ id } = parseActionInput(numericIdSchema, { id }));
-  const { schoolId } = await requireAdminOrTeacher();
-  await prisma.assignment.deleteMany({ where: { id, schoolId } });
-  revalidatePath("/list/assignments");
-  revalidateDashboard(schoolId);
+  await requireAdminOrTeacher();
+  throw new Error("Homework cannot be deleted after it has been assigned. Keep it for audit history.");
 }
 
 export type HomeworkSubmissionFormData = {
