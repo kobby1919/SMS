@@ -215,6 +215,29 @@ exports.Prisma.SchoolNotificationSettingScalarFieldEnum = {
   schoolId: 'schoolId'
 };
 
+exports.Prisma.TeacherAccountabilitySettingScalarFieldEnum = {
+  id: 'id',
+  attendanceOpenMinutesBeforeLesson: 'attendanceOpenMinutesBeforeLesson',
+  attendanceGraceMinutesAfterLesson: 'attendanceGraceMinutesAfterLesson',
+  attendanceEscalateMinutesAfterLesson: 'attendanceEscalateMinutesAfterLesson',
+  allowEarlyAttendanceMarking: 'allowEarlyAttendanceMarking',
+  requireLateAttendanceNote: 'requireLateAttendanceNote',
+  requireAttendanceCorrectionReason: 'requireAttendanceCorrectionReason',
+  caScorePublishWindowSchoolDays: 'caScorePublishWindowSchoolDays',
+  caReminderAfterSchoolDays: 'caReminderAfterSchoolDays',
+  caEscalateAfterSchoolDays: 'caEscalateAfterSchoolDays',
+  homeworkCheckWindowSchoolDays: 'homeworkCheckWindowSchoolDays',
+  homeworkEscalateAfterSchoolDays: 'homeworkEscalateAfterSchoolDays',
+  syllabusUpdateExpectation: 'syllabusUpdateExpectation',
+  teacherCloseoutTime: 'teacherCloseoutTime',
+  remindersEnabled: 'remindersEnabled',
+  escalationsEnabled: 'escalationsEnabled',
+  correctionApprovalRequired: 'correctionApprovalRequired',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId'
+};
+
 exports.Prisma.ParentNotificationPreferenceScalarFieldEnum = {
   id: 'id',
   dailySummaryEnabled: 'dailySummaryEnabled',
@@ -1120,6 +1143,7 @@ exports.Prisma.ModelName = {
   Teacher: 'Teacher',
   Parent: 'Parent',
   SchoolNotificationSetting: 'SchoolNotificationSetting',
+  TeacherAccountabilitySetting: 'TeacherAccountabilitySetting',
   ParentNotificationPreference: 'ParentNotificationPreference',
   ParentNotification: 'ParentNotification',
   ParentNotificationDeliveryLog: 'ParentNotificationDeliveryLog',

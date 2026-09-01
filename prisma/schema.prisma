@@ -311,50 +311,51 @@ model School {
   createdAt        DateTime               @default(now())
   updatedAt        DateTime               @updatedAt
 
-  admins                Admin[]
-  students              Student[]
-  teachers              Teacher[]
-  parents               Parent[]
-  grades                Grade[]
-  classes               Class[]
-  subjects              Subject[]
-  lessons               Lesson[]
-  exams                 Exam[]
-  assignments           Assignment[]
-  homeworkSubmissions   HomeworkSubmission[]
-  results               Result[]
-  attendances           Attendance[]
-  attendanceAuditLogs   AttendanceAuditLog[]
-  events                Event[]
-  announcements         Announcement[]
-  caConfigs             CAConfig[]
-  caBuckets             CABucket[]
-  caActivities          CAActivity[]
-  caActivityScores      CAActivityScore[]
-  caAuditLogs           CAAuditLog[]
-  continuousAssessments ContinuousAssessment[]
-  reportPublications    ReportCardPublication[]
-  examEntryWindows      ExamEntryWindow[]
-  syllabi               Syllabus[]
-  syllabusTopicProgress SyllabusTopicProgress[]
-  feeStructures         FeeStructure[]
-  studentBills          StudentBill[]
-  payments              Payment[]
-  paymentReversals      PaymentReversal[]
-  discounts             Discount[]
-  financeQueries        FinanceQuery[]
-  receiptCounters       ReceiptCounter[]
-  financeAuditLogs      FinanceAuditLog[]
-  invites               SchoolInvite[]
-  waitlistEntries       WaitlistEntry[]
-  onboardingAuditLogs   OnboardingAuditLog[]
-  financeJobs           FinanceJob[]
-  paymentWebhookEvents  PaymentWebhookEvent[]
-  parentNotifications   ParentNotification[]
-  parentActivityEvents  ParentActivityEvent[]
-  notificationSettings  SchoolNotificationSetting?
-  parentPreferences     ParentNotificationPreference[]
-  parentDeliveryLogs    ParentNotificationDeliveryLog[]
+  admins                 Admin[]
+  students               Student[]
+  teachers               Teacher[]
+  parents                Parent[]
+  grades                 Grade[]
+  classes                Class[]
+  subjects               Subject[]
+  lessons                Lesson[]
+  exams                  Exam[]
+  assignments            Assignment[]
+  homeworkSubmissions    HomeworkSubmission[]
+  results                Result[]
+  attendances            Attendance[]
+  attendanceAuditLogs    AttendanceAuditLog[]
+  events                 Event[]
+  announcements          Announcement[]
+  caConfigs              CAConfig[]
+  caBuckets              CABucket[]
+  caActivities           CAActivity[]
+  caActivityScores       CAActivityScore[]
+  caAuditLogs            CAAuditLog[]
+  continuousAssessments  ContinuousAssessment[]
+  reportPublications     ReportCardPublication[]
+  examEntryWindows       ExamEntryWindow[]
+  syllabi                Syllabus[]
+  syllabusTopicProgress  SyllabusTopicProgress[]
+  feeStructures          FeeStructure[]
+  studentBills           StudentBill[]
+  payments               Payment[]
+  paymentReversals       PaymentReversal[]
+  discounts              Discount[]
+  financeQueries         FinanceQuery[]
+  receiptCounters        ReceiptCounter[]
+  financeAuditLogs       FinanceAuditLog[]
+  invites                SchoolInvite[]
+  waitlistEntries        WaitlistEntry[]
+  onboardingAuditLogs    OnboardingAuditLog[]
+  financeJobs            FinanceJob[]
+  paymentWebhookEvents   PaymentWebhookEvent[]
+  parentNotifications    ParentNotification[]
+  parentActivityEvents   ParentActivityEvent[]
+  notificationSettings   SchoolNotificationSetting?
+  accountabilitySettings TeacherAccountabilitySetting?
+  parentPreferences      ParentNotificationPreference[]
+  parentDeliveryLogs     ParentNotificationDeliveryLog[]
 }
 
 model Admin {
@@ -485,6 +486,31 @@ model SchoolNotificationSetting {
   lastWeeklySummaryRunAt DateTime?
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @updatedAt
+
+  schoolId String @unique
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+}
+
+model TeacherAccountabilitySetting {
+  id                                   String   @id @default(cuid())
+  attendanceOpenMinutesBeforeLesson    Int      @default(10)
+  attendanceGraceMinutesAfterLesson    Int      @default(10)
+  attendanceEscalateMinutesAfterLesson Int      @default(30)
+  allowEarlyAttendanceMarking          Boolean  @default(true)
+  requireLateAttendanceNote            Boolean  @default(true)
+  requireAttendanceCorrectionReason    Boolean  @default(true)
+  caScorePublishWindowSchoolDays       Int      @default(3)
+  caReminderAfterSchoolDays            Int      @default(2)
+  caEscalateAfterSchoolDays            Int      @default(4)
+  homeworkCheckWindowSchoolDays        Int      @default(2)
+  homeworkEscalateAfterSchoolDays      Int      @default(3)
+  syllabusUpdateExpectation            String   @default("SAME_DAY")
+  teacherCloseoutTime                  String   @default("16:00")
+  remindersEnabled                     Boolean  @default(true)
+  escalationsEnabled                   Boolean  @default(true)
+  correctionApprovalRequired           Boolean  @default(true)
+  createdAt                            DateTime @default(now())
+  updatedAt                            DateTime @updatedAt
 
   schoolId String @unique
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
@@ -727,9 +753,9 @@ model Assignment {
   schoolId String @default("default-school")
   school   School @relation(fields: [schoolId], references: [id])
 
-  lessonId Int
-  lesson   Lesson   @relation(fields: [lessonId], references: [id])
-  results  Result[]
+  lessonId            Int
+  lesson              Lesson               @relation(fields: [lessonId], references: [id])
+  results             Result[]
   homeworkSubmissions HomeworkSubmission[]
 
   @@index([schoolId, dueDate])
@@ -875,7 +901,7 @@ model Event {
 }
 
 model Announcement {
-  id          Int      @id @default(autoincrement())
+  id          Int                  @id @default(autoincrement())
   title       String
   description String
   date        DateTime
@@ -1064,13 +1090,13 @@ model ContinuousAssessment {
 }
 
 model ReportCardPublication {
-  id           Int                     @id @default(autoincrement())
-  academicYear String
-  term         Term
-  status       ReportPublicationStatus @default(PUBLISHED)
-  notes        String?
-  publishedAt  DateTime                @default(now())
-  publishedBy  String
+  id            Int                     @id @default(autoincrement())
+  academicYear  String
+  term          Term
+  status        ReportPublicationStatus @default(PUBLISHED)
+  notes         String?
+  publishedAt   DateTime                @default(now())
+  publishedBy   String
   unpublishedAt DateTime?
   unpublishedBy String?
 

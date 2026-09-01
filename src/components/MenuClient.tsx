@@ -25,6 +25,7 @@ import {
   Star,
   ScrollText,
   BellRing,
+  ShieldCheck,
 } from "lucide-react";
 
 const parentMenuItems = [
@@ -308,6 +309,12 @@ const menuItems = [
         icon: BellRing,
         label: "Parent Notifications",
         href: "/admin/notification-settings",
+        visible: ["admin"],
+      },
+      {
+        icon: ShieldCheck,
+        label: "Teacher Accountability",
+        href: "/admin/accountability-settings",
         visible: ["admin"],
       },
     ],

@@ -44,6 +44,11 @@ export type Parent = $Result.DefaultSelection<Prisma.$ParentPayload>
  */
 export type SchoolNotificationSetting = $Result.DefaultSelection<Prisma.$SchoolNotificationSettingPayload>
 /**
+ * Model TeacherAccountabilitySetting
+ * 
+ */
+export type TeacherAccountabilitySetting = $Result.DefaultSelection<Prisma.$TeacherAccountabilitySettingPayload>
+/**
  * Model ParentNotificationPreference
  * 
  */
@@ -979,6 +984,16 @@ export class PrismaClient<
   get schoolNotificationSetting(): Prisma.SchoolNotificationSettingDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.teacherAccountabilitySetting`: Exposes CRUD operations for the **TeacherAccountabilitySetting** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TeacherAccountabilitySettings
+    * const teacherAccountabilitySettings = await prisma.teacherAccountabilitySetting.findMany()
+    * ```
+    */
+  get teacherAccountabilitySetting(): Prisma.TeacherAccountabilitySettingDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.parentNotificationPreference`: Exposes CRUD operations for the **ParentNotificationPreference** model.
     * Example usage:
     * ```ts
@@ -1847,6 +1862,7 @@ export namespace Prisma {
     Teacher: 'Teacher',
     Parent: 'Parent',
     SchoolNotificationSetting: 'SchoolNotificationSetting',
+    TeacherAccountabilitySetting: 'TeacherAccountabilitySetting',
     ParentNotificationPreference: 'ParentNotificationPreference',
     ParentNotification: 'ParentNotification',
     ParentNotificationDeliveryLog: 'ParentNotificationDeliveryLog',
@@ -1905,7 +1921,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "schoolNotificationSetting" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
+      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "schoolNotificationSetting" | "teacherAccountabilitySetting" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2350,6 +2366,80 @@ export namespace Prisma {
           count: {
             args: Prisma.SchoolNotificationSettingCountArgs<ExtArgs>
             result: $Utils.Optional<SchoolNotificationSettingCountAggregateOutputType> | number
+          }
+        }
+      }
+      TeacherAccountabilitySetting: {
+        payload: Prisma.$TeacherAccountabilitySettingPayload<ExtArgs>
+        fields: Prisma.TeacherAccountabilitySettingFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TeacherAccountabilitySettingFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilitySettingPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TeacherAccountabilitySettingFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilitySettingPayload>
+          }
+          findFirst: {
+            args: Prisma.TeacherAccountabilitySettingFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilitySettingPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TeacherAccountabilitySettingFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilitySettingPayload>
+          }
+          findMany: {
+            args: Prisma.TeacherAccountabilitySettingFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilitySettingPayload>[]
+          }
+          create: {
+            args: Prisma.TeacherAccountabilitySettingCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilitySettingPayload>
+          }
+          createMany: {
+            args: Prisma.TeacherAccountabilitySettingCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TeacherAccountabilitySettingCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilitySettingPayload>[]
+          }
+          delete: {
+            args: Prisma.TeacherAccountabilitySettingDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilitySettingPayload>
+          }
+          update: {
+            args: Prisma.TeacherAccountabilitySettingUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilitySettingPayload>
+          }
+          deleteMany: {
+            args: Prisma.TeacherAccountabilitySettingDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TeacherAccountabilitySettingUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TeacherAccountabilitySettingUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilitySettingPayload>[]
+          }
+          upsert: {
+            args: Prisma.TeacherAccountabilitySettingUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilitySettingPayload>
+          }
+          aggregate: {
+            args: Prisma.TeacherAccountabilitySettingAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTeacherAccountabilitySetting>
+          }
+          groupBy: {
+            args: Prisma.TeacherAccountabilitySettingGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TeacherAccountabilitySettingGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TeacherAccountabilitySettingCountArgs<ExtArgs>
+            result: $Utils.Optional<TeacherAccountabilitySettingCountAggregateOutputType> | number
           }
         }
       }
@@ -5649,6 +5739,7 @@ export namespace Prisma {
     teacher?: TeacherOmit
     parent?: ParentOmit
     schoolNotificationSetting?: SchoolNotificationSettingOmit
+    teacherAccountabilitySetting?: TeacherAccountabilitySettingOmit
     parentNotificationPreference?: ParentNotificationPreferenceOmit
     parentNotification?: ParentNotificationOmit
     parentNotificationDeliveryLog?: ParentNotificationDeliveryLogOmit
@@ -7503,6 +7594,7 @@ export namespace Prisma {
     parentNotifications?: boolean | School$parentNotificationsArgs<ExtArgs>
     parentActivityEvents?: boolean | School$parentActivityEventsArgs<ExtArgs>
     notificationSettings?: boolean | School$notificationSettingsArgs<ExtArgs>
+    accountabilitySettings?: boolean | School$accountabilitySettingsArgs<ExtArgs>
     parentPreferences?: boolean | School$parentPreferencesArgs<ExtArgs>
     parentDeliveryLogs?: boolean | School$parentDeliveryLogsArgs<ExtArgs>
     _count?: boolean | SchoolCountOutputTypeDefaultArgs<ExtArgs>
@@ -7612,6 +7704,7 @@ export namespace Prisma {
     parentNotifications?: boolean | School$parentNotificationsArgs<ExtArgs>
     parentActivityEvents?: boolean | School$parentActivityEventsArgs<ExtArgs>
     notificationSettings?: boolean | School$notificationSettingsArgs<ExtArgs>
+    accountabilitySettings?: boolean | School$accountabilitySettingsArgs<ExtArgs>
     parentPreferences?: boolean | School$parentPreferencesArgs<ExtArgs>
     parentDeliveryLogs?: boolean | School$parentDeliveryLogsArgs<ExtArgs>
     _count?: boolean | SchoolCountOutputTypeDefaultArgs<ExtArgs>
@@ -7664,6 +7757,7 @@ export namespace Prisma {
       parentNotifications: Prisma.$ParentNotificationPayload<ExtArgs>[]
       parentActivityEvents: Prisma.$ParentActivityEventPayload<ExtArgs>[]
       notificationSettings: Prisma.$SchoolNotificationSettingPayload<ExtArgs> | null
+      accountabilitySettings: Prisma.$TeacherAccountabilitySettingPayload<ExtArgs> | null
       parentPreferences: Prisma.$ParentNotificationPreferencePayload<ExtArgs>[]
       parentDeliveryLogs: Prisma.$ParentNotificationDeliveryLogPayload<ExtArgs>[]
     }
@@ -8121,6 +8215,7 @@ export namespace Prisma {
     parentNotifications<T extends School$parentNotificationsArgs<ExtArgs> = {}>(args?: Subset<T, School$parentNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentActivityEvents<T extends School$parentActivityEventsArgs<ExtArgs> = {}>(args?: Subset<T, School$parentActivityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentActivityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notificationSettings<T extends School$notificationSettingsArgs<ExtArgs> = {}>(args?: Subset<T, School$notificationSettingsArgs<ExtArgs>>): Prisma__SchoolNotificationSettingClient<$Result.GetResult<Prisma.$SchoolNotificationSettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    accountabilitySettings<T extends School$accountabilitySettingsArgs<ExtArgs> = {}>(args?: Subset<T, School$accountabilitySettingsArgs<ExtArgs>>): Prisma__TeacherAccountabilitySettingClient<$Result.GetResult<Prisma.$TeacherAccountabilitySettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     parentPreferences<T extends School$parentPreferencesArgs<ExtArgs> = {}>(args?: Subset<T, School$parentPreferencesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentNotificationPreferencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentDeliveryLogs<T extends School$parentDeliveryLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$parentDeliveryLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentNotificationDeliveryLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -9562,6 +9657,25 @@ export namespace Prisma {
      */
     include?: SchoolNotificationSettingInclude<ExtArgs> | null
     where?: SchoolNotificationSettingWhereInput
+  }
+
+  /**
+   * School.accountabilitySettings
+   */
+  export type School$accountabilitySettingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilitySetting
+     */
+    select?: TeacherAccountabilitySettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilitySetting
+     */
+    omit?: TeacherAccountabilitySettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilitySettingInclude<ExtArgs> | null
+    where?: TeacherAccountabilitySettingWhereInput
   }
 
   /**
@@ -16219,6 +16333,1326 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: SchoolNotificationSettingInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TeacherAccountabilitySetting
+   */
+
+  export type AggregateTeacherAccountabilitySetting = {
+    _count: TeacherAccountabilitySettingCountAggregateOutputType | null
+    _avg: TeacherAccountabilitySettingAvgAggregateOutputType | null
+    _sum: TeacherAccountabilitySettingSumAggregateOutputType | null
+    _min: TeacherAccountabilitySettingMinAggregateOutputType | null
+    _max: TeacherAccountabilitySettingMaxAggregateOutputType | null
+  }
+
+  export type TeacherAccountabilitySettingAvgAggregateOutputType = {
+    attendanceOpenMinutesBeforeLesson: number | null
+    attendanceGraceMinutesAfterLesson: number | null
+    attendanceEscalateMinutesAfterLesson: number | null
+    caScorePublishWindowSchoolDays: number | null
+    caReminderAfterSchoolDays: number | null
+    caEscalateAfterSchoolDays: number | null
+    homeworkCheckWindowSchoolDays: number | null
+    homeworkEscalateAfterSchoolDays: number | null
+  }
+
+  export type TeacherAccountabilitySettingSumAggregateOutputType = {
+    attendanceOpenMinutesBeforeLesson: number | null
+    attendanceGraceMinutesAfterLesson: number | null
+    attendanceEscalateMinutesAfterLesson: number | null
+    caScorePublishWindowSchoolDays: number | null
+    caReminderAfterSchoolDays: number | null
+    caEscalateAfterSchoolDays: number | null
+    homeworkCheckWindowSchoolDays: number | null
+    homeworkEscalateAfterSchoolDays: number | null
+  }
+
+  export type TeacherAccountabilitySettingMinAggregateOutputType = {
+    id: string | null
+    attendanceOpenMinutesBeforeLesson: number | null
+    attendanceGraceMinutesAfterLesson: number | null
+    attendanceEscalateMinutesAfterLesson: number | null
+    allowEarlyAttendanceMarking: boolean | null
+    requireLateAttendanceNote: boolean | null
+    requireAttendanceCorrectionReason: boolean | null
+    caScorePublishWindowSchoolDays: number | null
+    caReminderAfterSchoolDays: number | null
+    caEscalateAfterSchoolDays: number | null
+    homeworkCheckWindowSchoolDays: number | null
+    homeworkEscalateAfterSchoolDays: number | null
+    syllabusUpdateExpectation: string | null
+    teacherCloseoutTime: string | null
+    remindersEnabled: boolean | null
+    escalationsEnabled: boolean | null
+    correctionApprovalRequired: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+  }
+
+  export type TeacherAccountabilitySettingMaxAggregateOutputType = {
+    id: string | null
+    attendanceOpenMinutesBeforeLesson: number | null
+    attendanceGraceMinutesAfterLesson: number | null
+    attendanceEscalateMinutesAfterLesson: number | null
+    allowEarlyAttendanceMarking: boolean | null
+    requireLateAttendanceNote: boolean | null
+    requireAttendanceCorrectionReason: boolean | null
+    caScorePublishWindowSchoolDays: number | null
+    caReminderAfterSchoolDays: number | null
+    caEscalateAfterSchoolDays: number | null
+    homeworkCheckWindowSchoolDays: number | null
+    homeworkEscalateAfterSchoolDays: number | null
+    syllabusUpdateExpectation: string | null
+    teacherCloseoutTime: string | null
+    remindersEnabled: boolean | null
+    escalationsEnabled: boolean | null
+    correctionApprovalRequired: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+  }
+
+  export type TeacherAccountabilitySettingCountAggregateOutputType = {
+    id: number
+    attendanceOpenMinutesBeforeLesson: number
+    attendanceGraceMinutesAfterLesson: number
+    attendanceEscalateMinutesAfterLesson: number
+    allowEarlyAttendanceMarking: number
+    requireLateAttendanceNote: number
+    requireAttendanceCorrectionReason: number
+    caScorePublishWindowSchoolDays: number
+    caReminderAfterSchoolDays: number
+    caEscalateAfterSchoolDays: number
+    homeworkCheckWindowSchoolDays: number
+    homeworkEscalateAfterSchoolDays: number
+    syllabusUpdateExpectation: number
+    teacherCloseoutTime: number
+    remindersEnabled: number
+    escalationsEnabled: number
+    correctionApprovalRequired: number
+    createdAt: number
+    updatedAt: number
+    schoolId: number
+    _all: number
+  }
+
+
+  export type TeacherAccountabilitySettingAvgAggregateInputType = {
+    attendanceOpenMinutesBeforeLesson?: true
+    attendanceGraceMinutesAfterLesson?: true
+    attendanceEscalateMinutesAfterLesson?: true
+    caScorePublishWindowSchoolDays?: true
+    caReminderAfterSchoolDays?: true
+    caEscalateAfterSchoolDays?: true
+    homeworkCheckWindowSchoolDays?: true
+    homeworkEscalateAfterSchoolDays?: true
+  }
+
+  export type TeacherAccountabilitySettingSumAggregateInputType = {
+    attendanceOpenMinutesBeforeLesson?: true
+    attendanceGraceMinutesAfterLesson?: true
+    attendanceEscalateMinutesAfterLesson?: true
+    caScorePublishWindowSchoolDays?: true
+    caReminderAfterSchoolDays?: true
+    caEscalateAfterSchoolDays?: true
+    homeworkCheckWindowSchoolDays?: true
+    homeworkEscalateAfterSchoolDays?: true
+  }
+
+  export type TeacherAccountabilitySettingMinAggregateInputType = {
+    id?: true
+    attendanceOpenMinutesBeforeLesson?: true
+    attendanceGraceMinutesAfterLesson?: true
+    attendanceEscalateMinutesAfterLesson?: true
+    allowEarlyAttendanceMarking?: true
+    requireLateAttendanceNote?: true
+    requireAttendanceCorrectionReason?: true
+    caScorePublishWindowSchoolDays?: true
+    caReminderAfterSchoolDays?: true
+    caEscalateAfterSchoolDays?: true
+    homeworkCheckWindowSchoolDays?: true
+    homeworkEscalateAfterSchoolDays?: true
+    syllabusUpdateExpectation?: true
+    teacherCloseoutTime?: true
+    remindersEnabled?: true
+    escalationsEnabled?: true
+    correctionApprovalRequired?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+  }
+
+  export type TeacherAccountabilitySettingMaxAggregateInputType = {
+    id?: true
+    attendanceOpenMinutesBeforeLesson?: true
+    attendanceGraceMinutesAfterLesson?: true
+    attendanceEscalateMinutesAfterLesson?: true
+    allowEarlyAttendanceMarking?: true
+    requireLateAttendanceNote?: true
+    requireAttendanceCorrectionReason?: true
+    caScorePublishWindowSchoolDays?: true
+    caReminderAfterSchoolDays?: true
+    caEscalateAfterSchoolDays?: true
+    homeworkCheckWindowSchoolDays?: true
+    homeworkEscalateAfterSchoolDays?: true
+    syllabusUpdateExpectation?: true
+    teacherCloseoutTime?: true
+    remindersEnabled?: true
+    escalationsEnabled?: true
+    correctionApprovalRequired?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+  }
+
+  export type TeacherAccountabilitySettingCountAggregateInputType = {
+    id?: true
+    attendanceOpenMinutesBeforeLesson?: true
+    attendanceGraceMinutesAfterLesson?: true
+    attendanceEscalateMinutesAfterLesson?: true
+    allowEarlyAttendanceMarking?: true
+    requireLateAttendanceNote?: true
+    requireAttendanceCorrectionReason?: true
+    caScorePublishWindowSchoolDays?: true
+    caReminderAfterSchoolDays?: true
+    caEscalateAfterSchoolDays?: true
+    homeworkCheckWindowSchoolDays?: true
+    homeworkEscalateAfterSchoolDays?: true
+    syllabusUpdateExpectation?: true
+    teacherCloseoutTime?: true
+    remindersEnabled?: true
+    escalationsEnabled?: true
+    correctionApprovalRequired?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    _all?: true
+  }
+
+  export type TeacherAccountabilitySettingAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TeacherAccountabilitySetting to aggregate.
+     */
+    where?: TeacherAccountabilitySettingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherAccountabilitySettings to fetch.
+     */
+    orderBy?: TeacherAccountabilitySettingOrderByWithRelationInput | TeacherAccountabilitySettingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TeacherAccountabilitySettingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherAccountabilitySettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherAccountabilitySettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TeacherAccountabilitySettings
+    **/
+    _count?: true | TeacherAccountabilitySettingCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TeacherAccountabilitySettingAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TeacherAccountabilitySettingSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TeacherAccountabilitySettingMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TeacherAccountabilitySettingMaxAggregateInputType
+  }
+
+  export type GetTeacherAccountabilitySettingAggregateType<T extends TeacherAccountabilitySettingAggregateArgs> = {
+        [P in keyof T & keyof AggregateTeacherAccountabilitySetting]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTeacherAccountabilitySetting[P]>
+      : GetScalarType<T[P], AggregateTeacherAccountabilitySetting[P]>
+  }
+
+
+
+
+  export type TeacherAccountabilitySettingGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherAccountabilitySettingWhereInput
+    orderBy?: TeacherAccountabilitySettingOrderByWithAggregationInput | TeacherAccountabilitySettingOrderByWithAggregationInput[]
+    by: TeacherAccountabilitySettingScalarFieldEnum[] | TeacherAccountabilitySettingScalarFieldEnum
+    having?: TeacherAccountabilitySettingScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TeacherAccountabilitySettingCountAggregateInputType | true
+    _avg?: TeacherAccountabilitySettingAvgAggregateInputType
+    _sum?: TeacherAccountabilitySettingSumAggregateInputType
+    _min?: TeacherAccountabilitySettingMinAggregateInputType
+    _max?: TeacherAccountabilitySettingMaxAggregateInputType
+  }
+
+  export type TeacherAccountabilitySettingGroupByOutputType = {
+    id: string
+    attendanceOpenMinutesBeforeLesson: number
+    attendanceGraceMinutesAfterLesson: number
+    attendanceEscalateMinutesAfterLesson: number
+    allowEarlyAttendanceMarking: boolean
+    requireLateAttendanceNote: boolean
+    requireAttendanceCorrectionReason: boolean
+    caScorePublishWindowSchoolDays: number
+    caReminderAfterSchoolDays: number
+    caEscalateAfterSchoolDays: number
+    homeworkCheckWindowSchoolDays: number
+    homeworkEscalateAfterSchoolDays: number
+    syllabusUpdateExpectation: string
+    teacherCloseoutTime: string
+    remindersEnabled: boolean
+    escalationsEnabled: boolean
+    correctionApprovalRequired: boolean
+    createdAt: Date
+    updatedAt: Date
+    schoolId: string
+    _count: TeacherAccountabilitySettingCountAggregateOutputType | null
+    _avg: TeacherAccountabilitySettingAvgAggregateOutputType | null
+    _sum: TeacherAccountabilitySettingSumAggregateOutputType | null
+    _min: TeacherAccountabilitySettingMinAggregateOutputType | null
+    _max: TeacherAccountabilitySettingMaxAggregateOutputType | null
+  }
+
+  type GetTeacherAccountabilitySettingGroupByPayload<T extends TeacherAccountabilitySettingGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TeacherAccountabilitySettingGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TeacherAccountabilitySettingGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TeacherAccountabilitySettingGroupByOutputType[P]>
+            : GetScalarType<T[P], TeacherAccountabilitySettingGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TeacherAccountabilitySettingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    attendanceOpenMinutesBeforeLesson?: boolean
+    attendanceGraceMinutesAfterLesson?: boolean
+    attendanceEscalateMinutesAfterLesson?: boolean
+    allowEarlyAttendanceMarking?: boolean
+    requireLateAttendanceNote?: boolean
+    requireAttendanceCorrectionReason?: boolean
+    caScorePublishWindowSchoolDays?: boolean
+    caReminderAfterSchoolDays?: boolean
+    caEscalateAfterSchoolDays?: boolean
+    homeworkCheckWindowSchoolDays?: boolean
+    homeworkEscalateAfterSchoolDays?: boolean
+    syllabusUpdateExpectation?: boolean
+    teacherCloseoutTime?: boolean
+    remindersEnabled?: boolean
+    escalationsEnabled?: boolean
+    correctionApprovalRequired?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherAccountabilitySetting"]>
+
+  export type TeacherAccountabilitySettingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    attendanceOpenMinutesBeforeLesson?: boolean
+    attendanceGraceMinutesAfterLesson?: boolean
+    attendanceEscalateMinutesAfterLesson?: boolean
+    allowEarlyAttendanceMarking?: boolean
+    requireLateAttendanceNote?: boolean
+    requireAttendanceCorrectionReason?: boolean
+    caScorePublishWindowSchoolDays?: boolean
+    caReminderAfterSchoolDays?: boolean
+    caEscalateAfterSchoolDays?: boolean
+    homeworkCheckWindowSchoolDays?: boolean
+    homeworkEscalateAfterSchoolDays?: boolean
+    syllabusUpdateExpectation?: boolean
+    teacherCloseoutTime?: boolean
+    remindersEnabled?: boolean
+    escalationsEnabled?: boolean
+    correctionApprovalRequired?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherAccountabilitySetting"]>
+
+  export type TeacherAccountabilitySettingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    attendanceOpenMinutesBeforeLesson?: boolean
+    attendanceGraceMinutesAfterLesson?: boolean
+    attendanceEscalateMinutesAfterLesson?: boolean
+    allowEarlyAttendanceMarking?: boolean
+    requireLateAttendanceNote?: boolean
+    requireAttendanceCorrectionReason?: boolean
+    caScorePublishWindowSchoolDays?: boolean
+    caReminderAfterSchoolDays?: boolean
+    caEscalateAfterSchoolDays?: boolean
+    homeworkCheckWindowSchoolDays?: boolean
+    homeworkEscalateAfterSchoolDays?: boolean
+    syllabusUpdateExpectation?: boolean
+    teacherCloseoutTime?: boolean
+    remindersEnabled?: boolean
+    escalationsEnabled?: boolean
+    correctionApprovalRequired?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherAccountabilitySetting"]>
+
+  export type TeacherAccountabilitySettingSelectScalar = {
+    id?: boolean
+    attendanceOpenMinutesBeforeLesson?: boolean
+    attendanceGraceMinutesAfterLesson?: boolean
+    attendanceEscalateMinutesAfterLesson?: boolean
+    allowEarlyAttendanceMarking?: boolean
+    requireLateAttendanceNote?: boolean
+    requireAttendanceCorrectionReason?: boolean
+    caScorePublishWindowSchoolDays?: boolean
+    caReminderAfterSchoolDays?: boolean
+    caEscalateAfterSchoolDays?: boolean
+    homeworkCheckWindowSchoolDays?: boolean
+    homeworkEscalateAfterSchoolDays?: boolean
+    syllabusUpdateExpectation?: boolean
+    teacherCloseoutTime?: boolean
+    remindersEnabled?: boolean
+    escalationsEnabled?: boolean
+    correctionApprovalRequired?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+  }
+
+  export type TeacherAccountabilitySettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "attendanceOpenMinutesBeforeLesson" | "attendanceGraceMinutesAfterLesson" | "attendanceEscalateMinutesAfterLesson" | "allowEarlyAttendanceMarking" | "requireLateAttendanceNote" | "requireAttendanceCorrectionReason" | "caScorePublishWindowSchoolDays" | "caReminderAfterSchoolDays" | "caEscalateAfterSchoolDays" | "homeworkCheckWindowSchoolDays" | "homeworkEscalateAfterSchoolDays" | "syllabusUpdateExpectation" | "teacherCloseoutTime" | "remindersEnabled" | "escalationsEnabled" | "correctionApprovalRequired" | "createdAt" | "updatedAt" | "schoolId", ExtArgs["result"]["teacherAccountabilitySetting"]>
+  export type TeacherAccountabilitySettingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }
+  export type TeacherAccountabilitySettingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }
+  export type TeacherAccountabilitySettingIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }
+
+  export type $TeacherAccountabilitySettingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TeacherAccountabilitySetting"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      attendanceOpenMinutesBeforeLesson: number
+      attendanceGraceMinutesAfterLesson: number
+      attendanceEscalateMinutesAfterLesson: number
+      allowEarlyAttendanceMarking: boolean
+      requireLateAttendanceNote: boolean
+      requireAttendanceCorrectionReason: boolean
+      caScorePublishWindowSchoolDays: number
+      caReminderAfterSchoolDays: number
+      caEscalateAfterSchoolDays: number
+      homeworkCheckWindowSchoolDays: number
+      homeworkEscalateAfterSchoolDays: number
+      syllabusUpdateExpectation: string
+      teacherCloseoutTime: string
+      remindersEnabled: boolean
+      escalationsEnabled: boolean
+      correctionApprovalRequired: boolean
+      createdAt: Date
+      updatedAt: Date
+      schoolId: string
+    }, ExtArgs["result"]["teacherAccountabilitySetting"]>
+    composites: {}
+  }
+
+  type TeacherAccountabilitySettingGetPayload<S extends boolean | null | undefined | TeacherAccountabilitySettingDefaultArgs> = $Result.GetResult<Prisma.$TeacherAccountabilitySettingPayload, S>
+
+  type TeacherAccountabilitySettingCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TeacherAccountabilitySettingFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TeacherAccountabilitySettingCountAggregateInputType | true
+    }
+
+  export interface TeacherAccountabilitySettingDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TeacherAccountabilitySetting'], meta: { name: 'TeacherAccountabilitySetting' } }
+    /**
+     * Find zero or one TeacherAccountabilitySetting that matches the filter.
+     * @param {TeacherAccountabilitySettingFindUniqueArgs} args - Arguments to find a TeacherAccountabilitySetting
+     * @example
+     * // Get one TeacherAccountabilitySetting
+     * const teacherAccountabilitySetting = await prisma.teacherAccountabilitySetting.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TeacherAccountabilitySettingFindUniqueArgs>(args: SelectSubset<T, TeacherAccountabilitySettingFindUniqueArgs<ExtArgs>>): Prisma__TeacherAccountabilitySettingClient<$Result.GetResult<Prisma.$TeacherAccountabilitySettingPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TeacherAccountabilitySetting that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TeacherAccountabilitySettingFindUniqueOrThrowArgs} args - Arguments to find a TeacherAccountabilitySetting
+     * @example
+     * // Get one TeacherAccountabilitySetting
+     * const teacherAccountabilitySetting = await prisma.teacherAccountabilitySetting.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TeacherAccountabilitySettingFindUniqueOrThrowArgs>(args: SelectSubset<T, TeacherAccountabilitySettingFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TeacherAccountabilitySettingClient<$Result.GetResult<Prisma.$TeacherAccountabilitySettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TeacherAccountabilitySetting that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherAccountabilitySettingFindFirstArgs} args - Arguments to find a TeacherAccountabilitySetting
+     * @example
+     * // Get one TeacherAccountabilitySetting
+     * const teacherAccountabilitySetting = await prisma.teacherAccountabilitySetting.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TeacherAccountabilitySettingFindFirstArgs>(args?: SelectSubset<T, TeacherAccountabilitySettingFindFirstArgs<ExtArgs>>): Prisma__TeacherAccountabilitySettingClient<$Result.GetResult<Prisma.$TeacherAccountabilitySettingPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TeacherAccountabilitySetting that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherAccountabilitySettingFindFirstOrThrowArgs} args - Arguments to find a TeacherAccountabilitySetting
+     * @example
+     * // Get one TeacherAccountabilitySetting
+     * const teacherAccountabilitySetting = await prisma.teacherAccountabilitySetting.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TeacherAccountabilitySettingFindFirstOrThrowArgs>(args?: SelectSubset<T, TeacherAccountabilitySettingFindFirstOrThrowArgs<ExtArgs>>): Prisma__TeacherAccountabilitySettingClient<$Result.GetResult<Prisma.$TeacherAccountabilitySettingPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TeacherAccountabilitySettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherAccountabilitySettingFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TeacherAccountabilitySettings
+     * const teacherAccountabilitySettings = await prisma.teacherAccountabilitySetting.findMany()
+     * 
+     * // Get first 10 TeacherAccountabilitySettings
+     * const teacherAccountabilitySettings = await prisma.teacherAccountabilitySetting.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const teacherAccountabilitySettingWithIdOnly = await prisma.teacherAccountabilitySetting.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TeacherAccountabilitySettingFindManyArgs>(args?: SelectSubset<T, TeacherAccountabilitySettingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherAccountabilitySettingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TeacherAccountabilitySetting.
+     * @param {TeacherAccountabilitySettingCreateArgs} args - Arguments to create a TeacherAccountabilitySetting.
+     * @example
+     * // Create one TeacherAccountabilitySetting
+     * const TeacherAccountabilitySetting = await prisma.teacherAccountabilitySetting.create({
+     *   data: {
+     *     // ... data to create a TeacherAccountabilitySetting
+     *   }
+     * })
+     * 
+     */
+    create<T extends TeacherAccountabilitySettingCreateArgs>(args: SelectSubset<T, TeacherAccountabilitySettingCreateArgs<ExtArgs>>): Prisma__TeacherAccountabilitySettingClient<$Result.GetResult<Prisma.$TeacherAccountabilitySettingPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TeacherAccountabilitySettings.
+     * @param {TeacherAccountabilitySettingCreateManyArgs} args - Arguments to create many TeacherAccountabilitySettings.
+     * @example
+     * // Create many TeacherAccountabilitySettings
+     * const teacherAccountabilitySetting = await prisma.teacherAccountabilitySetting.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TeacherAccountabilitySettingCreateManyArgs>(args?: SelectSubset<T, TeacherAccountabilitySettingCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TeacherAccountabilitySettings and returns the data saved in the database.
+     * @param {TeacherAccountabilitySettingCreateManyAndReturnArgs} args - Arguments to create many TeacherAccountabilitySettings.
+     * @example
+     * // Create many TeacherAccountabilitySettings
+     * const teacherAccountabilitySetting = await prisma.teacherAccountabilitySetting.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TeacherAccountabilitySettings and only return the `id`
+     * const teacherAccountabilitySettingWithIdOnly = await prisma.teacherAccountabilitySetting.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TeacherAccountabilitySettingCreateManyAndReturnArgs>(args?: SelectSubset<T, TeacherAccountabilitySettingCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherAccountabilitySettingPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TeacherAccountabilitySetting.
+     * @param {TeacherAccountabilitySettingDeleteArgs} args - Arguments to delete one TeacherAccountabilitySetting.
+     * @example
+     * // Delete one TeacherAccountabilitySetting
+     * const TeacherAccountabilitySetting = await prisma.teacherAccountabilitySetting.delete({
+     *   where: {
+     *     // ... filter to delete one TeacherAccountabilitySetting
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TeacherAccountabilitySettingDeleteArgs>(args: SelectSubset<T, TeacherAccountabilitySettingDeleteArgs<ExtArgs>>): Prisma__TeacherAccountabilitySettingClient<$Result.GetResult<Prisma.$TeacherAccountabilitySettingPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TeacherAccountabilitySetting.
+     * @param {TeacherAccountabilitySettingUpdateArgs} args - Arguments to update one TeacherAccountabilitySetting.
+     * @example
+     * // Update one TeacherAccountabilitySetting
+     * const teacherAccountabilitySetting = await prisma.teacherAccountabilitySetting.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TeacherAccountabilitySettingUpdateArgs>(args: SelectSubset<T, TeacherAccountabilitySettingUpdateArgs<ExtArgs>>): Prisma__TeacherAccountabilitySettingClient<$Result.GetResult<Prisma.$TeacherAccountabilitySettingPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TeacherAccountabilitySettings.
+     * @param {TeacherAccountabilitySettingDeleteManyArgs} args - Arguments to filter TeacherAccountabilitySettings to delete.
+     * @example
+     * // Delete a few TeacherAccountabilitySettings
+     * const { count } = await prisma.teacherAccountabilitySetting.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TeacherAccountabilitySettingDeleteManyArgs>(args?: SelectSubset<T, TeacherAccountabilitySettingDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TeacherAccountabilitySettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherAccountabilitySettingUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TeacherAccountabilitySettings
+     * const teacherAccountabilitySetting = await prisma.teacherAccountabilitySetting.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TeacherAccountabilitySettingUpdateManyArgs>(args: SelectSubset<T, TeacherAccountabilitySettingUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TeacherAccountabilitySettings and returns the data updated in the database.
+     * @param {TeacherAccountabilitySettingUpdateManyAndReturnArgs} args - Arguments to update many TeacherAccountabilitySettings.
+     * @example
+     * // Update many TeacherAccountabilitySettings
+     * const teacherAccountabilitySetting = await prisma.teacherAccountabilitySetting.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TeacherAccountabilitySettings and only return the `id`
+     * const teacherAccountabilitySettingWithIdOnly = await prisma.teacherAccountabilitySetting.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TeacherAccountabilitySettingUpdateManyAndReturnArgs>(args: SelectSubset<T, TeacherAccountabilitySettingUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherAccountabilitySettingPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TeacherAccountabilitySetting.
+     * @param {TeacherAccountabilitySettingUpsertArgs} args - Arguments to update or create a TeacherAccountabilitySetting.
+     * @example
+     * // Update or create a TeacherAccountabilitySetting
+     * const teacherAccountabilitySetting = await prisma.teacherAccountabilitySetting.upsert({
+     *   create: {
+     *     // ... data to create a TeacherAccountabilitySetting
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TeacherAccountabilitySetting we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TeacherAccountabilitySettingUpsertArgs>(args: SelectSubset<T, TeacherAccountabilitySettingUpsertArgs<ExtArgs>>): Prisma__TeacherAccountabilitySettingClient<$Result.GetResult<Prisma.$TeacherAccountabilitySettingPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TeacherAccountabilitySettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherAccountabilitySettingCountArgs} args - Arguments to filter TeacherAccountabilitySettings to count.
+     * @example
+     * // Count the number of TeacherAccountabilitySettings
+     * const count = await prisma.teacherAccountabilitySetting.count({
+     *   where: {
+     *     // ... the filter for the TeacherAccountabilitySettings we want to count
+     *   }
+     * })
+    **/
+    count<T extends TeacherAccountabilitySettingCountArgs>(
+      args?: Subset<T, TeacherAccountabilitySettingCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TeacherAccountabilitySettingCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TeacherAccountabilitySetting.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherAccountabilitySettingAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TeacherAccountabilitySettingAggregateArgs>(args: Subset<T, TeacherAccountabilitySettingAggregateArgs>): Prisma.PrismaPromise<GetTeacherAccountabilitySettingAggregateType<T>>
+
+    /**
+     * Group by TeacherAccountabilitySetting.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherAccountabilitySettingGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TeacherAccountabilitySettingGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TeacherAccountabilitySettingGroupByArgs['orderBy'] }
+        : { orderBy?: TeacherAccountabilitySettingGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TeacherAccountabilitySettingGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTeacherAccountabilitySettingGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TeacherAccountabilitySetting model
+   */
+  readonly fields: TeacherAccountabilitySettingFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TeacherAccountabilitySetting.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TeacherAccountabilitySettingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TeacherAccountabilitySetting model
+   */
+  interface TeacherAccountabilitySettingFieldRefs {
+    readonly id: FieldRef<"TeacherAccountabilitySetting", 'String'>
+    readonly attendanceOpenMinutesBeforeLesson: FieldRef<"TeacherAccountabilitySetting", 'Int'>
+    readonly attendanceGraceMinutesAfterLesson: FieldRef<"TeacherAccountabilitySetting", 'Int'>
+    readonly attendanceEscalateMinutesAfterLesson: FieldRef<"TeacherAccountabilitySetting", 'Int'>
+    readonly allowEarlyAttendanceMarking: FieldRef<"TeacherAccountabilitySetting", 'Boolean'>
+    readonly requireLateAttendanceNote: FieldRef<"TeacherAccountabilitySetting", 'Boolean'>
+    readonly requireAttendanceCorrectionReason: FieldRef<"TeacherAccountabilitySetting", 'Boolean'>
+    readonly caScorePublishWindowSchoolDays: FieldRef<"TeacherAccountabilitySetting", 'Int'>
+    readonly caReminderAfterSchoolDays: FieldRef<"TeacherAccountabilitySetting", 'Int'>
+    readonly caEscalateAfterSchoolDays: FieldRef<"TeacherAccountabilitySetting", 'Int'>
+    readonly homeworkCheckWindowSchoolDays: FieldRef<"TeacherAccountabilitySetting", 'Int'>
+    readonly homeworkEscalateAfterSchoolDays: FieldRef<"TeacherAccountabilitySetting", 'Int'>
+    readonly syllabusUpdateExpectation: FieldRef<"TeacherAccountabilitySetting", 'String'>
+    readonly teacherCloseoutTime: FieldRef<"TeacherAccountabilitySetting", 'String'>
+    readonly remindersEnabled: FieldRef<"TeacherAccountabilitySetting", 'Boolean'>
+    readonly escalationsEnabled: FieldRef<"TeacherAccountabilitySetting", 'Boolean'>
+    readonly correctionApprovalRequired: FieldRef<"TeacherAccountabilitySetting", 'Boolean'>
+    readonly createdAt: FieldRef<"TeacherAccountabilitySetting", 'DateTime'>
+    readonly updatedAt: FieldRef<"TeacherAccountabilitySetting", 'DateTime'>
+    readonly schoolId: FieldRef<"TeacherAccountabilitySetting", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TeacherAccountabilitySetting findUnique
+   */
+  export type TeacherAccountabilitySettingFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilitySetting
+     */
+    select?: TeacherAccountabilitySettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilitySetting
+     */
+    omit?: TeacherAccountabilitySettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilitySettingInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherAccountabilitySetting to fetch.
+     */
+    where: TeacherAccountabilitySettingWhereUniqueInput
+  }
+
+  /**
+   * TeacherAccountabilitySetting findUniqueOrThrow
+   */
+  export type TeacherAccountabilitySettingFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilitySetting
+     */
+    select?: TeacherAccountabilitySettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilitySetting
+     */
+    omit?: TeacherAccountabilitySettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilitySettingInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherAccountabilitySetting to fetch.
+     */
+    where: TeacherAccountabilitySettingWhereUniqueInput
+  }
+
+  /**
+   * TeacherAccountabilitySetting findFirst
+   */
+  export type TeacherAccountabilitySettingFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilitySetting
+     */
+    select?: TeacherAccountabilitySettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilitySetting
+     */
+    omit?: TeacherAccountabilitySettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilitySettingInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherAccountabilitySetting to fetch.
+     */
+    where?: TeacherAccountabilitySettingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherAccountabilitySettings to fetch.
+     */
+    orderBy?: TeacherAccountabilitySettingOrderByWithRelationInput | TeacherAccountabilitySettingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TeacherAccountabilitySettings.
+     */
+    cursor?: TeacherAccountabilitySettingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherAccountabilitySettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherAccountabilitySettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherAccountabilitySettings.
+     */
+    distinct?: TeacherAccountabilitySettingScalarFieldEnum | TeacherAccountabilitySettingScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherAccountabilitySetting findFirstOrThrow
+   */
+  export type TeacherAccountabilitySettingFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilitySetting
+     */
+    select?: TeacherAccountabilitySettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilitySetting
+     */
+    omit?: TeacherAccountabilitySettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilitySettingInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherAccountabilitySetting to fetch.
+     */
+    where?: TeacherAccountabilitySettingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherAccountabilitySettings to fetch.
+     */
+    orderBy?: TeacherAccountabilitySettingOrderByWithRelationInput | TeacherAccountabilitySettingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TeacherAccountabilitySettings.
+     */
+    cursor?: TeacherAccountabilitySettingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherAccountabilitySettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherAccountabilitySettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherAccountabilitySettings.
+     */
+    distinct?: TeacherAccountabilitySettingScalarFieldEnum | TeacherAccountabilitySettingScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherAccountabilitySetting findMany
+   */
+  export type TeacherAccountabilitySettingFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilitySetting
+     */
+    select?: TeacherAccountabilitySettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilitySetting
+     */
+    omit?: TeacherAccountabilitySettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilitySettingInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherAccountabilitySettings to fetch.
+     */
+    where?: TeacherAccountabilitySettingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherAccountabilitySettings to fetch.
+     */
+    orderBy?: TeacherAccountabilitySettingOrderByWithRelationInput | TeacherAccountabilitySettingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TeacherAccountabilitySettings.
+     */
+    cursor?: TeacherAccountabilitySettingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherAccountabilitySettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherAccountabilitySettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherAccountabilitySettings.
+     */
+    distinct?: TeacherAccountabilitySettingScalarFieldEnum | TeacherAccountabilitySettingScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherAccountabilitySetting create
+   */
+  export type TeacherAccountabilitySettingCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilitySetting
+     */
+    select?: TeacherAccountabilitySettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilitySetting
+     */
+    omit?: TeacherAccountabilitySettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilitySettingInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TeacherAccountabilitySetting.
+     */
+    data: XOR<TeacherAccountabilitySettingCreateInput, TeacherAccountabilitySettingUncheckedCreateInput>
+  }
+
+  /**
+   * TeacherAccountabilitySetting createMany
+   */
+  export type TeacherAccountabilitySettingCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TeacherAccountabilitySettings.
+     */
+    data: TeacherAccountabilitySettingCreateManyInput | TeacherAccountabilitySettingCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TeacherAccountabilitySetting createManyAndReturn
+   */
+  export type TeacherAccountabilitySettingCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilitySetting
+     */
+    select?: TeacherAccountabilitySettingSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilitySetting
+     */
+    omit?: TeacherAccountabilitySettingOmit<ExtArgs> | null
+    /**
+     * The data used to create many TeacherAccountabilitySettings.
+     */
+    data: TeacherAccountabilitySettingCreateManyInput | TeacherAccountabilitySettingCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilitySettingIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TeacherAccountabilitySetting update
+   */
+  export type TeacherAccountabilitySettingUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilitySetting
+     */
+    select?: TeacherAccountabilitySettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilitySetting
+     */
+    omit?: TeacherAccountabilitySettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilitySettingInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TeacherAccountabilitySetting.
+     */
+    data: XOR<TeacherAccountabilitySettingUpdateInput, TeacherAccountabilitySettingUncheckedUpdateInput>
+    /**
+     * Choose, which TeacherAccountabilitySetting to update.
+     */
+    where: TeacherAccountabilitySettingWhereUniqueInput
+  }
+
+  /**
+   * TeacherAccountabilitySetting updateMany
+   */
+  export type TeacherAccountabilitySettingUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TeacherAccountabilitySettings.
+     */
+    data: XOR<TeacherAccountabilitySettingUpdateManyMutationInput, TeacherAccountabilitySettingUncheckedUpdateManyInput>
+    /**
+     * Filter which TeacherAccountabilitySettings to update
+     */
+    where?: TeacherAccountabilitySettingWhereInput
+    /**
+     * Limit how many TeacherAccountabilitySettings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TeacherAccountabilitySetting updateManyAndReturn
+   */
+  export type TeacherAccountabilitySettingUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilitySetting
+     */
+    select?: TeacherAccountabilitySettingSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilitySetting
+     */
+    omit?: TeacherAccountabilitySettingOmit<ExtArgs> | null
+    /**
+     * The data used to update TeacherAccountabilitySettings.
+     */
+    data: XOR<TeacherAccountabilitySettingUpdateManyMutationInput, TeacherAccountabilitySettingUncheckedUpdateManyInput>
+    /**
+     * Filter which TeacherAccountabilitySettings to update
+     */
+    where?: TeacherAccountabilitySettingWhereInput
+    /**
+     * Limit how many TeacherAccountabilitySettings to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilitySettingIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TeacherAccountabilitySetting upsert
+   */
+  export type TeacherAccountabilitySettingUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilitySetting
+     */
+    select?: TeacherAccountabilitySettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilitySetting
+     */
+    omit?: TeacherAccountabilitySettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilitySettingInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TeacherAccountabilitySetting to update in case it exists.
+     */
+    where: TeacherAccountabilitySettingWhereUniqueInput
+    /**
+     * In case the TeacherAccountabilitySetting found by the `where` argument doesn't exist, create a new TeacherAccountabilitySetting with this data.
+     */
+    create: XOR<TeacherAccountabilitySettingCreateInput, TeacherAccountabilitySettingUncheckedCreateInput>
+    /**
+     * In case the TeacherAccountabilitySetting was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TeacherAccountabilitySettingUpdateInput, TeacherAccountabilitySettingUncheckedUpdateInput>
+  }
+
+  /**
+   * TeacherAccountabilitySetting delete
+   */
+  export type TeacherAccountabilitySettingDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilitySetting
+     */
+    select?: TeacherAccountabilitySettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilitySetting
+     */
+    omit?: TeacherAccountabilitySettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilitySettingInclude<ExtArgs> | null
+    /**
+     * Filter which TeacherAccountabilitySetting to delete.
+     */
+    where: TeacherAccountabilitySettingWhereUniqueInput
+  }
+
+  /**
+   * TeacherAccountabilitySetting deleteMany
+   */
+  export type TeacherAccountabilitySettingDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TeacherAccountabilitySettings to delete
+     */
+    where?: TeacherAccountabilitySettingWhereInput
+    /**
+     * Limit how many TeacherAccountabilitySettings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TeacherAccountabilitySetting without action
+   */
+  export type TeacherAccountabilitySettingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilitySetting
+     */
+    select?: TeacherAccountabilitySettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilitySetting
+     */
+    omit?: TeacherAccountabilitySettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilitySettingInclude<ExtArgs> | null
   }
 
 
@@ -68772,6 +70206,32 @@ export namespace Prisma {
   export type SchoolNotificationSettingScalarFieldEnum = (typeof SchoolNotificationSettingScalarFieldEnum)[keyof typeof SchoolNotificationSettingScalarFieldEnum]
 
 
+  export const TeacherAccountabilitySettingScalarFieldEnum: {
+    id: 'id',
+    attendanceOpenMinutesBeforeLesson: 'attendanceOpenMinutesBeforeLesson',
+    attendanceGraceMinutesAfterLesson: 'attendanceGraceMinutesAfterLesson',
+    attendanceEscalateMinutesAfterLesson: 'attendanceEscalateMinutesAfterLesson',
+    allowEarlyAttendanceMarking: 'allowEarlyAttendanceMarking',
+    requireLateAttendanceNote: 'requireLateAttendanceNote',
+    requireAttendanceCorrectionReason: 'requireAttendanceCorrectionReason',
+    caScorePublishWindowSchoolDays: 'caScorePublishWindowSchoolDays',
+    caReminderAfterSchoolDays: 'caReminderAfterSchoolDays',
+    caEscalateAfterSchoolDays: 'caEscalateAfterSchoolDays',
+    homeworkCheckWindowSchoolDays: 'homeworkCheckWindowSchoolDays',
+    homeworkEscalateAfterSchoolDays: 'homeworkEscalateAfterSchoolDays',
+    syllabusUpdateExpectation: 'syllabusUpdateExpectation',
+    teacherCloseoutTime: 'teacherCloseoutTime',
+    remindersEnabled: 'remindersEnabled',
+    escalationsEnabled: 'escalationsEnabled',
+    correctionApprovalRequired: 'correctionApprovalRequired',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    schoolId: 'schoolId'
+  };
+
+  export type TeacherAccountabilitySettingScalarFieldEnum = (typeof TeacherAccountabilitySettingScalarFieldEnum)[keyof typeof TeacherAccountabilitySettingScalarFieldEnum]
+
+
   export const ParentNotificationPreferenceScalarFieldEnum: {
     id: 'id',
     dailySummaryEnabled: 'dailySummaryEnabled',
@@ -70203,6 +71663,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
     notificationSettings?: XOR<SchoolNotificationSettingNullableScalarRelationFilter, SchoolNotificationSettingWhereInput> | null
+    accountabilitySettings?: XOR<TeacherAccountabilitySettingNullableScalarRelationFilter, TeacherAccountabilitySettingWhereInput> | null
     parentPreferences?: ParentNotificationPreferenceListRelationFilter
     parentDeliveryLogs?: ParentNotificationDeliveryLogListRelationFilter
   }
@@ -70267,6 +71728,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationOrderByRelationAggregateInput
     parentActivityEvents?: ParentActivityEventOrderByRelationAggregateInput
     notificationSettings?: SchoolNotificationSettingOrderByWithRelationInput
+    accountabilitySettings?: TeacherAccountabilitySettingOrderByWithRelationInput
     parentPreferences?: ParentNotificationPreferenceOrderByRelationAggregateInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogOrderByRelationAggregateInput
   }
@@ -70334,6 +71796,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
     notificationSettings?: XOR<SchoolNotificationSettingNullableScalarRelationFilter, SchoolNotificationSettingWhereInput> | null
+    accountabilitySettings?: XOR<TeacherAccountabilitySettingNullableScalarRelationFilter, TeacherAccountabilitySettingWhereInput> | null
     parentPreferences?: ParentNotificationPreferenceListRelationFilter
     parentDeliveryLogs?: ParentNotificationDeliveryLogListRelationFilter
   }, "id" | "slug">
@@ -70923,6 +72386,138 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"SchoolNotificationSetting"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"SchoolNotificationSetting"> | Date | string
     schoolId?: StringWithAggregatesFilter<"SchoolNotificationSetting"> | string
+  }
+
+  export type TeacherAccountabilitySettingWhereInput = {
+    AND?: TeacherAccountabilitySettingWhereInput | TeacherAccountabilitySettingWhereInput[]
+    OR?: TeacherAccountabilitySettingWhereInput[]
+    NOT?: TeacherAccountabilitySettingWhereInput | TeacherAccountabilitySettingWhereInput[]
+    id?: StringFilter<"TeacherAccountabilitySetting"> | string
+    attendanceOpenMinutesBeforeLesson?: IntFilter<"TeacherAccountabilitySetting"> | number
+    attendanceGraceMinutesAfterLesson?: IntFilter<"TeacherAccountabilitySetting"> | number
+    attendanceEscalateMinutesAfterLesson?: IntFilter<"TeacherAccountabilitySetting"> | number
+    allowEarlyAttendanceMarking?: BoolFilter<"TeacherAccountabilitySetting"> | boolean
+    requireLateAttendanceNote?: BoolFilter<"TeacherAccountabilitySetting"> | boolean
+    requireAttendanceCorrectionReason?: BoolFilter<"TeacherAccountabilitySetting"> | boolean
+    caScorePublishWindowSchoolDays?: IntFilter<"TeacherAccountabilitySetting"> | number
+    caReminderAfterSchoolDays?: IntFilter<"TeacherAccountabilitySetting"> | number
+    caEscalateAfterSchoolDays?: IntFilter<"TeacherAccountabilitySetting"> | number
+    homeworkCheckWindowSchoolDays?: IntFilter<"TeacherAccountabilitySetting"> | number
+    homeworkEscalateAfterSchoolDays?: IntFilter<"TeacherAccountabilitySetting"> | number
+    syllabusUpdateExpectation?: StringFilter<"TeacherAccountabilitySetting"> | string
+    teacherCloseoutTime?: StringFilter<"TeacherAccountabilitySetting"> | string
+    remindersEnabled?: BoolFilter<"TeacherAccountabilitySetting"> | boolean
+    escalationsEnabled?: BoolFilter<"TeacherAccountabilitySetting"> | boolean
+    correctionApprovalRequired?: BoolFilter<"TeacherAccountabilitySetting"> | boolean
+    createdAt?: DateTimeFilter<"TeacherAccountabilitySetting"> | Date | string
+    updatedAt?: DateTimeFilter<"TeacherAccountabilitySetting"> | Date | string
+    schoolId?: StringFilter<"TeacherAccountabilitySetting"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+  }
+
+  export type TeacherAccountabilitySettingOrderByWithRelationInput = {
+    id?: SortOrder
+    attendanceOpenMinutesBeforeLesson?: SortOrder
+    attendanceGraceMinutesAfterLesson?: SortOrder
+    attendanceEscalateMinutesAfterLesson?: SortOrder
+    allowEarlyAttendanceMarking?: SortOrder
+    requireLateAttendanceNote?: SortOrder
+    requireAttendanceCorrectionReason?: SortOrder
+    caScorePublishWindowSchoolDays?: SortOrder
+    caReminderAfterSchoolDays?: SortOrder
+    caEscalateAfterSchoolDays?: SortOrder
+    homeworkCheckWindowSchoolDays?: SortOrder
+    homeworkEscalateAfterSchoolDays?: SortOrder
+    syllabusUpdateExpectation?: SortOrder
+    teacherCloseoutTime?: SortOrder
+    remindersEnabled?: SortOrder
+    escalationsEnabled?: SortOrder
+    correctionApprovalRequired?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+  }
+
+  export type TeacherAccountabilitySettingWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    schoolId?: string
+    AND?: TeacherAccountabilitySettingWhereInput | TeacherAccountabilitySettingWhereInput[]
+    OR?: TeacherAccountabilitySettingWhereInput[]
+    NOT?: TeacherAccountabilitySettingWhereInput | TeacherAccountabilitySettingWhereInput[]
+    attendanceOpenMinutesBeforeLesson?: IntFilter<"TeacherAccountabilitySetting"> | number
+    attendanceGraceMinutesAfterLesson?: IntFilter<"TeacherAccountabilitySetting"> | number
+    attendanceEscalateMinutesAfterLesson?: IntFilter<"TeacherAccountabilitySetting"> | number
+    allowEarlyAttendanceMarking?: BoolFilter<"TeacherAccountabilitySetting"> | boolean
+    requireLateAttendanceNote?: BoolFilter<"TeacherAccountabilitySetting"> | boolean
+    requireAttendanceCorrectionReason?: BoolFilter<"TeacherAccountabilitySetting"> | boolean
+    caScorePublishWindowSchoolDays?: IntFilter<"TeacherAccountabilitySetting"> | number
+    caReminderAfterSchoolDays?: IntFilter<"TeacherAccountabilitySetting"> | number
+    caEscalateAfterSchoolDays?: IntFilter<"TeacherAccountabilitySetting"> | number
+    homeworkCheckWindowSchoolDays?: IntFilter<"TeacherAccountabilitySetting"> | number
+    homeworkEscalateAfterSchoolDays?: IntFilter<"TeacherAccountabilitySetting"> | number
+    syllabusUpdateExpectation?: StringFilter<"TeacherAccountabilitySetting"> | string
+    teacherCloseoutTime?: StringFilter<"TeacherAccountabilitySetting"> | string
+    remindersEnabled?: BoolFilter<"TeacherAccountabilitySetting"> | boolean
+    escalationsEnabled?: BoolFilter<"TeacherAccountabilitySetting"> | boolean
+    correctionApprovalRequired?: BoolFilter<"TeacherAccountabilitySetting"> | boolean
+    createdAt?: DateTimeFilter<"TeacherAccountabilitySetting"> | Date | string
+    updatedAt?: DateTimeFilter<"TeacherAccountabilitySetting"> | Date | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+  }, "id" | "schoolId">
+
+  export type TeacherAccountabilitySettingOrderByWithAggregationInput = {
+    id?: SortOrder
+    attendanceOpenMinutesBeforeLesson?: SortOrder
+    attendanceGraceMinutesAfterLesson?: SortOrder
+    attendanceEscalateMinutesAfterLesson?: SortOrder
+    allowEarlyAttendanceMarking?: SortOrder
+    requireLateAttendanceNote?: SortOrder
+    requireAttendanceCorrectionReason?: SortOrder
+    caScorePublishWindowSchoolDays?: SortOrder
+    caReminderAfterSchoolDays?: SortOrder
+    caEscalateAfterSchoolDays?: SortOrder
+    homeworkCheckWindowSchoolDays?: SortOrder
+    homeworkEscalateAfterSchoolDays?: SortOrder
+    syllabusUpdateExpectation?: SortOrder
+    teacherCloseoutTime?: SortOrder
+    remindersEnabled?: SortOrder
+    escalationsEnabled?: SortOrder
+    correctionApprovalRequired?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    _count?: TeacherAccountabilitySettingCountOrderByAggregateInput
+    _avg?: TeacherAccountabilitySettingAvgOrderByAggregateInput
+    _max?: TeacherAccountabilitySettingMaxOrderByAggregateInput
+    _min?: TeacherAccountabilitySettingMinOrderByAggregateInput
+    _sum?: TeacherAccountabilitySettingSumOrderByAggregateInput
+  }
+
+  export type TeacherAccountabilitySettingScalarWhereWithAggregatesInput = {
+    AND?: TeacherAccountabilitySettingScalarWhereWithAggregatesInput | TeacherAccountabilitySettingScalarWhereWithAggregatesInput[]
+    OR?: TeacherAccountabilitySettingScalarWhereWithAggregatesInput[]
+    NOT?: TeacherAccountabilitySettingScalarWhereWithAggregatesInput | TeacherAccountabilitySettingScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TeacherAccountabilitySetting"> | string
+    attendanceOpenMinutesBeforeLesson?: IntWithAggregatesFilter<"TeacherAccountabilitySetting"> | number
+    attendanceGraceMinutesAfterLesson?: IntWithAggregatesFilter<"TeacherAccountabilitySetting"> | number
+    attendanceEscalateMinutesAfterLesson?: IntWithAggregatesFilter<"TeacherAccountabilitySetting"> | number
+    allowEarlyAttendanceMarking?: BoolWithAggregatesFilter<"TeacherAccountabilitySetting"> | boolean
+    requireLateAttendanceNote?: BoolWithAggregatesFilter<"TeacherAccountabilitySetting"> | boolean
+    requireAttendanceCorrectionReason?: BoolWithAggregatesFilter<"TeacherAccountabilitySetting"> | boolean
+    caScorePublishWindowSchoolDays?: IntWithAggregatesFilter<"TeacherAccountabilitySetting"> | number
+    caReminderAfterSchoolDays?: IntWithAggregatesFilter<"TeacherAccountabilitySetting"> | number
+    caEscalateAfterSchoolDays?: IntWithAggregatesFilter<"TeacherAccountabilitySetting"> | number
+    homeworkCheckWindowSchoolDays?: IntWithAggregatesFilter<"TeacherAccountabilitySetting"> | number
+    homeworkEscalateAfterSchoolDays?: IntWithAggregatesFilter<"TeacherAccountabilitySetting"> | number
+    syllabusUpdateExpectation?: StringWithAggregatesFilter<"TeacherAccountabilitySetting"> | string
+    teacherCloseoutTime?: StringWithAggregatesFilter<"TeacherAccountabilitySetting"> | string
+    remindersEnabled?: BoolWithAggregatesFilter<"TeacherAccountabilitySetting"> | boolean
+    escalationsEnabled?: BoolWithAggregatesFilter<"TeacherAccountabilitySetting"> | boolean
+    correctionApprovalRequired?: BoolWithAggregatesFilter<"TeacherAccountabilitySetting"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"TeacherAccountabilitySetting"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"TeacherAccountabilitySetting"> | Date | string
+    schoolId?: StringWithAggregatesFilter<"TeacherAccountabilitySetting"> | string
   }
 
   export type ParentNotificationPreferenceWhereInput = {
@@ -74977,6 +76572,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -75041,6 +76637,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -75105,6 +76702,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -75169,6 +76767,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -75849,6 +77448,166 @@ export namespace Prisma {
     quietHoursEnd?: StringFieldUpdateOperationsInput | string
     lastDailySummaryRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastWeeklySummaryRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherAccountabilitySettingCreateInput = {
+    id?: string
+    attendanceOpenMinutesBeforeLesson?: number
+    attendanceGraceMinutesAfterLesson?: number
+    attendanceEscalateMinutesAfterLesson?: number
+    allowEarlyAttendanceMarking?: boolean
+    requireLateAttendanceNote?: boolean
+    requireAttendanceCorrectionReason?: boolean
+    caScorePublishWindowSchoolDays?: number
+    caReminderAfterSchoolDays?: number
+    caEscalateAfterSchoolDays?: number
+    homeworkCheckWindowSchoolDays?: number
+    homeworkEscalateAfterSchoolDays?: number
+    syllabusUpdateExpectation?: string
+    teacherCloseoutTime?: string
+    remindersEnabled?: boolean
+    escalationsEnabled?: boolean
+    correctionApprovalRequired?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutAccountabilitySettingsInput
+  }
+
+  export type TeacherAccountabilitySettingUncheckedCreateInput = {
+    id?: string
+    attendanceOpenMinutesBeforeLesson?: number
+    attendanceGraceMinutesAfterLesson?: number
+    attendanceEscalateMinutesAfterLesson?: number
+    allowEarlyAttendanceMarking?: boolean
+    requireLateAttendanceNote?: boolean
+    requireAttendanceCorrectionReason?: boolean
+    caScorePublishWindowSchoolDays?: number
+    caReminderAfterSchoolDays?: number
+    caEscalateAfterSchoolDays?: number
+    homeworkCheckWindowSchoolDays?: number
+    homeworkEscalateAfterSchoolDays?: number
+    syllabusUpdateExpectation?: string
+    teacherCloseoutTime?: string
+    remindersEnabled?: boolean
+    escalationsEnabled?: boolean
+    correctionApprovalRequired?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+  }
+
+  export type TeacherAccountabilitySettingUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    attendanceOpenMinutesBeforeLesson?: IntFieldUpdateOperationsInput | number
+    attendanceGraceMinutesAfterLesson?: IntFieldUpdateOperationsInput | number
+    attendanceEscalateMinutesAfterLesson?: IntFieldUpdateOperationsInput | number
+    allowEarlyAttendanceMarking?: BoolFieldUpdateOperationsInput | boolean
+    requireLateAttendanceNote?: BoolFieldUpdateOperationsInput | boolean
+    requireAttendanceCorrectionReason?: BoolFieldUpdateOperationsInput | boolean
+    caScorePublishWindowSchoolDays?: IntFieldUpdateOperationsInput | number
+    caReminderAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    caEscalateAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    homeworkCheckWindowSchoolDays?: IntFieldUpdateOperationsInput | number
+    homeworkEscalateAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    syllabusUpdateExpectation?: StringFieldUpdateOperationsInput | string
+    teacherCloseoutTime?: StringFieldUpdateOperationsInput | string
+    remindersEnabled?: BoolFieldUpdateOperationsInput | boolean
+    escalationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    correctionApprovalRequired?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutAccountabilitySettingsNestedInput
+  }
+
+  export type TeacherAccountabilitySettingUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    attendanceOpenMinutesBeforeLesson?: IntFieldUpdateOperationsInput | number
+    attendanceGraceMinutesAfterLesson?: IntFieldUpdateOperationsInput | number
+    attendanceEscalateMinutesAfterLesson?: IntFieldUpdateOperationsInput | number
+    allowEarlyAttendanceMarking?: BoolFieldUpdateOperationsInput | boolean
+    requireLateAttendanceNote?: BoolFieldUpdateOperationsInput | boolean
+    requireAttendanceCorrectionReason?: BoolFieldUpdateOperationsInput | boolean
+    caScorePublishWindowSchoolDays?: IntFieldUpdateOperationsInput | number
+    caReminderAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    caEscalateAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    homeworkCheckWindowSchoolDays?: IntFieldUpdateOperationsInput | number
+    homeworkEscalateAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    syllabusUpdateExpectation?: StringFieldUpdateOperationsInput | string
+    teacherCloseoutTime?: StringFieldUpdateOperationsInput | string
+    remindersEnabled?: BoolFieldUpdateOperationsInput | boolean
+    escalationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    correctionApprovalRequired?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherAccountabilitySettingCreateManyInput = {
+    id?: string
+    attendanceOpenMinutesBeforeLesson?: number
+    attendanceGraceMinutesAfterLesson?: number
+    attendanceEscalateMinutesAfterLesson?: number
+    allowEarlyAttendanceMarking?: boolean
+    requireLateAttendanceNote?: boolean
+    requireAttendanceCorrectionReason?: boolean
+    caScorePublishWindowSchoolDays?: number
+    caReminderAfterSchoolDays?: number
+    caEscalateAfterSchoolDays?: number
+    homeworkCheckWindowSchoolDays?: number
+    homeworkEscalateAfterSchoolDays?: number
+    syllabusUpdateExpectation?: string
+    teacherCloseoutTime?: string
+    remindersEnabled?: boolean
+    escalationsEnabled?: boolean
+    correctionApprovalRequired?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+  }
+
+  export type TeacherAccountabilitySettingUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    attendanceOpenMinutesBeforeLesson?: IntFieldUpdateOperationsInput | number
+    attendanceGraceMinutesAfterLesson?: IntFieldUpdateOperationsInput | number
+    attendanceEscalateMinutesAfterLesson?: IntFieldUpdateOperationsInput | number
+    allowEarlyAttendanceMarking?: BoolFieldUpdateOperationsInput | boolean
+    requireLateAttendanceNote?: BoolFieldUpdateOperationsInput | boolean
+    requireAttendanceCorrectionReason?: BoolFieldUpdateOperationsInput | boolean
+    caScorePublishWindowSchoolDays?: IntFieldUpdateOperationsInput | number
+    caReminderAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    caEscalateAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    homeworkCheckWindowSchoolDays?: IntFieldUpdateOperationsInput | number
+    homeworkEscalateAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    syllabusUpdateExpectation?: StringFieldUpdateOperationsInput | string
+    teacherCloseoutTime?: StringFieldUpdateOperationsInput | string
+    remindersEnabled?: BoolFieldUpdateOperationsInput | boolean
+    escalationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    correctionApprovalRequired?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeacherAccountabilitySettingUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    attendanceOpenMinutesBeforeLesson?: IntFieldUpdateOperationsInput | number
+    attendanceGraceMinutesAfterLesson?: IntFieldUpdateOperationsInput | number
+    attendanceEscalateMinutesAfterLesson?: IntFieldUpdateOperationsInput | number
+    allowEarlyAttendanceMarking?: BoolFieldUpdateOperationsInput | boolean
+    requireLateAttendanceNote?: BoolFieldUpdateOperationsInput | boolean
+    requireAttendanceCorrectionReason?: BoolFieldUpdateOperationsInput | boolean
+    caScorePublishWindowSchoolDays?: IntFieldUpdateOperationsInput | number
+    caReminderAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    caEscalateAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    homeworkCheckWindowSchoolDays?: IntFieldUpdateOperationsInput | number
+    homeworkEscalateAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    syllabusUpdateExpectation?: StringFieldUpdateOperationsInput | string
+    teacherCloseoutTime?: StringFieldUpdateOperationsInput | string
+    remindersEnabled?: BoolFieldUpdateOperationsInput | boolean
+    escalationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    correctionApprovalRequired?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -80250,6 +82009,11 @@ export namespace Prisma {
     isNot?: SchoolNotificationSettingWhereInput | null
   }
 
+  export type TeacherAccountabilitySettingNullableScalarRelationFilter = {
+    is?: TeacherAccountabilitySettingWhereInput | null
+    isNot?: TeacherAccountabilitySettingWhereInput | null
+  }
+
   export type ParentNotificationPreferenceListRelationFilter = {
     every?: ParentNotificationPreferenceWhereInput
     some?: ParentNotificationPreferenceWhereInput
@@ -80919,6 +82683,97 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type TeacherAccountabilitySettingCountOrderByAggregateInput = {
+    id?: SortOrder
+    attendanceOpenMinutesBeforeLesson?: SortOrder
+    attendanceGraceMinutesAfterLesson?: SortOrder
+    attendanceEscalateMinutesAfterLesson?: SortOrder
+    allowEarlyAttendanceMarking?: SortOrder
+    requireLateAttendanceNote?: SortOrder
+    requireAttendanceCorrectionReason?: SortOrder
+    caScorePublishWindowSchoolDays?: SortOrder
+    caReminderAfterSchoolDays?: SortOrder
+    caEscalateAfterSchoolDays?: SortOrder
+    homeworkCheckWindowSchoolDays?: SortOrder
+    homeworkEscalateAfterSchoolDays?: SortOrder
+    syllabusUpdateExpectation?: SortOrder
+    teacherCloseoutTime?: SortOrder
+    remindersEnabled?: SortOrder
+    escalationsEnabled?: SortOrder
+    correctionApprovalRequired?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+  }
+
+  export type TeacherAccountabilitySettingAvgOrderByAggregateInput = {
+    attendanceOpenMinutesBeforeLesson?: SortOrder
+    attendanceGraceMinutesAfterLesson?: SortOrder
+    attendanceEscalateMinutesAfterLesson?: SortOrder
+    caScorePublishWindowSchoolDays?: SortOrder
+    caReminderAfterSchoolDays?: SortOrder
+    caEscalateAfterSchoolDays?: SortOrder
+    homeworkCheckWindowSchoolDays?: SortOrder
+    homeworkEscalateAfterSchoolDays?: SortOrder
+  }
+
+  export type TeacherAccountabilitySettingMaxOrderByAggregateInput = {
+    id?: SortOrder
+    attendanceOpenMinutesBeforeLesson?: SortOrder
+    attendanceGraceMinutesAfterLesson?: SortOrder
+    attendanceEscalateMinutesAfterLesson?: SortOrder
+    allowEarlyAttendanceMarking?: SortOrder
+    requireLateAttendanceNote?: SortOrder
+    requireAttendanceCorrectionReason?: SortOrder
+    caScorePublishWindowSchoolDays?: SortOrder
+    caReminderAfterSchoolDays?: SortOrder
+    caEscalateAfterSchoolDays?: SortOrder
+    homeworkCheckWindowSchoolDays?: SortOrder
+    homeworkEscalateAfterSchoolDays?: SortOrder
+    syllabusUpdateExpectation?: SortOrder
+    teacherCloseoutTime?: SortOrder
+    remindersEnabled?: SortOrder
+    escalationsEnabled?: SortOrder
+    correctionApprovalRequired?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+  }
+
+  export type TeacherAccountabilitySettingMinOrderByAggregateInput = {
+    id?: SortOrder
+    attendanceOpenMinutesBeforeLesson?: SortOrder
+    attendanceGraceMinutesAfterLesson?: SortOrder
+    attendanceEscalateMinutesAfterLesson?: SortOrder
+    allowEarlyAttendanceMarking?: SortOrder
+    requireLateAttendanceNote?: SortOrder
+    requireAttendanceCorrectionReason?: SortOrder
+    caScorePublishWindowSchoolDays?: SortOrder
+    caReminderAfterSchoolDays?: SortOrder
+    caEscalateAfterSchoolDays?: SortOrder
+    homeworkCheckWindowSchoolDays?: SortOrder
+    homeworkEscalateAfterSchoolDays?: SortOrder
+    syllabusUpdateExpectation?: SortOrder
+    teacherCloseoutTime?: SortOrder
+    remindersEnabled?: SortOrder
+    escalationsEnabled?: SortOrder
+    correctionApprovalRequired?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+  }
+
+  export type TeacherAccountabilitySettingSumOrderByAggregateInput = {
+    attendanceOpenMinutesBeforeLesson?: SortOrder
+    attendanceGraceMinutesAfterLesson?: SortOrder
+    attendanceEscalateMinutesAfterLesson?: SortOrder
+    caScorePublishWindowSchoolDays?: SortOrder
+    caReminderAfterSchoolDays?: SortOrder
+    caEscalateAfterSchoolDays?: SortOrder
+    homeworkCheckWindowSchoolDays?: SortOrder
+    homeworkEscalateAfterSchoolDays?: SortOrder
   }
 
   export type EnumParentDeliveryChannelFilter<$PrismaModel = never> = {
@@ -84512,6 +86367,12 @@ export namespace Prisma {
     connect?: SchoolNotificationSettingWhereUniqueInput
   }
 
+  export type TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput = {
+    create?: XOR<TeacherAccountabilitySettingCreateWithoutSchoolInput, TeacherAccountabilitySettingUncheckedCreateWithoutSchoolInput>
+    connectOrCreate?: TeacherAccountabilitySettingCreateOrConnectWithoutSchoolInput
+    connect?: TeacherAccountabilitySettingWhereUniqueInput
+  }
+
   export type ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput = {
     create?: XOR<ParentNotificationPreferenceCreateWithoutSchoolInput, ParentNotificationPreferenceUncheckedCreateWithoutSchoolInput> | ParentNotificationPreferenceCreateWithoutSchoolInput[] | ParentNotificationPreferenceUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: ParentNotificationPreferenceCreateOrConnectWithoutSchoolInput | ParentNotificationPreferenceCreateOrConnectWithoutSchoolInput[]
@@ -84817,6 +86678,12 @@ export namespace Prisma {
     create?: XOR<SchoolNotificationSettingCreateWithoutSchoolInput, SchoolNotificationSettingUncheckedCreateWithoutSchoolInput>
     connectOrCreate?: SchoolNotificationSettingCreateOrConnectWithoutSchoolInput
     connect?: SchoolNotificationSettingWhereUniqueInput
+  }
+
+  export type TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput = {
+    create?: XOR<TeacherAccountabilitySettingCreateWithoutSchoolInput, TeacherAccountabilitySettingUncheckedCreateWithoutSchoolInput>
+    connectOrCreate?: TeacherAccountabilitySettingCreateOrConnectWithoutSchoolInput
+    connect?: TeacherAccountabilitySettingWhereUniqueInput
   }
 
   export type ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput = {
@@ -85437,6 +87304,16 @@ export namespace Prisma {
     update?: XOR<XOR<SchoolNotificationSettingUpdateToOneWithWhereWithoutSchoolInput, SchoolNotificationSettingUpdateWithoutSchoolInput>, SchoolNotificationSettingUncheckedUpdateWithoutSchoolInput>
   }
 
+  export type TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput = {
+    create?: XOR<TeacherAccountabilitySettingCreateWithoutSchoolInput, TeacherAccountabilitySettingUncheckedCreateWithoutSchoolInput>
+    connectOrCreate?: TeacherAccountabilitySettingCreateOrConnectWithoutSchoolInput
+    upsert?: TeacherAccountabilitySettingUpsertWithoutSchoolInput
+    disconnect?: TeacherAccountabilitySettingWhereInput | boolean
+    delete?: TeacherAccountabilitySettingWhereInput | boolean
+    connect?: TeacherAccountabilitySettingWhereUniqueInput
+    update?: XOR<XOR<TeacherAccountabilitySettingUpdateToOneWithWhereWithoutSchoolInput, TeacherAccountabilitySettingUpdateWithoutSchoolInput>, TeacherAccountabilitySettingUncheckedUpdateWithoutSchoolInput>
+  }
+
   export type ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput = {
     create?: XOR<ParentNotificationPreferenceCreateWithoutSchoolInput, ParentNotificationPreferenceUncheckedCreateWithoutSchoolInput> | ParentNotificationPreferenceCreateWithoutSchoolInput[] | ParentNotificationPreferenceUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: ParentNotificationPreferenceCreateOrConnectWithoutSchoolInput | ParentNotificationPreferenceCreateOrConnectWithoutSchoolInput[]
@@ -86047,6 +87924,16 @@ export namespace Prisma {
     delete?: SchoolNotificationSettingWhereInput | boolean
     connect?: SchoolNotificationSettingWhereUniqueInput
     update?: XOR<XOR<SchoolNotificationSettingUpdateToOneWithWhereWithoutSchoolInput, SchoolNotificationSettingUpdateWithoutSchoolInput>, SchoolNotificationSettingUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput = {
+    create?: XOR<TeacherAccountabilitySettingCreateWithoutSchoolInput, TeacherAccountabilitySettingUncheckedCreateWithoutSchoolInput>
+    connectOrCreate?: TeacherAccountabilitySettingCreateOrConnectWithoutSchoolInput
+    upsert?: TeacherAccountabilitySettingUpsertWithoutSchoolInput
+    disconnect?: TeacherAccountabilitySettingWhereInput | boolean
+    delete?: TeacherAccountabilitySettingWhereInput | boolean
+    connect?: TeacherAccountabilitySettingWhereUniqueInput
+    update?: XOR<XOR<TeacherAccountabilitySettingUpdateToOneWithWhereWithoutSchoolInput, TeacherAccountabilitySettingUpdateWithoutSchoolInput>, TeacherAccountabilitySettingUncheckedUpdateWithoutSchoolInput>
   }
 
   export type ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput = {
@@ -87294,6 +89181,20 @@ export namespace Prisma {
     upsert?: SchoolUpsertWithoutNotificationSettingsInput
     connect?: SchoolWhereUniqueInput
     update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutNotificationSettingsInput, SchoolUpdateWithoutNotificationSettingsInput>, SchoolUncheckedUpdateWithoutNotificationSettingsInput>
+  }
+
+  export type SchoolCreateNestedOneWithoutAccountabilitySettingsInput = {
+    create?: XOR<SchoolCreateWithoutAccountabilitySettingsInput, SchoolUncheckedCreateWithoutAccountabilitySettingsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutAccountabilitySettingsInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type SchoolUpdateOneRequiredWithoutAccountabilitySettingsNestedInput = {
+    create?: XOR<SchoolCreateWithoutAccountabilitySettingsInput, SchoolUncheckedCreateWithoutAccountabilitySettingsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutAccountabilitySettingsInput
+    upsert?: SchoolUpsertWithoutAccountabilitySettingsInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutAccountabilitySettingsInput, SchoolUpdateWithoutAccountabilitySettingsInput>, SchoolUncheckedUpdateWithoutAccountabilitySettingsInput>
   }
 
   export type SchoolCreateNestedOneWithoutParentPreferencesInput = {
@@ -93360,6 +95261,55 @@ export namespace Prisma {
     create: XOR<SchoolNotificationSettingCreateWithoutSchoolInput, SchoolNotificationSettingUncheckedCreateWithoutSchoolInput>
   }
 
+  export type TeacherAccountabilitySettingCreateWithoutSchoolInput = {
+    id?: string
+    attendanceOpenMinutesBeforeLesson?: number
+    attendanceGraceMinutesAfterLesson?: number
+    attendanceEscalateMinutesAfterLesson?: number
+    allowEarlyAttendanceMarking?: boolean
+    requireLateAttendanceNote?: boolean
+    requireAttendanceCorrectionReason?: boolean
+    caScorePublishWindowSchoolDays?: number
+    caReminderAfterSchoolDays?: number
+    caEscalateAfterSchoolDays?: number
+    homeworkCheckWindowSchoolDays?: number
+    homeworkEscalateAfterSchoolDays?: number
+    syllabusUpdateExpectation?: string
+    teacherCloseoutTime?: string
+    remindersEnabled?: boolean
+    escalationsEnabled?: boolean
+    correctionApprovalRequired?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TeacherAccountabilitySettingUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    attendanceOpenMinutesBeforeLesson?: number
+    attendanceGraceMinutesAfterLesson?: number
+    attendanceEscalateMinutesAfterLesson?: number
+    allowEarlyAttendanceMarking?: boolean
+    requireLateAttendanceNote?: boolean
+    requireAttendanceCorrectionReason?: boolean
+    caScorePublishWindowSchoolDays?: number
+    caReminderAfterSchoolDays?: number
+    caEscalateAfterSchoolDays?: number
+    homeworkCheckWindowSchoolDays?: number
+    homeworkEscalateAfterSchoolDays?: number
+    syllabusUpdateExpectation?: string
+    teacherCloseoutTime?: string
+    remindersEnabled?: boolean
+    escalationsEnabled?: boolean
+    correctionApprovalRequired?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TeacherAccountabilitySettingCreateOrConnectWithoutSchoolInput = {
+    where: TeacherAccountabilitySettingWhereUniqueInput
+    create: XOR<TeacherAccountabilitySettingCreateWithoutSchoolInput, TeacherAccountabilitySettingUncheckedCreateWithoutSchoolInput>
+  }
+
   export type ParentNotificationPreferenceCreateWithoutSchoolInput = {
     id?: string
     dailySummaryEnabled?: boolean
@@ -94837,6 +96787,61 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TeacherAccountabilitySettingUpsertWithoutSchoolInput = {
+    update: XOR<TeacherAccountabilitySettingUpdateWithoutSchoolInput, TeacherAccountabilitySettingUncheckedUpdateWithoutSchoolInput>
+    create: XOR<TeacherAccountabilitySettingCreateWithoutSchoolInput, TeacherAccountabilitySettingUncheckedCreateWithoutSchoolInput>
+    where?: TeacherAccountabilitySettingWhereInput
+  }
+
+  export type TeacherAccountabilitySettingUpdateToOneWithWhereWithoutSchoolInput = {
+    where?: TeacherAccountabilitySettingWhereInput
+    data: XOR<TeacherAccountabilitySettingUpdateWithoutSchoolInput, TeacherAccountabilitySettingUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type TeacherAccountabilitySettingUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    attendanceOpenMinutesBeforeLesson?: IntFieldUpdateOperationsInput | number
+    attendanceGraceMinutesAfterLesson?: IntFieldUpdateOperationsInput | number
+    attendanceEscalateMinutesAfterLesson?: IntFieldUpdateOperationsInput | number
+    allowEarlyAttendanceMarking?: BoolFieldUpdateOperationsInput | boolean
+    requireLateAttendanceNote?: BoolFieldUpdateOperationsInput | boolean
+    requireAttendanceCorrectionReason?: BoolFieldUpdateOperationsInput | boolean
+    caScorePublishWindowSchoolDays?: IntFieldUpdateOperationsInput | number
+    caReminderAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    caEscalateAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    homeworkCheckWindowSchoolDays?: IntFieldUpdateOperationsInput | number
+    homeworkEscalateAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    syllabusUpdateExpectation?: StringFieldUpdateOperationsInput | string
+    teacherCloseoutTime?: StringFieldUpdateOperationsInput | string
+    remindersEnabled?: BoolFieldUpdateOperationsInput | boolean
+    escalationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    correctionApprovalRequired?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeacherAccountabilitySettingUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    attendanceOpenMinutesBeforeLesson?: IntFieldUpdateOperationsInput | number
+    attendanceGraceMinutesAfterLesson?: IntFieldUpdateOperationsInput | number
+    attendanceEscalateMinutesAfterLesson?: IntFieldUpdateOperationsInput | number
+    allowEarlyAttendanceMarking?: BoolFieldUpdateOperationsInput | boolean
+    requireLateAttendanceNote?: BoolFieldUpdateOperationsInput | boolean
+    requireAttendanceCorrectionReason?: BoolFieldUpdateOperationsInput | boolean
+    caScorePublishWindowSchoolDays?: IntFieldUpdateOperationsInput | number
+    caReminderAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    caEscalateAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    homeworkCheckWindowSchoolDays?: IntFieldUpdateOperationsInput | number
+    homeworkEscalateAfterSchoolDays?: IntFieldUpdateOperationsInput | number
+    syllabusUpdateExpectation?: StringFieldUpdateOperationsInput | string
+    teacherCloseoutTime?: StringFieldUpdateOperationsInput | string
+    remindersEnabled?: BoolFieldUpdateOperationsInput | boolean
+    escalationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    correctionApprovalRequired?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ParentNotificationPreferenceUpsertWithWhereUniqueWithoutSchoolInput = {
     where: ParentNotificationPreferenceWhereUniqueInput
     update: XOR<ParentNotificationPreferenceUpdateWithoutSchoolInput, ParentNotificationPreferenceUncheckedUpdateWithoutSchoolInput>
@@ -94966,6 +96971,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -95029,6 +97035,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -95108,6 +97115,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -95171,6 +97179,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -95234,6 +97243,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -95297,6 +97307,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -95902,6 +97913,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -95965,6 +97977,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -96311,6 +98324,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -96374,6 +98388,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -96843,6 +98858,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -96906,6 +98922,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -97129,6 +99146,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -97192,6 +99210,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -97545,6 +99564,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -97608,6 +99628,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -97792,6 +99813,7 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -97855,6 +99877,7 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -97934,6 +99957,7 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -97997,6 +100021,279 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolCreateWithoutAccountabilitySettingsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutAccountabilitySettingsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutAccountabilitySettingsInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutAccountabilitySettingsInput, SchoolUncheckedCreateWithoutAccountabilitySettingsInput>
+  }
+
+  export type SchoolUpsertWithoutAccountabilitySettingsInput = {
+    update: XOR<SchoolUpdateWithoutAccountabilitySettingsInput, SchoolUncheckedUpdateWithoutAccountabilitySettingsInput>
+    create: XOR<SchoolCreateWithoutAccountabilitySettingsInput, SchoolUncheckedCreateWithoutAccountabilitySettingsInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutAccountabilitySettingsInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutAccountabilitySettingsInput, SchoolUncheckedUpdateWithoutAccountabilitySettingsInput>
+  }
+
+  export type SchoolUpdateWithoutAccountabilitySettingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutAccountabilitySettingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -98061,6 +100358,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
 
@@ -98124,6 +100422,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
@@ -98242,6 +100541,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
 
@@ -98305,6 +100605,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
@@ -98412,6 +100713,7 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -98475,6 +100777,7 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -98692,6 +100995,7 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -98755,6 +101059,7 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -98945,6 +101250,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
   }
 
@@ -99008,6 +101314,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
   }
 
@@ -99171,6 +101478,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
   }
 
@@ -99234,6 +101542,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
@@ -99392,6 +101701,7 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -99455,6 +101765,7 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -99687,6 +101998,7 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -99750,6 +102062,7 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -99984,6 +102297,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -100047,6 +102361,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -100315,6 +102630,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -100378,6 +102694,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -100505,6 +102822,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -100568,6 +102886,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -101129,6 +103448,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -101192,6 +103512,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -101506,6 +103827,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -101569,6 +103891,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -101914,6 +104237,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -101977,6 +104301,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -102136,6 +104461,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -102199,6 +104525,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -102550,6 +104877,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -102613,6 +104941,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -102881,6 +105210,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -102944,6 +105274,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -103086,6 +105417,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -103149,6 +105481,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -103268,6 +105601,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -103331,6 +105665,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -103508,6 +105843,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -103571,6 +105907,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -103706,6 +106043,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -103769,6 +106107,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -103986,6 +106325,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -104049,6 +106389,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -104268,6 +106609,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -104331,6 +106673,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -104515,6 +106858,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -104578,6 +106922,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -104764,6 +107109,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -104827,6 +107173,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -105047,6 +107394,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -105110,6 +107458,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -105294,6 +107643,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -105357,6 +107707,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -105569,6 +107920,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -105632,6 +107984,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -105846,6 +108199,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -105909,6 +108263,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -106030,6 +108385,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -106093,6 +108449,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -106204,6 +108561,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -106267,6 +108625,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -106388,6 +108747,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -106451,6 +108811,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -106562,6 +108923,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -106625,6 +108987,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -106704,6 +109067,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -106767,6 +109131,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -106830,6 +109195,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -106893,6 +109259,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -107140,6 +109507,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -107203,6 +109571,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -107423,6 +109792,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -107486,6 +109856,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -107761,6 +110132,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -107824,6 +110196,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -108090,6 +110463,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -108153,6 +110527,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -108386,6 +110761,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -108449,6 +110825,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -108684,6 +111061,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -108747,6 +111125,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -108826,6 +111205,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -108889,6 +111269,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -108952,6 +111333,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -109015,6 +111397,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -109276,6 +111659,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -109339,6 +111723,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -109608,6 +111993,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -109671,6 +112057,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -109792,6 +112179,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -109855,6 +112243,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -109966,6 +112355,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -110029,6 +112419,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -110150,6 +112541,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -110213,6 +112605,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -110324,6 +112717,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -110387,6 +112781,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -110555,6 +112950,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -110618,6 +113014,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -110888,6 +113285,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -110951,6 +113349,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -111161,6 +113560,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -111224,6 +113624,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -111436,6 +113837,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -111499,6 +113901,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -111682,6 +114085,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -111745,6 +114149,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -112028,6 +114433,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -112091,6 +114497,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -112429,6 +114836,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -112492,6 +114900,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -112880,6 +115289,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -112943,6 +115353,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -113165,6 +115576,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -113228,6 +115640,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -113399,6 +115812,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -113462,6 +115876,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -113587,6 +116002,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -113650,6 +116066,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -113765,6 +116182,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -113828,6 +116246,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -113951,6 +116370,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -114014,6 +116434,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -114127,6 +116548,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -114190,6 +116612,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -114269,6 +116692,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -114332,6 +116756,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -114395,6 +116820,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -114458,6 +116884,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -114537,6 +116964,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -114600,6 +117028,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -114663,6 +117092,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -114726,6 +117156,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -114993,6 +117424,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -115056,6 +117488,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -115331,6 +117764,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -115394,6 +117828,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -115473,6 +117908,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -115536,6 +117972,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -115599,6 +118036,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -115662,6 +118100,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -115787,6 +118226,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -115850,6 +118290,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -115965,6 +118406,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -116028,6 +118470,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -116107,6 +118550,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -116170,6 +118614,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -116233,6 +118678,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -116296,6 +118742,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -116375,6 +118822,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -116438,6 +118886,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -116501,6 +118950,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -116564,6 +119014,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -116643,6 +119094,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -116706,6 +119158,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
