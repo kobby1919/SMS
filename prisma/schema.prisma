@@ -290,6 +290,75 @@ enum ParentSummaryCadence {
   OFF
 }
 
+enum TeacherObligationType {
+  ATTENDANCE
+  CA_SCORE_PUBLISHING
+  HOMEWORK_CHECKING
+  SYLLABUS_PROGRESS
+  EXAM_ENTRY
+  CORRECTION_REVIEW
+}
+
+enum TeacherObligationStatus {
+  PENDING
+  COMPLETED
+  COMPLETED_LATE
+  MISSED
+  ESCALATED
+  CANCELLED
+}
+
+enum TeacherObligationPriority {
+  LOW
+  NORMAL
+  HIGH
+  CRITICAL
+}
+
+enum TeacherReminderStatus {
+  PENDING
+  SENT
+  SKIPPED
+  FAILED
+}
+
+enum TeacherEscalationStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+  DISMISSED
+}
+
+enum TeacherCorrectionRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  NEEDS_MORE_INFO
+  CANCELLED
+}
+
+enum TeacherAccountabilityAuditAction {
+  OBLIGATION_CREATED
+  OBLIGATION_COMPLETED
+  OBLIGATION_COMPLETED_LATE
+  OBLIGATION_MISSED
+  OBLIGATION_ESCALATED
+  OBLIGATION_CANCELLED
+  REMINDER_QUEUED
+  REMINDER_SENT
+  REMINDER_FAILED
+  ESCALATION_CREATED
+  ESCALATION_ACKNOWLEDGED
+  ESCALATION_RESOLVED
+  ESCALATION_DISMISSED
+  CORRECTION_REQUESTED
+  CORRECTION_APPROVED
+  CORRECTION_REJECTED
+  CORRECTION_NEEDS_MORE_INFO
+  CORRECTION_CANCELLED
+  SETTINGS_UPDATED
+}
+
 // ─── EXISTING MODELS ─────────────────────────────────────────────────────────
 
 model School {
@@ -311,51 +380,56 @@ model School {
   createdAt        DateTime               @default(now())
   updatedAt        DateTime               @updatedAt
 
-  admins                 Admin[]
-  students               Student[]
-  teachers               Teacher[]
-  parents                Parent[]
-  grades                 Grade[]
-  classes                Class[]
-  subjects               Subject[]
-  lessons                Lesson[]
-  exams                  Exam[]
-  assignments            Assignment[]
-  homeworkSubmissions    HomeworkSubmission[]
-  results                Result[]
-  attendances            Attendance[]
-  attendanceAuditLogs    AttendanceAuditLog[]
-  events                 Event[]
-  announcements          Announcement[]
-  caConfigs              CAConfig[]
-  caBuckets              CABucket[]
-  caActivities           CAActivity[]
-  caActivityScores       CAActivityScore[]
-  caAuditLogs            CAAuditLog[]
-  continuousAssessments  ContinuousAssessment[]
-  reportPublications     ReportCardPublication[]
-  examEntryWindows       ExamEntryWindow[]
-  syllabi                Syllabus[]
-  syllabusTopicProgress  SyllabusTopicProgress[]
-  feeStructures          FeeStructure[]
-  studentBills           StudentBill[]
-  payments               Payment[]
-  paymentReversals       PaymentReversal[]
-  discounts              Discount[]
-  financeQueries         FinanceQuery[]
-  receiptCounters        ReceiptCounter[]
-  financeAuditLogs       FinanceAuditLog[]
-  invites                SchoolInvite[]
-  waitlistEntries        WaitlistEntry[]
-  onboardingAuditLogs    OnboardingAuditLog[]
-  financeJobs            FinanceJob[]
-  paymentWebhookEvents   PaymentWebhookEvent[]
-  parentNotifications    ParentNotification[]
-  parentActivityEvents   ParentActivityEvent[]
-  notificationSettings   SchoolNotificationSetting?
-  accountabilitySettings TeacherAccountabilitySetting?
-  parentPreferences      ParentNotificationPreference[]
-  parentDeliveryLogs     ParentNotificationDeliveryLog[]
+  admins                         Admin[]
+  students                       Student[]
+  teachers                       Teacher[]
+  parents                        Parent[]
+  grades                         Grade[]
+  classes                        Class[]
+  subjects                       Subject[]
+  lessons                        Lesson[]
+  exams                          Exam[]
+  assignments                    Assignment[]
+  homeworkSubmissions            HomeworkSubmission[]
+  results                        Result[]
+  attendances                    Attendance[]
+  attendanceAuditLogs            AttendanceAuditLog[]
+  events                         Event[]
+  announcements                  Announcement[]
+  caConfigs                      CAConfig[]
+  caBuckets                      CABucket[]
+  caActivities                   CAActivity[]
+  caActivityScores               CAActivityScore[]
+  caAuditLogs                    CAAuditLog[]
+  continuousAssessments          ContinuousAssessment[]
+  reportPublications             ReportCardPublication[]
+  examEntryWindows               ExamEntryWindow[]
+  syllabi                        Syllabus[]
+  syllabusTopicProgress          SyllabusTopicProgress[]
+  feeStructures                  FeeStructure[]
+  studentBills                   StudentBill[]
+  payments                       Payment[]
+  paymentReversals               PaymentReversal[]
+  discounts                      Discount[]
+  financeQueries                 FinanceQuery[]
+  receiptCounters                ReceiptCounter[]
+  financeAuditLogs               FinanceAuditLog[]
+  invites                        SchoolInvite[]
+  waitlistEntries                WaitlistEntry[]
+  onboardingAuditLogs            OnboardingAuditLog[]
+  financeJobs                    FinanceJob[]
+  paymentWebhookEvents           PaymentWebhookEvent[]
+  parentNotifications            ParentNotification[]
+  parentActivityEvents           ParentActivityEvent[]
+  notificationSettings           SchoolNotificationSetting?
+  accountabilitySettings         TeacherAccountabilitySetting?
+  teacherObligations             TeacherObligation[]
+  teacherReminders               TeacherReminder[]
+  teacherEscalations             TeacherEscalation[]
+  teacherCorrections             TeacherCorrectionRequest[]
+  teacherAccountabilityAuditLogs TeacherAccountabilityAuditLog[]
+  parentPreferences              ParentNotificationPreference[]
+  parentDeliveryLogs             ParentNotificationDeliveryLog[]
 }
 
 model Admin {
@@ -430,13 +504,18 @@ model Teacher {
   lessons  Lesson[]
   classes  Class[]   @relation("ClassTeacher")
 
-  continuousAssessments ContinuousAssessment[]
-  caBuckets             CABucket[]
-  caActivities          CAActivity[]
-  caActivityScores      CAActivityScore[]
-  checkedHomework       HomeworkSubmission[]    @relation("HomeworkCheckedBy")
-  parentActivityEvents  ParentActivityEvent[]
-  syllabusTopicProgress SyllabusTopicProgress[]
+  continuousAssessments     ContinuousAssessment[]
+  caBuckets                 CABucket[]
+  caActivities              CAActivity[]
+  caActivityScores          CAActivityScore[]
+  checkedHomework           HomeworkSubmission[]            @relation("HomeworkCheckedBy")
+  parentActivityEvents      ParentActivityEvent[]
+  syllabusTopicProgress     SyllabusTopicProgress[]
+  accountabilityObligations TeacherObligation[]
+  accountabilityReminders   TeacherReminder[]
+  accountabilityEscalations TeacherEscalation[]
+  correctionRequests        TeacherCorrectionRequest[]
+  accountabilityAuditLogs   TeacherAccountabilityAuditLog[]
 
   @@index([schoolId])
   @@index([schoolId, createdAt])
@@ -514,6 +593,140 @@ model TeacherAccountabilitySetting {
 
   schoolId String @unique
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+}
+
+model TeacherObligation {
+  id          String                    @id @default(cuid())
+  type        TeacherObligationType
+  status      TeacherObligationStatus   @default(PENDING)
+  priority    TeacherObligationPriority @default(NORMAL)
+  sourceModel String
+  sourceId    String
+  sourceKey   String
+  title       String
+  description String?
+  expectedAt  DateTime
+  completedAt DateTime?
+  metadata    Json?
+  createdAt   DateTime                  @default(now())
+  updatedAt   DateTime                  @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  reminders   TeacherReminder[]
+  escalations TeacherEscalation[]
+
+  @@unique([schoolId, teacherId, sourceKey])
+  @@index([schoolId, teacherId, status, expectedAt])
+  @@index([schoolId, type, status, expectedAt])
+  @@index([schoolId, status, expectedAt])
+  @@index([schoolId, sourceModel, sourceId])
+}
+
+model TeacherReminder {
+  id           String                @id @default(cuid())
+  channel      String                @default("IN_APP")
+  message      String
+  status       TeacherReminderStatus @default(PENDING)
+  scheduledAt  DateTime?
+  sentAt       DateTime?
+  errorMessage String?
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  obligationId String
+  obligation   TeacherObligation @relation(fields: [obligationId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId, obligationId, status])
+  @@index([schoolId, teacherId, status, scheduledAt])
+  @@index([schoolId, status, scheduledAt])
+}
+
+model TeacherEscalation {
+  id          String                  @id @default(cuid())
+  reason      String
+  status      TeacherEscalationStatus @default(OPEN)
+  escalatedAt DateTime                @default(now())
+  resolvedAt  DateTime?
+  reviewedBy  String?
+  reviewNote  String?
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  obligationId String
+  obligation   TeacherObligation @relation(fields: [obligationId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, obligationId])
+  @@index([schoolId, teacherId, status, escalatedAt])
+  @@index([schoolId, status, escalatedAt])
+}
+
+model TeacherCorrectionRequest {
+  id          String                         @id @default(cuid())
+  sourceModel String
+  sourceId    String
+  sourceKey   String
+  fieldName   String
+  oldValue    Json?
+  newValue    Json?
+  reason      String
+  evidenceUrl String?
+  status      TeacherCorrectionRequestStatus @default(PENDING)
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  reviewNote  String?
+  createdAt   DateTime                       @default(now())
+  updatedAt   DateTime                       @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, teacherId, sourceKey, fieldName])
+  @@index([schoolId, status, createdAt])
+  @@index([schoolId, teacherId, status, createdAt])
+  @@index([schoolId, sourceModel, sourceId])
+}
+
+model TeacherAccountabilityAuditLog {
+  id          String                           @id @default(cuid())
+  action      TeacherAccountabilityAuditAction
+  actorId     String?
+  actorRole   String?
+  sourceModel String
+  sourceId    String
+  before      Json?
+  after       Json?
+  message     String?
+  createdAt   DateTime                         @default(now())
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  teacherId String?
+  teacher   Teacher? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+
+  @@index([schoolId, teacherId, createdAt])
+  @@index([schoolId, action, createdAt])
+  @@index([schoolId, sourceModel, sourceId])
 }
 
 model ParentNotificationPreference {

@@ -238,6 +238,90 @@ exports.Prisma.TeacherAccountabilitySettingScalarFieldEnum = {
   schoolId: 'schoolId'
 };
 
+exports.Prisma.TeacherObligationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  status: 'status',
+  priority: 'priority',
+  sourceModel: 'sourceModel',
+  sourceId: 'sourceId',
+  sourceKey: 'sourceKey',
+  title: 'title',
+  description: 'description',
+  expectedAt: 'expectedAt',
+  completedAt: 'completedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId',
+  teacherId: 'teacherId'
+};
+
+exports.Prisma.TeacherReminderScalarFieldEnum = {
+  id: 'id',
+  channel: 'channel',
+  message: 'message',
+  status: 'status',
+  scheduledAt: 'scheduledAt',
+  sentAt: 'sentAt',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId',
+  teacherId: 'teacherId',
+  obligationId: 'obligationId'
+};
+
+exports.Prisma.TeacherEscalationScalarFieldEnum = {
+  id: 'id',
+  reason: 'reason',
+  status: 'status',
+  escalatedAt: 'escalatedAt',
+  resolvedAt: 'resolvedAt',
+  reviewedBy: 'reviewedBy',
+  reviewNote: 'reviewNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId',
+  teacherId: 'teacherId',
+  obligationId: 'obligationId'
+};
+
+exports.Prisma.TeacherCorrectionRequestScalarFieldEnum = {
+  id: 'id',
+  sourceModel: 'sourceModel',
+  sourceId: 'sourceId',
+  sourceKey: 'sourceKey',
+  fieldName: 'fieldName',
+  oldValue: 'oldValue',
+  newValue: 'newValue',
+  reason: 'reason',
+  evidenceUrl: 'evidenceUrl',
+  status: 'status',
+  reviewedBy: 'reviewedBy',
+  reviewedAt: 'reviewedAt',
+  reviewNote: 'reviewNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId',
+  teacherId: 'teacherId'
+};
+
+exports.Prisma.TeacherAccountabilityAuditLogScalarFieldEnum = {
+  id: 'id',
+  action: 'action',
+  actorId: 'actorId',
+  actorRole: 'actorRole',
+  sourceModel: 'sourceModel',
+  sourceId: 'sourceId',
+  before: 'before',
+  after: 'after',
+  message: 'message',
+  createdAt: 'createdAt',
+  schoolId: 'schoolId',
+  teacherId: 'teacherId'
+};
+
 exports.Prisma.ParentNotificationPreferenceScalarFieldEnum = {
   id: 'id',
   dailySummaryEnabled: 'dailySummaryEnabled',
@@ -875,6 +959,75 @@ exports.ParentSummaryCadence = exports.$Enums.ParentSummaryCadence = {
   OFF: 'OFF'
 };
 
+exports.TeacherObligationType = exports.$Enums.TeacherObligationType = {
+  ATTENDANCE: 'ATTENDANCE',
+  CA_SCORE_PUBLISHING: 'CA_SCORE_PUBLISHING',
+  HOMEWORK_CHECKING: 'HOMEWORK_CHECKING',
+  SYLLABUS_PROGRESS: 'SYLLABUS_PROGRESS',
+  EXAM_ENTRY: 'EXAM_ENTRY',
+  CORRECTION_REVIEW: 'CORRECTION_REVIEW'
+};
+
+exports.TeacherObligationStatus = exports.$Enums.TeacherObligationStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  COMPLETED_LATE: 'COMPLETED_LATE',
+  MISSED: 'MISSED',
+  ESCALATED: 'ESCALATED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.TeacherObligationPriority = exports.$Enums.TeacherObligationPriority = {
+  LOW: 'LOW',
+  NORMAL: 'NORMAL',
+  HIGH: 'HIGH',
+  CRITICAL: 'CRITICAL'
+};
+
+exports.TeacherReminderStatus = exports.$Enums.TeacherReminderStatus = {
+  PENDING: 'PENDING',
+  SENT: 'SENT',
+  SKIPPED: 'SKIPPED',
+  FAILED: 'FAILED'
+};
+
+exports.TeacherEscalationStatus = exports.$Enums.TeacherEscalationStatus = {
+  OPEN: 'OPEN',
+  ACKNOWLEDGED: 'ACKNOWLEDGED',
+  RESOLVED: 'RESOLVED',
+  DISMISSED: 'DISMISSED'
+};
+
+exports.TeacherCorrectionRequestStatus = exports.$Enums.TeacherCorrectionRequestStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  NEEDS_MORE_INFO: 'NEEDS_MORE_INFO',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.TeacherAccountabilityAuditAction = exports.$Enums.TeacherAccountabilityAuditAction = {
+  OBLIGATION_CREATED: 'OBLIGATION_CREATED',
+  OBLIGATION_COMPLETED: 'OBLIGATION_COMPLETED',
+  OBLIGATION_COMPLETED_LATE: 'OBLIGATION_COMPLETED_LATE',
+  OBLIGATION_MISSED: 'OBLIGATION_MISSED',
+  OBLIGATION_ESCALATED: 'OBLIGATION_ESCALATED',
+  OBLIGATION_CANCELLED: 'OBLIGATION_CANCELLED',
+  REMINDER_QUEUED: 'REMINDER_QUEUED',
+  REMINDER_SENT: 'REMINDER_SENT',
+  REMINDER_FAILED: 'REMINDER_FAILED',
+  ESCALATION_CREATED: 'ESCALATION_CREATED',
+  ESCALATION_ACKNOWLEDGED: 'ESCALATION_ACKNOWLEDGED',
+  ESCALATION_RESOLVED: 'ESCALATION_RESOLVED',
+  ESCALATION_DISMISSED: 'ESCALATION_DISMISSED',
+  CORRECTION_REQUESTED: 'CORRECTION_REQUESTED',
+  CORRECTION_APPROVED: 'CORRECTION_APPROVED',
+  CORRECTION_REJECTED: 'CORRECTION_REJECTED',
+  CORRECTION_NEEDS_MORE_INFO: 'CORRECTION_NEEDS_MORE_INFO',
+  CORRECTION_CANCELLED: 'CORRECTION_CANCELLED',
+  SETTINGS_UPDATED: 'SETTINGS_UPDATED'
+};
+
 exports.ParentDeliveryChannel = exports.$Enums.ParentDeliveryChannel = {
   EMAIL: 'EMAIL',
   SMS: 'SMS',
@@ -1144,6 +1297,11 @@ exports.Prisma.ModelName = {
   Parent: 'Parent',
   SchoolNotificationSetting: 'SchoolNotificationSetting',
   TeacherAccountabilitySetting: 'TeacherAccountabilitySetting',
+  TeacherObligation: 'TeacherObligation',
+  TeacherReminder: 'TeacherReminder',
+  TeacherEscalation: 'TeacherEscalation',
+  TeacherCorrectionRequest: 'TeacherCorrectionRequest',
+  TeacherAccountabilityAuditLog: 'TeacherAccountabilityAuditLog',
   ParentNotificationPreference: 'ParentNotificationPreference',
   ParentNotification: 'ParentNotification',
   ParentNotificationDeliveryLog: 'ParentNotificationDeliveryLog',

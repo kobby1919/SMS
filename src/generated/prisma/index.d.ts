@@ -49,6 +49,31 @@ export type SchoolNotificationSetting = $Result.DefaultSelection<Prisma.$SchoolN
  */
 export type TeacherAccountabilitySetting = $Result.DefaultSelection<Prisma.$TeacherAccountabilitySettingPayload>
 /**
+ * Model TeacherObligation
+ * 
+ */
+export type TeacherObligation = $Result.DefaultSelection<Prisma.$TeacherObligationPayload>
+/**
+ * Model TeacherReminder
+ * 
+ */
+export type TeacherReminder = $Result.DefaultSelection<Prisma.$TeacherReminderPayload>
+/**
+ * Model TeacherEscalation
+ * 
+ */
+export type TeacherEscalation = $Result.DefaultSelection<Prisma.$TeacherEscalationPayload>
+/**
+ * Model TeacherCorrectionRequest
+ * 
+ */
+export type TeacherCorrectionRequest = $Result.DefaultSelection<Prisma.$TeacherCorrectionRequestPayload>
+/**
+ * Model TeacherAccountabilityAuditLog
+ * 
+ */
+export type TeacherAccountabilityAuditLog = $Result.DefaultSelection<Prisma.$TeacherAccountabilityAuditLogPayload>
+/**
  * Model ParentNotificationPreference
  * 
  */
@@ -656,6 +681,96 @@ export const ParentSummaryCadence: {
 
 export type ParentSummaryCadence = (typeof ParentSummaryCadence)[keyof typeof ParentSummaryCadence]
 
+
+export const TeacherObligationType: {
+  ATTENDANCE: 'ATTENDANCE',
+  CA_SCORE_PUBLISHING: 'CA_SCORE_PUBLISHING',
+  HOMEWORK_CHECKING: 'HOMEWORK_CHECKING',
+  SYLLABUS_PROGRESS: 'SYLLABUS_PROGRESS',
+  EXAM_ENTRY: 'EXAM_ENTRY',
+  CORRECTION_REVIEW: 'CORRECTION_REVIEW'
+};
+
+export type TeacherObligationType = (typeof TeacherObligationType)[keyof typeof TeacherObligationType]
+
+
+export const TeacherObligationStatus: {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  COMPLETED_LATE: 'COMPLETED_LATE',
+  MISSED: 'MISSED',
+  ESCALATED: 'ESCALATED',
+  CANCELLED: 'CANCELLED'
+};
+
+export type TeacherObligationStatus = (typeof TeacherObligationStatus)[keyof typeof TeacherObligationStatus]
+
+
+export const TeacherObligationPriority: {
+  LOW: 'LOW',
+  NORMAL: 'NORMAL',
+  HIGH: 'HIGH',
+  CRITICAL: 'CRITICAL'
+};
+
+export type TeacherObligationPriority = (typeof TeacherObligationPriority)[keyof typeof TeacherObligationPriority]
+
+
+export const TeacherReminderStatus: {
+  PENDING: 'PENDING',
+  SENT: 'SENT',
+  SKIPPED: 'SKIPPED',
+  FAILED: 'FAILED'
+};
+
+export type TeacherReminderStatus = (typeof TeacherReminderStatus)[keyof typeof TeacherReminderStatus]
+
+
+export const TeacherEscalationStatus: {
+  OPEN: 'OPEN',
+  ACKNOWLEDGED: 'ACKNOWLEDGED',
+  RESOLVED: 'RESOLVED',
+  DISMISSED: 'DISMISSED'
+};
+
+export type TeacherEscalationStatus = (typeof TeacherEscalationStatus)[keyof typeof TeacherEscalationStatus]
+
+
+export const TeacherCorrectionRequestStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  NEEDS_MORE_INFO: 'NEEDS_MORE_INFO',
+  CANCELLED: 'CANCELLED'
+};
+
+export type TeacherCorrectionRequestStatus = (typeof TeacherCorrectionRequestStatus)[keyof typeof TeacherCorrectionRequestStatus]
+
+
+export const TeacherAccountabilityAuditAction: {
+  OBLIGATION_CREATED: 'OBLIGATION_CREATED',
+  OBLIGATION_COMPLETED: 'OBLIGATION_COMPLETED',
+  OBLIGATION_COMPLETED_LATE: 'OBLIGATION_COMPLETED_LATE',
+  OBLIGATION_MISSED: 'OBLIGATION_MISSED',
+  OBLIGATION_ESCALATED: 'OBLIGATION_ESCALATED',
+  OBLIGATION_CANCELLED: 'OBLIGATION_CANCELLED',
+  REMINDER_QUEUED: 'REMINDER_QUEUED',
+  REMINDER_SENT: 'REMINDER_SENT',
+  REMINDER_FAILED: 'REMINDER_FAILED',
+  ESCALATION_CREATED: 'ESCALATION_CREATED',
+  ESCALATION_ACKNOWLEDGED: 'ESCALATION_ACKNOWLEDGED',
+  ESCALATION_RESOLVED: 'ESCALATION_RESOLVED',
+  ESCALATION_DISMISSED: 'ESCALATION_DISMISSED',
+  CORRECTION_REQUESTED: 'CORRECTION_REQUESTED',
+  CORRECTION_APPROVED: 'CORRECTION_APPROVED',
+  CORRECTION_REJECTED: 'CORRECTION_REJECTED',
+  CORRECTION_NEEDS_MORE_INFO: 'CORRECTION_NEEDS_MORE_INFO',
+  CORRECTION_CANCELLED: 'CORRECTION_CANCELLED',
+  SETTINGS_UPDATED: 'SETTINGS_UPDATED'
+};
+
+export type TeacherAccountabilityAuditAction = (typeof TeacherAccountabilityAuditAction)[keyof typeof TeacherAccountabilityAuditAction]
+
 }
 
 export type UserSex = $Enums.UserSex
@@ -801,6 +916,34 @@ export const HomeworkSubmissionStatus: typeof $Enums.HomeworkSubmissionStatus
 export type ParentSummaryCadence = $Enums.ParentSummaryCadence
 
 export const ParentSummaryCadence: typeof $Enums.ParentSummaryCadence
+
+export type TeacherObligationType = $Enums.TeacherObligationType
+
+export const TeacherObligationType: typeof $Enums.TeacherObligationType
+
+export type TeacherObligationStatus = $Enums.TeacherObligationStatus
+
+export const TeacherObligationStatus: typeof $Enums.TeacherObligationStatus
+
+export type TeacherObligationPriority = $Enums.TeacherObligationPriority
+
+export const TeacherObligationPriority: typeof $Enums.TeacherObligationPriority
+
+export type TeacherReminderStatus = $Enums.TeacherReminderStatus
+
+export const TeacherReminderStatus: typeof $Enums.TeacherReminderStatus
+
+export type TeacherEscalationStatus = $Enums.TeacherEscalationStatus
+
+export const TeacherEscalationStatus: typeof $Enums.TeacherEscalationStatus
+
+export type TeacherCorrectionRequestStatus = $Enums.TeacherCorrectionRequestStatus
+
+export const TeacherCorrectionRequestStatus: typeof $Enums.TeacherCorrectionRequestStatus
+
+export type TeacherAccountabilityAuditAction = $Enums.TeacherAccountabilityAuditAction
+
+export const TeacherAccountabilityAuditAction: typeof $Enums.TeacherAccountabilityAuditAction
 
 /**
  * ##  Prisma Client ʲˢ
@@ -992,6 +1135,56 @@ export class PrismaClient<
     * ```
     */
   get teacherAccountabilitySetting(): Prisma.TeacherAccountabilitySettingDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.teacherObligation`: Exposes CRUD operations for the **TeacherObligation** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TeacherObligations
+    * const teacherObligations = await prisma.teacherObligation.findMany()
+    * ```
+    */
+  get teacherObligation(): Prisma.TeacherObligationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.teacherReminder`: Exposes CRUD operations for the **TeacherReminder** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TeacherReminders
+    * const teacherReminders = await prisma.teacherReminder.findMany()
+    * ```
+    */
+  get teacherReminder(): Prisma.TeacherReminderDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.teacherEscalation`: Exposes CRUD operations for the **TeacherEscalation** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TeacherEscalations
+    * const teacherEscalations = await prisma.teacherEscalation.findMany()
+    * ```
+    */
+  get teacherEscalation(): Prisma.TeacherEscalationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.teacherCorrectionRequest`: Exposes CRUD operations for the **TeacherCorrectionRequest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TeacherCorrectionRequests
+    * const teacherCorrectionRequests = await prisma.teacherCorrectionRequest.findMany()
+    * ```
+    */
+  get teacherCorrectionRequest(): Prisma.TeacherCorrectionRequestDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.teacherAccountabilityAuditLog`: Exposes CRUD operations for the **TeacherAccountabilityAuditLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TeacherAccountabilityAuditLogs
+    * const teacherAccountabilityAuditLogs = await prisma.teacherAccountabilityAuditLog.findMany()
+    * ```
+    */
+  get teacherAccountabilityAuditLog(): Prisma.TeacherAccountabilityAuditLogDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.parentNotificationPreference`: Exposes CRUD operations for the **ParentNotificationPreference** model.
@@ -1863,6 +2056,11 @@ export namespace Prisma {
     Parent: 'Parent',
     SchoolNotificationSetting: 'SchoolNotificationSetting',
     TeacherAccountabilitySetting: 'TeacherAccountabilitySetting',
+    TeacherObligation: 'TeacherObligation',
+    TeacherReminder: 'TeacherReminder',
+    TeacherEscalation: 'TeacherEscalation',
+    TeacherCorrectionRequest: 'TeacherCorrectionRequest',
+    TeacherAccountabilityAuditLog: 'TeacherAccountabilityAuditLog',
     ParentNotificationPreference: 'ParentNotificationPreference',
     ParentNotification: 'ParentNotification',
     ParentNotificationDeliveryLog: 'ParentNotificationDeliveryLog',
@@ -1921,7 +2119,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "schoolNotificationSetting" | "teacherAccountabilitySetting" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
+      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "schoolNotificationSetting" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2440,6 +2638,376 @@ export namespace Prisma {
           count: {
             args: Prisma.TeacherAccountabilitySettingCountArgs<ExtArgs>
             result: $Utils.Optional<TeacherAccountabilitySettingCountAggregateOutputType> | number
+          }
+        }
+      }
+      TeacherObligation: {
+        payload: Prisma.$TeacherObligationPayload<ExtArgs>
+        fields: Prisma.TeacherObligationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TeacherObligationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherObligationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TeacherObligationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherObligationPayload>
+          }
+          findFirst: {
+            args: Prisma.TeacherObligationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherObligationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TeacherObligationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherObligationPayload>
+          }
+          findMany: {
+            args: Prisma.TeacherObligationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherObligationPayload>[]
+          }
+          create: {
+            args: Prisma.TeacherObligationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherObligationPayload>
+          }
+          createMany: {
+            args: Prisma.TeacherObligationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TeacherObligationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherObligationPayload>[]
+          }
+          delete: {
+            args: Prisma.TeacherObligationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherObligationPayload>
+          }
+          update: {
+            args: Prisma.TeacherObligationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherObligationPayload>
+          }
+          deleteMany: {
+            args: Prisma.TeacherObligationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TeacherObligationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TeacherObligationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherObligationPayload>[]
+          }
+          upsert: {
+            args: Prisma.TeacherObligationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherObligationPayload>
+          }
+          aggregate: {
+            args: Prisma.TeacherObligationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTeacherObligation>
+          }
+          groupBy: {
+            args: Prisma.TeacherObligationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TeacherObligationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TeacherObligationCountArgs<ExtArgs>
+            result: $Utils.Optional<TeacherObligationCountAggregateOutputType> | number
+          }
+        }
+      }
+      TeacherReminder: {
+        payload: Prisma.$TeacherReminderPayload<ExtArgs>
+        fields: Prisma.TeacherReminderFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TeacherReminderFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherReminderPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TeacherReminderFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherReminderPayload>
+          }
+          findFirst: {
+            args: Prisma.TeacherReminderFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherReminderPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TeacherReminderFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherReminderPayload>
+          }
+          findMany: {
+            args: Prisma.TeacherReminderFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherReminderPayload>[]
+          }
+          create: {
+            args: Prisma.TeacherReminderCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherReminderPayload>
+          }
+          createMany: {
+            args: Prisma.TeacherReminderCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TeacherReminderCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherReminderPayload>[]
+          }
+          delete: {
+            args: Prisma.TeacherReminderDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherReminderPayload>
+          }
+          update: {
+            args: Prisma.TeacherReminderUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherReminderPayload>
+          }
+          deleteMany: {
+            args: Prisma.TeacherReminderDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TeacherReminderUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TeacherReminderUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherReminderPayload>[]
+          }
+          upsert: {
+            args: Prisma.TeacherReminderUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherReminderPayload>
+          }
+          aggregate: {
+            args: Prisma.TeacherReminderAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTeacherReminder>
+          }
+          groupBy: {
+            args: Prisma.TeacherReminderGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TeacherReminderGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TeacherReminderCountArgs<ExtArgs>
+            result: $Utils.Optional<TeacherReminderCountAggregateOutputType> | number
+          }
+        }
+      }
+      TeacherEscalation: {
+        payload: Prisma.$TeacherEscalationPayload<ExtArgs>
+        fields: Prisma.TeacherEscalationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TeacherEscalationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherEscalationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TeacherEscalationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherEscalationPayload>
+          }
+          findFirst: {
+            args: Prisma.TeacherEscalationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherEscalationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TeacherEscalationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherEscalationPayload>
+          }
+          findMany: {
+            args: Prisma.TeacherEscalationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherEscalationPayload>[]
+          }
+          create: {
+            args: Prisma.TeacherEscalationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherEscalationPayload>
+          }
+          createMany: {
+            args: Prisma.TeacherEscalationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TeacherEscalationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherEscalationPayload>[]
+          }
+          delete: {
+            args: Prisma.TeacherEscalationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherEscalationPayload>
+          }
+          update: {
+            args: Prisma.TeacherEscalationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherEscalationPayload>
+          }
+          deleteMany: {
+            args: Prisma.TeacherEscalationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TeacherEscalationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TeacherEscalationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherEscalationPayload>[]
+          }
+          upsert: {
+            args: Prisma.TeacherEscalationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherEscalationPayload>
+          }
+          aggregate: {
+            args: Prisma.TeacherEscalationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTeacherEscalation>
+          }
+          groupBy: {
+            args: Prisma.TeacherEscalationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TeacherEscalationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TeacherEscalationCountArgs<ExtArgs>
+            result: $Utils.Optional<TeacherEscalationCountAggregateOutputType> | number
+          }
+        }
+      }
+      TeacherCorrectionRequest: {
+        payload: Prisma.$TeacherCorrectionRequestPayload<ExtArgs>
+        fields: Prisma.TeacherCorrectionRequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TeacherCorrectionRequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherCorrectionRequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TeacherCorrectionRequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherCorrectionRequestPayload>
+          }
+          findFirst: {
+            args: Prisma.TeacherCorrectionRequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherCorrectionRequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TeacherCorrectionRequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherCorrectionRequestPayload>
+          }
+          findMany: {
+            args: Prisma.TeacherCorrectionRequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherCorrectionRequestPayload>[]
+          }
+          create: {
+            args: Prisma.TeacherCorrectionRequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherCorrectionRequestPayload>
+          }
+          createMany: {
+            args: Prisma.TeacherCorrectionRequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TeacherCorrectionRequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherCorrectionRequestPayload>[]
+          }
+          delete: {
+            args: Prisma.TeacherCorrectionRequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherCorrectionRequestPayload>
+          }
+          update: {
+            args: Prisma.TeacherCorrectionRequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherCorrectionRequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.TeacherCorrectionRequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TeacherCorrectionRequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TeacherCorrectionRequestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherCorrectionRequestPayload>[]
+          }
+          upsert: {
+            args: Prisma.TeacherCorrectionRequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherCorrectionRequestPayload>
+          }
+          aggregate: {
+            args: Prisma.TeacherCorrectionRequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTeacherCorrectionRequest>
+          }
+          groupBy: {
+            args: Prisma.TeacherCorrectionRequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TeacherCorrectionRequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TeacherCorrectionRequestCountArgs<ExtArgs>
+            result: $Utils.Optional<TeacherCorrectionRequestCountAggregateOutputType> | number
+          }
+        }
+      }
+      TeacherAccountabilityAuditLog: {
+        payload: Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>
+        fields: Prisma.TeacherAccountabilityAuditLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TeacherAccountabilityAuditLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilityAuditLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TeacherAccountabilityAuditLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilityAuditLogPayload>
+          }
+          findFirst: {
+            args: Prisma.TeacherAccountabilityAuditLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilityAuditLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TeacherAccountabilityAuditLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilityAuditLogPayload>
+          }
+          findMany: {
+            args: Prisma.TeacherAccountabilityAuditLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilityAuditLogPayload>[]
+          }
+          create: {
+            args: Prisma.TeacherAccountabilityAuditLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilityAuditLogPayload>
+          }
+          createMany: {
+            args: Prisma.TeacherAccountabilityAuditLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TeacherAccountabilityAuditLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilityAuditLogPayload>[]
+          }
+          delete: {
+            args: Prisma.TeacherAccountabilityAuditLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilityAuditLogPayload>
+          }
+          update: {
+            args: Prisma.TeacherAccountabilityAuditLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilityAuditLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.TeacherAccountabilityAuditLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TeacherAccountabilityAuditLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TeacherAccountabilityAuditLogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilityAuditLogPayload>[]
+          }
+          upsert: {
+            args: Prisma.TeacherAccountabilityAuditLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeacherAccountabilityAuditLogPayload>
+          }
+          aggregate: {
+            args: Prisma.TeacherAccountabilityAuditLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTeacherAccountabilityAuditLog>
+          }
+          groupBy: {
+            args: Prisma.TeacherAccountabilityAuditLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TeacherAccountabilityAuditLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TeacherAccountabilityAuditLogCountArgs<ExtArgs>
+            result: $Utils.Optional<TeacherAccountabilityAuditLogCountAggregateOutputType> | number
           }
         }
       }
@@ -5740,6 +6308,11 @@ export namespace Prisma {
     parent?: ParentOmit
     schoolNotificationSetting?: SchoolNotificationSettingOmit
     teacherAccountabilitySetting?: TeacherAccountabilitySettingOmit
+    teacherObligation?: TeacherObligationOmit
+    teacherReminder?: TeacherReminderOmit
+    teacherEscalation?: TeacherEscalationOmit
+    teacherCorrectionRequest?: TeacherCorrectionRequestOmit
+    teacherAccountabilityAuditLog?: TeacherAccountabilityAuditLogOmit
     parentNotificationPreference?: ParentNotificationPreferenceOmit
     parentNotification?: ParentNotificationOmit
     parentNotificationDeliveryLog?: ParentNotificationDeliveryLogOmit
@@ -5904,6 +6477,11 @@ export namespace Prisma {
     paymentWebhookEvents: number
     parentNotifications: number
     parentActivityEvents: number
+    teacherObligations: number
+    teacherReminders: number
+    teacherEscalations: number
+    teacherCorrections: number
+    teacherAccountabilityAuditLogs: number
     parentPreferences: number
     parentDeliveryLogs: number
   }
@@ -5950,6 +6528,11 @@ export namespace Prisma {
     paymentWebhookEvents?: boolean | SchoolCountOutputTypeCountPaymentWebhookEventsArgs
     parentNotifications?: boolean | SchoolCountOutputTypeCountParentNotificationsArgs
     parentActivityEvents?: boolean | SchoolCountOutputTypeCountParentActivityEventsArgs
+    teacherObligations?: boolean | SchoolCountOutputTypeCountTeacherObligationsArgs
+    teacherReminders?: boolean | SchoolCountOutputTypeCountTeacherRemindersArgs
+    teacherEscalations?: boolean | SchoolCountOutputTypeCountTeacherEscalationsArgs
+    teacherCorrections?: boolean | SchoolCountOutputTypeCountTeacherCorrectionsArgs
+    teacherAccountabilityAuditLogs?: boolean | SchoolCountOutputTypeCountTeacherAccountabilityAuditLogsArgs
     parentPreferences?: boolean | SchoolCountOutputTypeCountParentPreferencesArgs
     parentDeliveryLogs?: boolean | SchoolCountOutputTypeCountParentDeliveryLogsArgs
   }
@@ -6255,6 +6838,41 @@ export namespace Prisma {
   /**
    * SchoolCountOutputType without action
    */
+  export type SchoolCountOutputTypeCountTeacherObligationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherObligationWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountTeacherRemindersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherReminderWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountTeacherEscalationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherEscalationWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountTeacherCorrectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherCorrectionRequestWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountTeacherAccountabilityAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherAccountabilityAuditLogWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
   export type SchoolCountOutputTypeCountParentPreferencesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ParentNotificationPreferenceWhereInput
   }
@@ -6394,6 +7012,11 @@ export namespace Prisma {
     checkedHomework: number
     parentActivityEvents: number
     syllabusTopicProgress: number
+    accountabilityObligations: number
+    accountabilityReminders: number
+    accountabilityEscalations: number
+    correctionRequests: number
+    accountabilityAuditLogs: number
   }
 
   export type TeacherCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6407,6 +7030,11 @@ export namespace Prisma {
     checkedHomework?: boolean | TeacherCountOutputTypeCountCheckedHomeworkArgs
     parentActivityEvents?: boolean | TeacherCountOutputTypeCountParentActivityEventsArgs
     syllabusTopicProgress?: boolean | TeacherCountOutputTypeCountSyllabusTopicProgressArgs
+    accountabilityObligations?: boolean | TeacherCountOutputTypeCountAccountabilityObligationsArgs
+    accountabilityReminders?: boolean | TeacherCountOutputTypeCountAccountabilityRemindersArgs
+    accountabilityEscalations?: boolean | TeacherCountOutputTypeCountAccountabilityEscalationsArgs
+    correctionRequests?: boolean | TeacherCountOutputTypeCountCorrectionRequestsArgs
+    accountabilityAuditLogs?: boolean | TeacherCountOutputTypeCountAccountabilityAuditLogsArgs
   }
 
   // Custom InputTypes
@@ -6490,6 +7118,41 @@ export namespace Prisma {
     where?: SyllabusTopicProgressWhereInput
   }
 
+  /**
+   * TeacherCountOutputType without action
+   */
+  export type TeacherCountOutputTypeCountAccountabilityObligationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherObligationWhereInput
+  }
+
+  /**
+   * TeacherCountOutputType without action
+   */
+  export type TeacherCountOutputTypeCountAccountabilityRemindersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherReminderWhereInput
+  }
+
+  /**
+   * TeacherCountOutputType without action
+   */
+  export type TeacherCountOutputTypeCountAccountabilityEscalationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherEscalationWhereInput
+  }
+
+  /**
+   * TeacherCountOutputType without action
+   */
+  export type TeacherCountOutputTypeCountCorrectionRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherCorrectionRequestWhereInput
+  }
+
+  /**
+   * TeacherCountOutputType without action
+   */
+  export type TeacherCountOutputTypeCountAccountabilityAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherAccountabilityAuditLogWhereInput
+  }
+
 
   /**
    * Count Type ParentCountOutputType
@@ -6555,6 +7218,46 @@ export namespace Prisma {
    */
   export type ParentCountOutputTypeCountFinanceQueriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: FinanceQueryWhereInput
+  }
+
+
+  /**
+   * Count Type TeacherObligationCountOutputType
+   */
+
+  export type TeacherObligationCountOutputType = {
+    reminders: number
+    escalations: number
+  }
+
+  export type TeacherObligationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    reminders?: boolean | TeacherObligationCountOutputTypeCountRemindersArgs
+    escalations?: boolean | TeacherObligationCountOutputTypeCountEscalationsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * TeacherObligationCountOutputType without action
+   */
+  export type TeacherObligationCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherObligationCountOutputType
+     */
+    select?: TeacherObligationCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * TeacherObligationCountOutputType without action
+   */
+  export type TeacherObligationCountOutputTypeCountRemindersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherReminderWhereInput
+  }
+
+  /**
+   * TeacherObligationCountOutputType without action
+   */
+  export type TeacherObligationCountOutputTypeCountEscalationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherEscalationWhereInput
   }
 
 
@@ -7595,6 +8298,11 @@ export namespace Prisma {
     parentActivityEvents?: boolean | School$parentActivityEventsArgs<ExtArgs>
     notificationSettings?: boolean | School$notificationSettingsArgs<ExtArgs>
     accountabilitySettings?: boolean | School$accountabilitySettingsArgs<ExtArgs>
+    teacherObligations?: boolean | School$teacherObligationsArgs<ExtArgs>
+    teacherReminders?: boolean | School$teacherRemindersArgs<ExtArgs>
+    teacherEscalations?: boolean | School$teacherEscalationsArgs<ExtArgs>
+    teacherCorrections?: boolean | School$teacherCorrectionsArgs<ExtArgs>
+    teacherAccountabilityAuditLogs?: boolean | School$teacherAccountabilityAuditLogsArgs<ExtArgs>
     parentPreferences?: boolean | School$parentPreferencesArgs<ExtArgs>
     parentDeliveryLogs?: boolean | School$parentDeliveryLogsArgs<ExtArgs>
     _count?: boolean | SchoolCountOutputTypeDefaultArgs<ExtArgs>
@@ -7705,6 +8413,11 @@ export namespace Prisma {
     parentActivityEvents?: boolean | School$parentActivityEventsArgs<ExtArgs>
     notificationSettings?: boolean | School$notificationSettingsArgs<ExtArgs>
     accountabilitySettings?: boolean | School$accountabilitySettingsArgs<ExtArgs>
+    teacherObligations?: boolean | School$teacherObligationsArgs<ExtArgs>
+    teacherReminders?: boolean | School$teacherRemindersArgs<ExtArgs>
+    teacherEscalations?: boolean | School$teacherEscalationsArgs<ExtArgs>
+    teacherCorrections?: boolean | School$teacherCorrectionsArgs<ExtArgs>
+    teacherAccountabilityAuditLogs?: boolean | School$teacherAccountabilityAuditLogsArgs<ExtArgs>
     parentPreferences?: boolean | School$parentPreferencesArgs<ExtArgs>
     parentDeliveryLogs?: boolean | School$parentDeliveryLogsArgs<ExtArgs>
     _count?: boolean | SchoolCountOutputTypeDefaultArgs<ExtArgs>
@@ -7758,6 +8471,11 @@ export namespace Prisma {
       parentActivityEvents: Prisma.$ParentActivityEventPayload<ExtArgs>[]
       notificationSettings: Prisma.$SchoolNotificationSettingPayload<ExtArgs> | null
       accountabilitySettings: Prisma.$TeacherAccountabilitySettingPayload<ExtArgs> | null
+      teacherObligations: Prisma.$TeacherObligationPayload<ExtArgs>[]
+      teacherReminders: Prisma.$TeacherReminderPayload<ExtArgs>[]
+      teacherEscalations: Prisma.$TeacherEscalationPayload<ExtArgs>[]
+      teacherCorrections: Prisma.$TeacherCorrectionRequestPayload<ExtArgs>[]
+      teacherAccountabilityAuditLogs: Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>[]
       parentPreferences: Prisma.$ParentNotificationPreferencePayload<ExtArgs>[]
       parentDeliveryLogs: Prisma.$ParentNotificationDeliveryLogPayload<ExtArgs>[]
     }
@@ -8216,6 +8934,11 @@ export namespace Prisma {
     parentActivityEvents<T extends School$parentActivityEventsArgs<ExtArgs> = {}>(args?: Subset<T, School$parentActivityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentActivityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notificationSettings<T extends School$notificationSettingsArgs<ExtArgs> = {}>(args?: Subset<T, School$notificationSettingsArgs<ExtArgs>>): Prisma__SchoolNotificationSettingClient<$Result.GetResult<Prisma.$SchoolNotificationSettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     accountabilitySettings<T extends School$accountabilitySettingsArgs<ExtArgs> = {}>(args?: Subset<T, School$accountabilitySettingsArgs<ExtArgs>>): Prisma__TeacherAccountabilitySettingClient<$Result.GetResult<Prisma.$TeacherAccountabilitySettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    teacherObligations<T extends School$teacherObligationsArgs<ExtArgs> = {}>(args?: Subset<T, School$teacherObligationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherObligationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    teacherReminders<T extends School$teacherRemindersArgs<ExtArgs> = {}>(args?: Subset<T, School$teacherRemindersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherReminderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    teacherEscalations<T extends School$teacherEscalationsArgs<ExtArgs> = {}>(args?: Subset<T, School$teacherEscalationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherEscalationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    teacherCorrections<T extends School$teacherCorrectionsArgs<ExtArgs> = {}>(args?: Subset<T, School$teacherCorrectionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherCorrectionRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    teacherAccountabilityAuditLogs<T extends School$teacherAccountabilityAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$teacherAccountabilityAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentPreferences<T extends School$parentPreferencesArgs<ExtArgs> = {}>(args?: Subset<T, School$parentPreferencesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentNotificationPreferencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentDeliveryLogs<T extends School$parentDeliveryLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$parentDeliveryLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentNotificationDeliveryLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -9676,6 +10399,126 @@ export namespace Prisma {
      */
     include?: TeacherAccountabilitySettingInclude<ExtArgs> | null
     where?: TeacherAccountabilitySettingWhereInput
+  }
+
+  /**
+   * School.teacherObligations
+   */
+  export type School$teacherObligationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherObligation
+     */
+    select?: TeacherObligationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherObligation
+     */
+    omit?: TeacherObligationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherObligationInclude<ExtArgs> | null
+    where?: TeacherObligationWhereInput
+    orderBy?: TeacherObligationOrderByWithRelationInput | TeacherObligationOrderByWithRelationInput[]
+    cursor?: TeacherObligationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeacherObligationScalarFieldEnum | TeacherObligationScalarFieldEnum[]
+  }
+
+  /**
+   * School.teacherReminders
+   */
+  export type School$teacherRemindersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherReminder
+     */
+    select?: TeacherReminderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherReminder
+     */
+    omit?: TeacherReminderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherReminderInclude<ExtArgs> | null
+    where?: TeacherReminderWhereInput
+    orderBy?: TeacherReminderOrderByWithRelationInput | TeacherReminderOrderByWithRelationInput[]
+    cursor?: TeacherReminderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeacherReminderScalarFieldEnum | TeacherReminderScalarFieldEnum[]
+  }
+
+  /**
+   * School.teacherEscalations
+   */
+  export type School$teacherEscalationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherEscalation
+     */
+    select?: TeacherEscalationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherEscalation
+     */
+    omit?: TeacherEscalationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherEscalationInclude<ExtArgs> | null
+    where?: TeacherEscalationWhereInput
+    orderBy?: TeacherEscalationOrderByWithRelationInput | TeacherEscalationOrderByWithRelationInput[]
+    cursor?: TeacherEscalationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeacherEscalationScalarFieldEnum | TeacherEscalationScalarFieldEnum[]
+  }
+
+  /**
+   * School.teacherCorrections
+   */
+  export type School$teacherCorrectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherCorrectionRequest
+     */
+    select?: TeacherCorrectionRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherCorrectionRequest
+     */
+    omit?: TeacherCorrectionRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherCorrectionRequestInclude<ExtArgs> | null
+    where?: TeacherCorrectionRequestWhereInput
+    orderBy?: TeacherCorrectionRequestOrderByWithRelationInput | TeacherCorrectionRequestOrderByWithRelationInput[]
+    cursor?: TeacherCorrectionRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeacherCorrectionRequestScalarFieldEnum | TeacherCorrectionRequestScalarFieldEnum[]
+  }
+
+  /**
+   * School.teacherAccountabilityAuditLogs
+   */
+  export type School$teacherAccountabilityAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilityAuditLog
+     */
+    select?: TeacherAccountabilityAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilityAuditLog
+     */
+    omit?: TeacherAccountabilityAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilityAuditLogInclude<ExtArgs> | null
+    where?: TeacherAccountabilityAuditLogWhereInput
+    orderBy?: TeacherAccountabilityAuditLogOrderByWithRelationInput | TeacherAccountabilityAuditLogOrderByWithRelationInput[]
+    cursor?: TeacherAccountabilityAuditLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeacherAccountabilityAuditLogScalarFieldEnum | TeacherAccountabilityAuditLogScalarFieldEnum[]
   }
 
   /**
@@ -12592,6 +13435,11 @@ export namespace Prisma {
     checkedHomework?: boolean | Teacher$checkedHomeworkArgs<ExtArgs>
     parentActivityEvents?: boolean | Teacher$parentActivityEventsArgs<ExtArgs>
     syllabusTopicProgress?: boolean | Teacher$syllabusTopicProgressArgs<ExtArgs>
+    accountabilityObligations?: boolean | Teacher$accountabilityObligationsArgs<ExtArgs>
+    accountabilityReminders?: boolean | Teacher$accountabilityRemindersArgs<ExtArgs>
+    accountabilityEscalations?: boolean | Teacher$accountabilityEscalationsArgs<ExtArgs>
+    correctionRequests?: boolean | Teacher$correctionRequestsArgs<ExtArgs>
+    accountabilityAuditLogs?: boolean | Teacher$accountabilityAuditLogsArgs<ExtArgs>
     _count?: boolean | TeacherCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["teacher"]>
 
@@ -12658,6 +13506,11 @@ export namespace Prisma {
     checkedHomework?: boolean | Teacher$checkedHomeworkArgs<ExtArgs>
     parentActivityEvents?: boolean | Teacher$parentActivityEventsArgs<ExtArgs>
     syllabusTopicProgress?: boolean | Teacher$syllabusTopicProgressArgs<ExtArgs>
+    accountabilityObligations?: boolean | Teacher$accountabilityObligationsArgs<ExtArgs>
+    accountabilityReminders?: boolean | Teacher$accountabilityRemindersArgs<ExtArgs>
+    accountabilityEscalations?: boolean | Teacher$accountabilityEscalationsArgs<ExtArgs>
+    correctionRequests?: boolean | Teacher$correctionRequestsArgs<ExtArgs>
+    accountabilityAuditLogs?: boolean | Teacher$accountabilityAuditLogsArgs<ExtArgs>
     _count?: boolean | TeacherCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TeacherIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -12681,6 +13534,11 @@ export namespace Prisma {
       checkedHomework: Prisma.$HomeworkSubmissionPayload<ExtArgs>[]
       parentActivityEvents: Prisma.$ParentActivityEventPayload<ExtArgs>[]
       syllabusTopicProgress: Prisma.$SyllabusTopicProgressPayload<ExtArgs>[]
+      accountabilityObligations: Prisma.$TeacherObligationPayload<ExtArgs>[]
+      accountabilityReminders: Prisma.$TeacherReminderPayload<ExtArgs>[]
+      accountabilityEscalations: Prisma.$TeacherEscalationPayload<ExtArgs>[]
+      correctionRequests: Prisma.$TeacherCorrectionRequestPayload<ExtArgs>[]
+      accountabilityAuditLogs: Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -13101,6 +13959,11 @@ export namespace Prisma {
     checkedHomework<T extends Teacher$checkedHomeworkArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$checkedHomeworkArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentActivityEvents<T extends Teacher$parentActivityEventsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$parentActivityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentActivityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     syllabusTopicProgress<T extends Teacher$syllabusTopicProgressArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$syllabusTopicProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SyllabusTopicProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    accountabilityObligations<T extends Teacher$accountabilityObligationsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$accountabilityObligationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherObligationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    accountabilityReminders<T extends Teacher$accountabilityRemindersArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$accountabilityRemindersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherReminderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    accountabilityEscalations<T extends Teacher$accountabilityEscalationsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$accountabilityEscalationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherEscalationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    correctionRequests<T extends Teacher$correctionRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$correctionRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherCorrectionRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    accountabilityAuditLogs<T extends Teacher$accountabilityAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$accountabilityAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13781,6 +14644,126 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SyllabusTopicProgressScalarFieldEnum | SyllabusTopicProgressScalarFieldEnum[]
+  }
+
+  /**
+   * Teacher.accountabilityObligations
+   */
+  export type Teacher$accountabilityObligationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherObligation
+     */
+    select?: TeacherObligationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherObligation
+     */
+    omit?: TeacherObligationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherObligationInclude<ExtArgs> | null
+    where?: TeacherObligationWhereInput
+    orderBy?: TeacherObligationOrderByWithRelationInput | TeacherObligationOrderByWithRelationInput[]
+    cursor?: TeacherObligationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeacherObligationScalarFieldEnum | TeacherObligationScalarFieldEnum[]
+  }
+
+  /**
+   * Teacher.accountabilityReminders
+   */
+  export type Teacher$accountabilityRemindersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherReminder
+     */
+    select?: TeacherReminderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherReminder
+     */
+    omit?: TeacherReminderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherReminderInclude<ExtArgs> | null
+    where?: TeacherReminderWhereInput
+    orderBy?: TeacherReminderOrderByWithRelationInput | TeacherReminderOrderByWithRelationInput[]
+    cursor?: TeacherReminderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeacherReminderScalarFieldEnum | TeacherReminderScalarFieldEnum[]
+  }
+
+  /**
+   * Teacher.accountabilityEscalations
+   */
+  export type Teacher$accountabilityEscalationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherEscalation
+     */
+    select?: TeacherEscalationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherEscalation
+     */
+    omit?: TeacherEscalationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherEscalationInclude<ExtArgs> | null
+    where?: TeacherEscalationWhereInput
+    orderBy?: TeacherEscalationOrderByWithRelationInput | TeacherEscalationOrderByWithRelationInput[]
+    cursor?: TeacherEscalationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeacherEscalationScalarFieldEnum | TeacherEscalationScalarFieldEnum[]
+  }
+
+  /**
+   * Teacher.correctionRequests
+   */
+  export type Teacher$correctionRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherCorrectionRequest
+     */
+    select?: TeacherCorrectionRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherCorrectionRequest
+     */
+    omit?: TeacherCorrectionRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherCorrectionRequestInclude<ExtArgs> | null
+    where?: TeacherCorrectionRequestWhereInput
+    orderBy?: TeacherCorrectionRequestOrderByWithRelationInput | TeacherCorrectionRequestOrderByWithRelationInput[]
+    cursor?: TeacherCorrectionRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeacherCorrectionRequestScalarFieldEnum | TeacherCorrectionRequestScalarFieldEnum[]
+  }
+
+  /**
+   * Teacher.accountabilityAuditLogs
+   */
+  export type Teacher$accountabilityAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilityAuditLog
+     */
+    select?: TeacherAccountabilityAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilityAuditLog
+     */
+    omit?: TeacherAccountabilityAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilityAuditLogInclude<ExtArgs> | null
+    where?: TeacherAccountabilityAuditLogWhereInput
+    orderBy?: TeacherAccountabilityAuditLogOrderByWithRelationInput | TeacherAccountabilityAuditLogOrderByWithRelationInput[]
+    cursor?: TeacherAccountabilityAuditLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeacherAccountabilityAuditLogScalarFieldEnum | TeacherAccountabilityAuditLogScalarFieldEnum[]
   }
 
   /**
@@ -17653,6 +18636,6006 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: TeacherAccountabilitySettingInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TeacherObligation
+   */
+
+  export type AggregateTeacherObligation = {
+    _count: TeacherObligationCountAggregateOutputType | null
+    _min: TeacherObligationMinAggregateOutputType | null
+    _max: TeacherObligationMaxAggregateOutputType | null
+  }
+
+  export type TeacherObligationMinAggregateOutputType = {
+    id: string | null
+    type: $Enums.TeacherObligationType | null
+    status: $Enums.TeacherObligationStatus | null
+    priority: $Enums.TeacherObligationPriority | null
+    sourceModel: string | null
+    sourceId: string | null
+    sourceKey: string | null
+    title: string | null
+    description: string | null
+    expectedAt: Date | null
+    completedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+    teacherId: string | null
+  }
+
+  export type TeacherObligationMaxAggregateOutputType = {
+    id: string | null
+    type: $Enums.TeacherObligationType | null
+    status: $Enums.TeacherObligationStatus | null
+    priority: $Enums.TeacherObligationPriority | null
+    sourceModel: string | null
+    sourceId: string | null
+    sourceKey: string | null
+    title: string | null
+    description: string | null
+    expectedAt: Date | null
+    completedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+    teacherId: string | null
+  }
+
+  export type TeacherObligationCountAggregateOutputType = {
+    id: number
+    type: number
+    status: number
+    priority: number
+    sourceModel: number
+    sourceId: number
+    sourceKey: number
+    title: number
+    description: number
+    expectedAt: number
+    completedAt: number
+    metadata: number
+    createdAt: number
+    updatedAt: number
+    schoolId: number
+    teacherId: number
+    _all: number
+  }
+
+
+  export type TeacherObligationMinAggregateInputType = {
+    id?: true
+    type?: true
+    status?: true
+    priority?: true
+    sourceModel?: true
+    sourceId?: true
+    sourceKey?: true
+    title?: true
+    description?: true
+    expectedAt?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    teacherId?: true
+  }
+
+  export type TeacherObligationMaxAggregateInputType = {
+    id?: true
+    type?: true
+    status?: true
+    priority?: true
+    sourceModel?: true
+    sourceId?: true
+    sourceKey?: true
+    title?: true
+    description?: true
+    expectedAt?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    teacherId?: true
+  }
+
+  export type TeacherObligationCountAggregateInputType = {
+    id?: true
+    type?: true
+    status?: true
+    priority?: true
+    sourceModel?: true
+    sourceId?: true
+    sourceKey?: true
+    title?: true
+    description?: true
+    expectedAt?: true
+    completedAt?: true
+    metadata?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    teacherId?: true
+    _all?: true
+  }
+
+  export type TeacherObligationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TeacherObligation to aggregate.
+     */
+    where?: TeacherObligationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherObligations to fetch.
+     */
+    orderBy?: TeacherObligationOrderByWithRelationInput | TeacherObligationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TeacherObligationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherObligations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherObligations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TeacherObligations
+    **/
+    _count?: true | TeacherObligationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TeacherObligationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TeacherObligationMaxAggregateInputType
+  }
+
+  export type GetTeacherObligationAggregateType<T extends TeacherObligationAggregateArgs> = {
+        [P in keyof T & keyof AggregateTeacherObligation]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTeacherObligation[P]>
+      : GetScalarType<T[P], AggregateTeacherObligation[P]>
+  }
+
+
+
+
+  export type TeacherObligationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherObligationWhereInput
+    orderBy?: TeacherObligationOrderByWithAggregationInput | TeacherObligationOrderByWithAggregationInput[]
+    by: TeacherObligationScalarFieldEnum[] | TeacherObligationScalarFieldEnum
+    having?: TeacherObligationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TeacherObligationCountAggregateInputType | true
+    _min?: TeacherObligationMinAggregateInputType
+    _max?: TeacherObligationMaxAggregateInputType
+  }
+
+  export type TeacherObligationGroupByOutputType = {
+    id: string
+    type: $Enums.TeacherObligationType
+    status: $Enums.TeacherObligationStatus
+    priority: $Enums.TeacherObligationPriority
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    title: string
+    description: string | null
+    expectedAt: Date
+    completedAt: Date | null
+    metadata: JsonValue | null
+    createdAt: Date
+    updatedAt: Date
+    schoolId: string
+    teacherId: string
+    _count: TeacherObligationCountAggregateOutputType | null
+    _min: TeacherObligationMinAggregateOutputType | null
+    _max: TeacherObligationMaxAggregateOutputType | null
+  }
+
+  type GetTeacherObligationGroupByPayload<T extends TeacherObligationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TeacherObligationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TeacherObligationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TeacherObligationGroupByOutputType[P]>
+            : GetScalarType<T[P], TeacherObligationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TeacherObligationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    status?: boolean
+    priority?: boolean
+    sourceModel?: boolean
+    sourceId?: boolean
+    sourceKey?: boolean
+    title?: boolean
+    description?: boolean
+    expectedAt?: boolean
+    completedAt?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    reminders?: boolean | TeacherObligation$remindersArgs<ExtArgs>
+    escalations?: boolean | TeacherObligation$escalationsArgs<ExtArgs>
+    _count?: boolean | TeacherObligationCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherObligation"]>
+
+  export type TeacherObligationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    status?: boolean
+    priority?: boolean
+    sourceModel?: boolean
+    sourceId?: boolean
+    sourceKey?: boolean
+    title?: boolean
+    description?: boolean
+    expectedAt?: boolean
+    completedAt?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherObligation"]>
+
+  export type TeacherObligationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    status?: boolean
+    priority?: boolean
+    sourceModel?: boolean
+    sourceId?: boolean
+    sourceKey?: boolean
+    title?: boolean
+    description?: boolean
+    expectedAt?: boolean
+    completedAt?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherObligation"]>
+
+  export type TeacherObligationSelectScalar = {
+    id?: boolean
+    type?: boolean
+    status?: boolean
+    priority?: boolean
+    sourceModel?: boolean
+    sourceId?: boolean
+    sourceKey?: boolean
+    title?: boolean
+    description?: boolean
+    expectedAt?: boolean
+    completedAt?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+  }
+
+  export type TeacherObligationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "status" | "priority" | "sourceModel" | "sourceId" | "sourceKey" | "title" | "description" | "expectedAt" | "completedAt" | "metadata" | "createdAt" | "updatedAt" | "schoolId" | "teacherId", ExtArgs["result"]["teacherObligation"]>
+  export type TeacherObligationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    reminders?: boolean | TeacherObligation$remindersArgs<ExtArgs>
+    escalations?: boolean | TeacherObligation$escalationsArgs<ExtArgs>
+    _count?: boolean | TeacherObligationCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type TeacherObligationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+  }
+  export type TeacherObligationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+  }
+
+  export type $TeacherObligationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TeacherObligation"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      teacher: Prisma.$TeacherPayload<ExtArgs>
+      reminders: Prisma.$TeacherReminderPayload<ExtArgs>[]
+      escalations: Prisma.$TeacherEscalationPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      type: $Enums.TeacherObligationType
+      status: $Enums.TeacherObligationStatus
+      priority: $Enums.TeacherObligationPriority
+      sourceModel: string
+      sourceId: string
+      sourceKey: string
+      title: string
+      description: string | null
+      expectedAt: Date
+      completedAt: Date | null
+      metadata: Prisma.JsonValue | null
+      createdAt: Date
+      updatedAt: Date
+      schoolId: string
+      teacherId: string
+    }, ExtArgs["result"]["teacherObligation"]>
+    composites: {}
+  }
+
+  type TeacherObligationGetPayload<S extends boolean | null | undefined | TeacherObligationDefaultArgs> = $Result.GetResult<Prisma.$TeacherObligationPayload, S>
+
+  type TeacherObligationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TeacherObligationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TeacherObligationCountAggregateInputType | true
+    }
+
+  export interface TeacherObligationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TeacherObligation'], meta: { name: 'TeacherObligation' } }
+    /**
+     * Find zero or one TeacherObligation that matches the filter.
+     * @param {TeacherObligationFindUniqueArgs} args - Arguments to find a TeacherObligation
+     * @example
+     * // Get one TeacherObligation
+     * const teacherObligation = await prisma.teacherObligation.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TeacherObligationFindUniqueArgs>(args: SelectSubset<T, TeacherObligationFindUniqueArgs<ExtArgs>>): Prisma__TeacherObligationClient<$Result.GetResult<Prisma.$TeacherObligationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TeacherObligation that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TeacherObligationFindUniqueOrThrowArgs} args - Arguments to find a TeacherObligation
+     * @example
+     * // Get one TeacherObligation
+     * const teacherObligation = await prisma.teacherObligation.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TeacherObligationFindUniqueOrThrowArgs>(args: SelectSubset<T, TeacherObligationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TeacherObligationClient<$Result.GetResult<Prisma.$TeacherObligationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TeacherObligation that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherObligationFindFirstArgs} args - Arguments to find a TeacherObligation
+     * @example
+     * // Get one TeacherObligation
+     * const teacherObligation = await prisma.teacherObligation.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TeacherObligationFindFirstArgs>(args?: SelectSubset<T, TeacherObligationFindFirstArgs<ExtArgs>>): Prisma__TeacherObligationClient<$Result.GetResult<Prisma.$TeacherObligationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TeacherObligation that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherObligationFindFirstOrThrowArgs} args - Arguments to find a TeacherObligation
+     * @example
+     * // Get one TeacherObligation
+     * const teacherObligation = await prisma.teacherObligation.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TeacherObligationFindFirstOrThrowArgs>(args?: SelectSubset<T, TeacherObligationFindFirstOrThrowArgs<ExtArgs>>): Prisma__TeacherObligationClient<$Result.GetResult<Prisma.$TeacherObligationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TeacherObligations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherObligationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TeacherObligations
+     * const teacherObligations = await prisma.teacherObligation.findMany()
+     * 
+     * // Get first 10 TeacherObligations
+     * const teacherObligations = await prisma.teacherObligation.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const teacherObligationWithIdOnly = await prisma.teacherObligation.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TeacherObligationFindManyArgs>(args?: SelectSubset<T, TeacherObligationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherObligationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TeacherObligation.
+     * @param {TeacherObligationCreateArgs} args - Arguments to create a TeacherObligation.
+     * @example
+     * // Create one TeacherObligation
+     * const TeacherObligation = await prisma.teacherObligation.create({
+     *   data: {
+     *     // ... data to create a TeacherObligation
+     *   }
+     * })
+     * 
+     */
+    create<T extends TeacherObligationCreateArgs>(args: SelectSubset<T, TeacherObligationCreateArgs<ExtArgs>>): Prisma__TeacherObligationClient<$Result.GetResult<Prisma.$TeacherObligationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TeacherObligations.
+     * @param {TeacherObligationCreateManyArgs} args - Arguments to create many TeacherObligations.
+     * @example
+     * // Create many TeacherObligations
+     * const teacherObligation = await prisma.teacherObligation.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TeacherObligationCreateManyArgs>(args?: SelectSubset<T, TeacherObligationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TeacherObligations and returns the data saved in the database.
+     * @param {TeacherObligationCreateManyAndReturnArgs} args - Arguments to create many TeacherObligations.
+     * @example
+     * // Create many TeacherObligations
+     * const teacherObligation = await prisma.teacherObligation.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TeacherObligations and only return the `id`
+     * const teacherObligationWithIdOnly = await prisma.teacherObligation.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TeacherObligationCreateManyAndReturnArgs>(args?: SelectSubset<T, TeacherObligationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherObligationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TeacherObligation.
+     * @param {TeacherObligationDeleteArgs} args - Arguments to delete one TeacherObligation.
+     * @example
+     * // Delete one TeacherObligation
+     * const TeacherObligation = await prisma.teacherObligation.delete({
+     *   where: {
+     *     // ... filter to delete one TeacherObligation
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TeacherObligationDeleteArgs>(args: SelectSubset<T, TeacherObligationDeleteArgs<ExtArgs>>): Prisma__TeacherObligationClient<$Result.GetResult<Prisma.$TeacherObligationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TeacherObligation.
+     * @param {TeacherObligationUpdateArgs} args - Arguments to update one TeacherObligation.
+     * @example
+     * // Update one TeacherObligation
+     * const teacherObligation = await prisma.teacherObligation.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TeacherObligationUpdateArgs>(args: SelectSubset<T, TeacherObligationUpdateArgs<ExtArgs>>): Prisma__TeacherObligationClient<$Result.GetResult<Prisma.$TeacherObligationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TeacherObligations.
+     * @param {TeacherObligationDeleteManyArgs} args - Arguments to filter TeacherObligations to delete.
+     * @example
+     * // Delete a few TeacherObligations
+     * const { count } = await prisma.teacherObligation.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TeacherObligationDeleteManyArgs>(args?: SelectSubset<T, TeacherObligationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TeacherObligations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherObligationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TeacherObligations
+     * const teacherObligation = await prisma.teacherObligation.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TeacherObligationUpdateManyArgs>(args: SelectSubset<T, TeacherObligationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TeacherObligations and returns the data updated in the database.
+     * @param {TeacherObligationUpdateManyAndReturnArgs} args - Arguments to update many TeacherObligations.
+     * @example
+     * // Update many TeacherObligations
+     * const teacherObligation = await prisma.teacherObligation.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TeacherObligations and only return the `id`
+     * const teacherObligationWithIdOnly = await prisma.teacherObligation.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TeacherObligationUpdateManyAndReturnArgs>(args: SelectSubset<T, TeacherObligationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherObligationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TeacherObligation.
+     * @param {TeacherObligationUpsertArgs} args - Arguments to update or create a TeacherObligation.
+     * @example
+     * // Update or create a TeacherObligation
+     * const teacherObligation = await prisma.teacherObligation.upsert({
+     *   create: {
+     *     // ... data to create a TeacherObligation
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TeacherObligation we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TeacherObligationUpsertArgs>(args: SelectSubset<T, TeacherObligationUpsertArgs<ExtArgs>>): Prisma__TeacherObligationClient<$Result.GetResult<Prisma.$TeacherObligationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TeacherObligations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherObligationCountArgs} args - Arguments to filter TeacherObligations to count.
+     * @example
+     * // Count the number of TeacherObligations
+     * const count = await prisma.teacherObligation.count({
+     *   where: {
+     *     // ... the filter for the TeacherObligations we want to count
+     *   }
+     * })
+    **/
+    count<T extends TeacherObligationCountArgs>(
+      args?: Subset<T, TeacherObligationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TeacherObligationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TeacherObligation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherObligationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TeacherObligationAggregateArgs>(args: Subset<T, TeacherObligationAggregateArgs>): Prisma.PrismaPromise<GetTeacherObligationAggregateType<T>>
+
+    /**
+     * Group by TeacherObligation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherObligationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TeacherObligationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TeacherObligationGroupByArgs['orderBy'] }
+        : { orderBy?: TeacherObligationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TeacherObligationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTeacherObligationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TeacherObligation model
+   */
+  readonly fields: TeacherObligationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TeacherObligation.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TeacherObligationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    teacher<T extends TeacherDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TeacherDefaultArgs<ExtArgs>>): Prisma__TeacherClient<$Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    reminders<T extends TeacherObligation$remindersArgs<ExtArgs> = {}>(args?: Subset<T, TeacherObligation$remindersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherReminderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    escalations<T extends TeacherObligation$escalationsArgs<ExtArgs> = {}>(args?: Subset<T, TeacherObligation$escalationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherEscalationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TeacherObligation model
+   */
+  interface TeacherObligationFieldRefs {
+    readonly id: FieldRef<"TeacherObligation", 'String'>
+    readonly type: FieldRef<"TeacherObligation", 'TeacherObligationType'>
+    readonly status: FieldRef<"TeacherObligation", 'TeacherObligationStatus'>
+    readonly priority: FieldRef<"TeacherObligation", 'TeacherObligationPriority'>
+    readonly sourceModel: FieldRef<"TeacherObligation", 'String'>
+    readonly sourceId: FieldRef<"TeacherObligation", 'String'>
+    readonly sourceKey: FieldRef<"TeacherObligation", 'String'>
+    readonly title: FieldRef<"TeacherObligation", 'String'>
+    readonly description: FieldRef<"TeacherObligation", 'String'>
+    readonly expectedAt: FieldRef<"TeacherObligation", 'DateTime'>
+    readonly completedAt: FieldRef<"TeacherObligation", 'DateTime'>
+    readonly metadata: FieldRef<"TeacherObligation", 'Json'>
+    readonly createdAt: FieldRef<"TeacherObligation", 'DateTime'>
+    readonly updatedAt: FieldRef<"TeacherObligation", 'DateTime'>
+    readonly schoolId: FieldRef<"TeacherObligation", 'String'>
+    readonly teacherId: FieldRef<"TeacherObligation", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TeacherObligation findUnique
+   */
+  export type TeacherObligationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherObligation
+     */
+    select?: TeacherObligationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherObligation
+     */
+    omit?: TeacherObligationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherObligationInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherObligation to fetch.
+     */
+    where: TeacherObligationWhereUniqueInput
+  }
+
+  /**
+   * TeacherObligation findUniqueOrThrow
+   */
+  export type TeacherObligationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherObligation
+     */
+    select?: TeacherObligationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherObligation
+     */
+    omit?: TeacherObligationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherObligationInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherObligation to fetch.
+     */
+    where: TeacherObligationWhereUniqueInput
+  }
+
+  /**
+   * TeacherObligation findFirst
+   */
+  export type TeacherObligationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherObligation
+     */
+    select?: TeacherObligationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherObligation
+     */
+    omit?: TeacherObligationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherObligationInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherObligation to fetch.
+     */
+    where?: TeacherObligationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherObligations to fetch.
+     */
+    orderBy?: TeacherObligationOrderByWithRelationInput | TeacherObligationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TeacherObligations.
+     */
+    cursor?: TeacherObligationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherObligations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherObligations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherObligations.
+     */
+    distinct?: TeacherObligationScalarFieldEnum | TeacherObligationScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherObligation findFirstOrThrow
+   */
+  export type TeacherObligationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherObligation
+     */
+    select?: TeacherObligationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherObligation
+     */
+    omit?: TeacherObligationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherObligationInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherObligation to fetch.
+     */
+    where?: TeacherObligationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherObligations to fetch.
+     */
+    orderBy?: TeacherObligationOrderByWithRelationInput | TeacherObligationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TeacherObligations.
+     */
+    cursor?: TeacherObligationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherObligations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherObligations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherObligations.
+     */
+    distinct?: TeacherObligationScalarFieldEnum | TeacherObligationScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherObligation findMany
+   */
+  export type TeacherObligationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherObligation
+     */
+    select?: TeacherObligationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherObligation
+     */
+    omit?: TeacherObligationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherObligationInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherObligations to fetch.
+     */
+    where?: TeacherObligationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherObligations to fetch.
+     */
+    orderBy?: TeacherObligationOrderByWithRelationInput | TeacherObligationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TeacherObligations.
+     */
+    cursor?: TeacherObligationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherObligations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherObligations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherObligations.
+     */
+    distinct?: TeacherObligationScalarFieldEnum | TeacherObligationScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherObligation create
+   */
+  export type TeacherObligationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherObligation
+     */
+    select?: TeacherObligationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherObligation
+     */
+    omit?: TeacherObligationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherObligationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TeacherObligation.
+     */
+    data: XOR<TeacherObligationCreateInput, TeacherObligationUncheckedCreateInput>
+  }
+
+  /**
+   * TeacherObligation createMany
+   */
+  export type TeacherObligationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TeacherObligations.
+     */
+    data: TeacherObligationCreateManyInput | TeacherObligationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TeacherObligation createManyAndReturn
+   */
+  export type TeacherObligationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherObligation
+     */
+    select?: TeacherObligationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherObligation
+     */
+    omit?: TeacherObligationOmit<ExtArgs> | null
+    /**
+     * The data used to create many TeacherObligations.
+     */
+    data: TeacherObligationCreateManyInput | TeacherObligationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherObligationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TeacherObligation update
+   */
+  export type TeacherObligationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherObligation
+     */
+    select?: TeacherObligationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherObligation
+     */
+    omit?: TeacherObligationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherObligationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TeacherObligation.
+     */
+    data: XOR<TeacherObligationUpdateInput, TeacherObligationUncheckedUpdateInput>
+    /**
+     * Choose, which TeacherObligation to update.
+     */
+    where: TeacherObligationWhereUniqueInput
+  }
+
+  /**
+   * TeacherObligation updateMany
+   */
+  export type TeacherObligationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TeacherObligations.
+     */
+    data: XOR<TeacherObligationUpdateManyMutationInput, TeacherObligationUncheckedUpdateManyInput>
+    /**
+     * Filter which TeacherObligations to update
+     */
+    where?: TeacherObligationWhereInput
+    /**
+     * Limit how many TeacherObligations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TeacherObligation updateManyAndReturn
+   */
+  export type TeacherObligationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherObligation
+     */
+    select?: TeacherObligationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherObligation
+     */
+    omit?: TeacherObligationOmit<ExtArgs> | null
+    /**
+     * The data used to update TeacherObligations.
+     */
+    data: XOR<TeacherObligationUpdateManyMutationInput, TeacherObligationUncheckedUpdateManyInput>
+    /**
+     * Filter which TeacherObligations to update
+     */
+    where?: TeacherObligationWhereInput
+    /**
+     * Limit how many TeacherObligations to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherObligationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TeacherObligation upsert
+   */
+  export type TeacherObligationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherObligation
+     */
+    select?: TeacherObligationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherObligation
+     */
+    omit?: TeacherObligationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherObligationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TeacherObligation to update in case it exists.
+     */
+    where: TeacherObligationWhereUniqueInput
+    /**
+     * In case the TeacherObligation found by the `where` argument doesn't exist, create a new TeacherObligation with this data.
+     */
+    create: XOR<TeacherObligationCreateInput, TeacherObligationUncheckedCreateInput>
+    /**
+     * In case the TeacherObligation was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TeacherObligationUpdateInput, TeacherObligationUncheckedUpdateInput>
+  }
+
+  /**
+   * TeacherObligation delete
+   */
+  export type TeacherObligationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherObligation
+     */
+    select?: TeacherObligationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherObligation
+     */
+    omit?: TeacherObligationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherObligationInclude<ExtArgs> | null
+    /**
+     * Filter which TeacherObligation to delete.
+     */
+    where: TeacherObligationWhereUniqueInput
+  }
+
+  /**
+   * TeacherObligation deleteMany
+   */
+  export type TeacherObligationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TeacherObligations to delete
+     */
+    where?: TeacherObligationWhereInput
+    /**
+     * Limit how many TeacherObligations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TeacherObligation.reminders
+   */
+  export type TeacherObligation$remindersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherReminder
+     */
+    select?: TeacherReminderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherReminder
+     */
+    omit?: TeacherReminderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherReminderInclude<ExtArgs> | null
+    where?: TeacherReminderWhereInput
+    orderBy?: TeacherReminderOrderByWithRelationInput | TeacherReminderOrderByWithRelationInput[]
+    cursor?: TeacherReminderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeacherReminderScalarFieldEnum | TeacherReminderScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherObligation.escalations
+   */
+  export type TeacherObligation$escalationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherEscalation
+     */
+    select?: TeacherEscalationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherEscalation
+     */
+    omit?: TeacherEscalationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherEscalationInclude<ExtArgs> | null
+    where?: TeacherEscalationWhereInput
+    orderBy?: TeacherEscalationOrderByWithRelationInput | TeacherEscalationOrderByWithRelationInput[]
+    cursor?: TeacherEscalationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeacherEscalationScalarFieldEnum | TeacherEscalationScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherObligation without action
+   */
+  export type TeacherObligationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherObligation
+     */
+    select?: TeacherObligationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherObligation
+     */
+    omit?: TeacherObligationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherObligationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TeacherReminder
+   */
+
+  export type AggregateTeacherReminder = {
+    _count: TeacherReminderCountAggregateOutputType | null
+    _min: TeacherReminderMinAggregateOutputType | null
+    _max: TeacherReminderMaxAggregateOutputType | null
+  }
+
+  export type TeacherReminderMinAggregateOutputType = {
+    id: string | null
+    channel: string | null
+    message: string | null
+    status: $Enums.TeacherReminderStatus | null
+    scheduledAt: Date | null
+    sentAt: Date | null
+    errorMessage: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+    teacherId: string | null
+    obligationId: string | null
+  }
+
+  export type TeacherReminderMaxAggregateOutputType = {
+    id: string | null
+    channel: string | null
+    message: string | null
+    status: $Enums.TeacherReminderStatus | null
+    scheduledAt: Date | null
+    sentAt: Date | null
+    errorMessage: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+    teacherId: string | null
+    obligationId: string | null
+  }
+
+  export type TeacherReminderCountAggregateOutputType = {
+    id: number
+    channel: number
+    message: number
+    status: number
+    scheduledAt: number
+    sentAt: number
+    errorMessage: number
+    createdAt: number
+    updatedAt: number
+    schoolId: number
+    teacherId: number
+    obligationId: number
+    _all: number
+  }
+
+
+  export type TeacherReminderMinAggregateInputType = {
+    id?: true
+    channel?: true
+    message?: true
+    status?: true
+    scheduledAt?: true
+    sentAt?: true
+    errorMessage?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    teacherId?: true
+    obligationId?: true
+  }
+
+  export type TeacherReminderMaxAggregateInputType = {
+    id?: true
+    channel?: true
+    message?: true
+    status?: true
+    scheduledAt?: true
+    sentAt?: true
+    errorMessage?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    teacherId?: true
+    obligationId?: true
+  }
+
+  export type TeacherReminderCountAggregateInputType = {
+    id?: true
+    channel?: true
+    message?: true
+    status?: true
+    scheduledAt?: true
+    sentAt?: true
+    errorMessage?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    teacherId?: true
+    obligationId?: true
+    _all?: true
+  }
+
+  export type TeacherReminderAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TeacherReminder to aggregate.
+     */
+    where?: TeacherReminderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherReminders to fetch.
+     */
+    orderBy?: TeacherReminderOrderByWithRelationInput | TeacherReminderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TeacherReminderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherReminders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherReminders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TeacherReminders
+    **/
+    _count?: true | TeacherReminderCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TeacherReminderMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TeacherReminderMaxAggregateInputType
+  }
+
+  export type GetTeacherReminderAggregateType<T extends TeacherReminderAggregateArgs> = {
+        [P in keyof T & keyof AggregateTeacherReminder]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTeacherReminder[P]>
+      : GetScalarType<T[P], AggregateTeacherReminder[P]>
+  }
+
+
+
+
+  export type TeacherReminderGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherReminderWhereInput
+    orderBy?: TeacherReminderOrderByWithAggregationInput | TeacherReminderOrderByWithAggregationInput[]
+    by: TeacherReminderScalarFieldEnum[] | TeacherReminderScalarFieldEnum
+    having?: TeacherReminderScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TeacherReminderCountAggregateInputType | true
+    _min?: TeacherReminderMinAggregateInputType
+    _max?: TeacherReminderMaxAggregateInputType
+  }
+
+  export type TeacherReminderGroupByOutputType = {
+    id: string
+    channel: string
+    message: string
+    status: $Enums.TeacherReminderStatus
+    scheduledAt: Date | null
+    sentAt: Date | null
+    errorMessage: string | null
+    createdAt: Date
+    updatedAt: Date
+    schoolId: string
+    teacherId: string
+    obligationId: string
+    _count: TeacherReminderCountAggregateOutputType | null
+    _min: TeacherReminderMinAggregateOutputType | null
+    _max: TeacherReminderMaxAggregateOutputType | null
+  }
+
+  type GetTeacherReminderGroupByPayload<T extends TeacherReminderGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TeacherReminderGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TeacherReminderGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TeacherReminderGroupByOutputType[P]>
+            : GetScalarType<T[P], TeacherReminderGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TeacherReminderSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    channel?: boolean
+    message?: boolean
+    status?: boolean
+    scheduledAt?: boolean
+    sentAt?: boolean
+    errorMessage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    obligationId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    obligation?: boolean | TeacherObligationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherReminder"]>
+
+  export type TeacherReminderSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    channel?: boolean
+    message?: boolean
+    status?: boolean
+    scheduledAt?: boolean
+    sentAt?: boolean
+    errorMessage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    obligationId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    obligation?: boolean | TeacherObligationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherReminder"]>
+
+  export type TeacherReminderSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    channel?: boolean
+    message?: boolean
+    status?: boolean
+    scheduledAt?: boolean
+    sentAt?: boolean
+    errorMessage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    obligationId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    obligation?: boolean | TeacherObligationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherReminder"]>
+
+  export type TeacherReminderSelectScalar = {
+    id?: boolean
+    channel?: boolean
+    message?: boolean
+    status?: boolean
+    scheduledAt?: boolean
+    sentAt?: boolean
+    errorMessage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    obligationId?: boolean
+  }
+
+  export type TeacherReminderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "channel" | "message" | "status" | "scheduledAt" | "sentAt" | "errorMessage" | "createdAt" | "updatedAt" | "schoolId" | "teacherId" | "obligationId", ExtArgs["result"]["teacherReminder"]>
+  export type TeacherReminderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    obligation?: boolean | TeacherObligationDefaultArgs<ExtArgs>
+  }
+  export type TeacherReminderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    obligation?: boolean | TeacherObligationDefaultArgs<ExtArgs>
+  }
+  export type TeacherReminderIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    obligation?: boolean | TeacherObligationDefaultArgs<ExtArgs>
+  }
+
+  export type $TeacherReminderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TeacherReminder"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      teacher: Prisma.$TeacherPayload<ExtArgs>
+      obligation: Prisma.$TeacherObligationPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      channel: string
+      message: string
+      status: $Enums.TeacherReminderStatus
+      scheduledAt: Date | null
+      sentAt: Date | null
+      errorMessage: string | null
+      createdAt: Date
+      updatedAt: Date
+      schoolId: string
+      teacherId: string
+      obligationId: string
+    }, ExtArgs["result"]["teacherReminder"]>
+    composites: {}
+  }
+
+  type TeacherReminderGetPayload<S extends boolean | null | undefined | TeacherReminderDefaultArgs> = $Result.GetResult<Prisma.$TeacherReminderPayload, S>
+
+  type TeacherReminderCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TeacherReminderFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TeacherReminderCountAggregateInputType | true
+    }
+
+  export interface TeacherReminderDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TeacherReminder'], meta: { name: 'TeacherReminder' } }
+    /**
+     * Find zero or one TeacherReminder that matches the filter.
+     * @param {TeacherReminderFindUniqueArgs} args - Arguments to find a TeacherReminder
+     * @example
+     * // Get one TeacherReminder
+     * const teacherReminder = await prisma.teacherReminder.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TeacherReminderFindUniqueArgs>(args: SelectSubset<T, TeacherReminderFindUniqueArgs<ExtArgs>>): Prisma__TeacherReminderClient<$Result.GetResult<Prisma.$TeacherReminderPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TeacherReminder that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TeacherReminderFindUniqueOrThrowArgs} args - Arguments to find a TeacherReminder
+     * @example
+     * // Get one TeacherReminder
+     * const teacherReminder = await prisma.teacherReminder.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TeacherReminderFindUniqueOrThrowArgs>(args: SelectSubset<T, TeacherReminderFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TeacherReminderClient<$Result.GetResult<Prisma.$TeacherReminderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TeacherReminder that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherReminderFindFirstArgs} args - Arguments to find a TeacherReminder
+     * @example
+     * // Get one TeacherReminder
+     * const teacherReminder = await prisma.teacherReminder.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TeacherReminderFindFirstArgs>(args?: SelectSubset<T, TeacherReminderFindFirstArgs<ExtArgs>>): Prisma__TeacherReminderClient<$Result.GetResult<Prisma.$TeacherReminderPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TeacherReminder that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherReminderFindFirstOrThrowArgs} args - Arguments to find a TeacherReminder
+     * @example
+     * // Get one TeacherReminder
+     * const teacherReminder = await prisma.teacherReminder.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TeacherReminderFindFirstOrThrowArgs>(args?: SelectSubset<T, TeacherReminderFindFirstOrThrowArgs<ExtArgs>>): Prisma__TeacherReminderClient<$Result.GetResult<Prisma.$TeacherReminderPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TeacherReminders that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherReminderFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TeacherReminders
+     * const teacherReminders = await prisma.teacherReminder.findMany()
+     * 
+     * // Get first 10 TeacherReminders
+     * const teacherReminders = await prisma.teacherReminder.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const teacherReminderWithIdOnly = await prisma.teacherReminder.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TeacherReminderFindManyArgs>(args?: SelectSubset<T, TeacherReminderFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherReminderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TeacherReminder.
+     * @param {TeacherReminderCreateArgs} args - Arguments to create a TeacherReminder.
+     * @example
+     * // Create one TeacherReminder
+     * const TeacherReminder = await prisma.teacherReminder.create({
+     *   data: {
+     *     // ... data to create a TeacherReminder
+     *   }
+     * })
+     * 
+     */
+    create<T extends TeacherReminderCreateArgs>(args: SelectSubset<T, TeacherReminderCreateArgs<ExtArgs>>): Prisma__TeacherReminderClient<$Result.GetResult<Prisma.$TeacherReminderPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TeacherReminders.
+     * @param {TeacherReminderCreateManyArgs} args - Arguments to create many TeacherReminders.
+     * @example
+     * // Create many TeacherReminders
+     * const teacherReminder = await prisma.teacherReminder.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TeacherReminderCreateManyArgs>(args?: SelectSubset<T, TeacherReminderCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TeacherReminders and returns the data saved in the database.
+     * @param {TeacherReminderCreateManyAndReturnArgs} args - Arguments to create many TeacherReminders.
+     * @example
+     * // Create many TeacherReminders
+     * const teacherReminder = await prisma.teacherReminder.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TeacherReminders and only return the `id`
+     * const teacherReminderWithIdOnly = await prisma.teacherReminder.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TeacherReminderCreateManyAndReturnArgs>(args?: SelectSubset<T, TeacherReminderCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherReminderPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TeacherReminder.
+     * @param {TeacherReminderDeleteArgs} args - Arguments to delete one TeacherReminder.
+     * @example
+     * // Delete one TeacherReminder
+     * const TeacherReminder = await prisma.teacherReminder.delete({
+     *   where: {
+     *     // ... filter to delete one TeacherReminder
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TeacherReminderDeleteArgs>(args: SelectSubset<T, TeacherReminderDeleteArgs<ExtArgs>>): Prisma__TeacherReminderClient<$Result.GetResult<Prisma.$TeacherReminderPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TeacherReminder.
+     * @param {TeacherReminderUpdateArgs} args - Arguments to update one TeacherReminder.
+     * @example
+     * // Update one TeacherReminder
+     * const teacherReminder = await prisma.teacherReminder.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TeacherReminderUpdateArgs>(args: SelectSubset<T, TeacherReminderUpdateArgs<ExtArgs>>): Prisma__TeacherReminderClient<$Result.GetResult<Prisma.$TeacherReminderPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TeacherReminders.
+     * @param {TeacherReminderDeleteManyArgs} args - Arguments to filter TeacherReminders to delete.
+     * @example
+     * // Delete a few TeacherReminders
+     * const { count } = await prisma.teacherReminder.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TeacherReminderDeleteManyArgs>(args?: SelectSubset<T, TeacherReminderDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TeacherReminders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherReminderUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TeacherReminders
+     * const teacherReminder = await prisma.teacherReminder.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TeacherReminderUpdateManyArgs>(args: SelectSubset<T, TeacherReminderUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TeacherReminders and returns the data updated in the database.
+     * @param {TeacherReminderUpdateManyAndReturnArgs} args - Arguments to update many TeacherReminders.
+     * @example
+     * // Update many TeacherReminders
+     * const teacherReminder = await prisma.teacherReminder.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TeacherReminders and only return the `id`
+     * const teacherReminderWithIdOnly = await prisma.teacherReminder.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TeacherReminderUpdateManyAndReturnArgs>(args: SelectSubset<T, TeacherReminderUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherReminderPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TeacherReminder.
+     * @param {TeacherReminderUpsertArgs} args - Arguments to update or create a TeacherReminder.
+     * @example
+     * // Update or create a TeacherReminder
+     * const teacherReminder = await prisma.teacherReminder.upsert({
+     *   create: {
+     *     // ... data to create a TeacherReminder
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TeacherReminder we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TeacherReminderUpsertArgs>(args: SelectSubset<T, TeacherReminderUpsertArgs<ExtArgs>>): Prisma__TeacherReminderClient<$Result.GetResult<Prisma.$TeacherReminderPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TeacherReminders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherReminderCountArgs} args - Arguments to filter TeacherReminders to count.
+     * @example
+     * // Count the number of TeacherReminders
+     * const count = await prisma.teacherReminder.count({
+     *   where: {
+     *     // ... the filter for the TeacherReminders we want to count
+     *   }
+     * })
+    **/
+    count<T extends TeacherReminderCountArgs>(
+      args?: Subset<T, TeacherReminderCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TeacherReminderCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TeacherReminder.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherReminderAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TeacherReminderAggregateArgs>(args: Subset<T, TeacherReminderAggregateArgs>): Prisma.PrismaPromise<GetTeacherReminderAggregateType<T>>
+
+    /**
+     * Group by TeacherReminder.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherReminderGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TeacherReminderGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TeacherReminderGroupByArgs['orderBy'] }
+        : { orderBy?: TeacherReminderGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TeacherReminderGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTeacherReminderGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TeacherReminder model
+   */
+  readonly fields: TeacherReminderFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TeacherReminder.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TeacherReminderClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    teacher<T extends TeacherDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TeacherDefaultArgs<ExtArgs>>): Prisma__TeacherClient<$Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    obligation<T extends TeacherObligationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TeacherObligationDefaultArgs<ExtArgs>>): Prisma__TeacherObligationClient<$Result.GetResult<Prisma.$TeacherObligationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TeacherReminder model
+   */
+  interface TeacherReminderFieldRefs {
+    readonly id: FieldRef<"TeacherReminder", 'String'>
+    readonly channel: FieldRef<"TeacherReminder", 'String'>
+    readonly message: FieldRef<"TeacherReminder", 'String'>
+    readonly status: FieldRef<"TeacherReminder", 'TeacherReminderStatus'>
+    readonly scheduledAt: FieldRef<"TeacherReminder", 'DateTime'>
+    readonly sentAt: FieldRef<"TeacherReminder", 'DateTime'>
+    readonly errorMessage: FieldRef<"TeacherReminder", 'String'>
+    readonly createdAt: FieldRef<"TeacherReminder", 'DateTime'>
+    readonly updatedAt: FieldRef<"TeacherReminder", 'DateTime'>
+    readonly schoolId: FieldRef<"TeacherReminder", 'String'>
+    readonly teacherId: FieldRef<"TeacherReminder", 'String'>
+    readonly obligationId: FieldRef<"TeacherReminder", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TeacherReminder findUnique
+   */
+  export type TeacherReminderFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherReminder
+     */
+    select?: TeacherReminderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherReminder
+     */
+    omit?: TeacherReminderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherReminderInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherReminder to fetch.
+     */
+    where: TeacherReminderWhereUniqueInput
+  }
+
+  /**
+   * TeacherReminder findUniqueOrThrow
+   */
+  export type TeacherReminderFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherReminder
+     */
+    select?: TeacherReminderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherReminder
+     */
+    omit?: TeacherReminderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherReminderInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherReminder to fetch.
+     */
+    where: TeacherReminderWhereUniqueInput
+  }
+
+  /**
+   * TeacherReminder findFirst
+   */
+  export type TeacherReminderFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherReminder
+     */
+    select?: TeacherReminderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherReminder
+     */
+    omit?: TeacherReminderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherReminderInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherReminder to fetch.
+     */
+    where?: TeacherReminderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherReminders to fetch.
+     */
+    orderBy?: TeacherReminderOrderByWithRelationInput | TeacherReminderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TeacherReminders.
+     */
+    cursor?: TeacherReminderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherReminders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherReminders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherReminders.
+     */
+    distinct?: TeacherReminderScalarFieldEnum | TeacherReminderScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherReminder findFirstOrThrow
+   */
+  export type TeacherReminderFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherReminder
+     */
+    select?: TeacherReminderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherReminder
+     */
+    omit?: TeacherReminderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherReminderInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherReminder to fetch.
+     */
+    where?: TeacherReminderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherReminders to fetch.
+     */
+    orderBy?: TeacherReminderOrderByWithRelationInput | TeacherReminderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TeacherReminders.
+     */
+    cursor?: TeacherReminderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherReminders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherReminders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherReminders.
+     */
+    distinct?: TeacherReminderScalarFieldEnum | TeacherReminderScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherReminder findMany
+   */
+  export type TeacherReminderFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherReminder
+     */
+    select?: TeacherReminderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherReminder
+     */
+    omit?: TeacherReminderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherReminderInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherReminders to fetch.
+     */
+    where?: TeacherReminderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherReminders to fetch.
+     */
+    orderBy?: TeacherReminderOrderByWithRelationInput | TeacherReminderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TeacherReminders.
+     */
+    cursor?: TeacherReminderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherReminders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherReminders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherReminders.
+     */
+    distinct?: TeacherReminderScalarFieldEnum | TeacherReminderScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherReminder create
+   */
+  export type TeacherReminderCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherReminder
+     */
+    select?: TeacherReminderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherReminder
+     */
+    omit?: TeacherReminderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherReminderInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TeacherReminder.
+     */
+    data: XOR<TeacherReminderCreateInput, TeacherReminderUncheckedCreateInput>
+  }
+
+  /**
+   * TeacherReminder createMany
+   */
+  export type TeacherReminderCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TeacherReminders.
+     */
+    data: TeacherReminderCreateManyInput | TeacherReminderCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TeacherReminder createManyAndReturn
+   */
+  export type TeacherReminderCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherReminder
+     */
+    select?: TeacherReminderSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherReminder
+     */
+    omit?: TeacherReminderOmit<ExtArgs> | null
+    /**
+     * The data used to create many TeacherReminders.
+     */
+    data: TeacherReminderCreateManyInput | TeacherReminderCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherReminderIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TeacherReminder update
+   */
+  export type TeacherReminderUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherReminder
+     */
+    select?: TeacherReminderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherReminder
+     */
+    omit?: TeacherReminderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherReminderInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TeacherReminder.
+     */
+    data: XOR<TeacherReminderUpdateInput, TeacherReminderUncheckedUpdateInput>
+    /**
+     * Choose, which TeacherReminder to update.
+     */
+    where: TeacherReminderWhereUniqueInput
+  }
+
+  /**
+   * TeacherReminder updateMany
+   */
+  export type TeacherReminderUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TeacherReminders.
+     */
+    data: XOR<TeacherReminderUpdateManyMutationInput, TeacherReminderUncheckedUpdateManyInput>
+    /**
+     * Filter which TeacherReminders to update
+     */
+    where?: TeacherReminderWhereInput
+    /**
+     * Limit how many TeacherReminders to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TeacherReminder updateManyAndReturn
+   */
+  export type TeacherReminderUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherReminder
+     */
+    select?: TeacherReminderSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherReminder
+     */
+    omit?: TeacherReminderOmit<ExtArgs> | null
+    /**
+     * The data used to update TeacherReminders.
+     */
+    data: XOR<TeacherReminderUpdateManyMutationInput, TeacherReminderUncheckedUpdateManyInput>
+    /**
+     * Filter which TeacherReminders to update
+     */
+    where?: TeacherReminderWhereInput
+    /**
+     * Limit how many TeacherReminders to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherReminderIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TeacherReminder upsert
+   */
+  export type TeacherReminderUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherReminder
+     */
+    select?: TeacherReminderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherReminder
+     */
+    omit?: TeacherReminderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherReminderInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TeacherReminder to update in case it exists.
+     */
+    where: TeacherReminderWhereUniqueInput
+    /**
+     * In case the TeacherReminder found by the `where` argument doesn't exist, create a new TeacherReminder with this data.
+     */
+    create: XOR<TeacherReminderCreateInput, TeacherReminderUncheckedCreateInput>
+    /**
+     * In case the TeacherReminder was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TeacherReminderUpdateInput, TeacherReminderUncheckedUpdateInput>
+  }
+
+  /**
+   * TeacherReminder delete
+   */
+  export type TeacherReminderDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherReminder
+     */
+    select?: TeacherReminderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherReminder
+     */
+    omit?: TeacherReminderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherReminderInclude<ExtArgs> | null
+    /**
+     * Filter which TeacherReminder to delete.
+     */
+    where: TeacherReminderWhereUniqueInput
+  }
+
+  /**
+   * TeacherReminder deleteMany
+   */
+  export type TeacherReminderDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TeacherReminders to delete
+     */
+    where?: TeacherReminderWhereInput
+    /**
+     * Limit how many TeacherReminders to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TeacherReminder without action
+   */
+  export type TeacherReminderDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherReminder
+     */
+    select?: TeacherReminderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherReminder
+     */
+    omit?: TeacherReminderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherReminderInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TeacherEscalation
+   */
+
+  export type AggregateTeacherEscalation = {
+    _count: TeacherEscalationCountAggregateOutputType | null
+    _min: TeacherEscalationMinAggregateOutputType | null
+    _max: TeacherEscalationMaxAggregateOutputType | null
+  }
+
+  export type TeacherEscalationMinAggregateOutputType = {
+    id: string | null
+    reason: string | null
+    status: $Enums.TeacherEscalationStatus | null
+    escalatedAt: Date | null
+    resolvedAt: Date | null
+    reviewedBy: string | null
+    reviewNote: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+    teacherId: string | null
+    obligationId: string | null
+  }
+
+  export type TeacherEscalationMaxAggregateOutputType = {
+    id: string | null
+    reason: string | null
+    status: $Enums.TeacherEscalationStatus | null
+    escalatedAt: Date | null
+    resolvedAt: Date | null
+    reviewedBy: string | null
+    reviewNote: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+    teacherId: string | null
+    obligationId: string | null
+  }
+
+  export type TeacherEscalationCountAggregateOutputType = {
+    id: number
+    reason: number
+    status: number
+    escalatedAt: number
+    resolvedAt: number
+    reviewedBy: number
+    reviewNote: number
+    createdAt: number
+    updatedAt: number
+    schoolId: number
+    teacherId: number
+    obligationId: number
+    _all: number
+  }
+
+
+  export type TeacherEscalationMinAggregateInputType = {
+    id?: true
+    reason?: true
+    status?: true
+    escalatedAt?: true
+    resolvedAt?: true
+    reviewedBy?: true
+    reviewNote?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    teacherId?: true
+    obligationId?: true
+  }
+
+  export type TeacherEscalationMaxAggregateInputType = {
+    id?: true
+    reason?: true
+    status?: true
+    escalatedAt?: true
+    resolvedAt?: true
+    reviewedBy?: true
+    reviewNote?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    teacherId?: true
+    obligationId?: true
+  }
+
+  export type TeacherEscalationCountAggregateInputType = {
+    id?: true
+    reason?: true
+    status?: true
+    escalatedAt?: true
+    resolvedAt?: true
+    reviewedBy?: true
+    reviewNote?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    teacherId?: true
+    obligationId?: true
+    _all?: true
+  }
+
+  export type TeacherEscalationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TeacherEscalation to aggregate.
+     */
+    where?: TeacherEscalationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherEscalations to fetch.
+     */
+    orderBy?: TeacherEscalationOrderByWithRelationInput | TeacherEscalationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TeacherEscalationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherEscalations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherEscalations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TeacherEscalations
+    **/
+    _count?: true | TeacherEscalationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TeacherEscalationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TeacherEscalationMaxAggregateInputType
+  }
+
+  export type GetTeacherEscalationAggregateType<T extends TeacherEscalationAggregateArgs> = {
+        [P in keyof T & keyof AggregateTeacherEscalation]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTeacherEscalation[P]>
+      : GetScalarType<T[P], AggregateTeacherEscalation[P]>
+  }
+
+
+
+
+  export type TeacherEscalationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherEscalationWhereInput
+    orderBy?: TeacherEscalationOrderByWithAggregationInput | TeacherEscalationOrderByWithAggregationInput[]
+    by: TeacherEscalationScalarFieldEnum[] | TeacherEscalationScalarFieldEnum
+    having?: TeacherEscalationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TeacherEscalationCountAggregateInputType | true
+    _min?: TeacherEscalationMinAggregateInputType
+    _max?: TeacherEscalationMaxAggregateInputType
+  }
+
+  export type TeacherEscalationGroupByOutputType = {
+    id: string
+    reason: string
+    status: $Enums.TeacherEscalationStatus
+    escalatedAt: Date
+    resolvedAt: Date | null
+    reviewedBy: string | null
+    reviewNote: string | null
+    createdAt: Date
+    updatedAt: Date
+    schoolId: string
+    teacherId: string
+    obligationId: string
+    _count: TeacherEscalationCountAggregateOutputType | null
+    _min: TeacherEscalationMinAggregateOutputType | null
+    _max: TeacherEscalationMaxAggregateOutputType | null
+  }
+
+  type GetTeacherEscalationGroupByPayload<T extends TeacherEscalationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TeacherEscalationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TeacherEscalationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TeacherEscalationGroupByOutputType[P]>
+            : GetScalarType<T[P], TeacherEscalationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TeacherEscalationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reason?: boolean
+    status?: boolean
+    escalatedAt?: boolean
+    resolvedAt?: boolean
+    reviewedBy?: boolean
+    reviewNote?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    obligationId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    obligation?: boolean | TeacherObligationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherEscalation"]>
+
+  export type TeacherEscalationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reason?: boolean
+    status?: boolean
+    escalatedAt?: boolean
+    resolvedAt?: boolean
+    reviewedBy?: boolean
+    reviewNote?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    obligationId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    obligation?: boolean | TeacherObligationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherEscalation"]>
+
+  export type TeacherEscalationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reason?: boolean
+    status?: boolean
+    escalatedAt?: boolean
+    resolvedAt?: boolean
+    reviewedBy?: boolean
+    reviewNote?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    obligationId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    obligation?: boolean | TeacherObligationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherEscalation"]>
+
+  export type TeacherEscalationSelectScalar = {
+    id?: boolean
+    reason?: boolean
+    status?: boolean
+    escalatedAt?: boolean
+    resolvedAt?: boolean
+    reviewedBy?: boolean
+    reviewNote?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    obligationId?: boolean
+  }
+
+  export type TeacherEscalationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "reason" | "status" | "escalatedAt" | "resolvedAt" | "reviewedBy" | "reviewNote" | "createdAt" | "updatedAt" | "schoolId" | "teacherId" | "obligationId", ExtArgs["result"]["teacherEscalation"]>
+  export type TeacherEscalationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    obligation?: boolean | TeacherObligationDefaultArgs<ExtArgs>
+  }
+  export type TeacherEscalationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    obligation?: boolean | TeacherObligationDefaultArgs<ExtArgs>
+  }
+  export type TeacherEscalationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    obligation?: boolean | TeacherObligationDefaultArgs<ExtArgs>
+  }
+
+  export type $TeacherEscalationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TeacherEscalation"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      teacher: Prisma.$TeacherPayload<ExtArgs>
+      obligation: Prisma.$TeacherObligationPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      reason: string
+      status: $Enums.TeacherEscalationStatus
+      escalatedAt: Date
+      resolvedAt: Date | null
+      reviewedBy: string | null
+      reviewNote: string | null
+      createdAt: Date
+      updatedAt: Date
+      schoolId: string
+      teacherId: string
+      obligationId: string
+    }, ExtArgs["result"]["teacherEscalation"]>
+    composites: {}
+  }
+
+  type TeacherEscalationGetPayload<S extends boolean | null | undefined | TeacherEscalationDefaultArgs> = $Result.GetResult<Prisma.$TeacherEscalationPayload, S>
+
+  type TeacherEscalationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TeacherEscalationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TeacherEscalationCountAggregateInputType | true
+    }
+
+  export interface TeacherEscalationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TeacherEscalation'], meta: { name: 'TeacherEscalation' } }
+    /**
+     * Find zero or one TeacherEscalation that matches the filter.
+     * @param {TeacherEscalationFindUniqueArgs} args - Arguments to find a TeacherEscalation
+     * @example
+     * // Get one TeacherEscalation
+     * const teacherEscalation = await prisma.teacherEscalation.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TeacherEscalationFindUniqueArgs>(args: SelectSubset<T, TeacherEscalationFindUniqueArgs<ExtArgs>>): Prisma__TeacherEscalationClient<$Result.GetResult<Prisma.$TeacherEscalationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TeacherEscalation that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TeacherEscalationFindUniqueOrThrowArgs} args - Arguments to find a TeacherEscalation
+     * @example
+     * // Get one TeacherEscalation
+     * const teacherEscalation = await prisma.teacherEscalation.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TeacherEscalationFindUniqueOrThrowArgs>(args: SelectSubset<T, TeacherEscalationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TeacherEscalationClient<$Result.GetResult<Prisma.$TeacherEscalationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TeacherEscalation that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherEscalationFindFirstArgs} args - Arguments to find a TeacherEscalation
+     * @example
+     * // Get one TeacherEscalation
+     * const teacherEscalation = await prisma.teacherEscalation.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TeacherEscalationFindFirstArgs>(args?: SelectSubset<T, TeacherEscalationFindFirstArgs<ExtArgs>>): Prisma__TeacherEscalationClient<$Result.GetResult<Prisma.$TeacherEscalationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TeacherEscalation that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherEscalationFindFirstOrThrowArgs} args - Arguments to find a TeacherEscalation
+     * @example
+     * // Get one TeacherEscalation
+     * const teacherEscalation = await prisma.teacherEscalation.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TeacherEscalationFindFirstOrThrowArgs>(args?: SelectSubset<T, TeacherEscalationFindFirstOrThrowArgs<ExtArgs>>): Prisma__TeacherEscalationClient<$Result.GetResult<Prisma.$TeacherEscalationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TeacherEscalations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherEscalationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TeacherEscalations
+     * const teacherEscalations = await prisma.teacherEscalation.findMany()
+     * 
+     * // Get first 10 TeacherEscalations
+     * const teacherEscalations = await prisma.teacherEscalation.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const teacherEscalationWithIdOnly = await prisma.teacherEscalation.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TeacherEscalationFindManyArgs>(args?: SelectSubset<T, TeacherEscalationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherEscalationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TeacherEscalation.
+     * @param {TeacherEscalationCreateArgs} args - Arguments to create a TeacherEscalation.
+     * @example
+     * // Create one TeacherEscalation
+     * const TeacherEscalation = await prisma.teacherEscalation.create({
+     *   data: {
+     *     // ... data to create a TeacherEscalation
+     *   }
+     * })
+     * 
+     */
+    create<T extends TeacherEscalationCreateArgs>(args: SelectSubset<T, TeacherEscalationCreateArgs<ExtArgs>>): Prisma__TeacherEscalationClient<$Result.GetResult<Prisma.$TeacherEscalationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TeacherEscalations.
+     * @param {TeacherEscalationCreateManyArgs} args - Arguments to create many TeacherEscalations.
+     * @example
+     * // Create many TeacherEscalations
+     * const teacherEscalation = await prisma.teacherEscalation.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TeacherEscalationCreateManyArgs>(args?: SelectSubset<T, TeacherEscalationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TeacherEscalations and returns the data saved in the database.
+     * @param {TeacherEscalationCreateManyAndReturnArgs} args - Arguments to create many TeacherEscalations.
+     * @example
+     * // Create many TeacherEscalations
+     * const teacherEscalation = await prisma.teacherEscalation.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TeacherEscalations and only return the `id`
+     * const teacherEscalationWithIdOnly = await prisma.teacherEscalation.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TeacherEscalationCreateManyAndReturnArgs>(args?: SelectSubset<T, TeacherEscalationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherEscalationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TeacherEscalation.
+     * @param {TeacherEscalationDeleteArgs} args - Arguments to delete one TeacherEscalation.
+     * @example
+     * // Delete one TeacherEscalation
+     * const TeacherEscalation = await prisma.teacherEscalation.delete({
+     *   where: {
+     *     // ... filter to delete one TeacherEscalation
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TeacherEscalationDeleteArgs>(args: SelectSubset<T, TeacherEscalationDeleteArgs<ExtArgs>>): Prisma__TeacherEscalationClient<$Result.GetResult<Prisma.$TeacherEscalationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TeacherEscalation.
+     * @param {TeacherEscalationUpdateArgs} args - Arguments to update one TeacherEscalation.
+     * @example
+     * // Update one TeacherEscalation
+     * const teacherEscalation = await prisma.teacherEscalation.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TeacherEscalationUpdateArgs>(args: SelectSubset<T, TeacherEscalationUpdateArgs<ExtArgs>>): Prisma__TeacherEscalationClient<$Result.GetResult<Prisma.$TeacherEscalationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TeacherEscalations.
+     * @param {TeacherEscalationDeleteManyArgs} args - Arguments to filter TeacherEscalations to delete.
+     * @example
+     * // Delete a few TeacherEscalations
+     * const { count } = await prisma.teacherEscalation.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TeacherEscalationDeleteManyArgs>(args?: SelectSubset<T, TeacherEscalationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TeacherEscalations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherEscalationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TeacherEscalations
+     * const teacherEscalation = await prisma.teacherEscalation.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TeacherEscalationUpdateManyArgs>(args: SelectSubset<T, TeacherEscalationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TeacherEscalations and returns the data updated in the database.
+     * @param {TeacherEscalationUpdateManyAndReturnArgs} args - Arguments to update many TeacherEscalations.
+     * @example
+     * // Update many TeacherEscalations
+     * const teacherEscalation = await prisma.teacherEscalation.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TeacherEscalations and only return the `id`
+     * const teacherEscalationWithIdOnly = await prisma.teacherEscalation.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TeacherEscalationUpdateManyAndReturnArgs>(args: SelectSubset<T, TeacherEscalationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherEscalationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TeacherEscalation.
+     * @param {TeacherEscalationUpsertArgs} args - Arguments to update or create a TeacherEscalation.
+     * @example
+     * // Update or create a TeacherEscalation
+     * const teacherEscalation = await prisma.teacherEscalation.upsert({
+     *   create: {
+     *     // ... data to create a TeacherEscalation
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TeacherEscalation we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TeacherEscalationUpsertArgs>(args: SelectSubset<T, TeacherEscalationUpsertArgs<ExtArgs>>): Prisma__TeacherEscalationClient<$Result.GetResult<Prisma.$TeacherEscalationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TeacherEscalations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherEscalationCountArgs} args - Arguments to filter TeacherEscalations to count.
+     * @example
+     * // Count the number of TeacherEscalations
+     * const count = await prisma.teacherEscalation.count({
+     *   where: {
+     *     // ... the filter for the TeacherEscalations we want to count
+     *   }
+     * })
+    **/
+    count<T extends TeacherEscalationCountArgs>(
+      args?: Subset<T, TeacherEscalationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TeacherEscalationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TeacherEscalation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherEscalationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TeacherEscalationAggregateArgs>(args: Subset<T, TeacherEscalationAggregateArgs>): Prisma.PrismaPromise<GetTeacherEscalationAggregateType<T>>
+
+    /**
+     * Group by TeacherEscalation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherEscalationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TeacherEscalationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TeacherEscalationGroupByArgs['orderBy'] }
+        : { orderBy?: TeacherEscalationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TeacherEscalationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTeacherEscalationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TeacherEscalation model
+   */
+  readonly fields: TeacherEscalationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TeacherEscalation.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TeacherEscalationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    teacher<T extends TeacherDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TeacherDefaultArgs<ExtArgs>>): Prisma__TeacherClient<$Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    obligation<T extends TeacherObligationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TeacherObligationDefaultArgs<ExtArgs>>): Prisma__TeacherObligationClient<$Result.GetResult<Prisma.$TeacherObligationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TeacherEscalation model
+   */
+  interface TeacherEscalationFieldRefs {
+    readonly id: FieldRef<"TeacherEscalation", 'String'>
+    readonly reason: FieldRef<"TeacherEscalation", 'String'>
+    readonly status: FieldRef<"TeacherEscalation", 'TeacherEscalationStatus'>
+    readonly escalatedAt: FieldRef<"TeacherEscalation", 'DateTime'>
+    readonly resolvedAt: FieldRef<"TeacherEscalation", 'DateTime'>
+    readonly reviewedBy: FieldRef<"TeacherEscalation", 'String'>
+    readonly reviewNote: FieldRef<"TeacherEscalation", 'String'>
+    readonly createdAt: FieldRef<"TeacherEscalation", 'DateTime'>
+    readonly updatedAt: FieldRef<"TeacherEscalation", 'DateTime'>
+    readonly schoolId: FieldRef<"TeacherEscalation", 'String'>
+    readonly teacherId: FieldRef<"TeacherEscalation", 'String'>
+    readonly obligationId: FieldRef<"TeacherEscalation", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TeacherEscalation findUnique
+   */
+  export type TeacherEscalationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherEscalation
+     */
+    select?: TeacherEscalationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherEscalation
+     */
+    omit?: TeacherEscalationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherEscalationInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherEscalation to fetch.
+     */
+    where: TeacherEscalationWhereUniqueInput
+  }
+
+  /**
+   * TeacherEscalation findUniqueOrThrow
+   */
+  export type TeacherEscalationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherEscalation
+     */
+    select?: TeacherEscalationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherEscalation
+     */
+    omit?: TeacherEscalationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherEscalationInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherEscalation to fetch.
+     */
+    where: TeacherEscalationWhereUniqueInput
+  }
+
+  /**
+   * TeacherEscalation findFirst
+   */
+  export type TeacherEscalationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherEscalation
+     */
+    select?: TeacherEscalationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherEscalation
+     */
+    omit?: TeacherEscalationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherEscalationInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherEscalation to fetch.
+     */
+    where?: TeacherEscalationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherEscalations to fetch.
+     */
+    orderBy?: TeacherEscalationOrderByWithRelationInput | TeacherEscalationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TeacherEscalations.
+     */
+    cursor?: TeacherEscalationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherEscalations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherEscalations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherEscalations.
+     */
+    distinct?: TeacherEscalationScalarFieldEnum | TeacherEscalationScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherEscalation findFirstOrThrow
+   */
+  export type TeacherEscalationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherEscalation
+     */
+    select?: TeacherEscalationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherEscalation
+     */
+    omit?: TeacherEscalationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherEscalationInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherEscalation to fetch.
+     */
+    where?: TeacherEscalationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherEscalations to fetch.
+     */
+    orderBy?: TeacherEscalationOrderByWithRelationInput | TeacherEscalationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TeacherEscalations.
+     */
+    cursor?: TeacherEscalationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherEscalations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherEscalations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherEscalations.
+     */
+    distinct?: TeacherEscalationScalarFieldEnum | TeacherEscalationScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherEscalation findMany
+   */
+  export type TeacherEscalationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherEscalation
+     */
+    select?: TeacherEscalationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherEscalation
+     */
+    omit?: TeacherEscalationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherEscalationInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherEscalations to fetch.
+     */
+    where?: TeacherEscalationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherEscalations to fetch.
+     */
+    orderBy?: TeacherEscalationOrderByWithRelationInput | TeacherEscalationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TeacherEscalations.
+     */
+    cursor?: TeacherEscalationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherEscalations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherEscalations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherEscalations.
+     */
+    distinct?: TeacherEscalationScalarFieldEnum | TeacherEscalationScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherEscalation create
+   */
+  export type TeacherEscalationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherEscalation
+     */
+    select?: TeacherEscalationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherEscalation
+     */
+    omit?: TeacherEscalationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherEscalationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TeacherEscalation.
+     */
+    data: XOR<TeacherEscalationCreateInput, TeacherEscalationUncheckedCreateInput>
+  }
+
+  /**
+   * TeacherEscalation createMany
+   */
+  export type TeacherEscalationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TeacherEscalations.
+     */
+    data: TeacherEscalationCreateManyInput | TeacherEscalationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TeacherEscalation createManyAndReturn
+   */
+  export type TeacherEscalationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherEscalation
+     */
+    select?: TeacherEscalationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherEscalation
+     */
+    omit?: TeacherEscalationOmit<ExtArgs> | null
+    /**
+     * The data used to create many TeacherEscalations.
+     */
+    data: TeacherEscalationCreateManyInput | TeacherEscalationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherEscalationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TeacherEscalation update
+   */
+  export type TeacherEscalationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherEscalation
+     */
+    select?: TeacherEscalationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherEscalation
+     */
+    omit?: TeacherEscalationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherEscalationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TeacherEscalation.
+     */
+    data: XOR<TeacherEscalationUpdateInput, TeacherEscalationUncheckedUpdateInput>
+    /**
+     * Choose, which TeacherEscalation to update.
+     */
+    where: TeacherEscalationWhereUniqueInput
+  }
+
+  /**
+   * TeacherEscalation updateMany
+   */
+  export type TeacherEscalationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TeacherEscalations.
+     */
+    data: XOR<TeacherEscalationUpdateManyMutationInput, TeacherEscalationUncheckedUpdateManyInput>
+    /**
+     * Filter which TeacherEscalations to update
+     */
+    where?: TeacherEscalationWhereInput
+    /**
+     * Limit how many TeacherEscalations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TeacherEscalation updateManyAndReturn
+   */
+  export type TeacherEscalationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherEscalation
+     */
+    select?: TeacherEscalationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherEscalation
+     */
+    omit?: TeacherEscalationOmit<ExtArgs> | null
+    /**
+     * The data used to update TeacherEscalations.
+     */
+    data: XOR<TeacherEscalationUpdateManyMutationInput, TeacherEscalationUncheckedUpdateManyInput>
+    /**
+     * Filter which TeacherEscalations to update
+     */
+    where?: TeacherEscalationWhereInput
+    /**
+     * Limit how many TeacherEscalations to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherEscalationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TeacherEscalation upsert
+   */
+  export type TeacherEscalationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherEscalation
+     */
+    select?: TeacherEscalationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherEscalation
+     */
+    omit?: TeacherEscalationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherEscalationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TeacherEscalation to update in case it exists.
+     */
+    where: TeacherEscalationWhereUniqueInput
+    /**
+     * In case the TeacherEscalation found by the `where` argument doesn't exist, create a new TeacherEscalation with this data.
+     */
+    create: XOR<TeacherEscalationCreateInput, TeacherEscalationUncheckedCreateInput>
+    /**
+     * In case the TeacherEscalation was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TeacherEscalationUpdateInput, TeacherEscalationUncheckedUpdateInput>
+  }
+
+  /**
+   * TeacherEscalation delete
+   */
+  export type TeacherEscalationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherEscalation
+     */
+    select?: TeacherEscalationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherEscalation
+     */
+    omit?: TeacherEscalationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherEscalationInclude<ExtArgs> | null
+    /**
+     * Filter which TeacherEscalation to delete.
+     */
+    where: TeacherEscalationWhereUniqueInput
+  }
+
+  /**
+   * TeacherEscalation deleteMany
+   */
+  export type TeacherEscalationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TeacherEscalations to delete
+     */
+    where?: TeacherEscalationWhereInput
+    /**
+     * Limit how many TeacherEscalations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TeacherEscalation without action
+   */
+  export type TeacherEscalationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherEscalation
+     */
+    select?: TeacherEscalationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherEscalation
+     */
+    omit?: TeacherEscalationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherEscalationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TeacherCorrectionRequest
+   */
+
+  export type AggregateTeacherCorrectionRequest = {
+    _count: TeacherCorrectionRequestCountAggregateOutputType | null
+    _min: TeacherCorrectionRequestMinAggregateOutputType | null
+    _max: TeacherCorrectionRequestMaxAggregateOutputType | null
+  }
+
+  export type TeacherCorrectionRequestMinAggregateOutputType = {
+    id: string | null
+    sourceModel: string | null
+    sourceId: string | null
+    sourceKey: string | null
+    fieldName: string | null
+    reason: string | null
+    evidenceUrl: string | null
+    status: $Enums.TeacherCorrectionRequestStatus | null
+    reviewedBy: string | null
+    reviewedAt: Date | null
+    reviewNote: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+    teacherId: string | null
+  }
+
+  export type TeacherCorrectionRequestMaxAggregateOutputType = {
+    id: string | null
+    sourceModel: string | null
+    sourceId: string | null
+    sourceKey: string | null
+    fieldName: string | null
+    reason: string | null
+    evidenceUrl: string | null
+    status: $Enums.TeacherCorrectionRequestStatus | null
+    reviewedBy: string | null
+    reviewedAt: Date | null
+    reviewNote: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+    teacherId: string | null
+  }
+
+  export type TeacherCorrectionRequestCountAggregateOutputType = {
+    id: number
+    sourceModel: number
+    sourceId: number
+    sourceKey: number
+    fieldName: number
+    oldValue: number
+    newValue: number
+    reason: number
+    evidenceUrl: number
+    status: number
+    reviewedBy: number
+    reviewedAt: number
+    reviewNote: number
+    createdAt: number
+    updatedAt: number
+    schoolId: number
+    teacherId: number
+    _all: number
+  }
+
+
+  export type TeacherCorrectionRequestMinAggregateInputType = {
+    id?: true
+    sourceModel?: true
+    sourceId?: true
+    sourceKey?: true
+    fieldName?: true
+    reason?: true
+    evidenceUrl?: true
+    status?: true
+    reviewedBy?: true
+    reviewedAt?: true
+    reviewNote?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    teacherId?: true
+  }
+
+  export type TeacherCorrectionRequestMaxAggregateInputType = {
+    id?: true
+    sourceModel?: true
+    sourceId?: true
+    sourceKey?: true
+    fieldName?: true
+    reason?: true
+    evidenceUrl?: true
+    status?: true
+    reviewedBy?: true
+    reviewedAt?: true
+    reviewNote?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    teacherId?: true
+  }
+
+  export type TeacherCorrectionRequestCountAggregateInputType = {
+    id?: true
+    sourceModel?: true
+    sourceId?: true
+    sourceKey?: true
+    fieldName?: true
+    oldValue?: true
+    newValue?: true
+    reason?: true
+    evidenceUrl?: true
+    status?: true
+    reviewedBy?: true
+    reviewedAt?: true
+    reviewNote?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    teacherId?: true
+    _all?: true
+  }
+
+  export type TeacherCorrectionRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TeacherCorrectionRequest to aggregate.
+     */
+    where?: TeacherCorrectionRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherCorrectionRequests to fetch.
+     */
+    orderBy?: TeacherCorrectionRequestOrderByWithRelationInput | TeacherCorrectionRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TeacherCorrectionRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherCorrectionRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherCorrectionRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TeacherCorrectionRequests
+    **/
+    _count?: true | TeacherCorrectionRequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TeacherCorrectionRequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TeacherCorrectionRequestMaxAggregateInputType
+  }
+
+  export type GetTeacherCorrectionRequestAggregateType<T extends TeacherCorrectionRequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateTeacherCorrectionRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTeacherCorrectionRequest[P]>
+      : GetScalarType<T[P], AggregateTeacherCorrectionRequest[P]>
+  }
+
+
+
+
+  export type TeacherCorrectionRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherCorrectionRequestWhereInput
+    orderBy?: TeacherCorrectionRequestOrderByWithAggregationInput | TeacherCorrectionRequestOrderByWithAggregationInput[]
+    by: TeacherCorrectionRequestScalarFieldEnum[] | TeacherCorrectionRequestScalarFieldEnum
+    having?: TeacherCorrectionRequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TeacherCorrectionRequestCountAggregateInputType | true
+    _min?: TeacherCorrectionRequestMinAggregateInputType
+    _max?: TeacherCorrectionRequestMaxAggregateInputType
+  }
+
+  export type TeacherCorrectionRequestGroupByOutputType = {
+    id: string
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    fieldName: string
+    oldValue: JsonValue | null
+    newValue: JsonValue | null
+    reason: string
+    evidenceUrl: string | null
+    status: $Enums.TeacherCorrectionRequestStatus
+    reviewedBy: string | null
+    reviewedAt: Date | null
+    reviewNote: string | null
+    createdAt: Date
+    updatedAt: Date
+    schoolId: string
+    teacherId: string
+    _count: TeacherCorrectionRequestCountAggregateOutputType | null
+    _min: TeacherCorrectionRequestMinAggregateOutputType | null
+    _max: TeacherCorrectionRequestMaxAggregateOutputType | null
+  }
+
+  type GetTeacherCorrectionRequestGroupByPayload<T extends TeacherCorrectionRequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TeacherCorrectionRequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TeacherCorrectionRequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TeacherCorrectionRequestGroupByOutputType[P]>
+            : GetScalarType<T[P], TeacherCorrectionRequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TeacherCorrectionRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    sourceModel?: boolean
+    sourceId?: boolean
+    sourceKey?: boolean
+    fieldName?: boolean
+    oldValue?: boolean
+    newValue?: boolean
+    reason?: boolean
+    evidenceUrl?: boolean
+    status?: boolean
+    reviewedBy?: boolean
+    reviewedAt?: boolean
+    reviewNote?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherCorrectionRequest"]>
+
+  export type TeacherCorrectionRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    sourceModel?: boolean
+    sourceId?: boolean
+    sourceKey?: boolean
+    fieldName?: boolean
+    oldValue?: boolean
+    newValue?: boolean
+    reason?: boolean
+    evidenceUrl?: boolean
+    status?: boolean
+    reviewedBy?: boolean
+    reviewedAt?: boolean
+    reviewNote?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherCorrectionRequest"]>
+
+  export type TeacherCorrectionRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    sourceModel?: boolean
+    sourceId?: boolean
+    sourceKey?: boolean
+    fieldName?: boolean
+    oldValue?: boolean
+    newValue?: boolean
+    reason?: boolean
+    evidenceUrl?: boolean
+    status?: boolean
+    reviewedBy?: boolean
+    reviewedAt?: boolean
+    reviewNote?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherCorrectionRequest"]>
+
+  export type TeacherCorrectionRequestSelectScalar = {
+    id?: boolean
+    sourceModel?: boolean
+    sourceId?: boolean
+    sourceKey?: boolean
+    fieldName?: boolean
+    oldValue?: boolean
+    newValue?: boolean
+    reason?: boolean
+    evidenceUrl?: boolean
+    status?: boolean
+    reviewedBy?: boolean
+    reviewedAt?: boolean
+    reviewNote?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+  }
+
+  export type TeacherCorrectionRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sourceModel" | "sourceId" | "sourceKey" | "fieldName" | "oldValue" | "newValue" | "reason" | "evidenceUrl" | "status" | "reviewedBy" | "reviewedAt" | "reviewNote" | "createdAt" | "updatedAt" | "schoolId" | "teacherId", ExtArgs["result"]["teacherCorrectionRequest"]>
+  export type TeacherCorrectionRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+  }
+  export type TeacherCorrectionRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+  }
+  export type TeacherCorrectionRequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+  }
+
+  export type $TeacherCorrectionRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TeacherCorrectionRequest"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      teacher: Prisma.$TeacherPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      sourceModel: string
+      sourceId: string
+      sourceKey: string
+      fieldName: string
+      oldValue: Prisma.JsonValue | null
+      newValue: Prisma.JsonValue | null
+      reason: string
+      evidenceUrl: string | null
+      status: $Enums.TeacherCorrectionRequestStatus
+      reviewedBy: string | null
+      reviewedAt: Date | null
+      reviewNote: string | null
+      createdAt: Date
+      updatedAt: Date
+      schoolId: string
+      teacherId: string
+    }, ExtArgs["result"]["teacherCorrectionRequest"]>
+    composites: {}
+  }
+
+  type TeacherCorrectionRequestGetPayload<S extends boolean | null | undefined | TeacherCorrectionRequestDefaultArgs> = $Result.GetResult<Prisma.$TeacherCorrectionRequestPayload, S>
+
+  type TeacherCorrectionRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TeacherCorrectionRequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TeacherCorrectionRequestCountAggregateInputType | true
+    }
+
+  export interface TeacherCorrectionRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TeacherCorrectionRequest'], meta: { name: 'TeacherCorrectionRequest' } }
+    /**
+     * Find zero or one TeacherCorrectionRequest that matches the filter.
+     * @param {TeacherCorrectionRequestFindUniqueArgs} args - Arguments to find a TeacherCorrectionRequest
+     * @example
+     * // Get one TeacherCorrectionRequest
+     * const teacherCorrectionRequest = await prisma.teacherCorrectionRequest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TeacherCorrectionRequestFindUniqueArgs>(args: SelectSubset<T, TeacherCorrectionRequestFindUniqueArgs<ExtArgs>>): Prisma__TeacherCorrectionRequestClient<$Result.GetResult<Prisma.$TeacherCorrectionRequestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TeacherCorrectionRequest that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TeacherCorrectionRequestFindUniqueOrThrowArgs} args - Arguments to find a TeacherCorrectionRequest
+     * @example
+     * // Get one TeacherCorrectionRequest
+     * const teacherCorrectionRequest = await prisma.teacherCorrectionRequest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TeacherCorrectionRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, TeacherCorrectionRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TeacherCorrectionRequestClient<$Result.GetResult<Prisma.$TeacherCorrectionRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TeacherCorrectionRequest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherCorrectionRequestFindFirstArgs} args - Arguments to find a TeacherCorrectionRequest
+     * @example
+     * // Get one TeacherCorrectionRequest
+     * const teacherCorrectionRequest = await prisma.teacherCorrectionRequest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TeacherCorrectionRequestFindFirstArgs>(args?: SelectSubset<T, TeacherCorrectionRequestFindFirstArgs<ExtArgs>>): Prisma__TeacherCorrectionRequestClient<$Result.GetResult<Prisma.$TeacherCorrectionRequestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TeacherCorrectionRequest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherCorrectionRequestFindFirstOrThrowArgs} args - Arguments to find a TeacherCorrectionRequest
+     * @example
+     * // Get one TeacherCorrectionRequest
+     * const teacherCorrectionRequest = await prisma.teacherCorrectionRequest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TeacherCorrectionRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, TeacherCorrectionRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__TeacherCorrectionRequestClient<$Result.GetResult<Prisma.$TeacherCorrectionRequestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TeacherCorrectionRequests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherCorrectionRequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TeacherCorrectionRequests
+     * const teacherCorrectionRequests = await prisma.teacherCorrectionRequest.findMany()
+     * 
+     * // Get first 10 TeacherCorrectionRequests
+     * const teacherCorrectionRequests = await prisma.teacherCorrectionRequest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const teacherCorrectionRequestWithIdOnly = await prisma.teacherCorrectionRequest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TeacherCorrectionRequestFindManyArgs>(args?: SelectSubset<T, TeacherCorrectionRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherCorrectionRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TeacherCorrectionRequest.
+     * @param {TeacherCorrectionRequestCreateArgs} args - Arguments to create a TeacherCorrectionRequest.
+     * @example
+     * // Create one TeacherCorrectionRequest
+     * const TeacherCorrectionRequest = await prisma.teacherCorrectionRequest.create({
+     *   data: {
+     *     // ... data to create a TeacherCorrectionRequest
+     *   }
+     * })
+     * 
+     */
+    create<T extends TeacherCorrectionRequestCreateArgs>(args: SelectSubset<T, TeacherCorrectionRequestCreateArgs<ExtArgs>>): Prisma__TeacherCorrectionRequestClient<$Result.GetResult<Prisma.$TeacherCorrectionRequestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TeacherCorrectionRequests.
+     * @param {TeacherCorrectionRequestCreateManyArgs} args - Arguments to create many TeacherCorrectionRequests.
+     * @example
+     * // Create many TeacherCorrectionRequests
+     * const teacherCorrectionRequest = await prisma.teacherCorrectionRequest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TeacherCorrectionRequestCreateManyArgs>(args?: SelectSubset<T, TeacherCorrectionRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TeacherCorrectionRequests and returns the data saved in the database.
+     * @param {TeacherCorrectionRequestCreateManyAndReturnArgs} args - Arguments to create many TeacherCorrectionRequests.
+     * @example
+     * // Create many TeacherCorrectionRequests
+     * const teacherCorrectionRequest = await prisma.teacherCorrectionRequest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TeacherCorrectionRequests and only return the `id`
+     * const teacherCorrectionRequestWithIdOnly = await prisma.teacherCorrectionRequest.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TeacherCorrectionRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, TeacherCorrectionRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherCorrectionRequestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TeacherCorrectionRequest.
+     * @param {TeacherCorrectionRequestDeleteArgs} args - Arguments to delete one TeacherCorrectionRequest.
+     * @example
+     * // Delete one TeacherCorrectionRequest
+     * const TeacherCorrectionRequest = await prisma.teacherCorrectionRequest.delete({
+     *   where: {
+     *     // ... filter to delete one TeacherCorrectionRequest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TeacherCorrectionRequestDeleteArgs>(args: SelectSubset<T, TeacherCorrectionRequestDeleteArgs<ExtArgs>>): Prisma__TeacherCorrectionRequestClient<$Result.GetResult<Prisma.$TeacherCorrectionRequestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TeacherCorrectionRequest.
+     * @param {TeacherCorrectionRequestUpdateArgs} args - Arguments to update one TeacherCorrectionRequest.
+     * @example
+     * // Update one TeacherCorrectionRequest
+     * const teacherCorrectionRequest = await prisma.teacherCorrectionRequest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TeacherCorrectionRequestUpdateArgs>(args: SelectSubset<T, TeacherCorrectionRequestUpdateArgs<ExtArgs>>): Prisma__TeacherCorrectionRequestClient<$Result.GetResult<Prisma.$TeacherCorrectionRequestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TeacherCorrectionRequests.
+     * @param {TeacherCorrectionRequestDeleteManyArgs} args - Arguments to filter TeacherCorrectionRequests to delete.
+     * @example
+     * // Delete a few TeacherCorrectionRequests
+     * const { count } = await prisma.teacherCorrectionRequest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TeacherCorrectionRequestDeleteManyArgs>(args?: SelectSubset<T, TeacherCorrectionRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TeacherCorrectionRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherCorrectionRequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TeacherCorrectionRequests
+     * const teacherCorrectionRequest = await prisma.teacherCorrectionRequest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TeacherCorrectionRequestUpdateManyArgs>(args: SelectSubset<T, TeacherCorrectionRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TeacherCorrectionRequests and returns the data updated in the database.
+     * @param {TeacherCorrectionRequestUpdateManyAndReturnArgs} args - Arguments to update many TeacherCorrectionRequests.
+     * @example
+     * // Update many TeacherCorrectionRequests
+     * const teacherCorrectionRequest = await prisma.teacherCorrectionRequest.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TeacherCorrectionRequests and only return the `id`
+     * const teacherCorrectionRequestWithIdOnly = await prisma.teacherCorrectionRequest.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TeacherCorrectionRequestUpdateManyAndReturnArgs>(args: SelectSubset<T, TeacherCorrectionRequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherCorrectionRequestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TeacherCorrectionRequest.
+     * @param {TeacherCorrectionRequestUpsertArgs} args - Arguments to update or create a TeacherCorrectionRequest.
+     * @example
+     * // Update or create a TeacherCorrectionRequest
+     * const teacherCorrectionRequest = await prisma.teacherCorrectionRequest.upsert({
+     *   create: {
+     *     // ... data to create a TeacherCorrectionRequest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TeacherCorrectionRequest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TeacherCorrectionRequestUpsertArgs>(args: SelectSubset<T, TeacherCorrectionRequestUpsertArgs<ExtArgs>>): Prisma__TeacherCorrectionRequestClient<$Result.GetResult<Prisma.$TeacherCorrectionRequestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TeacherCorrectionRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherCorrectionRequestCountArgs} args - Arguments to filter TeacherCorrectionRequests to count.
+     * @example
+     * // Count the number of TeacherCorrectionRequests
+     * const count = await prisma.teacherCorrectionRequest.count({
+     *   where: {
+     *     // ... the filter for the TeacherCorrectionRequests we want to count
+     *   }
+     * })
+    **/
+    count<T extends TeacherCorrectionRequestCountArgs>(
+      args?: Subset<T, TeacherCorrectionRequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TeacherCorrectionRequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TeacherCorrectionRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherCorrectionRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TeacherCorrectionRequestAggregateArgs>(args: Subset<T, TeacherCorrectionRequestAggregateArgs>): Prisma.PrismaPromise<GetTeacherCorrectionRequestAggregateType<T>>
+
+    /**
+     * Group by TeacherCorrectionRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherCorrectionRequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TeacherCorrectionRequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TeacherCorrectionRequestGroupByArgs['orderBy'] }
+        : { orderBy?: TeacherCorrectionRequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TeacherCorrectionRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTeacherCorrectionRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TeacherCorrectionRequest model
+   */
+  readonly fields: TeacherCorrectionRequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TeacherCorrectionRequest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TeacherCorrectionRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    teacher<T extends TeacherDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TeacherDefaultArgs<ExtArgs>>): Prisma__TeacherClient<$Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TeacherCorrectionRequest model
+   */
+  interface TeacherCorrectionRequestFieldRefs {
+    readonly id: FieldRef<"TeacherCorrectionRequest", 'String'>
+    readonly sourceModel: FieldRef<"TeacherCorrectionRequest", 'String'>
+    readonly sourceId: FieldRef<"TeacherCorrectionRequest", 'String'>
+    readonly sourceKey: FieldRef<"TeacherCorrectionRequest", 'String'>
+    readonly fieldName: FieldRef<"TeacherCorrectionRequest", 'String'>
+    readonly oldValue: FieldRef<"TeacherCorrectionRequest", 'Json'>
+    readonly newValue: FieldRef<"TeacherCorrectionRequest", 'Json'>
+    readonly reason: FieldRef<"TeacherCorrectionRequest", 'String'>
+    readonly evidenceUrl: FieldRef<"TeacherCorrectionRequest", 'String'>
+    readonly status: FieldRef<"TeacherCorrectionRequest", 'TeacherCorrectionRequestStatus'>
+    readonly reviewedBy: FieldRef<"TeacherCorrectionRequest", 'String'>
+    readonly reviewedAt: FieldRef<"TeacherCorrectionRequest", 'DateTime'>
+    readonly reviewNote: FieldRef<"TeacherCorrectionRequest", 'String'>
+    readonly createdAt: FieldRef<"TeacherCorrectionRequest", 'DateTime'>
+    readonly updatedAt: FieldRef<"TeacherCorrectionRequest", 'DateTime'>
+    readonly schoolId: FieldRef<"TeacherCorrectionRequest", 'String'>
+    readonly teacherId: FieldRef<"TeacherCorrectionRequest", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TeacherCorrectionRequest findUnique
+   */
+  export type TeacherCorrectionRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherCorrectionRequest
+     */
+    select?: TeacherCorrectionRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherCorrectionRequest
+     */
+    omit?: TeacherCorrectionRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherCorrectionRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherCorrectionRequest to fetch.
+     */
+    where: TeacherCorrectionRequestWhereUniqueInput
+  }
+
+  /**
+   * TeacherCorrectionRequest findUniqueOrThrow
+   */
+  export type TeacherCorrectionRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherCorrectionRequest
+     */
+    select?: TeacherCorrectionRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherCorrectionRequest
+     */
+    omit?: TeacherCorrectionRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherCorrectionRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherCorrectionRequest to fetch.
+     */
+    where: TeacherCorrectionRequestWhereUniqueInput
+  }
+
+  /**
+   * TeacherCorrectionRequest findFirst
+   */
+  export type TeacherCorrectionRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherCorrectionRequest
+     */
+    select?: TeacherCorrectionRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherCorrectionRequest
+     */
+    omit?: TeacherCorrectionRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherCorrectionRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherCorrectionRequest to fetch.
+     */
+    where?: TeacherCorrectionRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherCorrectionRequests to fetch.
+     */
+    orderBy?: TeacherCorrectionRequestOrderByWithRelationInput | TeacherCorrectionRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TeacherCorrectionRequests.
+     */
+    cursor?: TeacherCorrectionRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherCorrectionRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherCorrectionRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherCorrectionRequests.
+     */
+    distinct?: TeacherCorrectionRequestScalarFieldEnum | TeacherCorrectionRequestScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherCorrectionRequest findFirstOrThrow
+   */
+  export type TeacherCorrectionRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherCorrectionRequest
+     */
+    select?: TeacherCorrectionRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherCorrectionRequest
+     */
+    omit?: TeacherCorrectionRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherCorrectionRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherCorrectionRequest to fetch.
+     */
+    where?: TeacherCorrectionRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherCorrectionRequests to fetch.
+     */
+    orderBy?: TeacherCorrectionRequestOrderByWithRelationInput | TeacherCorrectionRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TeacherCorrectionRequests.
+     */
+    cursor?: TeacherCorrectionRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherCorrectionRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherCorrectionRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherCorrectionRequests.
+     */
+    distinct?: TeacherCorrectionRequestScalarFieldEnum | TeacherCorrectionRequestScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherCorrectionRequest findMany
+   */
+  export type TeacherCorrectionRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherCorrectionRequest
+     */
+    select?: TeacherCorrectionRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherCorrectionRequest
+     */
+    omit?: TeacherCorrectionRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherCorrectionRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherCorrectionRequests to fetch.
+     */
+    where?: TeacherCorrectionRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherCorrectionRequests to fetch.
+     */
+    orderBy?: TeacherCorrectionRequestOrderByWithRelationInput | TeacherCorrectionRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TeacherCorrectionRequests.
+     */
+    cursor?: TeacherCorrectionRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherCorrectionRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherCorrectionRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherCorrectionRequests.
+     */
+    distinct?: TeacherCorrectionRequestScalarFieldEnum | TeacherCorrectionRequestScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherCorrectionRequest create
+   */
+  export type TeacherCorrectionRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherCorrectionRequest
+     */
+    select?: TeacherCorrectionRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherCorrectionRequest
+     */
+    omit?: TeacherCorrectionRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherCorrectionRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TeacherCorrectionRequest.
+     */
+    data: XOR<TeacherCorrectionRequestCreateInput, TeacherCorrectionRequestUncheckedCreateInput>
+  }
+
+  /**
+   * TeacherCorrectionRequest createMany
+   */
+  export type TeacherCorrectionRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TeacherCorrectionRequests.
+     */
+    data: TeacherCorrectionRequestCreateManyInput | TeacherCorrectionRequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TeacherCorrectionRequest createManyAndReturn
+   */
+  export type TeacherCorrectionRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherCorrectionRequest
+     */
+    select?: TeacherCorrectionRequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherCorrectionRequest
+     */
+    omit?: TeacherCorrectionRequestOmit<ExtArgs> | null
+    /**
+     * The data used to create many TeacherCorrectionRequests.
+     */
+    data: TeacherCorrectionRequestCreateManyInput | TeacherCorrectionRequestCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherCorrectionRequestIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TeacherCorrectionRequest update
+   */
+  export type TeacherCorrectionRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherCorrectionRequest
+     */
+    select?: TeacherCorrectionRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherCorrectionRequest
+     */
+    omit?: TeacherCorrectionRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherCorrectionRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TeacherCorrectionRequest.
+     */
+    data: XOR<TeacherCorrectionRequestUpdateInput, TeacherCorrectionRequestUncheckedUpdateInput>
+    /**
+     * Choose, which TeacherCorrectionRequest to update.
+     */
+    where: TeacherCorrectionRequestWhereUniqueInput
+  }
+
+  /**
+   * TeacherCorrectionRequest updateMany
+   */
+  export type TeacherCorrectionRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TeacherCorrectionRequests.
+     */
+    data: XOR<TeacherCorrectionRequestUpdateManyMutationInput, TeacherCorrectionRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which TeacherCorrectionRequests to update
+     */
+    where?: TeacherCorrectionRequestWhereInput
+    /**
+     * Limit how many TeacherCorrectionRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TeacherCorrectionRequest updateManyAndReturn
+   */
+  export type TeacherCorrectionRequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherCorrectionRequest
+     */
+    select?: TeacherCorrectionRequestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherCorrectionRequest
+     */
+    omit?: TeacherCorrectionRequestOmit<ExtArgs> | null
+    /**
+     * The data used to update TeacherCorrectionRequests.
+     */
+    data: XOR<TeacherCorrectionRequestUpdateManyMutationInput, TeacherCorrectionRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which TeacherCorrectionRequests to update
+     */
+    where?: TeacherCorrectionRequestWhereInput
+    /**
+     * Limit how many TeacherCorrectionRequests to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherCorrectionRequestIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TeacherCorrectionRequest upsert
+   */
+  export type TeacherCorrectionRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherCorrectionRequest
+     */
+    select?: TeacherCorrectionRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherCorrectionRequest
+     */
+    omit?: TeacherCorrectionRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherCorrectionRequestInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TeacherCorrectionRequest to update in case it exists.
+     */
+    where: TeacherCorrectionRequestWhereUniqueInput
+    /**
+     * In case the TeacherCorrectionRequest found by the `where` argument doesn't exist, create a new TeacherCorrectionRequest with this data.
+     */
+    create: XOR<TeacherCorrectionRequestCreateInput, TeacherCorrectionRequestUncheckedCreateInput>
+    /**
+     * In case the TeacherCorrectionRequest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TeacherCorrectionRequestUpdateInput, TeacherCorrectionRequestUncheckedUpdateInput>
+  }
+
+  /**
+   * TeacherCorrectionRequest delete
+   */
+  export type TeacherCorrectionRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherCorrectionRequest
+     */
+    select?: TeacherCorrectionRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherCorrectionRequest
+     */
+    omit?: TeacherCorrectionRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherCorrectionRequestInclude<ExtArgs> | null
+    /**
+     * Filter which TeacherCorrectionRequest to delete.
+     */
+    where: TeacherCorrectionRequestWhereUniqueInput
+  }
+
+  /**
+   * TeacherCorrectionRequest deleteMany
+   */
+  export type TeacherCorrectionRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TeacherCorrectionRequests to delete
+     */
+    where?: TeacherCorrectionRequestWhereInput
+    /**
+     * Limit how many TeacherCorrectionRequests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TeacherCorrectionRequest without action
+   */
+  export type TeacherCorrectionRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherCorrectionRequest
+     */
+    select?: TeacherCorrectionRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherCorrectionRequest
+     */
+    omit?: TeacherCorrectionRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherCorrectionRequestInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TeacherAccountabilityAuditLog
+   */
+
+  export type AggregateTeacherAccountabilityAuditLog = {
+    _count: TeacherAccountabilityAuditLogCountAggregateOutputType | null
+    _min: TeacherAccountabilityAuditLogMinAggregateOutputType | null
+    _max: TeacherAccountabilityAuditLogMaxAggregateOutputType | null
+  }
+
+  export type TeacherAccountabilityAuditLogMinAggregateOutputType = {
+    id: string | null
+    action: $Enums.TeacherAccountabilityAuditAction | null
+    actorId: string | null
+    actorRole: string | null
+    sourceModel: string | null
+    sourceId: string | null
+    message: string | null
+    createdAt: Date | null
+    schoolId: string | null
+    teacherId: string | null
+  }
+
+  export type TeacherAccountabilityAuditLogMaxAggregateOutputType = {
+    id: string | null
+    action: $Enums.TeacherAccountabilityAuditAction | null
+    actorId: string | null
+    actorRole: string | null
+    sourceModel: string | null
+    sourceId: string | null
+    message: string | null
+    createdAt: Date | null
+    schoolId: string | null
+    teacherId: string | null
+  }
+
+  export type TeacherAccountabilityAuditLogCountAggregateOutputType = {
+    id: number
+    action: number
+    actorId: number
+    actorRole: number
+    sourceModel: number
+    sourceId: number
+    before: number
+    after: number
+    message: number
+    createdAt: number
+    schoolId: number
+    teacherId: number
+    _all: number
+  }
+
+
+  export type TeacherAccountabilityAuditLogMinAggregateInputType = {
+    id?: true
+    action?: true
+    actorId?: true
+    actorRole?: true
+    sourceModel?: true
+    sourceId?: true
+    message?: true
+    createdAt?: true
+    schoolId?: true
+    teacherId?: true
+  }
+
+  export type TeacherAccountabilityAuditLogMaxAggregateInputType = {
+    id?: true
+    action?: true
+    actorId?: true
+    actorRole?: true
+    sourceModel?: true
+    sourceId?: true
+    message?: true
+    createdAt?: true
+    schoolId?: true
+    teacherId?: true
+  }
+
+  export type TeacherAccountabilityAuditLogCountAggregateInputType = {
+    id?: true
+    action?: true
+    actorId?: true
+    actorRole?: true
+    sourceModel?: true
+    sourceId?: true
+    before?: true
+    after?: true
+    message?: true
+    createdAt?: true
+    schoolId?: true
+    teacherId?: true
+    _all?: true
+  }
+
+  export type TeacherAccountabilityAuditLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TeacherAccountabilityAuditLog to aggregate.
+     */
+    where?: TeacherAccountabilityAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherAccountabilityAuditLogs to fetch.
+     */
+    orderBy?: TeacherAccountabilityAuditLogOrderByWithRelationInput | TeacherAccountabilityAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TeacherAccountabilityAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherAccountabilityAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherAccountabilityAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TeacherAccountabilityAuditLogs
+    **/
+    _count?: true | TeacherAccountabilityAuditLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TeacherAccountabilityAuditLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TeacherAccountabilityAuditLogMaxAggregateInputType
+  }
+
+  export type GetTeacherAccountabilityAuditLogAggregateType<T extends TeacherAccountabilityAuditLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateTeacherAccountabilityAuditLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTeacherAccountabilityAuditLog[P]>
+      : GetScalarType<T[P], AggregateTeacherAccountabilityAuditLog[P]>
+  }
+
+
+
+
+  export type TeacherAccountabilityAuditLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeacherAccountabilityAuditLogWhereInput
+    orderBy?: TeacherAccountabilityAuditLogOrderByWithAggregationInput | TeacherAccountabilityAuditLogOrderByWithAggregationInput[]
+    by: TeacherAccountabilityAuditLogScalarFieldEnum[] | TeacherAccountabilityAuditLogScalarFieldEnum
+    having?: TeacherAccountabilityAuditLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TeacherAccountabilityAuditLogCountAggregateInputType | true
+    _min?: TeacherAccountabilityAuditLogMinAggregateInputType
+    _max?: TeacherAccountabilityAuditLogMaxAggregateInputType
+  }
+
+  export type TeacherAccountabilityAuditLogGroupByOutputType = {
+    id: string
+    action: $Enums.TeacherAccountabilityAuditAction
+    actorId: string | null
+    actorRole: string | null
+    sourceModel: string
+    sourceId: string
+    before: JsonValue | null
+    after: JsonValue | null
+    message: string | null
+    createdAt: Date
+    schoolId: string
+    teacherId: string | null
+    _count: TeacherAccountabilityAuditLogCountAggregateOutputType | null
+    _min: TeacherAccountabilityAuditLogMinAggregateOutputType | null
+    _max: TeacherAccountabilityAuditLogMaxAggregateOutputType | null
+  }
+
+  type GetTeacherAccountabilityAuditLogGroupByPayload<T extends TeacherAccountabilityAuditLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TeacherAccountabilityAuditLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TeacherAccountabilityAuditLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TeacherAccountabilityAuditLogGroupByOutputType[P]>
+            : GetScalarType<T[P], TeacherAccountabilityAuditLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TeacherAccountabilityAuditLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    action?: boolean
+    actorId?: boolean
+    actorRole?: boolean
+    sourceModel?: boolean
+    sourceId?: boolean
+    before?: boolean
+    after?: boolean
+    message?: boolean
+    createdAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherAccountabilityAuditLog$teacherArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherAccountabilityAuditLog"]>
+
+  export type TeacherAccountabilityAuditLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    action?: boolean
+    actorId?: boolean
+    actorRole?: boolean
+    sourceModel?: boolean
+    sourceId?: boolean
+    before?: boolean
+    after?: boolean
+    message?: boolean
+    createdAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherAccountabilityAuditLog$teacherArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherAccountabilityAuditLog"]>
+
+  export type TeacherAccountabilityAuditLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    action?: boolean
+    actorId?: boolean
+    actorRole?: boolean
+    sourceModel?: boolean
+    sourceId?: boolean
+    before?: boolean
+    after?: boolean
+    message?: boolean
+    createdAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherAccountabilityAuditLog$teacherArgs<ExtArgs>
+  }, ExtArgs["result"]["teacherAccountabilityAuditLog"]>
+
+  export type TeacherAccountabilityAuditLogSelectScalar = {
+    id?: boolean
+    action?: boolean
+    actorId?: boolean
+    actorRole?: boolean
+    sourceModel?: boolean
+    sourceId?: boolean
+    before?: boolean
+    after?: boolean
+    message?: boolean
+    createdAt?: boolean
+    schoolId?: boolean
+    teacherId?: boolean
+  }
+
+  export type TeacherAccountabilityAuditLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "action" | "actorId" | "actorRole" | "sourceModel" | "sourceId" | "before" | "after" | "message" | "createdAt" | "schoolId" | "teacherId", ExtArgs["result"]["teacherAccountabilityAuditLog"]>
+  export type TeacherAccountabilityAuditLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherAccountabilityAuditLog$teacherArgs<ExtArgs>
+  }
+  export type TeacherAccountabilityAuditLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherAccountabilityAuditLog$teacherArgs<ExtArgs>
+  }
+  export type TeacherAccountabilityAuditLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    teacher?: boolean | TeacherAccountabilityAuditLog$teacherArgs<ExtArgs>
+  }
+
+  export type $TeacherAccountabilityAuditLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TeacherAccountabilityAuditLog"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      teacher: Prisma.$TeacherPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      action: $Enums.TeacherAccountabilityAuditAction
+      actorId: string | null
+      actorRole: string | null
+      sourceModel: string
+      sourceId: string
+      before: Prisma.JsonValue | null
+      after: Prisma.JsonValue | null
+      message: string | null
+      createdAt: Date
+      schoolId: string
+      teacherId: string | null
+    }, ExtArgs["result"]["teacherAccountabilityAuditLog"]>
+    composites: {}
+  }
+
+  type TeacherAccountabilityAuditLogGetPayload<S extends boolean | null | undefined | TeacherAccountabilityAuditLogDefaultArgs> = $Result.GetResult<Prisma.$TeacherAccountabilityAuditLogPayload, S>
+
+  type TeacherAccountabilityAuditLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TeacherAccountabilityAuditLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TeacherAccountabilityAuditLogCountAggregateInputType | true
+    }
+
+  export interface TeacherAccountabilityAuditLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TeacherAccountabilityAuditLog'], meta: { name: 'TeacherAccountabilityAuditLog' } }
+    /**
+     * Find zero or one TeacherAccountabilityAuditLog that matches the filter.
+     * @param {TeacherAccountabilityAuditLogFindUniqueArgs} args - Arguments to find a TeacherAccountabilityAuditLog
+     * @example
+     * // Get one TeacherAccountabilityAuditLog
+     * const teacherAccountabilityAuditLog = await prisma.teacherAccountabilityAuditLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TeacherAccountabilityAuditLogFindUniqueArgs>(args: SelectSubset<T, TeacherAccountabilityAuditLogFindUniqueArgs<ExtArgs>>): Prisma__TeacherAccountabilityAuditLogClient<$Result.GetResult<Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TeacherAccountabilityAuditLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TeacherAccountabilityAuditLogFindUniqueOrThrowArgs} args - Arguments to find a TeacherAccountabilityAuditLog
+     * @example
+     * // Get one TeacherAccountabilityAuditLog
+     * const teacherAccountabilityAuditLog = await prisma.teacherAccountabilityAuditLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TeacherAccountabilityAuditLogFindUniqueOrThrowArgs>(args: SelectSubset<T, TeacherAccountabilityAuditLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TeacherAccountabilityAuditLogClient<$Result.GetResult<Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TeacherAccountabilityAuditLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherAccountabilityAuditLogFindFirstArgs} args - Arguments to find a TeacherAccountabilityAuditLog
+     * @example
+     * // Get one TeacherAccountabilityAuditLog
+     * const teacherAccountabilityAuditLog = await prisma.teacherAccountabilityAuditLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TeacherAccountabilityAuditLogFindFirstArgs>(args?: SelectSubset<T, TeacherAccountabilityAuditLogFindFirstArgs<ExtArgs>>): Prisma__TeacherAccountabilityAuditLogClient<$Result.GetResult<Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TeacherAccountabilityAuditLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherAccountabilityAuditLogFindFirstOrThrowArgs} args - Arguments to find a TeacherAccountabilityAuditLog
+     * @example
+     * // Get one TeacherAccountabilityAuditLog
+     * const teacherAccountabilityAuditLog = await prisma.teacherAccountabilityAuditLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TeacherAccountabilityAuditLogFindFirstOrThrowArgs>(args?: SelectSubset<T, TeacherAccountabilityAuditLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__TeacherAccountabilityAuditLogClient<$Result.GetResult<Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TeacherAccountabilityAuditLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherAccountabilityAuditLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TeacherAccountabilityAuditLogs
+     * const teacherAccountabilityAuditLogs = await prisma.teacherAccountabilityAuditLog.findMany()
+     * 
+     * // Get first 10 TeacherAccountabilityAuditLogs
+     * const teacherAccountabilityAuditLogs = await prisma.teacherAccountabilityAuditLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const teacherAccountabilityAuditLogWithIdOnly = await prisma.teacherAccountabilityAuditLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TeacherAccountabilityAuditLogFindManyArgs>(args?: SelectSubset<T, TeacherAccountabilityAuditLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TeacherAccountabilityAuditLog.
+     * @param {TeacherAccountabilityAuditLogCreateArgs} args - Arguments to create a TeacherAccountabilityAuditLog.
+     * @example
+     * // Create one TeacherAccountabilityAuditLog
+     * const TeacherAccountabilityAuditLog = await prisma.teacherAccountabilityAuditLog.create({
+     *   data: {
+     *     // ... data to create a TeacherAccountabilityAuditLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends TeacherAccountabilityAuditLogCreateArgs>(args: SelectSubset<T, TeacherAccountabilityAuditLogCreateArgs<ExtArgs>>): Prisma__TeacherAccountabilityAuditLogClient<$Result.GetResult<Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TeacherAccountabilityAuditLogs.
+     * @param {TeacherAccountabilityAuditLogCreateManyArgs} args - Arguments to create many TeacherAccountabilityAuditLogs.
+     * @example
+     * // Create many TeacherAccountabilityAuditLogs
+     * const teacherAccountabilityAuditLog = await prisma.teacherAccountabilityAuditLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TeacherAccountabilityAuditLogCreateManyArgs>(args?: SelectSubset<T, TeacherAccountabilityAuditLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TeacherAccountabilityAuditLogs and returns the data saved in the database.
+     * @param {TeacherAccountabilityAuditLogCreateManyAndReturnArgs} args - Arguments to create many TeacherAccountabilityAuditLogs.
+     * @example
+     * // Create many TeacherAccountabilityAuditLogs
+     * const teacherAccountabilityAuditLog = await prisma.teacherAccountabilityAuditLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TeacherAccountabilityAuditLogs and only return the `id`
+     * const teacherAccountabilityAuditLogWithIdOnly = await prisma.teacherAccountabilityAuditLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TeacherAccountabilityAuditLogCreateManyAndReturnArgs>(args?: SelectSubset<T, TeacherAccountabilityAuditLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TeacherAccountabilityAuditLog.
+     * @param {TeacherAccountabilityAuditLogDeleteArgs} args - Arguments to delete one TeacherAccountabilityAuditLog.
+     * @example
+     * // Delete one TeacherAccountabilityAuditLog
+     * const TeacherAccountabilityAuditLog = await prisma.teacherAccountabilityAuditLog.delete({
+     *   where: {
+     *     // ... filter to delete one TeacherAccountabilityAuditLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TeacherAccountabilityAuditLogDeleteArgs>(args: SelectSubset<T, TeacherAccountabilityAuditLogDeleteArgs<ExtArgs>>): Prisma__TeacherAccountabilityAuditLogClient<$Result.GetResult<Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TeacherAccountabilityAuditLog.
+     * @param {TeacherAccountabilityAuditLogUpdateArgs} args - Arguments to update one TeacherAccountabilityAuditLog.
+     * @example
+     * // Update one TeacherAccountabilityAuditLog
+     * const teacherAccountabilityAuditLog = await prisma.teacherAccountabilityAuditLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TeacherAccountabilityAuditLogUpdateArgs>(args: SelectSubset<T, TeacherAccountabilityAuditLogUpdateArgs<ExtArgs>>): Prisma__TeacherAccountabilityAuditLogClient<$Result.GetResult<Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TeacherAccountabilityAuditLogs.
+     * @param {TeacherAccountabilityAuditLogDeleteManyArgs} args - Arguments to filter TeacherAccountabilityAuditLogs to delete.
+     * @example
+     * // Delete a few TeacherAccountabilityAuditLogs
+     * const { count } = await prisma.teacherAccountabilityAuditLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TeacherAccountabilityAuditLogDeleteManyArgs>(args?: SelectSubset<T, TeacherAccountabilityAuditLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TeacherAccountabilityAuditLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherAccountabilityAuditLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TeacherAccountabilityAuditLogs
+     * const teacherAccountabilityAuditLog = await prisma.teacherAccountabilityAuditLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TeacherAccountabilityAuditLogUpdateManyArgs>(args: SelectSubset<T, TeacherAccountabilityAuditLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TeacherAccountabilityAuditLogs and returns the data updated in the database.
+     * @param {TeacherAccountabilityAuditLogUpdateManyAndReturnArgs} args - Arguments to update many TeacherAccountabilityAuditLogs.
+     * @example
+     * // Update many TeacherAccountabilityAuditLogs
+     * const teacherAccountabilityAuditLog = await prisma.teacherAccountabilityAuditLog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TeacherAccountabilityAuditLogs and only return the `id`
+     * const teacherAccountabilityAuditLogWithIdOnly = await prisma.teacherAccountabilityAuditLog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TeacherAccountabilityAuditLogUpdateManyAndReturnArgs>(args: SelectSubset<T, TeacherAccountabilityAuditLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TeacherAccountabilityAuditLog.
+     * @param {TeacherAccountabilityAuditLogUpsertArgs} args - Arguments to update or create a TeacherAccountabilityAuditLog.
+     * @example
+     * // Update or create a TeacherAccountabilityAuditLog
+     * const teacherAccountabilityAuditLog = await prisma.teacherAccountabilityAuditLog.upsert({
+     *   create: {
+     *     // ... data to create a TeacherAccountabilityAuditLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TeacherAccountabilityAuditLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TeacherAccountabilityAuditLogUpsertArgs>(args: SelectSubset<T, TeacherAccountabilityAuditLogUpsertArgs<ExtArgs>>): Prisma__TeacherAccountabilityAuditLogClient<$Result.GetResult<Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TeacherAccountabilityAuditLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherAccountabilityAuditLogCountArgs} args - Arguments to filter TeacherAccountabilityAuditLogs to count.
+     * @example
+     * // Count the number of TeacherAccountabilityAuditLogs
+     * const count = await prisma.teacherAccountabilityAuditLog.count({
+     *   where: {
+     *     // ... the filter for the TeacherAccountabilityAuditLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends TeacherAccountabilityAuditLogCountArgs>(
+      args?: Subset<T, TeacherAccountabilityAuditLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TeacherAccountabilityAuditLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TeacherAccountabilityAuditLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherAccountabilityAuditLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TeacherAccountabilityAuditLogAggregateArgs>(args: Subset<T, TeacherAccountabilityAuditLogAggregateArgs>): Prisma.PrismaPromise<GetTeacherAccountabilityAuditLogAggregateType<T>>
+
+    /**
+     * Group by TeacherAccountabilityAuditLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeacherAccountabilityAuditLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TeacherAccountabilityAuditLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TeacherAccountabilityAuditLogGroupByArgs['orderBy'] }
+        : { orderBy?: TeacherAccountabilityAuditLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TeacherAccountabilityAuditLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTeacherAccountabilityAuditLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TeacherAccountabilityAuditLog model
+   */
+  readonly fields: TeacherAccountabilityAuditLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TeacherAccountabilityAuditLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TeacherAccountabilityAuditLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    teacher<T extends TeacherAccountabilityAuditLog$teacherArgs<ExtArgs> = {}>(args?: Subset<T, TeacherAccountabilityAuditLog$teacherArgs<ExtArgs>>): Prisma__TeacherClient<$Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TeacherAccountabilityAuditLog model
+   */
+  interface TeacherAccountabilityAuditLogFieldRefs {
+    readonly id: FieldRef<"TeacherAccountabilityAuditLog", 'String'>
+    readonly action: FieldRef<"TeacherAccountabilityAuditLog", 'TeacherAccountabilityAuditAction'>
+    readonly actorId: FieldRef<"TeacherAccountabilityAuditLog", 'String'>
+    readonly actorRole: FieldRef<"TeacherAccountabilityAuditLog", 'String'>
+    readonly sourceModel: FieldRef<"TeacherAccountabilityAuditLog", 'String'>
+    readonly sourceId: FieldRef<"TeacherAccountabilityAuditLog", 'String'>
+    readonly before: FieldRef<"TeacherAccountabilityAuditLog", 'Json'>
+    readonly after: FieldRef<"TeacherAccountabilityAuditLog", 'Json'>
+    readonly message: FieldRef<"TeacherAccountabilityAuditLog", 'String'>
+    readonly createdAt: FieldRef<"TeacherAccountabilityAuditLog", 'DateTime'>
+    readonly schoolId: FieldRef<"TeacherAccountabilityAuditLog", 'String'>
+    readonly teacherId: FieldRef<"TeacherAccountabilityAuditLog", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TeacherAccountabilityAuditLog findUnique
+   */
+  export type TeacherAccountabilityAuditLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilityAuditLog
+     */
+    select?: TeacherAccountabilityAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilityAuditLog
+     */
+    omit?: TeacherAccountabilityAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilityAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherAccountabilityAuditLog to fetch.
+     */
+    where: TeacherAccountabilityAuditLogWhereUniqueInput
+  }
+
+  /**
+   * TeacherAccountabilityAuditLog findUniqueOrThrow
+   */
+  export type TeacherAccountabilityAuditLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilityAuditLog
+     */
+    select?: TeacherAccountabilityAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilityAuditLog
+     */
+    omit?: TeacherAccountabilityAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilityAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherAccountabilityAuditLog to fetch.
+     */
+    where: TeacherAccountabilityAuditLogWhereUniqueInput
+  }
+
+  /**
+   * TeacherAccountabilityAuditLog findFirst
+   */
+  export type TeacherAccountabilityAuditLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilityAuditLog
+     */
+    select?: TeacherAccountabilityAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilityAuditLog
+     */
+    omit?: TeacherAccountabilityAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilityAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherAccountabilityAuditLog to fetch.
+     */
+    where?: TeacherAccountabilityAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherAccountabilityAuditLogs to fetch.
+     */
+    orderBy?: TeacherAccountabilityAuditLogOrderByWithRelationInput | TeacherAccountabilityAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TeacherAccountabilityAuditLogs.
+     */
+    cursor?: TeacherAccountabilityAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherAccountabilityAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherAccountabilityAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherAccountabilityAuditLogs.
+     */
+    distinct?: TeacherAccountabilityAuditLogScalarFieldEnum | TeacherAccountabilityAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherAccountabilityAuditLog findFirstOrThrow
+   */
+  export type TeacherAccountabilityAuditLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilityAuditLog
+     */
+    select?: TeacherAccountabilityAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilityAuditLog
+     */
+    omit?: TeacherAccountabilityAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilityAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherAccountabilityAuditLog to fetch.
+     */
+    where?: TeacherAccountabilityAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherAccountabilityAuditLogs to fetch.
+     */
+    orderBy?: TeacherAccountabilityAuditLogOrderByWithRelationInput | TeacherAccountabilityAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TeacherAccountabilityAuditLogs.
+     */
+    cursor?: TeacherAccountabilityAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherAccountabilityAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherAccountabilityAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherAccountabilityAuditLogs.
+     */
+    distinct?: TeacherAccountabilityAuditLogScalarFieldEnum | TeacherAccountabilityAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherAccountabilityAuditLog findMany
+   */
+  export type TeacherAccountabilityAuditLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilityAuditLog
+     */
+    select?: TeacherAccountabilityAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilityAuditLog
+     */
+    omit?: TeacherAccountabilityAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilityAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which TeacherAccountabilityAuditLogs to fetch.
+     */
+    where?: TeacherAccountabilityAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeacherAccountabilityAuditLogs to fetch.
+     */
+    orderBy?: TeacherAccountabilityAuditLogOrderByWithRelationInput | TeacherAccountabilityAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TeacherAccountabilityAuditLogs.
+     */
+    cursor?: TeacherAccountabilityAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeacherAccountabilityAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeacherAccountabilityAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeacherAccountabilityAuditLogs.
+     */
+    distinct?: TeacherAccountabilityAuditLogScalarFieldEnum | TeacherAccountabilityAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * TeacherAccountabilityAuditLog create
+   */
+  export type TeacherAccountabilityAuditLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilityAuditLog
+     */
+    select?: TeacherAccountabilityAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilityAuditLog
+     */
+    omit?: TeacherAccountabilityAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilityAuditLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TeacherAccountabilityAuditLog.
+     */
+    data: XOR<TeacherAccountabilityAuditLogCreateInput, TeacherAccountabilityAuditLogUncheckedCreateInput>
+  }
+
+  /**
+   * TeacherAccountabilityAuditLog createMany
+   */
+  export type TeacherAccountabilityAuditLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TeacherAccountabilityAuditLogs.
+     */
+    data: TeacherAccountabilityAuditLogCreateManyInput | TeacherAccountabilityAuditLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TeacherAccountabilityAuditLog createManyAndReturn
+   */
+  export type TeacherAccountabilityAuditLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilityAuditLog
+     */
+    select?: TeacherAccountabilityAuditLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilityAuditLog
+     */
+    omit?: TeacherAccountabilityAuditLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many TeacherAccountabilityAuditLogs.
+     */
+    data: TeacherAccountabilityAuditLogCreateManyInput | TeacherAccountabilityAuditLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilityAuditLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TeacherAccountabilityAuditLog update
+   */
+  export type TeacherAccountabilityAuditLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilityAuditLog
+     */
+    select?: TeacherAccountabilityAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilityAuditLog
+     */
+    omit?: TeacherAccountabilityAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilityAuditLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TeacherAccountabilityAuditLog.
+     */
+    data: XOR<TeacherAccountabilityAuditLogUpdateInput, TeacherAccountabilityAuditLogUncheckedUpdateInput>
+    /**
+     * Choose, which TeacherAccountabilityAuditLog to update.
+     */
+    where: TeacherAccountabilityAuditLogWhereUniqueInput
+  }
+
+  /**
+   * TeacherAccountabilityAuditLog updateMany
+   */
+  export type TeacherAccountabilityAuditLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TeacherAccountabilityAuditLogs.
+     */
+    data: XOR<TeacherAccountabilityAuditLogUpdateManyMutationInput, TeacherAccountabilityAuditLogUncheckedUpdateManyInput>
+    /**
+     * Filter which TeacherAccountabilityAuditLogs to update
+     */
+    where?: TeacherAccountabilityAuditLogWhereInput
+    /**
+     * Limit how many TeacherAccountabilityAuditLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TeacherAccountabilityAuditLog updateManyAndReturn
+   */
+  export type TeacherAccountabilityAuditLogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilityAuditLog
+     */
+    select?: TeacherAccountabilityAuditLogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilityAuditLog
+     */
+    omit?: TeacherAccountabilityAuditLogOmit<ExtArgs> | null
+    /**
+     * The data used to update TeacherAccountabilityAuditLogs.
+     */
+    data: XOR<TeacherAccountabilityAuditLogUpdateManyMutationInput, TeacherAccountabilityAuditLogUncheckedUpdateManyInput>
+    /**
+     * Filter which TeacherAccountabilityAuditLogs to update
+     */
+    where?: TeacherAccountabilityAuditLogWhereInput
+    /**
+     * Limit how many TeacherAccountabilityAuditLogs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilityAuditLogIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TeacherAccountabilityAuditLog upsert
+   */
+  export type TeacherAccountabilityAuditLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilityAuditLog
+     */
+    select?: TeacherAccountabilityAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilityAuditLog
+     */
+    omit?: TeacherAccountabilityAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilityAuditLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TeacherAccountabilityAuditLog to update in case it exists.
+     */
+    where: TeacherAccountabilityAuditLogWhereUniqueInput
+    /**
+     * In case the TeacherAccountabilityAuditLog found by the `where` argument doesn't exist, create a new TeacherAccountabilityAuditLog with this data.
+     */
+    create: XOR<TeacherAccountabilityAuditLogCreateInput, TeacherAccountabilityAuditLogUncheckedCreateInput>
+    /**
+     * In case the TeacherAccountabilityAuditLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TeacherAccountabilityAuditLogUpdateInput, TeacherAccountabilityAuditLogUncheckedUpdateInput>
+  }
+
+  /**
+   * TeacherAccountabilityAuditLog delete
+   */
+  export type TeacherAccountabilityAuditLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilityAuditLog
+     */
+    select?: TeacherAccountabilityAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilityAuditLog
+     */
+    omit?: TeacherAccountabilityAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilityAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter which TeacherAccountabilityAuditLog to delete.
+     */
+    where: TeacherAccountabilityAuditLogWhereUniqueInput
+  }
+
+  /**
+   * TeacherAccountabilityAuditLog deleteMany
+   */
+  export type TeacherAccountabilityAuditLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TeacherAccountabilityAuditLogs to delete
+     */
+    where?: TeacherAccountabilityAuditLogWhereInput
+    /**
+     * Limit how many TeacherAccountabilityAuditLogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TeacherAccountabilityAuditLog.teacher
+   */
+  export type TeacherAccountabilityAuditLog$teacherArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Teacher
+     */
+    select?: TeacherSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Teacher
+     */
+    omit?: TeacherOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherInclude<ExtArgs> | null
+    where?: TeacherWhereInput
+  }
+
+  /**
+   * TeacherAccountabilityAuditLog without action
+   */
+  export type TeacherAccountabilityAuditLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherAccountabilityAuditLog
+     */
+    select?: TeacherAccountabilityAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherAccountabilityAuditLog
+     */
+    omit?: TeacherAccountabilityAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherAccountabilityAuditLogInclude<ExtArgs> | null
   }
 
 
@@ -70232,6 +77215,105 @@ export namespace Prisma {
   export type TeacherAccountabilitySettingScalarFieldEnum = (typeof TeacherAccountabilitySettingScalarFieldEnum)[keyof typeof TeacherAccountabilitySettingScalarFieldEnum]
 
 
+  export const TeacherObligationScalarFieldEnum: {
+    id: 'id',
+    type: 'type',
+    status: 'status',
+    priority: 'priority',
+    sourceModel: 'sourceModel',
+    sourceId: 'sourceId',
+    sourceKey: 'sourceKey',
+    title: 'title',
+    description: 'description',
+    expectedAt: 'expectedAt',
+    completedAt: 'completedAt',
+    metadata: 'metadata',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    schoolId: 'schoolId',
+    teacherId: 'teacherId'
+  };
+
+  export type TeacherObligationScalarFieldEnum = (typeof TeacherObligationScalarFieldEnum)[keyof typeof TeacherObligationScalarFieldEnum]
+
+
+  export const TeacherReminderScalarFieldEnum: {
+    id: 'id',
+    channel: 'channel',
+    message: 'message',
+    status: 'status',
+    scheduledAt: 'scheduledAt',
+    sentAt: 'sentAt',
+    errorMessage: 'errorMessage',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    schoolId: 'schoolId',
+    teacherId: 'teacherId',
+    obligationId: 'obligationId'
+  };
+
+  export type TeacherReminderScalarFieldEnum = (typeof TeacherReminderScalarFieldEnum)[keyof typeof TeacherReminderScalarFieldEnum]
+
+
+  export const TeacherEscalationScalarFieldEnum: {
+    id: 'id',
+    reason: 'reason',
+    status: 'status',
+    escalatedAt: 'escalatedAt',
+    resolvedAt: 'resolvedAt',
+    reviewedBy: 'reviewedBy',
+    reviewNote: 'reviewNote',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    schoolId: 'schoolId',
+    teacherId: 'teacherId',
+    obligationId: 'obligationId'
+  };
+
+  export type TeacherEscalationScalarFieldEnum = (typeof TeacherEscalationScalarFieldEnum)[keyof typeof TeacherEscalationScalarFieldEnum]
+
+
+  export const TeacherCorrectionRequestScalarFieldEnum: {
+    id: 'id',
+    sourceModel: 'sourceModel',
+    sourceId: 'sourceId',
+    sourceKey: 'sourceKey',
+    fieldName: 'fieldName',
+    oldValue: 'oldValue',
+    newValue: 'newValue',
+    reason: 'reason',
+    evidenceUrl: 'evidenceUrl',
+    status: 'status',
+    reviewedBy: 'reviewedBy',
+    reviewedAt: 'reviewedAt',
+    reviewNote: 'reviewNote',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    schoolId: 'schoolId',
+    teacherId: 'teacherId'
+  };
+
+  export type TeacherCorrectionRequestScalarFieldEnum = (typeof TeacherCorrectionRequestScalarFieldEnum)[keyof typeof TeacherCorrectionRequestScalarFieldEnum]
+
+
+  export const TeacherAccountabilityAuditLogScalarFieldEnum: {
+    id: 'id',
+    action: 'action',
+    actorId: 'actorId',
+    actorRole: 'actorRole',
+    sourceModel: 'sourceModel',
+    sourceId: 'sourceId',
+    before: 'before',
+    after: 'after',
+    message: 'message',
+    createdAt: 'createdAt',
+    schoolId: 'schoolId',
+    teacherId: 'teacherId'
+  };
+
+  export type TeacherAccountabilityAuditLogScalarFieldEnum = (typeof TeacherAccountabilityAuditLogScalarFieldEnum)[keyof typeof TeacherAccountabilityAuditLogScalarFieldEnum]
+
+
   export const ParentNotificationPreferenceScalarFieldEnum: {
     id: 'id',
     dailySummaryEnabled: 'dailySummaryEnabled',
@@ -71094,6 +78176,118 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'TeacherObligationType'
+   */
+  export type EnumTeacherObligationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherObligationType'>
+    
+
+
+  /**
+   * Reference to a field of type 'TeacherObligationType[]'
+   */
+  export type ListEnumTeacherObligationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherObligationType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TeacherObligationStatus'
+   */
+  export type EnumTeacherObligationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherObligationStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'TeacherObligationStatus[]'
+   */
+  export type ListEnumTeacherObligationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherObligationStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TeacherObligationPriority'
+   */
+  export type EnumTeacherObligationPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherObligationPriority'>
+    
+
+
+  /**
+   * Reference to a field of type 'TeacherObligationPriority[]'
+   */
+  export type ListEnumTeacherObligationPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherObligationPriority[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+  /**
+   * Reference to a field of type 'TeacherReminderStatus'
+   */
+  export type EnumTeacherReminderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherReminderStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'TeacherReminderStatus[]'
+   */
+  export type ListEnumTeacherReminderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherReminderStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TeacherEscalationStatus'
+   */
+  export type EnumTeacherEscalationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherEscalationStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'TeacherEscalationStatus[]'
+   */
+  export type ListEnumTeacherEscalationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherEscalationStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TeacherCorrectionRequestStatus'
+   */
+  export type EnumTeacherCorrectionRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherCorrectionRequestStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'TeacherCorrectionRequestStatus[]'
+   */
+  export type ListEnumTeacherCorrectionRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherCorrectionRequestStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TeacherAccountabilityAuditAction'
+   */
+  export type EnumTeacherAccountabilityAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherAccountabilityAuditAction'>
+    
+
+
+  /**
+   * Reference to a field of type 'TeacherAccountabilityAuditAction[]'
+   */
+  export type ListEnumTeacherAccountabilityAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherAccountabilityAuditAction[]'>
+    
+
+
+  /**
    * Reference to a field of type 'ParentDeliveryChannel'
    */
   export type EnumParentDeliveryChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentDeliveryChannel'>
@@ -71132,20 +78326,6 @@ export namespace Prisma {
    * Reference to a field of type 'ParentNotificationPriority[]'
    */
   export type ListEnumParentNotificationPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentNotificationPriority[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Json'
-   */
-  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-  /**
-   * Reference to a field of type 'QueryMode'
-   */
-  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -71664,6 +78844,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventListRelationFilter
     notificationSettings?: XOR<SchoolNotificationSettingNullableScalarRelationFilter, SchoolNotificationSettingWhereInput> | null
     accountabilitySettings?: XOR<TeacherAccountabilitySettingNullableScalarRelationFilter, TeacherAccountabilitySettingWhereInput> | null
+    teacherObligations?: TeacherObligationListRelationFilter
+    teacherReminders?: TeacherReminderListRelationFilter
+    teacherEscalations?: TeacherEscalationListRelationFilter
+    teacherCorrections?: TeacherCorrectionRequestListRelationFilter
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogListRelationFilter
     parentPreferences?: ParentNotificationPreferenceListRelationFilter
     parentDeliveryLogs?: ParentNotificationDeliveryLogListRelationFilter
   }
@@ -71729,6 +78914,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventOrderByRelationAggregateInput
     notificationSettings?: SchoolNotificationSettingOrderByWithRelationInput
     accountabilitySettings?: TeacherAccountabilitySettingOrderByWithRelationInput
+    teacherObligations?: TeacherObligationOrderByRelationAggregateInput
+    teacherReminders?: TeacherReminderOrderByRelationAggregateInput
+    teacherEscalations?: TeacherEscalationOrderByRelationAggregateInput
+    teacherCorrections?: TeacherCorrectionRequestOrderByRelationAggregateInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogOrderByRelationAggregateInput
     parentPreferences?: ParentNotificationPreferenceOrderByRelationAggregateInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogOrderByRelationAggregateInput
   }
@@ -71797,6 +78987,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventListRelationFilter
     notificationSettings?: XOR<SchoolNotificationSettingNullableScalarRelationFilter, SchoolNotificationSettingWhereInput> | null
     accountabilitySettings?: XOR<TeacherAccountabilitySettingNullableScalarRelationFilter, TeacherAccountabilitySettingWhereInput> | null
+    teacherObligations?: TeacherObligationListRelationFilter
+    teacherReminders?: TeacherReminderListRelationFilter
+    teacherEscalations?: TeacherEscalationListRelationFilter
+    teacherCorrections?: TeacherCorrectionRequestListRelationFilter
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogListRelationFilter
     parentPreferences?: ParentNotificationPreferenceListRelationFilter
     parentDeliveryLogs?: ParentNotificationDeliveryLogListRelationFilter
   }, "id" | "slug">
@@ -72066,6 +79261,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
     syllabusTopicProgress?: SyllabusTopicProgressListRelationFilter
+    accountabilityObligations?: TeacherObligationListRelationFilter
+    accountabilityReminders?: TeacherReminderListRelationFilter
+    accountabilityEscalations?: TeacherEscalationListRelationFilter
+    correctionRequests?: TeacherCorrectionRequestListRelationFilter
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogListRelationFilter
   }
 
   export type TeacherOrderByWithRelationInput = {
@@ -72093,6 +79293,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionOrderByRelationAggregateInput
     parentActivityEvents?: ParentActivityEventOrderByRelationAggregateInput
     syllabusTopicProgress?: SyllabusTopicProgressOrderByRelationAggregateInput
+    accountabilityObligations?: TeacherObligationOrderByRelationAggregateInput
+    accountabilityReminders?: TeacherReminderOrderByRelationAggregateInput
+    accountabilityEscalations?: TeacherEscalationOrderByRelationAggregateInput
+    correctionRequests?: TeacherCorrectionRequestOrderByRelationAggregateInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogOrderByRelationAggregateInput
   }
 
   export type TeacherWhereUniqueInput = Prisma.AtLeast<{
@@ -72123,6 +79328,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
     syllabusTopicProgress?: SyllabusTopicProgressListRelationFilter
+    accountabilityObligations?: TeacherObligationListRelationFilter
+    accountabilityReminders?: TeacherReminderListRelationFilter
+    accountabilityEscalations?: TeacherEscalationListRelationFilter
+    correctionRequests?: TeacherCorrectionRequestListRelationFilter
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogListRelationFilter
   }, "id" | "username">
 
   export type TeacherOrderByWithAggregationInput = {
@@ -72518,6 +79728,531 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"TeacherAccountabilitySetting"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"TeacherAccountabilitySetting"> | Date | string
     schoolId?: StringWithAggregatesFilter<"TeacherAccountabilitySetting"> | string
+  }
+
+  export type TeacherObligationWhereInput = {
+    AND?: TeacherObligationWhereInput | TeacherObligationWhereInput[]
+    OR?: TeacherObligationWhereInput[]
+    NOT?: TeacherObligationWhereInput | TeacherObligationWhereInput[]
+    id?: StringFilter<"TeacherObligation"> | string
+    type?: EnumTeacherObligationTypeFilter<"TeacherObligation"> | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFilter<"TeacherObligation"> | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFilter<"TeacherObligation"> | $Enums.TeacherObligationPriority
+    sourceModel?: StringFilter<"TeacherObligation"> | string
+    sourceId?: StringFilter<"TeacherObligation"> | string
+    sourceKey?: StringFilter<"TeacherObligation"> | string
+    title?: StringFilter<"TeacherObligation"> | string
+    description?: StringNullableFilter<"TeacherObligation"> | string | null
+    expectedAt?: DateTimeFilter<"TeacherObligation"> | Date | string
+    completedAt?: DateTimeNullableFilter<"TeacherObligation"> | Date | string | null
+    metadata?: JsonNullableFilter<"TeacherObligation">
+    createdAt?: DateTimeFilter<"TeacherObligation"> | Date | string
+    updatedAt?: DateTimeFilter<"TeacherObligation"> | Date | string
+    schoolId?: StringFilter<"TeacherObligation"> | string
+    teacherId?: StringFilter<"TeacherObligation"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
+    reminders?: TeacherReminderListRelationFilter
+    escalations?: TeacherEscalationListRelationFilter
+  }
+
+  export type TeacherObligationOrderByWithRelationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    status?: SortOrder
+    priority?: SortOrder
+    sourceModel?: SortOrder
+    sourceId?: SortOrder
+    sourceKey?: SortOrder
+    title?: SortOrder
+    description?: SortOrderInput | SortOrder
+    expectedAt?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+    teacher?: TeacherOrderByWithRelationInput
+    reminders?: TeacherReminderOrderByRelationAggregateInput
+    escalations?: TeacherEscalationOrderByRelationAggregateInput
+  }
+
+  export type TeacherObligationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    schoolId_teacherId_sourceKey?: TeacherObligationSchoolIdTeacherIdSourceKeyCompoundUniqueInput
+    AND?: TeacherObligationWhereInput | TeacherObligationWhereInput[]
+    OR?: TeacherObligationWhereInput[]
+    NOT?: TeacherObligationWhereInput | TeacherObligationWhereInput[]
+    type?: EnumTeacherObligationTypeFilter<"TeacherObligation"> | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFilter<"TeacherObligation"> | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFilter<"TeacherObligation"> | $Enums.TeacherObligationPriority
+    sourceModel?: StringFilter<"TeacherObligation"> | string
+    sourceId?: StringFilter<"TeacherObligation"> | string
+    sourceKey?: StringFilter<"TeacherObligation"> | string
+    title?: StringFilter<"TeacherObligation"> | string
+    description?: StringNullableFilter<"TeacherObligation"> | string | null
+    expectedAt?: DateTimeFilter<"TeacherObligation"> | Date | string
+    completedAt?: DateTimeNullableFilter<"TeacherObligation"> | Date | string | null
+    metadata?: JsonNullableFilter<"TeacherObligation">
+    createdAt?: DateTimeFilter<"TeacherObligation"> | Date | string
+    updatedAt?: DateTimeFilter<"TeacherObligation"> | Date | string
+    schoolId?: StringFilter<"TeacherObligation"> | string
+    teacherId?: StringFilter<"TeacherObligation"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
+    reminders?: TeacherReminderListRelationFilter
+    escalations?: TeacherEscalationListRelationFilter
+  }, "id" | "schoolId_teacherId_sourceKey">
+
+  export type TeacherObligationOrderByWithAggregationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    status?: SortOrder
+    priority?: SortOrder
+    sourceModel?: SortOrder
+    sourceId?: SortOrder
+    sourceKey?: SortOrder
+    title?: SortOrder
+    description?: SortOrderInput | SortOrder
+    expectedAt?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+    _count?: TeacherObligationCountOrderByAggregateInput
+    _max?: TeacherObligationMaxOrderByAggregateInput
+    _min?: TeacherObligationMinOrderByAggregateInput
+  }
+
+  export type TeacherObligationScalarWhereWithAggregatesInput = {
+    AND?: TeacherObligationScalarWhereWithAggregatesInput | TeacherObligationScalarWhereWithAggregatesInput[]
+    OR?: TeacherObligationScalarWhereWithAggregatesInput[]
+    NOT?: TeacherObligationScalarWhereWithAggregatesInput | TeacherObligationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TeacherObligation"> | string
+    type?: EnumTeacherObligationTypeWithAggregatesFilter<"TeacherObligation"> | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusWithAggregatesFilter<"TeacherObligation"> | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityWithAggregatesFilter<"TeacherObligation"> | $Enums.TeacherObligationPriority
+    sourceModel?: StringWithAggregatesFilter<"TeacherObligation"> | string
+    sourceId?: StringWithAggregatesFilter<"TeacherObligation"> | string
+    sourceKey?: StringWithAggregatesFilter<"TeacherObligation"> | string
+    title?: StringWithAggregatesFilter<"TeacherObligation"> | string
+    description?: StringNullableWithAggregatesFilter<"TeacherObligation"> | string | null
+    expectedAt?: DateTimeWithAggregatesFilter<"TeacherObligation"> | Date | string
+    completedAt?: DateTimeNullableWithAggregatesFilter<"TeacherObligation"> | Date | string | null
+    metadata?: JsonNullableWithAggregatesFilter<"TeacherObligation">
+    createdAt?: DateTimeWithAggregatesFilter<"TeacherObligation"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"TeacherObligation"> | Date | string
+    schoolId?: StringWithAggregatesFilter<"TeacherObligation"> | string
+    teacherId?: StringWithAggregatesFilter<"TeacherObligation"> | string
+  }
+
+  export type TeacherReminderWhereInput = {
+    AND?: TeacherReminderWhereInput | TeacherReminderWhereInput[]
+    OR?: TeacherReminderWhereInput[]
+    NOT?: TeacherReminderWhereInput | TeacherReminderWhereInput[]
+    id?: StringFilter<"TeacherReminder"> | string
+    channel?: StringFilter<"TeacherReminder"> | string
+    message?: StringFilter<"TeacherReminder"> | string
+    status?: EnumTeacherReminderStatusFilter<"TeacherReminder"> | $Enums.TeacherReminderStatus
+    scheduledAt?: DateTimeNullableFilter<"TeacherReminder"> | Date | string | null
+    sentAt?: DateTimeNullableFilter<"TeacherReminder"> | Date | string | null
+    errorMessage?: StringNullableFilter<"TeacherReminder"> | string | null
+    createdAt?: DateTimeFilter<"TeacherReminder"> | Date | string
+    updatedAt?: DateTimeFilter<"TeacherReminder"> | Date | string
+    schoolId?: StringFilter<"TeacherReminder"> | string
+    teacherId?: StringFilter<"TeacherReminder"> | string
+    obligationId?: StringFilter<"TeacherReminder"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
+    obligation?: XOR<TeacherObligationScalarRelationFilter, TeacherObligationWhereInput>
+  }
+
+  export type TeacherReminderOrderByWithRelationInput = {
+    id?: SortOrder
+    channel?: SortOrder
+    message?: SortOrder
+    status?: SortOrder
+    scheduledAt?: SortOrderInput | SortOrder
+    sentAt?: SortOrderInput | SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+    obligationId?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+    teacher?: TeacherOrderByWithRelationInput
+    obligation?: TeacherObligationOrderByWithRelationInput
+  }
+
+  export type TeacherReminderWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: TeacherReminderWhereInput | TeacherReminderWhereInput[]
+    OR?: TeacherReminderWhereInput[]
+    NOT?: TeacherReminderWhereInput | TeacherReminderWhereInput[]
+    channel?: StringFilter<"TeacherReminder"> | string
+    message?: StringFilter<"TeacherReminder"> | string
+    status?: EnumTeacherReminderStatusFilter<"TeacherReminder"> | $Enums.TeacherReminderStatus
+    scheduledAt?: DateTimeNullableFilter<"TeacherReminder"> | Date | string | null
+    sentAt?: DateTimeNullableFilter<"TeacherReminder"> | Date | string | null
+    errorMessage?: StringNullableFilter<"TeacherReminder"> | string | null
+    createdAt?: DateTimeFilter<"TeacherReminder"> | Date | string
+    updatedAt?: DateTimeFilter<"TeacherReminder"> | Date | string
+    schoolId?: StringFilter<"TeacherReminder"> | string
+    teacherId?: StringFilter<"TeacherReminder"> | string
+    obligationId?: StringFilter<"TeacherReminder"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
+    obligation?: XOR<TeacherObligationScalarRelationFilter, TeacherObligationWhereInput>
+  }, "id">
+
+  export type TeacherReminderOrderByWithAggregationInput = {
+    id?: SortOrder
+    channel?: SortOrder
+    message?: SortOrder
+    status?: SortOrder
+    scheduledAt?: SortOrderInput | SortOrder
+    sentAt?: SortOrderInput | SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+    obligationId?: SortOrder
+    _count?: TeacherReminderCountOrderByAggregateInput
+    _max?: TeacherReminderMaxOrderByAggregateInput
+    _min?: TeacherReminderMinOrderByAggregateInput
+  }
+
+  export type TeacherReminderScalarWhereWithAggregatesInput = {
+    AND?: TeacherReminderScalarWhereWithAggregatesInput | TeacherReminderScalarWhereWithAggregatesInput[]
+    OR?: TeacherReminderScalarWhereWithAggregatesInput[]
+    NOT?: TeacherReminderScalarWhereWithAggregatesInput | TeacherReminderScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TeacherReminder"> | string
+    channel?: StringWithAggregatesFilter<"TeacherReminder"> | string
+    message?: StringWithAggregatesFilter<"TeacherReminder"> | string
+    status?: EnumTeacherReminderStatusWithAggregatesFilter<"TeacherReminder"> | $Enums.TeacherReminderStatus
+    scheduledAt?: DateTimeNullableWithAggregatesFilter<"TeacherReminder"> | Date | string | null
+    sentAt?: DateTimeNullableWithAggregatesFilter<"TeacherReminder"> | Date | string | null
+    errorMessage?: StringNullableWithAggregatesFilter<"TeacherReminder"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"TeacherReminder"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"TeacherReminder"> | Date | string
+    schoolId?: StringWithAggregatesFilter<"TeacherReminder"> | string
+    teacherId?: StringWithAggregatesFilter<"TeacherReminder"> | string
+    obligationId?: StringWithAggregatesFilter<"TeacherReminder"> | string
+  }
+
+  export type TeacherEscalationWhereInput = {
+    AND?: TeacherEscalationWhereInput | TeacherEscalationWhereInput[]
+    OR?: TeacherEscalationWhereInput[]
+    NOT?: TeacherEscalationWhereInput | TeacherEscalationWhereInput[]
+    id?: StringFilter<"TeacherEscalation"> | string
+    reason?: StringFilter<"TeacherEscalation"> | string
+    status?: EnumTeacherEscalationStatusFilter<"TeacherEscalation"> | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeFilter<"TeacherEscalation"> | Date | string
+    resolvedAt?: DateTimeNullableFilter<"TeacherEscalation"> | Date | string | null
+    reviewedBy?: StringNullableFilter<"TeacherEscalation"> | string | null
+    reviewNote?: StringNullableFilter<"TeacherEscalation"> | string | null
+    createdAt?: DateTimeFilter<"TeacherEscalation"> | Date | string
+    updatedAt?: DateTimeFilter<"TeacherEscalation"> | Date | string
+    schoolId?: StringFilter<"TeacherEscalation"> | string
+    teacherId?: StringFilter<"TeacherEscalation"> | string
+    obligationId?: StringFilter<"TeacherEscalation"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
+    obligation?: XOR<TeacherObligationScalarRelationFilter, TeacherObligationWhereInput>
+  }
+
+  export type TeacherEscalationOrderByWithRelationInput = {
+    id?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    escalatedAt?: SortOrder
+    resolvedAt?: SortOrderInput | SortOrder
+    reviewedBy?: SortOrderInput | SortOrder
+    reviewNote?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+    obligationId?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+    teacher?: TeacherOrderByWithRelationInput
+    obligation?: TeacherObligationOrderByWithRelationInput
+  }
+
+  export type TeacherEscalationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    schoolId_obligationId?: TeacherEscalationSchoolIdObligationIdCompoundUniqueInput
+    AND?: TeacherEscalationWhereInput | TeacherEscalationWhereInput[]
+    OR?: TeacherEscalationWhereInput[]
+    NOT?: TeacherEscalationWhereInput | TeacherEscalationWhereInput[]
+    reason?: StringFilter<"TeacherEscalation"> | string
+    status?: EnumTeacherEscalationStatusFilter<"TeacherEscalation"> | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeFilter<"TeacherEscalation"> | Date | string
+    resolvedAt?: DateTimeNullableFilter<"TeacherEscalation"> | Date | string | null
+    reviewedBy?: StringNullableFilter<"TeacherEscalation"> | string | null
+    reviewNote?: StringNullableFilter<"TeacherEscalation"> | string | null
+    createdAt?: DateTimeFilter<"TeacherEscalation"> | Date | string
+    updatedAt?: DateTimeFilter<"TeacherEscalation"> | Date | string
+    schoolId?: StringFilter<"TeacherEscalation"> | string
+    teacherId?: StringFilter<"TeacherEscalation"> | string
+    obligationId?: StringFilter<"TeacherEscalation"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
+    obligation?: XOR<TeacherObligationScalarRelationFilter, TeacherObligationWhereInput>
+  }, "id" | "schoolId_obligationId">
+
+  export type TeacherEscalationOrderByWithAggregationInput = {
+    id?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    escalatedAt?: SortOrder
+    resolvedAt?: SortOrderInput | SortOrder
+    reviewedBy?: SortOrderInput | SortOrder
+    reviewNote?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+    obligationId?: SortOrder
+    _count?: TeacherEscalationCountOrderByAggregateInput
+    _max?: TeacherEscalationMaxOrderByAggregateInput
+    _min?: TeacherEscalationMinOrderByAggregateInput
+  }
+
+  export type TeacherEscalationScalarWhereWithAggregatesInput = {
+    AND?: TeacherEscalationScalarWhereWithAggregatesInput | TeacherEscalationScalarWhereWithAggregatesInput[]
+    OR?: TeacherEscalationScalarWhereWithAggregatesInput[]
+    NOT?: TeacherEscalationScalarWhereWithAggregatesInput | TeacherEscalationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TeacherEscalation"> | string
+    reason?: StringWithAggregatesFilter<"TeacherEscalation"> | string
+    status?: EnumTeacherEscalationStatusWithAggregatesFilter<"TeacherEscalation"> | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeWithAggregatesFilter<"TeacherEscalation"> | Date | string
+    resolvedAt?: DateTimeNullableWithAggregatesFilter<"TeacherEscalation"> | Date | string | null
+    reviewedBy?: StringNullableWithAggregatesFilter<"TeacherEscalation"> | string | null
+    reviewNote?: StringNullableWithAggregatesFilter<"TeacherEscalation"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"TeacherEscalation"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"TeacherEscalation"> | Date | string
+    schoolId?: StringWithAggregatesFilter<"TeacherEscalation"> | string
+    teacherId?: StringWithAggregatesFilter<"TeacherEscalation"> | string
+    obligationId?: StringWithAggregatesFilter<"TeacherEscalation"> | string
+  }
+
+  export type TeacherCorrectionRequestWhereInput = {
+    AND?: TeacherCorrectionRequestWhereInput | TeacherCorrectionRequestWhereInput[]
+    OR?: TeacherCorrectionRequestWhereInput[]
+    NOT?: TeacherCorrectionRequestWhereInput | TeacherCorrectionRequestWhereInput[]
+    id?: StringFilter<"TeacherCorrectionRequest"> | string
+    sourceModel?: StringFilter<"TeacherCorrectionRequest"> | string
+    sourceId?: StringFilter<"TeacherCorrectionRequest"> | string
+    sourceKey?: StringFilter<"TeacherCorrectionRequest"> | string
+    fieldName?: StringFilter<"TeacherCorrectionRequest"> | string
+    oldValue?: JsonNullableFilter<"TeacherCorrectionRequest">
+    newValue?: JsonNullableFilter<"TeacherCorrectionRequest">
+    reason?: StringFilter<"TeacherCorrectionRequest"> | string
+    evidenceUrl?: StringNullableFilter<"TeacherCorrectionRequest"> | string | null
+    status?: EnumTeacherCorrectionRequestStatusFilter<"TeacherCorrectionRequest"> | $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: StringNullableFilter<"TeacherCorrectionRequest"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"TeacherCorrectionRequest"> | Date | string | null
+    reviewNote?: StringNullableFilter<"TeacherCorrectionRequest"> | string | null
+    createdAt?: DateTimeFilter<"TeacherCorrectionRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"TeacherCorrectionRequest"> | Date | string
+    schoolId?: StringFilter<"TeacherCorrectionRequest"> | string
+    teacherId?: StringFilter<"TeacherCorrectionRequest"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
+  }
+
+  export type TeacherCorrectionRequestOrderByWithRelationInput = {
+    id?: SortOrder
+    sourceModel?: SortOrder
+    sourceId?: SortOrder
+    sourceKey?: SortOrder
+    fieldName?: SortOrder
+    oldValue?: SortOrderInput | SortOrder
+    newValue?: SortOrderInput | SortOrder
+    reason?: SortOrder
+    evidenceUrl?: SortOrderInput | SortOrder
+    status?: SortOrder
+    reviewedBy?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    reviewNote?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+    teacher?: TeacherOrderByWithRelationInput
+  }
+
+  export type TeacherCorrectionRequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    schoolId_teacherId_sourceKey_fieldName?: TeacherCorrectionRequestSchoolIdTeacherIdSourceKeyFieldNameCompoundUniqueInput
+    AND?: TeacherCorrectionRequestWhereInput | TeacherCorrectionRequestWhereInput[]
+    OR?: TeacherCorrectionRequestWhereInput[]
+    NOT?: TeacherCorrectionRequestWhereInput | TeacherCorrectionRequestWhereInput[]
+    sourceModel?: StringFilter<"TeacherCorrectionRequest"> | string
+    sourceId?: StringFilter<"TeacherCorrectionRequest"> | string
+    sourceKey?: StringFilter<"TeacherCorrectionRequest"> | string
+    fieldName?: StringFilter<"TeacherCorrectionRequest"> | string
+    oldValue?: JsonNullableFilter<"TeacherCorrectionRequest">
+    newValue?: JsonNullableFilter<"TeacherCorrectionRequest">
+    reason?: StringFilter<"TeacherCorrectionRequest"> | string
+    evidenceUrl?: StringNullableFilter<"TeacherCorrectionRequest"> | string | null
+    status?: EnumTeacherCorrectionRequestStatusFilter<"TeacherCorrectionRequest"> | $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: StringNullableFilter<"TeacherCorrectionRequest"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"TeacherCorrectionRequest"> | Date | string | null
+    reviewNote?: StringNullableFilter<"TeacherCorrectionRequest"> | string | null
+    createdAt?: DateTimeFilter<"TeacherCorrectionRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"TeacherCorrectionRequest"> | Date | string
+    schoolId?: StringFilter<"TeacherCorrectionRequest"> | string
+    teacherId?: StringFilter<"TeacherCorrectionRequest"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
+  }, "id" | "schoolId_teacherId_sourceKey_fieldName">
+
+  export type TeacherCorrectionRequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    sourceModel?: SortOrder
+    sourceId?: SortOrder
+    sourceKey?: SortOrder
+    fieldName?: SortOrder
+    oldValue?: SortOrderInput | SortOrder
+    newValue?: SortOrderInput | SortOrder
+    reason?: SortOrder
+    evidenceUrl?: SortOrderInput | SortOrder
+    status?: SortOrder
+    reviewedBy?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    reviewNote?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+    _count?: TeacherCorrectionRequestCountOrderByAggregateInput
+    _max?: TeacherCorrectionRequestMaxOrderByAggregateInput
+    _min?: TeacherCorrectionRequestMinOrderByAggregateInput
+  }
+
+  export type TeacherCorrectionRequestScalarWhereWithAggregatesInput = {
+    AND?: TeacherCorrectionRequestScalarWhereWithAggregatesInput | TeacherCorrectionRequestScalarWhereWithAggregatesInput[]
+    OR?: TeacherCorrectionRequestScalarWhereWithAggregatesInput[]
+    NOT?: TeacherCorrectionRequestScalarWhereWithAggregatesInput | TeacherCorrectionRequestScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TeacherCorrectionRequest"> | string
+    sourceModel?: StringWithAggregatesFilter<"TeacherCorrectionRequest"> | string
+    sourceId?: StringWithAggregatesFilter<"TeacherCorrectionRequest"> | string
+    sourceKey?: StringWithAggregatesFilter<"TeacherCorrectionRequest"> | string
+    fieldName?: StringWithAggregatesFilter<"TeacherCorrectionRequest"> | string
+    oldValue?: JsonNullableWithAggregatesFilter<"TeacherCorrectionRequest">
+    newValue?: JsonNullableWithAggregatesFilter<"TeacherCorrectionRequest">
+    reason?: StringWithAggregatesFilter<"TeacherCorrectionRequest"> | string
+    evidenceUrl?: StringNullableWithAggregatesFilter<"TeacherCorrectionRequest"> | string | null
+    status?: EnumTeacherCorrectionRequestStatusWithAggregatesFilter<"TeacherCorrectionRequest"> | $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: StringNullableWithAggregatesFilter<"TeacherCorrectionRequest"> | string | null
+    reviewedAt?: DateTimeNullableWithAggregatesFilter<"TeacherCorrectionRequest"> | Date | string | null
+    reviewNote?: StringNullableWithAggregatesFilter<"TeacherCorrectionRequest"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"TeacherCorrectionRequest"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"TeacherCorrectionRequest"> | Date | string
+    schoolId?: StringWithAggregatesFilter<"TeacherCorrectionRequest"> | string
+    teacherId?: StringWithAggregatesFilter<"TeacherCorrectionRequest"> | string
+  }
+
+  export type TeacherAccountabilityAuditLogWhereInput = {
+    AND?: TeacherAccountabilityAuditLogWhereInput | TeacherAccountabilityAuditLogWhereInput[]
+    OR?: TeacherAccountabilityAuditLogWhereInput[]
+    NOT?: TeacherAccountabilityAuditLogWhereInput | TeacherAccountabilityAuditLogWhereInput[]
+    id?: StringFilter<"TeacherAccountabilityAuditLog"> | string
+    action?: EnumTeacherAccountabilityAuditActionFilter<"TeacherAccountabilityAuditLog"> | $Enums.TeacherAccountabilityAuditAction
+    actorId?: StringNullableFilter<"TeacherAccountabilityAuditLog"> | string | null
+    actorRole?: StringNullableFilter<"TeacherAccountabilityAuditLog"> | string | null
+    sourceModel?: StringFilter<"TeacherAccountabilityAuditLog"> | string
+    sourceId?: StringFilter<"TeacherAccountabilityAuditLog"> | string
+    before?: JsonNullableFilter<"TeacherAccountabilityAuditLog">
+    after?: JsonNullableFilter<"TeacherAccountabilityAuditLog">
+    message?: StringNullableFilter<"TeacherAccountabilityAuditLog"> | string | null
+    createdAt?: DateTimeFilter<"TeacherAccountabilityAuditLog"> | Date | string
+    schoolId?: StringFilter<"TeacherAccountabilityAuditLog"> | string
+    teacherId?: StringNullableFilter<"TeacherAccountabilityAuditLog"> | string | null
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    teacher?: XOR<TeacherNullableScalarRelationFilter, TeacherWhereInput> | null
+  }
+
+  export type TeacherAccountabilityAuditLogOrderByWithRelationInput = {
+    id?: SortOrder
+    action?: SortOrder
+    actorId?: SortOrderInput | SortOrder
+    actorRole?: SortOrderInput | SortOrder
+    sourceModel?: SortOrder
+    sourceId?: SortOrder
+    before?: SortOrderInput | SortOrder
+    after?: SortOrderInput | SortOrder
+    message?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrderInput | SortOrder
+    school?: SchoolOrderByWithRelationInput
+    teacher?: TeacherOrderByWithRelationInput
+  }
+
+  export type TeacherAccountabilityAuditLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: TeacherAccountabilityAuditLogWhereInput | TeacherAccountabilityAuditLogWhereInput[]
+    OR?: TeacherAccountabilityAuditLogWhereInput[]
+    NOT?: TeacherAccountabilityAuditLogWhereInput | TeacherAccountabilityAuditLogWhereInput[]
+    action?: EnumTeacherAccountabilityAuditActionFilter<"TeacherAccountabilityAuditLog"> | $Enums.TeacherAccountabilityAuditAction
+    actorId?: StringNullableFilter<"TeacherAccountabilityAuditLog"> | string | null
+    actorRole?: StringNullableFilter<"TeacherAccountabilityAuditLog"> | string | null
+    sourceModel?: StringFilter<"TeacherAccountabilityAuditLog"> | string
+    sourceId?: StringFilter<"TeacherAccountabilityAuditLog"> | string
+    before?: JsonNullableFilter<"TeacherAccountabilityAuditLog">
+    after?: JsonNullableFilter<"TeacherAccountabilityAuditLog">
+    message?: StringNullableFilter<"TeacherAccountabilityAuditLog"> | string | null
+    createdAt?: DateTimeFilter<"TeacherAccountabilityAuditLog"> | Date | string
+    schoolId?: StringFilter<"TeacherAccountabilityAuditLog"> | string
+    teacherId?: StringNullableFilter<"TeacherAccountabilityAuditLog"> | string | null
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    teacher?: XOR<TeacherNullableScalarRelationFilter, TeacherWhereInput> | null
+  }, "id">
+
+  export type TeacherAccountabilityAuditLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    action?: SortOrder
+    actorId?: SortOrderInput | SortOrder
+    actorRole?: SortOrderInput | SortOrder
+    sourceModel?: SortOrder
+    sourceId?: SortOrder
+    before?: SortOrderInput | SortOrder
+    after?: SortOrderInput | SortOrder
+    message?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrderInput | SortOrder
+    _count?: TeacherAccountabilityAuditLogCountOrderByAggregateInput
+    _max?: TeacherAccountabilityAuditLogMaxOrderByAggregateInput
+    _min?: TeacherAccountabilityAuditLogMinOrderByAggregateInput
+  }
+
+  export type TeacherAccountabilityAuditLogScalarWhereWithAggregatesInput = {
+    AND?: TeacherAccountabilityAuditLogScalarWhereWithAggregatesInput | TeacherAccountabilityAuditLogScalarWhereWithAggregatesInput[]
+    OR?: TeacherAccountabilityAuditLogScalarWhereWithAggregatesInput[]
+    NOT?: TeacherAccountabilityAuditLogScalarWhereWithAggregatesInput | TeacherAccountabilityAuditLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TeacherAccountabilityAuditLog"> | string
+    action?: EnumTeacherAccountabilityAuditActionWithAggregatesFilter<"TeacherAccountabilityAuditLog"> | $Enums.TeacherAccountabilityAuditAction
+    actorId?: StringNullableWithAggregatesFilter<"TeacherAccountabilityAuditLog"> | string | null
+    actorRole?: StringNullableWithAggregatesFilter<"TeacherAccountabilityAuditLog"> | string | null
+    sourceModel?: StringWithAggregatesFilter<"TeacherAccountabilityAuditLog"> | string
+    sourceId?: StringWithAggregatesFilter<"TeacherAccountabilityAuditLog"> | string
+    before?: JsonNullableWithAggregatesFilter<"TeacherAccountabilityAuditLog">
+    after?: JsonNullableWithAggregatesFilter<"TeacherAccountabilityAuditLog">
+    message?: StringNullableWithAggregatesFilter<"TeacherAccountabilityAuditLog"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"TeacherAccountabilityAuditLog"> | Date | string
+    schoolId?: StringWithAggregatesFilter<"TeacherAccountabilityAuditLog"> | string
+    teacherId?: StringNullableWithAggregatesFilter<"TeacherAccountabilityAuditLog"> | string | null
   }
 
   export type ParentNotificationPreferenceWhereInput = {
@@ -76573,6 +84308,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -76638,6 +84378,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -76703,6 +84448,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -76768,6 +84518,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -77059,6 +84814,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateInput = {
@@ -77085,6 +84845,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUpdateInput = {
@@ -77111,6 +84876,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateInput = {
@@ -77137,6 +84907,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherCreateManyInput = {
@@ -77611,6 +85386,590 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherObligationCreateInput = {
+    id?: string
+    type: $Enums.TeacherObligationType
+    status?: $Enums.TeacherObligationStatus
+    priority?: $Enums.TeacherObligationPriority
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    title: string
+    description?: string | null
+    expectedAt: Date | string
+    completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutTeacherObligationsInput
+    teacher: TeacherCreateNestedOneWithoutAccountabilityObligationsInput
+    reminders?: TeacherReminderCreateNestedManyWithoutObligationInput
+    escalations?: TeacherEscalationCreateNestedManyWithoutObligationInput
+  }
+
+  export type TeacherObligationUncheckedCreateInput = {
+    id?: string
+    type: $Enums.TeacherObligationType
+    status?: $Enums.TeacherObligationStatus
+    priority?: $Enums.TeacherObligationPriority
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    title: string
+    description?: string | null
+    expectedAt: Date | string
+    completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    teacherId: string
+    reminders?: TeacherReminderUncheckedCreateNestedManyWithoutObligationInput
+    escalations?: TeacherEscalationUncheckedCreateNestedManyWithoutObligationInput
+  }
+
+  export type TeacherObligationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTeacherObligationTypeFieldUpdateOperationsInput | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFieldUpdateOperationsInput | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFieldUpdateOperationsInput | $Enums.TeacherObligationPriority
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutTeacherObligationsNestedInput
+    teacher?: TeacherUpdateOneRequiredWithoutAccountabilityObligationsNestedInput
+    reminders?: TeacherReminderUpdateManyWithoutObligationNestedInput
+    escalations?: TeacherEscalationUpdateManyWithoutObligationNestedInput
+  }
+
+  export type TeacherObligationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTeacherObligationTypeFieldUpdateOperationsInput | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFieldUpdateOperationsInput | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFieldUpdateOperationsInput | $Enums.TeacherObligationPriority
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    reminders?: TeacherReminderUncheckedUpdateManyWithoutObligationNestedInput
+    escalations?: TeacherEscalationUncheckedUpdateManyWithoutObligationNestedInput
+  }
+
+  export type TeacherObligationCreateManyInput = {
+    id?: string
+    type: $Enums.TeacherObligationType
+    status?: $Enums.TeacherObligationStatus
+    priority?: $Enums.TeacherObligationPriority
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    title: string
+    description?: string | null
+    expectedAt: Date | string
+    completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    teacherId: string
+  }
+
+  export type TeacherObligationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTeacherObligationTypeFieldUpdateOperationsInput | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFieldUpdateOperationsInput | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFieldUpdateOperationsInput | $Enums.TeacherObligationPriority
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeacherObligationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTeacherObligationTypeFieldUpdateOperationsInput | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFieldUpdateOperationsInput | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFieldUpdateOperationsInput | $Enums.TeacherObligationPriority
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherReminderCreateInput = {
+    id?: string
+    channel?: string
+    message: string
+    status?: $Enums.TeacherReminderStatus
+    scheduledAt?: Date | string | null
+    sentAt?: Date | string | null
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutTeacherRemindersInput
+    teacher: TeacherCreateNestedOneWithoutAccountabilityRemindersInput
+    obligation: TeacherObligationCreateNestedOneWithoutRemindersInput
+  }
+
+  export type TeacherReminderUncheckedCreateInput = {
+    id?: string
+    channel?: string
+    message: string
+    status?: $Enums.TeacherReminderStatus
+    scheduledAt?: Date | string | null
+    sentAt?: Date | string | null
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    teacherId: string
+    obligationId: string
+  }
+
+  export type TeacherReminderUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutTeacherRemindersNestedInput
+    teacher?: TeacherUpdateOneRequiredWithoutAccountabilityRemindersNestedInput
+    obligation?: TeacherObligationUpdateOneRequiredWithoutRemindersNestedInput
+  }
+
+  export type TeacherReminderUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    obligationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherReminderCreateManyInput = {
+    id?: string
+    channel?: string
+    message: string
+    status?: $Enums.TeacherReminderStatus
+    scheduledAt?: Date | string | null
+    sentAt?: Date | string | null
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    teacherId: string
+    obligationId: string
+  }
+
+  export type TeacherReminderUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeacherReminderUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    obligationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherEscalationCreateInput = {
+    id?: string
+    reason: string
+    status?: $Enums.TeacherEscalationStatus
+    escalatedAt?: Date | string
+    resolvedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutTeacherEscalationsInput
+    teacher: TeacherCreateNestedOneWithoutAccountabilityEscalationsInput
+    obligation: TeacherObligationCreateNestedOneWithoutEscalationsInput
+  }
+
+  export type TeacherEscalationUncheckedCreateInput = {
+    id?: string
+    reason: string
+    status?: $Enums.TeacherEscalationStatus
+    escalatedAt?: Date | string
+    resolvedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    teacherId: string
+    obligationId: string
+  }
+
+  export type TeacherEscalationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherEscalationStatusFieldUpdateOperationsInput | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutTeacherEscalationsNestedInput
+    teacher?: TeacherUpdateOneRequiredWithoutAccountabilityEscalationsNestedInput
+    obligation?: TeacherObligationUpdateOneRequiredWithoutEscalationsNestedInput
+  }
+
+  export type TeacherEscalationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherEscalationStatusFieldUpdateOperationsInput | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    obligationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherEscalationCreateManyInput = {
+    id?: string
+    reason: string
+    status?: $Enums.TeacherEscalationStatus
+    escalatedAt?: Date | string
+    resolvedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    teacherId: string
+    obligationId: string
+  }
+
+  export type TeacherEscalationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherEscalationStatusFieldUpdateOperationsInput | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeacherEscalationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherEscalationStatusFieldUpdateOperationsInput | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    obligationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherCorrectionRequestCreateInput = {
+    id?: string
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    fieldName: string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason: string
+    evidenceUrl?: string | null
+    status?: $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutTeacherCorrectionsInput
+    teacher: TeacherCreateNestedOneWithoutCorrectionRequestsInput
+  }
+
+  export type TeacherCorrectionRequestUncheckedCreateInput = {
+    id?: string
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    fieldName: string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason: string
+    evidenceUrl?: string | null
+    status?: $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    teacherId: string
+  }
+
+  export type TeacherCorrectionRequestUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    fieldName?: StringFieldUpdateOperationsInput | string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason?: StringFieldUpdateOperationsInput | string
+    evidenceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTeacherCorrectionRequestStatusFieldUpdateOperationsInput | $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutTeacherCorrectionsNestedInput
+    teacher?: TeacherUpdateOneRequiredWithoutCorrectionRequestsNestedInput
+  }
+
+  export type TeacherCorrectionRequestUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    fieldName?: StringFieldUpdateOperationsInput | string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason?: StringFieldUpdateOperationsInput | string
+    evidenceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTeacherCorrectionRequestStatusFieldUpdateOperationsInput | $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherCorrectionRequestCreateManyInput = {
+    id?: string
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    fieldName: string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason: string
+    evidenceUrl?: string | null
+    status?: $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    teacherId: string
+  }
+
+  export type TeacherCorrectionRequestUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    fieldName?: StringFieldUpdateOperationsInput | string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason?: StringFieldUpdateOperationsInput | string
+    evidenceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTeacherCorrectionRequestStatusFieldUpdateOperationsInput | $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeacherCorrectionRequestUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    fieldName?: StringFieldUpdateOperationsInput | string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason?: StringFieldUpdateOperationsInput | string
+    evidenceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTeacherCorrectionRequestStatusFieldUpdateOperationsInput | $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherAccountabilityAuditLogCreateInput = {
+    id?: string
+    action: $Enums.TeacherAccountabilityAuditAction
+    actorId?: string | null
+    actorRole?: string | null
+    sourceModel: string
+    sourceId: string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: string | null
+    createdAt?: Date | string
+    school: SchoolCreateNestedOneWithoutTeacherAccountabilityAuditLogsInput
+    teacher?: TeacherCreateNestedOneWithoutAccountabilityAuditLogsInput
+  }
+
+  export type TeacherAccountabilityAuditLogUncheckedCreateInput = {
+    id?: string
+    action: $Enums.TeacherAccountabilityAuditAction
+    actorId?: string | null
+    actorRole?: string | null
+    sourceModel: string
+    sourceId: string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: string | null
+    createdAt?: Date | string
+    schoolId: string
+    teacherId?: string | null
+  }
+
+  export type TeacherAccountabilityAuditLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumTeacherAccountabilityAuditActionFieldUpdateOperationsInput | $Enums.TeacherAccountabilityAuditAction
+    actorId?: NullableStringFieldUpdateOperationsInput | string | null
+    actorRole?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutTeacherAccountabilityAuditLogsNestedInput
+    teacher?: TeacherUpdateOneWithoutAccountabilityAuditLogsNestedInput
+  }
+
+  export type TeacherAccountabilityAuditLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumTeacherAccountabilityAuditActionFieldUpdateOperationsInput | $Enums.TeacherAccountabilityAuditAction
+    actorId?: NullableStringFieldUpdateOperationsInput | string | null
+    actorRole?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    teacherId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type TeacherAccountabilityAuditLogCreateManyInput = {
+    id?: string
+    action: $Enums.TeacherAccountabilityAuditAction
+    actorId?: string | null
+    actorRole?: string | null
+    sourceModel: string
+    sourceId: string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: string | null
+    createdAt?: Date | string
+    schoolId: string
+    teacherId?: string | null
+  }
+
+  export type TeacherAccountabilityAuditLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumTeacherAccountabilityAuditActionFieldUpdateOperationsInput | $Enums.TeacherAccountabilityAuditAction
+    actorId?: NullableStringFieldUpdateOperationsInput | string | null
+    actorRole?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeacherAccountabilityAuditLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumTeacherAccountabilityAuditActionFieldUpdateOperationsInput | $Enums.TeacherAccountabilityAuditAction
+    actorId?: NullableStringFieldUpdateOperationsInput | string | null
+    actorRole?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    teacherId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ParentNotificationPreferenceCreateInput = {
@@ -82014,6 +90373,36 @@ export namespace Prisma {
     isNot?: TeacherAccountabilitySettingWhereInput | null
   }
 
+  export type TeacherObligationListRelationFilter = {
+    every?: TeacherObligationWhereInput
+    some?: TeacherObligationWhereInput
+    none?: TeacherObligationWhereInput
+  }
+
+  export type TeacherReminderListRelationFilter = {
+    every?: TeacherReminderWhereInput
+    some?: TeacherReminderWhereInput
+    none?: TeacherReminderWhereInput
+  }
+
+  export type TeacherEscalationListRelationFilter = {
+    every?: TeacherEscalationWhereInput
+    some?: TeacherEscalationWhereInput
+    none?: TeacherEscalationWhereInput
+  }
+
+  export type TeacherCorrectionRequestListRelationFilter = {
+    every?: TeacherCorrectionRequestWhereInput
+    some?: TeacherCorrectionRequestWhereInput
+    none?: TeacherCorrectionRequestWhereInput
+  }
+
+  export type TeacherAccountabilityAuditLogListRelationFilter = {
+    every?: TeacherAccountabilityAuditLogWhereInput
+    some?: TeacherAccountabilityAuditLogWhereInput
+    none?: TeacherAccountabilityAuditLogWhereInput
+  }
+
   export type ParentNotificationPreferenceListRelationFilter = {
     every?: ParentNotificationPreferenceWhereInput
     some?: ParentNotificationPreferenceWhereInput
@@ -82192,6 +90581,26 @@ export namespace Prisma {
   }
 
   export type ParentActivityEventOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TeacherObligationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TeacherReminderOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TeacherEscalationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TeacherCorrectionRequestOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TeacherAccountabilityAuditLogOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -82776,6 +91185,449 @@ export namespace Prisma {
     homeworkEscalateAfterSchoolDays?: SortOrder
   }
 
+  export type EnumTeacherObligationTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherObligationType | EnumTeacherObligationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherObligationType[] | ListEnumTeacherObligationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherObligationType[] | ListEnumTeacherObligationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherObligationTypeFilter<$PrismaModel> | $Enums.TeacherObligationType
+  }
+
+  export type EnumTeacherObligationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherObligationStatus | EnumTeacherObligationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherObligationStatus[] | ListEnumTeacherObligationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherObligationStatus[] | ListEnumTeacherObligationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherObligationStatusFilter<$PrismaModel> | $Enums.TeacherObligationStatus
+  }
+
+  export type EnumTeacherObligationPriorityFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherObligationPriority | EnumTeacherObligationPriorityFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherObligationPriority[] | ListEnumTeacherObligationPriorityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherObligationPriority[] | ListEnumTeacherObligationPriorityFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherObligationPriorityFilter<$PrismaModel> | $Enums.TeacherObligationPriority
+  }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type TeacherScalarRelationFilter = {
+    is?: TeacherWhereInput
+    isNot?: TeacherWhereInput
+  }
+
+  export type TeacherObligationSchoolIdTeacherIdSourceKeyCompoundUniqueInput = {
+    schoolId: string
+    teacherId: string
+    sourceKey: string
+  }
+
+  export type TeacherObligationCountOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    status?: SortOrder
+    priority?: SortOrder
+    sourceModel?: SortOrder
+    sourceId?: SortOrder
+    sourceKey?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    expectedAt?: SortOrder
+    completedAt?: SortOrder
+    metadata?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+  }
+
+  export type TeacherObligationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    status?: SortOrder
+    priority?: SortOrder
+    sourceModel?: SortOrder
+    sourceId?: SortOrder
+    sourceKey?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    expectedAt?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+  }
+
+  export type TeacherObligationMinOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    status?: SortOrder
+    priority?: SortOrder
+    sourceModel?: SortOrder
+    sourceId?: SortOrder
+    sourceKey?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    expectedAt?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+  }
+
+  export type EnumTeacherObligationTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherObligationType | EnumTeacherObligationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherObligationType[] | ListEnumTeacherObligationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherObligationType[] | ListEnumTeacherObligationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherObligationTypeWithAggregatesFilter<$PrismaModel> | $Enums.TeacherObligationType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTeacherObligationTypeFilter<$PrismaModel>
+    _max?: NestedEnumTeacherObligationTypeFilter<$PrismaModel>
+  }
+
+  export type EnumTeacherObligationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherObligationStatus | EnumTeacherObligationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherObligationStatus[] | ListEnumTeacherObligationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherObligationStatus[] | ListEnumTeacherObligationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherObligationStatusWithAggregatesFilter<$PrismaModel> | $Enums.TeacherObligationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTeacherObligationStatusFilter<$PrismaModel>
+    _max?: NestedEnumTeacherObligationStatusFilter<$PrismaModel>
+  }
+
+  export type EnumTeacherObligationPriorityWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherObligationPriority | EnumTeacherObligationPriorityFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherObligationPriority[] | ListEnumTeacherObligationPriorityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherObligationPriority[] | ListEnumTeacherObligationPriorityFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherObligationPriorityWithAggregatesFilter<$PrismaModel> | $Enums.TeacherObligationPriority
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTeacherObligationPriorityFilter<$PrismaModel>
+    _max?: NestedEnumTeacherObligationPriorityFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type EnumTeacherReminderStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherReminderStatus | EnumTeacherReminderStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherReminderStatus[] | ListEnumTeacherReminderStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherReminderStatus[] | ListEnumTeacherReminderStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherReminderStatusFilter<$PrismaModel> | $Enums.TeacherReminderStatus
+  }
+
+  export type TeacherObligationScalarRelationFilter = {
+    is?: TeacherObligationWhereInput
+    isNot?: TeacherObligationWhereInput
+  }
+
+  export type TeacherReminderCountOrderByAggregateInput = {
+    id?: SortOrder
+    channel?: SortOrder
+    message?: SortOrder
+    status?: SortOrder
+    scheduledAt?: SortOrder
+    sentAt?: SortOrder
+    errorMessage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+    obligationId?: SortOrder
+  }
+
+  export type TeacherReminderMaxOrderByAggregateInput = {
+    id?: SortOrder
+    channel?: SortOrder
+    message?: SortOrder
+    status?: SortOrder
+    scheduledAt?: SortOrder
+    sentAt?: SortOrder
+    errorMessage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+    obligationId?: SortOrder
+  }
+
+  export type TeacherReminderMinOrderByAggregateInput = {
+    id?: SortOrder
+    channel?: SortOrder
+    message?: SortOrder
+    status?: SortOrder
+    scheduledAt?: SortOrder
+    sentAt?: SortOrder
+    errorMessage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+    obligationId?: SortOrder
+  }
+
+  export type EnumTeacherReminderStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherReminderStatus | EnumTeacherReminderStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherReminderStatus[] | ListEnumTeacherReminderStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherReminderStatus[] | ListEnumTeacherReminderStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherReminderStatusWithAggregatesFilter<$PrismaModel> | $Enums.TeacherReminderStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTeacherReminderStatusFilter<$PrismaModel>
+    _max?: NestedEnumTeacherReminderStatusFilter<$PrismaModel>
+  }
+
+  export type EnumTeacherEscalationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherEscalationStatus | EnumTeacherEscalationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherEscalationStatus[] | ListEnumTeacherEscalationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherEscalationStatus[] | ListEnumTeacherEscalationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherEscalationStatusFilter<$PrismaModel> | $Enums.TeacherEscalationStatus
+  }
+
+  export type TeacherEscalationSchoolIdObligationIdCompoundUniqueInput = {
+    schoolId: string
+    obligationId: string
+  }
+
+  export type TeacherEscalationCountOrderByAggregateInput = {
+    id?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    escalatedAt?: SortOrder
+    resolvedAt?: SortOrder
+    reviewedBy?: SortOrder
+    reviewNote?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+    obligationId?: SortOrder
+  }
+
+  export type TeacherEscalationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    escalatedAt?: SortOrder
+    resolvedAt?: SortOrder
+    reviewedBy?: SortOrder
+    reviewNote?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+    obligationId?: SortOrder
+  }
+
+  export type TeacherEscalationMinOrderByAggregateInput = {
+    id?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    escalatedAt?: SortOrder
+    resolvedAt?: SortOrder
+    reviewedBy?: SortOrder
+    reviewNote?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+    obligationId?: SortOrder
+  }
+
+  export type EnumTeacherEscalationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherEscalationStatus | EnumTeacherEscalationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherEscalationStatus[] | ListEnumTeacherEscalationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherEscalationStatus[] | ListEnumTeacherEscalationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherEscalationStatusWithAggregatesFilter<$PrismaModel> | $Enums.TeacherEscalationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTeacherEscalationStatusFilter<$PrismaModel>
+    _max?: NestedEnumTeacherEscalationStatusFilter<$PrismaModel>
+  }
+
+  export type EnumTeacherCorrectionRequestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherCorrectionRequestStatus | EnumTeacherCorrectionRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherCorrectionRequestStatus[] | ListEnumTeacherCorrectionRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherCorrectionRequestStatus[] | ListEnumTeacherCorrectionRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherCorrectionRequestStatusFilter<$PrismaModel> | $Enums.TeacherCorrectionRequestStatus
+  }
+
+  export type TeacherCorrectionRequestSchoolIdTeacherIdSourceKeyFieldNameCompoundUniqueInput = {
+    schoolId: string
+    teacherId: string
+    sourceKey: string
+    fieldName: string
+  }
+
+  export type TeacherCorrectionRequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    sourceModel?: SortOrder
+    sourceId?: SortOrder
+    sourceKey?: SortOrder
+    fieldName?: SortOrder
+    oldValue?: SortOrder
+    newValue?: SortOrder
+    reason?: SortOrder
+    evidenceUrl?: SortOrder
+    status?: SortOrder
+    reviewedBy?: SortOrder
+    reviewedAt?: SortOrder
+    reviewNote?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+  }
+
+  export type TeacherCorrectionRequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    sourceModel?: SortOrder
+    sourceId?: SortOrder
+    sourceKey?: SortOrder
+    fieldName?: SortOrder
+    reason?: SortOrder
+    evidenceUrl?: SortOrder
+    status?: SortOrder
+    reviewedBy?: SortOrder
+    reviewedAt?: SortOrder
+    reviewNote?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+  }
+
+  export type TeacherCorrectionRequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    sourceModel?: SortOrder
+    sourceId?: SortOrder
+    sourceKey?: SortOrder
+    fieldName?: SortOrder
+    reason?: SortOrder
+    evidenceUrl?: SortOrder
+    status?: SortOrder
+    reviewedBy?: SortOrder
+    reviewedAt?: SortOrder
+    reviewNote?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+  }
+
+  export type EnumTeacherCorrectionRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherCorrectionRequestStatus | EnumTeacherCorrectionRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherCorrectionRequestStatus[] | ListEnumTeacherCorrectionRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherCorrectionRequestStatus[] | ListEnumTeacherCorrectionRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherCorrectionRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.TeacherCorrectionRequestStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTeacherCorrectionRequestStatusFilter<$PrismaModel>
+    _max?: NestedEnumTeacherCorrectionRequestStatusFilter<$PrismaModel>
+  }
+
+  export type EnumTeacherAccountabilityAuditActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherAccountabilityAuditAction | EnumTeacherAccountabilityAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherAccountabilityAuditAction[] | ListEnumTeacherAccountabilityAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherAccountabilityAuditAction[] | ListEnumTeacherAccountabilityAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherAccountabilityAuditActionFilter<$PrismaModel> | $Enums.TeacherAccountabilityAuditAction
+  }
+
+  export type TeacherNullableScalarRelationFilter = {
+    is?: TeacherWhereInput | null
+    isNot?: TeacherWhereInput | null
+  }
+
+  export type TeacherAccountabilityAuditLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    action?: SortOrder
+    actorId?: SortOrder
+    actorRole?: SortOrder
+    sourceModel?: SortOrder
+    sourceId?: SortOrder
+    before?: SortOrder
+    after?: SortOrder
+    message?: SortOrder
+    createdAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+  }
+
+  export type TeacherAccountabilityAuditLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    action?: SortOrder
+    actorId?: SortOrder
+    actorRole?: SortOrder
+    sourceModel?: SortOrder
+    sourceId?: SortOrder
+    message?: SortOrder
+    createdAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+  }
+
+  export type TeacherAccountabilityAuditLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    action?: SortOrder
+    actorId?: SortOrder
+    actorRole?: SortOrder
+    sourceModel?: SortOrder
+    sourceId?: SortOrder
+    message?: SortOrder
+    createdAt?: SortOrder
+    schoolId?: SortOrder
+    teacherId?: SortOrder
+  }
+
+  export type EnumTeacherAccountabilityAuditActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherAccountabilityAuditAction | EnumTeacherAccountabilityAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherAccountabilityAuditAction[] | ListEnumTeacherAccountabilityAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherAccountabilityAuditAction[] | ListEnumTeacherAccountabilityAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherAccountabilityAuditActionWithAggregatesFilter<$PrismaModel> | $Enums.TeacherAccountabilityAuditAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTeacherAccountabilityAuditActionFilter<$PrismaModel>
+    _max?: NestedEnumTeacherAccountabilityAuditActionFilter<$PrismaModel>
+  }
+
   export type EnumParentDeliveryChannelFilter<$PrismaModel = never> = {
     equals?: $Enums.ParentDeliveryChannel | EnumParentDeliveryChannelFieldRefInput<$PrismaModel>
     in?: $Enums.ParentDeliveryChannel[] | ListEnumParentDeliveryChannelFieldRefInput<$PrismaModel>
@@ -82853,29 +91705,6 @@ export namespace Prisma {
     in?: $Enums.ParentNotificationPriority[] | ListEnumParentNotificationPriorityFieldRefInput<$PrismaModel>
     notIn?: $Enums.ParentNotificationPriority[] | ListEnumParentNotificationPriorityFieldRefInput<$PrismaModel>
     not?: NestedEnumParentNotificationPriorityFilter<$PrismaModel> | $Enums.ParentNotificationPriority
-  }
-  export type JsonNullableFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type StudentNullableScalarRelationFilter = {
@@ -82966,32 +91795,6 @@ export namespace Prisma {
     _min?: NestedEnumParentNotificationPriorityFilter<$PrismaModel>
     _max?: NestedEnumParentNotificationPriorityFilter<$PrismaModel>
   }
-  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedJsonNullableFilter<$PrismaModel>
-    _max?: NestedJsonNullableFilter<$PrismaModel>
-  }
 
   export type EnumParentDeliveryStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.ParentDeliveryStatus | EnumParentDeliveryStatusFieldRefInput<$PrismaModel>
@@ -83061,11 +91864,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumParentDeliveryStatusFilter<$PrismaModel>
     _max?: NestedEnumParentDeliveryStatusFilter<$PrismaModel>
-  }
-
-  export type TeacherNullableScalarRelationFilter = {
-    is?: TeacherWhereInput | null
-    isNot?: TeacherWhereInput | null
   }
 
   export type ParentActivityEventSchoolIdParentIdSourceKeyCompoundUniqueInput = {
@@ -83255,11 +92053,6 @@ export namespace Prisma {
   export type SubjectScalarRelationFilter = {
     is?: SubjectWhereInput
     isNot?: SubjectWhereInput
-  }
-
-  export type TeacherScalarRelationFilter = {
-    is?: TeacherWhereInput
-    isNot?: TeacherWhereInput
   }
 
   export type LessonCountOrderByAggregateInput = {
@@ -86373,6 +95166,41 @@ export namespace Prisma {
     connect?: TeacherAccountabilitySettingWhereUniqueInput
   }
 
+  export type TeacherObligationCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<TeacherObligationCreateWithoutSchoolInput, TeacherObligationUncheckedCreateWithoutSchoolInput> | TeacherObligationCreateWithoutSchoolInput[] | TeacherObligationUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherObligationCreateOrConnectWithoutSchoolInput | TeacherObligationCreateOrConnectWithoutSchoolInput[]
+    createMany?: TeacherObligationCreateManySchoolInputEnvelope
+    connect?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+  }
+
+  export type TeacherReminderCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<TeacherReminderCreateWithoutSchoolInput, TeacherReminderUncheckedCreateWithoutSchoolInput> | TeacherReminderCreateWithoutSchoolInput[] | TeacherReminderUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherReminderCreateOrConnectWithoutSchoolInput | TeacherReminderCreateOrConnectWithoutSchoolInput[]
+    createMany?: TeacherReminderCreateManySchoolInputEnvelope
+    connect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+  }
+
+  export type TeacherEscalationCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<TeacherEscalationCreateWithoutSchoolInput, TeacherEscalationUncheckedCreateWithoutSchoolInput> | TeacherEscalationCreateWithoutSchoolInput[] | TeacherEscalationUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherEscalationCreateOrConnectWithoutSchoolInput | TeacherEscalationCreateOrConnectWithoutSchoolInput[]
+    createMany?: TeacherEscalationCreateManySchoolInputEnvelope
+    connect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+  }
+
+  export type TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<TeacherCorrectionRequestCreateWithoutSchoolInput, TeacherCorrectionRequestUncheckedCreateWithoutSchoolInput> | TeacherCorrectionRequestCreateWithoutSchoolInput[] | TeacherCorrectionRequestUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherCorrectionRequestCreateOrConnectWithoutSchoolInput | TeacherCorrectionRequestCreateOrConnectWithoutSchoolInput[]
+    createMany?: TeacherCorrectionRequestCreateManySchoolInputEnvelope
+    connect?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+  }
+
+  export type TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<TeacherAccountabilityAuditLogCreateWithoutSchoolInput, TeacherAccountabilityAuditLogUncheckedCreateWithoutSchoolInput> | TeacherAccountabilityAuditLogCreateWithoutSchoolInput[] | TeacherAccountabilityAuditLogUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherAccountabilityAuditLogCreateOrConnectWithoutSchoolInput | TeacherAccountabilityAuditLogCreateOrConnectWithoutSchoolInput[]
+    createMany?: TeacherAccountabilityAuditLogCreateManySchoolInputEnvelope
+    connect?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+  }
+
   export type ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput = {
     create?: XOR<ParentNotificationPreferenceCreateWithoutSchoolInput, ParentNotificationPreferenceUncheckedCreateWithoutSchoolInput> | ParentNotificationPreferenceCreateWithoutSchoolInput[] | ParentNotificationPreferenceUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: ParentNotificationPreferenceCreateOrConnectWithoutSchoolInput | ParentNotificationPreferenceCreateOrConnectWithoutSchoolInput[]
@@ -86684,6 +95512,41 @@ export namespace Prisma {
     create?: XOR<TeacherAccountabilitySettingCreateWithoutSchoolInput, TeacherAccountabilitySettingUncheckedCreateWithoutSchoolInput>
     connectOrCreate?: TeacherAccountabilitySettingCreateOrConnectWithoutSchoolInput
     connect?: TeacherAccountabilitySettingWhereUniqueInput
+  }
+
+  export type TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<TeacherObligationCreateWithoutSchoolInput, TeacherObligationUncheckedCreateWithoutSchoolInput> | TeacherObligationCreateWithoutSchoolInput[] | TeacherObligationUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherObligationCreateOrConnectWithoutSchoolInput | TeacherObligationCreateOrConnectWithoutSchoolInput[]
+    createMany?: TeacherObligationCreateManySchoolInputEnvelope
+    connect?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+  }
+
+  export type TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<TeacherReminderCreateWithoutSchoolInput, TeacherReminderUncheckedCreateWithoutSchoolInput> | TeacherReminderCreateWithoutSchoolInput[] | TeacherReminderUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherReminderCreateOrConnectWithoutSchoolInput | TeacherReminderCreateOrConnectWithoutSchoolInput[]
+    createMany?: TeacherReminderCreateManySchoolInputEnvelope
+    connect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+  }
+
+  export type TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<TeacherEscalationCreateWithoutSchoolInput, TeacherEscalationUncheckedCreateWithoutSchoolInput> | TeacherEscalationCreateWithoutSchoolInput[] | TeacherEscalationUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherEscalationCreateOrConnectWithoutSchoolInput | TeacherEscalationCreateOrConnectWithoutSchoolInput[]
+    createMany?: TeacherEscalationCreateManySchoolInputEnvelope
+    connect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+  }
+
+  export type TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<TeacherCorrectionRequestCreateWithoutSchoolInput, TeacherCorrectionRequestUncheckedCreateWithoutSchoolInput> | TeacherCorrectionRequestCreateWithoutSchoolInput[] | TeacherCorrectionRequestUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherCorrectionRequestCreateOrConnectWithoutSchoolInput | TeacherCorrectionRequestCreateOrConnectWithoutSchoolInput[]
+    createMany?: TeacherCorrectionRequestCreateManySchoolInputEnvelope
+    connect?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+  }
+
+  export type TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<TeacherAccountabilityAuditLogCreateWithoutSchoolInput, TeacherAccountabilityAuditLogUncheckedCreateWithoutSchoolInput> | TeacherAccountabilityAuditLogCreateWithoutSchoolInput[] | TeacherAccountabilityAuditLogUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherAccountabilityAuditLogCreateOrConnectWithoutSchoolInput | TeacherAccountabilityAuditLogCreateOrConnectWithoutSchoolInput[]
+    createMany?: TeacherAccountabilityAuditLogCreateManySchoolInputEnvelope
+    connect?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
   }
 
   export type ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput = {
@@ -87314,6 +96177,76 @@ export namespace Prisma {
     update?: XOR<XOR<TeacherAccountabilitySettingUpdateToOneWithWhereWithoutSchoolInput, TeacherAccountabilitySettingUpdateWithoutSchoolInput>, TeacherAccountabilitySettingUncheckedUpdateWithoutSchoolInput>
   }
 
+  export type TeacherObligationUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<TeacherObligationCreateWithoutSchoolInput, TeacherObligationUncheckedCreateWithoutSchoolInput> | TeacherObligationCreateWithoutSchoolInput[] | TeacherObligationUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherObligationCreateOrConnectWithoutSchoolInput | TeacherObligationCreateOrConnectWithoutSchoolInput[]
+    upsert?: TeacherObligationUpsertWithWhereUniqueWithoutSchoolInput | TeacherObligationUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: TeacherObligationCreateManySchoolInputEnvelope
+    set?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+    disconnect?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+    delete?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+    connect?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+    update?: TeacherObligationUpdateWithWhereUniqueWithoutSchoolInput | TeacherObligationUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: TeacherObligationUpdateManyWithWhereWithoutSchoolInput | TeacherObligationUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: TeacherObligationScalarWhereInput | TeacherObligationScalarWhereInput[]
+  }
+
+  export type TeacherReminderUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<TeacherReminderCreateWithoutSchoolInput, TeacherReminderUncheckedCreateWithoutSchoolInput> | TeacherReminderCreateWithoutSchoolInput[] | TeacherReminderUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherReminderCreateOrConnectWithoutSchoolInput | TeacherReminderCreateOrConnectWithoutSchoolInput[]
+    upsert?: TeacherReminderUpsertWithWhereUniqueWithoutSchoolInput | TeacherReminderUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: TeacherReminderCreateManySchoolInputEnvelope
+    set?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    disconnect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    delete?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    connect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    update?: TeacherReminderUpdateWithWhereUniqueWithoutSchoolInput | TeacherReminderUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: TeacherReminderUpdateManyWithWhereWithoutSchoolInput | TeacherReminderUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: TeacherReminderScalarWhereInput | TeacherReminderScalarWhereInput[]
+  }
+
+  export type TeacherEscalationUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<TeacherEscalationCreateWithoutSchoolInput, TeacherEscalationUncheckedCreateWithoutSchoolInput> | TeacherEscalationCreateWithoutSchoolInput[] | TeacherEscalationUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherEscalationCreateOrConnectWithoutSchoolInput | TeacherEscalationCreateOrConnectWithoutSchoolInput[]
+    upsert?: TeacherEscalationUpsertWithWhereUniqueWithoutSchoolInput | TeacherEscalationUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: TeacherEscalationCreateManySchoolInputEnvelope
+    set?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    disconnect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    delete?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    connect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    update?: TeacherEscalationUpdateWithWhereUniqueWithoutSchoolInput | TeacherEscalationUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: TeacherEscalationUpdateManyWithWhereWithoutSchoolInput | TeacherEscalationUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: TeacherEscalationScalarWhereInput | TeacherEscalationScalarWhereInput[]
+  }
+
+  export type TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<TeacherCorrectionRequestCreateWithoutSchoolInput, TeacherCorrectionRequestUncheckedCreateWithoutSchoolInput> | TeacherCorrectionRequestCreateWithoutSchoolInput[] | TeacherCorrectionRequestUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherCorrectionRequestCreateOrConnectWithoutSchoolInput | TeacherCorrectionRequestCreateOrConnectWithoutSchoolInput[]
+    upsert?: TeacherCorrectionRequestUpsertWithWhereUniqueWithoutSchoolInput | TeacherCorrectionRequestUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: TeacherCorrectionRequestCreateManySchoolInputEnvelope
+    set?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+    disconnect?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+    delete?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+    connect?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+    update?: TeacherCorrectionRequestUpdateWithWhereUniqueWithoutSchoolInput | TeacherCorrectionRequestUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: TeacherCorrectionRequestUpdateManyWithWhereWithoutSchoolInput | TeacherCorrectionRequestUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: TeacherCorrectionRequestScalarWhereInput | TeacherCorrectionRequestScalarWhereInput[]
+  }
+
+  export type TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<TeacherAccountabilityAuditLogCreateWithoutSchoolInput, TeacherAccountabilityAuditLogUncheckedCreateWithoutSchoolInput> | TeacherAccountabilityAuditLogCreateWithoutSchoolInput[] | TeacherAccountabilityAuditLogUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherAccountabilityAuditLogCreateOrConnectWithoutSchoolInput | TeacherAccountabilityAuditLogCreateOrConnectWithoutSchoolInput[]
+    upsert?: TeacherAccountabilityAuditLogUpsertWithWhereUniqueWithoutSchoolInput | TeacherAccountabilityAuditLogUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: TeacherAccountabilityAuditLogCreateManySchoolInputEnvelope
+    set?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+    disconnect?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+    delete?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+    connect?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+    update?: TeacherAccountabilityAuditLogUpdateWithWhereUniqueWithoutSchoolInput | TeacherAccountabilityAuditLogUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: TeacherAccountabilityAuditLogUpdateManyWithWhereWithoutSchoolInput | TeacherAccountabilityAuditLogUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: TeacherAccountabilityAuditLogScalarWhereInput | TeacherAccountabilityAuditLogScalarWhereInput[]
+  }
+
   export type ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput = {
     create?: XOR<ParentNotificationPreferenceCreateWithoutSchoolInput, ParentNotificationPreferenceUncheckedCreateWithoutSchoolInput> | ParentNotificationPreferenceCreateWithoutSchoolInput[] | ParentNotificationPreferenceUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: ParentNotificationPreferenceCreateOrConnectWithoutSchoolInput | ParentNotificationPreferenceCreateOrConnectWithoutSchoolInput[]
@@ -87936,6 +96869,76 @@ export namespace Prisma {
     update?: XOR<XOR<TeacherAccountabilitySettingUpdateToOneWithWhereWithoutSchoolInput, TeacherAccountabilitySettingUpdateWithoutSchoolInput>, TeacherAccountabilitySettingUncheckedUpdateWithoutSchoolInput>
   }
 
+  export type TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<TeacherObligationCreateWithoutSchoolInput, TeacherObligationUncheckedCreateWithoutSchoolInput> | TeacherObligationCreateWithoutSchoolInput[] | TeacherObligationUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherObligationCreateOrConnectWithoutSchoolInput | TeacherObligationCreateOrConnectWithoutSchoolInput[]
+    upsert?: TeacherObligationUpsertWithWhereUniqueWithoutSchoolInput | TeacherObligationUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: TeacherObligationCreateManySchoolInputEnvelope
+    set?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+    disconnect?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+    delete?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+    connect?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+    update?: TeacherObligationUpdateWithWhereUniqueWithoutSchoolInput | TeacherObligationUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: TeacherObligationUpdateManyWithWhereWithoutSchoolInput | TeacherObligationUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: TeacherObligationScalarWhereInput | TeacherObligationScalarWhereInput[]
+  }
+
+  export type TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<TeacherReminderCreateWithoutSchoolInput, TeacherReminderUncheckedCreateWithoutSchoolInput> | TeacherReminderCreateWithoutSchoolInput[] | TeacherReminderUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherReminderCreateOrConnectWithoutSchoolInput | TeacherReminderCreateOrConnectWithoutSchoolInput[]
+    upsert?: TeacherReminderUpsertWithWhereUniqueWithoutSchoolInput | TeacherReminderUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: TeacherReminderCreateManySchoolInputEnvelope
+    set?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    disconnect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    delete?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    connect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    update?: TeacherReminderUpdateWithWhereUniqueWithoutSchoolInput | TeacherReminderUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: TeacherReminderUpdateManyWithWhereWithoutSchoolInput | TeacherReminderUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: TeacherReminderScalarWhereInput | TeacherReminderScalarWhereInput[]
+  }
+
+  export type TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<TeacherEscalationCreateWithoutSchoolInput, TeacherEscalationUncheckedCreateWithoutSchoolInput> | TeacherEscalationCreateWithoutSchoolInput[] | TeacherEscalationUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherEscalationCreateOrConnectWithoutSchoolInput | TeacherEscalationCreateOrConnectWithoutSchoolInput[]
+    upsert?: TeacherEscalationUpsertWithWhereUniqueWithoutSchoolInput | TeacherEscalationUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: TeacherEscalationCreateManySchoolInputEnvelope
+    set?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    disconnect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    delete?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    connect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    update?: TeacherEscalationUpdateWithWhereUniqueWithoutSchoolInput | TeacherEscalationUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: TeacherEscalationUpdateManyWithWhereWithoutSchoolInput | TeacherEscalationUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: TeacherEscalationScalarWhereInput | TeacherEscalationScalarWhereInput[]
+  }
+
+  export type TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<TeacherCorrectionRequestCreateWithoutSchoolInput, TeacherCorrectionRequestUncheckedCreateWithoutSchoolInput> | TeacherCorrectionRequestCreateWithoutSchoolInput[] | TeacherCorrectionRequestUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherCorrectionRequestCreateOrConnectWithoutSchoolInput | TeacherCorrectionRequestCreateOrConnectWithoutSchoolInput[]
+    upsert?: TeacherCorrectionRequestUpsertWithWhereUniqueWithoutSchoolInput | TeacherCorrectionRequestUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: TeacherCorrectionRequestCreateManySchoolInputEnvelope
+    set?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+    disconnect?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+    delete?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+    connect?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+    update?: TeacherCorrectionRequestUpdateWithWhereUniqueWithoutSchoolInput | TeacherCorrectionRequestUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: TeacherCorrectionRequestUpdateManyWithWhereWithoutSchoolInput | TeacherCorrectionRequestUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: TeacherCorrectionRequestScalarWhereInput | TeacherCorrectionRequestScalarWhereInput[]
+  }
+
+  export type TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<TeacherAccountabilityAuditLogCreateWithoutSchoolInput, TeacherAccountabilityAuditLogUncheckedCreateWithoutSchoolInput> | TeacherAccountabilityAuditLogCreateWithoutSchoolInput[] | TeacherAccountabilityAuditLogUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: TeacherAccountabilityAuditLogCreateOrConnectWithoutSchoolInput | TeacherAccountabilityAuditLogCreateOrConnectWithoutSchoolInput[]
+    upsert?: TeacherAccountabilityAuditLogUpsertWithWhereUniqueWithoutSchoolInput | TeacherAccountabilityAuditLogUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: TeacherAccountabilityAuditLogCreateManySchoolInputEnvelope
+    set?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+    disconnect?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+    delete?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+    connect?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+    update?: TeacherAccountabilityAuditLogUpdateWithWhereUniqueWithoutSchoolInput | TeacherAccountabilityAuditLogUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: TeacherAccountabilityAuditLogUpdateManyWithWhereWithoutSchoolInput | TeacherAccountabilityAuditLogUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: TeacherAccountabilityAuditLogScalarWhereInput | TeacherAccountabilityAuditLogScalarWhereInput[]
+  }
+
   export type ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput = {
     create?: XOR<ParentNotificationPreferenceCreateWithoutSchoolInput, ParentNotificationPreferenceUncheckedCreateWithoutSchoolInput> | ParentNotificationPreferenceCreateWithoutSchoolInput[] | ParentNotificationPreferenceUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: ParentNotificationPreferenceCreateOrConnectWithoutSchoolInput | ParentNotificationPreferenceCreateOrConnectWithoutSchoolInput[]
@@ -88541,6 +97544,41 @@ export namespace Prisma {
     connect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
   }
 
+  export type TeacherObligationCreateNestedManyWithoutTeacherInput = {
+    create?: XOR<TeacherObligationCreateWithoutTeacherInput, TeacherObligationUncheckedCreateWithoutTeacherInput> | TeacherObligationCreateWithoutTeacherInput[] | TeacherObligationUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherObligationCreateOrConnectWithoutTeacherInput | TeacherObligationCreateOrConnectWithoutTeacherInput[]
+    createMany?: TeacherObligationCreateManyTeacherInputEnvelope
+    connect?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+  }
+
+  export type TeacherReminderCreateNestedManyWithoutTeacherInput = {
+    create?: XOR<TeacherReminderCreateWithoutTeacherInput, TeacherReminderUncheckedCreateWithoutTeacherInput> | TeacherReminderCreateWithoutTeacherInput[] | TeacherReminderUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherReminderCreateOrConnectWithoutTeacherInput | TeacherReminderCreateOrConnectWithoutTeacherInput[]
+    createMany?: TeacherReminderCreateManyTeacherInputEnvelope
+    connect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+  }
+
+  export type TeacherEscalationCreateNestedManyWithoutTeacherInput = {
+    create?: XOR<TeacherEscalationCreateWithoutTeacherInput, TeacherEscalationUncheckedCreateWithoutTeacherInput> | TeacherEscalationCreateWithoutTeacherInput[] | TeacherEscalationUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherEscalationCreateOrConnectWithoutTeacherInput | TeacherEscalationCreateOrConnectWithoutTeacherInput[]
+    createMany?: TeacherEscalationCreateManyTeacherInputEnvelope
+    connect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+  }
+
+  export type TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput = {
+    create?: XOR<TeacherCorrectionRequestCreateWithoutTeacherInput, TeacherCorrectionRequestUncheckedCreateWithoutTeacherInput> | TeacherCorrectionRequestCreateWithoutTeacherInput[] | TeacherCorrectionRequestUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherCorrectionRequestCreateOrConnectWithoutTeacherInput | TeacherCorrectionRequestCreateOrConnectWithoutTeacherInput[]
+    createMany?: TeacherCorrectionRequestCreateManyTeacherInputEnvelope
+    connect?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+  }
+
+  export type TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput = {
+    create?: XOR<TeacherAccountabilityAuditLogCreateWithoutTeacherInput, TeacherAccountabilityAuditLogUncheckedCreateWithoutTeacherInput> | TeacherAccountabilityAuditLogCreateWithoutTeacherInput[] | TeacherAccountabilityAuditLogUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherAccountabilityAuditLogCreateOrConnectWithoutTeacherInput | TeacherAccountabilityAuditLogCreateOrConnectWithoutTeacherInput[]
+    createMany?: TeacherAccountabilityAuditLogCreateManyTeacherInputEnvelope
+    connect?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+  }
+
   export type SubjectUncheckedCreateNestedManyWithoutTeachersInput = {
     create?: XOR<SubjectCreateWithoutTeachersInput, SubjectUncheckedCreateWithoutTeachersInput> | SubjectCreateWithoutTeachersInput[] | SubjectUncheckedCreateWithoutTeachersInput[]
     connectOrCreate?: SubjectCreateOrConnectWithoutTeachersInput | SubjectCreateOrConnectWithoutTeachersInput[]
@@ -88608,6 +97646,41 @@ export namespace Prisma {
     connectOrCreate?: SyllabusTopicProgressCreateOrConnectWithoutTeacherInput | SyllabusTopicProgressCreateOrConnectWithoutTeacherInput[]
     createMany?: SyllabusTopicProgressCreateManyTeacherInputEnvelope
     connect?: SyllabusTopicProgressWhereUniqueInput | SyllabusTopicProgressWhereUniqueInput[]
+  }
+
+  export type TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput = {
+    create?: XOR<TeacherObligationCreateWithoutTeacherInput, TeacherObligationUncheckedCreateWithoutTeacherInput> | TeacherObligationCreateWithoutTeacherInput[] | TeacherObligationUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherObligationCreateOrConnectWithoutTeacherInput | TeacherObligationCreateOrConnectWithoutTeacherInput[]
+    createMany?: TeacherObligationCreateManyTeacherInputEnvelope
+    connect?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+  }
+
+  export type TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput = {
+    create?: XOR<TeacherReminderCreateWithoutTeacherInput, TeacherReminderUncheckedCreateWithoutTeacherInput> | TeacherReminderCreateWithoutTeacherInput[] | TeacherReminderUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherReminderCreateOrConnectWithoutTeacherInput | TeacherReminderCreateOrConnectWithoutTeacherInput[]
+    createMany?: TeacherReminderCreateManyTeacherInputEnvelope
+    connect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+  }
+
+  export type TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput = {
+    create?: XOR<TeacherEscalationCreateWithoutTeacherInput, TeacherEscalationUncheckedCreateWithoutTeacherInput> | TeacherEscalationCreateWithoutTeacherInput[] | TeacherEscalationUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherEscalationCreateOrConnectWithoutTeacherInput | TeacherEscalationCreateOrConnectWithoutTeacherInput[]
+    createMany?: TeacherEscalationCreateManyTeacherInputEnvelope
+    connect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+  }
+
+  export type TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput = {
+    create?: XOR<TeacherCorrectionRequestCreateWithoutTeacherInput, TeacherCorrectionRequestUncheckedCreateWithoutTeacherInput> | TeacherCorrectionRequestCreateWithoutTeacherInput[] | TeacherCorrectionRequestUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherCorrectionRequestCreateOrConnectWithoutTeacherInput | TeacherCorrectionRequestCreateOrConnectWithoutTeacherInput[]
+    createMany?: TeacherCorrectionRequestCreateManyTeacherInputEnvelope
+    connect?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+  }
+
+  export type TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput = {
+    create?: XOR<TeacherAccountabilityAuditLogCreateWithoutTeacherInput, TeacherAccountabilityAuditLogUncheckedCreateWithoutTeacherInput> | TeacherAccountabilityAuditLogCreateWithoutTeacherInput[] | TeacherAccountabilityAuditLogUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherAccountabilityAuditLogCreateOrConnectWithoutTeacherInput | TeacherAccountabilityAuditLogCreateOrConnectWithoutTeacherInput[]
+    createMany?: TeacherAccountabilityAuditLogCreateManyTeacherInputEnvelope
+    connect?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
   }
 
   export type SchoolUpdateOneRequiredWithoutTeachersNestedInput = {
@@ -88757,6 +97830,76 @@ export namespace Prisma {
     deleteMany?: SyllabusTopicProgressScalarWhereInput | SyllabusTopicProgressScalarWhereInput[]
   }
 
+  export type TeacherObligationUpdateManyWithoutTeacherNestedInput = {
+    create?: XOR<TeacherObligationCreateWithoutTeacherInput, TeacherObligationUncheckedCreateWithoutTeacherInput> | TeacherObligationCreateWithoutTeacherInput[] | TeacherObligationUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherObligationCreateOrConnectWithoutTeacherInput | TeacherObligationCreateOrConnectWithoutTeacherInput[]
+    upsert?: TeacherObligationUpsertWithWhereUniqueWithoutTeacherInput | TeacherObligationUpsertWithWhereUniqueWithoutTeacherInput[]
+    createMany?: TeacherObligationCreateManyTeacherInputEnvelope
+    set?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+    disconnect?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+    delete?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+    connect?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+    update?: TeacherObligationUpdateWithWhereUniqueWithoutTeacherInput | TeacherObligationUpdateWithWhereUniqueWithoutTeacherInput[]
+    updateMany?: TeacherObligationUpdateManyWithWhereWithoutTeacherInput | TeacherObligationUpdateManyWithWhereWithoutTeacherInput[]
+    deleteMany?: TeacherObligationScalarWhereInput | TeacherObligationScalarWhereInput[]
+  }
+
+  export type TeacherReminderUpdateManyWithoutTeacherNestedInput = {
+    create?: XOR<TeacherReminderCreateWithoutTeacherInput, TeacherReminderUncheckedCreateWithoutTeacherInput> | TeacherReminderCreateWithoutTeacherInput[] | TeacherReminderUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherReminderCreateOrConnectWithoutTeacherInput | TeacherReminderCreateOrConnectWithoutTeacherInput[]
+    upsert?: TeacherReminderUpsertWithWhereUniqueWithoutTeacherInput | TeacherReminderUpsertWithWhereUniqueWithoutTeacherInput[]
+    createMany?: TeacherReminderCreateManyTeacherInputEnvelope
+    set?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    disconnect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    delete?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    connect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    update?: TeacherReminderUpdateWithWhereUniqueWithoutTeacherInput | TeacherReminderUpdateWithWhereUniqueWithoutTeacherInput[]
+    updateMany?: TeacherReminderUpdateManyWithWhereWithoutTeacherInput | TeacherReminderUpdateManyWithWhereWithoutTeacherInput[]
+    deleteMany?: TeacherReminderScalarWhereInput | TeacherReminderScalarWhereInput[]
+  }
+
+  export type TeacherEscalationUpdateManyWithoutTeacherNestedInput = {
+    create?: XOR<TeacherEscalationCreateWithoutTeacherInput, TeacherEscalationUncheckedCreateWithoutTeacherInput> | TeacherEscalationCreateWithoutTeacherInput[] | TeacherEscalationUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherEscalationCreateOrConnectWithoutTeacherInput | TeacherEscalationCreateOrConnectWithoutTeacherInput[]
+    upsert?: TeacherEscalationUpsertWithWhereUniqueWithoutTeacherInput | TeacherEscalationUpsertWithWhereUniqueWithoutTeacherInput[]
+    createMany?: TeacherEscalationCreateManyTeacherInputEnvelope
+    set?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    disconnect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    delete?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    connect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    update?: TeacherEscalationUpdateWithWhereUniqueWithoutTeacherInput | TeacherEscalationUpdateWithWhereUniqueWithoutTeacherInput[]
+    updateMany?: TeacherEscalationUpdateManyWithWhereWithoutTeacherInput | TeacherEscalationUpdateManyWithWhereWithoutTeacherInput[]
+    deleteMany?: TeacherEscalationScalarWhereInput | TeacherEscalationScalarWhereInput[]
+  }
+
+  export type TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput = {
+    create?: XOR<TeacherCorrectionRequestCreateWithoutTeacherInput, TeacherCorrectionRequestUncheckedCreateWithoutTeacherInput> | TeacherCorrectionRequestCreateWithoutTeacherInput[] | TeacherCorrectionRequestUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherCorrectionRequestCreateOrConnectWithoutTeacherInput | TeacherCorrectionRequestCreateOrConnectWithoutTeacherInput[]
+    upsert?: TeacherCorrectionRequestUpsertWithWhereUniqueWithoutTeacherInput | TeacherCorrectionRequestUpsertWithWhereUniqueWithoutTeacherInput[]
+    createMany?: TeacherCorrectionRequestCreateManyTeacherInputEnvelope
+    set?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+    disconnect?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+    delete?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+    connect?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+    update?: TeacherCorrectionRequestUpdateWithWhereUniqueWithoutTeacherInput | TeacherCorrectionRequestUpdateWithWhereUniqueWithoutTeacherInput[]
+    updateMany?: TeacherCorrectionRequestUpdateManyWithWhereWithoutTeacherInput | TeacherCorrectionRequestUpdateManyWithWhereWithoutTeacherInput[]
+    deleteMany?: TeacherCorrectionRequestScalarWhereInput | TeacherCorrectionRequestScalarWhereInput[]
+  }
+
+  export type TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput = {
+    create?: XOR<TeacherAccountabilityAuditLogCreateWithoutTeacherInput, TeacherAccountabilityAuditLogUncheckedCreateWithoutTeacherInput> | TeacherAccountabilityAuditLogCreateWithoutTeacherInput[] | TeacherAccountabilityAuditLogUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherAccountabilityAuditLogCreateOrConnectWithoutTeacherInput | TeacherAccountabilityAuditLogCreateOrConnectWithoutTeacherInput[]
+    upsert?: TeacherAccountabilityAuditLogUpsertWithWhereUniqueWithoutTeacherInput | TeacherAccountabilityAuditLogUpsertWithWhereUniqueWithoutTeacherInput[]
+    createMany?: TeacherAccountabilityAuditLogCreateManyTeacherInputEnvelope
+    set?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+    disconnect?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+    delete?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+    connect?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+    update?: TeacherAccountabilityAuditLogUpdateWithWhereUniqueWithoutTeacherInput | TeacherAccountabilityAuditLogUpdateWithWhereUniqueWithoutTeacherInput[]
+    updateMany?: TeacherAccountabilityAuditLogUpdateManyWithWhereWithoutTeacherInput | TeacherAccountabilityAuditLogUpdateManyWithWhereWithoutTeacherInput[]
+    deleteMany?: TeacherAccountabilityAuditLogScalarWhereInput | TeacherAccountabilityAuditLogScalarWhereInput[]
+  }
+
   export type SubjectUncheckedUpdateManyWithoutTeachersNestedInput = {
     create?: XOR<SubjectCreateWithoutTeachersInput, SubjectUncheckedCreateWithoutTeachersInput> | SubjectCreateWithoutTeachersInput[] | SubjectUncheckedCreateWithoutTeachersInput[]
     connectOrCreate?: SubjectCreateOrConnectWithoutTeachersInput | SubjectCreateOrConnectWithoutTeachersInput[]
@@ -88894,6 +98037,76 @@ export namespace Prisma {
     update?: SyllabusTopicProgressUpdateWithWhereUniqueWithoutTeacherInput | SyllabusTopicProgressUpdateWithWhereUniqueWithoutTeacherInput[]
     updateMany?: SyllabusTopicProgressUpdateManyWithWhereWithoutTeacherInput | SyllabusTopicProgressUpdateManyWithWhereWithoutTeacherInput[]
     deleteMany?: SyllabusTopicProgressScalarWhereInput | SyllabusTopicProgressScalarWhereInput[]
+  }
+
+  export type TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput = {
+    create?: XOR<TeacherObligationCreateWithoutTeacherInput, TeacherObligationUncheckedCreateWithoutTeacherInput> | TeacherObligationCreateWithoutTeacherInput[] | TeacherObligationUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherObligationCreateOrConnectWithoutTeacherInput | TeacherObligationCreateOrConnectWithoutTeacherInput[]
+    upsert?: TeacherObligationUpsertWithWhereUniqueWithoutTeacherInput | TeacherObligationUpsertWithWhereUniqueWithoutTeacherInput[]
+    createMany?: TeacherObligationCreateManyTeacherInputEnvelope
+    set?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+    disconnect?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+    delete?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+    connect?: TeacherObligationWhereUniqueInput | TeacherObligationWhereUniqueInput[]
+    update?: TeacherObligationUpdateWithWhereUniqueWithoutTeacherInput | TeacherObligationUpdateWithWhereUniqueWithoutTeacherInput[]
+    updateMany?: TeacherObligationUpdateManyWithWhereWithoutTeacherInput | TeacherObligationUpdateManyWithWhereWithoutTeacherInput[]
+    deleteMany?: TeacherObligationScalarWhereInput | TeacherObligationScalarWhereInput[]
+  }
+
+  export type TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput = {
+    create?: XOR<TeacherReminderCreateWithoutTeacherInput, TeacherReminderUncheckedCreateWithoutTeacherInput> | TeacherReminderCreateWithoutTeacherInput[] | TeacherReminderUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherReminderCreateOrConnectWithoutTeacherInput | TeacherReminderCreateOrConnectWithoutTeacherInput[]
+    upsert?: TeacherReminderUpsertWithWhereUniqueWithoutTeacherInput | TeacherReminderUpsertWithWhereUniqueWithoutTeacherInput[]
+    createMany?: TeacherReminderCreateManyTeacherInputEnvelope
+    set?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    disconnect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    delete?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    connect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    update?: TeacherReminderUpdateWithWhereUniqueWithoutTeacherInput | TeacherReminderUpdateWithWhereUniqueWithoutTeacherInput[]
+    updateMany?: TeacherReminderUpdateManyWithWhereWithoutTeacherInput | TeacherReminderUpdateManyWithWhereWithoutTeacherInput[]
+    deleteMany?: TeacherReminderScalarWhereInput | TeacherReminderScalarWhereInput[]
+  }
+
+  export type TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput = {
+    create?: XOR<TeacherEscalationCreateWithoutTeacherInput, TeacherEscalationUncheckedCreateWithoutTeacherInput> | TeacherEscalationCreateWithoutTeacherInput[] | TeacherEscalationUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherEscalationCreateOrConnectWithoutTeacherInput | TeacherEscalationCreateOrConnectWithoutTeacherInput[]
+    upsert?: TeacherEscalationUpsertWithWhereUniqueWithoutTeacherInput | TeacherEscalationUpsertWithWhereUniqueWithoutTeacherInput[]
+    createMany?: TeacherEscalationCreateManyTeacherInputEnvelope
+    set?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    disconnect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    delete?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    connect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    update?: TeacherEscalationUpdateWithWhereUniqueWithoutTeacherInput | TeacherEscalationUpdateWithWhereUniqueWithoutTeacherInput[]
+    updateMany?: TeacherEscalationUpdateManyWithWhereWithoutTeacherInput | TeacherEscalationUpdateManyWithWhereWithoutTeacherInput[]
+    deleteMany?: TeacherEscalationScalarWhereInput | TeacherEscalationScalarWhereInput[]
+  }
+
+  export type TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput = {
+    create?: XOR<TeacherCorrectionRequestCreateWithoutTeacherInput, TeacherCorrectionRequestUncheckedCreateWithoutTeacherInput> | TeacherCorrectionRequestCreateWithoutTeacherInput[] | TeacherCorrectionRequestUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherCorrectionRequestCreateOrConnectWithoutTeacherInput | TeacherCorrectionRequestCreateOrConnectWithoutTeacherInput[]
+    upsert?: TeacherCorrectionRequestUpsertWithWhereUniqueWithoutTeacherInput | TeacherCorrectionRequestUpsertWithWhereUniqueWithoutTeacherInput[]
+    createMany?: TeacherCorrectionRequestCreateManyTeacherInputEnvelope
+    set?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+    disconnect?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+    delete?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+    connect?: TeacherCorrectionRequestWhereUniqueInput | TeacherCorrectionRequestWhereUniqueInput[]
+    update?: TeacherCorrectionRequestUpdateWithWhereUniqueWithoutTeacherInput | TeacherCorrectionRequestUpdateWithWhereUniqueWithoutTeacherInput[]
+    updateMany?: TeacherCorrectionRequestUpdateManyWithWhereWithoutTeacherInput | TeacherCorrectionRequestUpdateManyWithWhereWithoutTeacherInput[]
+    deleteMany?: TeacherCorrectionRequestScalarWhereInput | TeacherCorrectionRequestScalarWhereInput[]
+  }
+
+  export type TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput = {
+    create?: XOR<TeacherAccountabilityAuditLogCreateWithoutTeacherInput, TeacherAccountabilityAuditLogUncheckedCreateWithoutTeacherInput> | TeacherAccountabilityAuditLogCreateWithoutTeacherInput[] | TeacherAccountabilityAuditLogUncheckedCreateWithoutTeacherInput[]
+    connectOrCreate?: TeacherAccountabilityAuditLogCreateOrConnectWithoutTeacherInput | TeacherAccountabilityAuditLogCreateOrConnectWithoutTeacherInput[]
+    upsert?: TeacherAccountabilityAuditLogUpsertWithWhereUniqueWithoutTeacherInput | TeacherAccountabilityAuditLogUpsertWithWhereUniqueWithoutTeacherInput[]
+    createMany?: TeacherAccountabilityAuditLogCreateManyTeacherInputEnvelope
+    set?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+    disconnect?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+    delete?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+    connect?: TeacherAccountabilityAuditLogWhereUniqueInput | TeacherAccountabilityAuditLogWhereUniqueInput[]
+    update?: TeacherAccountabilityAuditLogUpdateWithWhereUniqueWithoutTeacherInput | TeacherAccountabilityAuditLogUpdateWithWhereUniqueWithoutTeacherInput[]
+    updateMany?: TeacherAccountabilityAuditLogUpdateManyWithWhereWithoutTeacherInput | TeacherAccountabilityAuditLogUpdateManyWithWhereWithoutTeacherInput[]
+    deleteMany?: TeacherAccountabilityAuditLogScalarWhereInput | TeacherAccountabilityAuditLogScalarWhereInput[]
   }
 
   export type SchoolCreateNestedOneWithoutParentsInput = {
@@ -89195,6 +98408,288 @@ export namespace Prisma {
     upsert?: SchoolUpsertWithoutAccountabilitySettingsInput
     connect?: SchoolWhereUniqueInput
     update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutAccountabilitySettingsInput, SchoolUpdateWithoutAccountabilitySettingsInput>, SchoolUncheckedUpdateWithoutAccountabilitySettingsInput>
+  }
+
+  export type SchoolCreateNestedOneWithoutTeacherObligationsInput = {
+    create?: XOR<SchoolCreateWithoutTeacherObligationsInput, SchoolUncheckedCreateWithoutTeacherObligationsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutTeacherObligationsInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type TeacherCreateNestedOneWithoutAccountabilityObligationsInput = {
+    create?: XOR<TeacherCreateWithoutAccountabilityObligationsInput, TeacherUncheckedCreateWithoutAccountabilityObligationsInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutAccountabilityObligationsInput
+    connect?: TeacherWhereUniqueInput
+  }
+
+  export type TeacherReminderCreateNestedManyWithoutObligationInput = {
+    create?: XOR<TeacherReminderCreateWithoutObligationInput, TeacherReminderUncheckedCreateWithoutObligationInput> | TeacherReminderCreateWithoutObligationInput[] | TeacherReminderUncheckedCreateWithoutObligationInput[]
+    connectOrCreate?: TeacherReminderCreateOrConnectWithoutObligationInput | TeacherReminderCreateOrConnectWithoutObligationInput[]
+    createMany?: TeacherReminderCreateManyObligationInputEnvelope
+    connect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+  }
+
+  export type TeacherEscalationCreateNestedManyWithoutObligationInput = {
+    create?: XOR<TeacherEscalationCreateWithoutObligationInput, TeacherEscalationUncheckedCreateWithoutObligationInput> | TeacherEscalationCreateWithoutObligationInput[] | TeacherEscalationUncheckedCreateWithoutObligationInput[]
+    connectOrCreate?: TeacherEscalationCreateOrConnectWithoutObligationInput | TeacherEscalationCreateOrConnectWithoutObligationInput[]
+    createMany?: TeacherEscalationCreateManyObligationInputEnvelope
+    connect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+  }
+
+  export type TeacherReminderUncheckedCreateNestedManyWithoutObligationInput = {
+    create?: XOR<TeacherReminderCreateWithoutObligationInput, TeacherReminderUncheckedCreateWithoutObligationInput> | TeacherReminderCreateWithoutObligationInput[] | TeacherReminderUncheckedCreateWithoutObligationInput[]
+    connectOrCreate?: TeacherReminderCreateOrConnectWithoutObligationInput | TeacherReminderCreateOrConnectWithoutObligationInput[]
+    createMany?: TeacherReminderCreateManyObligationInputEnvelope
+    connect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+  }
+
+  export type TeacherEscalationUncheckedCreateNestedManyWithoutObligationInput = {
+    create?: XOR<TeacherEscalationCreateWithoutObligationInput, TeacherEscalationUncheckedCreateWithoutObligationInput> | TeacherEscalationCreateWithoutObligationInput[] | TeacherEscalationUncheckedCreateWithoutObligationInput[]
+    connectOrCreate?: TeacherEscalationCreateOrConnectWithoutObligationInput | TeacherEscalationCreateOrConnectWithoutObligationInput[]
+    createMany?: TeacherEscalationCreateManyObligationInputEnvelope
+    connect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+  }
+
+  export type EnumTeacherObligationTypeFieldUpdateOperationsInput = {
+    set?: $Enums.TeacherObligationType
+  }
+
+  export type EnumTeacherObligationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.TeacherObligationStatus
+  }
+
+  export type EnumTeacherObligationPriorityFieldUpdateOperationsInput = {
+    set?: $Enums.TeacherObligationPriority
+  }
+
+  export type SchoolUpdateOneRequiredWithoutTeacherObligationsNestedInput = {
+    create?: XOR<SchoolCreateWithoutTeacherObligationsInput, SchoolUncheckedCreateWithoutTeacherObligationsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutTeacherObligationsInput
+    upsert?: SchoolUpsertWithoutTeacherObligationsInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutTeacherObligationsInput, SchoolUpdateWithoutTeacherObligationsInput>, SchoolUncheckedUpdateWithoutTeacherObligationsInput>
+  }
+
+  export type TeacherUpdateOneRequiredWithoutAccountabilityObligationsNestedInput = {
+    create?: XOR<TeacherCreateWithoutAccountabilityObligationsInput, TeacherUncheckedCreateWithoutAccountabilityObligationsInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutAccountabilityObligationsInput
+    upsert?: TeacherUpsertWithoutAccountabilityObligationsInput
+    connect?: TeacherWhereUniqueInput
+    update?: XOR<XOR<TeacherUpdateToOneWithWhereWithoutAccountabilityObligationsInput, TeacherUpdateWithoutAccountabilityObligationsInput>, TeacherUncheckedUpdateWithoutAccountabilityObligationsInput>
+  }
+
+  export type TeacherReminderUpdateManyWithoutObligationNestedInput = {
+    create?: XOR<TeacherReminderCreateWithoutObligationInput, TeacherReminderUncheckedCreateWithoutObligationInput> | TeacherReminderCreateWithoutObligationInput[] | TeacherReminderUncheckedCreateWithoutObligationInput[]
+    connectOrCreate?: TeacherReminderCreateOrConnectWithoutObligationInput | TeacherReminderCreateOrConnectWithoutObligationInput[]
+    upsert?: TeacherReminderUpsertWithWhereUniqueWithoutObligationInput | TeacherReminderUpsertWithWhereUniqueWithoutObligationInput[]
+    createMany?: TeacherReminderCreateManyObligationInputEnvelope
+    set?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    disconnect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    delete?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    connect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    update?: TeacherReminderUpdateWithWhereUniqueWithoutObligationInput | TeacherReminderUpdateWithWhereUniqueWithoutObligationInput[]
+    updateMany?: TeacherReminderUpdateManyWithWhereWithoutObligationInput | TeacherReminderUpdateManyWithWhereWithoutObligationInput[]
+    deleteMany?: TeacherReminderScalarWhereInput | TeacherReminderScalarWhereInput[]
+  }
+
+  export type TeacherEscalationUpdateManyWithoutObligationNestedInput = {
+    create?: XOR<TeacherEscalationCreateWithoutObligationInput, TeacherEscalationUncheckedCreateWithoutObligationInput> | TeacherEscalationCreateWithoutObligationInput[] | TeacherEscalationUncheckedCreateWithoutObligationInput[]
+    connectOrCreate?: TeacherEscalationCreateOrConnectWithoutObligationInput | TeacherEscalationCreateOrConnectWithoutObligationInput[]
+    upsert?: TeacherEscalationUpsertWithWhereUniqueWithoutObligationInput | TeacherEscalationUpsertWithWhereUniqueWithoutObligationInput[]
+    createMany?: TeacherEscalationCreateManyObligationInputEnvelope
+    set?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    disconnect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    delete?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    connect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    update?: TeacherEscalationUpdateWithWhereUniqueWithoutObligationInput | TeacherEscalationUpdateWithWhereUniqueWithoutObligationInput[]
+    updateMany?: TeacherEscalationUpdateManyWithWhereWithoutObligationInput | TeacherEscalationUpdateManyWithWhereWithoutObligationInput[]
+    deleteMany?: TeacherEscalationScalarWhereInput | TeacherEscalationScalarWhereInput[]
+  }
+
+  export type TeacherReminderUncheckedUpdateManyWithoutObligationNestedInput = {
+    create?: XOR<TeacherReminderCreateWithoutObligationInput, TeacherReminderUncheckedCreateWithoutObligationInput> | TeacherReminderCreateWithoutObligationInput[] | TeacherReminderUncheckedCreateWithoutObligationInput[]
+    connectOrCreate?: TeacherReminderCreateOrConnectWithoutObligationInput | TeacherReminderCreateOrConnectWithoutObligationInput[]
+    upsert?: TeacherReminderUpsertWithWhereUniqueWithoutObligationInput | TeacherReminderUpsertWithWhereUniqueWithoutObligationInput[]
+    createMany?: TeacherReminderCreateManyObligationInputEnvelope
+    set?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    disconnect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    delete?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    connect?: TeacherReminderWhereUniqueInput | TeacherReminderWhereUniqueInput[]
+    update?: TeacherReminderUpdateWithWhereUniqueWithoutObligationInput | TeacherReminderUpdateWithWhereUniqueWithoutObligationInput[]
+    updateMany?: TeacherReminderUpdateManyWithWhereWithoutObligationInput | TeacherReminderUpdateManyWithWhereWithoutObligationInput[]
+    deleteMany?: TeacherReminderScalarWhereInput | TeacherReminderScalarWhereInput[]
+  }
+
+  export type TeacherEscalationUncheckedUpdateManyWithoutObligationNestedInput = {
+    create?: XOR<TeacherEscalationCreateWithoutObligationInput, TeacherEscalationUncheckedCreateWithoutObligationInput> | TeacherEscalationCreateWithoutObligationInput[] | TeacherEscalationUncheckedCreateWithoutObligationInput[]
+    connectOrCreate?: TeacherEscalationCreateOrConnectWithoutObligationInput | TeacherEscalationCreateOrConnectWithoutObligationInput[]
+    upsert?: TeacherEscalationUpsertWithWhereUniqueWithoutObligationInput | TeacherEscalationUpsertWithWhereUniqueWithoutObligationInput[]
+    createMany?: TeacherEscalationCreateManyObligationInputEnvelope
+    set?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    disconnect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    delete?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    connect?: TeacherEscalationWhereUniqueInput | TeacherEscalationWhereUniqueInput[]
+    update?: TeacherEscalationUpdateWithWhereUniqueWithoutObligationInput | TeacherEscalationUpdateWithWhereUniqueWithoutObligationInput[]
+    updateMany?: TeacherEscalationUpdateManyWithWhereWithoutObligationInput | TeacherEscalationUpdateManyWithWhereWithoutObligationInput[]
+    deleteMany?: TeacherEscalationScalarWhereInput | TeacherEscalationScalarWhereInput[]
+  }
+
+  export type SchoolCreateNestedOneWithoutTeacherRemindersInput = {
+    create?: XOR<SchoolCreateWithoutTeacherRemindersInput, SchoolUncheckedCreateWithoutTeacherRemindersInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutTeacherRemindersInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type TeacherCreateNestedOneWithoutAccountabilityRemindersInput = {
+    create?: XOR<TeacherCreateWithoutAccountabilityRemindersInput, TeacherUncheckedCreateWithoutAccountabilityRemindersInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutAccountabilityRemindersInput
+    connect?: TeacherWhereUniqueInput
+  }
+
+  export type TeacherObligationCreateNestedOneWithoutRemindersInput = {
+    create?: XOR<TeacherObligationCreateWithoutRemindersInput, TeacherObligationUncheckedCreateWithoutRemindersInput>
+    connectOrCreate?: TeacherObligationCreateOrConnectWithoutRemindersInput
+    connect?: TeacherObligationWhereUniqueInput
+  }
+
+  export type EnumTeacherReminderStatusFieldUpdateOperationsInput = {
+    set?: $Enums.TeacherReminderStatus
+  }
+
+  export type SchoolUpdateOneRequiredWithoutTeacherRemindersNestedInput = {
+    create?: XOR<SchoolCreateWithoutTeacherRemindersInput, SchoolUncheckedCreateWithoutTeacherRemindersInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutTeacherRemindersInput
+    upsert?: SchoolUpsertWithoutTeacherRemindersInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutTeacherRemindersInput, SchoolUpdateWithoutTeacherRemindersInput>, SchoolUncheckedUpdateWithoutTeacherRemindersInput>
+  }
+
+  export type TeacherUpdateOneRequiredWithoutAccountabilityRemindersNestedInput = {
+    create?: XOR<TeacherCreateWithoutAccountabilityRemindersInput, TeacherUncheckedCreateWithoutAccountabilityRemindersInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutAccountabilityRemindersInput
+    upsert?: TeacherUpsertWithoutAccountabilityRemindersInput
+    connect?: TeacherWhereUniqueInput
+    update?: XOR<XOR<TeacherUpdateToOneWithWhereWithoutAccountabilityRemindersInput, TeacherUpdateWithoutAccountabilityRemindersInput>, TeacherUncheckedUpdateWithoutAccountabilityRemindersInput>
+  }
+
+  export type TeacherObligationUpdateOneRequiredWithoutRemindersNestedInput = {
+    create?: XOR<TeacherObligationCreateWithoutRemindersInput, TeacherObligationUncheckedCreateWithoutRemindersInput>
+    connectOrCreate?: TeacherObligationCreateOrConnectWithoutRemindersInput
+    upsert?: TeacherObligationUpsertWithoutRemindersInput
+    connect?: TeacherObligationWhereUniqueInput
+    update?: XOR<XOR<TeacherObligationUpdateToOneWithWhereWithoutRemindersInput, TeacherObligationUpdateWithoutRemindersInput>, TeacherObligationUncheckedUpdateWithoutRemindersInput>
+  }
+
+  export type SchoolCreateNestedOneWithoutTeacherEscalationsInput = {
+    create?: XOR<SchoolCreateWithoutTeacherEscalationsInput, SchoolUncheckedCreateWithoutTeacherEscalationsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutTeacherEscalationsInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type TeacherCreateNestedOneWithoutAccountabilityEscalationsInput = {
+    create?: XOR<TeacherCreateWithoutAccountabilityEscalationsInput, TeacherUncheckedCreateWithoutAccountabilityEscalationsInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutAccountabilityEscalationsInput
+    connect?: TeacherWhereUniqueInput
+  }
+
+  export type TeacherObligationCreateNestedOneWithoutEscalationsInput = {
+    create?: XOR<TeacherObligationCreateWithoutEscalationsInput, TeacherObligationUncheckedCreateWithoutEscalationsInput>
+    connectOrCreate?: TeacherObligationCreateOrConnectWithoutEscalationsInput
+    connect?: TeacherObligationWhereUniqueInput
+  }
+
+  export type EnumTeacherEscalationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.TeacherEscalationStatus
+  }
+
+  export type SchoolUpdateOneRequiredWithoutTeacherEscalationsNestedInput = {
+    create?: XOR<SchoolCreateWithoutTeacherEscalationsInput, SchoolUncheckedCreateWithoutTeacherEscalationsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutTeacherEscalationsInput
+    upsert?: SchoolUpsertWithoutTeacherEscalationsInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutTeacherEscalationsInput, SchoolUpdateWithoutTeacherEscalationsInput>, SchoolUncheckedUpdateWithoutTeacherEscalationsInput>
+  }
+
+  export type TeacherUpdateOneRequiredWithoutAccountabilityEscalationsNestedInput = {
+    create?: XOR<TeacherCreateWithoutAccountabilityEscalationsInput, TeacherUncheckedCreateWithoutAccountabilityEscalationsInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutAccountabilityEscalationsInput
+    upsert?: TeacherUpsertWithoutAccountabilityEscalationsInput
+    connect?: TeacherWhereUniqueInput
+    update?: XOR<XOR<TeacherUpdateToOneWithWhereWithoutAccountabilityEscalationsInput, TeacherUpdateWithoutAccountabilityEscalationsInput>, TeacherUncheckedUpdateWithoutAccountabilityEscalationsInput>
+  }
+
+  export type TeacherObligationUpdateOneRequiredWithoutEscalationsNestedInput = {
+    create?: XOR<TeacherObligationCreateWithoutEscalationsInput, TeacherObligationUncheckedCreateWithoutEscalationsInput>
+    connectOrCreate?: TeacherObligationCreateOrConnectWithoutEscalationsInput
+    upsert?: TeacherObligationUpsertWithoutEscalationsInput
+    connect?: TeacherObligationWhereUniqueInput
+    update?: XOR<XOR<TeacherObligationUpdateToOneWithWhereWithoutEscalationsInput, TeacherObligationUpdateWithoutEscalationsInput>, TeacherObligationUncheckedUpdateWithoutEscalationsInput>
+  }
+
+  export type SchoolCreateNestedOneWithoutTeacherCorrectionsInput = {
+    create?: XOR<SchoolCreateWithoutTeacherCorrectionsInput, SchoolUncheckedCreateWithoutTeacherCorrectionsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutTeacherCorrectionsInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type TeacherCreateNestedOneWithoutCorrectionRequestsInput = {
+    create?: XOR<TeacherCreateWithoutCorrectionRequestsInput, TeacherUncheckedCreateWithoutCorrectionRequestsInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutCorrectionRequestsInput
+    connect?: TeacherWhereUniqueInput
+  }
+
+  export type EnumTeacherCorrectionRequestStatusFieldUpdateOperationsInput = {
+    set?: $Enums.TeacherCorrectionRequestStatus
+  }
+
+  export type SchoolUpdateOneRequiredWithoutTeacherCorrectionsNestedInput = {
+    create?: XOR<SchoolCreateWithoutTeacherCorrectionsInput, SchoolUncheckedCreateWithoutTeacherCorrectionsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutTeacherCorrectionsInput
+    upsert?: SchoolUpsertWithoutTeacherCorrectionsInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutTeacherCorrectionsInput, SchoolUpdateWithoutTeacherCorrectionsInput>, SchoolUncheckedUpdateWithoutTeacherCorrectionsInput>
+  }
+
+  export type TeacherUpdateOneRequiredWithoutCorrectionRequestsNestedInput = {
+    create?: XOR<TeacherCreateWithoutCorrectionRequestsInput, TeacherUncheckedCreateWithoutCorrectionRequestsInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutCorrectionRequestsInput
+    upsert?: TeacherUpsertWithoutCorrectionRequestsInput
+    connect?: TeacherWhereUniqueInput
+    update?: XOR<XOR<TeacherUpdateToOneWithWhereWithoutCorrectionRequestsInput, TeacherUpdateWithoutCorrectionRequestsInput>, TeacherUncheckedUpdateWithoutCorrectionRequestsInput>
+  }
+
+  export type SchoolCreateNestedOneWithoutTeacherAccountabilityAuditLogsInput = {
+    create?: XOR<SchoolCreateWithoutTeacherAccountabilityAuditLogsInput, SchoolUncheckedCreateWithoutTeacherAccountabilityAuditLogsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutTeacherAccountabilityAuditLogsInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type TeacherCreateNestedOneWithoutAccountabilityAuditLogsInput = {
+    create?: XOR<TeacherCreateWithoutAccountabilityAuditLogsInput, TeacherUncheckedCreateWithoutAccountabilityAuditLogsInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutAccountabilityAuditLogsInput
+    connect?: TeacherWhereUniqueInput
+  }
+
+  export type EnumTeacherAccountabilityAuditActionFieldUpdateOperationsInput = {
+    set?: $Enums.TeacherAccountabilityAuditAction
+  }
+
+  export type SchoolUpdateOneRequiredWithoutTeacherAccountabilityAuditLogsNestedInput = {
+    create?: XOR<SchoolCreateWithoutTeacherAccountabilityAuditLogsInput, SchoolUncheckedCreateWithoutTeacherAccountabilityAuditLogsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutTeacherAccountabilityAuditLogsInput
+    upsert?: SchoolUpsertWithoutTeacherAccountabilityAuditLogsInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutTeacherAccountabilityAuditLogsInput, SchoolUpdateWithoutTeacherAccountabilityAuditLogsInput>, SchoolUncheckedUpdateWithoutTeacherAccountabilityAuditLogsInput>
+  }
+
+  export type TeacherUpdateOneWithoutAccountabilityAuditLogsNestedInput = {
+    create?: XOR<TeacherCreateWithoutAccountabilityAuditLogsInput, TeacherUncheckedCreateWithoutAccountabilityAuditLogsInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutAccountabilityAuditLogsInput
+    upsert?: TeacherUpsertWithoutAccountabilityAuditLogsInput
+    disconnect?: TeacherWhereInput | boolean
+    delete?: TeacherWhereInput | boolean
+    connect?: TeacherWhereUniqueInput
+    update?: XOR<XOR<TeacherUpdateToOneWithWhereWithoutAccountabilityAuditLogsInput, TeacherUpdateWithoutAccountabilityAuditLogsInput>, TeacherUncheckedUpdateWithoutAccountabilityAuditLogsInput>
   }
 
   export type SchoolCreateNestedOneWithoutParentPreferencesInput = {
@@ -92899,6 +102394,148 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type NestedEnumTeacherObligationTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherObligationType | EnumTeacherObligationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherObligationType[] | ListEnumTeacherObligationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherObligationType[] | ListEnumTeacherObligationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherObligationTypeFilter<$PrismaModel> | $Enums.TeacherObligationType
+  }
+
+  export type NestedEnumTeacherObligationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherObligationStatus | EnumTeacherObligationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherObligationStatus[] | ListEnumTeacherObligationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherObligationStatus[] | ListEnumTeacherObligationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherObligationStatusFilter<$PrismaModel> | $Enums.TeacherObligationStatus
+  }
+
+  export type NestedEnumTeacherObligationPriorityFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherObligationPriority | EnumTeacherObligationPriorityFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherObligationPriority[] | ListEnumTeacherObligationPriorityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherObligationPriority[] | ListEnumTeacherObligationPriorityFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherObligationPriorityFilter<$PrismaModel> | $Enums.TeacherObligationPriority
+  }
+
+  export type NestedEnumTeacherObligationTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherObligationType | EnumTeacherObligationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherObligationType[] | ListEnumTeacherObligationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherObligationType[] | ListEnumTeacherObligationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherObligationTypeWithAggregatesFilter<$PrismaModel> | $Enums.TeacherObligationType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTeacherObligationTypeFilter<$PrismaModel>
+    _max?: NestedEnumTeacherObligationTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumTeacherObligationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherObligationStatus | EnumTeacherObligationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherObligationStatus[] | ListEnumTeacherObligationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherObligationStatus[] | ListEnumTeacherObligationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherObligationStatusWithAggregatesFilter<$PrismaModel> | $Enums.TeacherObligationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTeacherObligationStatusFilter<$PrismaModel>
+    _max?: NestedEnumTeacherObligationStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumTeacherObligationPriorityWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherObligationPriority | EnumTeacherObligationPriorityFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherObligationPriority[] | ListEnumTeacherObligationPriorityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherObligationPriority[] | ListEnumTeacherObligationPriorityFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherObligationPriorityWithAggregatesFilter<$PrismaModel> | $Enums.TeacherObligationPriority
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTeacherObligationPriorityFilter<$PrismaModel>
+    _max?: NestedEnumTeacherObligationPriorityFilter<$PrismaModel>
+  }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedEnumTeacherReminderStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherReminderStatus | EnumTeacherReminderStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherReminderStatus[] | ListEnumTeacherReminderStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherReminderStatus[] | ListEnumTeacherReminderStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherReminderStatusFilter<$PrismaModel> | $Enums.TeacherReminderStatus
+  }
+
+  export type NestedEnumTeacherReminderStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherReminderStatus | EnumTeacherReminderStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherReminderStatus[] | ListEnumTeacherReminderStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherReminderStatus[] | ListEnumTeacherReminderStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherReminderStatusWithAggregatesFilter<$PrismaModel> | $Enums.TeacherReminderStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTeacherReminderStatusFilter<$PrismaModel>
+    _max?: NestedEnumTeacherReminderStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumTeacherEscalationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherEscalationStatus | EnumTeacherEscalationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherEscalationStatus[] | ListEnumTeacherEscalationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherEscalationStatus[] | ListEnumTeacherEscalationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherEscalationStatusFilter<$PrismaModel> | $Enums.TeacherEscalationStatus
+  }
+
+  export type NestedEnumTeacherEscalationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherEscalationStatus | EnumTeacherEscalationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherEscalationStatus[] | ListEnumTeacherEscalationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherEscalationStatus[] | ListEnumTeacherEscalationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherEscalationStatusWithAggregatesFilter<$PrismaModel> | $Enums.TeacherEscalationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTeacherEscalationStatusFilter<$PrismaModel>
+    _max?: NestedEnumTeacherEscalationStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumTeacherCorrectionRequestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherCorrectionRequestStatus | EnumTeacherCorrectionRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherCorrectionRequestStatus[] | ListEnumTeacherCorrectionRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherCorrectionRequestStatus[] | ListEnumTeacherCorrectionRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherCorrectionRequestStatusFilter<$PrismaModel> | $Enums.TeacherCorrectionRequestStatus
+  }
+
+  export type NestedEnumTeacherCorrectionRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherCorrectionRequestStatus | EnumTeacherCorrectionRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherCorrectionRequestStatus[] | ListEnumTeacherCorrectionRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherCorrectionRequestStatus[] | ListEnumTeacherCorrectionRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherCorrectionRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.TeacherCorrectionRequestStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTeacherCorrectionRequestStatusFilter<$PrismaModel>
+    _max?: NestedEnumTeacherCorrectionRequestStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumTeacherAccountabilityAuditActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherAccountabilityAuditAction | EnumTeacherAccountabilityAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherAccountabilityAuditAction[] | ListEnumTeacherAccountabilityAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherAccountabilityAuditAction[] | ListEnumTeacherAccountabilityAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherAccountabilityAuditActionFilter<$PrismaModel> | $Enums.TeacherAccountabilityAuditAction
+  }
+
+  export type NestedEnumTeacherAccountabilityAuditActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherAccountabilityAuditAction | EnumTeacherAccountabilityAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherAccountabilityAuditAction[] | ListEnumTeacherAccountabilityAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherAccountabilityAuditAction[] | ListEnumTeacherAccountabilityAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherAccountabilityAuditActionWithAggregatesFilter<$PrismaModel> | $Enums.TeacherAccountabilityAuditAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTeacherAccountabilityAuditActionFilter<$PrismaModel>
+    _max?: NestedEnumTeacherAccountabilityAuditActionFilter<$PrismaModel>
+  }
+
   export type NestedEnumParentDeliveryChannelFilter<$PrismaModel = never> = {
     equals?: $Enums.ParentDeliveryChannel | EnumParentDeliveryChannelFieldRefInput<$PrismaModel>
     in?: $Enums.ParentDeliveryChannel[] | ListEnumParentDeliveryChannelFieldRefInput<$PrismaModel>
@@ -92948,29 +102585,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumParentNotificationPriorityFilter<$PrismaModel>
     _max?: NestedEnumParentNotificationPriorityFilter<$PrismaModel>
-  }
-  export type NestedJsonNullableFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<NestedJsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
-
-  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type NestedEnumParentDeliveryStatusFilter<$PrismaModel = never> = {
@@ -93761,6 +103375,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutSchoolInput = {
@@ -93786,6 +103405,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutSchoolInput = {
@@ -95308,6 +104932,218 @@ export namespace Prisma {
   export type TeacherAccountabilitySettingCreateOrConnectWithoutSchoolInput = {
     where: TeacherAccountabilitySettingWhereUniqueInput
     create: XOR<TeacherAccountabilitySettingCreateWithoutSchoolInput, TeacherAccountabilitySettingUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type TeacherObligationCreateWithoutSchoolInput = {
+    id?: string
+    type: $Enums.TeacherObligationType
+    status?: $Enums.TeacherObligationStatus
+    priority?: $Enums.TeacherObligationPriority
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    title: string
+    description?: string | null
+    expectedAt: Date | string
+    completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teacher: TeacherCreateNestedOneWithoutAccountabilityObligationsInput
+    reminders?: TeacherReminderCreateNestedManyWithoutObligationInput
+    escalations?: TeacherEscalationCreateNestedManyWithoutObligationInput
+  }
+
+  export type TeacherObligationUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    type: $Enums.TeacherObligationType
+    status?: $Enums.TeacherObligationStatus
+    priority?: $Enums.TeacherObligationPriority
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    title: string
+    description?: string | null
+    expectedAt: Date | string
+    completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teacherId: string
+    reminders?: TeacherReminderUncheckedCreateNestedManyWithoutObligationInput
+    escalations?: TeacherEscalationUncheckedCreateNestedManyWithoutObligationInput
+  }
+
+  export type TeacherObligationCreateOrConnectWithoutSchoolInput = {
+    where: TeacherObligationWhereUniqueInput
+    create: XOR<TeacherObligationCreateWithoutSchoolInput, TeacherObligationUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type TeacherObligationCreateManySchoolInputEnvelope = {
+    data: TeacherObligationCreateManySchoolInput | TeacherObligationCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TeacherReminderCreateWithoutSchoolInput = {
+    id?: string
+    channel?: string
+    message: string
+    status?: $Enums.TeacherReminderStatus
+    scheduledAt?: Date | string | null
+    sentAt?: Date | string | null
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teacher: TeacherCreateNestedOneWithoutAccountabilityRemindersInput
+    obligation: TeacherObligationCreateNestedOneWithoutRemindersInput
+  }
+
+  export type TeacherReminderUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    channel?: string
+    message: string
+    status?: $Enums.TeacherReminderStatus
+    scheduledAt?: Date | string | null
+    sentAt?: Date | string | null
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teacherId: string
+    obligationId: string
+  }
+
+  export type TeacherReminderCreateOrConnectWithoutSchoolInput = {
+    where: TeacherReminderWhereUniqueInput
+    create: XOR<TeacherReminderCreateWithoutSchoolInput, TeacherReminderUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type TeacherReminderCreateManySchoolInputEnvelope = {
+    data: TeacherReminderCreateManySchoolInput | TeacherReminderCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TeacherEscalationCreateWithoutSchoolInput = {
+    id?: string
+    reason: string
+    status?: $Enums.TeacherEscalationStatus
+    escalatedAt?: Date | string
+    resolvedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teacher: TeacherCreateNestedOneWithoutAccountabilityEscalationsInput
+    obligation: TeacherObligationCreateNestedOneWithoutEscalationsInput
+  }
+
+  export type TeacherEscalationUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    reason: string
+    status?: $Enums.TeacherEscalationStatus
+    escalatedAt?: Date | string
+    resolvedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teacherId: string
+    obligationId: string
+  }
+
+  export type TeacherEscalationCreateOrConnectWithoutSchoolInput = {
+    where: TeacherEscalationWhereUniqueInput
+    create: XOR<TeacherEscalationCreateWithoutSchoolInput, TeacherEscalationUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type TeacherEscalationCreateManySchoolInputEnvelope = {
+    data: TeacherEscalationCreateManySchoolInput | TeacherEscalationCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TeacherCorrectionRequestCreateWithoutSchoolInput = {
+    id?: string
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    fieldName: string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason: string
+    evidenceUrl?: string | null
+    status?: $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teacher: TeacherCreateNestedOneWithoutCorrectionRequestsInput
+  }
+
+  export type TeacherCorrectionRequestUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    fieldName: string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason: string
+    evidenceUrl?: string | null
+    status?: $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teacherId: string
+  }
+
+  export type TeacherCorrectionRequestCreateOrConnectWithoutSchoolInput = {
+    where: TeacherCorrectionRequestWhereUniqueInput
+    create: XOR<TeacherCorrectionRequestCreateWithoutSchoolInput, TeacherCorrectionRequestUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type TeacherCorrectionRequestCreateManySchoolInputEnvelope = {
+    data: TeacherCorrectionRequestCreateManySchoolInput | TeacherCorrectionRequestCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TeacherAccountabilityAuditLogCreateWithoutSchoolInput = {
+    id?: string
+    action: $Enums.TeacherAccountabilityAuditAction
+    actorId?: string | null
+    actorRole?: string | null
+    sourceModel: string
+    sourceId: string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: string | null
+    createdAt?: Date | string
+    teacher?: TeacherCreateNestedOneWithoutAccountabilityAuditLogsInput
+  }
+
+  export type TeacherAccountabilityAuditLogUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    action: $Enums.TeacherAccountabilityAuditAction
+    actorId?: string | null
+    actorRole?: string | null
+    sourceModel: string
+    sourceId: string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: string | null
+    createdAt?: Date | string
+    teacherId?: string | null
+  }
+
+  export type TeacherAccountabilityAuditLogCreateOrConnectWithoutSchoolInput = {
+    where: TeacherAccountabilityAuditLogWhereUniqueInput
+    create: XOR<TeacherAccountabilityAuditLogCreateWithoutSchoolInput, TeacherAccountabilityAuditLogUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type TeacherAccountabilityAuditLogCreateManySchoolInputEnvelope = {
+    data: TeacherAccountabilityAuditLogCreateManySchoolInput | TeacherAccountabilityAuditLogCreateManySchoolInput[]
+    skipDuplicates?: boolean
   }
 
   export type ParentNotificationPreferenceCreateWithoutSchoolInput = {
@@ -96842,6 +106678,185 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TeacherObligationUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: TeacherObligationWhereUniqueInput
+    update: XOR<TeacherObligationUpdateWithoutSchoolInput, TeacherObligationUncheckedUpdateWithoutSchoolInput>
+    create: XOR<TeacherObligationCreateWithoutSchoolInput, TeacherObligationUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type TeacherObligationUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: TeacherObligationWhereUniqueInput
+    data: XOR<TeacherObligationUpdateWithoutSchoolInput, TeacherObligationUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type TeacherObligationUpdateManyWithWhereWithoutSchoolInput = {
+    where: TeacherObligationScalarWhereInput
+    data: XOR<TeacherObligationUpdateManyMutationInput, TeacherObligationUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type TeacherObligationScalarWhereInput = {
+    AND?: TeacherObligationScalarWhereInput | TeacherObligationScalarWhereInput[]
+    OR?: TeacherObligationScalarWhereInput[]
+    NOT?: TeacherObligationScalarWhereInput | TeacherObligationScalarWhereInput[]
+    id?: StringFilter<"TeacherObligation"> | string
+    type?: EnumTeacherObligationTypeFilter<"TeacherObligation"> | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFilter<"TeacherObligation"> | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFilter<"TeacherObligation"> | $Enums.TeacherObligationPriority
+    sourceModel?: StringFilter<"TeacherObligation"> | string
+    sourceId?: StringFilter<"TeacherObligation"> | string
+    sourceKey?: StringFilter<"TeacherObligation"> | string
+    title?: StringFilter<"TeacherObligation"> | string
+    description?: StringNullableFilter<"TeacherObligation"> | string | null
+    expectedAt?: DateTimeFilter<"TeacherObligation"> | Date | string
+    completedAt?: DateTimeNullableFilter<"TeacherObligation"> | Date | string | null
+    metadata?: JsonNullableFilter<"TeacherObligation">
+    createdAt?: DateTimeFilter<"TeacherObligation"> | Date | string
+    updatedAt?: DateTimeFilter<"TeacherObligation"> | Date | string
+    schoolId?: StringFilter<"TeacherObligation"> | string
+    teacherId?: StringFilter<"TeacherObligation"> | string
+  }
+
+  export type TeacherReminderUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: TeacherReminderWhereUniqueInput
+    update: XOR<TeacherReminderUpdateWithoutSchoolInput, TeacherReminderUncheckedUpdateWithoutSchoolInput>
+    create: XOR<TeacherReminderCreateWithoutSchoolInput, TeacherReminderUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type TeacherReminderUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: TeacherReminderWhereUniqueInput
+    data: XOR<TeacherReminderUpdateWithoutSchoolInput, TeacherReminderUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type TeacherReminderUpdateManyWithWhereWithoutSchoolInput = {
+    where: TeacherReminderScalarWhereInput
+    data: XOR<TeacherReminderUpdateManyMutationInput, TeacherReminderUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type TeacherReminderScalarWhereInput = {
+    AND?: TeacherReminderScalarWhereInput | TeacherReminderScalarWhereInput[]
+    OR?: TeacherReminderScalarWhereInput[]
+    NOT?: TeacherReminderScalarWhereInput | TeacherReminderScalarWhereInput[]
+    id?: StringFilter<"TeacherReminder"> | string
+    channel?: StringFilter<"TeacherReminder"> | string
+    message?: StringFilter<"TeacherReminder"> | string
+    status?: EnumTeacherReminderStatusFilter<"TeacherReminder"> | $Enums.TeacherReminderStatus
+    scheduledAt?: DateTimeNullableFilter<"TeacherReminder"> | Date | string | null
+    sentAt?: DateTimeNullableFilter<"TeacherReminder"> | Date | string | null
+    errorMessage?: StringNullableFilter<"TeacherReminder"> | string | null
+    createdAt?: DateTimeFilter<"TeacherReminder"> | Date | string
+    updatedAt?: DateTimeFilter<"TeacherReminder"> | Date | string
+    schoolId?: StringFilter<"TeacherReminder"> | string
+    teacherId?: StringFilter<"TeacherReminder"> | string
+    obligationId?: StringFilter<"TeacherReminder"> | string
+  }
+
+  export type TeacherEscalationUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: TeacherEscalationWhereUniqueInput
+    update: XOR<TeacherEscalationUpdateWithoutSchoolInput, TeacherEscalationUncheckedUpdateWithoutSchoolInput>
+    create: XOR<TeacherEscalationCreateWithoutSchoolInput, TeacherEscalationUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type TeacherEscalationUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: TeacherEscalationWhereUniqueInput
+    data: XOR<TeacherEscalationUpdateWithoutSchoolInput, TeacherEscalationUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type TeacherEscalationUpdateManyWithWhereWithoutSchoolInput = {
+    where: TeacherEscalationScalarWhereInput
+    data: XOR<TeacherEscalationUpdateManyMutationInput, TeacherEscalationUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type TeacherEscalationScalarWhereInput = {
+    AND?: TeacherEscalationScalarWhereInput | TeacherEscalationScalarWhereInput[]
+    OR?: TeacherEscalationScalarWhereInput[]
+    NOT?: TeacherEscalationScalarWhereInput | TeacherEscalationScalarWhereInput[]
+    id?: StringFilter<"TeacherEscalation"> | string
+    reason?: StringFilter<"TeacherEscalation"> | string
+    status?: EnumTeacherEscalationStatusFilter<"TeacherEscalation"> | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeFilter<"TeacherEscalation"> | Date | string
+    resolvedAt?: DateTimeNullableFilter<"TeacherEscalation"> | Date | string | null
+    reviewedBy?: StringNullableFilter<"TeacherEscalation"> | string | null
+    reviewNote?: StringNullableFilter<"TeacherEscalation"> | string | null
+    createdAt?: DateTimeFilter<"TeacherEscalation"> | Date | string
+    updatedAt?: DateTimeFilter<"TeacherEscalation"> | Date | string
+    schoolId?: StringFilter<"TeacherEscalation"> | string
+    teacherId?: StringFilter<"TeacherEscalation"> | string
+    obligationId?: StringFilter<"TeacherEscalation"> | string
+  }
+
+  export type TeacherCorrectionRequestUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: TeacherCorrectionRequestWhereUniqueInput
+    update: XOR<TeacherCorrectionRequestUpdateWithoutSchoolInput, TeacherCorrectionRequestUncheckedUpdateWithoutSchoolInput>
+    create: XOR<TeacherCorrectionRequestCreateWithoutSchoolInput, TeacherCorrectionRequestUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type TeacherCorrectionRequestUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: TeacherCorrectionRequestWhereUniqueInput
+    data: XOR<TeacherCorrectionRequestUpdateWithoutSchoolInput, TeacherCorrectionRequestUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type TeacherCorrectionRequestUpdateManyWithWhereWithoutSchoolInput = {
+    where: TeacherCorrectionRequestScalarWhereInput
+    data: XOR<TeacherCorrectionRequestUpdateManyMutationInput, TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type TeacherCorrectionRequestScalarWhereInput = {
+    AND?: TeacherCorrectionRequestScalarWhereInput | TeacherCorrectionRequestScalarWhereInput[]
+    OR?: TeacherCorrectionRequestScalarWhereInput[]
+    NOT?: TeacherCorrectionRequestScalarWhereInput | TeacherCorrectionRequestScalarWhereInput[]
+    id?: StringFilter<"TeacherCorrectionRequest"> | string
+    sourceModel?: StringFilter<"TeacherCorrectionRequest"> | string
+    sourceId?: StringFilter<"TeacherCorrectionRequest"> | string
+    sourceKey?: StringFilter<"TeacherCorrectionRequest"> | string
+    fieldName?: StringFilter<"TeacherCorrectionRequest"> | string
+    oldValue?: JsonNullableFilter<"TeacherCorrectionRequest">
+    newValue?: JsonNullableFilter<"TeacherCorrectionRequest">
+    reason?: StringFilter<"TeacherCorrectionRequest"> | string
+    evidenceUrl?: StringNullableFilter<"TeacherCorrectionRequest"> | string | null
+    status?: EnumTeacherCorrectionRequestStatusFilter<"TeacherCorrectionRequest"> | $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: StringNullableFilter<"TeacherCorrectionRequest"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"TeacherCorrectionRequest"> | Date | string | null
+    reviewNote?: StringNullableFilter<"TeacherCorrectionRequest"> | string | null
+    createdAt?: DateTimeFilter<"TeacherCorrectionRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"TeacherCorrectionRequest"> | Date | string
+    schoolId?: StringFilter<"TeacherCorrectionRequest"> | string
+    teacherId?: StringFilter<"TeacherCorrectionRequest"> | string
+  }
+
+  export type TeacherAccountabilityAuditLogUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: TeacherAccountabilityAuditLogWhereUniqueInput
+    update: XOR<TeacherAccountabilityAuditLogUpdateWithoutSchoolInput, TeacherAccountabilityAuditLogUncheckedUpdateWithoutSchoolInput>
+    create: XOR<TeacherAccountabilityAuditLogCreateWithoutSchoolInput, TeacherAccountabilityAuditLogUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type TeacherAccountabilityAuditLogUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: TeacherAccountabilityAuditLogWhereUniqueInput
+    data: XOR<TeacherAccountabilityAuditLogUpdateWithoutSchoolInput, TeacherAccountabilityAuditLogUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type TeacherAccountabilityAuditLogUpdateManyWithWhereWithoutSchoolInput = {
+    where: TeacherAccountabilityAuditLogScalarWhereInput
+    data: XOR<TeacherAccountabilityAuditLogUpdateManyMutationInput, TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type TeacherAccountabilityAuditLogScalarWhereInput = {
+    AND?: TeacherAccountabilityAuditLogScalarWhereInput | TeacherAccountabilityAuditLogScalarWhereInput[]
+    OR?: TeacherAccountabilityAuditLogScalarWhereInput[]
+    NOT?: TeacherAccountabilityAuditLogScalarWhereInput | TeacherAccountabilityAuditLogScalarWhereInput[]
+    id?: StringFilter<"TeacherAccountabilityAuditLog"> | string
+    action?: EnumTeacherAccountabilityAuditActionFilter<"TeacherAccountabilityAuditLog"> | $Enums.TeacherAccountabilityAuditAction
+    actorId?: StringNullableFilter<"TeacherAccountabilityAuditLog"> | string | null
+    actorRole?: StringNullableFilter<"TeacherAccountabilityAuditLog"> | string | null
+    sourceModel?: StringFilter<"TeacherAccountabilityAuditLog"> | string
+    sourceId?: StringFilter<"TeacherAccountabilityAuditLog"> | string
+    before?: JsonNullableFilter<"TeacherAccountabilityAuditLog">
+    after?: JsonNullableFilter<"TeacherAccountabilityAuditLog">
+    message?: StringNullableFilter<"TeacherAccountabilityAuditLog"> | string | null
+    createdAt?: DateTimeFilter<"TeacherAccountabilityAuditLog"> | Date | string
+    schoolId?: StringFilter<"TeacherAccountabilityAuditLog"> | string
+    teacherId?: StringNullableFilter<"TeacherAccountabilityAuditLog"> | string | null
+  }
+
   export type ParentNotificationPreferenceUpsertWithWhereUniqueWithoutSchoolInput = {
     where: ParentNotificationPreferenceWhereUniqueInput
     update: XOR<ParentNotificationPreferenceUpdateWithoutSchoolInput, ParentNotificationPreferenceUncheckedUpdateWithoutSchoolInput>
@@ -96972,6 +106987,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -97036,6 +107056,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -97116,6 +107141,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -97180,6 +107210,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -97244,6 +107279,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -97308,6 +107348,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -97914,6 +107959,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -97978,6 +108028,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -98325,6 +108380,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -98389,6 +108449,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -98788,6 +108853,218 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TeacherObligationCreateWithoutTeacherInput = {
+    id?: string
+    type: $Enums.TeacherObligationType
+    status?: $Enums.TeacherObligationStatus
+    priority?: $Enums.TeacherObligationPriority
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    title: string
+    description?: string | null
+    expectedAt: Date | string
+    completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutTeacherObligationsInput
+    reminders?: TeacherReminderCreateNestedManyWithoutObligationInput
+    escalations?: TeacherEscalationCreateNestedManyWithoutObligationInput
+  }
+
+  export type TeacherObligationUncheckedCreateWithoutTeacherInput = {
+    id?: string
+    type: $Enums.TeacherObligationType
+    status?: $Enums.TeacherObligationStatus
+    priority?: $Enums.TeacherObligationPriority
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    title: string
+    description?: string | null
+    expectedAt: Date | string
+    completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    reminders?: TeacherReminderUncheckedCreateNestedManyWithoutObligationInput
+    escalations?: TeacherEscalationUncheckedCreateNestedManyWithoutObligationInput
+  }
+
+  export type TeacherObligationCreateOrConnectWithoutTeacherInput = {
+    where: TeacherObligationWhereUniqueInput
+    create: XOR<TeacherObligationCreateWithoutTeacherInput, TeacherObligationUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type TeacherObligationCreateManyTeacherInputEnvelope = {
+    data: TeacherObligationCreateManyTeacherInput | TeacherObligationCreateManyTeacherInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TeacherReminderCreateWithoutTeacherInput = {
+    id?: string
+    channel?: string
+    message: string
+    status?: $Enums.TeacherReminderStatus
+    scheduledAt?: Date | string | null
+    sentAt?: Date | string | null
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutTeacherRemindersInput
+    obligation: TeacherObligationCreateNestedOneWithoutRemindersInput
+  }
+
+  export type TeacherReminderUncheckedCreateWithoutTeacherInput = {
+    id?: string
+    channel?: string
+    message: string
+    status?: $Enums.TeacherReminderStatus
+    scheduledAt?: Date | string | null
+    sentAt?: Date | string | null
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    obligationId: string
+  }
+
+  export type TeacherReminderCreateOrConnectWithoutTeacherInput = {
+    where: TeacherReminderWhereUniqueInput
+    create: XOR<TeacherReminderCreateWithoutTeacherInput, TeacherReminderUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type TeacherReminderCreateManyTeacherInputEnvelope = {
+    data: TeacherReminderCreateManyTeacherInput | TeacherReminderCreateManyTeacherInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TeacherEscalationCreateWithoutTeacherInput = {
+    id?: string
+    reason: string
+    status?: $Enums.TeacherEscalationStatus
+    escalatedAt?: Date | string
+    resolvedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutTeacherEscalationsInput
+    obligation: TeacherObligationCreateNestedOneWithoutEscalationsInput
+  }
+
+  export type TeacherEscalationUncheckedCreateWithoutTeacherInput = {
+    id?: string
+    reason: string
+    status?: $Enums.TeacherEscalationStatus
+    escalatedAt?: Date | string
+    resolvedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    obligationId: string
+  }
+
+  export type TeacherEscalationCreateOrConnectWithoutTeacherInput = {
+    where: TeacherEscalationWhereUniqueInput
+    create: XOR<TeacherEscalationCreateWithoutTeacherInput, TeacherEscalationUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type TeacherEscalationCreateManyTeacherInputEnvelope = {
+    data: TeacherEscalationCreateManyTeacherInput | TeacherEscalationCreateManyTeacherInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TeacherCorrectionRequestCreateWithoutTeacherInput = {
+    id?: string
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    fieldName: string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason: string
+    evidenceUrl?: string | null
+    status?: $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutTeacherCorrectionsInput
+  }
+
+  export type TeacherCorrectionRequestUncheckedCreateWithoutTeacherInput = {
+    id?: string
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    fieldName: string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason: string
+    evidenceUrl?: string | null
+    status?: $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+  }
+
+  export type TeacherCorrectionRequestCreateOrConnectWithoutTeacherInput = {
+    where: TeacherCorrectionRequestWhereUniqueInput
+    create: XOR<TeacherCorrectionRequestCreateWithoutTeacherInput, TeacherCorrectionRequestUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type TeacherCorrectionRequestCreateManyTeacherInputEnvelope = {
+    data: TeacherCorrectionRequestCreateManyTeacherInput | TeacherCorrectionRequestCreateManyTeacherInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TeacherAccountabilityAuditLogCreateWithoutTeacherInput = {
+    id?: string
+    action: $Enums.TeacherAccountabilityAuditAction
+    actorId?: string | null
+    actorRole?: string | null
+    sourceModel: string
+    sourceId: string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: string | null
+    createdAt?: Date | string
+    school: SchoolCreateNestedOneWithoutTeacherAccountabilityAuditLogsInput
+  }
+
+  export type TeacherAccountabilityAuditLogUncheckedCreateWithoutTeacherInput = {
+    id?: string
+    action: $Enums.TeacherAccountabilityAuditAction
+    actorId?: string | null
+    actorRole?: string | null
+    sourceModel: string
+    sourceId: string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: string | null
+    createdAt?: Date | string
+    schoolId: string
+  }
+
+  export type TeacherAccountabilityAuditLogCreateOrConnectWithoutTeacherInput = {
+    where: TeacherAccountabilityAuditLogWhereUniqueInput
+    create: XOR<TeacherAccountabilityAuditLogCreateWithoutTeacherInput, TeacherAccountabilityAuditLogUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type TeacherAccountabilityAuditLogCreateManyTeacherInputEnvelope = {
+    data: TeacherAccountabilityAuditLogCreateManyTeacherInput | TeacherAccountabilityAuditLogCreateManyTeacherInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SchoolUpsertWithoutTeachersInput = {
     update: XOR<SchoolUpdateWithoutTeachersInput, SchoolUncheckedUpdateWithoutTeachersInput>
     create: XOR<SchoolCreateWithoutTeachersInput, SchoolUncheckedCreateWithoutTeachersInput>
@@ -98859,6 +109136,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -98923,6 +109205,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -99087,6 +109374,86 @@ export namespace Prisma {
     data: XOR<SyllabusTopicProgressUpdateManyMutationInput, SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherInput>
   }
 
+  export type TeacherObligationUpsertWithWhereUniqueWithoutTeacherInput = {
+    where: TeacherObligationWhereUniqueInput
+    update: XOR<TeacherObligationUpdateWithoutTeacherInput, TeacherObligationUncheckedUpdateWithoutTeacherInput>
+    create: XOR<TeacherObligationCreateWithoutTeacherInput, TeacherObligationUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type TeacherObligationUpdateWithWhereUniqueWithoutTeacherInput = {
+    where: TeacherObligationWhereUniqueInput
+    data: XOR<TeacherObligationUpdateWithoutTeacherInput, TeacherObligationUncheckedUpdateWithoutTeacherInput>
+  }
+
+  export type TeacherObligationUpdateManyWithWhereWithoutTeacherInput = {
+    where: TeacherObligationScalarWhereInput
+    data: XOR<TeacherObligationUpdateManyMutationInput, TeacherObligationUncheckedUpdateManyWithoutTeacherInput>
+  }
+
+  export type TeacherReminderUpsertWithWhereUniqueWithoutTeacherInput = {
+    where: TeacherReminderWhereUniqueInput
+    update: XOR<TeacherReminderUpdateWithoutTeacherInput, TeacherReminderUncheckedUpdateWithoutTeacherInput>
+    create: XOR<TeacherReminderCreateWithoutTeacherInput, TeacherReminderUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type TeacherReminderUpdateWithWhereUniqueWithoutTeacherInput = {
+    where: TeacherReminderWhereUniqueInput
+    data: XOR<TeacherReminderUpdateWithoutTeacherInput, TeacherReminderUncheckedUpdateWithoutTeacherInput>
+  }
+
+  export type TeacherReminderUpdateManyWithWhereWithoutTeacherInput = {
+    where: TeacherReminderScalarWhereInput
+    data: XOR<TeacherReminderUpdateManyMutationInput, TeacherReminderUncheckedUpdateManyWithoutTeacherInput>
+  }
+
+  export type TeacherEscalationUpsertWithWhereUniqueWithoutTeacherInput = {
+    where: TeacherEscalationWhereUniqueInput
+    update: XOR<TeacherEscalationUpdateWithoutTeacherInput, TeacherEscalationUncheckedUpdateWithoutTeacherInput>
+    create: XOR<TeacherEscalationCreateWithoutTeacherInput, TeacherEscalationUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type TeacherEscalationUpdateWithWhereUniqueWithoutTeacherInput = {
+    where: TeacherEscalationWhereUniqueInput
+    data: XOR<TeacherEscalationUpdateWithoutTeacherInput, TeacherEscalationUncheckedUpdateWithoutTeacherInput>
+  }
+
+  export type TeacherEscalationUpdateManyWithWhereWithoutTeacherInput = {
+    where: TeacherEscalationScalarWhereInput
+    data: XOR<TeacherEscalationUpdateManyMutationInput, TeacherEscalationUncheckedUpdateManyWithoutTeacherInput>
+  }
+
+  export type TeacherCorrectionRequestUpsertWithWhereUniqueWithoutTeacherInput = {
+    where: TeacherCorrectionRequestWhereUniqueInput
+    update: XOR<TeacherCorrectionRequestUpdateWithoutTeacherInput, TeacherCorrectionRequestUncheckedUpdateWithoutTeacherInput>
+    create: XOR<TeacherCorrectionRequestCreateWithoutTeacherInput, TeacherCorrectionRequestUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type TeacherCorrectionRequestUpdateWithWhereUniqueWithoutTeacherInput = {
+    where: TeacherCorrectionRequestWhereUniqueInput
+    data: XOR<TeacherCorrectionRequestUpdateWithoutTeacherInput, TeacherCorrectionRequestUncheckedUpdateWithoutTeacherInput>
+  }
+
+  export type TeacherCorrectionRequestUpdateManyWithWhereWithoutTeacherInput = {
+    where: TeacherCorrectionRequestScalarWhereInput
+    data: XOR<TeacherCorrectionRequestUpdateManyMutationInput, TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherInput>
+  }
+
+  export type TeacherAccountabilityAuditLogUpsertWithWhereUniqueWithoutTeacherInput = {
+    where: TeacherAccountabilityAuditLogWhereUniqueInput
+    update: XOR<TeacherAccountabilityAuditLogUpdateWithoutTeacherInput, TeacherAccountabilityAuditLogUncheckedUpdateWithoutTeacherInput>
+    create: XOR<TeacherAccountabilityAuditLogCreateWithoutTeacherInput, TeacherAccountabilityAuditLogUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type TeacherAccountabilityAuditLogUpdateWithWhereUniqueWithoutTeacherInput = {
+    where: TeacherAccountabilityAuditLogWhereUniqueInput
+    data: XOR<TeacherAccountabilityAuditLogUpdateWithoutTeacherInput, TeacherAccountabilityAuditLogUncheckedUpdateWithoutTeacherInput>
+  }
+
+  export type TeacherAccountabilityAuditLogUpdateManyWithWhereWithoutTeacherInput = {
+    where: TeacherAccountabilityAuditLogScalarWhereInput
+    data: XOR<TeacherAccountabilityAuditLogUpdateManyMutationInput, TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherInput>
+  }
+
   export type SchoolCreateWithoutParentsInput = {
     id: string
     name: string
@@ -99147,6 +109514,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -99211,6 +109583,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -99565,6 +109942,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -99629,6 +110011,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -99814,6 +110201,11 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -99878,6 +110270,11 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -99958,6 +110355,11 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -100022,6 +110424,11 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -100086,6 +110493,11 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -100150,6 +110562,11 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -100230,6 +110647,11 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -100294,8 +110716,2453 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolCreateWithoutTeacherObligationsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutTeacherObligationsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutTeacherObligationsInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutTeacherObligationsInput, SchoolUncheckedCreateWithoutTeacherObligationsInput>
+  }
+
+  export type TeacherCreateWithoutAccountabilityObligationsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    school?: SchoolCreateNestedOneWithoutTeachersInput
+    subjects?: SubjectCreateNestedManyWithoutTeachersInput
+    lessons?: LessonCreateNestedManyWithoutTeacherInput
+    classes?: ClassCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
+    caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
+    caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherUncheckedCreateWithoutAccountabilityObligationsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    schoolId?: string
+    subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherCreateOrConnectWithoutAccountabilityObligationsInput = {
+    where: TeacherWhereUniqueInput
+    create: XOR<TeacherCreateWithoutAccountabilityObligationsInput, TeacherUncheckedCreateWithoutAccountabilityObligationsInput>
+  }
+
+  export type TeacherReminderCreateWithoutObligationInput = {
+    id?: string
+    channel?: string
+    message: string
+    status?: $Enums.TeacherReminderStatus
+    scheduledAt?: Date | string | null
+    sentAt?: Date | string | null
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutTeacherRemindersInput
+    teacher: TeacherCreateNestedOneWithoutAccountabilityRemindersInput
+  }
+
+  export type TeacherReminderUncheckedCreateWithoutObligationInput = {
+    id?: string
+    channel?: string
+    message: string
+    status?: $Enums.TeacherReminderStatus
+    scheduledAt?: Date | string | null
+    sentAt?: Date | string | null
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    teacherId: string
+  }
+
+  export type TeacherReminderCreateOrConnectWithoutObligationInput = {
+    where: TeacherReminderWhereUniqueInput
+    create: XOR<TeacherReminderCreateWithoutObligationInput, TeacherReminderUncheckedCreateWithoutObligationInput>
+  }
+
+  export type TeacherReminderCreateManyObligationInputEnvelope = {
+    data: TeacherReminderCreateManyObligationInput | TeacherReminderCreateManyObligationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TeacherEscalationCreateWithoutObligationInput = {
+    id?: string
+    reason: string
+    status?: $Enums.TeacherEscalationStatus
+    escalatedAt?: Date | string
+    resolvedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutTeacherEscalationsInput
+    teacher: TeacherCreateNestedOneWithoutAccountabilityEscalationsInput
+  }
+
+  export type TeacherEscalationUncheckedCreateWithoutObligationInput = {
+    id?: string
+    reason: string
+    status?: $Enums.TeacherEscalationStatus
+    escalatedAt?: Date | string
+    resolvedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    teacherId: string
+  }
+
+  export type TeacherEscalationCreateOrConnectWithoutObligationInput = {
+    where: TeacherEscalationWhereUniqueInput
+    create: XOR<TeacherEscalationCreateWithoutObligationInput, TeacherEscalationUncheckedCreateWithoutObligationInput>
+  }
+
+  export type TeacherEscalationCreateManyObligationInputEnvelope = {
+    data: TeacherEscalationCreateManyObligationInput | TeacherEscalationCreateManyObligationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SchoolUpsertWithoutTeacherObligationsInput = {
+    update: XOR<SchoolUpdateWithoutTeacherObligationsInput, SchoolUncheckedUpdateWithoutTeacherObligationsInput>
+    create: XOR<SchoolCreateWithoutTeacherObligationsInput, SchoolUncheckedCreateWithoutTeacherObligationsInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutTeacherObligationsInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutTeacherObligationsInput, SchoolUncheckedUpdateWithoutTeacherObligationsInput>
+  }
+
+  export type SchoolUpdateWithoutTeacherObligationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutTeacherObligationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type TeacherUpsertWithoutAccountabilityObligationsInput = {
+    update: XOR<TeacherUpdateWithoutAccountabilityObligationsInput, TeacherUncheckedUpdateWithoutAccountabilityObligationsInput>
+    create: XOR<TeacherCreateWithoutAccountabilityObligationsInput, TeacherUncheckedCreateWithoutAccountabilityObligationsInput>
+    where?: TeacherWhereInput
+  }
+
+  export type TeacherUpdateToOneWithWhereWithoutAccountabilityObligationsInput = {
+    where?: TeacherWhereInput
+    data: XOR<TeacherUpdateWithoutAccountabilityObligationsInput, TeacherUncheckedUpdateWithoutAccountabilityObligationsInput>
+  }
+
+  export type TeacherUpdateWithoutAccountabilityObligationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
+    subjects?: SubjectUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
+    caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
+    caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
+  }
+
+  export type TeacherUncheckedUpdateWithoutAccountabilityObligationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    schoolId?: StringFieldUpdateOperationsInput | string
+    subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
+  }
+
+  export type TeacherReminderUpsertWithWhereUniqueWithoutObligationInput = {
+    where: TeacherReminderWhereUniqueInput
+    update: XOR<TeacherReminderUpdateWithoutObligationInput, TeacherReminderUncheckedUpdateWithoutObligationInput>
+    create: XOR<TeacherReminderCreateWithoutObligationInput, TeacherReminderUncheckedCreateWithoutObligationInput>
+  }
+
+  export type TeacherReminderUpdateWithWhereUniqueWithoutObligationInput = {
+    where: TeacherReminderWhereUniqueInput
+    data: XOR<TeacherReminderUpdateWithoutObligationInput, TeacherReminderUncheckedUpdateWithoutObligationInput>
+  }
+
+  export type TeacherReminderUpdateManyWithWhereWithoutObligationInput = {
+    where: TeacherReminderScalarWhereInput
+    data: XOR<TeacherReminderUpdateManyMutationInput, TeacherReminderUncheckedUpdateManyWithoutObligationInput>
+  }
+
+  export type TeacherEscalationUpsertWithWhereUniqueWithoutObligationInput = {
+    where: TeacherEscalationWhereUniqueInput
+    update: XOR<TeacherEscalationUpdateWithoutObligationInput, TeacherEscalationUncheckedUpdateWithoutObligationInput>
+    create: XOR<TeacherEscalationCreateWithoutObligationInput, TeacherEscalationUncheckedCreateWithoutObligationInput>
+  }
+
+  export type TeacherEscalationUpdateWithWhereUniqueWithoutObligationInput = {
+    where: TeacherEscalationWhereUniqueInput
+    data: XOR<TeacherEscalationUpdateWithoutObligationInput, TeacherEscalationUncheckedUpdateWithoutObligationInput>
+  }
+
+  export type TeacherEscalationUpdateManyWithWhereWithoutObligationInput = {
+    where: TeacherEscalationScalarWhereInput
+    data: XOR<TeacherEscalationUpdateManyMutationInput, TeacherEscalationUncheckedUpdateManyWithoutObligationInput>
+  }
+
+  export type SchoolCreateWithoutTeacherRemindersInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutTeacherRemindersInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutTeacherRemindersInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutTeacherRemindersInput, SchoolUncheckedCreateWithoutTeacherRemindersInput>
+  }
+
+  export type TeacherCreateWithoutAccountabilityRemindersInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    school?: SchoolCreateNestedOneWithoutTeachersInput
+    subjects?: SubjectCreateNestedManyWithoutTeachersInput
+    lessons?: LessonCreateNestedManyWithoutTeacherInput
+    classes?: ClassCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
+    caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
+    caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherUncheckedCreateWithoutAccountabilityRemindersInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    schoolId?: string
+    subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherCreateOrConnectWithoutAccountabilityRemindersInput = {
+    where: TeacherWhereUniqueInput
+    create: XOR<TeacherCreateWithoutAccountabilityRemindersInput, TeacherUncheckedCreateWithoutAccountabilityRemindersInput>
+  }
+
+  export type TeacherObligationCreateWithoutRemindersInput = {
+    id?: string
+    type: $Enums.TeacherObligationType
+    status?: $Enums.TeacherObligationStatus
+    priority?: $Enums.TeacherObligationPriority
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    title: string
+    description?: string | null
+    expectedAt: Date | string
+    completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutTeacherObligationsInput
+    teacher: TeacherCreateNestedOneWithoutAccountabilityObligationsInput
+    escalations?: TeacherEscalationCreateNestedManyWithoutObligationInput
+  }
+
+  export type TeacherObligationUncheckedCreateWithoutRemindersInput = {
+    id?: string
+    type: $Enums.TeacherObligationType
+    status?: $Enums.TeacherObligationStatus
+    priority?: $Enums.TeacherObligationPriority
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    title: string
+    description?: string | null
+    expectedAt: Date | string
+    completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    teacherId: string
+    escalations?: TeacherEscalationUncheckedCreateNestedManyWithoutObligationInput
+  }
+
+  export type TeacherObligationCreateOrConnectWithoutRemindersInput = {
+    where: TeacherObligationWhereUniqueInput
+    create: XOR<TeacherObligationCreateWithoutRemindersInput, TeacherObligationUncheckedCreateWithoutRemindersInput>
+  }
+
+  export type SchoolUpsertWithoutTeacherRemindersInput = {
+    update: XOR<SchoolUpdateWithoutTeacherRemindersInput, SchoolUncheckedUpdateWithoutTeacherRemindersInput>
+    create: XOR<SchoolCreateWithoutTeacherRemindersInput, SchoolUncheckedCreateWithoutTeacherRemindersInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutTeacherRemindersInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutTeacherRemindersInput, SchoolUncheckedUpdateWithoutTeacherRemindersInput>
+  }
+
+  export type SchoolUpdateWithoutTeacherRemindersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutTeacherRemindersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type TeacherUpsertWithoutAccountabilityRemindersInput = {
+    update: XOR<TeacherUpdateWithoutAccountabilityRemindersInput, TeacherUncheckedUpdateWithoutAccountabilityRemindersInput>
+    create: XOR<TeacherCreateWithoutAccountabilityRemindersInput, TeacherUncheckedCreateWithoutAccountabilityRemindersInput>
+    where?: TeacherWhereInput
+  }
+
+  export type TeacherUpdateToOneWithWhereWithoutAccountabilityRemindersInput = {
+    where?: TeacherWhereInput
+    data: XOR<TeacherUpdateWithoutAccountabilityRemindersInput, TeacherUncheckedUpdateWithoutAccountabilityRemindersInput>
+  }
+
+  export type TeacherUpdateWithoutAccountabilityRemindersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
+    subjects?: SubjectUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
+    caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
+    caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
+  }
+
+  export type TeacherUncheckedUpdateWithoutAccountabilityRemindersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    schoolId?: StringFieldUpdateOperationsInput | string
+    subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
+  }
+
+  export type TeacherObligationUpsertWithoutRemindersInput = {
+    update: XOR<TeacherObligationUpdateWithoutRemindersInput, TeacherObligationUncheckedUpdateWithoutRemindersInput>
+    create: XOR<TeacherObligationCreateWithoutRemindersInput, TeacherObligationUncheckedCreateWithoutRemindersInput>
+    where?: TeacherObligationWhereInput
+  }
+
+  export type TeacherObligationUpdateToOneWithWhereWithoutRemindersInput = {
+    where?: TeacherObligationWhereInput
+    data: XOR<TeacherObligationUpdateWithoutRemindersInput, TeacherObligationUncheckedUpdateWithoutRemindersInput>
+  }
+
+  export type TeacherObligationUpdateWithoutRemindersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTeacherObligationTypeFieldUpdateOperationsInput | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFieldUpdateOperationsInput | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFieldUpdateOperationsInput | $Enums.TeacherObligationPriority
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutTeacherObligationsNestedInput
+    teacher?: TeacherUpdateOneRequiredWithoutAccountabilityObligationsNestedInput
+    escalations?: TeacherEscalationUpdateManyWithoutObligationNestedInput
+  }
+
+  export type TeacherObligationUncheckedUpdateWithoutRemindersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTeacherObligationTypeFieldUpdateOperationsInput | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFieldUpdateOperationsInput | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFieldUpdateOperationsInput | $Enums.TeacherObligationPriority
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    escalations?: TeacherEscalationUncheckedUpdateManyWithoutObligationNestedInput
+  }
+
+  export type SchoolCreateWithoutTeacherEscalationsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutTeacherEscalationsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutTeacherEscalationsInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutTeacherEscalationsInput, SchoolUncheckedCreateWithoutTeacherEscalationsInput>
+  }
+
+  export type TeacherCreateWithoutAccountabilityEscalationsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    school?: SchoolCreateNestedOneWithoutTeachersInput
+    subjects?: SubjectCreateNestedManyWithoutTeachersInput
+    lessons?: LessonCreateNestedManyWithoutTeacherInput
+    classes?: ClassCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
+    caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
+    caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherUncheckedCreateWithoutAccountabilityEscalationsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    schoolId?: string
+    subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherCreateOrConnectWithoutAccountabilityEscalationsInput = {
+    where: TeacherWhereUniqueInput
+    create: XOR<TeacherCreateWithoutAccountabilityEscalationsInput, TeacherUncheckedCreateWithoutAccountabilityEscalationsInput>
+  }
+
+  export type TeacherObligationCreateWithoutEscalationsInput = {
+    id?: string
+    type: $Enums.TeacherObligationType
+    status?: $Enums.TeacherObligationStatus
+    priority?: $Enums.TeacherObligationPriority
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    title: string
+    description?: string | null
+    expectedAt: Date | string
+    completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutTeacherObligationsInput
+    teacher: TeacherCreateNestedOneWithoutAccountabilityObligationsInput
+    reminders?: TeacherReminderCreateNestedManyWithoutObligationInput
+  }
+
+  export type TeacherObligationUncheckedCreateWithoutEscalationsInput = {
+    id?: string
+    type: $Enums.TeacherObligationType
+    status?: $Enums.TeacherObligationStatus
+    priority?: $Enums.TeacherObligationPriority
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    title: string
+    description?: string | null
+    expectedAt: Date | string
+    completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    teacherId: string
+    reminders?: TeacherReminderUncheckedCreateNestedManyWithoutObligationInput
+  }
+
+  export type TeacherObligationCreateOrConnectWithoutEscalationsInput = {
+    where: TeacherObligationWhereUniqueInput
+    create: XOR<TeacherObligationCreateWithoutEscalationsInput, TeacherObligationUncheckedCreateWithoutEscalationsInput>
+  }
+
+  export type SchoolUpsertWithoutTeacherEscalationsInput = {
+    update: XOR<SchoolUpdateWithoutTeacherEscalationsInput, SchoolUncheckedUpdateWithoutTeacherEscalationsInput>
+    create: XOR<SchoolCreateWithoutTeacherEscalationsInput, SchoolUncheckedCreateWithoutTeacherEscalationsInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutTeacherEscalationsInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutTeacherEscalationsInput, SchoolUncheckedUpdateWithoutTeacherEscalationsInput>
+  }
+
+  export type SchoolUpdateWithoutTeacherEscalationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutTeacherEscalationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type TeacherUpsertWithoutAccountabilityEscalationsInput = {
+    update: XOR<TeacherUpdateWithoutAccountabilityEscalationsInput, TeacherUncheckedUpdateWithoutAccountabilityEscalationsInput>
+    create: XOR<TeacherCreateWithoutAccountabilityEscalationsInput, TeacherUncheckedCreateWithoutAccountabilityEscalationsInput>
+    where?: TeacherWhereInput
+  }
+
+  export type TeacherUpdateToOneWithWhereWithoutAccountabilityEscalationsInput = {
+    where?: TeacherWhereInput
+    data: XOR<TeacherUpdateWithoutAccountabilityEscalationsInput, TeacherUncheckedUpdateWithoutAccountabilityEscalationsInput>
+  }
+
+  export type TeacherUpdateWithoutAccountabilityEscalationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
+    subjects?: SubjectUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
+    caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
+    caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
+  }
+
+  export type TeacherUncheckedUpdateWithoutAccountabilityEscalationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    schoolId?: StringFieldUpdateOperationsInput | string
+    subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
+  }
+
+  export type TeacherObligationUpsertWithoutEscalationsInput = {
+    update: XOR<TeacherObligationUpdateWithoutEscalationsInput, TeacherObligationUncheckedUpdateWithoutEscalationsInput>
+    create: XOR<TeacherObligationCreateWithoutEscalationsInput, TeacherObligationUncheckedCreateWithoutEscalationsInput>
+    where?: TeacherObligationWhereInput
+  }
+
+  export type TeacherObligationUpdateToOneWithWhereWithoutEscalationsInput = {
+    where?: TeacherObligationWhereInput
+    data: XOR<TeacherObligationUpdateWithoutEscalationsInput, TeacherObligationUncheckedUpdateWithoutEscalationsInput>
+  }
+
+  export type TeacherObligationUpdateWithoutEscalationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTeacherObligationTypeFieldUpdateOperationsInput | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFieldUpdateOperationsInput | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFieldUpdateOperationsInput | $Enums.TeacherObligationPriority
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutTeacherObligationsNestedInput
+    teacher?: TeacherUpdateOneRequiredWithoutAccountabilityObligationsNestedInput
+    reminders?: TeacherReminderUpdateManyWithoutObligationNestedInput
+  }
+
+  export type TeacherObligationUncheckedUpdateWithoutEscalationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTeacherObligationTypeFieldUpdateOperationsInput | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFieldUpdateOperationsInput | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFieldUpdateOperationsInput | $Enums.TeacherObligationPriority
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    reminders?: TeacherReminderUncheckedUpdateManyWithoutObligationNestedInput
+  }
+
+  export type SchoolCreateWithoutTeacherCorrectionsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutTeacherCorrectionsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutTeacherCorrectionsInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutTeacherCorrectionsInput, SchoolUncheckedCreateWithoutTeacherCorrectionsInput>
+  }
+
+  export type TeacherCreateWithoutCorrectionRequestsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    school?: SchoolCreateNestedOneWithoutTeachersInput
+    subjects?: SubjectCreateNestedManyWithoutTeachersInput
+    lessons?: LessonCreateNestedManyWithoutTeacherInput
+    classes?: ClassCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
+    caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
+    caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherUncheckedCreateWithoutCorrectionRequestsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    schoolId?: string
+    subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherCreateOrConnectWithoutCorrectionRequestsInput = {
+    where: TeacherWhereUniqueInput
+    create: XOR<TeacherCreateWithoutCorrectionRequestsInput, TeacherUncheckedCreateWithoutCorrectionRequestsInput>
+  }
+
+  export type SchoolUpsertWithoutTeacherCorrectionsInput = {
+    update: XOR<SchoolUpdateWithoutTeacherCorrectionsInput, SchoolUncheckedUpdateWithoutTeacherCorrectionsInput>
+    create: XOR<SchoolCreateWithoutTeacherCorrectionsInput, SchoolUncheckedCreateWithoutTeacherCorrectionsInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutTeacherCorrectionsInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutTeacherCorrectionsInput, SchoolUncheckedUpdateWithoutTeacherCorrectionsInput>
+  }
+
+  export type SchoolUpdateWithoutTeacherCorrectionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutTeacherCorrectionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type TeacherUpsertWithoutCorrectionRequestsInput = {
+    update: XOR<TeacherUpdateWithoutCorrectionRequestsInput, TeacherUncheckedUpdateWithoutCorrectionRequestsInput>
+    create: XOR<TeacherCreateWithoutCorrectionRequestsInput, TeacherUncheckedCreateWithoutCorrectionRequestsInput>
+    where?: TeacherWhereInput
+  }
+
+  export type TeacherUpdateToOneWithWhereWithoutCorrectionRequestsInput = {
+    where?: TeacherWhereInput
+    data: XOR<TeacherUpdateWithoutCorrectionRequestsInput, TeacherUncheckedUpdateWithoutCorrectionRequestsInput>
+  }
+
+  export type TeacherUpdateWithoutCorrectionRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
+    subjects?: SubjectUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
+    caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
+    caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
+  }
+
+  export type TeacherUncheckedUpdateWithoutCorrectionRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    schoolId?: StringFieldUpdateOperationsInput | string
+    subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
+  }
+
+  export type SchoolCreateWithoutTeacherAccountabilityAuditLogsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutTeacherAccountabilityAuditLogsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutTeacherAccountabilityAuditLogsInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutTeacherAccountabilityAuditLogsInput, SchoolUncheckedCreateWithoutTeacherAccountabilityAuditLogsInput>
+  }
+
+  export type TeacherCreateWithoutAccountabilityAuditLogsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    school?: SchoolCreateNestedOneWithoutTeachersInput
+    subjects?: SubjectCreateNestedManyWithoutTeachersInput
+    lessons?: LessonCreateNestedManyWithoutTeacherInput
+    classes?: ClassCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
+    caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
+    caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherUncheckedCreateWithoutAccountabilityAuditLogsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    schoolId?: string
+    subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherCreateOrConnectWithoutAccountabilityAuditLogsInput = {
+    where: TeacherWhereUniqueInput
+    create: XOR<TeacherCreateWithoutAccountabilityAuditLogsInput, TeacherUncheckedCreateWithoutAccountabilityAuditLogsInput>
+  }
+
+  export type SchoolUpsertWithoutTeacherAccountabilityAuditLogsInput = {
+    update: XOR<SchoolUpdateWithoutTeacherAccountabilityAuditLogsInput, SchoolUncheckedUpdateWithoutTeacherAccountabilityAuditLogsInput>
+    create: XOR<SchoolCreateWithoutTeacherAccountabilityAuditLogsInput, SchoolUncheckedCreateWithoutTeacherAccountabilityAuditLogsInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutTeacherAccountabilityAuditLogsInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutTeacherAccountabilityAuditLogsInput, SchoolUncheckedUpdateWithoutTeacherAccountabilityAuditLogsInput>
+  }
+
+  export type SchoolUpdateWithoutTeacherAccountabilityAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutTeacherAccountabilityAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type TeacherUpsertWithoutAccountabilityAuditLogsInput = {
+    update: XOR<TeacherUpdateWithoutAccountabilityAuditLogsInput, TeacherUncheckedUpdateWithoutAccountabilityAuditLogsInput>
+    create: XOR<TeacherCreateWithoutAccountabilityAuditLogsInput, TeacherUncheckedCreateWithoutAccountabilityAuditLogsInput>
+    where?: TeacherWhereInput
+  }
+
+  export type TeacherUpdateToOneWithWhereWithoutAccountabilityAuditLogsInput = {
+    where?: TeacherWhereInput
+    data: XOR<TeacherUpdateWithoutAccountabilityAuditLogsInput, TeacherUncheckedUpdateWithoutAccountabilityAuditLogsInput>
+  }
+
+  export type TeacherUpdateWithoutAccountabilityAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
+    subjects?: SubjectUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
+    caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
+    caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+  }
+
+  export type TeacherUncheckedUpdateWithoutAccountabilityAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    schoolId?: StringFieldUpdateOperationsInput | string
+    subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type SchoolCreateWithoutParentPreferencesInput = {
@@ -100359,6 +113226,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
 
@@ -100423,6 +113295,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
 
@@ -100542,6 +113419,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
 
@@ -100606,6 +113488,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
@@ -100714,6 +113601,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -100778,6 +113670,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -100996,6 +113893,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -101060,6 +113962,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -101251,6 +114158,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
   }
 
@@ -101315,6 +114227,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
   }
 
@@ -101479,6 +114396,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
   }
 
@@ -101543,6 +114465,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
@@ -101702,6 +114629,11 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -101766,6 +114698,11 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -101896,6 +114833,11 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
     checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutParentActivityEventsInput = {
@@ -101921,6 +114863,11 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
     checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutParentActivityEventsInput = {
@@ -101999,6 +114946,11 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -102063,6 +115015,11 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -102211,6 +115168,11 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
     checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutParentActivityEventsInput = {
@@ -102236,6 +115198,11 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
     checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type SchoolCreateWithoutGradesInput = {
@@ -102298,6 +115265,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -102362,6 +115334,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -102631,6 +115608,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -102695,6 +115677,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -102823,6 +115810,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -102887,6 +115879,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -102919,6 +115916,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutClassesInput = {
@@ -102944,6 +115946,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutClassesInput = {
@@ -103449,6 +116456,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -103513,6 +116525,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -103551,6 +116568,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutClassesInput = {
@@ -103576,6 +116598,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type LessonUpsertWithWhereUniqueWithoutClassInput = {
@@ -103828,6 +116855,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -103892,6 +116924,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -103924,6 +116961,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutSubjectsInput = {
@@ -103949,6 +116991,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutSubjectsInput = {
@@ -104238,6 +117285,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -104302,6 +117354,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -104462,6 +117519,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -104526,6 +117588,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -104626,6 +117693,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutLessonsInput = {
@@ -104651,6 +117723,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutLessonsInput = {
@@ -104878,6 +117955,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -104942,6 +118024,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -105060,6 +118147,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutLessonsInput = {
@@ -105085,6 +118177,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type ExamUpsertWithWhereUniqueWithoutLessonInput = {
@@ -105211,6 +118308,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -105275,6 +118377,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -105418,6 +118525,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -105482,6 +118594,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -105602,6 +118719,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -105666,6 +118788,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -105844,6 +118971,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -105908,6 +119040,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -106044,6 +119181,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -106108,6 +119250,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -106223,6 +119370,11 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutCheckedHomeworkInput = {
@@ -106248,6 +119400,11 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutCheckedHomeworkInput = {
@@ -106326,6 +119483,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -106390,6 +119552,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -106523,6 +119690,11 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutCheckedHomeworkInput = {
@@ -106548,6 +119720,11 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type SchoolCreateWithoutResultsInput = {
@@ -106610,6 +119787,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -106674,6 +119856,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -106859,6 +120046,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -106923,6 +120115,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -107110,6 +120307,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -107174,6 +120376,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -107395,6 +120602,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -107459,6 +120671,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -107644,6 +120861,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -107708,6 +120930,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -107921,6 +121148,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -107985,6 +121217,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -108200,6 +121437,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -108264,6 +121506,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -108386,6 +121633,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -108450,6 +121702,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -108562,6 +121819,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -108626,6 +121888,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -108748,6 +122015,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -108812,6 +122084,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -108924,6 +122201,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -108988,6 +122270,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -109068,6 +122355,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -109132,6 +122424,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -109196,6 +122493,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -109260,6 +122562,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -109360,6 +122667,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutCaBucketsInput = {
@@ -109385,6 +122697,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutCaBucketsInput = {
@@ -109508,6 +122825,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -109572,6 +122894,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -109690,6 +123017,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutCaBucketsInput = {
@@ -109715,6 +123047,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type CAActivityUpsertWithWhereUniqueWithoutBucketInput = {
@@ -109793,6 +123130,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -109857,6 +123199,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -109997,6 +123344,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutCaActivitiesInput = {
@@ -110022,6 +123374,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutCaActivitiesInput = {
@@ -110133,6 +123490,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -110197,6 +123559,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -110361,6 +123728,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutCaActivitiesInput = {
@@ -110386,6 +123758,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type CAActivityScoreUpsertWithWhereUniqueWithoutActivityInput = {
@@ -110464,6 +123841,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -110528,6 +123910,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -110659,6 +124046,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutCaActivityScoresInput = {
@@ -110684,6 +124076,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutCaActivityScoresInput = {
@@ -110762,6 +124159,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -110826,6 +124228,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -110975,6 +124382,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutCaActivityScoresInput = {
@@ -111000,6 +124412,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type SchoolCreateWithoutCaAuditLogsInput = {
@@ -111062,6 +124479,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -111126,6 +124548,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -111206,6 +124633,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -111270,6 +124702,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -111334,6 +124771,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -111398,6 +124840,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -111489,6 +124936,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutContinuousAssessmentsInput = {
@@ -111514,6 +124966,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutContinuousAssessmentsInput = {
@@ -111660,6 +125117,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -111724,6 +125186,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -111827,6 +125294,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutContinuousAssessmentsInput = {
@@ -111852,6 +125324,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type SubjectUpsertWithoutContinuousAssessmentsInput = {
@@ -111994,6 +125471,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -112058,6 +125540,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -112180,6 +125667,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -112244,6 +125736,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -112356,6 +125853,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -112420,6 +125922,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -112542,6 +126049,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -112606,6 +126118,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -112718,6 +126235,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -112782,6 +126304,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -112951,6 +126478,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -113015,6 +126547,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -113286,6 +126823,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -113350,6 +126892,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -113458,6 +127005,11 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
     checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutSyllabusTopicProgressInput = {
@@ -113483,6 +127035,11 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
     checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutSyllabusTopicProgressInput = {
@@ -113561,6 +127118,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -113625,6 +127187,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -113751,6 +127318,11 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
     checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutSyllabusTopicProgressInput = {
@@ -113776,6 +127348,11 @@ export namespace Prisma {
     caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
     checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type SchoolCreateWithoutFeeStructuresInput = {
@@ -113838,6 +127415,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -113902,6 +127484,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -114086,6 +127673,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -114150,6 +127742,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -114434,6 +128031,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -114498,6 +128100,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -114837,6 +128444,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -114901,6 +128513,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -115290,6 +128907,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -115354,6 +128976,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -115577,6 +129204,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -115641,6 +129273,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -115813,6 +129450,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -115877,6 +129519,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -116003,6 +129650,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -116067,6 +129719,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -116183,6 +129840,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -116247,6 +129909,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -116371,6 +130038,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -116435,6 +130107,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -116549,6 +130226,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -116613,6 +130295,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -116693,6 +130380,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -116757,6 +130449,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -116821,6 +130518,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -116885,6 +130587,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -116965,6 +130672,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -117029,6 +130741,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -117093,6 +130810,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -117157,6 +130879,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -117425,6 +131152,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -117489,6 +131221,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -117765,6 +131502,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -117829,6 +131571,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -117909,6 +131656,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -117973,6 +131725,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -118037,6 +131794,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -118101,6 +131863,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -118227,6 +131994,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -118291,6 +132063,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -118407,6 +132184,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -118471,6 +132253,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -118551,6 +132338,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -118615,6 +132407,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -118679,6 +132476,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -118743,6 +132545,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -118823,6 +132630,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -118887,6 +132699,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -118951,6 +132768,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
   }
@@ -119015,6 +132837,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
   }
@@ -119095,6 +132922,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
   }
@@ -119159,6 +132991,11 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
   }
@@ -119685,6 +133522,85 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type TeacherObligationCreateManySchoolInput = {
+    id?: string
+    type: $Enums.TeacherObligationType
+    status?: $Enums.TeacherObligationStatus
+    priority?: $Enums.TeacherObligationPriority
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    title: string
+    description?: string | null
+    expectedAt: Date | string
+    completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teacherId: string
+  }
+
+  export type TeacherReminderCreateManySchoolInput = {
+    id?: string
+    channel?: string
+    message: string
+    status?: $Enums.TeacherReminderStatus
+    scheduledAt?: Date | string | null
+    sentAt?: Date | string | null
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teacherId: string
+    obligationId: string
+  }
+
+  export type TeacherEscalationCreateManySchoolInput = {
+    id?: string
+    reason: string
+    status?: $Enums.TeacherEscalationStatus
+    escalatedAt?: Date | string
+    resolvedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teacherId: string
+    obligationId: string
+  }
+
+  export type TeacherCorrectionRequestCreateManySchoolInput = {
+    id?: string
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    fieldName: string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason: string
+    evidenceUrl?: string | null
+    status?: $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teacherId: string
+  }
+
+  export type TeacherAccountabilityAuditLogCreateManySchoolInput = {
+    id?: string
+    action: $Enums.TeacherAccountabilityAuditAction
+    actorId?: string | null
+    actorRole?: string | null
+    sourceModel: string
+    sourceId: string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: string | null
+    createdAt?: Date | string
+    teacherId?: string | null
+  }
+
   export type ParentNotificationPreferenceCreateManySchoolInput = {
     id?: string
     dailySummaryEnabled?: boolean
@@ -119824,6 +133740,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutSchoolInput = {
@@ -119849,6 +133770,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateManyWithoutSchoolInput = {
@@ -121385,6 +135311,247 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TeacherObligationUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTeacherObligationTypeFieldUpdateOperationsInput | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFieldUpdateOperationsInput | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFieldUpdateOperationsInput | $Enums.TeacherObligationPriority
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacher?: TeacherUpdateOneRequiredWithoutAccountabilityObligationsNestedInput
+    reminders?: TeacherReminderUpdateManyWithoutObligationNestedInput
+    escalations?: TeacherEscalationUpdateManyWithoutObligationNestedInput
+  }
+
+  export type TeacherObligationUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTeacherObligationTypeFieldUpdateOperationsInput | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFieldUpdateOperationsInput | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFieldUpdateOperationsInput | $Enums.TeacherObligationPriority
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    reminders?: TeacherReminderUncheckedUpdateManyWithoutObligationNestedInput
+    escalations?: TeacherEscalationUncheckedUpdateManyWithoutObligationNestedInput
+  }
+
+  export type TeacherObligationUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTeacherObligationTypeFieldUpdateOperationsInput | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFieldUpdateOperationsInput | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFieldUpdateOperationsInput | $Enums.TeacherObligationPriority
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherReminderUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacher?: TeacherUpdateOneRequiredWithoutAccountabilityRemindersNestedInput
+    obligation?: TeacherObligationUpdateOneRequiredWithoutRemindersNestedInput
+  }
+
+  export type TeacherReminderUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    obligationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherReminderUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    obligationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherEscalationUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherEscalationStatusFieldUpdateOperationsInput | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacher?: TeacherUpdateOneRequiredWithoutAccountabilityEscalationsNestedInput
+    obligation?: TeacherObligationUpdateOneRequiredWithoutEscalationsNestedInput
+  }
+
+  export type TeacherEscalationUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherEscalationStatusFieldUpdateOperationsInput | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    obligationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherEscalationUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherEscalationStatusFieldUpdateOperationsInput | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+    obligationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherCorrectionRequestUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    fieldName?: StringFieldUpdateOperationsInput | string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason?: StringFieldUpdateOperationsInput | string
+    evidenceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTeacherCorrectionRequestStatusFieldUpdateOperationsInput | $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacher?: TeacherUpdateOneRequiredWithoutCorrectionRequestsNestedInput
+  }
+
+  export type TeacherCorrectionRequestUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    fieldName?: StringFieldUpdateOperationsInput | string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason?: StringFieldUpdateOperationsInput | string
+    evidenceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTeacherCorrectionRequestStatusFieldUpdateOperationsInput | $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    fieldName?: StringFieldUpdateOperationsInput | string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason?: StringFieldUpdateOperationsInput | string
+    evidenceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTeacherCorrectionRequestStatusFieldUpdateOperationsInput | $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherAccountabilityAuditLogUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumTeacherAccountabilityAuditActionFieldUpdateOperationsInput | $Enums.TeacherAccountabilityAuditAction
+    actorId?: NullableStringFieldUpdateOperationsInput | string | null
+    actorRole?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacher?: TeacherUpdateOneWithoutAccountabilityAuditLogsNestedInput
+  }
+
+  export type TeacherAccountabilityAuditLogUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumTeacherAccountabilityAuditActionFieldUpdateOperationsInput | $Enums.TeacherAccountabilityAuditAction
+    actorId?: NullableStringFieldUpdateOperationsInput | string | null
+    actorRole?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacherId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumTeacherAccountabilityAuditActionFieldUpdateOperationsInput | $Enums.TeacherAccountabilityAuditAction
+    actorId?: NullableStringFieldUpdateOperationsInput | string | null
+    actorRole?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacherId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type ParentNotificationPreferenceUpdateWithoutSchoolInput = {
     id?: StringFieldUpdateOperationsInput | string
     dailySummaryEnabled?: BoolFieldUpdateOperationsInput | boolean
@@ -122237,6 +136404,85 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type TeacherObligationCreateManyTeacherInput = {
+    id?: string
+    type: $Enums.TeacherObligationType
+    status?: $Enums.TeacherObligationStatus
+    priority?: $Enums.TeacherObligationPriority
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    title: string
+    description?: string | null
+    expectedAt: Date | string
+    completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+  }
+
+  export type TeacherReminderCreateManyTeacherInput = {
+    id?: string
+    channel?: string
+    message: string
+    status?: $Enums.TeacherReminderStatus
+    scheduledAt?: Date | string | null
+    sentAt?: Date | string | null
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    obligationId: string
+  }
+
+  export type TeacherEscalationCreateManyTeacherInput = {
+    id?: string
+    reason: string
+    status?: $Enums.TeacherEscalationStatus
+    escalatedAt?: Date | string
+    resolvedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    obligationId: string
+  }
+
+  export type TeacherCorrectionRequestCreateManyTeacherInput = {
+    id?: string
+    sourceModel: string
+    sourceId: string
+    sourceKey: string
+    fieldName: string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason: string
+    evidenceUrl?: string | null
+    status?: $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+  }
+
+  export type TeacherAccountabilityAuditLogCreateManyTeacherInput = {
+    id?: string
+    action: $Enums.TeacherAccountabilityAuditAction
+    actorId?: string | null
+    actorRole?: string | null
+    sourceModel: string
+    sourceId: string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: string | null
+    createdAt?: Date | string
+    schoolId: string
+  }
+
   export type SubjectUpdateWithoutTeachersInput = {
     name?: StringFieldUpdateOperationsInput | string
     school?: SchoolUpdateOneRequiredWithoutSubjectsNestedInput
@@ -122663,6 +136909,247 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TeacherObligationUpdateWithoutTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTeacherObligationTypeFieldUpdateOperationsInput | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFieldUpdateOperationsInput | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFieldUpdateOperationsInput | $Enums.TeacherObligationPriority
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutTeacherObligationsNestedInput
+    reminders?: TeacherReminderUpdateManyWithoutObligationNestedInput
+    escalations?: TeacherEscalationUpdateManyWithoutObligationNestedInput
+  }
+
+  export type TeacherObligationUncheckedUpdateWithoutTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTeacherObligationTypeFieldUpdateOperationsInput | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFieldUpdateOperationsInput | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFieldUpdateOperationsInput | $Enums.TeacherObligationPriority
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    reminders?: TeacherReminderUncheckedUpdateManyWithoutObligationNestedInput
+    escalations?: TeacherEscalationUncheckedUpdateManyWithoutObligationNestedInput
+  }
+
+  export type TeacherObligationUncheckedUpdateManyWithoutTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTeacherObligationTypeFieldUpdateOperationsInput | $Enums.TeacherObligationType
+    status?: EnumTeacherObligationStatusFieldUpdateOperationsInput | $Enums.TeacherObligationStatus
+    priority?: EnumTeacherObligationPriorityFieldUpdateOperationsInput | $Enums.TeacherObligationPriority
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherReminderUpdateWithoutTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutTeacherRemindersNestedInput
+    obligation?: TeacherObligationUpdateOneRequiredWithoutRemindersNestedInput
+  }
+
+  export type TeacherReminderUncheckedUpdateWithoutTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    obligationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherReminderUncheckedUpdateManyWithoutTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    obligationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherEscalationUpdateWithoutTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherEscalationStatusFieldUpdateOperationsInput | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutTeacherEscalationsNestedInput
+    obligation?: TeacherObligationUpdateOneRequiredWithoutEscalationsNestedInput
+  }
+
+  export type TeacherEscalationUncheckedUpdateWithoutTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherEscalationStatusFieldUpdateOperationsInput | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    obligationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherEscalationUncheckedUpdateManyWithoutTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherEscalationStatusFieldUpdateOperationsInput | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    obligationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherCorrectionRequestUpdateWithoutTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    fieldName?: StringFieldUpdateOperationsInput | string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason?: StringFieldUpdateOperationsInput | string
+    evidenceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTeacherCorrectionRequestStatusFieldUpdateOperationsInput | $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutTeacherCorrectionsNestedInput
+  }
+
+  export type TeacherCorrectionRequestUncheckedUpdateWithoutTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    fieldName?: StringFieldUpdateOperationsInput | string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason?: StringFieldUpdateOperationsInput | string
+    evidenceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTeacherCorrectionRequestStatusFieldUpdateOperationsInput | $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    sourceKey?: StringFieldUpdateOperationsInput | string
+    fieldName?: StringFieldUpdateOperationsInput | string
+    oldValue?: NullableJsonNullValueInput | InputJsonValue
+    newValue?: NullableJsonNullValueInput | InputJsonValue
+    reason?: StringFieldUpdateOperationsInput | string
+    evidenceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTeacherCorrectionRequestStatusFieldUpdateOperationsInput | $Enums.TeacherCorrectionRequestStatus
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherAccountabilityAuditLogUpdateWithoutTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumTeacherAccountabilityAuditActionFieldUpdateOperationsInput | $Enums.TeacherAccountabilityAuditAction
+    actorId?: NullableStringFieldUpdateOperationsInput | string | null
+    actorRole?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutTeacherAccountabilityAuditLogsNestedInput
+  }
+
+  export type TeacherAccountabilityAuditLogUncheckedUpdateWithoutTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumTeacherAccountabilityAuditActionFieldUpdateOperationsInput | $Enums.TeacherAccountabilityAuditAction
+    actorId?: NullableStringFieldUpdateOperationsInput | string | null
+    actorRole?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumTeacherAccountabilityAuditActionFieldUpdateOperationsInput | $Enums.TeacherAccountabilityAuditAction
+    actorId?: NullableStringFieldUpdateOperationsInput | string | null
+    actorRole?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceModel?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
   export type StudentCreateManyParentInput = {
     id: string
     username: string
@@ -123018,6 +137505,118 @@ export namespace Prisma {
     paymentId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeacherReminderCreateManyObligationInput = {
+    id?: string
+    channel?: string
+    message: string
+    status?: $Enums.TeacherReminderStatus
+    scheduledAt?: Date | string | null
+    sentAt?: Date | string | null
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    teacherId: string
+  }
+
+  export type TeacherEscalationCreateManyObligationInput = {
+    id?: string
+    reason: string
+    status?: $Enums.TeacherEscalationStatus
+    escalatedAt?: Date | string
+    resolvedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    teacherId: string
+  }
+
+  export type TeacherReminderUpdateWithoutObligationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutTeacherRemindersNestedInput
+    teacher?: TeacherUpdateOneRequiredWithoutAccountabilityRemindersNestedInput
+  }
+
+  export type TeacherReminderUncheckedUpdateWithoutObligationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherReminderUncheckedUpdateManyWithoutObligationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherEscalationUpdateWithoutObligationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherEscalationStatusFieldUpdateOperationsInput | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutTeacherEscalationsNestedInput
+    teacher?: TeacherUpdateOneRequiredWithoutAccountabilityEscalationsNestedInput
+  }
+
+  export type TeacherEscalationUncheckedUpdateWithoutObligationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherEscalationStatusFieldUpdateOperationsInput | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TeacherEscalationUncheckedUpdateManyWithoutObligationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumTeacherEscalationStatusFieldUpdateOperationsInput | $Enums.TeacherEscalationStatus
+    escalatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    teacherId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ParentNotificationDeliveryLogCreateManyNotificationInput = {
@@ -124017,6 +138616,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutSubjectsInput = {
@@ -124042,6 +138646,11 @@ export namespace Prisma {
     checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
     syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateManyWithoutSubjectsInput = {
