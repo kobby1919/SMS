@@ -19920,6 +19920,7 @@ export namespace Prisma {
   export type TeacherReminderMinAggregateOutputType = {
     id: string | null
     channel: string | null
+    dedupeKey: string | null
     message: string | null
     status: $Enums.TeacherReminderStatus | null
     scheduledAt: Date | null
@@ -19935,6 +19936,7 @@ export namespace Prisma {
   export type TeacherReminderMaxAggregateOutputType = {
     id: string | null
     channel: string | null
+    dedupeKey: string | null
     message: string | null
     status: $Enums.TeacherReminderStatus | null
     scheduledAt: Date | null
@@ -19950,6 +19952,7 @@ export namespace Prisma {
   export type TeacherReminderCountAggregateOutputType = {
     id: number
     channel: number
+    dedupeKey: number
     message: number
     status: number
     scheduledAt: number
@@ -19967,6 +19970,7 @@ export namespace Prisma {
   export type TeacherReminderMinAggregateInputType = {
     id?: true
     channel?: true
+    dedupeKey?: true
     message?: true
     status?: true
     scheduledAt?: true
@@ -19982,6 +19986,7 @@ export namespace Prisma {
   export type TeacherReminderMaxAggregateInputType = {
     id?: true
     channel?: true
+    dedupeKey?: true
     message?: true
     status?: true
     scheduledAt?: true
@@ -19997,6 +20002,7 @@ export namespace Prisma {
   export type TeacherReminderCountAggregateInputType = {
     id?: true
     channel?: true
+    dedupeKey?: true
     message?: true
     status?: true
     scheduledAt?: true
@@ -20085,6 +20091,7 @@ export namespace Prisma {
   export type TeacherReminderGroupByOutputType = {
     id: string
     channel: string
+    dedupeKey: string
     message: string
     status: $Enums.TeacherReminderStatus
     scheduledAt: Date | null
@@ -20117,6 +20124,7 @@ export namespace Prisma {
   export type TeacherReminderSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     channel?: boolean
+    dedupeKey?: boolean
     message?: boolean
     status?: boolean
     scheduledAt?: boolean
@@ -20135,6 +20143,7 @@ export namespace Prisma {
   export type TeacherReminderSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     channel?: boolean
+    dedupeKey?: boolean
     message?: boolean
     status?: boolean
     scheduledAt?: boolean
@@ -20153,6 +20162,7 @@ export namespace Prisma {
   export type TeacherReminderSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     channel?: boolean
+    dedupeKey?: boolean
     message?: boolean
     status?: boolean
     scheduledAt?: boolean
@@ -20171,6 +20181,7 @@ export namespace Prisma {
   export type TeacherReminderSelectScalar = {
     id?: boolean
     channel?: boolean
+    dedupeKey?: boolean
     message?: boolean
     status?: boolean
     scheduledAt?: boolean
@@ -20183,7 +20194,7 @@ export namespace Prisma {
     obligationId?: boolean
   }
 
-  export type TeacherReminderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "channel" | "message" | "status" | "scheduledAt" | "sentAt" | "errorMessage" | "createdAt" | "updatedAt" | "schoolId" | "teacherId" | "obligationId", ExtArgs["result"]["teacherReminder"]>
+  export type TeacherReminderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "channel" | "dedupeKey" | "message" | "status" | "scheduledAt" | "sentAt" | "errorMessage" | "createdAt" | "updatedAt" | "schoolId" | "teacherId" | "obligationId", ExtArgs["result"]["teacherReminder"]>
   export type TeacherReminderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     teacher?: boolean | TeacherDefaultArgs<ExtArgs>
@@ -20210,6 +20221,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       channel: string
+      dedupeKey: string
       message: string
       status: $Enums.TeacherReminderStatus
       scheduledAt: Date | null
@@ -20648,6 +20660,7 @@ export namespace Prisma {
   interface TeacherReminderFieldRefs {
     readonly id: FieldRef<"TeacherReminder", 'String'>
     readonly channel: FieldRef<"TeacherReminder", 'String'>
+    readonly dedupeKey: FieldRef<"TeacherReminder", 'String'>
     readonly message: FieldRef<"TeacherReminder", 'String'>
     readonly status: FieldRef<"TeacherReminder", 'TeacherReminderStatus'>
     readonly scheduledAt: FieldRef<"TeacherReminder", 'DateTime'>
@@ -77240,6 +77253,7 @@ export namespace Prisma {
   export const TeacherReminderScalarFieldEnum: {
     id: 'id',
     channel: 'channel',
+    dedupeKey: 'dedupeKey',
     message: 'message',
     status: 'status',
     scheduledAt: 'scheduledAt',
@@ -79856,6 +79870,7 @@ export namespace Prisma {
     NOT?: TeacherReminderWhereInput | TeacherReminderWhereInput[]
     id?: StringFilter<"TeacherReminder"> | string
     channel?: StringFilter<"TeacherReminder"> | string
+    dedupeKey?: StringFilter<"TeacherReminder"> | string
     message?: StringFilter<"TeacherReminder"> | string
     status?: EnumTeacherReminderStatusFilter<"TeacherReminder"> | $Enums.TeacherReminderStatus
     scheduledAt?: DateTimeNullableFilter<"TeacherReminder"> | Date | string | null
@@ -79874,6 +79889,7 @@ export namespace Prisma {
   export type TeacherReminderOrderByWithRelationInput = {
     id?: SortOrder
     channel?: SortOrder
+    dedupeKey?: SortOrder
     message?: SortOrder
     status?: SortOrder
     scheduledAt?: SortOrderInput | SortOrder
@@ -79891,10 +79907,12 @@ export namespace Prisma {
 
   export type TeacherReminderWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    schoolId_dedupeKey?: TeacherReminderSchoolIdDedupeKeyCompoundUniqueInput
     AND?: TeacherReminderWhereInput | TeacherReminderWhereInput[]
     OR?: TeacherReminderWhereInput[]
     NOT?: TeacherReminderWhereInput | TeacherReminderWhereInput[]
     channel?: StringFilter<"TeacherReminder"> | string
+    dedupeKey?: StringFilter<"TeacherReminder"> | string
     message?: StringFilter<"TeacherReminder"> | string
     status?: EnumTeacherReminderStatusFilter<"TeacherReminder"> | $Enums.TeacherReminderStatus
     scheduledAt?: DateTimeNullableFilter<"TeacherReminder"> | Date | string | null
@@ -79908,11 +79926,12 @@ export namespace Prisma {
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
     obligation?: XOR<TeacherObligationScalarRelationFilter, TeacherObligationWhereInput>
-  }, "id">
+  }, "id" | "schoolId_dedupeKey">
 
   export type TeacherReminderOrderByWithAggregationInput = {
     id?: SortOrder
     channel?: SortOrder
+    dedupeKey?: SortOrder
     message?: SortOrder
     status?: SortOrder
     scheduledAt?: SortOrderInput | SortOrder
@@ -79934,6 +79953,7 @@ export namespace Prisma {
     NOT?: TeacherReminderScalarWhereWithAggregatesInput | TeacherReminderScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"TeacherReminder"> | string
     channel?: StringWithAggregatesFilter<"TeacherReminder"> | string
+    dedupeKey?: StringWithAggregatesFilter<"TeacherReminder"> | string
     message?: StringWithAggregatesFilter<"TeacherReminder"> | string
     status?: EnumTeacherReminderStatusWithAggregatesFilter<"TeacherReminder"> | $Enums.TeacherReminderStatus
     scheduledAt?: DateTimeNullableWithAggregatesFilter<"TeacherReminder"> | Date | string | null
@@ -85530,6 +85550,7 @@ export namespace Prisma {
   export type TeacherReminderCreateInput = {
     id?: string
     channel?: string
+    dedupeKey: string
     message: string
     status?: $Enums.TeacherReminderStatus
     scheduledAt?: Date | string | null
@@ -85545,6 +85566,7 @@ export namespace Prisma {
   export type TeacherReminderUncheckedCreateInput = {
     id?: string
     channel?: string
+    dedupeKey: string
     message: string
     status?: $Enums.TeacherReminderStatus
     scheduledAt?: Date | string | null
@@ -85560,6 +85582,7 @@ export namespace Prisma {
   export type TeacherReminderUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     channel?: StringFieldUpdateOperationsInput | string
+    dedupeKey?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -85575,6 +85598,7 @@ export namespace Prisma {
   export type TeacherReminderUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     channel?: StringFieldUpdateOperationsInput | string
+    dedupeKey?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -85590,6 +85614,7 @@ export namespace Prisma {
   export type TeacherReminderCreateManyInput = {
     id?: string
     channel?: string
+    dedupeKey: string
     message: string
     status?: $Enums.TeacherReminderStatus
     scheduledAt?: Date | string | null
@@ -85605,6 +85630,7 @@ export namespace Prisma {
   export type TeacherReminderUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     channel?: StringFieldUpdateOperationsInput | string
+    dedupeKey?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -85617,6 +85643,7 @@ export namespace Prisma {
   export type TeacherReminderUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     channel?: StringFieldUpdateOperationsInput | string
+    dedupeKey?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -91363,9 +91390,15 @@ export namespace Prisma {
     isNot?: TeacherObligationWhereInput
   }
 
+  export type TeacherReminderSchoolIdDedupeKeyCompoundUniqueInput = {
+    schoolId: string
+    dedupeKey: string
+  }
+
   export type TeacherReminderCountOrderByAggregateInput = {
     id?: SortOrder
     channel?: SortOrder
+    dedupeKey?: SortOrder
     message?: SortOrder
     status?: SortOrder
     scheduledAt?: SortOrder
@@ -91381,6 +91414,7 @@ export namespace Prisma {
   export type TeacherReminderMaxOrderByAggregateInput = {
     id?: SortOrder
     channel?: SortOrder
+    dedupeKey?: SortOrder
     message?: SortOrder
     status?: SortOrder
     scheduledAt?: SortOrder
@@ -91396,6 +91430,7 @@ export namespace Prisma {
   export type TeacherReminderMinOrderByAggregateInput = {
     id?: SortOrder
     channel?: SortOrder
+    dedupeKey?: SortOrder
     message?: SortOrder
     status?: SortOrder
     scheduledAt?: SortOrder
@@ -104987,6 +105022,7 @@ export namespace Prisma {
   export type TeacherReminderCreateWithoutSchoolInput = {
     id?: string
     channel?: string
+    dedupeKey: string
     message: string
     status?: $Enums.TeacherReminderStatus
     scheduledAt?: Date | string | null
@@ -105001,6 +105037,7 @@ export namespace Prisma {
   export type TeacherReminderUncheckedCreateWithoutSchoolInput = {
     id?: string
     channel?: string
+    dedupeKey: string
     message: string
     status?: $Enums.TeacherReminderStatus
     scheduledAt?: Date | string | null
@@ -106738,6 +106775,7 @@ export namespace Prisma {
     NOT?: TeacherReminderScalarWhereInput | TeacherReminderScalarWhereInput[]
     id?: StringFilter<"TeacherReminder"> | string
     channel?: StringFilter<"TeacherReminder"> | string
+    dedupeKey?: StringFilter<"TeacherReminder"> | string
     message?: StringFilter<"TeacherReminder"> | string
     status?: EnumTeacherReminderStatusFilter<"TeacherReminder"> | $Enums.TeacherReminderStatus
     scheduledAt?: DateTimeNullableFilter<"TeacherReminder"> | Date | string | null
@@ -108906,6 +108944,7 @@ export namespace Prisma {
   export type TeacherReminderCreateWithoutTeacherInput = {
     id?: string
     channel?: string
+    dedupeKey: string
     message: string
     status?: $Enums.TeacherReminderStatus
     scheduledAt?: Date | string | null
@@ -108920,6 +108959,7 @@ export namespace Prisma {
   export type TeacherReminderUncheckedCreateWithoutTeacherInput = {
     id?: string
     channel?: string
+    dedupeKey: string
     message: string
     status?: $Enums.TeacherReminderStatus
     scheduledAt?: Date | string | null
@@ -110936,6 +110976,7 @@ export namespace Prisma {
   export type TeacherReminderCreateWithoutObligationInput = {
     id?: string
     channel?: string
+    dedupeKey: string
     message: string
     status?: $Enums.TeacherReminderStatus
     scheduledAt?: Date | string | null
@@ -110950,6 +110991,7 @@ export namespace Prisma {
   export type TeacherReminderUncheckedCreateWithoutObligationInput = {
     id?: string
     channel?: string
+    dedupeKey: string
     message: string
     status?: $Enums.TeacherReminderStatus
     scheduledAt?: Date | string | null
@@ -133543,6 +133585,7 @@ export namespace Prisma {
   export type TeacherReminderCreateManySchoolInput = {
     id?: string
     channel?: string
+    dedupeKey: string
     message: string
     status?: $Enums.TeacherReminderStatus
     scheduledAt?: Date | string | null
@@ -135372,6 +135415,7 @@ export namespace Prisma {
   export type TeacherReminderUpdateWithoutSchoolInput = {
     id?: StringFieldUpdateOperationsInput | string
     channel?: StringFieldUpdateOperationsInput | string
+    dedupeKey?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -135386,6 +135430,7 @@ export namespace Prisma {
   export type TeacherReminderUncheckedUpdateWithoutSchoolInput = {
     id?: StringFieldUpdateOperationsInput | string
     channel?: StringFieldUpdateOperationsInput | string
+    dedupeKey?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -135400,6 +135445,7 @@ export namespace Prisma {
   export type TeacherReminderUncheckedUpdateManyWithoutSchoolInput = {
     id?: StringFieldUpdateOperationsInput | string
     channel?: StringFieldUpdateOperationsInput | string
+    dedupeKey?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -136425,6 +136471,7 @@ export namespace Prisma {
   export type TeacherReminderCreateManyTeacherInput = {
     id?: string
     channel?: string
+    dedupeKey: string
     message: string
     status?: $Enums.TeacherReminderStatus
     scheduledAt?: Date | string | null
@@ -136970,6 +137017,7 @@ export namespace Prisma {
   export type TeacherReminderUpdateWithoutTeacherInput = {
     id?: StringFieldUpdateOperationsInput | string
     channel?: StringFieldUpdateOperationsInput | string
+    dedupeKey?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -136984,6 +137032,7 @@ export namespace Prisma {
   export type TeacherReminderUncheckedUpdateWithoutTeacherInput = {
     id?: StringFieldUpdateOperationsInput | string
     channel?: StringFieldUpdateOperationsInput | string
+    dedupeKey?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -136998,6 +137047,7 @@ export namespace Prisma {
   export type TeacherReminderUncheckedUpdateManyWithoutTeacherInput = {
     id?: StringFieldUpdateOperationsInput | string
     channel?: StringFieldUpdateOperationsInput | string
+    dedupeKey?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -137510,6 +137560,7 @@ export namespace Prisma {
   export type TeacherReminderCreateManyObligationInput = {
     id?: string
     channel?: string
+    dedupeKey: string
     message: string
     status?: $Enums.TeacherReminderStatus
     scheduledAt?: Date | string | null
@@ -137538,6 +137589,7 @@ export namespace Prisma {
   export type TeacherReminderUpdateWithoutObligationInput = {
     id?: StringFieldUpdateOperationsInput | string
     channel?: StringFieldUpdateOperationsInput | string
+    dedupeKey?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -137552,6 +137604,7 @@ export namespace Prisma {
   export type TeacherReminderUncheckedUpdateWithoutObligationInput = {
     id?: StringFieldUpdateOperationsInput | string
     channel?: StringFieldUpdateOperationsInput | string
+    dedupeKey?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -137566,6 +137619,7 @@ export namespace Prisma {
   export type TeacherReminderUncheckedUpdateManyWithoutObligationInput = {
     id?: StringFieldUpdateOperationsInput | string
     channel?: StringFieldUpdateOperationsInput | string
+    dedupeKey?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     status?: EnumTeacherReminderStatusFieldUpdateOperationsInput | $Enums.TeacherReminderStatus
     scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

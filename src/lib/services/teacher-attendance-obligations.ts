@@ -58,6 +58,14 @@ function addMinutes(date: Date, minutes: number) {
   return new Date(date.getTime() + minutes * 60_000);
 }
 
+function chunkArray<T>(items: T[], size: number) {
+  const chunks: T[][] = [];
+  for (let index = 0; index < items.length; index += size) {
+    chunks.push(items.slice(index, index + size));
+  }
+  return chunks;
+}
+
 function combineDateWithLessonTime(date: Date, lessonTime: Date) {
   const value = dayStart(date);
   value.setHours(lessonTime.getHours(), lessonTime.getMinutes(), 0, 0);
@@ -256,73 +264,148 @@ export async function syncAttendanceObligationsForDate({
       description: `Attendance for ${lesson.subject.name} in ${lesson.class.name} is expected by ${deadlineAt.toLocaleTimeString("en-GH", { hour: "2-digit", minute: "2-digit" })}.`,
     };
   });
+  const existingObligations = await prisma.teacherObligation.findMany({
+    where: {
+      schoolId,
+      type: "ATTENDANCE",
+      sourceKey: { in: updates.map((item) => item.sourceKey) },
+    },
+    select: {
+      id: true,
+      sourceId: true,
+      sourceKey: true,
+      status: true,
+      priority: true,
+      expectedAt: true,
+      completedAt: true,
+      metadata: true,
+    },
+  });
+  const existingBySourceKey = new Map(
+    existingObligations.map((obligation) => [obligation.sourceKey, obligation]),
+  );
 
-  const obligations = await prisma.$transaction(
-    updates.map((item) =>
-      prisma.teacherObligation.upsert({
-        where: {
-          schoolId_teacherId_sourceKey: {
-            schoolId,
-            teacherId: item.lesson.teacherId,
-            sourceKey: item.sourceKey,
-          },
-        },
-        create: {
-          schoolId,
-          teacherId: item.lesson.teacherId,
-          type: "ATTENDANCE",
-          status: item.status,
-          priority: item.priority,
-          sourceModel: "Lesson",
-          sourceId: String(item.lesson.id),
-          sourceKey: item.sourceKey,
-          title: item.title,
-          description: item.description,
-          expectedAt: item.deadlineAt,
-          completedAt: item.completedAt,
-          metadata: {
-            lessonId: item.lesson.id,
-            classId: item.lesson.classId,
-            className: item.lesson.class.name,
-            subjectId: item.lesson.subjectId,
-            subjectName: item.lesson.subject.name,
-            teacherName: `${item.lesson.teacher.name} ${item.lesson.teacher.surname}`,
-            date: targetDateKey,
-            openAt: item.openAt.toISOString(),
-            deadlineAt: item.deadlineAt.toISOString(),
-            missedAt: item.missedAt.toISOString(),
-            studentCount: item.studentCount,
-            attendanceCount: item.attendanceCount,
-          },
-        },
-        update: {
-          status: item.status,
-          priority: item.priority,
-          title: item.title,
-          description: item.description,
-          expectedAt: item.deadlineAt,
-          completedAt: item.completedAt,
-          metadata: {
-            lessonId: item.lesson.id,
-            classId: item.lesson.classId,
-            className: item.lesson.class.name,
-            subjectId: item.lesson.subjectId,
-            subjectName: item.lesson.subject.name,
-            teacherName: `${item.lesson.teacher.name} ${item.lesson.teacher.surname}`,
-            date: targetDateKey,
-            openAt: item.openAt.toISOString(),
-            deadlineAt: item.deadlineAt.toISOString(),
-            missedAt: item.missedAt.toISOString(),
-            studentCount: item.studentCount,
-            attendanceCount: item.attendanceCount,
-          },
-        },
-      }),
+  const durableUpdates = updates.map((item) => {
+    const existingStatus = existingBySourceKey.get(item.sourceKey)?.status;
+    const status =
+      existingStatus === "ESCALATED" &&
+      item.status !== "COMPLETED" &&
+      item.status !== "COMPLETED_LATE"
+        ? "ESCALATED"
+        : item.status;
+
+    return {
+      ...item,
+      status,
+      priority: priorityForStatus(status),
+    };
+  });
+
+  const createData = durableUpdates
+    .filter((item) => !existingBySourceKey.has(item.sourceKey))
+    .map((item) => ({
+      schoolId,
+      teacherId: item.lesson.teacherId,
+      type: "ATTENDANCE" as const,
+      status: item.status,
+      priority: item.priority,
+      sourceModel: "Lesson",
+      sourceId: String(item.lesson.id),
+      sourceKey: item.sourceKey,
+      title: item.title,
+      description: item.description,
+      expectedAt: item.deadlineAt,
+      completedAt: item.completedAt,
+      metadata: {
+        lessonId: item.lesson.id,
+        classId: item.lesson.classId,
+        className: item.lesson.class.name,
+        subjectId: item.lesson.subjectId,
+        subjectName: item.lesson.subject.name,
+        teacherName: `${item.lesson.teacher.name} ${item.lesson.teacher.surname}`,
+        date: targetDateKey,
+        openAt: item.openAt.toISOString(),
+        deadlineAt: item.deadlineAt.toISOString(),
+        missedAt: item.missedAt.toISOString(),
+        studentCount: item.studentCount,
+        attendanceCount: item.attendanceCount,
+      },
+    }));
+
+  if (createData.length > 0) {
+    await prisma.teacherObligation.createMany({
+      data: createData,
+      skipDuplicates: true,
+    });
+  }
+
+  const updateData = durableUpdates.filter((item) => {
+    const existing = existingBySourceKey.get(item.sourceKey);
+    if (!existing) return false;
+
+    return (
+      existing.status !== item.status ||
+      existing.priority !== item.priority ||
+      existing.expectedAt.getTime() !== item.deadlineAt.getTime() ||
+      (existing.completedAt?.getTime() ?? null) !== (item.completedAt?.getTime() ?? null)
+    );
+  });
+
+  await Promise.all(
+    chunkArray(updateData, 4).map((chunk) =>
+      Promise.all(
+        chunk.map((item) => {
+          const existing = existingBySourceKey.get(item.sourceKey);
+          if (!existing) return null;
+
+          return prisma.teacherObligation.update({
+            where: { id: existing.id },
+            data: {
+              status: item.status,
+              priority: item.priority,
+              title: item.title,
+              description: item.description,
+              expectedAt: item.deadlineAt,
+              completedAt: item.completedAt,
+              metadata: {
+                lessonId: item.lesson.id,
+                classId: item.lesson.classId,
+                className: item.lesson.class.name,
+                subjectId: item.lesson.subjectId,
+                subjectName: item.lesson.subject.name,
+                teacherName: `${item.lesson.teacher.name} ${item.lesson.teacher.surname}`,
+                date: targetDateKey,
+                openAt: item.openAt.toISOString(),
+                deadlineAt: item.deadlineAt.toISOString(),
+                missedAt: item.missedAt.toISOString(),
+                studentCount: item.studentCount,
+                attendanceCount: item.attendanceCount,
+              },
+            },
+          });
+        }),
+      ),
     ),
   );
 
+  const obligations = await prisma.teacherObligation.findMany({
+    where: {
+      schoolId,
+      type: "ATTENDANCE",
+      sourceKey: { in: durableUpdates.map((item) => item.sourceKey) },
+    },
+    select: {
+      id: true,
+      sourceId: true,
+      sourceKey: true,
+      status: true,
+      expectedAt: true,
+      completedAt: true,
+    },
+  });
+
   return obligations.map((obligation) => {
-    const item = updates.find((update) => update.sourceKey === obligation.sourceKey);
+    const item = durableUpdates.find((update) => update.sourceKey === obligation.sourceKey);
     return {
       lessonId: Number(obligation.sourceId),
       obligationId: obligation.id,

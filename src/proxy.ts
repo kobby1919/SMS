@@ -18,6 +18,7 @@ const isInternalSecretRoute = createRouteMatcher([
   "/api/webhooks/payments(.*)",
   "/api/internal/finance/jobs/run",
   "/api/internal/parent-summaries/run",
+  "/api/internal/teacher-accountability/run",
 ]);
 
 const isPublicRoute = createRouteMatcher([
@@ -30,6 +31,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/webhooks/payments(.*)",
   "/api/internal/finance/jobs/run",
   "/api/internal/parent-summaries/run",
+  "/api/internal/teacher-accountability/run",
   "/howItWorks(.*)",
   "/about(.*)",
   "/auth/callback",

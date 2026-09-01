@@ -260,6 +260,7 @@ exports.Prisma.TeacherObligationScalarFieldEnum = {
 exports.Prisma.TeacherReminderScalarFieldEnum = {
   id: 'id',
   channel: 'channel',
+  dedupeKey: 'dedupeKey',
   message: 'message',
   status: 'status',
   scheduledAt: 'scheduledAt',

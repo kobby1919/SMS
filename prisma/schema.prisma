@@ -630,6 +630,7 @@ model TeacherObligation {
 model TeacherReminder {
   id           String                @id @default(cuid())
   channel      String                @default("IN_APP")
+  dedupeKey    String
   message      String
   status       TeacherReminderStatus @default(PENDING)
   scheduledAt  DateTime?
@@ -647,6 +648,7 @@ model TeacherReminder {
   obligationId String
   obligation   TeacherObligation @relation(fields: [obligationId], references: [id], onDelete: Cascade)
 
+  @@unique([schoolId, dedupeKey])
   @@index([schoolId, obligationId, status])
   @@index([schoolId, teacherId, status, scheduledAt])
   @@index([schoolId, status, scheduledAt])
