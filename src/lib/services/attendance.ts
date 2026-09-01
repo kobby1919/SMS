@@ -1,6 +1,7 @@
 import prisma from "@/src/lib/prisma";
 import type { AttendanceFollowUpStatus, AttendanceStatus } from "@/src/generated/prisma";
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
+import { syncAttendanceObligationsForDate } from "@/src/lib/services/teacher-attendance-obligations";
 
 const ATTENDANCE_STATUS_LABELS: Record<AttendanceStatus, string> = {
   PRESENT: "Present",
@@ -202,7 +203,7 @@ export async function saveAttendance({
 
   const lesson = await prisma.lesson.findFirst({
     where: { id: lessonId, schoolId },
-    select: { id: true, classId: true },
+    select: { id: true, classId: true, teacherId: true },
   });
   if (!lesson) throw new Error("Lesson not found.");
 
@@ -404,6 +405,12 @@ export async function saveAttendance({
       }),
     );
   }
+
+  await syncAttendanceObligationsForDate({
+    schoolId,
+    teacherId: lesson.teacherId,
+    date: attendanceDate,
+  });
 
   return records.length;
 }

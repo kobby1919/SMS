@@ -2,6 +2,7 @@ import prisma from "@/src/lib/prisma";
 import { requirePageSession } from "@/src/lib/authz";
 import AttendanceTaker from "@/src/components/AttendanceTaker";
 import { AttendanceStatus, Day, Prisma } from "@/src/generated/prisma";
+import { syncAttendanceObligationsForDate } from "@/src/lib/services/teacher-attendance-obligations";
 
 
 const TakeAttendancePage = async ({
@@ -44,21 +45,32 @@ const TakeAttendancePage = async ({
   };
 
   let teacherLessons: LessonWithSummary[] = [];
+  let attendanceObligations: Awaited<ReturnType<typeof syncAttendanceObligationsForDate>> = [];
 
   if (!isWeekend) {
-    teacherLessons = await prisma.lesson.findMany({
-      where: {
+    [teacherLessons, attendanceObligations] = await Promise.all([
+      prisma.lesson.findMany({
+        where: {
+          schoolId,
+          ...(role === "teacher" ? { teacherId: userId } : {}),
+          day: dayOfWeekStr as Day, // Cast to the Enum type safely
+        },
+        include: {
+          subject: { select: { name: true } },
+          class: { select: { id: true, name: true } },
+        },
+        orderBy: { startTime: "asc" },
+      }),
+      syncAttendanceObligationsForDate({
         schoolId,
-        ...(role === "teacher" ? { teacherId: userId } : {}),
-        day: dayOfWeekStr as Day, // Cast to the Enum type safely
-      },
-      include: {
-        subject: { select: { name: true } },
-        class: { select: { id: true, name: true } },
-      },
-      orderBy: { startTime: "asc" },
-    });
+        teacherId: role === "teacher" ? userId : undefined,
+        date: new Date(dateStr),
+      }),
+    ]);
   }
+  const obligationByLessonId = new Map(
+    attendanceObligations.map((obligation) => [obligation.lessonId, obligation]),
+  );
 
   // If a lesson is selected, fetch its students + existing attendance
   let selectedLesson: LessonWithSummary | null = null;
@@ -115,6 +127,16 @@ const TakeAttendancePage = async ({
       ) : (
         <AttendanceTaker
           teacherLessons={teacherLessons.map((l) => ({
+            accountability: obligationByLessonId.get(l.id)
+              ? {
+                  status: obligationByLessonId.get(l.id)!.status,
+                  openAt: obligationByLessonId.get(l.id)!.openAt.toISOString(),
+                  deadlineAt: obligationByLessonId.get(l.id)!.deadlineAt.toISOString(),
+                  missedAt: obligationByLessonId.get(l.id)!.missedAt.toISOString(),
+                  attendanceCount: obligationByLessonId.get(l.id)!.attendanceCount,
+                  studentCount: obligationByLessonId.get(l.id)!.studentCount,
+                }
+              : null,
             id: l.id,
             subjectName: l.subject.name,
             className: l.class.name,

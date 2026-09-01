@@ -21,7 +21,18 @@ type TeacherLesson = {
   startTime:   string;
   endTime:     string;
   day:         string;
+  accountability?: {
+    status: "PENDING" | "COMPLETED" | "COMPLETED_LATE" | "MISSED" | "ESCALATED" | "CANCELLED";
+    openAt: string;
+    deadlineAt: string;
+    missedAt: string;
+    attendanceCount: number;
+    studentCount: number;
+  } | null;
 };
+type AttendanceAccountabilityStatus = NonNullable<
+  NonNullable<TeacherLesson["accountability"]>["status"]
+>;
 
 type Student = {
   id:      string;
@@ -98,6 +109,24 @@ const STATUS_CONFIG = {
 const formatTime = (iso: string) => {
   const d = new Date(iso);
   return `${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}`;
+};
+
+const accountabilityLabel = (lesson: TeacherLesson) => {
+  const status = lesson.accountability?.status;
+  if (status === "COMPLETED") return "Submitted";
+  if (status === "COMPLETED_LATE") return "Submitted late";
+  if (status === "MISSED") return "Missed";
+  if (status === "ESCALATED") return "Escalated";
+  if (status === "CANCELLED") return "Cancelled";
+  return `Due ${lesson.accountability?.deadlineAt ? formatTime(lesson.accountability.deadlineAt) : formatTime(lesson.endTime)}`;
+};
+
+const accountabilityClassName = (status?: AttendanceAccountabilityStatus) => {
+  if (status === "COMPLETED") return "bg-emerald-50 text-emerald-700";
+  if (status === "COMPLETED_LATE") return "bg-amber-50 text-amber-700";
+  if (status === "MISSED" || status === "ESCALATED") return "bg-rose-50 text-rose-700";
+  if (status === "CANCELLED") return "bg-gray-100 text-gray-500";
+  return "bg-sky-50 text-sky-700";
 };
 
 const getApiErrorMessage = (data: unknown) => {
@@ -353,6 +382,11 @@ const AttendanceTaker = ({
                         <p className={`text-xs font-semibold mt-0.5 ${isSelected ? "text-emerald-600" : "text-gray-400"}`}>
                           {lesson.className} · {formatTime(lesson.startTime)}–{formatTime(lesson.endTime)}
                         </p>
+                        <span
+                          className={`mt-2 inline-flex rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${accountabilityClassName(lesson.accountability?.status)}`}
+                        >
+                          {accountabilityLabel(lesson)}
+                        </span>
                       </div>
                       <ChevronRight size={14} className={isSelected ? "text-emerald-500" : "text-gray-300"} />
                     </button>
