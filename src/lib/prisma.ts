@@ -27,7 +27,29 @@ interface CustomGlobal extends Global {
 }
 
 const customGlobal = global as unknown as CustomGlobal;
-const prisma = customGlobal.prismaGlobal ?? prismaClientSingleton();
+const requiredDelegates = [
+  "teacherAccountabilitySetting",
+  "teacherObligation",
+  "teacherReminder",
+  "teacherEscalation",
+  "teacherCorrectionRequest",
+  "teacherAccountabilityAuditLog",
+] as const;
+
+function hasRequiredDelegates(client: ReturnType<typeof prismaClientSingleton>) {
+  return requiredDelegates.every((delegate) => delegate in client);
+}
+
+let prismaClient = customGlobal.prismaGlobal;
+
+if (!prismaClient || !hasRequiredDelegates(prismaClient)) {
+  if (prismaClient && process.env.NODE_ENV !== "production") {
+    void prismaClient.$disconnect().catch(() => undefined);
+  }
+  prismaClient = prismaClientSingleton();
+}
+
+const prisma = prismaClient;
 export default prisma;
 
 if (process.env.NODE_ENV !== "production") customGlobal.prismaGlobal = prisma;
