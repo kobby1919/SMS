@@ -183,6 +183,18 @@ const AttendanceTaker = ({
 
   const isToday    = dateStr === todayStr;
   const isPastDate = dateStr < todayStr;
+  const selectedLessonAccountability = teacherLessons.find(
+    (lesson) => lesson.id === selectedLessonId,
+  )?.accountability;
+  const selectedLessonWindowClosed =
+    selectedLessonAccountability?.status === "MISSED" ||
+    selectedLessonAccountability?.status === "ESCALATED" ||
+    selectedLessonAccountability?.status === "CANCELLED";
+  const selectedLessonNotOpenYet =
+    selectedLessonAccountability?.status === "PENDING" &&
+    new Date() < new Date(selectedLessonAccountability.openAt);
+  const selectedLessonLockedForTeacher =
+    selectedLessonWindowClosed || selectedLessonNotOpenYet;
 
   const defaultRecordFor = (studentId: string): AttendanceRecord => ({
     studentId,
@@ -600,11 +612,15 @@ const AttendanceTaker = ({
               {/* Submit button */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <p className="text-xs text-gray-400 font-medium">
-                  {Object.values(attendance).filter((r) => r.status !== "PRESENT").length} exception{Object.values(attendance).filter((r) => r.status !== "PRESENT").length !== 1 ? "s" : ""} marked
+                  {selectedLessonWindowClosed
+                    ? "Attendance window closed. Ask an admin to approve correction."
+                    : selectedLessonNotOpenYet
+                      ? `Attendance opens at ${selectedLessonAccountability?.openAt ? formatTime(selectedLessonAccountability.openAt) : "the scheduled time"}.`
+                      : `${Object.values(attendance).filter((r) => r.status !== "PRESENT").length} exception${Object.values(attendance).filter((r) => r.status !== "PRESENT").length !== 1 ? "s" : ""} marked`}
                 </p>
                 <button
                   onClick={handleSubmit}
-                  disabled={saving || students.length === 0}
+                  disabled={saving || students.length === 0 || selectedLessonLockedForTeacher}
                   className={`w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all shadow-sm
                     ${saved
                       ? "bg-emerald-500 text-white"

@@ -1,7 +1,10 @@
 import prisma from "@/src/lib/prisma";
 import type { AttendanceFollowUpStatus, AttendanceStatus } from "@/src/generated/prisma";
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
-import { syncAttendanceObligationsForDate } from "@/src/lib/services/teacher-attendance-obligations";
+import {
+  evaluateAttendanceWindow,
+  syncAttendanceObligationsForDate,
+} from "@/src/lib/services/teacher-attendance-obligations";
 
 const ATTENDANCE_STATUS_LABELS: Record<AttendanceStatus, string> = {
   PRESENT: "Present",
@@ -206,6 +209,21 @@ export async function saveAttendance({
     select: { id: true, classId: true, teacherId: true },
   });
   if (!lesson) throw new Error("Lesson not found.");
+  if (actorRole === "teacher") {
+    const window = await evaluateAttendanceWindow({
+      schoolId,
+      lessonId,
+      date: attendanceDate,
+    });
+    if (!window.allowed) {
+      await syncAttendanceObligationsForDate({
+        schoolId,
+        teacherId: lesson.teacherId,
+        date: attendanceDate,
+      });
+      throw new Error(window.message ?? "Attendance is not open for this lesson.");
+    }
+  }
 
   const validStudents = await prisma.student.findMany({
     where: { schoolId, classId: lesson.classId, id: { in: studentIds } },

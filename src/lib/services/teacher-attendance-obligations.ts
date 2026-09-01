@@ -29,6 +29,15 @@ type AttendanceObligationSnapshot = {
   attendanceCount: number;
 };
 
+type AttendanceWindowEvaluation = {
+  allowed: boolean;
+  status: "UPCOMING" | "OPEN" | "LATE" | "MISSED";
+  openAt: Date;
+  deadlineAt: Date;
+  missedAt: Date;
+  message?: string;
+};
+
 function dateKey(date: Date) {
   return date.toISOString().slice(0, 10);
 }
@@ -53,6 +62,63 @@ function combineDateWithLessonTime(date: Date, lessonTime: Date) {
   const value = dayStart(date);
   value.setHours(lessonTime.getHours(), lessonTime.getMinutes(), 0, 0);
   return value;
+}
+
+export async function evaluateAttendanceWindow({
+  schoolId,
+  lessonId,
+  date,
+  now = new Date(),
+}: {
+  schoolId: string;
+  lessonId: number;
+  date: Date;
+  now?: Date;
+}): Promise<AttendanceWindowEvaluation> {
+  const settings = await getTeacherAccountabilitySettings(schoolId);
+  const lesson = await prisma.lesson.findFirst({
+    where: { id: lessonId, schoolId },
+    select: { startTime: true, endTime: true },
+  });
+  if (!lesson) throw new Error("Lesson not found.");
+
+  const startAt = combineDateWithLessonTime(date, lesson.startTime);
+  const endAt = combineDateWithLessonTime(date, lesson.endTime);
+  const openAt = settings.allowEarlyAttendanceMarking
+    ? addMinutes(startAt, -settings.attendanceOpenMinutesBeforeLesson)
+    : startAt;
+  const deadlineAt = addMinutes(endAt, settings.attendanceGraceMinutesAfterLesson);
+  const missedAt = addMinutes(endAt, settings.attendanceEscalateMinutesAfterLesson);
+
+  if (now < openAt) {
+    return {
+      allowed: false,
+      status: "UPCOMING",
+      openAt,
+      deadlineAt,
+      missedAt,
+      message: `Attendance opens at ${openAt.toLocaleTimeString("en-GH", { hour: "2-digit", minute: "2-digit" })}.`,
+    };
+  }
+
+  if (now > missedAt) {
+    return {
+      allowed: false,
+      status: "MISSED",
+      openAt,
+      deadlineAt,
+      missedAt,
+      message: "This attendance window has closed. Ask an admin to correct or approve late entry.",
+    };
+  }
+
+  return {
+    allowed: true,
+    status: now > deadlineAt ? "LATE" : "OPEN",
+    openAt,
+    deadlineAt,
+    missedAt,
+  };
 }
 
 function statusForAttendanceObligation({
@@ -271,4 +337,3 @@ export async function syncAttendanceObligationsForDate({
     };
   });
 }
-
