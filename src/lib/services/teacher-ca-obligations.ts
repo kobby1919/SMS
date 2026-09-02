@@ -73,12 +73,13 @@ async function getCAActivityForObligation(schoolId: string, activityId: number) 
         select: {
           id: true,
           name: true,
+          students: { select: { id: true } },
           _count: { select: { students: true } },
         },
       },
       subject: { select: { id: true, name: true } },
       teacher: { select: { id: true, name: true, surname: true } },
-      scores: { select: { id: true, updatedAt: true } },
+      scores: { select: { id: true, studentId: true, updatedAt: true } },
     },
   });
 }
@@ -99,8 +100,10 @@ function buildCAObligationState({
   now: Date;
 }) {
   const studentCount = activity.class._count.students;
-  const scoreCount = activity.scores.length;
-  const latestScoreAt = activity.scores.reduce<Date | null>(
+  const classStudentIds = new Set(activity.class.students.map((student) => student.id));
+  const validScores = activity.scores.filter((score) => classStudentIds.has(score.studentId));
+  const scoreCount = validScores.length;
+  const latestScoreAt = validScores.reduce<Date | null>(
     (latest, score) => (!latest || score.updatedAt > latest ? score.updatedAt : latest),
     null,
   );
@@ -181,6 +184,7 @@ export async function syncCAActivityScorePublishingObligation({
     missedAt: state.missedAt.toISOString(),
     studentCount: state.studentCount,
     scoreCount: state.scoreCount,
+    missingScoreCount: Math.max(state.studentCount - state.scoreCount, 0),
   };
 
   const existing = await prisma.teacherObligation.findUnique({

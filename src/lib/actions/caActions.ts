@@ -593,15 +593,21 @@ export async function bulkUpsertCAActivityScores(data: {
     select: {
       classId: true,
       subjectId: true,
+      rawMaxScore: true,
+      isLocked: true,
       bucket: { select: { term: true, academicYear: true } },
       class: {
         select: {
+          students: { select: { id: true } },
           _count: { select: { students: true } },
         },
       },
     },
   });
   if (!activity) throw new Error("CA activity not found.");
+  if (activity.isLocked) {
+    throw new Error("This CA activity is locked. Score changes require an admin correction process.");
+  }
 
   await assertTeacherCanManageCAContext({
     userId,
@@ -626,6 +632,16 @@ export async function bulkUpsertCAActivityScores(data: {
     throw new Error(
       `Publish scores for all ${activity.class._count.students} students before locking this CA activity.`,
     );
+  }
+  const rosterStudentIds = new Set(activity.class.students.map((student) => student.id));
+  const invalidStudentId = studentIds.find((studentId) => !rosterStudentIds.has(studentId));
+  if (invalidStudentId) {
+    throw new Error("One or more students do not belong to this CA activity class.");
+  }
+  const rawMaxScore = Number(activity.rawMaxScore);
+  const invalidScore = parsed.rows.find((row) => row.rawScore > rawMaxScore);
+  if (invalidScore) {
+    throw new Error(`Raw score cannot exceed the activity maximum score of ${rawMaxScore}.`);
   }
 
   const writeResults = await Promise.all(

@@ -44,6 +44,22 @@ export const teacherAccountabilitySettingsSchema = z.object({
     });
   }
 
+  if (value.caReminderAfterSchoolDays >= value.caScorePublishWindowSchoolDays) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["caReminderAfterSchoolDays"],
+      message: "CA reminder must happen before the score publishing deadline.",
+    });
+  }
+
+  if (value.caScorePublishWindowSchoolDays >= value.caEscalateAfterSchoolDays) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["caEscalateAfterSchoolDays"],
+      message: "CA escalation must happen after the score publishing deadline.",
+    });
+  }
+
   if (value.homeworkCheckWindowSchoolDays >= value.homeworkEscalateAfterSchoolDays) {
     ctx.addIssue({
       code: "custom",
