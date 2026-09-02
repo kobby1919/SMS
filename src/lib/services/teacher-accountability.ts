@@ -1,6 +1,7 @@
 import prisma from "@/src/lib/prisma";
 import type { TeacherObligation, TeacherReminder } from "@/src/generated/prisma";
 import { syncAttendanceObligationsForDate } from "@/src/lib/services/teacher-attendance-obligations";
+import { getTeacherAccountabilitySettings } from "@/src/lib/services/teacher-accountability-settings";
 
 type AttendanceMetadata = {
   className?: string;
@@ -44,6 +45,11 @@ function escalationReason(obligation: TeacherObligation) {
   return `Attendance for ${subject} in ${className} was not submitted before the missed deadline.`;
 }
 
+function missedAtForObligation(obligation: TeacherObligation) {
+  const metadata = readAttendanceMetadata(obligation.metadata);
+  return parseMetadataDate(metadata.missedAt) ?? obligation.expectedAt;
+}
+
 async function queueReminderIfNeeded({
   obligation,
   now,
@@ -84,8 +90,7 @@ async function escalateIfNeeded({
   obligation: TeacherObligation;
   now: Date;
 }) {
-  const metadata = readAttendanceMetadata(obligation.metadata);
-  const missedAt = parseMetadataDate(metadata.missedAt) ?? obligation.expectedAt;
+  const missedAt = missedAtForObligation(obligation);
   if (missedAt > now) return false;
 
   const existing = await prisma.teacherEscalation.findUnique({
@@ -114,6 +119,14 @@ async function escalateIfNeeded({
         status: "ESCALATED",
         priority: "HIGH",
       },
+    }),
+    prisma.teacherReminder.updateMany({
+      where: {
+        schoolId: obligation.schoolId,
+        obligationId: obligation.id,
+        status: "PENDING",
+      },
+      data: { status: "SKIPPED" },
     }),
     prisma.teacherAccountabilityAuditLog.create({
       data: {
@@ -148,6 +161,7 @@ export async function processAttendanceAccountabilityForSchool({
   now?: Date;
   limit?: number;
 }): Promise<TeacherAccountabilityWorkerResult> {
+  const settings = await getTeacherAccountabilitySettings(schoolId);
   const syncedObligations = await syncAttendanceObligationsForDate({
     schoolId,
     date: now,
@@ -170,32 +184,43 @@ export async function processAttendanceAccountabilityForSchool({
   let skipped = 0;
 
   for (const obligation of obligations) {
-    const reminder = await queueReminderIfNeeded({ obligation, now });
-    if (reminder) {
-      remindersQueued += 1;
-      await prisma.teacherAccountabilityAuditLog.create({
-        data: {
-          schoolId: obligation.schoolId,
-          teacherId: obligation.teacherId,
-          action: "REMINDER_QUEUED",
-          actorRole: "SYSTEM",
-          sourceModel: "TeacherObligation",
-          sourceId: obligation.id,
-          after: {
-            reminderId: reminder.id,
-            status: reminder.status,
-          },
-          message: reminder.message,
-        },
-      });
+    if (settings.escalationsEnabled && missedAtForObligation(obligation) <= now) {
+      const escalated = await escalateIfNeeded({ obligation, now });
+      if (escalated) {
+        escalationsCreated += 1;
+      } else {
+        skipped += 1;
+      }
+      continue;
     }
 
-    const escalated = await escalateIfNeeded({ obligation, now });
-    if (escalated) {
-      escalationsCreated += 1;
-    } else if (!reminder) {
+    if (!settings.remindersEnabled) {
       skipped += 1;
+      continue;
     }
+
+    const reminder = await queueReminderIfNeeded({ obligation, now });
+    if (!reminder) {
+      skipped += 1;
+      continue;
+    }
+
+    remindersQueued += 1;
+    await prisma.teacherAccountabilityAuditLog.create({
+      data: {
+        schoolId: obligation.schoolId,
+        teacherId: obligation.teacherId,
+        action: "REMINDER_QUEUED",
+        actorRole: "SYSTEM",
+        sourceModel: "TeacherObligation",
+        sourceId: obligation.id,
+        after: {
+          reminderId: reminder.id,
+          status: reminder.status,
+        },
+        message: reminder.message,
+      },
+    });
   }
 
   return {

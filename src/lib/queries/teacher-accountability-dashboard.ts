@@ -4,6 +4,11 @@ import type {
   TeacherObligationPriority,
   TeacherObligationStatus,
 } from "@/src/generated/prisma";
+import {
+  effectiveObligationPriority,
+  effectiveObligationStatus,
+  isAccountabilityIssue,
+} from "@/src/lib/queries/teacher-accountability-status";
 
 type TeacherName = {
   id: string;
@@ -133,14 +138,15 @@ function toObligationRow(obligation: {
     reminders: number;
     escalations: number;
   };
-}): AccountabilityObligationRow {
+}, now: Date): AccountabilityObligationRow {
   const metadata = readMetadata(obligation.metadata);
+  const status = effectiveObligationStatus(obligation, now);
   return {
     id: obligation.id,
     teacherName: fullName(obligation.teacher),
     title: obligation.title,
-    status: obligation.status,
-    priority: obligation.priority,
+    status,
+    priority: effectiveObligationPriority(status, obligation.priority),
     expectedAt: obligation.expectedAt,
     completedAt: obligation.completedAt,
     className: metadata.className ?? null,
@@ -187,7 +193,6 @@ export async function getTeacherAccountabilityOverview(
       where: {
         schoolId,
         type: "ATTENDANCE",
-        status: { in: ["MISSED", "ESCALATED", "COMPLETED_LATE"] },
         expectedAt: { gte: weekStart, lte: todayEnd },
       },
       include: {
@@ -195,21 +200,33 @@ export async function getTeacherAccountabilityOverview(
         _count: { select: { reminders: true, escalations: true } },
       },
       orderBy: [{ priority: "desc" }, { expectedAt: "desc" }],
-      take: 25,
+      take: 200,
     }),
-    prisma.teacherObligation.groupBy({
-      by: ["teacherId", "status"],
+    prisma.teacherObligation.findMany({
       where: {
         schoolId,
         type: "ATTENDANCE",
         expectedAt: { gte: weekStart, lte: todayEnd },
       },
-      _count: { _all: true },
+      select: {
+        id: true,
+        teacherId: true,
+        status: true,
+        priority: true,
+        expectedAt: true,
+        completedAt: true,
+        metadata: true,
+      },
+      orderBy: [{ expectedAt: "asc" }],
+      take: 2000,
     }),
     prisma.teacherEscalation.findMany({
       where: {
         schoolId,
         status: { in: ["OPEN", "ACKNOWLEDGED"] },
+        obligation: {
+          expectedAt: { gte: weekStart, lte: todayEnd },
+        },
       },
       include: {
         teacher: { select: { id: true, name: true, surname: true } },
@@ -228,10 +245,16 @@ export async function getTeacherAccountabilityOverview(
       where: {
         schoolId,
         status: "PENDING",
+        obligation: {
+          expectedAt: { gte: todayStart, lte: todayEnd },
+        },
       },
     }),
     prisma.teacherAccountabilityAuditLog.findMany({
-      where: { schoolId },
+      where: {
+        schoolId,
+        createdAt: { gte: weekStart, lte: now },
+      },
       include: {
         teacher: { select: { id: true, name: true, surname: true } },
       },
@@ -254,6 +277,7 @@ export async function getTeacherAccountabilityOverview(
   const summaryByTeacher = new Map<string, TeacherAccountabilitySummaryRow>();
 
   for (const row of weeklyStatusGroups) {
+    const status = effectiveObligationStatus(row, now);
     const summary =
       summaryByTeacher.get(row.teacherId) ??
       {
@@ -267,14 +291,13 @@ export async function getTeacherAccountabilityOverview(
         escalated: 0,
         reliabilityScore: 0,
       };
-    const count = row._count._all;
-    summary.total += count;
+    summary.total += 1;
 
-    if (row.status === "PENDING") summary.pending += count;
-    if (row.status === "COMPLETED") summary.completed += count;
-    if (row.status === "COMPLETED_LATE") summary.completedLate += count;
-    if (row.status === "MISSED") summary.missed += count;
-    if (row.status === "ESCALATED") summary.escalated += count;
+    if (status === "PENDING") summary.pending += 1;
+    if (status === "COMPLETED") summary.completed += 1;
+    if (status === "COMPLETED_LATE") summary.completedLate += 1;
+    if (status === "MISSED") summary.missed += 1;
+    if (status === "ESCALATED") summary.escalated += 1;
 
     summaryByTeacher.set(row.teacherId, summary);
   }
@@ -292,8 +315,13 @@ export async function getTeacherAccountabilityOverview(
     .sort((a, b) => a.reliabilityScore - b.reliabilityScore || b.total - a.total)
     .slice(0, 12);
 
-  const todayRows = todayObligations.map(toObligationRow);
-  const issueRows = issueObligations.map(toObligationRow);
+  const todayRows = todayObligations.map((obligation) =>
+    toObligationRow(obligation, now),
+  );
+  const issueRows = issueObligations
+    .map((obligation) => toObligationRow(obligation, now))
+    .filter((row) => isAccountabilityIssue(row.status))
+    .slice(0, 25);
   const totals = todayRows.reduce(
     (acc, obligation) => {
       acc.today += 1;

@@ -4,6 +4,11 @@ import type {
   TeacherObligationPriority,
   TeacherObligationStatus,
 } from "@/src/generated/prisma";
+import {
+  effectiveObligationPriority,
+  effectiveObligationStatus,
+  isAccountabilityIssue,
+} from "@/src/lib/queries/teacher-accountability-status";
 
 type ObligationMetadata = {
   className?: string;
@@ -116,13 +121,14 @@ function toDutyRow(obligation: {
   sourceModel: string;
   sourceId: string;
   metadata: unknown;
-}): TeacherDutyRow {
+}, now: Date): TeacherDutyRow {
   const metadata = readMetadata(obligation.metadata);
+  const status = effectiveObligationStatus(obligation, now);
   return {
     id: obligation.id,
     title: obligation.title,
-    status: obligation.status,
-    priority: obligation.priority,
+    status,
+    priority: effectiveObligationPriority(status, obligation.priority),
     expectedAt: obligation.expectedAt,
     completedAt: obligation.completedAt,
     className: metadata.className ?? null,
@@ -170,26 +176,36 @@ export async function getTeacherSelfAccountabilityOverview({
       where: {
         schoolId,
         teacherId,
-        status: { in: ["COMPLETED_LATE", "MISSED", "ESCALATED"] },
         expectedAt: { gte: weekStart, lte: todayEnd },
       },
       orderBy: [{ priority: "desc" }, { expectedAt: "desc" }],
-      take: 20,
+      take: 120,
     }),
-    prisma.teacherObligation.groupBy({
-      by: ["status"],
+    prisma.teacherObligation.findMany({
       where: {
         schoolId,
         teacherId,
         expectedAt: { gte: weekStart, lte: todayEnd },
       },
-      _count: { _all: true },
+      select: {
+        id: true,
+        status: true,
+        priority: true,
+        expectedAt: true,
+        completedAt: true,
+        metadata: true,
+      },
+      orderBy: [{ expectedAt: "asc" }],
+      take: 500,
     }),
     prisma.teacherEscalation.findMany({
       where: {
         schoolId,
         teacherId,
         status: { in: ["OPEN", "ACKNOWLEDGED"] },
+        obligation: {
+          expectedAt: { gte: weekStart, lte: todayEnd },
+        },
       },
       include: {
         obligation: { select: { title: true } },
@@ -202,6 +218,9 @@ export async function getTeacherSelfAccountabilityOverview({
         schoolId,
         teacherId,
         status: "PENDING",
+        obligation: {
+          expectedAt: { gte: todayStart, lte: todayEnd },
+        },
       },
     }),
     prisma.teacherReminder.findMany({
@@ -209,6 +228,9 @@ export async function getTeacherSelfAccountabilityOverview({
         schoolId,
         teacherId,
         status: { in: ["PENDING", "FAILED"] },
+        obligation: {
+          expectedAt: { gte: todayStart, lte: todayEnd },
+        },
       },
       include: {
         obligation: { select: { title: true } },
@@ -220,6 +242,7 @@ export async function getTeacherSelfAccountabilityOverview({
       where: {
         schoolId,
         teacherId,
+        createdAt: { gte: weekStart, lte: now },
       },
       orderBy: [{ createdAt: "desc" }],
       take: 10,
@@ -241,30 +264,35 @@ export async function getTeacherSelfAccountabilityOverview({
   let weeklyTotal = 0;
   let weeklyEarned = 0;
   for (const row of weeklyStatusGroups) {
-    const count = row._count._all;
-    weeklyTotal += count;
-    if (row.status === "PENDING") {
-      totals.pending += count;
-      weeklyEarned += count * 0.4;
+    const status = effectiveObligationStatus(row, now);
+    weeklyTotal += 1;
+    if (status === "PENDING") {
+      totals.pending += 1;
+      weeklyEarned += 0.4;
     }
-    if (row.status === "COMPLETED") {
-      totals.completed += count;
-      weeklyEarned += count;
+    if (status === "COMPLETED") {
+      totals.completed += 1;
+      weeklyEarned += 1;
     }
-    if (row.status === "COMPLETED_LATE") {
-      totals.completedLate += count;
-      weeklyEarned += count * 0.7;
+    if (status === "COMPLETED_LATE") {
+      totals.completedLate += 1;
+      weeklyEarned += 0.7;
     }
-    if (row.status === "MISSED") totals.missed += count;
-    if (row.status === "ESCALATED") totals.escalated += count;
+    if (status === "MISSED") totals.missed += 1;
+    if (status === "ESCALATED") totals.escalated += 1;
   }
   totals.reliabilityScore =
     weeklyTotal > 0 ? Math.round((weeklyEarned / weeklyTotal) * 100) : 100;
 
+  const weeklyIssueRows = weeklyIssueDuties
+    .map((obligation) => toDutyRow(obligation, now))
+    .filter((row) => isAccountabilityIssue(row.status))
+    .slice(0, 20);
+
   return {
     totals,
-    todayDuties: todayDuties.map(toDutyRow),
-    weeklyIssues: weeklyIssueDuties.map(toDutyRow),
+    todayDuties: todayDuties.map((obligation) => toDutyRow(obligation, now)),
+    weeklyIssues: weeklyIssueRows,
     reminders: reminders.map((reminder) => ({
       id: reminder.id,
       message: reminder.message,
