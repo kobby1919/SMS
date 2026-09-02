@@ -209,6 +209,9 @@ export async function saveAttendance({
     select: { id: true, classId: true, teacherId: true },
   });
   if (!lesson) throw new Error("Lesson not found.");
+  if (actorRole === "teacher" && lesson.teacherId !== actorId) {
+    throw new Error("You can only submit attendance for lessons assigned to you.");
+  }
   if (actorRole === "teacher") {
     const window = await evaluateAttendanceWindow({
       schoolId,

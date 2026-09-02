@@ -50,6 +50,9 @@ export async function updateTeacherAccountabilitySettings(data: unknown) {
   });
 
   revalidatePath("/admin/accountability-settings");
+  revalidatePath("/admin/accountability");
+  revalidatePath("/teacher/accountability");
+  revalidatePath("/teacher");
 }
 
 export async function updateTeacherAccountabilitySettingsWithState(
@@ -69,4 +72,3 @@ export async function updateTeacherAccountabilitySettingsWithState(
     };
   }
 }
-

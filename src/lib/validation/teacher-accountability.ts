@@ -28,7 +28,7 @@ export const teacherAccountabilitySettingsSchema = z.object({
   escalationsEnabled: z.boolean().default(true),
   correctionApprovalRequired: z.boolean().default(true),
 }).superRefine((value, ctx) => {
-  if (value.attendanceEscalateMinutesAfterLesson < value.attendanceGraceMinutesAfterLesson) {
+  if (value.attendanceEscalateMinutesAfterLesson <= value.attendanceGraceMinutesAfterLesson) {
     ctx.addIssue({
       code: "custom",
       path: ["attendanceEscalateMinutesAfterLesson"],
@@ -36,7 +36,7 @@ export const teacherAccountabilitySettingsSchema = z.object({
     });
   }
 
-  if (value.caReminderAfterSchoolDays > value.caEscalateAfterSchoolDays) {
+  if (value.caReminderAfterSchoolDays >= value.caEscalateAfterSchoolDays) {
     ctx.addIssue({
       code: "custom",
       path: ["caEscalateAfterSchoolDays"],
@@ -44,7 +44,7 @@ export const teacherAccountabilitySettingsSchema = z.object({
     });
   }
 
-  if (value.homeworkCheckWindowSchoolDays > value.homeworkEscalateAfterSchoolDays) {
+  if (value.homeworkCheckWindowSchoolDays >= value.homeworkEscalateAfterSchoolDays) {
     ctx.addIssue({
       code: "custom",
       path: ["homeworkEscalateAfterSchoolDays"],
@@ -56,4 +56,3 @@ export const teacherAccountabilitySettingsSchema = z.object({
 export type TeacherAccountabilitySettingsInput = z.infer<
   typeof teacherAccountabilitySettingsSchema
 >;
-

@@ -1,6 +1,7 @@
 import prisma from "@/src/lib/prisma";
 import type {
   Day,
+  TeacherAccountabilityAuditAction,
   TeacherObligationPriority,
   TeacherObligationStatus,
 } from "@/src/generated/prisma";
@@ -157,6 +158,17 @@ function priorityForStatus(status: TeacherObligationStatus): TeacherObligationPr
   return "NORMAL";
 }
 
+function auditActionForStatus(
+  status: TeacherObligationStatus,
+): TeacherAccountabilityAuditAction | null {
+  if (status === "COMPLETED") return "OBLIGATION_COMPLETED";
+  if (status === "COMPLETED_LATE") return "OBLIGATION_COMPLETED_LATE";
+  if (status === "MISSED") return "OBLIGATION_MISSED";
+  if (status === "ESCALATED") return "OBLIGATION_ESCALATED";
+  if (status === "CANCELLED") return "OBLIGATION_CANCELLED";
+  return null;
+}
+
 export function attendanceObligationSourceKey(lessonId: number, date: Date) {
   return `attendance:${dateKey(date)}:lesson:${lessonId}`;
 }
@@ -272,6 +284,7 @@ export async function syncAttendanceObligationsForDate({
     },
     select: {
       id: true,
+      teacherId: true,
       sourceId: true,
       sourceKey: true,
       status: true,
@@ -383,6 +396,62 @@ export async function syncAttendanceObligationsForDate({
               },
             },
           });
+        }),
+      ),
+    ),
+  );
+
+  const transitionedUpdates = updateData
+    .map((item) => ({
+      item,
+      existing: existingBySourceKey.get(item.sourceKey),
+    }))
+    .filter(({ existing, item }) => existing && existing.status !== item.status);
+
+  await Promise.all(
+    chunkArray(transitionedUpdates, 4).map((chunk) =>
+      Promise.all(
+        chunk.map(async ({ item, existing }) => {
+          if (!existing) return;
+          const action = auditActionForStatus(item.status);
+
+          await Promise.all([
+            item.status === "PENDING"
+              ? Promise.resolve()
+              : prisma.teacherReminder.updateMany({
+                  where: {
+                    schoolId,
+                    obligationId: existing.id,
+                    status: "PENDING",
+                  },
+                  data: {
+                    status: "SKIPPED",
+                    errorMessage: `Superseded by obligation status ${item.status}.`,
+                  },
+                }),
+            action
+              ? prisma.teacherAccountabilityAuditLog.create({
+                  data: {
+                    schoolId,
+                    teacherId: existing.teacherId,
+                    action,
+                    actorRole: "SYSTEM",
+                    sourceModel: "TeacherObligation",
+                    sourceId: existing.id,
+                    before: {
+                      status: existing.status,
+                      priority: existing.priority,
+                    },
+                    after: {
+                      status: item.status,
+                      priority: item.priority,
+                      completedAt: item.completedAt?.toISOString() ?? null,
+                    },
+                    message: `Attendance obligation for ${item.lesson.subject.name} in ${item.lesson.class.name} changed from ${existing.status} to ${item.status}.`,
+                  },
+                })
+              : Promise.resolve(),
+          ]);
         }),
       ),
     ),

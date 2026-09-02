@@ -35,7 +35,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const result = await runTeacherAccountabilityWorker({ schoolId, limit });
+  try {
+    const result = await runTeacherAccountabilityWorker({ schoolId, limit });
 
-  return NextResponse.json(result);
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error("Teacher accountability worker failed", error);
+    return NextResponse.json(
+      { error: "Teacher accountability worker failed." },
+      { status: 500 },
+    );
+  }
 }
