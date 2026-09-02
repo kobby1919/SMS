@@ -314,6 +314,12 @@ const menuItems = [
       {
         icon: ShieldCheck,
         label: "Teacher Accountability",
+        href: "/admin/accountability",
+        visible: ["admin"],
+      },
+      {
+        icon: SlidersHorizontal,
+        label: "Accountability Settings",
         href: "/admin/accountability-settings",
         visible: ["admin"],
       },
