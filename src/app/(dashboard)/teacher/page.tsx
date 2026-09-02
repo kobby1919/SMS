@@ -8,8 +8,10 @@ import EventList from "@/src/components/EventList";
 import WelcomeBanner from "@/src/components/WelcomeBanner";
 import UpcomingExams from "@/src/components/UpcomingExams";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
+import { getTeacherSelfAccountabilityOverview } from "@/src/lib/queries/teacher-self-accountability";
 import Link from "next/link";
 import {
+  AlertTriangle,
   BookOpenCheck,
   CalendarCheck2,
   ClipboardCheck,
@@ -18,6 +20,7 @@ import {
   Layers3,
   Megaphone,
   NotebookPen,
+  ShieldCheck,
   Users,
 } from "lucide-react";
 
@@ -69,7 +72,7 @@ const TeacherPage = async ({
   todayEnd.setHours(23, 59, 59, 999);
   const todayDay = dayNames[today.getDay()];
 
-  const [teacher, lessons, activePeriod] = await Promise.all([
+  const [teacher, lessons, activePeriod, accountability] = await Promise.all([
     prisma.teacher.findFirst({
       where: { id: userId, schoolId },
       include: { classes: { select: { id: true, name: true } } },
@@ -90,6 +93,7 @@ const TeacherPage = async ({
       orderBy: [{ day: "asc" }, { startTime: "asc" }],
     }),
     getActiveAcademicPeriod(schoolId),
+    getTeacherSelfAccountabilityOverview({ schoolId, teacherId: userId }),
   ]);
 
   const todayLessons = lessons.filter((lesson) => lesson.day === todayDay);
@@ -282,7 +286,17 @@ const TeacherPage = async ({
     });
   const syllabusAttentionCount = syllabusInsights.filter((item) => item.status === "Behind" || item.dueNowCount > 0).length;
 
-  const taskCount = pendingAttendanceCount + pendingHomeworkChecks.length + pendingCATasks.length + syllabusAttentionCount;
+  const accountabilityAttentionCount =
+    accountability.totals.pending +
+    accountability.totals.completedLate +
+    accountability.totals.missed +
+    accountability.totals.escalated;
+  const taskCount =
+    pendingAttendanceCount +
+    pendingHomeworkChecks.length +
+    pendingCATasks.length +
+    syllabusAttentionCount +
+    accountabilityAttentionCount;
 
   const teacherFirstName = teacher?.name ?? "Teacher";
   const teacherFullName  = teacher ? `${teacher.name} ${teacher.surname}` : teacherFirstName;
@@ -307,6 +321,52 @@ const TeacherPage = async ({
           subtitle={`${todayLabel} · ${taskCount} item${taskCount === 1 ? "" : "s"} needing attention today`}
           tag={`${formatTerm(activePeriod.currentTerm)} · ${activePeriod.academicYear}`}
         />
+
+        <section className="rounded-2xl border border-slate-200 bg-slate-950 p-4 text-white shadow-sm">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-start gap-3">
+              <div className="rounded-xl bg-sky-400/10 p-2 text-sky-200">
+                <ShieldCheck size={20} />
+              </div>
+              <div>
+                <h2 className="text-base font-black">Accountability Check</h2>
+                <p className="mt-1 text-sm font-medium text-slate-300">
+                  Weekly reliability is {accountability.totals.reliabilityScore}%.
+                  {accountabilityAttentionCount > 0
+                    ? ` ${accountabilityAttentionCount} item${accountabilityAttentionCount === 1 ? "" : "s"} need attention.`
+                    : " No late, missed, or escalated duty is waiting."}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:w-auto">
+              <div className="rounded-xl bg-white/10 px-3 py-2">
+                <p className="text-lg font-black">{accountability.totals.today}</p>
+                <p className="text-[10px] font-bold uppercase text-slate-300">Today</p>
+              </div>
+              <div className="rounded-xl bg-white/10 px-3 py-2">
+                <p className="text-lg font-black">{accountability.totals.pending}</p>
+                <p className="text-[10px] font-bold uppercase text-slate-300">Pending</p>
+              </div>
+              <div className="rounded-xl bg-white/10 px-3 py-2">
+                <p className="text-lg font-black">{accountability.totals.completedLate}</p>
+                <p className="text-[10px] font-bold uppercase text-slate-300">Late</p>
+              </div>
+              <div className="rounded-xl bg-white/10 px-3 py-2">
+                <p className="text-lg font-black">{accountability.totals.openEscalations}</p>
+                <p className="text-[10px] font-bold uppercase text-slate-300">Escalated</p>
+              </div>
+            </div>
+
+            <Link
+              href="/teacher/accountability"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-xs font-black text-slate-950 transition hover:bg-slate-100 lg:w-auto"
+            >
+              {accountabilityAttentionCount > 0 ? <AlertTriangle size={14} /> : <ShieldCheck size={14} />}
+              Open accountability
+            </Link>
+          </div>
+        </section>
 
         <section className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
           <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">

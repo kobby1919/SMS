@@ -88,6 +88,12 @@ const teacherMenuItems = [
         href: "/list/assignments",
         visible: ["teacher"],
       },
+      {
+        icon: ShieldCheck,
+        label: "Accountability",
+        href: "/teacher/accountability",
+        visible: ["teacher"],
+      },
     ],
   },
   {
