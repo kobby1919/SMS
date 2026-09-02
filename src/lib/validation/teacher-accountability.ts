@@ -56,3 +56,17 @@ export const teacherAccountabilitySettingsSchema = z.object({
 export type TeacherAccountabilitySettingsInput = z.infer<
   typeof teacherAccountabilitySettingsSchema
 >;
+
+export const teacherEscalationReviewSchema = z.object({
+  escalationId: z.string().min(1, "Escalation is required."),
+  action: z.enum(["ACKNOWLEDGE", "RESOLVE", "DISMISS"]),
+  note: z
+    .string()
+    .trim()
+    .min(5, "Add a short management note.")
+    .max(500, "Keep the note below 500 characters."),
+});
+
+export type TeacherEscalationReviewInput = z.infer<
+  typeof teacherEscalationReviewSchema
+>;

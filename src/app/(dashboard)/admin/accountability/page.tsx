@@ -17,6 +17,7 @@ import {
   type AccountabilityObligationRow,
   type TeacherAccountabilitySummaryRow,
 } from "@/src/lib/queries/teacher-accountability-dashboard";
+import TeacherEscalationActions from "@/src/components/TeacherEscalationActions";
 
 export const dynamic = "force-dynamic";
 
@@ -206,14 +207,24 @@ function EscalationList({ rows }: { rows: AccountabilityEscalationRow[] }) {
         <div className="divide-y divide-slate-100">
           {rows.map((row) => (
             <div key={row.id} className="py-3 first:pt-0 last:pb-0">
-              <p className="font-black text-slate-950">{row.teacherName}</p>
-              <p className="mt-1 text-sm font-semibold text-slate-600">
-                {row.obligationTitle}
-              </p>
-              <p className="mt-1 text-sm font-medium text-slate-500">{row.reason}</p>
-              <p className="mt-2 text-xs font-bold text-slate-400">
-                Escalated: {formatDateTime(row.escalatedAt)}
-              </p>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <p className="font-black text-slate-950">{row.teacherName}</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-600">
+                    {row.obligationTitle}
+                  </p>
+                  <p className="mt-1 text-sm font-medium text-slate-500">{row.reason}</p>
+                  <p className="mt-2 text-xs font-bold text-slate-400">
+                    Escalated: {formatDateTime(row.escalatedAt)}
+                  </p>
+                </div>
+                <span
+                  className={`w-fit rounded-full px-2.5 py-1 text-xs font-black ${statusClass(row.status)}`}
+                >
+                  {row.status.replaceAll("_", " ")}
+                </span>
+              </div>
+              <TeacherEscalationActions escalationId={row.id} />
             </div>
           ))}
         </div>
