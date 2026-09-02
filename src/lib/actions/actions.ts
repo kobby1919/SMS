@@ -14,6 +14,7 @@ import {
   markHomeworkSubmissionsForAssignment,
   syncHomeworkSubmissionsForAssignment,
 } from "@/src/lib/services/homework";
+import { syncHomeworkCheckingObligation } from "@/src/lib/services/teacher-homework-obligations";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   announcementFormSchema,
@@ -37,10 +38,19 @@ const requireAdminOrTeacher = () => requireRole(["admin", "teacher"]);
 async function getLessonInSchool(lessonId: number, schoolId: string) {
   const lesson = await prisma.lesson.findFirst({
     where: { id: lessonId, schoolId },
-    select: { id: true, schoolId: true },
+    select: { id: true, schoolId: true, teacherId: true },
   });
   assertSameSchool(lesson, schoolId);
   return lesson;
+}
+
+function requireTeacherOwnsLesson(
+  lesson: Awaited<ReturnType<typeof getLessonInSchool>>,
+  ctx: Awaited<ReturnType<typeof requireAdminOrTeacher>>,
+) {
+  if (ctx.role === "teacher" && lesson.teacherId !== ctx.userId) {
+    throw new AuthorizationError("You can only assign homework for lessons assigned to you.", 403);
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -447,7 +457,8 @@ export type AssignmentFormData = {
 export async function createAssignment(data: AssignmentFormData): Promise<void> {
   const parsed = parseActionInput(assignmentFormSchema, data);
   const ctx = await requireAdminOrTeacher();
-  await getLessonInSchool(parsed.lessonId, ctx.schoolId);
+  const lesson = await getLessonInSchool(parsed.lessonId, ctx.schoolId);
+  requireTeacherOwnsLesson(lesson, ctx);
 
   const assignment = await prisma.assignment.create({
     data: {
@@ -470,6 +481,10 @@ export async function createAssignment(data: AssignmentFormData): Promise<void> 
 
   const dueFmt = new Intl.DateTimeFormat("en-GH", { day: "numeric", month: "long", year: "numeric" }).format(new Date(parsed.dueDate));
   await syncHomeworkSubmissionsForAssignment(assignment.id, ctx.schoolId);
+  await syncHomeworkCheckingObligation({
+    schoolId: ctx.schoolId,
+    assignmentId: assignment.id,
+  });
 
   await prisma.announcement.create({
     data: {
@@ -529,7 +544,8 @@ export async function updateAssignment(data: AssignmentFormData): Promise<void> 
   if (hasCheckedHomework) {
     throw new Error("This homework already has student checks, so its details cannot be edited.");
   }
-  await getLessonInSchool(parsed.lessonId, ctx.schoolId);
+  const nextLesson = await getLessonInSchool(parsed.lessonId, ctx.schoolId);
+  requireTeacherOwnsLesson(nextLesson, ctx);
 
   const assignment = await prisma.assignment.update({
     where: { id: data.id },
@@ -552,6 +568,10 @@ export async function updateAssignment(data: AssignmentFormData): Promise<void> 
 
   const dueFmt = new Intl.DateTimeFormat("en-GH", { day: "numeric", month: "long", year: "numeric" }).format(new Date(data.dueDate));
   await syncHomeworkSubmissionsForAssignment(assignment.id, ctx.schoolId);
+  await syncHomeworkCheckingObligation({
+    schoolId: ctx.schoolId,
+    assignmentId: assignment.id,
+  });
 
   const announcementData = {
     schoolId:    ctx.schoolId,
@@ -692,6 +712,10 @@ export async function updateHomeworkSubmission(data: HomeworkSubmissionFormData)
       },
     });
   }
+  await syncHomeworkCheckingObligation({
+    schoolId: ctx.schoolId,
+    assignmentId: parsed.assignmentId,
+  });
 
   revalidatePath("/list/assignments");
   revalidatePath("/parent");
@@ -767,6 +791,10 @@ export async function updateHomeworkSubmissionsBulk(data: HomeworkBulkSubmission
       },
     });
   }
+  await syncHomeworkCheckingObligation({
+    schoolId: ctx.schoolId,
+    assignmentId: parsed.assignmentId,
+  });
 
   revalidatePath("/list/assignments");
   revalidatePath("/parent");

@@ -26,6 +26,7 @@ type ObligationMetadata = {
   studentCount?: number;
   attendanceCount?: number;
   scoreCount?: number;
+  checkedCount?: number;
 };
 
 export type TeacherAccountabilityOverview = {
@@ -157,7 +158,9 @@ function toObligationRow(obligation: {
         ? metadata.attendanceCount
         : typeof metadata.scoreCount === "number"
           ? metadata.scoreCount
-          : null,
+          : typeof metadata.checkedCount === "number"
+            ? metadata.checkedCount
+            : null,
     studentCount:
       typeof metadata.studentCount === "number" ? metadata.studentCount : null,
     reminderCount: obligation._count.reminders,

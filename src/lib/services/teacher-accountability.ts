@@ -3,6 +3,7 @@ import type { TeacherObligation, TeacherReminder } from "@/src/generated/prisma"
 import { syncAttendanceObligationsForDate } from "@/src/lib/services/teacher-attendance-obligations";
 import { getTeacherAccountabilitySettings } from "@/src/lib/services/teacher-accountability-settings";
 import { syncCAActivityScorePublishingObligationsForSchool } from "@/src/lib/services/teacher-ca-obligations";
+import { syncHomeworkCheckingObligationsForSchool } from "@/src/lib/services/teacher-homework-obligations";
 
 type AttendanceMetadata = {
   className?: string;
@@ -40,6 +41,9 @@ function reminderMessage(obligation: TeacherObligation) {
   if (obligation.type === "CA_SCORE_PUBLISHING") {
     return `CA scores for ${subject} in ${className} are due. Please publish the full class scores before this becomes an escalation.`;
   }
+  if (obligation.type === "HOMEWORK_CHECKING") {
+    return `Homework checks for ${subject} in ${className} are due. Please close pending submissions before this becomes an escalation.`;
+  }
   return `Attendance for ${subject} in ${className} is due. Please submit it before it becomes an escalation.`;
 }
 
@@ -49,6 +53,9 @@ function escalationReason(obligation: TeacherObligation) {
   const className = metadata.className ?? "the class";
   if (obligation.type === "CA_SCORE_PUBLISHING") {
     return `CA scores for ${subject} in ${className} were not published before the escalation deadline.`;
+  }
+  if (obligation.type === "HOMEWORK_CHECKING") {
+    return `Homework checks for ${subject} in ${className} were not completed before the escalation deadline.`;
   }
   return `Attendance for ${subject} in ${className} was not submitted before the missed deadline.`;
 }
@@ -175,7 +182,11 @@ export async function processAttendanceAccountabilityForSchool({
   limit?: number;
 }): Promise<TeacherAccountabilityWorkerResult> {
   const settings = await getTeacherAccountabilitySettings(schoolId);
-  const [syncedAttendanceObligations, syncedCAObligations] = await Promise.all([
+  const [
+    syncedAttendanceObligations,
+    syncedCAObligations,
+    syncedHomeworkObligations,
+  ] = await Promise.all([
     syncAttendanceObligationsForDate({
       schoolId,
       date: now,
@@ -186,12 +197,17 @@ export async function processAttendanceAccountabilityForSchool({
       now,
       limit,
     }),
+    syncHomeworkCheckingObligationsForSchool({
+      schoolId,
+      now,
+      limit,
+    }),
   ]);
 
   const obligations = await prisma.teacherObligation.findMany({
     where: {
       schoolId,
-      type: { in: ["ATTENDANCE", "CA_SCORE_PUBLISHING"] },
+      type: { in: ["ATTENDANCE", "CA_SCORE_PUBLISHING", "HOMEWORK_CHECKING"] },
       status: { in: ["PENDING", "MISSED"] },
     },
     orderBy: [{ expectedAt: "asc" }, { createdAt: "asc" }],
@@ -249,7 +265,8 @@ export async function processAttendanceAccountabilityForSchool({
 
   return {
     schoolId,
-    syncedObligations: syncedAttendanceObligations.length + syncedCAObligations,
+    syncedObligations:
+      syncedAttendanceObligations.length + syncedCAObligations + syncedHomeworkObligations,
     checkedObligations: obligations.length,
     remindersQueued,
     escalationsCreated,

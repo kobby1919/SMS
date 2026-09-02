@@ -72,6 +72,7 @@ export async function syncHomeworkSubmissionsForAssignment(
     assignmentId: assignment.id,
     studentId: student.id,
   }));
+  const validStudentIds = rows.map((row) => row.studentId);
 
   if (rows.length > 0) {
     await db.homeworkSubmission.createMany({
@@ -79,6 +80,15 @@ export async function syncHomeworkSubmissionsForAssignment(
       skipDuplicates: true,
     });
   }
+  await db.homeworkSubmission.deleteMany({
+    where: {
+      schoolId,
+      assignmentId: assignment.id,
+      ...(validStudentIds.length > 0
+        ? { studentId: { notIn: validStudentIds } }
+        : {}),
+    },
+  });
 
   return {
     assignmentId: assignment.id,
