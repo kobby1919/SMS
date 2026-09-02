@@ -25,6 +25,7 @@ type ObligationMetadata = {
   missedAt?: string;
   studentCount?: number;
   attendanceCount?: number;
+  scoreCount?: number;
 };
 
 export type TeacherAccountabilityOverview = {
@@ -152,7 +153,11 @@ function toObligationRow(obligation: {
     className: metadata.className ?? null,
     subjectName: metadata.subjectName ?? null,
     attendanceCount:
-      typeof metadata.attendanceCount === "number" ? metadata.attendanceCount : null,
+      typeof metadata.attendanceCount === "number"
+        ? metadata.attendanceCount
+        : typeof metadata.scoreCount === "number"
+          ? metadata.scoreCount
+          : null,
     studentCount:
       typeof metadata.studentCount === "number" ? metadata.studentCount : null,
     reminderCount: obligation._count.reminders,
@@ -179,7 +184,6 @@ export async function getTeacherAccountabilityOverview(
     prisma.teacherObligation.findMany({
       where: {
         schoolId,
-        type: "ATTENDANCE",
         expectedAt: { gte: todayStart, lte: todayEnd },
       },
       include: {
@@ -192,7 +196,6 @@ export async function getTeacherAccountabilityOverview(
     prisma.teacherObligation.findMany({
       where: {
         schoolId,
-        type: "ATTENDANCE",
         expectedAt: { gte: weekStart, lte: todayEnd },
       },
       include: {
@@ -205,7 +208,6 @@ export async function getTeacherAccountabilityOverview(
     prisma.teacherObligation.findMany({
       where: {
         schoolId,
-        type: "ATTENDANCE",
         expectedAt: { gte: weekStart, lte: todayEnd },
       },
       select: {

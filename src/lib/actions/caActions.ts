@@ -34,6 +34,7 @@ import {
   recordCAActivityGivenEvents,
   recordCAActivityScoreEvents,
 } from "@/src/lib/services/parent-daily-summary";
+import { syncCAActivityScorePublishingObligation } from "@/src/lib/services/teacher-ca-obligations";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 
@@ -567,6 +568,10 @@ export async function createCAActivityAction(data: {
     schoolId,
     activityId: activity.id,
   });
+  await syncCAActivityScorePublishingObligation({
+    schoolId,
+    activityId: activity.id,
+  });
 
   revalidatePath("/list/ca");
   revalidatePath("/list/ca", "page");
@@ -589,6 +594,11 @@ export async function bulkUpsertCAActivityScores(data: {
       classId: true,
       subjectId: true,
       bucket: { select: { term: true, academicYear: true } },
+      class: {
+        select: {
+          _count: { select: { students: true } },
+        },
+      },
     },
   });
   if (!activity) throw new Error("CA activity not found.");
@@ -606,6 +616,17 @@ export async function bulkUpsertCAActivityScores(data: {
     term: activity.bucket.term,
     academicYear: activity.bucket.academicYear,
   });
+
+  const studentIds = parsed.rows.map((row) => row.studentId);
+  const uniqueStudentIds = new Set(studentIds);
+  if (uniqueStudentIds.size !== studentIds.length) {
+    throw new Error("Each student may appear only once when publishing CA scores.");
+  }
+  if (uniqueStudentIds.size !== activity.class._count.students) {
+    throw new Error(
+      `Publish scores for all ${activity.class._count.students} students before locking this CA activity.`,
+    );
+  }
 
   const writeResults = await Promise.all(
     parsed.rows.map((row) =>
@@ -642,6 +663,10 @@ export async function bulkUpsertCAActivityScores(data: {
       data: { isLocked: true },
     });
   }
+  await syncCAActivityScorePublishingObligation({
+    schoolId,
+    activityId: parsed.activityId,
+  });
 
   await logCAAudit({
     schoolId,

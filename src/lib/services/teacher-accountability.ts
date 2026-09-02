@@ -2,12 +2,14 @@ import prisma from "@/src/lib/prisma";
 import type { TeacherObligation, TeacherReminder } from "@/src/generated/prisma";
 import { syncAttendanceObligationsForDate } from "@/src/lib/services/teacher-attendance-obligations";
 import { getTeacherAccountabilitySettings } from "@/src/lib/services/teacher-accountability-settings";
+import { syncCAActivityScorePublishingObligationsForSchool } from "@/src/lib/services/teacher-ca-obligations";
 
 type AttendanceMetadata = {
   className?: string;
   subjectName?: string;
   date?: string;
   deadlineAt?: string;
+  reminderAt?: string;
   missedAt?: string;
 };
 
@@ -35,6 +37,9 @@ function reminderMessage(obligation: TeacherObligation) {
   const metadata = readAttendanceMetadata(obligation.metadata);
   const subject = metadata.subjectName ?? "this lesson";
   const className = metadata.className ?? "your class";
+  if (obligation.type === "CA_SCORE_PUBLISHING") {
+    return `CA scores for ${subject} in ${className} are due. Please publish the full class scores before this becomes an escalation.`;
+  }
   return `Attendance for ${subject} in ${className} is due. Please submit it before it becomes an escalation.`;
 }
 
@@ -42,7 +47,15 @@ function escalationReason(obligation: TeacherObligation) {
   const metadata = readAttendanceMetadata(obligation.metadata);
   const subject = metadata.subjectName ?? "this lesson";
   const className = metadata.className ?? "the class";
+  if (obligation.type === "CA_SCORE_PUBLISHING") {
+    return `CA scores for ${subject} in ${className} were not published before the escalation deadline.`;
+  }
   return `Attendance for ${subject} in ${className} was not submitted before the missed deadline.`;
+}
+
+function reminderAtForObligation(obligation: TeacherObligation) {
+  const metadata = readAttendanceMetadata(obligation.metadata);
+  return parseMetadataDate(metadata.reminderAt) ?? obligation.expectedAt;
 }
 
 function missedAtForObligation(obligation: TeacherObligation) {
@@ -57,7 +70,7 @@ async function queueReminderIfNeeded({
   obligation: TeacherObligation;
   now: Date;
 }): Promise<TeacherReminder | null> {
-  const dedupeKey = `attendance-reminder:${obligation.id}`;
+  const dedupeKey = `${obligation.type.toLowerCase()}-reminder:${obligation.id}`;
   const existing = await prisma.teacherReminder.findUnique({
     where: {
       schoolId_dedupeKey: {
@@ -162,18 +175,24 @@ export async function processAttendanceAccountabilityForSchool({
   limit?: number;
 }): Promise<TeacherAccountabilityWorkerResult> {
   const settings = await getTeacherAccountabilitySettings(schoolId);
-  const syncedObligations = await syncAttendanceObligationsForDate({
-    schoolId,
-    date: now,
-    now,
-  });
+  const [syncedAttendanceObligations, syncedCAObligations] = await Promise.all([
+    syncAttendanceObligationsForDate({
+      schoolId,
+      date: now,
+      now,
+    }),
+    syncCAActivityScorePublishingObligationsForSchool({
+      schoolId,
+      now,
+      limit,
+    }),
+  ]);
 
   const obligations = await prisma.teacherObligation.findMany({
     where: {
       schoolId,
-      type: "ATTENDANCE",
+      type: { in: ["ATTENDANCE", "CA_SCORE_PUBLISHING"] },
       status: { in: ["PENDING", "MISSED"] },
-      expectedAt: { lte: now },
     },
     orderBy: [{ expectedAt: "asc" }, { createdAt: "asc" }],
     take: limit,
@@ -195,6 +214,11 @@ export async function processAttendanceAccountabilityForSchool({
     }
 
     if (!settings.remindersEnabled) {
+      skipped += 1;
+      continue;
+    }
+
+    if (reminderAtForObligation(obligation) > now) {
       skipped += 1;
       continue;
     }
@@ -225,7 +249,7 @@ export async function processAttendanceAccountabilityForSchool({
 
   return {
     schoolId,
-    syncedObligations: syncedObligations.length,
+    syncedObligations: syncedAttendanceObligations.length + syncedCAObligations,
     checkedObligations: obligations.length,
     remindersQueued,
     escalationsCreated,

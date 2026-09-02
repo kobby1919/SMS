@@ -14,6 +14,7 @@ type ObligationMetadata = {
   className?: string;
   subjectName?: string;
   attendanceCount?: number;
+  scoreCount?: number;
   studentCount?: number;
 };
 
@@ -134,7 +135,11 @@ function toDutyRow(obligation: {
     className: metadata.className ?? null,
     subjectName: metadata.subjectName ?? null,
     attendanceCount:
-      typeof metadata.attendanceCount === "number" ? metadata.attendanceCount : null,
+      typeof metadata.attendanceCount === "number"
+        ? metadata.attendanceCount
+        : typeof metadata.scoreCount === "number"
+          ? metadata.scoreCount
+          : null,
     studentCount:
       typeof metadata.studentCount === "number" ? metadata.studentCount : null,
     actionHref: actionHref(obligation.sourceModel, obligation.sourceId),

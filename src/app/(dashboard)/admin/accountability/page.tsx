@@ -288,7 +288,7 @@ const AdminAccountabilityPage = async () => {
             <div>
               <h1 className="text-xl font-black">Teacher Accountability</h1>
               <p className="mt-1 max-w-3xl text-sm font-medium leading-relaxed text-slate-300">
-                Monitor attendance duties, late submissions, reminders,
+                Monitor attendance, CA publishing, late submissions, reminders,
                 escalations, and teacher reliability from one place.
               </p>
             </div>
@@ -306,7 +306,7 @@ const AdminAccountabilityPage = async () => {
         <StatCard
           label="Today"
           value={overview.totals.today}
-          helper="Attendance duties tracked today"
+          helper="Teacher duties tracked today"
           tone="blue"
         />
         <StatCard
@@ -331,7 +331,7 @@ const AdminAccountabilityPage = async () => {
 
       <div className="grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
         <ObligationList
-          title="Pending Attendance Duties"
+          title="Pending Teacher Duties"
           rows={overview.upcoming}
           icon={<Clock3 size={18} />}
         />
