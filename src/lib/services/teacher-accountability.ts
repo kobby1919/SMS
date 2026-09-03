@@ -70,6 +70,26 @@ function missedAtForObligation(obligation: TeacherObligation) {
   return parseMetadataDate(metadata.missedAt) ?? obligation.expectedAt;
 }
 
+function startOfDay(date: Date) {
+  const value = new Date(date);
+  value.setHours(0, 0, 0, 0);
+  return value;
+}
+
+function endOfDay(date: Date) {
+  const value = new Date(date);
+  value.setHours(23, 59, 59, 999);
+  return value;
+}
+
+function startOfWeek(date: Date) {
+  const value = startOfDay(date);
+  const day = value.getDay();
+  const mondayOffset = day === 0 ? -6 : 1 - day;
+  value.setDate(value.getDate() + mondayOffset);
+  return value;
+}
+
 async function queueReminderIfNeeded({
   obligation,
   now,
@@ -175,6 +195,61 @@ async function escalateIfNeeded({
   return true;
 }
 
+export async function processTeacherWeekEscalationCatchup({
+  schoolId,
+  teacherId,
+  now = new Date(),
+  limit = 200,
+}: {
+  schoolId: string;
+  teacherId: string;
+  now?: Date;
+  limit?: number;
+}) {
+  const settings = await getTeacherAccountabilitySettings(schoolId);
+  if (!settings.escalationsEnabled) {
+    return { checkedObligations: 0, escalationsCreated: 0, skipped: 0 };
+  }
+
+  const obligations = await prisma.teacherObligation.findMany({
+    where: {
+      schoolId,
+      teacherId,
+      type: { in: ["ATTENDANCE", "CA_SCORE_PUBLISHING", "HOMEWORK_CHECKING"] },
+      status: { in: ["PENDING", "MISSED"] },
+      expectedAt: {
+        gte: startOfWeek(now),
+        lte: endOfDay(now),
+      },
+    },
+    orderBy: [{ expectedAt: "desc" }, { createdAt: "desc" }],
+    take: limit,
+  });
+
+  let escalationsCreated = 0;
+  let skipped = 0;
+
+  for (const obligation of obligations) {
+    if (missedAtForObligation(obligation) > now) {
+      skipped += 1;
+      continue;
+    }
+
+    const escalated = await escalateIfNeeded({ obligation, now });
+    if (escalated) {
+      escalationsCreated += 1;
+    } else {
+      skipped += 1;
+    }
+  }
+
+  return {
+    checkedObligations: obligations.length,
+    escalationsCreated,
+    skipped,
+  };
+}
+
 export async function processAttendanceAccountabilityForSchool({
   schoolId,
   now = new Date(),
@@ -207,15 +282,35 @@ export async function processAttendanceAccountabilityForSchool({
     }),
   ]);
 
-  const obligations = await prisma.teacherObligation.findMany({
-    where: {
-      schoolId,
-      type: { in: ["ATTENDANCE", "CA_SCORE_PUBLISHING", "HOMEWORK_CHECKING"] },
-      status: { in: ["PENDING", "MISSED"] },
-    },
-    orderBy: [{ expectedAt: "asc" }, { createdAt: "asc" }],
-    take: limit,
-  });
+  const [escalationCandidates, reminderCandidates] = await Promise.all([
+    prisma.teacherObligation.findMany({
+      where: {
+        schoolId,
+        type: { in: ["ATTENDANCE", "CA_SCORE_PUBLISHING", "HOMEWORK_CHECKING"] },
+        status: { in: ["PENDING", "MISSED"] },
+        expectedAt: { lte: endOfDay(now) },
+      },
+      orderBy: [{ expectedAt: "desc" }, { createdAt: "desc" }],
+      take: limit,
+    }),
+    prisma.teacherObligation.findMany({
+      where: {
+        schoolId,
+        type: { in: ["ATTENDANCE", "CA_SCORE_PUBLISHING", "HOMEWORK_CHECKING"] },
+        status: { in: ["PENDING", "MISSED"] },
+      },
+      orderBy: [{ expectedAt: "asc" }, { createdAt: "asc" }],
+      take: limit,
+    }),
+  ]);
+  const obligations = [
+    ...new Map(
+      [...escalationCandidates, ...reminderCandidates].map((obligation) => [
+        obligation.id,
+        obligation,
+      ]),
+    ).values(),
+  ].slice(0, limit);
 
   let remindersQueued = 0;
   let escalationsCreated = 0;

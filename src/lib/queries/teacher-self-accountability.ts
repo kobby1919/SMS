@@ -93,6 +93,7 @@ export type TeacherAuditRow = {
   action: TeacherAccountabilityAuditAction;
   message: string | null;
   createdAt: Date;
+  dutyExpectedAt: Date | null;
 };
 
 function startOfDay(date: Date) {
@@ -319,10 +320,36 @@ export async function getTeacherSelfAccountabilityOverview({
         teacherId,
         createdAt: { gte: weekStart, lte: now },
       },
+      select: {
+        id: true,
+        action: true,
+        message: true,
+        createdAt: true,
+        sourceModel: true,
+        sourceId: true,
+      },
       orderBy: [{ createdAt: "desc" }],
       take: 10,
     }),
   ]);
+  const auditObligationIds = auditTrail
+    .filter((log) => log.sourceModel === "TeacherObligation")
+    .map((log) => log.sourceId);
+  const auditObligations = auditObligationIds.length > 0
+    ? await prisma.teacherObligation.findMany({
+        where: {
+          schoolId,
+          id: { in: auditObligationIds },
+        },
+        select: {
+          id: true,
+          expectedAt: true,
+        },
+      })
+    : [];
+  const auditExpectedAtById = new Map(
+    auditObligations.map((obligation) => [obligation.id, obligation.expectedAt]),
+  );
 
   const totals = {
     today: todayDuties.length,
@@ -417,6 +444,10 @@ export async function getTeacherSelfAccountabilityOverview({
       action: log.action,
       message: log.message,
       createdAt: log.createdAt,
+      dutyExpectedAt:
+        log.sourceModel === "TeacherObligation"
+          ? auditExpectedAtById.get(log.sourceId) ?? null
+          : null,
     })),
   };
 }

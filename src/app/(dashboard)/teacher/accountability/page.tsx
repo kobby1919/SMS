@@ -400,6 +400,11 @@ function AuditList({ rows }: { rows: TeacherAuditRow[] }) {
                   {formatDateTime(row.createdAt)}
                 </p>
               </div>
+              {row.dutyExpectedAt ? (
+                <p className="mt-1 text-xs font-black uppercase tracking-wide text-slate-400">
+                  Duty date: {formatDateTime(row.dutyExpectedAt)}
+                </p>
+              ) : null}
               {row.message ? (
                 <p className="mt-1 text-sm font-medium text-slate-500">
                   {row.message}
