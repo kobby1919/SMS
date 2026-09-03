@@ -1,20 +1,18 @@
 import Link from "next/link";
 import {
   AlertTriangle,
-  BellRing,
-  CheckCircle2,
   Clock3,
   ExternalLink,
   ShieldCheck,
   TimerReset,
 } from "lucide-react";
 import { requirePageSession } from "@/src/lib/authz";
+import { prepareTeacherAccountabilityForView } from "@/src/lib/services/teacher-accountability-view";
 import {
   getTeacherSelfAccountabilityOverview,
   type TeacherAuditRow,
   type TeacherDutyRow,
   type TeacherEscalationRow,
-  type TeacherReminderRow,
 } from "@/src/lib/queries/teacher-self-accountability";
 
 export const dynamic = "force-dynamic";
@@ -137,37 +135,6 @@ function DutyList({
   );
 }
 
-function ReminderList({ rows }: { rows: TeacherReminderRow[] }) {
-  return (
-    <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="mb-4 flex items-center gap-2">
-        <div className="rounded-lg bg-sky-50 p-2 text-sky-700">
-          <BellRing size={18} />
-        </div>
-        <h2 className="text-base font-black text-slate-950">Reminders</h2>
-      </div>
-
-      {rows.length === 0 ? (
-        <EmptyState message="No reminder is waiting for you." />
-      ) : (
-        <div className="divide-y divide-slate-100">
-          {rows.map((row) => (
-            <div key={row.id} className="py-3 first:pt-0 last:pb-0">
-              <p className="font-black text-slate-950">{row.obligationTitle}</p>
-              <p className="mt-1 text-sm font-medium text-slate-600">{row.message}</p>
-              <p className="mt-2 text-xs font-bold text-slate-400">
-                {row.scheduledAt
-                  ? `Scheduled: ${formatDateTime(row.scheduledAt)}`
-                  : `Created: ${formatDateTime(row.createdAt)}`}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
-    </section>
-  );
-}
-
 function EscalationList({ rows }: { rows: TeacherEscalationRow[] }) {
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
@@ -236,6 +203,10 @@ function AuditList({ rows }: { rows: TeacherAuditRow[] }) {
 
 const TeacherAccountabilityPage = async () => {
   const { userId, schoolId } = await requirePageSession(["teacher"]);
+  await prepareTeacherAccountabilityForView({
+    schoolId,
+    teacherId: userId,
+  });
   const overview = await getTeacherSelfAccountabilityOverview({
     schoolId,
     teacherId: userId,
@@ -251,8 +222,8 @@ const TeacherAccountabilityPage = async () => {
           <div>
             <h1 className="text-xl font-black">My Accountability</h1>
             <p className="mt-1 max-w-3xl text-sm font-medium leading-relaxed text-slate-300">
-              Track your attendance duties, reminders, escalations, and weekly
-              reliability in one simple place.
+              Track your duties, escalations, weekly reliability, and audit
+              history in one simple place.
             </p>
           </div>
         </div>
@@ -280,7 +251,7 @@ const TeacherAccountabilityPage = async () => {
         <StatCard
           label="Escalations"
           value={overview.totals.openEscalations}
-          helper={`${overview.totals.pendingReminders} reminder(s) waiting`}
+          helper="Open issues needing admin attention"
           tone={overview.totals.openEscalations > 0 ? "red" : "green"}
         />
       </div>
@@ -291,16 +262,15 @@ const TeacherAccountabilityPage = async () => {
           rows={overview.todayDuties}
           empty="No duty has been assigned to you today."
         />
-        <ReminderList rows={overview.reminders} />
+        <EscalationList rows={overview.escalations} />
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
+      <div className="grid gap-5">
         <DutyList
           title="Weekly Issues"
           rows={overview.weeklyIssues}
           empty="No late, missed, or escalated duty is attached to you this week."
         />
-        <EscalationList rows={overview.escalations} />
       </div>
 
       <AuditList rows={overview.auditTrail} />

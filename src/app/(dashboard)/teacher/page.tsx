@@ -8,6 +8,7 @@ import EventList from "@/src/components/EventList";
 import WelcomeBanner from "@/src/components/WelcomeBanner";
 import UpcomingExams from "@/src/components/UpcomingExams";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
+import { prepareTeacherAccountabilityForView } from "@/src/lib/services/teacher-accountability-view";
 import { getTeacherSelfAccountabilityOverview } from "@/src/lib/queries/teacher-self-accountability";
 import Link from "next/link";
 import {
@@ -71,6 +72,12 @@ const TeacherPage = async ({
   const todayEnd = new Date(today);
   todayEnd.setHours(23, 59, 59, 999);
   const todayDay = dayNames[today.getDay()];
+
+  await prepareTeacherAccountabilityForView({
+    schoolId,
+    teacherId: userId,
+    now: today,
+  });
 
   const [teacher, lessons, activePeriod, accountability] = await Promise.all([
     prisma.teacher.findFirst({

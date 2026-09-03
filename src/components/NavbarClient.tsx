@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -49,11 +49,24 @@ type ParentNotification = {
   childName: string | null;
 };
 
+type TeacherAlert = {
+  id: string;
+  title: string;
+  description: string;
+  href: string;
+  priority: string;
+  status: string;
+  dueAt: string;
+};
+
 type NavbarClientProps = {
   user: NavUser;
   parentContext?: {
     children: ParentChild[];
     notifications: ParentNotification[];
+  };
+  teacherContext?: {
+    alerts: TeacherAlert[];
   };
 };
 
@@ -304,11 +317,96 @@ function ParentQuickActions() {
   );
 }
 
-const NavbarClient = ({ user, parentContext }: NavbarClientProps) => {
+function TeacherBell({ alerts }: { alerts: TeacherAlert[] }) {
+  const urgentCount = alerts.filter((alert) =>
+    ["HIGH", "CRITICAL"].includes(alert.priority) ||
+    ["MISSED", "ESCALATED"].includes(alert.status),
+  ).length;
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (alerts.length === 0) return;
+    const todayKey = new Date().toISOString().slice(0, 10);
+    const storageKey = `edujay-teacher-alerts-opened:${todayKey}`;
+    if (sessionStorage.getItem(storageKey)) return;
+    sessionStorage.setItem(storageKey, "1");
+    const timer = window.setTimeout(() => setOpen(true), 0);
+    return () => window.clearTimeout(timer);
+  }, [alerts.length]);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        className="relative flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white text-gray-600 shadow-sm transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700"
+        aria-label="Open teacher alerts"
+      >
+        <BellRing size={18} />
+        {alerts.length > 0 && (
+          <span className={`absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-black text-white ${urgentCount > 0 ? "bg-rose-600" : "bg-indigo-600"}`}>
+            {alerts.length}
+          </span>
+        )}
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-12 z-40 w-[min(22rem,calc(100vw-1.5rem))] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl">
+          <div className="border-b border-gray-100 px-4 py-3">
+            <p className="text-sm font-black text-gray-900">Teacher alerts</p>
+            <p className="text-xs font-semibold text-gray-400">
+              {alerts.length > 0 ? `${alerts.length} active item${alerts.length === 1 ? "" : "s"} today` : "No urgent duty is waiting"}
+            </p>
+          </div>
+          <div className="max-h-[24rem] overflow-y-auto">
+            {alerts.length > 0 ? alerts.map((alert) => (
+              <Link
+                key={alert.id}
+                href={alert.href}
+                onClick={() => setOpen(false)}
+                className="block border-b border-gray-50 px-4 py-3 last:border-0 hover:bg-indigo-50"
+              >
+                <div className="flex items-start gap-3">
+                  <span className={`mt-1 h-2 w-2 shrink-0 rounded-full ${["HIGH", "CRITICAL"].includes(alert.priority) ? "bg-rose-600" : "bg-indigo-600"}`} />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-black text-gray-900">{alert.title}</span>
+                    <span className="mt-1 whitespace-pre-line text-xs font-semibold text-gray-500">
+                      {alert.description}
+                    </span>
+                    <span className="mt-2 block text-[10px] font-black uppercase tracking-wide text-gray-400">
+                      {alert.status.replaceAll("_", " ")} - {formatTime(alert.dueAt)}
+                    </span>
+                  </span>
+                </div>
+              </Link>
+            )) : (
+              <div className="px-4 py-8 text-center">
+                <Check className="mx-auto mb-2 text-emerald-500" size={22} />
+                <p className="text-sm font-black text-gray-800">All clear</p>
+                <p className="text-xs font-semibold text-gray-400">No teacher alerts right now.</p>
+              </div>
+            )}
+          </div>
+          <Link
+            href="/teacher/accountability"
+            onClick={() => setOpen(false)}
+            className="block border-t border-gray-100 bg-gray-50 px-4 py-3 text-center text-xs font-black text-indigo-700"
+          >
+            Open accountability
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const NavbarClient = ({ user, parentContext, teacherContext }: NavbarClientProps) => {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const isParent = user.role === "parent";
+  const isTeacher = user.role === "teacher";
   const children = parentContext?.children ?? [];
   const notifications = parentContext?.notifications ?? [];
+  const teacherAlerts = teacherContext?.alerts ?? [];
   const searchItems = isParent
     ? parentSearchItems(children, notifications)
     : roleShortcuts[user.role] ?? roleShortcuts.admin;
@@ -356,6 +454,17 @@ const NavbarClient = ({ user, parentContext }: NavbarClientProps) => {
             <>
               <ParentQuickActions />
               <ParentBell notifications={notifications} />
+            </>
+          ) : isTeacher ? (
+            <>
+              <TeacherBell alerts={teacherAlerts} />
+              <Link
+                href={searchItems[0]?.href ?? "/teacher"}
+                className="hidden h-10 items-center gap-2 rounded-full border border-gray-100 bg-white px-3 text-xs font-black text-gray-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 sm:flex"
+              >
+                <Menu size={15} />
+                Shortcuts
+              </Link>
             </>
           ) : (
             <Link
