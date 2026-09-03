@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import {
   AlertTriangle,
   BellRing,
-  CheckCircle2,
   Clock3,
   ExternalLink,
   ShieldCheck,
@@ -38,6 +37,10 @@ function statusClass(status: string) {
     return "bg-rose-50 text-rose-700";
   }
   return "bg-slate-100 text-slate-700";
+}
+
+function escalationReviewHref(escalationId: string) {
+  return `/admin/accountability?escalationId=${encodeURIComponent(escalationId)}`;
 }
 
 function StatCard({
@@ -191,7 +194,13 @@ function TeacherSummaryTable({ rows }: { rows: TeacherAccountabilitySummaryRow[]
   );
 }
 
-function EscalationList({ rows }: { rows: AccountabilityEscalationRow[] }) {
+function EscalationList({
+  rows,
+  focusedEscalationId,
+}: {
+  rows: AccountabilityEscalationRow[];
+  focusedEscalationId?: string;
+}) {
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
       <div className="mb-4 flex items-center gap-2">
@@ -205,11 +214,24 @@ function EscalationList({ rows }: { rows: AccountabilityEscalationRow[] }) {
         <EmptyState message="No open escalations. Good discipline so far." />
       ) : (
         <div className="divide-y divide-slate-100">
-          {rows.map((row) => (
-            <div key={row.id} className="py-3 first:pt-0 last:pb-0">
+          {rows.map((row) => {
+            const isFocused = row.id === focusedEscalationId;
+            return (
+            <div
+              key={row.id}
+              id={`escalation-${row.id}`}
+              className={`py-3 first:pt-0 last:pb-0 ${isFocused ? "rounded-lg bg-sky-50 px-3 ring-2 ring-sky-200" : ""}`}
+            >
               <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p className="font-black text-slate-950">{row.teacherName}</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-black text-slate-950">{row.teacherName}</p>
+                    {isFocused ? (
+                      <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-sky-700">
+                        Selected review
+                      </span>
+                    ) : null}
+                  </div>
                   <p className="mt-1 text-sm font-semibold text-slate-600">
                     {row.obligationTitle}
                   </p>
@@ -224,9 +246,25 @@ function EscalationList({ rows }: { rows: AccountabilityEscalationRow[] }) {
                   {row.status.replaceAll("_", " ")}
                 </span>
               </div>
-              <TeacherEscalationActions escalationId={row.id} />
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Link
+                  href={escalationReviewHref(row.id)}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-slate-950 px-3 py-2 text-xs font-black text-white transition hover:bg-slate-700"
+                >
+                  Review <ExternalLink size={14} />
+                </Link>
+              </div>
+              {isFocused && ["OPEN", "ACKNOWLEDGED"].includes(row.status) ? (
+                <TeacherEscalationActions escalationId={row.id} />
+              ) : null}
+              {isFocused && ["RESOLVED", "DISMISSED"].includes(row.status) ? (
+                <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
+                  This escalation is already closed, so no further review action is needed.
+                </p>
+              ) : null}
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </section>
@@ -273,9 +311,16 @@ function AuditList({ rows }: { rows: AccountabilityAuditRow[] }) {
   );
 }
 
-const AdminAccountabilityPage = async () => {
+const AdminAccountabilityPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ escalationId?: string }>;
+}) => {
+  const { escalationId: focusedEscalationId } = await searchParams;
   const { schoolId } = await requirePageSession(["admin"]);
-  const overview = await getTeacherAccountabilityOverview(schoolId);
+  const overview = await getTeacherAccountabilityOverview(schoolId, new Date(), {
+    focusedEscalationId,
+  });
 
   return (
     <div className="flex flex-col gap-5 p-4">
@@ -291,6 +336,11 @@ const AdminAccountabilityPage = async () => {
                 Monitor attendance, CA publishing, late submissions, reminders,
                 escalations, and teacher reliability from one place.
               </p>
+              {focusedEscalationId ? (
+                <p className="mt-3 rounded-lg bg-sky-400/10 px-3 py-2 text-xs font-black text-sky-100">
+                  Opened one escalation for review. The selected item is highlighted below.
+                </p>
+              ) : null}
             </div>
           </div>
           <Link
@@ -335,7 +385,10 @@ const AdminAccountabilityPage = async () => {
           rows={overview.upcoming}
           icon={<Clock3 size={18} />}
         />
-        <EscalationList rows={overview.openEscalations} />
+        <EscalationList
+          rows={overview.openEscalations}
+          focusedEscalationId={focusedEscalationId}
+        />
       </div>
 
       <TeacherSummaryTable rows={overview.teacherSummaries} />

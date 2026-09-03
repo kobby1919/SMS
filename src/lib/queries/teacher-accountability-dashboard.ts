@@ -171,16 +171,19 @@ function toObligationRow(obligation: {
 export async function getTeacherAccountabilityOverview(
   schoolId: string,
   now = new Date(),
+  options: { focusedEscalationId?: string } = {},
 ): Promise<TeacherAccountabilityOverview> {
   const todayStart = startOfDay(now);
   const todayEnd = endOfDay(now);
   const weekStart = startOfWeek(now);
+  const focusedEscalationId = options.focusedEscalationId?.trim();
 
   const [
     todayObligations,
     issueObligations,
     weeklyStatusGroups,
     openEscalations,
+    openEscalationCount,
     remindersPending,
     recentAuditLogs,
   ] = await Promise.all([
@@ -228,10 +231,15 @@ export async function getTeacherAccountabilityOverview(
     prisma.teacherEscalation.findMany({
       where: {
         schoolId,
-        status: { in: ["OPEN", "ACKNOWLEDGED"] },
-        obligation: {
-          expectedAt: { gte: weekStart, lte: todayEnd },
-        },
+        OR: [
+          {
+            status: { in: ["OPEN", "ACKNOWLEDGED"] },
+            obligation: {
+              expectedAt: { gte: weekStart, lte: todayEnd },
+            },
+          },
+          ...(focusedEscalationId ? [{ id: focusedEscalationId }] : []),
+        ],
       },
       include: {
         teacher: { select: { id: true, name: true, surname: true } },
@@ -244,7 +252,16 @@ export async function getTeacherAccountabilityOverview(
         },
       },
       orderBy: [{ escalatedAt: "desc" }],
-      take: 20,
+      take: 30,
+    }),
+    prisma.teacherEscalation.count({
+      where: {
+        schoolId,
+        status: { in: ["OPEN", "ACKNOWLEDGED"] },
+        obligation: {
+          expectedAt: { gte: weekStart, lte: todayEnd },
+        },
+      },
     }),
     prisma.teacherReminder.count({
       where: {
@@ -344,7 +361,7 @@ export async function getTeacherAccountabilityOverview(
       completedLate: 0,
       missed: 0,
       escalated: 0,
-      openEscalations: openEscalations.length,
+      openEscalations: openEscalationCount,
       remindersPending,
     },
   );
