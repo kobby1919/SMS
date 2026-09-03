@@ -73,6 +73,10 @@ function needsManagementReview(duty: TeacherDutyRow | undefined) {
   return duty?.status === "ESCALATED" || Boolean(duty?.escalationStatus);
 }
 
+function obligationReviewHref(obligationId: string) {
+  return `/teacher/accountability?obligationId=${encodeURIComponent(obligationId)}`;
+}
+
 function sortDutiesByUrgency(a: TeacherDutyRow, b: TeacherDutyRow) {
   const rank = {
     ESCALATED: 0,
@@ -348,9 +352,14 @@ const TeacherPage = async () => {
       })
       .filter(([lessonId]) => Number.isFinite(lessonId)),
   );
-  const firstActionHref =
-    activeTodayDuties[0]?.actionHref ??
-    (todayLessons[0] ? `/list/attendance/take?lessonId=${todayLessons[0].id}` : "/teacher/accountability");
+  const firstActiveDuty = activeTodayDuties[0];
+  const firstActionHref = firstActiveDuty
+    ? needsManagementReview(firstActiveDuty)
+      ? obligationReviewHref(firstActiveDuty.id)
+      : firstActiveDuty.actionHref
+    : todayLessons[0]
+      ? `/list/attendance/take?lessonId=${todayLessons[0].id}`
+      : "/teacher/accountability";
   const todaySummaryStats = [
     { label: "Lessons", value: todayLessons.length },
     {
@@ -447,7 +456,7 @@ const TeacherPage = async () => {
                       ) : null}
                     </div>
                     <Link
-                      href={needsManagementReview(duty) ? "/teacher/accountability" : duty.actionHref}
+                      href={needsManagementReview(duty) ? obligationReviewHref(duty.id) : duty.actionHref}
                       className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-black text-slate-900 ring-1 ring-gray-200 transition hover:bg-slate-900 hover:text-white sm:w-auto"
                     >
                       {needsManagementReview(duty) ? "Review escalation" : dutyActionLabel(duty)}
@@ -523,7 +532,7 @@ const TeacherPage = async () => {
                           {displayAttendanceState}
                         </span>
                         <Link
-                          href={attendanceEscalated ? "/teacher/accountability" : `/list/attendance/take?lessonId=${lesson.id}`}
+                          href={attendanceDuty && attendanceEscalated ? obligationReviewHref(attendanceDuty.id) : `/list/attendance/take?lessonId=${lesson.id}`}
                           className={`inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-black text-white transition ${
                             attendanceEscalated
                               ? "bg-rose-600 hover:bg-rose-700"

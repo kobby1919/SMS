@@ -21,6 +21,14 @@ const roleLabel: Record<AppRole, string> = {
   bursar: "Bursar",
 };
 
+function obligationReviewHref(obligationId: string) {
+  return `/teacher/accountability?obligationId=${encodeURIComponent(obligationId)}`;
+}
+
+function needsTeacherReview(status: string, escalationStatus: string | null) {
+  return status === "ESCALATED" || Boolean(escalationStatus);
+}
+
 const Navbar = async ({ role, userId, schoolId }: Props) => {
   const [clerkUser, branding] = await Promise.all([
     currentUser().catch(() => null),
@@ -52,7 +60,9 @@ const Navbar = async ({ role, userId, schoolId }: Props) => {
           duty.escalationReason ?? null,
           `Due ${duty.expectedAt.toLocaleTimeString("en-GH", { hour: "2-digit", minute: "2-digit" })}`,
         ].filter(Boolean).join("\n"),
-        href: duty.actionHref,
+        href: needsTeacherReview(duty.status, duty.escalationStatus)
+          ? obligationReviewHref(duty.id)
+          : duty.actionHref,
         priority:
           duty.status === "MISSED" || duty.status === "ESCALATED" || duty.escalationStatus
             ? "HIGH"

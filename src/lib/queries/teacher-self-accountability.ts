@@ -181,6 +181,10 @@ function actionHref(sourceModel: string, sourceId: string) {
   return "/teacher/accountability";
 }
 
+function obligationReviewHref(obligationId: string) {
+  return `/teacher/accountability?obligationId=${encodeURIComponent(obligationId)}`;
+}
+
 function obligationTypeLabel(type: TeacherObligationType | null) {
   if (type === "ATTENDANCE") return "Attendance";
   if (type === "CA_SCORE_PUBLISHING") return "CA scores";
@@ -266,7 +270,7 @@ function toAuditRow(
     className: metadata.className ?? null,
     subjectName: metadata.subjectName ?? null,
     actionHref: obligation
-      ? actionHref(obligation.sourceModel, obligation.sourceId)
+      ? obligationReviewHref(obligation.id)
       : actionHref(log.sourceModel, log.sourceId),
     nextStep: auditNextStep(log.action, obligation),
   };

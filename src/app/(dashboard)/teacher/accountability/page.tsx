@@ -45,6 +45,19 @@ function typeLabel(type: string) {
   return type.replaceAll("_", " ");
 }
 
+function obligationReviewHref(obligationId: string) {
+  return `/teacher/accountability?obligationId=${encodeURIComponent(obligationId)}`;
+}
+
+function needsManagementReview(row: TeacherDutyRow) {
+  return row.status === "ESCALATED" || Boolean(row.escalationStatus);
+}
+
+function historyRowMatchesFocus(row: { actionHref: string }, focusedObligationId?: string) {
+  if (!focusedObligationId) return false;
+  return row.actionHref.includes(`obligationId=${encodeURIComponent(focusedObligationId)}`);
+}
+
 function StatCard({
   label,
   value,
@@ -83,9 +96,23 @@ function EmptyState({ message }: { message: string }) {
   );
 }
 
-function DutyRowItem({ row, showType = false }: { row: TeacherDutyRow; showType?: boolean }) {
+function DutyRowItem({
+  row,
+  showType = false,
+  focusedObligationId,
+}: {
+  row: TeacherDutyRow;
+  showType?: boolean;
+  focusedObligationId?: string;
+}) {
+  const isFocused = row.id === focusedObligationId;
+  const href = needsManagementReview(row) ? obligationReviewHref(row.id) : row.actionHref;
+
   return (
-    <div className="py-3 first:pt-0 last:pb-0">
+    <div
+      id={`obligation-${row.id}`}
+      className={`py-3 first:pt-0 last:pb-0 ${isFocused ? "rounded-lg bg-sky-50 px-3 ring-2 ring-sky-200" : ""}`}
+    >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           {(showType || row.escalationStatus) && (
@@ -127,10 +154,10 @@ function DutyRowItem({ row, showType = false }: { row: TeacherDutyRow; showType?
             {row.status.replaceAll("_", " ")}
           </span>
           <Link
-            href={row.actionHref}
+            href={href}
             className="inline-flex items-center gap-1.5 rounded-lg bg-slate-950 px-3 py-2 text-xs font-black text-white transition hover:bg-slate-700"
           >
-            Open <ExternalLink size={14} />
+            {needsManagementReview(row) ? "Review" : "Open"} <ExternalLink size={14} />
           </Link>
         </div>
       </div>
@@ -142,10 +169,12 @@ function DutyList({
   title,
   rows,
   empty,
+  focusedObligationId,
 }: {
   title: string;
   rows: TeacherDutyRow[];
   empty: string;
+  focusedObligationId?: string;
 }) {
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
@@ -161,7 +190,7 @@ function DutyList({
       ) : (
         <div className="divide-y divide-slate-100">
           {rows.map((row) => (
-            <DutyRowItem key={row.id} row={row} />
+            <DutyRowItem key={row.id} row={row} focusedObligationId={focusedObligationId} />
           ))}
         </div>
       )}
@@ -169,7 +198,13 @@ function DutyList({
   );
 }
 
-function TodayDutiesPanel({ rows }: { rows: TeacherDutyRow[] }) {
+function TodayDutiesPanel({
+  rows,
+  focusedObligationId,
+}: {
+  rows: TeacherDutyRow[];
+  focusedObligationId?: string;
+}) {
   const hasNonAttendanceDuty = rows.some((row) => row.type !== "ATTENDANCE");
   if (!hasNonAttendanceDuty) {
     return (
@@ -177,6 +212,7 @@ function TodayDutiesPanel({ rows }: { rows: TeacherDutyRow[] }) {
         title="Today's Duties"
         rows={rows}
         empty="No duty has been assigned to you today."
+        focusedObligationId={focusedObligationId}
       />
     );
   }
@@ -211,7 +247,7 @@ function TodayDutiesPanel({ rows }: { rows: TeacherDutyRow[] }) {
         {groups.map((group) => (
           <details
             key={group.type}
-            open={group.issueCount > 0}
+            open={group.issueCount > 0 || group.rows.some((row) => row.id === focusedObligationId)}
             className={`rounded-lg border ${group.issueCount > 0 ? "border-rose-200 bg-rose-50/40" : "border-slate-200 bg-slate-50"}`}
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3">
@@ -230,7 +266,7 @@ function TodayDutiesPanel({ rows }: { rows: TeacherDutyRow[] }) {
             </summary>
             <div className="divide-y divide-slate-100 border-t border-white/70 bg-white px-4 py-2">
               {group.rows.map((row) => (
-                <DutyRowItem key={row.id} row={row} />
+                <DutyRowItem key={row.id} row={row} focusedObligationId={focusedObligationId} />
               ))}
             </div>
           </details>
@@ -240,7 +276,13 @@ function TodayDutiesPanel({ rows }: { rows: TeacherDutyRow[] }) {
   );
 }
 
-function EscalationDayBreakdown({ days }: { days: TeacherWeeklyDayGroup[] }) {
+function EscalationDayBreakdown({
+  days,
+  focusedObligationId,
+}: {
+  days: TeacherWeeklyDayGroup[];
+  focusedObligationId?: string;
+}) {
   const dayGroups = days.map((day) => ({
     ...day,
     rows: day.rows.filter((row) => row.status === "ESCALATED" || row.escalationStatus),
@@ -268,7 +310,7 @@ function EscalationDayBreakdown({ days }: { days: TeacherWeeklyDayGroup[] }) {
           {dayGroups.map((day) => (
             <details
               key={day.key}
-              open={day.isToday && day.rows.length > 0}
+              open={(day.isToday && day.rows.length > 0) || day.rows.some((row) => row.id === focusedObligationId)}
               className={`rounded-lg border ${day.rows.length > 0 ? "border-rose-200 bg-rose-50/40" : "border-slate-200 bg-slate-50"}`}
             >
               <summary className="flex cursor-pointer list-none flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
@@ -296,7 +338,7 @@ function EscalationDayBreakdown({ days }: { days: TeacherWeeklyDayGroup[] }) {
                 ) : (
                   <div className="divide-y divide-slate-100">
                     {day.rows.map((row) => (
-                      <DutyRowItem key={row.id} row={row} showType />
+                      <DutyRowItem key={row.id} row={row} showType focusedObligationId={focusedObligationId} />
                     ))}
                   </div>
                 )}
@@ -309,7 +351,13 @@ function EscalationDayBreakdown({ days }: { days: TeacherWeeklyDayGroup[] }) {
   );
 }
 
-function WeeklyDayBreakdown({ days }: { days: TeacherWeeklyDayGroup[] }) {
+function WeeklyDayBreakdown({
+  days,
+  focusedObligationId,
+}: {
+  days: TeacherWeeklyDayGroup[];
+  focusedObligationId?: string;
+}) {
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
       <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
@@ -335,7 +383,7 @@ function WeeklyDayBreakdown({ days }: { days: TeacherWeeklyDayGroup[] }) {
           return (
             <details
               key={day.key}
-              open={day.isToday}
+              open={day.isToday || day.rows.some((row) => row.id === focusedObligationId)}
               className={`rounded-lg border ${tone}`}
             >
               <summary className="flex cursor-pointer list-none flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
@@ -363,7 +411,7 @@ function WeeklyDayBreakdown({ days }: { days: TeacherWeeklyDayGroup[] }) {
                 ) : (
                   <div className="divide-y divide-slate-100">
                     {day.rows.map((row) => (
-                      <DutyRowItem key={row.id} row={row} showType />
+                      <DutyRowItem key={row.id} row={row} showType focusedObligationId={focusedObligationId} />
                     ))}
                   </div>
                 )}
@@ -376,12 +424,21 @@ function WeeklyDayBreakdown({ days }: { days: TeacherWeeklyDayGroup[] }) {
   );
 }
 
-function HistorySection({ days }: { days: TeacherHistoryDayGroup[] }) {
+function HistorySection({
+  days,
+  focusedObligationId,
+}: {
+  days: TeacherHistoryDayGroup[];
+  focusedObligationId?: string;
+}) {
   const total = days.reduce((count, day) => count + day.rows.length, 0);
+  const hasFocusedHistory = days.some((day) =>
+    day.rows.some((row) => historyRowMatchesFocus(row, focusedObligationId)),
+  );
 
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <details>
+      <details open={hasFocusedHistory}>
         <summary className="flex cursor-pointer list-none flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <span className="flex items-center gap-2">
             <span className="rounded-lg bg-slate-100 p-2 text-slate-700">
@@ -409,7 +466,10 @@ function HistorySection({ days }: { days: TeacherHistoryDayGroup[] }) {
               {days.map((day) => (
                 <details
                   key={day.key}
-                  open={day.isToday && day.rows.length > 0}
+                  open={
+                    (day.isToday && day.rows.length > 0) ||
+                    day.rows.some((row) => historyRowMatchesFocus(row, focusedObligationId))
+                  }
                   className={`rounded-lg border ${day.rows.length > 0 ? "border-slate-200 bg-slate-50" : "border-slate-100 bg-white"}`}
                 >
                   <summary className="flex cursor-pointer list-none flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
@@ -436,8 +496,13 @@ function HistorySection({ days }: { days: TeacherHistoryDayGroup[] }) {
                       </p>
                     ) : (
                       <div className="divide-y divide-slate-100">
-                        {day.rows.map((row) => (
-                          <div key={row.id} className="py-3 first:pt-0 last:pb-0">
+                        {day.rows.map((row) => {
+                          const isFocused = historyRowMatchesFocus(row, focusedObligationId);
+                          return (
+                          <div
+                            key={row.id}
+                            className={`py-3 first:pt-0 last:pb-0 ${isFocused ? "rounded-lg bg-sky-50 px-3 ring-2 ring-sky-200" : ""}`}
+                          >
                             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                               <div className="min-w-0">
                                 <div className="flex flex-wrap items-center gap-2">
@@ -482,7 +547,8 @@ function HistorySection({ days }: { days: TeacherHistoryDayGroup[] }) {
                               </Link>
                             </div>
                           </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     )}
                   </div>
@@ -496,7 +562,12 @@ function HistorySection({ days }: { days: TeacherHistoryDayGroup[] }) {
   );
 }
 
-const TeacherAccountabilityPage = async () => {
+const TeacherAccountabilityPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ obligationId?: string }>;
+}) => {
+  const { obligationId: focusedObligationId } = await searchParams;
   const { userId, schoolId } = await requirePageSession(["teacher"]);
   await prepareTeacherAccountabilityForView({
     schoolId,
@@ -517,9 +588,14 @@ const TeacherAccountabilityPage = async () => {
           <div>
             <h1 className="text-xl font-black">My Accountability</h1>
             <p className="mt-1 max-w-3xl text-sm font-medium leading-relaxed text-slate-300">
-              Track your duties, escalations, weekly reliability, and audit
-              history in one simple place.
+              Track your duties, escalations, weekly reliability, and history
+              in one simple place.
             </p>
+            {focusedObligationId ? (
+              <p className="mt-3 rounded-lg bg-sky-400/10 px-3 py-2 text-xs font-black text-sky-100">
+                Opened a specific escalated duty. The matching row is highlighted below.
+              </p>
+            ) : null}
           </div>
         </div>
       </div>
@@ -552,13 +628,13 @@ const TeacherAccountabilityPage = async () => {
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
-        <TodayDutiesPanel rows={overview.todayDuties} />
-        <EscalationDayBreakdown days={overview.weeklyDays} />
+        <TodayDutiesPanel rows={overview.todayDuties} focusedObligationId={focusedObligationId} />
+        <EscalationDayBreakdown days={overview.weeklyDays} focusedObligationId={focusedObligationId} />
       </div>
 
-      <WeeklyDayBreakdown days={overview.weeklyDays} />
+      <WeeklyDayBreakdown days={overview.weeklyDays} focusedObligationId={focusedObligationId} />
 
-      <HistorySection days={overview.historyDays} />
+      <HistorySection days={overview.historyDays} focusedObligationId={focusedObligationId} />
     </div>
   );
 };
