@@ -15,6 +15,7 @@ import {
   AlertTriangle,
   BookOpenCheck,
   CalendarCheck2,
+  CheckCircle2,
   ClipboardCheck,
   FilePenLine,
   GraduationCap,
@@ -24,6 +25,7 @@ import {
   ShieldCheck,
   Users,
 } from "lucide-react";
+import type { TeacherDutyRow } from "@/src/lib/queries/teacher-self-accountability";
 
 const dayNames = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"] as const;
 const schoolDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"] as const;
@@ -37,6 +39,49 @@ function formatTime(value: Date) {
 
 function formatTerm(term: string) {
   return term.replace("TERM_", "Term ");
+}
+
+function teacherDutyTypeLabel(type: string) {
+  if (type === "ATTENDANCE") return "Attendance";
+  if (type === "CA_SCORE_PUBLISHING") return "CA scores";
+  if (type === "HOMEWORK_CHECKING") return "Homework checks";
+  if (type === "SYLLABUS_PROGRESS") return "Syllabus";
+  if (type === "EXAM_ENTRY") return "Exam entry";
+  return type.replaceAll("_", " ");
+}
+
+function teacherDutyStatusClass(status: string) {
+  if (status === "ESCALATED" || status === "MISSED") {
+    return "bg-rose-50 text-rose-700";
+  }
+  if (status === "PENDING") return "bg-amber-50 text-amber-700";
+  if (status === "COMPLETED_LATE") return "bg-orange-50 text-orange-700";
+  return "bg-emerald-50 text-emerald-700";
+}
+
+function dutyActionLabel(duty: TeacherDutyRow) {
+  if (duty.type === "ATTENDANCE") return "Take attendance";
+  if (duty.type === "CA_SCORE_PUBLISHING") return "Enter scores";
+  if (duty.type === "HOMEWORK_CHECKING") return "Check homework";
+  if (duty.type === "SYLLABUS_PROGRESS") return "Update syllabus";
+  if (duty.type === "EXAM_ENTRY") return "Enter exam";
+  return "Open";
+}
+
+function isClosedDuty(duty: TeacherDutyRow) {
+  return ["COMPLETED", "COMPLETED_LATE", "CANCELLED"].includes(duty.status);
+}
+
+function sortDutiesByUrgency(a: TeacherDutyRow, b: TeacherDutyRow) {
+  const rank = {
+    ESCALATED: 0,
+    MISSED: 1,
+    PENDING: 2,
+    COMPLETED_LATE: 3,
+    COMPLETED: 4,
+    CANCELLED: 5,
+  } as Record<string, number>;
+  return (rank[a.status] ?? 9) - (rank[b.status] ?? 9) || a.expectedAt.getTime() - b.expectedAt.getTime();
 }
 
 function startMonthForTerm(term: string) {
@@ -293,17 +338,12 @@ const TeacherPage = async ({
     });
   const syllabusAttentionCount = syllabusInsights.filter((item) => item.status === "Behind" || item.dueNowCount > 0).length;
 
-  const accountabilityAttentionCount =
-    accountability.totals.pending +
-    accountability.totals.completedLate +
-    accountability.totals.missed +
-    accountability.totals.escalated;
-  const taskCount =
-    pendingAttendanceCount +
-    pendingHomeworkChecks.length +
-    pendingCATasks.length +
-    syllabusAttentionCount +
-    accountabilityAttentionCount;
+  const activeTodayDuties = accountability.todayDuties
+    .filter((duty) => !isClosedDuty(duty))
+    .sort(sortDutiesByUrgency);
+  const completedTodayDuties = accountability.todayDuties.filter(isClosedDuty).length;
+  const accountabilityAttentionCount = activeTodayDuties.length;
+  const taskCount = accountabilityAttentionCount + syllabusAttentionCount;
 
   const teacherFirstName = teacher?.name ?? "Teacher";
   const teacherFullName  = teacher ? `${teacher.name} ${teacher.surname}` : teacherFirstName;
@@ -329,58 +369,93 @@ const TeacherPage = async ({
           tag={`${formatTerm(activePeriod.currentTerm)} · ${activePeriod.academicYear}`}
         />
 
-        <section className="rounded-2xl border border-slate-200 bg-slate-950 p-4 text-white shadow-sm">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex items-start gap-3">
-              <div className="rounded-xl bg-sky-400/10 p-2 text-sky-200">
-                <ShieldCheck size={20} />
+              <div className={`rounded-xl p-2 ${accountabilityAttentionCount > 0 ? "bg-rose-50 text-rose-600" : "bg-emerald-50 text-emerald-600"}`}>
+                {accountabilityAttentionCount > 0 ? <AlertTriangle size={20} /> : <CheckCircle2 size={20} />}
               </div>
               <div>
-                <h2 className="text-base font-black">Accountability Check</h2>
-                <p className="mt-1 text-sm font-medium text-slate-300">
-                  Weekly reliability is {accountability.totals.reliabilityScore}%.
+                <h2 className="text-base font-black text-gray-900">Start Here</h2>
+                <p className="mt-1 max-w-2xl text-sm font-medium text-gray-500">
                   {accountabilityAttentionCount > 0
-                    ? ` ${accountabilityAttentionCount} item${accountabilityAttentionCount === 1 ? "" : "s"} need attention.`
-                    : " No late, missed, or escalated duty is waiting."}
+                    ? `${accountabilityAttentionCount} active dut${accountabilityAttentionCount === 1 ? "y" : "ies"} need your attention today.`
+                    : `All ${completedTodayDuties} scheduled dut${completedTodayDuties === 1 ? "y" : "ies"} for today are clear.`}
+                  {" "}Weekly reliability is {accountability.totals.reliabilityScore}%.
                 </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:w-auto">
-              <div className="rounded-xl bg-white/10 px-3 py-2">
-                <p className="text-lg font-black">{accountability.totals.today}</p>
-                <p className="text-[10px] font-bold uppercase text-slate-300">Today</p>
-              </div>
-              <div className="rounded-xl bg-white/10 px-3 py-2">
-                <p className="text-lg font-black">{accountability.totals.pending}</p>
-                <p className="text-[10px] font-bold uppercase text-slate-300">Pending</p>
-              </div>
-              <div className="rounded-xl bg-white/10 px-3 py-2">
-                <p className="text-lg font-black">{accountability.totals.completedLate}</p>
-                <p className="text-[10px] font-bold uppercase text-slate-300">Late</p>
-              </div>
-              <div className="rounded-xl bg-white/10 px-3 py-2">
-                <p className="text-lg font-black">{accountability.totals.weeklyEscalations}</p>
-                <p className="text-[10px] font-bold uppercase text-slate-300">Escalated Week</p>
               </div>
             </div>
 
             <Link
               href="/teacher/accountability"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-xs font-black text-slate-950 transition hover:bg-slate-100 lg:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-black text-white transition hover:bg-slate-700 lg:w-auto"
             >
-              {accountabilityAttentionCount > 0 ? <AlertTriangle size={14} /> : <ShieldCheck size={14} />}
-              Open accountability
+              <ShieldCheck size={14} />
+              Full accountability
             </Link>
           </div>
+
+          {activeTodayDuties.length === 0 ? (
+            <div className="mt-4 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3">
+              <p className="text-sm font-black text-emerald-800">No urgent work is waiting right now.</p>
+              <p className="mt-1 text-xs font-semibold text-emerald-700">
+                Use the lesson list below for teaching flow, CA, homework, and timetable checks.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-4 grid gap-2">
+              {activeTodayDuties.slice(0, 5).map((duty) => (
+                <div
+                  key={duty.id}
+                  className="rounded-2xl border border-gray-100 bg-gray-50/80 p-3"
+                >
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="rounded-lg bg-white px-2 py-0.5 text-[10px] font-black uppercase text-gray-500">
+                          {teacherDutyTypeLabel(duty.type)}
+                        </span>
+                        <span className={`rounded-lg px-2 py-0.5 text-[10px] font-black uppercase ${teacherDutyStatusClass(duty.status)}`}>
+                          {duty.status.replaceAll("_", " ")}
+                        </span>
+                      </div>
+                      <p className="mt-2 truncate text-sm font-black text-gray-900">{duty.title}</p>
+                      <p className="mt-0.5 text-xs font-semibold text-gray-500">
+                        {duty.className ?? "Class"} · {duty.subjectName ?? "Subject"} · Due {formatTime(duty.expectedAt)}
+                      </p>
+                      {duty.escalationReason ? (
+                        <p className="mt-2 rounded-xl bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-700">
+                          {duty.escalationReason}
+                        </p>
+                      ) : null}
+                    </div>
+                    <Link
+                      href={duty.actionHref}
+                      className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-black text-slate-900 ring-1 ring-gray-200 transition hover:bg-slate-900 hover:text-white sm:w-auto"
+                    >
+                      {dutyActionLabel(duty)}
+                    </Link>
+                  </div>
+                </div>
+              ))}
+              {activeTodayDuties.length > 5 ? (
+                <Link
+                  href="/teacher/accountability"
+                  className="inline-flex justify-center rounded-xl bg-gray-50 px-4 py-2 text-xs font-black text-gray-600 hover:bg-gray-100"
+                >
+                  View {activeTodayDuties.length - 5} more duties
+                </Link>
+              ) : null}
+            </div>
+          )}
         </section>
 
         <section className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
           <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-lg font-black text-gray-800">Today&apos;s Work</h1>
+              <h1 className="text-lg font-black text-gray-800">Today&apos;s Lessons</h1>
               <p className="text-sm font-medium text-gray-400">
-                Start from here. Attendance, CA, and homework actions stay tied to your timetable.
+                Your timetable for today, with attendance and CA actions beside each lesson.
               </p>
             </div>
             <Link
