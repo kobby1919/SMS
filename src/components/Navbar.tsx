@@ -42,31 +42,25 @@ const Navbar = async ({ role, userId, schoolId }: Props) => {
   if (role === "teacher") {
     await prepareTeacherAccountabilityForView({ schoolId, teacherId: userId });
     const overview = await getTeacherSelfAccountabilityOverview({ schoolId, teacherId: userId });
-    const alerts = [
-      ...overview.todayDuties
-        .filter((duty) => duty.status !== "COMPLETED" && duty.status !== "COMPLETED_LATE")
-        .map((duty) => ({
-          id: duty.id,
-          title: duty.title,
-          description: [
-            duty.className && duty.subjectName ? `${duty.className} - ${duty.subjectName}` : null,
-            `Due ${duty.expectedAt.toLocaleTimeString("en-GH", { hour: "2-digit", minute: "2-digit" })}`,
-          ].filter(Boolean).join("\n"),
-          href: duty.actionHref,
-          priority: duty.status === "MISSED" || duty.status === "ESCALATED" ? "HIGH" : duty.priority,
-          status: duty.status,
-          dueAt: duty.expectedAt.toISOString(),
-        })),
-      ...overview.escalations.map((escalation) => ({
-        id: `escalation-${escalation.id}`,
-        title: escalation.obligationTitle,
-        description: escalation.reason,
-        href: "/teacher/accountability",
-        priority: "HIGH" as const,
-        status: escalation.status,
-        dueAt: escalation.escalatedAt.toISOString(),
-      })),
-    ].slice(0, 8);
+    const alerts = overview.todayDuties
+      .filter((duty) => !["COMPLETED", "COMPLETED_LATE", "CANCELLED"].includes(duty.status))
+      .map((duty) => ({
+        id: duty.id,
+        title: duty.title,
+        description: [
+          duty.className && duty.subjectName ? `${duty.className} - ${duty.subjectName}` : null,
+          duty.escalationReason ?? null,
+          `Due ${duty.expectedAt.toLocaleTimeString("en-GH", { hour: "2-digit", minute: "2-digit" })}`,
+        ].filter(Boolean).join("\n"),
+        href: duty.actionHref,
+        priority:
+          duty.status === "MISSED" || duty.status === "ESCALATED" || duty.escalationStatus
+            ? "HIGH"
+            : duty.priority,
+        status: duty.status,
+        dueAt: duty.expectedAt.toISOString(),
+      }))
+      .slice(0, 8);
 
     return <NavbarClient user={userData} teacherContext={{ alerts }} />;
   }

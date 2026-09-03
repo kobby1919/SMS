@@ -459,7 +459,6 @@ export async function getTeacherSelfAccountabilityOverview({
         createdAt: { gte: weekStart, lte: now },
         action: {
           in: [
-            "OBLIGATION_ESCALATED",
             "ESCALATION_CREATED",
             "ESCALATION_ACKNOWLEDGED",
             "ESCALATION_RESOLVED",
