@@ -1,6 +1,7 @@
 import prisma from "@/src/lib/prisma";
 import type {
   TeacherAccountabilityAuditAction,
+  TeacherObligationType,
   TeacherObligationPriority,
   TeacherObligationStatus,
 } from "@/src/generated/prisma";
@@ -33,6 +34,7 @@ export type TeacherSelfAccountabilityOverview = {
   };
   todayDuties: TeacherDutyRow[];
   weeklyIssues: TeacherDutyRow[];
+  weeklyDays: TeacherWeeklyDayGroup[];
   reminders: TeacherReminderRow[];
   escalations: TeacherEscalationRow[];
   auditTrail: TeacherAuditRow[];
@@ -40,6 +42,7 @@ export type TeacherSelfAccountabilityOverview = {
 
 export type TeacherDutyRow = {
   id: string;
+  type: TeacherObligationType;
   title: string;
   status: TeacherObligationStatus;
   priority: TeacherObligationPriority;
@@ -50,6 +53,21 @@ export type TeacherDutyRow = {
   attendanceCount: number | null;
   studentCount: number | null;
   actionHref: string;
+  escalationStatus: string | null;
+  escalationReason: string | null;
+  escalatedAt: Date | null;
+};
+
+export type TeacherWeeklyDayGroup = {
+  key: string;
+  label: string;
+  shortLabel: string;
+  isToday: boolean;
+  total: number;
+  issueCount: number;
+  pendingCount: number;
+  completedCount: number;
+  rows: TeacherDutyRow[];
 };
 
 export type TeacherReminderRow = {
@@ -96,6 +114,33 @@ function startOfWeek(date: Date) {
   return value;
 }
 
+function endOfWeek(date: Date) {
+  const value = startOfWeek(date);
+  value.setDate(value.getDate() + 6);
+  value.setHours(23, 59, 59, 999);
+  return value;
+}
+
+function dayKey(date: Date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function formatDayLabel(date: Date) {
+  return new Intl.DateTimeFormat("en-GH", {
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+  }).format(date);
+}
+
+function formatShortDayLabel(date: Date) {
+  return new Intl.DateTimeFormat("en-GH", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  }).format(date);
+}
+
 function readMetadata(metadata: unknown): ObligationMetadata {
   if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
     return {};
@@ -115,6 +160,7 @@ function actionHref(sourceModel: string, sourceId: string) {
 
 function toDutyRow(obligation: {
   id: string;
+  type: TeacherObligationType;
   title: string;
   status: TeacherObligationStatus;
   priority: TeacherObligationPriority;
@@ -123,11 +169,21 @@ function toDutyRow(obligation: {
   sourceModel: string;
   sourceId: string;
   metadata: unknown;
+  escalations?: {
+    reason: string;
+    status: string;
+    escalatedAt: Date;
+  }[];
 }, now: Date): TeacherDutyRow {
   const metadata = readMetadata(obligation.metadata);
   const status = effectiveObligationStatus(obligation, now);
+  const activeEscalation =
+    obligation.escalations?.find((escalation) =>
+      escalation.status === "OPEN" || escalation.status === "ACKNOWLEDGED",
+    ) ?? null;
   return {
     id: obligation.id,
+    type: obligation.type,
     title: obligation.title,
     status,
     priority: effectiveObligationPriority(status, obligation.priority),
@@ -146,6 +202,9 @@ function toDutyRow(obligation: {
     studentCount:
       typeof metadata.studentCount === "number" ? metadata.studentCount : null,
     actionHref: actionHref(obligation.sourceModel, obligation.sourceId),
+    escalationStatus: activeEscalation?.status ?? null,
+    escalationReason: activeEscalation?.reason ?? null,
+    escalatedAt: activeEscalation?.escalatedAt ?? null,
   };
 }
 
@@ -161,11 +220,11 @@ export async function getTeacherSelfAccountabilityOverview({
   const todayStart = startOfDay(now);
   const todayEnd = endOfDay(now);
   const weekStart = startOfWeek(now);
+  const weekEnd = endOfWeek(now);
 
   const [
     todayDuties,
-    weeklyIssueDuties,
-    weeklyStatusGroups,
+    weeklyDuties,
     openEscalations,
     pendingReminders,
     reminders,
@@ -184,26 +243,21 @@ export async function getTeacherSelfAccountabilityOverview({
       where: {
         schoolId,
         teacherId,
-        expectedAt: { gte: weekStart, lte: todayEnd },
+        expectedAt: { gte: weekStart, lte: weekEnd },
       },
-      orderBy: [{ priority: "desc" }, { expectedAt: "desc" }],
-      take: 120,
-    }),
-    prisma.teacherObligation.findMany({
-      where: {
-        schoolId,
-        teacherId,
-        expectedAt: { gte: weekStart, lte: todayEnd },
+      include: {
+        escalations: {
+          where: { status: { in: ["OPEN", "ACKNOWLEDGED"] } },
+          select: {
+            reason: true,
+            status: true,
+            escalatedAt: true,
+          },
+          orderBy: { escalatedAt: "desc" },
+          take: 1,
+        },
       },
-      select: {
-        id: true,
-        status: true,
-        priority: true,
-        expectedAt: true,
-        completedAt: true,
-        metadata: true,
-      },
-      orderBy: [{ expectedAt: "asc" }],
+      orderBy: [{ expectedAt: "asc" }, { createdAt: "asc" }],
       take: 500,
     }),
     prisma.teacherEscalation.findMany({
@@ -271,8 +325,10 @@ export async function getTeacherSelfAccountabilityOverview({
 
   let weeklyTotal = 0;
   let weeklyEarned = 0;
-  for (const row of weeklyStatusGroups) {
-    const status = effectiveObligationStatus(row, now);
+  const weeklyRows = weeklyDuties.map((obligation) => toDutyRow(obligation, now));
+
+  for (const row of weeklyRows) {
+    const status = row.status;
     weeklyTotal += 1;
     if (status === "PENDING") {
       totals.pending += 1;
@@ -292,15 +348,38 @@ export async function getTeacherSelfAccountabilityOverview({
   totals.reliabilityScore =
     weeklyTotal > 0 ? Math.round((weeklyEarned / weeklyTotal) * 100) : 100;
 
-  const weeklyIssueRows = weeklyIssueDuties
-    .map((obligation) => toDutyRow(obligation, now))
+  const weeklyIssueRows = weeklyRows
     .filter((row) => isAccountabilityIssue(row.status))
     .slice(0, 20);
+
+  const rowsByDay = new Map<string, TeacherDutyRow[]>();
+  for (const row of weeklyRows) {
+    const key = dayKey(row.expectedAt);
+    rowsByDay.set(key, [...(rowsByDay.get(key) ?? []), row]);
+  }
+  const weeklyDays = Array.from({ length: 7 }, (_, index) => {
+    const date = startOfDay(weekStart);
+    date.setDate(date.getDate() + index);
+    const key = dayKey(date);
+    const rows = rowsByDay.get(key) ?? [];
+    return {
+      key,
+      label: formatDayLabel(date),
+      shortLabel: formatShortDayLabel(date),
+      isToday: key === dayKey(now),
+      total: rows.length,
+      issueCount: rows.filter((row) => isAccountabilityIssue(row.status)).length,
+      pendingCount: rows.filter((row) => row.status === "PENDING").length,
+      completedCount: rows.filter((row) => row.status === "COMPLETED" || row.status === "COMPLETED_LATE").length,
+      rows,
+    };
+  });
 
   return {
     totals,
     todayDuties: todayDuties.map((obligation) => toDutyRow(obligation, now)),
     weeklyIssues: weeklyIssueRows,
+    weeklyDays,
     reminders: reminders.map((reminder) => ({
       id: reminder.id,
       message: reminder.message,

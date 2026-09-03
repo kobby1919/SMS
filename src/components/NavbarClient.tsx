@@ -326,10 +326,6 @@ function TeacherBell({ alerts }: { alerts: TeacherAlert[] }) {
 
   useEffect(() => {
     if (alerts.length === 0) return;
-    const todayKey = new Date().toISOString().slice(0, 10);
-    const storageKey = `edujay-teacher-alerts-opened:${todayKey}`;
-    if (sessionStorage.getItem(storageKey)) return;
-    sessionStorage.setItem(storageKey, "1");
     const timer = window.setTimeout(() => setOpen(true), 0);
     return () => window.clearTimeout(timer);
   }, [alerts.length]);

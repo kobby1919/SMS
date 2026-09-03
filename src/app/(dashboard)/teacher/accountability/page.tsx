@@ -13,6 +13,7 @@ import {
   type TeacherAuditRow,
   type TeacherDutyRow,
   type TeacherEscalationRow,
+  type TeacherWeeklyDayGroup,
 } from "@/src/lib/queries/teacher-self-accountability";
 
 export const dynamic = "force-dynamic";
@@ -34,6 +35,15 @@ function statusClass(status: string) {
     return "bg-rose-50 text-rose-700";
   }
   return "bg-slate-100 text-slate-700";
+}
+
+function typeLabel(type: string) {
+  if (type === "ATTENDANCE") return "Attendance";
+  if (type === "CA_SCORE_PUBLISHING") return "CA scores";
+  if (type === "HOMEWORK_CHECKING") return "Homework";
+  if (type === "SYLLABUS_PROGRESS") return "Syllabus";
+  if (type === "EXAM_ENTRY") return "Exam entry";
+  return type.replaceAll("_", " ");
 }
 
 function StatCard({
@@ -164,6 +174,111 @@ function EscalationList({ rows }: { rows: TeacherEscalationRow[] }) {
   );
 }
 
+function WeeklyDayBreakdown({ days }: { days: TeacherWeeklyDayGroup[] }) {
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 className="text-base font-black text-slate-950">This Week</h2>
+          <p className="text-sm font-semibold text-slate-500">
+            Open each day to see the duties, missed work, and escalations for that date.
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        {days.map((day) => {
+          const tone =
+            day.issueCount > 0
+              ? "border-rose-200 bg-rose-50/40"
+              : day.pendingCount > 0
+                ? "border-amber-200 bg-amber-50/40"
+                : day.total > 0
+                  ? "border-emerald-200 bg-emerald-50/40"
+                  : "border-slate-200 bg-slate-50";
+
+          return (
+            <details
+              key={day.key}
+              open={day.isToday}
+              className={`rounded-lg border ${tone}`}
+            >
+              <summary className="flex cursor-pointer list-none flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <span>
+                  <span className="block text-sm font-black text-slate-950">
+                    {day.label}
+                    {day.isToday ? " · Today" : ""}
+                  </span>
+                  <span className="mt-1 block text-xs font-semibold text-slate-500">
+                    {day.total === 0
+                      ? "No duty recorded"
+                      : `${day.total} dut${day.total === 1 ? "y" : "ies"} · ${day.pendingCount} pending · ${day.issueCount} issue${day.issueCount === 1 ? "" : "s"}`}
+                  </span>
+                </span>
+                <span className="inline-flex w-fit rounded-full bg-white px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-slate-600">
+                  {day.shortLabel}
+                </span>
+              </summary>
+
+              <div className="border-t border-white/70 bg-white px-4 py-2">
+                {day.rows.length === 0 ? (
+                  <p className="py-3 text-sm font-semibold text-slate-400">
+                    Nothing was expected on this day.
+                  </p>
+                ) : (
+                  <div className="divide-y divide-slate-100">
+                    {day.rows.map((row) => (
+                      <div key={row.id} className="py-3">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-slate-600">
+                                {typeLabel(row.type)}
+                              </span>
+                              {row.escalationStatus ? (
+                                <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-rose-700">
+                                  Escalated
+                                </span>
+                              ) : null}
+                            </div>
+                            <p className="mt-2 font-black text-slate-950">{row.title}</p>
+                            <p className="mt-1 text-sm font-semibold text-slate-600">
+                              {row.className ?? "Class"} - {row.subjectName ?? "Subject"}
+                            </p>
+                            <p className="mt-1 text-xs font-bold text-slate-400">
+                              Due: {formatDateTime(row.expectedAt)}
+                            </p>
+                            {row.escalationReason ? (
+                              <p className="mt-2 rounded-lg bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-700">
+                                {row.escalationReason}
+                              </p>
+                            ) : null}
+                          </div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className={`rounded-full px-2.5 py-1 text-xs font-black ${statusClass(row.status)}`}>
+                              {row.status.replaceAll("_", " ")}
+                            </span>
+                            <Link
+                              href={row.actionHref}
+                              className="inline-flex items-center gap-1.5 rounded-lg bg-slate-950 px-3 py-2 text-xs font-black text-white transition hover:bg-slate-700"
+                            >
+                              Open <ExternalLink size={14} />
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </details>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 function AuditList({ rows }: { rows: TeacherAuditRow[] }) {
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
@@ -265,13 +380,7 @@ const TeacherAccountabilityPage = async () => {
         <EscalationList rows={overview.escalations} />
       </div>
 
-      <div className="grid gap-5">
-        <DutyList
-          title="Weekly Issues"
-          rows={overview.weeklyIssues}
-          empty="No late, missed, or escalated duty is attached to you this week."
-        />
-      </div>
+      <WeeklyDayBreakdown days={overview.weeklyDays} />
 
       <AuditList rows={overview.auditTrail} />
     </div>
