@@ -2,6 +2,7 @@ import prisma from "@/src/lib/prisma";
 import type { AttendanceFollowUpStatus, AttendanceStatus } from "@/src/generated/prisma";
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
 import {
+  attendanceObligationSourceKey,
   evaluateAttendanceWindow,
   syncAttendanceObligationsForDate,
 } from "@/src/lib/services/teacher-attendance-obligations";
@@ -213,6 +214,31 @@ export async function saveAttendance({
     throw new Error("You can only submit attendance for lessons assigned to you.");
   }
   if (actorRole === "teacher") {
+    const attendanceObligation = await prisma.teacherObligation.findUnique({
+      where: {
+        schoolId_teacherId_sourceKey: {
+          schoolId,
+          teacherId: lesson.teacherId,
+          sourceKey: attendanceObligationSourceKey(lessonId, attendanceDate),
+        },
+      },
+      select: {
+        status: true,
+        escalations: {
+          where: { status: { in: ["OPEN", "ACKNOWLEDGED"] } },
+          select: { id: true },
+          take: 1,
+        },
+      },
+    });
+
+    if (
+      attendanceObligation?.status === "ESCALATED" ||
+      (attendanceObligation?.escalations.length ?? 0) > 0
+    ) {
+      throw new Error("This attendance duty has been escalated. Ask an admin to review or approve the correction.");
+    }
+
     const window = await evaluateAttendanceWindow({
       schoolId,
       lessonId,

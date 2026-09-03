@@ -3,8 +3,6 @@
 import prisma from "@/src/lib/prisma";
 import { requirePageSession } from "@/src/lib/authz";
 import Announcements from "@/src/components/Announcements";
-import EventCalendar from "@/src/components/EventCalendar";
-import EventList from "@/src/components/EventList";
 import WelcomeBanner from "@/src/components/WelcomeBanner";
 import UpcomingExams from "@/src/components/UpcomingExams";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
@@ -22,7 +20,6 @@ import {
   Layers3,
   Megaphone,
   NotebookPen,
-  ShieldCheck,
   Users,
 } from "lucide-react";
 import type { TeacherDutyRow } from "@/src/lib/queries/teacher-self-accountability";
@@ -72,6 +69,10 @@ function isClosedDuty(duty: TeacherDutyRow) {
   return ["COMPLETED", "COMPLETED_LATE", "CANCELLED"].includes(duty.status);
 }
 
+function needsManagementReview(duty: TeacherDutyRow | undefined) {
+  return duty?.status === "ESCALATED" || Boolean(duty?.escalationStatus);
+}
+
 function sortDutiesByUrgency(a: TeacherDutyRow, b: TeacherDutyRow) {
   const rank = {
     ESCALATED: 0,
@@ -104,13 +105,8 @@ function topicEndWeek(topic: { weekNumber: number; durationWeeks: number }) {
   return topic.weekNumber + topic.durationWeeks - 1;
 }
 
-const TeacherPage = async ({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | undefined }>;
-}) => {
+const TeacherPage = async () => {
   const { userId, schoolId } = await requirePageSession(["teacher"]);
-  const resolvedSearchParams = await searchParams;
   const today = new Date();
   const todayStart = new Date(today);
   todayStart.setHours(0, 0, 0, 0);
@@ -274,7 +270,6 @@ const TeacherPage = async ({
     };
   });
 
-  const pendingAttendanceCount = lessonWork.filter((item) => item.attendanceState !== "Completed").length;
   const pendingHomeworkChecks = homeworkTasks
     .map((assignment) => ({
       assignment,
@@ -344,6 +339,33 @@ const TeacherPage = async ({
   const completedTodayDuties = accountability.todayDuties.filter(isClosedDuty).length;
   const accountabilityAttentionCount = activeTodayDuties.length;
   const taskCount = accountabilityAttentionCount + syllabusAttentionCount;
+  const attendanceDutyByLessonId = new Map(
+    accountability.todayDuties
+      .filter((duty) => duty.type === "ATTENDANCE")
+      .map((duty) => {
+        const lessonId = Number(new URLSearchParams(duty.actionHref.split("?")[1] ?? "").get("lessonId"));
+        return [lessonId, duty] as const;
+      })
+      .filter(([lessonId]) => Number.isFinite(lessonId)),
+  );
+  const firstActionHref =
+    activeTodayDuties[0]?.actionHref ??
+    (todayLessons[0] ? `/list/attendance/take?lessonId=${todayLessons[0].id}` : "/teacher/accountability");
+  const todaySummaryStats = [
+    { label: "Lessons", value: todayLessons.length },
+    {
+      label: "Attendance",
+      value: activeTodayDuties.filter((duty) => duty.type === "ATTENDANCE").length,
+    },
+    {
+      label: "Homework",
+      value: activeTodayDuties.filter((duty) => duty.type === "HOMEWORK_CHECKING").length,
+    },
+    {
+      label: "CA Scores",
+      value: activeTodayDuties.filter((duty) => duty.type === "CA_SCORE_PUBLISHING").length,
+    },
+  ];
 
   const teacherFirstName = teacher?.name ?? "Teacher";
   const teacherFullName  = teacher ? `${teacher.name} ${teacher.surname}` : teacherFirstName;
@@ -370,45 +392,40 @@ const TeacherPage = async ({
         />
 
         <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-            <div className="flex items-start gap-3">
-              <div className={`rounded-xl p-2 ${accountabilityAttentionCount > 0 ? "bg-rose-50 text-rose-600" : "bg-emerald-50 text-emerald-600"}`}>
-                {accountabilityAttentionCount > 0 ? <AlertTriangle size={20} /> : <CheckCircle2 size={20} />}
-              </div>
-              <div>
-                <h2 className="text-base font-black text-gray-900">Start Here</h2>
-                <p className="mt-1 max-w-2xl text-sm font-medium text-gray-500">
-                  {accountabilityAttentionCount > 0
-                    ? `${accountabilityAttentionCount} active dut${accountabilityAttentionCount === 1 ? "y" : "ies"} need your attention today.`
-                    : `All ${completedTodayDuties} scheduled dut${completedTodayDuties === 1 ? "y" : "ies"} for today are clear.`}
-                  {" "}Weekly reliability is {accountability.totals.reliabilityScore}%.
-                </p>
-              </div>
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase text-gray-400">Today</p>
+              <h2 className="mt-1 text-xl font-black text-gray-900">{todayLabel}</h2>
+              <p className="mt-1 max-w-2xl text-sm font-medium text-gray-500">
+                {accountabilityAttentionCount > 0
+                  ? `${accountabilityAttentionCount} thing${accountabilityAttentionCount === 1 ? "" : "s"} need action.`
+                  : `All ${completedTodayDuties} required dut${completedTodayDuties === 1 ? "y" : "ies"} are clear.`}
+                {" "}Reliability this week is {accountability.totals.reliabilityScore}%.
+              </p>
             </div>
 
             <Link
-              href="/teacher/accountability"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-black text-white transition hover:bg-slate-700 lg:w-auto"
+              href={firstActionHref}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-black text-white transition hover:bg-slate-700 lg:w-auto"
             >
-              <ShieldCheck size={14} />
-              Full accountability
+              {accountabilityAttentionCount > 0 ? <AlertTriangle size={16} /> : <CheckCircle2 size={16} />}
+              {accountabilityAttentionCount > 0 ? "Start today's work" : "View today's plan"}
             </Link>
           </div>
 
-          {activeTodayDuties.length === 0 ? (
-            <div className="mt-4 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3">
-              <p className="text-sm font-black text-emerald-800">No urgent work is waiting right now.</p>
-              <p className="mt-1 text-xs font-semibold text-emerald-700">
-                Use the lesson list below for teaching flow, CA, homework, and timetable checks.
-              </p>
-            </div>
-          ) : (
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {todaySummaryStats.map((stat) => (
+              <div key={stat.label} className="rounded-2xl bg-gray-50 px-3 py-3">
+                <p className="text-2xl font-black text-gray-900">{stat.value}</p>
+                <p className="mt-1 text-[11px] font-black uppercase text-gray-400">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+
+          {activeTodayDuties.length > 0 ? (
             <div className="mt-4 grid gap-2">
-              {activeTodayDuties.slice(0, 5).map((duty) => (
-                <div
-                  key={duty.id}
-                  className="rounded-2xl border border-gray-100 bg-gray-50/80 p-3"
-                >
+              {activeTodayDuties.slice(0, 4).map((duty) => (
+                <div key={duty.id} className="rounded-2xl border border-gray-100 bg-gray-50/80 p-3">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
@@ -430,24 +447,16 @@ const TeacherPage = async ({
                       ) : null}
                     </div>
                     <Link
-                      href={duty.actionHref}
+                      href={needsManagementReview(duty) ? "/teacher/accountability" : duty.actionHref}
                       className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-black text-slate-900 ring-1 ring-gray-200 transition hover:bg-slate-900 hover:text-white sm:w-auto"
                     >
-                      {dutyActionLabel(duty)}
+                      {needsManagementReview(duty) ? "Review escalation" : dutyActionLabel(duty)}
                     </Link>
                   </div>
                 </div>
               ))}
-              {activeTodayDuties.length > 5 ? (
-                <Link
-                  href="/teacher/accountability"
-                  className="inline-flex justify-center rounded-xl bg-gray-50 px-4 py-2 text-xs font-black text-gray-600 hover:bg-gray-100"
-                >
-                  View {activeTodayDuties.length - 5} more duties
-                </Link>
-              ) : null}
             </div>
-          )}
+          ) : null}
         </section>
 
         <section className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
@@ -475,106 +484,80 @@ const TeacherPage = async ({
             </div>
           ) : (
             <div className="grid gap-3">
-              {lessonWork.map(({ lesson, expected, attendance, attendanceState }) => (
-                <div
-                  key={lesson.id}
-                  className="rounded-2xl border border-gray-100 bg-gray-50/70 p-3"
-                >
-                  <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h2 className="truncate text-sm font-black text-gray-800">{lesson.subject.name}</h2>
-                        <span className="rounded-lg bg-white px-2 py-0.5 text-[11px] font-black text-indigo-600">
-                          {lesson.class.name}
-                        </span>
-                      </div>
-                      <p className="mt-1 text-xs font-semibold text-gray-400">
-                        {formatTime(lesson.startTime)} - {formatTime(lesson.endTime)} · {expected} student{expected === 1 ? "" : "s"}
-                      </p>
-                    </div>
+              {lessonWork.map(({ lesson, expected, attendance, attendanceState }) => {
+                const attendanceDuty = attendanceDutyByLessonId.get(lesson.id);
+                const attendanceEscalated = needsManagementReview(attendanceDuty);
+                const displayAttendanceState = attendanceEscalated
+                  ? "Escalated"
+                  : attendanceDuty?.status === "MISSED"
+                    ? "Missed"
+                    : attendanceState;
 
-                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 lg:flex lg:items-center">
-                      <span className={`inline-flex items-center justify-center rounded-xl px-3 py-2 text-xs font-black ${
-                        attendanceState === "Completed"
-                          ? "bg-emerald-50 text-emerald-700"
-                          : attendanceState === "Partial"
-                            ? "bg-amber-50 text-amber-700"
-                            : "bg-rose-50 text-rose-700"
-                      }`}>
-                        <CalendarCheck2 size={14} className="mr-1.5" />
-                        {attendanceState}
-                      </span>
-                      <Link
-                        href={`/list/attendance/take?lessonId=${lesson.id}`}
-                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-black text-white transition hover:bg-emerald-700"
-                      >
-                        <ClipboardCheck size={14} />
-                        Attendance
-                      </Link>
-                      <Link
-                        href={`/list/ca?classId=${lesson.class.id}&view=activity`}
-                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-3 py-2 text-xs font-black text-white transition hover:bg-indigo-700"
-                      >
-                        <Layers3 size={14} />
-                        CA
-                      </Link>
+                return (
+                  <div
+                    key={lesson.id}
+                    className="rounded-2xl border border-gray-100 bg-gray-50/70 p-3"
+                  >
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h2 className="truncate text-sm font-black text-gray-800">{lesson.subject.name}</h2>
+                          <span className="rounded-lg bg-white px-2 py-0.5 text-[11px] font-black text-indigo-600">
+                            {lesson.class.name}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-xs font-semibold text-gray-400">
+                          {formatTime(lesson.startTime)} - {formatTime(lesson.endTime)} · {expected} student{expected === 1 ? "" : "s"}
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 lg:flex lg:items-center">
+                        <span className={`inline-flex items-center justify-center rounded-xl px-3 py-2 text-xs font-black ${
+                          displayAttendanceState === "Completed"
+                            ? "bg-emerald-50 text-emerald-700"
+                            : displayAttendanceState === "Partial"
+                              ? "bg-amber-50 text-amber-700"
+                              : "bg-rose-50 text-rose-700"
+                        }`}>
+                          <CalendarCheck2 size={14} className="mr-1.5" />
+                          {displayAttendanceState}
+                        </span>
+                        <Link
+                          href={attendanceEscalated ? "/teacher/accountability" : `/list/attendance/take?lessonId=${lesson.id}`}
+                          className={`inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-black text-white transition ${
+                            attendanceEscalated
+                              ? "bg-rose-600 hover:bg-rose-700"
+                              : "bg-emerald-600 hover:bg-emerald-700"
+                          }`}
+                        >
+                          <ClipboardCheck size={14} />
+                          {attendanceEscalated ? "Review escalation" : "Attendance"}
+                        </Link>
+                        <Link
+                          href={`/list/ca?classId=${lesson.class.id}&view=activity`}
+                          className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-3 py-2 text-xs font-black text-white transition hover:bg-indigo-700"
+                        >
+                          <Layers3 size={14} />
+                          CA
+                        </Link>
+                      </div>
                     </div>
+                    {attendance.total > 0 && (
+                      <p className="mt-2 text-[11px] font-semibold text-gray-400">
+                        Attendance saved for {attendance.total}/{expected}. Absent: {attendance.absent}. Late: {attendance.late}.
+                      </p>
+                    )}
+                    {attendanceEscalated ? (
+                      <p className="mt-2 rounded-xl bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-700">
+                        This attendance duty has been escalated. Normal marking is closed from the dashboard.
+                      </p>
+                    ) : null}
                   </div>
-                  {attendance.total > 0 && (
-                    <p className="mt-2 text-[11px] font-semibold text-gray-400">
-                      Attendance saved for {attendance.total}/{expected}. Absent: {attendance.absent}. Late: {attendance.late}.
-                    </p>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>
-
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-5">
-          {[
-            {
-              label: "Today Lessons",
-              value: todayLessons.length,
-              icon: <BookOpenCheck size={16} />,
-              tone: "bg-indigo-50 text-indigo-600",
-            },
-            {
-              label: "Attendance Due",
-              value: pendingAttendanceCount,
-              icon: <CalendarCheck2 size={16} />,
-              tone: pendingAttendanceCount > 0 ? "bg-rose-50 text-rose-600" : "bg-emerald-50 text-emerald-600",
-            },
-            {
-              label: "Homework Checks",
-              value: pendingHomeworkChecks.length,
-              icon: <NotebookPen size={16} />,
-              tone: pendingHomeworkChecks.length > 0 ? "bg-amber-50 text-amber-600" : "bg-gray-50 text-gray-400",
-            },
-            {
-              label: "CA Scores Due",
-              value: pendingCATasks.length,
-              icon: <FilePenLine size={16} />,
-              tone: pendingCATasks.length > 0 ? "bg-violet-50 text-violet-600" : "bg-gray-50 text-gray-400",
-            },
-            {
-              label: "Syllabus Pace",
-              value: syllabusAttentionCount,
-              icon: <BookOpenCheck size={16} />,
-              tone: syllabusAttentionCount > 0 ? "bg-amber-50 text-amber-600" : "bg-emerald-50 text-emerald-600",
-            },
-          ].map((stat) => (
-            <div key={stat.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.tone}`}>
-                {stat.icon}
-              </div>
-              <div>
-                <p className="text-xl font-black text-gray-800 leading-none">{stat.value}</p>
-                <p className="text-xs text-gray-400 font-medium mt-0.5">{stat.label}</p>
-              </div>
-            </div>
-          ))}
-        </div>
 
         <div className="grid gap-4 lg:grid-cols-2">
           <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
@@ -704,48 +687,52 @@ const TeacherPage = async ({
         </div>
 
         <section className="bg-white p-5 rounded-2xl shadow-sm">
-          <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h1 className="text-lg font-black text-gray-800">Weekly Schedule</h1>
-              <p className="text-sm text-gray-400 mt-0.5">{teacherFullName} · compact timetable</p>
-            </div>
-            <span className="text-xs font-black text-gray-400">{lessons.length} total periods</span>
-          </div>
-          <div className="grid gap-3 md:grid-cols-2">
-            {lessonsByDay.map(({ day, lessons: dayLessons }) => (
-              <div
-                key={day}
-                className={`rounded-2xl border p-3 ${
-                  day === todayDay ? "border-indigo-200 bg-indigo-50/60" : "border-gray-100 bg-gray-50/70"
-                }`}
-              >
-                <div className="mb-2 flex items-center justify-between">
-                  <h2 className="text-xs font-black uppercase tracking-wider text-gray-500">
-                    {day.toLowerCase()}
-                  </h2>
-                  <span className="text-[10px] font-black text-gray-400">
-                    {dayLessons.length} period{dayLessons.length === 1 ? "" : "s"}
-                  </span>
-                </div>
-                {dayLessons.length === 0 ? (
-                  <p className="rounded-xl bg-white/70 px-3 py-3 text-xs font-bold text-gray-300">
-                    No lesson
-                  </p>
-                ) : (
-                  <div className="space-y-2">
-                    {dayLessons.map((lesson) => (
-                      <div key={lesson.id} className="rounded-xl bg-white px-3 py-2">
-                        <p className="truncate text-sm font-black text-gray-800">{lesson.subject.name}</p>
-                        <p className="mt-0.5 text-xs font-semibold text-gray-400">
-                          {lesson.class.name} · {formatTime(lesson.startTime)} - {formatTime(lesson.endTime)}
-                        </p>
-                      </div>
-                    ))}
+          <details>
+            <summary className="flex cursor-pointer list-none flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+              <span>
+                <span className="block text-lg font-black text-gray-800">Weekly Timetable</span>
+                <span className="mt-0.5 block text-sm text-gray-400">{teacherFullName} · {lessons.length} total periods</span>
+              </span>
+              <span className="inline-flex w-fit rounded-xl bg-gray-50 px-3 py-2 text-xs font-black text-gray-500">
+                Open schedule
+              </span>
+            </summary>
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {lessonsByDay.map(({ day, lessons: dayLessons }) => (
+                <div
+                  key={day}
+                  className={`rounded-2xl border p-3 ${
+                    day === todayDay ? "border-indigo-200 bg-indigo-50/60" : "border-gray-100 bg-gray-50/70"
+                  }`}
+                >
+                  <div className="mb-2 flex items-center justify-between">
+                    <h2 className="text-xs font-black uppercase tracking-wider text-gray-500">
+                      {day.toLowerCase()}
+                    </h2>
+                    <span className="text-[10px] font-black text-gray-400">
+                      {dayLessons.length} period{dayLessons.length === 1 ? "" : "s"}
+                    </span>
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
+                  {dayLessons.length === 0 ? (
+                    <p className="rounded-xl bg-white/70 px-3 py-3 text-xs font-bold text-gray-300">
+                      No lesson
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      {dayLessons.map((lesson) => (
+                        <div key={lesson.id} className="rounded-xl bg-white px-3 py-2">
+                          <p className="truncate text-sm font-black text-gray-800">{lesson.subject.name}</p>
+                          <p className="mt-0.5 text-xs font-semibold text-gray-400">
+                            {lesson.class.name} · {formatTime(lesson.startTime)} - {formatTime(lesson.endTime)}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </details>
         </section>
       </div>
 
@@ -774,8 +761,6 @@ const TeacherPage = async ({
           </div>
         </section>
         <UpcomingExams teacherId={userId} />
-        <EventCalendar />
-        <EventList dateParam={resolvedSearchParams.date} />
         <Announcements />
       </div>
     </div>
