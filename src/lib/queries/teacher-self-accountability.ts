@@ -14,6 +14,12 @@ import {
 type ObligationMetadata = {
   className?: string;
   subjectName?: string;
+  teacherName?: string;
+  bucketName?: string;
+  activityTitle?: string;
+  assignmentTitle?: string;
+  term?: string;
+  academicYear?: string;
   attendanceCount?: number;
   scoreCount?: number;
   checkedCount?: number;
@@ -39,6 +45,7 @@ export type TeacherSelfAccountabilityOverview = {
   reminders: TeacherReminderRow[];
   escalations: TeacherEscalationRow[];
   auditTrail: TeacherAuditRow[];
+  historyDays: TeacherHistoryDayGroup[];
 };
 
 export type TeacherDutyRow = {
@@ -91,9 +98,23 @@ export type TeacherEscalationRow = {
 export type TeacherAuditRow = {
   id: string;
   action: TeacherAccountabilityAuditAction;
+  title: string;
   message: string | null;
   createdAt: Date;
   dutyExpectedAt: Date | null;
+  dutyType: TeacherObligationType | null;
+  className: string | null;
+  subjectName: string | null;
+  actionHref: string;
+  nextStep: string | null;
+};
+
+export type TeacherHistoryDayGroup = {
+  key: string;
+  label: string;
+  shortLabel: string;
+  isToday: boolean;
+  rows: TeacherAuditRow[];
 };
 
 function startOfDay(date: Date) {
@@ -158,6 +179,123 @@ function actionHref(sourceModel: string, sourceId: string) {
   if (sourceModel === "Assignment") return "/list/assignments";
   if (sourceModel === "Syllabus") return `/list/syllabus/${sourceId}`;
   return "/teacher/accountability";
+}
+
+function obligationTypeLabel(type: TeacherObligationType | null) {
+  if (type === "ATTENDANCE") return "Attendance";
+  if (type === "CA_SCORE_PUBLISHING") return "CA scores";
+  if (type === "HOMEWORK_CHECKING") return "Homework";
+  if (type === "SYLLABUS_PROGRESS") return "Syllabus";
+  if (type === "EXAM_ENTRY") return "Exam entry";
+  if (type === "CORRECTION_REVIEW") return "Correction review";
+  return "Accountability";
+}
+
+function auditActionTitle(
+  action: TeacherAccountabilityAuditAction,
+  obligation: { type: TeacherObligationType; title: string } | null,
+) {
+  const label = obligationTypeLabel(obligation?.type ?? null);
+  if (action === "OBLIGATION_CREATED") return `${label} duty was created`;
+  if (action === "OBLIGATION_COMPLETED") return `${label} duty was completed`;
+  if (action === "OBLIGATION_COMPLETED_LATE") return `${label} duty was completed late`;
+  if (action === "OBLIGATION_MISSED") return `${label} duty was missed`;
+  if (action === "OBLIGATION_ESCALATED" || action === "ESCALATION_CREATED") {
+    return `${label} duty was escalated`;
+  }
+  if (action === "OBLIGATION_CANCELLED") return `${label} duty was cancelled`;
+  if (action === "REMINDER_QUEUED") return `${label} reminder was queued`;
+  if (action === "REMINDER_SENT") return `${label} reminder was sent`;
+  if (action === "REMINDER_FAILED") return `${label} reminder failed`;
+  if (action === "ESCALATION_ACKNOWLEDGED") return `${label} escalation was acknowledged`;
+  if (action === "ESCALATION_RESOLVED") return `${label} escalation was resolved`;
+  if (action === "ESCALATION_DISMISSED") return `${label} escalation was dismissed`;
+  if (action === "CORRECTION_REQUESTED") return "Correction request was submitted";
+  if (action === "CORRECTION_APPROVED") return "Correction request was approved";
+  if (action === "CORRECTION_REJECTED") return "Correction request was rejected";
+  if (action === "CORRECTION_NEEDS_MORE_INFO") return "Correction request needs more information";
+  if (action === "CORRECTION_CANCELLED") return "Correction request was cancelled";
+  if (action === "SETTINGS_UPDATED") return "Accountability settings were updated";
+  return obligation?.title ?? "Accountability event was recorded";
+}
+
+function auditNextStep(
+  action: TeacherAccountabilityAuditAction,
+  obligation: {
+    status: TeacherObligationStatus;
+    completedAt: Date | null;
+  } | null,
+) {
+  if (!obligation) return null;
+  const status = obligation.status;
+  if (status === "PENDING") return "Open this duty and complete it before it becomes late.";
+  if (status === "MISSED") return "This duty was missed. Open it, complete what is still possible, and expect management review.";
+  if (status === "ESCALATED") return "This item has been escalated. Open it and resolve the outstanding work.";
+  if (action === "REMINDER_FAILED") return "The reminder failed to send, but the duty still remains on your accountability record.";
+  if (status === "COMPLETED_LATE") return "This was accepted, but it remains marked as completed late.";
+  if (status === "COMPLETED") return "No action needed.";
+  return null;
+}
+
+function toAuditRow(
+  log: {
+    id: string;
+    action: TeacherAccountabilityAuditAction;
+    message: string | null;
+    createdAt: Date;
+    sourceModel: string;
+    sourceId: string;
+  },
+  obligation: {
+    id: string;
+    type: TeacherObligationType;
+    title: string;
+    status: TeacherObligationStatus;
+    expectedAt: Date;
+    completedAt: Date | null;
+    sourceModel: string;
+    sourceId: string;
+    metadata: unknown;
+  } | null,
+): TeacherAuditRow {
+  const metadata = readMetadata(obligation?.metadata);
+  return {
+    id: log.id,
+    action: log.action,
+    title: auditActionTitle(log.action, obligation),
+    message: log.message ?? obligation?.title ?? null,
+    createdAt: log.createdAt,
+    dutyExpectedAt: obligation?.expectedAt ?? null,
+    dutyType: obligation?.type ?? null,
+    className: metadata.className ?? null,
+    subjectName: metadata.subjectName ?? null,
+    actionHref: obligation
+      ? actionHref(obligation.sourceModel, obligation.sourceId)
+      : actionHref(log.sourceModel, log.sourceId),
+    nextStep: auditNextStep(log.action, obligation),
+  };
+}
+
+function buildHistoryDays(rows: TeacherAuditRow[], weekStart: Date, now: Date) {
+  const rowsByDay = new Map<string, TeacherAuditRow[]>();
+  for (const row of rows) {
+    const historyDate = row.dutyExpectedAt ?? row.createdAt;
+    const key = dayKey(historyDate);
+    rowsByDay.set(key, [...(rowsByDay.get(key) ?? []), row]);
+  }
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = startOfDay(weekStart);
+    date.setDate(date.getDate() + index);
+    const key = dayKey(date);
+    return {
+      key,
+      label: formatDayLabel(date),
+      shortLabel: formatShortDayLabel(date),
+      isToday: key === dayKey(now),
+      rows: rowsByDay.get(key) ?? [],
+    };
+  });
 }
 
 function toDutyRow(obligation: {
@@ -344,11 +482,18 @@ export async function getTeacherSelfAccountabilityOverview({
         select: {
           id: true,
           expectedAt: true,
+          type: true,
+          title: true,
+          status: true,
+          completedAt: true,
+          sourceModel: true,
+          sourceId: true,
+          metadata: true,
         },
       })
     : [];
-  const auditExpectedAtById = new Map(
-    auditObligations.map((obligation) => [obligation.id, obligation.expectedAt]),
+  const auditObligationById = new Map(
+    auditObligations.map((obligation) => [obligation.id, obligation]),
   );
 
   const totals = {
@@ -419,6 +564,15 @@ export async function getTeacherSelfAccountabilityOverview({
     };
   });
 
+  const auditRows = auditTrail.map((log) =>
+    toAuditRow(
+      log,
+      log.sourceModel === "TeacherObligation"
+        ? auditObligationById.get(log.sourceId) ?? null
+        : null,
+    ),
+  );
+
   return {
     totals,
     todayDuties: todayDuties.map((obligation) => toDutyRow(obligation, now)),
@@ -439,15 +593,7 @@ export async function getTeacherSelfAccountabilityOverview({
       escalatedAt: escalation.escalatedAt,
       obligationTitle: escalation.obligation.title,
     })),
-    auditTrail: auditTrail.map((log) => ({
-      id: log.id,
-      action: log.action,
-      message: log.message,
-      createdAt: log.createdAt,
-      dutyExpectedAt:
-        log.sourceModel === "TeacherObligation"
-          ? auditExpectedAtById.get(log.sourceId) ?? null
-          : null,
-    })),
+    auditTrail: auditRows,
+    historyDays: buildHistoryDays(auditRows, weekStart, now),
   };
 }
