@@ -347,14 +347,14 @@ function TeacherBell({ alerts }: { alerts: TeacherAlert[] }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-12 z-40 w-[min(22rem,calc(100vw-1.5rem))] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl">
+        <div className="fixed inset-x-3 top-16 z-40 max-h-[calc(100dvh-5rem)] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-12 sm:w-[min(22rem,calc(100vw-1.5rem))]">
           <div className="border-b border-gray-100 px-4 py-3">
             <p className="text-sm font-black text-gray-900">Teacher alerts</p>
             <p className="text-xs font-semibold text-gray-400">
               {alerts.length > 0 ? `${alerts.length} active item${alerts.length === 1 ? "" : "s"} today` : "No urgent duty is waiting"}
             </p>
           </div>
-          <div className="max-h-[24rem] overflow-y-auto">
+          <div className="max-h-[calc(100dvh-11rem)] overflow-y-auto sm:max-h-[24rem]">
             {alerts.length > 0 ? alerts.map((alert) => (
               <Link
                 key={alert.id}

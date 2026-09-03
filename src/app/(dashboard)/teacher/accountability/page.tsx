@@ -364,10 +364,10 @@ const TeacherAccountabilityPage = async () => {
           tone={overview.totals.pending > 0 ? "amber" : "green"}
         />
         <StatCard
-          label="Escalations"
-          value={overview.totals.openEscalations}
-          helper="Open issues needing admin attention"
-          tone={overview.totals.openEscalations > 0 ? "red" : "green"}
+          label="Week Escalations"
+          value={overview.totals.weeklyEscalations}
+          helper={`${overview.totals.openEscalations} still open`}
+          tone={overview.totals.weeklyEscalations > 0 ? "red" : "green"}
         />
       </div>
 

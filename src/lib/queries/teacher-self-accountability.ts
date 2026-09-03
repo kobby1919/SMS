@@ -28,6 +28,7 @@ export type TeacherSelfAccountabilityOverview = {
     completedLate: number;
     missed: number;
     escalated: number;
+    weeklyEscalations: number;
     openEscalations: number;
     pendingReminders: number;
     reliabilityScore: number;
@@ -318,6 +319,7 @@ export async function getTeacherSelfAccountabilityOverview({
     completedLate: 0,
     missed: 0,
     escalated: 0,
+    weeklyEscalations: 0,
     openEscalations: openEscalations.length,
     pendingReminders,
     reliabilityScore: 0,
@@ -344,6 +346,9 @@ export async function getTeacherSelfAccountabilityOverview({
     }
     if (status === "MISSED") totals.missed += 1;
     if (status === "ESCALATED") totals.escalated += 1;
+    if (status === "ESCALATED" || row.escalationStatus) {
+      totals.weeklyEscalations += 1;
+    }
   }
   totals.reliabilityScore =
     weeklyTotal > 0 ? Math.round((weeklyEarned / weeklyTotal) * 100) : 100;

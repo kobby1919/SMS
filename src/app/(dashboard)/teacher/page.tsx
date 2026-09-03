@@ -360,8 +360,8 @@ const TeacherPage = async ({
                 <p className="text-[10px] font-bold uppercase text-slate-300">Late</p>
               </div>
               <div className="rounded-xl bg-white/10 px-3 py-2">
-                <p className="text-lg font-black">{accountability.totals.openEscalations}</p>
-                <p className="text-[10px] font-bold uppercase text-slate-300">Escalated</p>
+                <p className="text-lg font-black">{accountability.totals.weeklyEscalations}</p>
+                <p className="text-[10px] font-bold uppercase text-slate-300">Escalated Week</p>
               </div>
             </div>
 
