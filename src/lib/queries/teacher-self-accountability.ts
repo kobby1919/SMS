@@ -237,6 +237,18 @@ export async function getTeacherSelfAccountabilityOverview({
         teacherId,
         expectedAt: { gte: todayStart, lte: todayEnd },
       },
+      include: {
+        escalations: {
+          where: { status: { in: ["OPEN", "ACKNOWLEDGED"] } },
+          select: {
+            reason: true,
+            status: true,
+            escalatedAt: true,
+          },
+          orderBy: { escalatedAt: "desc" },
+          take: 1,
+        },
+      },
       orderBy: [{ expectedAt: "asc" }, { createdAt: "asc" }],
       take: 40,
     }),
