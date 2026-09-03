@@ -33,6 +33,13 @@ function normalizeHomeworkStatus(status: HomeworkSubmissionStatus, dueDate: Date
   return status;
 }
 
+function isFinalHomeworkStatus(status: HomeworkSubmissionStatus) {
+  return status === "SUBMITTED" ||
+    status === "LATE" ||
+    status === "MISSING" ||
+    status === "EXCUSED";
+}
+
 function notesMatch(left?: string | null, right?: string | null) {
   return (left?.trim() || null) === (right?.trim() || null);
 }
@@ -131,6 +138,9 @@ export async function markHomeworkSubmission(params: {
 
   const effectiveStatus = normalizeHomeworkStatus(params.status, assignment.dueDate, now);
   const note = params.note?.trim() || null;
+  if (effectiveStatus === "EXCUSED" && !note) {
+    throw new Error("Excused homework requires a short note.");
+  }
   const existing = await prisma.homeworkSubmission.findUnique({
     where: {
       schoolId_assignmentId_studentId: {
@@ -143,7 +153,15 @@ export async function markHomeworkSubmission(params: {
 
   if (
     existing?.checkedAt &&
-    existing.status !== "PENDING" &&
+    isFinalHomeworkStatus(existing.status) &&
+    effectiveStatus === "PENDING"
+  ) {
+    throw new Error("Checked homework cannot be reset to pending. Choose the correct final status and add a reason.");
+  }
+
+  if (
+    existing?.checkedAt &&
+    isFinalHomeworkStatus(existing.status) &&
     existing.status !== effectiveStatus &&
     !note
   ) {
@@ -224,6 +242,17 @@ export async function markHomeworkSubmissionsForAssignment(params: {
   }
 
   const effectiveStatus = normalizeHomeworkStatus(params.status, assignment.dueDate, now);
+  const note = params.note?.trim() || null;
+  if (params.status === "SUBMITTED" && isPastHomeworkDeadline(assignment.dueDate, now)) {
+    throw new Error("After the due date, mark late submissions individually so each late record is intentional.");
+  }
+  if (effectiveStatus === "PENDING") {
+    throw new Error("Bulk reset to pending is not allowed after homework records have been created.");
+  }
+  if (effectiveStatus === "EXCUSED" && !note) {
+    throw new Error("Excused homework requires a short note.");
+  }
+
   const targetSubmissions = await prisma.homeworkSubmission.findMany({
     where: {
       schoolId: params.schoolId,
@@ -253,7 +282,7 @@ export async function markHomeworkSubmissionsForAssignment(params: {
           ? params.submittedAt ?? now
           : null,
       checkedAt: now,
-      note: params.note?.trim() || null,
+      note,
     },
   });
 

@@ -217,6 +217,7 @@ export async function syncHomeworkCheckingObligation({
       id: true,
       status: true,
       priority: true,
+      expectedAt: true,
     },
   });
 
@@ -279,6 +280,8 @@ export async function syncHomeworkCheckingObligation({
       : state.status;
   const nextPriority = priorityForStatus(nextStatus);
   const statusChanged = existing.status !== nextStatus;
+  const scheduleChanged = existing.expectedAt.getTime() !== state.expectedAt.getTime();
+  const shouldSkipPendingReminders = nextStatus !== "PENDING" || scheduleChanged;
   const action = auditActionForStatus(nextStatus);
 
   await prisma.$transaction([
@@ -294,9 +297,8 @@ export async function syncHomeworkCheckingObligation({
         metadata,
       },
     }),
-    ...(nextStatus === "PENDING"
-      ? []
-      : [
+    ...(shouldSkipPendingReminders
+      ? [
           prisma.teacherReminder.updateMany({
             where: {
               schoolId,
@@ -305,10 +307,14 @@ export async function syncHomeworkCheckingObligation({
             },
             data: {
               status: "SKIPPED",
-              errorMessage: `Superseded by obligation status ${nextStatus}.`,
+              errorMessage:
+                nextStatus === "PENDING"
+                  ? "Superseded by homework schedule update."
+                  : `Superseded by obligation status ${nextStatus}.`,
             },
           }),
-        ]),
+        ]
+      : []),
     ...(statusChanged && action
       ? [
           prisma.teacherAccountabilityAuditLog.create({

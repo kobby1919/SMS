@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { CheckCircle2, Clock, Loader2, RotateCcw, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, Loader2, XCircle } from "lucide-react";
 import { updateHomeworkSubmission, updateHomeworkSubmissionsBulk } from "@/src/lib/actions/actions";
 
 type HomeworkStatus = "PENDING" | "SUBMITTED" | "LATE" | "MISSING" | "EXCUSED";
@@ -81,12 +81,22 @@ export default function HomeworkSubmissionTracker({
       currentSubmission.checkedAt !== null &&
       finalStatuses.has(currentSubmission.status) &&
       currentSubmission.status !== statusToSave;
-    const note = needsReason
-      ? window.prompt("Give a short reason for correcting this homework record.")?.trim()
+    const needsExcuseNote = statusToSave === "EXCUSED";
+    const note = needsReason || needsExcuseNote
+      ? window.prompt(
+          needsReason
+            ? "Give a short reason for correcting this homework record."
+            : "Give a short reason why this homework is excused.",
+        )?.trim()
       : "";
 
     if (needsReason && !note) {
       setError("A reason is required before correcting an already checked homework record.");
+      setMessage(null);
+      return;
+    }
+    if (needsExcuseNote && !note) {
+      setError("A short note is required before marking homework as excused.");
       setMessage(null);
       return;
     }
@@ -187,15 +197,13 @@ export default function HomeworkSubmissionTracker({
         <div className="grid grid-cols-1 gap-1 sm:flex sm:flex-wrap">
           <button
             type="button"
-            disabled={isPending || counts.PENDING === 0}
+            disabled={isPending || counts.PENDING === 0 || deadlinePassed}
             onClick={() => markPending("SUBMITTED")}
             className="rounded-lg bg-emerald-600 px-2.5 py-1.5 text-[11px] font-black text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {bulkStatus === "SUBMITTED" || bulkStatus === "LATE"
               ? "Saving..."
-              : deadlinePassed
-                ? "Mark pending late"
-                : "Mark pending submitted"}
+              : "Mark pending submitted"}
           </button>
           <button
             type="button"
@@ -229,7 +237,7 @@ export default function HomeworkSubmissionTracker({
                   {statusLabel[submission.status]}
                 </span>
               </div>
-              <div className="grid grid-cols-4 gap-1 sm:flex sm:items-center">
+              <div className="grid grid-cols-3 gap-1 sm:flex sm:items-center">
                 <button
                   type="button"
                   disabled={buttonDisabled(deadlinePassed ? "LATE" : "SUBMITTED")}
@@ -256,15 +264,6 @@ export default function HomeworkSubmissionTracker({
                   title="Mark excused"
                 >
                   <Clock size={14} />
-                </button>
-                <button
-                  type="button"
-                  disabled={buttonDisabled("PENDING")}
-                  onClick={() => mark(submission.studentId, "PENDING")}
-                  className="inline-flex h-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600 transition hover:bg-slate-200 disabled:opacity-50"
-                  title="Reset to pending"
-                >
-                  <RotateCcw size={14} />
                 </button>
               </div>
             </div>

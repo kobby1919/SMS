@@ -753,6 +753,15 @@ export async function updateHomeworkSubmissionsBulk(data: HomeworkBulkSubmission
     return end < new Date();
   })();
   const effectiveStatus = parsed.status === "SUBMITTED" && isPastDeadline ? "LATE" : parsed.status;
+  if (parsed.status === "SUBMITTED" && isPastDeadline) {
+    throw new Error("After the due date, mark late submissions individually so each late record is intentional.");
+  }
+  if (effectiveStatus === "PENDING") {
+    throw new Error("Bulk reset to pending is not allowed after homework records have been created.");
+  }
+  if (effectiveStatus === "EXCUSED" && !parsed.note?.trim()) {
+    throw new Error("Excused homework requires a short note.");
+  }
 
   const submissions = await markHomeworkSubmissionsForAssignment({
     schoolId: ctx.schoolId,

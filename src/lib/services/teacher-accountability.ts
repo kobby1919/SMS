@@ -77,7 +77,10 @@ async function queueReminderIfNeeded({
   obligation: TeacherObligation;
   now: Date;
 }): Promise<TeacherReminder | null> {
-  const dedupeKey = `${obligation.type.toLowerCase()}-reminder:${obligation.id}`;
+  const reminderAt = reminderAtForObligation(obligation);
+  const scheduledAt = reminderAt > now ? reminderAt : now;
+  const reminderWindowKey = reminderAt.toISOString().slice(0, 16);
+  const dedupeKey = `${obligation.type.toLowerCase()}-reminder:${obligation.id}:${reminderWindowKey}`;
   const existing = await prisma.teacherReminder.findUnique({
     where: {
       schoolId_dedupeKey: {
@@ -97,7 +100,7 @@ async function queueReminderIfNeeded({
       channel: "IN_APP",
       dedupeKey,
       message: reminderMessage(obligation),
-      scheduledAt: now,
+      scheduledAt,
       status: "PENDING",
     },
   });
