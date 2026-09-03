@@ -204,9 +204,6 @@ function auditActionTitle(
     return `${label} duty was escalated`;
   }
   if (action === "OBLIGATION_CANCELLED") return `${label} duty was cancelled`;
-  if (action === "REMINDER_QUEUED") return `${label} reminder was queued`;
-  if (action === "REMINDER_SENT") return `${label} reminder was sent`;
-  if (action === "REMINDER_FAILED") return `${label} reminder failed`;
   if (action === "ESCALATION_ACKNOWLEDGED") return `${label} escalation was acknowledged`;
   if (action === "ESCALATION_RESOLVED") return `${label} escalation was resolved`;
   if (action === "ESCALATION_DISMISSED") return `${label} escalation was dismissed`;
@@ -231,7 +228,6 @@ function auditNextStep(
   if (status === "PENDING") return "Open this duty and complete it before it becomes late.";
   if (status === "MISSED") return "This duty was missed. Open it, complete what is still possible, and expect management review.";
   if (status === "ESCALATED") return "This item has been escalated. Open it and resolve the outstanding work.";
-  if (action === "REMINDER_FAILED") return "The reminder failed to send, but the duty still remains on your accountability record.";
   if (status === "COMPLETED_LATE") return "This was accepted, but it remains marked as completed late.";
   if (status === "COMPLETED") return "No action needed.";
   return null;
@@ -366,6 +362,7 @@ export async function getTeacherSelfAccountabilityOverview({
     todayDuties,
     weeklyDuties,
     openEscalations,
+    openEscalationCount,
     pendingReminders,
     reminders,
     auditTrail,
@@ -427,6 +424,16 @@ export async function getTeacherSelfAccountabilityOverview({
       orderBy: [{ escalatedAt: "desc" }],
       take: 10,
     }),
+    prisma.teacherEscalation.count({
+      where: {
+        schoolId,
+        teacherId,
+        status: { in: ["OPEN", "ACKNOWLEDGED"] },
+        obligation: {
+          expectedAt: { gte: weekStart, lte: todayEnd },
+        },
+      },
+    }),
     prisma.teacherReminder.count({
       where: {
         schoolId,
@@ -478,9 +485,13 @@ export async function getTeacherSelfAccountabilityOverview({
       take: 300,
     }),
   ]);
-  const auditObligationIds = auditTrail
-    .filter((log) => log.sourceModel === "TeacherObligation")
-    .map((log) => log.sourceId);
+  const auditObligationIds = Array.from(
+    new Set(
+      auditTrail
+        .filter((log) => log.sourceModel === "TeacherObligation")
+        .map((log) => log.sourceId),
+    ),
+  );
   const auditObligations = auditObligationIds.length > 0
     ? await prisma.teacherObligation.findMany({
         where: {
@@ -512,7 +523,7 @@ export async function getTeacherSelfAccountabilityOverview({
     missed: 0,
     escalated: 0,
     weeklyEscalations: 0,
-    openEscalations: openEscalations.length,
+    openEscalations: openEscalationCount,
     pendingReminders,
     reliabilityScore: 0,
   };
