@@ -467,7 +467,7 @@ export async function getTeacherSelfAccountabilityOverview({
         sourceId: true,
       },
       orderBy: [{ createdAt: "desc" }],
-      take: 10,
+      take: 300,
     }),
   ]);
   const auditObligationIds = auditTrail
