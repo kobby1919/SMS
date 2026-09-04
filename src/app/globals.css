@@ -138,6 +138,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    font-size: 16.5px;
+  }
+
+  @media (max-width: 640px) {
+    html {
+      font-size: 16px;
+    }
+  }
+}
+
 @media (max-width: 640px) {
   /* 1. Target the URL wrapper container to drop the rigid 1rem side margins */
   .flex-1.flex.items-center.rounded-md.mx-4 {
