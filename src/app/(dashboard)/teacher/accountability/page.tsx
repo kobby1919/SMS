@@ -10,9 +10,8 @@ import { requirePageSession } from "@/src/lib/authz";
 import { prepareTeacherAccountabilityForView } from "@/src/lib/services/teacher-accountability-view";
 import {
   getTeacherSelfAccountabilityOverview,
-  type TeacherHistoryDayGroup,
+  type TeacherHistoryWeekGroup,
   type TeacherDutyRow,
-  type TeacherWeeklyDayGroup,
 } from "@/src/lib/queries/teacher-self-accountability";
 import TeacherEscalationResponseForm from "@/src/components/TeacherEscalationResponseForm";
 
@@ -121,10 +120,12 @@ function DutyRowItem({
   row,
   showType = false,
   focusedObligationId,
+  allowResponseForm = false,
 }: {
   row: TeacherDutyRow;
   showType?: boolean;
   focusedObligationId?: string;
+  allowResponseForm?: boolean;
 }) {
   const isFocused = row.id === focusedObligationId;
   const href = needsManagementReview(row) ? obligationReviewHref(row.id) : row.actionHref;
@@ -187,7 +188,7 @@ function DutyRowItem({
           </Link>
         </div>
       </div>
-      {isFocused && needsManagementReview(row) ? (
+      {allowResponseForm && isFocused && needsManagementReview(row) ? (
         <TeacherEscalationResponseForm
           obligationId={row.id}
           existingStatus={row.teacherResponseStatus}
@@ -213,16 +214,16 @@ function NeedsAttentionPanel({
         </div>
         <div>
           <h2 className="text-base font-black text-slate-950">
-            Needs Attention
+            Recent Escalations
           </h2>
           <p className="text-sm font-semibold text-slate-500">
-            Fix or respond to only the duties that need your action.
+            Only duties that need a teacher response appear here.
           </p>
         </div>
       </div>
 
       {rows.length === 0 ? (
-        <EmptyState message="No issue needs your attention right now." />
+        <EmptyState message="No escalation needs your response right now." />
       ) : (
         <div className="divide-y divide-slate-100">
           {rows.map((row) => (
@@ -231,6 +232,7 @@ function NeedsAttentionPanel({
               row={row}
               showType
               focusedObligationId={focusedObligationId}
+              allowResponseForm
             />
           ))}
         </div>
@@ -350,89 +352,16 @@ function TodayDutiesPanel({
   );
 }
 
-function WeeklyDayBreakdown({
-  days,
-  focusedObligationId,
-}: {
-  days: TeacherWeeklyDayGroup[];
-  focusedObligationId?: string;
-}) {
-  return (
-    <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h2 className="text-base font-black text-slate-950">This Week</h2>
-          <p className="text-sm font-semibold text-slate-500">
-            Open each day to see the duties, missed work, and escalations for that date.
-          </p>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        {days.map((day) => {
-          const tone =
-            day.issueCount > 0
-              ? "border-rose-200 bg-rose-50/40"
-              : day.pendingCount > 0
-                ? "border-amber-200 bg-amber-50/40"
-                : day.total > 0
-                  ? "border-emerald-200 bg-emerald-50/40"
-                  : "border-slate-200 bg-slate-50";
-
-          return (
-            <details
-              key={day.key}
-              open={day.isToday || day.rows.some((row) => row.id === focusedObligationId)}
-              className={`rounded-lg border ${tone}`}
-            >
-              <summary className="flex cursor-pointer list-none flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-                <span>
-                  <span className="block text-sm font-black text-slate-950">
-                    {day.label}
-                    {day.isToday ? " · Today" : ""}
-                  </span>
-                  <span className="mt-1 block text-xs font-semibold text-slate-500">
-                    {day.total === 0
-                      ? "No duty recorded"
-                      : `${day.total} dut${day.total === 1 ? "y" : "ies"} · ${day.pendingCount} pending · ${day.issueCount} issue${day.issueCount === 1 ? "" : "s"}`}
-                  </span>
-                </span>
-                <span className="inline-flex w-fit rounded-full bg-white px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-slate-600">
-                  {day.shortLabel}
-                </span>
-              </summary>
-
-              <div className="border-t border-white/70 bg-white px-4 py-2">
-                {day.rows.length === 0 ? (
-                  <p className="py-3 text-sm font-semibold text-slate-400">
-                    Nothing was expected on this day.
-                  </p>
-                ) : (
-                  <div className="divide-y divide-slate-100">
-                    {day.rows.map((row) => (
-                      <DutyRowItem key={row.id} row={row} showType focusedObligationId={focusedObligationId} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            </details>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
 function HistorySection({
-  days,
+  weeks,
   focusedObligationId,
 }: {
-  days: TeacherHistoryDayGroup[];
+  weeks: TeacherHistoryWeekGroup[];
   focusedObligationId?: string;
 }) {
-  const total = days.reduce((count, day) => count + day.rows.length, 0);
-  const hasFocusedHistory = days.some((day) =>
-    day.rows.some((row) => historyRowMatchesFocus(row, focusedObligationId)),
+  const total = weeks.reduce((count, week) => count + week.rows.length, 0);
+  const hasFocusedHistory = weeks.some((week) =>
+    week.rows.some((row) => historyRowMatchesFocus(row, focusedObligationId)),
   );
 
   return (
@@ -445,10 +374,10 @@ function HistorySection({
             </span>
             <span>
               <span className="block text-base font-black text-slate-950">
-                History
+                Past Escalations
               </span>
               <span className="mt-1 block text-sm font-semibold text-slate-500">
-                Plain record of what happened, when it was due, and when it was recorded.
+                Closed issues and teacher responses, grouped by week.
               </span>
             </span>
           </span>
@@ -459,43 +388,41 @@ function HistorySection({
 
         <div className="mt-4">
           {total === 0 ? (
-            <EmptyState message="No accountability history has been recorded yet." />
+            <EmptyState message="No past escalation history has been recorded yet." />
           ) : (
             <div className="space-y-2">
-              {days.map((day) => (
+              {weeks.map((week) => (
                 <details
-                  key={day.key}
+                  key={week.key}
                   open={
-                    (day.isToday && day.rows.length > 0) ||
-                    day.rows.some((row) => historyRowMatchesFocus(row, focusedObligationId))
+                    week.rows.some((row) => historyRowMatchesFocus(row, focusedObligationId))
                   }
-                  className={`rounded-lg border ${day.rows.length > 0 ? "border-slate-200 bg-slate-50" : "border-slate-100 bg-white"}`}
+                  className={`rounded-lg border ${week.rows.length > 0 ? "border-slate-200 bg-slate-50" : "border-slate-100 bg-white"}`}
                 >
                   <summary className="flex cursor-pointer list-none flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
                     <span>
                       <span className="block text-sm font-black text-slate-950">
-                        {day.label}
-                        {day.isToday ? " · Today" : ""}
+                        {week.label}
                       </span>
                       <span className="mt-1 block text-xs font-semibold text-slate-500">
-                        {day.rows.length === 0
-                          ? "No history for this day"
-                          : `${day.rows.length} event${day.rows.length === 1 ? "" : "s"} recorded`}
+                        {week.rows.length === 0
+                          ? "No closed escalation"
+                          : `${week.rows.length} event${week.rows.length === 1 ? "" : "s"} recorded`}
                       </span>
                     </span>
                     <span className="inline-flex w-fit rounded-full bg-white px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-slate-600">
-                      {day.shortLabel}
+                      Week
                     </span>
                   </summary>
 
                   <div className="border-t border-slate-100 bg-white px-4 py-2">
-                    {day.rows.length === 0 ? (
+                    {week.rows.length === 0 ? (
                       <p className="py-3 text-sm font-semibold text-slate-400">
-                        Nothing was recorded for this duty date.
+                        Nothing was closed in this week.
                       </p>
                     ) : (
                       <div className="divide-y divide-slate-100">
-                        {day.rows.map((row) => {
+                        {week.rows.map((row) => {
                           const isFocused = historyRowMatchesFocus(row, focusedObligationId);
                           return (
                           <div
@@ -641,9 +568,7 @@ const TeacherAccountabilityPage = async ({
         <TodayDutiesPanel rows={todayRows} focusedObligationId={focusedObligationId} />
       </div>
 
-      <WeeklyDayBreakdown days={overview.weeklyDays} focusedObligationId={focusedObligationId} />
-
-      <HistorySection days={overview.historyDays} focusedObligationId={focusedObligationId} />
+      <HistorySection weeks={overview.historyWeeks} focusedObligationId={focusedObligationId} />
     </div>
   );
 };

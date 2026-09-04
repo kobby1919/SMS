@@ -47,6 +47,7 @@ export type TeacherSelfAccountabilityOverview = {
   escalations: TeacherEscalationRow[];
   auditTrail: TeacherAuditRow[];
   historyDays: TeacherHistoryDayGroup[];
+  historyWeeks: TeacherHistoryWeekGroup[];
 };
 
 export type TeacherDutyRow = {
@@ -118,6 +119,12 @@ export type TeacherHistoryDayGroup = {
   label: string;
   shortLabel: string;
   isToday: boolean;
+  rows: TeacherAuditRow[];
+};
+
+export type TeacherHistoryWeekGroup = {
+  key: string;
+  label: string;
   rows: TeacherAuditRow[];
 };
 
@@ -302,6 +309,38 @@ function buildHistoryDays(rows: TeacherAuditRow[], weekStart: Date, now: Date) {
   });
 }
 
+function buildHistoryWeeks(rows: TeacherAuditRow[], now: Date) {
+  const currentWeekStart = startOfWeek(now);
+  const rowsByWeek = new Map<string, TeacherAuditRow[]>();
+
+  for (const row of rows) {
+    const historyDate = row.dutyExpectedAt ?? row.createdAt;
+    const weekStart = startOfWeek(historyDate);
+    const key = dayKey(weekStart);
+    rowsByWeek.set(key, [...(rowsByWeek.get(key) ?? []), row]);
+  }
+
+  return Array.from({ length: 4 }, (_, index) => {
+    const weekStart = startOfWeek(currentWeekStart);
+    weekStart.setDate(currentWeekStart.getDate() - index * 7);
+    const weekEnd = endOfWeek(weekStart);
+    const key = dayKey(weekStart);
+    const label =
+      index === 0
+        ? "This week"
+        : new Intl.DateTimeFormat("en-GH", {
+            day: "numeric",
+            month: "short",
+          }).formatRange(weekStart, weekEnd);
+
+    return {
+      key,
+      label,
+      rows: rowsByWeek.get(key) ?? [],
+    };
+  });
+}
+
 function toDutyRow(obligation: {
   id: string;
   type: TeacherObligationType;
@@ -372,6 +411,8 @@ export async function getTeacherSelfAccountabilityOverview({
   const todayEnd = endOfDay(now);
   const weekStart = startOfWeek(now);
   const weekEnd = endOfWeek(now);
+  const historyStart = startOfWeek(now);
+  historyStart.setDate(historyStart.getDate() - 21);
 
   const [
     todayDuties,
@@ -478,7 +519,7 @@ export async function getTeacherSelfAccountabilityOverview({
       where: {
         schoolId,
         teacherId,
-        createdAt: { gte: weekStart, lte: now },
+        createdAt: { gte: historyStart, lte: now },
         action: {
           in: [
             "ESCALATION_CREATED",
@@ -668,5 +709,6 @@ export async function getTeacherSelfAccountabilityOverview({
     })),
     auditTrail: auditRows,
     historyDays: buildHistoryDays(auditRows, weekStart, now),
+    historyWeeks: buildHistoryWeeks(auditRows, now),
   };
 }
