@@ -246,6 +246,39 @@ function EscalationList({
                   {row.status.replaceAll("_", " ")}
                 </span>
               </div>
+              {row.teacherResponseStatus ? (
+                <div className="mt-3 rounded-lg border border-sky-100 bg-sky-50 px-3 py-3">
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-xs font-black uppercase tracking-wide text-sky-700">
+                      Teacher response
+                    </p>
+                    <span className="w-fit rounded-full bg-white px-2.5 py-1 text-[11px] font-black text-sky-700">
+                      {row.teacherResponseStatus.replaceAll("_", " ")}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm font-semibold leading-relaxed text-slate-700">
+                    {row.teacherResponseReason}
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-3 text-xs font-bold text-slate-500">
+                    {row.teacherResponseCreatedAt ? (
+                      <span>Sent: {formatDateTime(row.teacherResponseCreatedAt)}</span>
+                    ) : null}
+                    {row.teacherResponseEvidenceUrl ? (
+                      <Link
+                        href={row.teacherResponseEvidenceUrl}
+                        className="text-sky-700 underline"
+                        target="_blank"
+                      >
+                        View evidence
+                      </Link>
+                    ) : null}
+                  </div>
+                </div>
+              ) : isFocused ? (
+                <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-700">
+                  No teacher response has been submitted yet.
+                </p>
+              ) : null}
               <div className="mt-3 flex flex-wrap gap-2">
                 <Link
                   href={escalationReviewHref(row.id)}

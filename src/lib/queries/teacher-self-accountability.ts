@@ -1,6 +1,7 @@
 import prisma from "@/src/lib/prisma";
 import type {
   TeacherAccountabilityAuditAction,
+  TeacherCorrectionRequestStatus,
   TeacherObligationType,
   TeacherObligationPriority,
   TeacherObligationStatus,
@@ -64,6 +65,9 @@ export type TeacherDutyRow = {
   escalationStatus: string | null;
   escalationReason: string | null;
   escalatedAt: Date | null;
+  teacherResponseStatus: TeacherCorrectionRequestStatus | null;
+  teacherResponseReason: string | null;
+  teacherResponseCreatedAt: Date | null;
 };
 
 export type TeacherWeeklyDayGroup = {
@@ -314,7 +318,11 @@ function toDutyRow(obligation: {
     status: string;
     escalatedAt: Date;
   }[];
-}, now: Date): TeacherDutyRow {
+}, now: Date, response?: {
+  status: TeacherCorrectionRequestStatus;
+  reason: string;
+  createdAt: Date;
+}): TeacherDutyRow {
   const metadata = readMetadata(obligation.metadata);
   const status = effectiveObligationStatus(obligation, now);
   const activeEscalation =
@@ -345,6 +353,9 @@ function toDutyRow(obligation: {
     escalationStatus: activeEscalation?.status ?? null,
     escalationReason: activeEscalation?.reason ?? null,
     escalatedAt: activeEscalation?.escalatedAt ?? null,
+    teacherResponseStatus: response?.status ?? null,
+    teacherResponseReason: response?.reason ?? null,
+    teacherResponseCreatedAt: response?.createdAt ?? null,
   };
 }
 
@@ -474,6 +485,7 @@ export async function getTeacherSelfAccountabilityOverview({
             "ESCALATION_ACKNOWLEDGED",
             "ESCALATION_RESOLVED",
             "ESCALATION_DISMISSED",
+            "CORRECTION_REQUESTED",
           ],
         },
       },
@@ -518,6 +530,40 @@ export async function getTeacherSelfAccountabilityOverview({
   const auditObligationById = new Map(
     auditObligations.map((obligation) => [obligation.id, obligation]),
   );
+  const responseObligationIds = Array.from(
+    new Set([...todayDuties, ...weeklyDuties].map((obligation) => obligation.id)),
+  );
+  const teacherResponses = responseObligationIds.length > 0
+    ? await prisma.teacherCorrectionRequest.findMany({
+        where: {
+          schoolId,
+          teacherId,
+          sourceModel: "TeacherObligation",
+          sourceId: { in: responseObligationIds },
+          fieldName: "escalationResponse",
+        },
+        select: {
+          sourceId: true,
+          status: true,
+          reason: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: "desc" },
+      })
+    : [];
+  const responseByObligationId = new Map<
+    string,
+    {
+      status: TeacherCorrectionRequestStatus;
+      reason: string;
+      createdAt: Date;
+    }
+  >();
+  for (const response of teacherResponses) {
+    if (!responseByObligationId.has(response.sourceId)) {
+      responseByObligationId.set(response.sourceId, response);
+    }
+  }
 
   const totals = {
     today: todayDuties.length,
@@ -534,7 +580,9 @@ export async function getTeacherSelfAccountabilityOverview({
 
   let weeklyTotal = 0;
   let weeklyEarned = 0;
-  const weeklyRows = weeklyDuties.map((obligation) => toDutyRow(obligation, now));
+  const weeklyRows = weeklyDuties.map((obligation) =>
+    toDutyRow(obligation, now, responseByObligationId.get(obligation.id)),
+  );
 
   for (const row of weeklyRows) {
     const status = row.status;
@@ -598,7 +646,9 @@ export async function getTeacherSelfAccountabilityOverview({
 
   return {
     totals,
-    todayDuties: todayDuties.map((obligation) => toDutyRow(obligation, now)),
+    todayDuties: todayDuties.map((obligation) =>
+      toDutyRow(obligation, now, responseByObligationId.get(obligation.id)),
+    ),
     weeklyIssues: weeklyIssueRows,
     weeklyDays,
     reminders: reminders.map((reminder) => ({

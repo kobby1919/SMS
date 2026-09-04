@@ -1,6 +1,7 @@
 import prisma from "@/src/lib/prisma";
 import type {
   TeacherAccountabilityAuditAction,
+  TeacherCorrectionRequestStatus,
   TeacherObligationPriority,
   TeacherObligationStatus,
 } from "@/src/generated/prisma";
@@ -81,10 +82,15 @@ export type AccountabilityEscalationRow = {
   reason: string;
   status: string;
   escalatedAt: Date;
+  obligationId: string;
   obligationTitle: string;
   expectedAt: Date;
   className: string | null;
   subjectName: string | null;
+  teacherResponseStatus: TeacherCorrectionRequestStatus | null;
+  teacherResponseReason: string | null;
+  teacherResponseEvidenceUrl: string | null;
+  teacherResponseCreatedAt: Date | null;
 };
 
 export type AccountabilityAuditRow = {
@@ -336,6 +342,41 @@ export async function getTeacherAccountabilityOverview(
     })
     .sort((a, b) => a.reliabilityScore - b.reliabilityScore || b.total - a.total)
     .slice(0, 12);
+  const escalationObligationIds = Array.from(
+    new Set(openEscalations.map((escalation) => escalation.obligationId)),
+  );
+  const teacherResponses = escalationObligationIds.length > 0
+    ? await prisma.teacherCorrectionRequest.findMany({
+        where: {
+          schoolId,
+          sourceModel: "TeacherObligation",
+          sourceId: { in: escalationObligationIds },
+          fieldName: "escalationResponse",
+        },
+        select: {
+          sourceId: true,
+          status: true,
+          reason: true,
+          evidenceUrl: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: "desc" },
+      })
+    : [];
+  const responseByObligationId = new Map<
+    string,
+    {
+      status: TeacherCorrectionRequestStatus;
+      reason: string;
+      evidenceUrl: string | null;
+      createdAt: Date;
+    }
+  >();
+  for (const response of teacherResponses) {
+    if (!responseByObligationId.has(response.sourceId)) {
+      responseByObligationId.set(response.sourceId, response);
+    }
+  }
 
   const todayRows = todayObligations.map((obligation) =>
     toObligationRow(obligation, now),
@@ -373,16 +414,22 @@ export async function getTeacherAccountabilityOverview(
     teacherSummaries,
     openEscalations: openEscalations.map((escalation) => {
       const metadata = readMetadata(escalation.obligation.metadata);
+      const response = responseByObligationId.get(escalation.obligationId);
       return {
         id: escalation.id,
         teacherName: fullName(escalation.teacher),
         reason: escalation.reason,
         status: escalation.status,
         escalatedAt: escalation.escalatedAt,
+        obligationId: escalation.obligationId,
         obligationTitle: escalation.obligation.title,
         expectedAt: escalation.obligation.expectedAt,
         className: metadata.className ?? null,
         subjectName: metadata.subjectName ?? null,
+        teacherResponseStatus: response?.status ?? null,
+        teacherResponseReason: response?.reason ?? null,
+        teacherResponseEvidenceUrl: response?.evidenceUrl ?? null,
+        teacherResponseCreatedAt: response?.createdAt ?? null,
       };
     }),
     recentAuditLogs: recentAuditLogs.map((log) => ({

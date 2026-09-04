@@ -14,6 +14,7 @@ import {
   type TeacherDutyRow,
   type TeacherWeeklyDayGroup,
 } from "@/src/lib/queries/teacher-self-accountability";
+import TeacherEscalationResponseForm from "@/src/components/TeacherEscalationResponseForm";
 
 export const dynamic = "force-dynamic";
 
@@ -51,6 +52,26 @@ function obligationReviewHref(obligationId: string) {
 
 function needsManagementReview(row: TeacherDutyRow) {
   return row.status === "ESCALATED" || Boolean(row.escalationStatus);
+}
+
+function needsTeacherAttention(row: TeacherDutyRow) {
+  return (
+    row.status === "MISSED" ||
+    row.status === "ESCALATED" ||
+    Boolean(row.escalationStatus) ||
+    row.teacherResponseStatus === "NEEDS_MORE_INFO"
+  );
+}
+
+function dutyActionLabel(row: TeacherDutyRow) {
+  if (needsManagementReview(row)) {
+    if (row.teacherResponseStatus === "PENDING") return "View";
+    return "Respond";
+  }
+  if (row.status === "COMPLETED" || row.status === "COMPLETED_LATE") {
+    return "View";
+  }
+  return "Open";
 }
 
 function historyRowMatchesFocus(row: { actionHref: string }, focusedObligationId?: string) {
@@ -148,6 +169,11 @@ function DutyRowItem({
               {row.escalationReason}
             </p>
           ) : null}
+          {row.teacherResponseStatus ? (
+            <p className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600">
+              Response status: {row.teacherResponseStatus.replaceAll("_", " ")}
+            </p>
+          ) : null}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className={`rounded-full px-2.5 py-1 text-xs font-black ${statusClass(row.status)}`}>
@@ -157,11 +183,59 @@ function DutyRowItem({
             href={href}
             className="inline-flex items-center gap-1.5 rounded-lg bg-slate-950 px-3 py-2 text-xs font-black text-white transition hover:bg-slate-700"
           >
-            {needsManagementReview(row) ? "Review" : "Open"} <ExternalLink size={14} />
+            {dutyActionLabel(row)} <ExternalLink size={14} />
           </Link>
         </div>
       </div>
+      {isFocused && needsManagementReview(row) ? (
+        <TeacherEscalationResponseForm
+          obligationId={row.id}
+          existingStatus={row.teacherResponseStatus}
+          existingReason={row.teacherResponseReason}
+        />
+      ) : null}
     </div>
+  );
+}
+
+function NeedsAttentionPanel({
+  rows,
+  focusedObligationId,
+}: {
+  rows: TeacherDutyRow[];
+  focusedObligationId?: string;
+}) {
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="mb-4 flex items-start gap-2">
+        <div className="rounded-lg bg-rose-50 p-2 text-rose-700">
+          <AlertTriangle size={18} />
+        </div>
+        <div>
+          <h2 className="text-base font-black text-slate-950">
+            Needs Attention
+          </h2>
+          <p className="text-sm font-semibold text-slate-500">
+            Fix or respond to only the duties that need your action.
+          </p>
+        </div>
+      </div>
+
+      {rows.length === 0 ? (
+        <EmptyState message="No issue needs your attention right now." />
+      ) : (
+        <div className="divide-y divide-slate-100">
+          {rows.map((row) => (
+            <DutyRowItem
+              key={row.id}
+              row={row}
+              showType
+              focusedObligationId={focusedObligationId}
+            />
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 
@@ -272,81 +346,6 @@ function TodayDutiesPanel({
           </details>
         ))}
       </div>
-    </section>
-  );
-}
-
-function EscalationDayBreakdown({
-  days,
-  focusedObligationId,
-}: {
-  days: TeacherWeeklyDayGroup[];
-  focusedObligationId?: string;
-}) {
-  const dayGroups = days.map((day) => ({
-    ...day,
-    rows: day.rows.filter((row) => row.status === "ESCALATED" || row.escalationStatus),
-  }));
-  const escalationCount = dayGroups.reduce((total, day) => total + day.rows.length, 0);
-
-  return (
-    <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="mb-4 flex items-center gap-2">
-        <div className="rounded-lg bg-rose-50 p-2 text-rose-700">
-          <AlertTriangle size={18} />
-        </div>
-        <div>
-          <h2 className="text-base font-black text-slate-950">Escalations</h2>
-          <p className="text-sm font-semibold text-slate-500">
-            {escalationCount} escalation{escalationCount === 1 ? "" : "s"} recorded this week.
-          </p>
-        </div>
-      </div>
-
-      {escalationCount === 0 ? (
-        <EmptyState message="No escalation is attached to you this week." />
-      ) : (
-        <div className="space-y-2">
-          {dayGroups.map((day) => (
-            <details
-              key={day.key}
-              open={(day.isToday && day.rows.length > 0) || day.rows.some((row) => row.id === focusedObligationId)}
-              className={`rounded-lg border ${day.rows.length > 0 ? "border-rose-200 bg-rose-50/40" : "border-slate-200 bg-slate-50"}`}
-            >
-              <summary className="flex cursor-pointer list-none flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-                <span>
-                  <span className="block text-sm font-black text-slate-950">
-                    {day.label}
-                    {day.isToday ? " · Today" : ""}
-                  </span>
-                  <span className="mt-1 block text-xs font-semibold text-slate-500">
-                    {day.rows.length === 0
-                      ? "No escalation"
-                      : `${day.rows.length} escalation${day.rows.length === 1 ? "" : "s"}`}
-                  </span>
-                </span>
-                <span className="inline-flex w-fit rounded-full bg-white px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-slate-600">
-                  {day.shortLabel}
-                </span>
-              </summary>
-
-              <div className="border-t border-white/70 bg-white px-4 py-2">
-                {day.rows.length === 0 ? (
-                  <p className="py-3 text-sm font-semibold text-slate-400">
-                    No escalation was raised on this day.
-                  </p>
-                ) : (
-                  <div className="divide-y divide-slate-100">
-                    {day.rows.map((row) => (
-                      <DutyRowItem key={row.id} row={row} showType focusedObligationId={focusedObligationId} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            </details>
-          ))}
-        </div>
-      )}
     </section>
   );
 }
@@ -577,6 +576,19 @@ const TeacherAccountabilityPage = async ({
     schoolId,
     teacherId: userId,
   });
+  const attentionRows = overview.weeklyIssues.filter(needsTeacherAttention);
+  const attentionIds = new Set(attentionRows.map((row) => row.id));
+  const todayRows = overview.todayDuties.filter((row) => !attentionIds.has(row.id));
+  const resolvedThisWeek = overview.historyDays.reduce(
+    (count, day) =>
+      count +
+      day.rows.filter((row) =>
+        row.action === "ESCALATION_RESOLVED" ||
+        row.action === "ESCALATION_DISMISSED" ||
+        row.action === "CORRECTION_REQUESTED",
+      ).length,
+    0,
+  );
 
   return (
     <div className="flex flex-col gap-5 p-4">
@@ -588,25 +600,19 @@ const TeacherAccountabilityPage = async ({
           <div>
             <h1 className="text-xl font-black">My Accountability</h1>
             <p className="mt-1 max-w-3xl text-sm font-medium leading-relaxed text-slate-300">
-              Track your duties, escalations, weekly reliability, and history
-              in one simple place.
+              See what needs your attention, finish today&apos;s duties, and
+              keep your teaching records clean.
             </p>
             {focusedObligationId ? (
               <p className="mt-3 rounded-lg bg-sky-400/10 px-3 py-2 text-xs font-black text-sky-100">
-                Opened a specific escalated duty. The matching row is highlighted below.
+                Opened one duty. The matching item is highlighted below.
               </p>
             ) : null}
           </div>
         </div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          label="Reliability"
-          value={overview.totals.reliabilityScore}
-          helper="Weekly score based on submitted duties"
-          tone={overview.totals.reliabilityScore >= 80 ? "green" : "amber"}
-        />
+      <div className="grid gap-3 sm:grid-cols-3">
         <StatCard
           label="Today"
           value={overview.totals.today}
@@ -614,22 +620,25 @@ const TeacherAccountabilityPage = async ({
           tone="blue"
         />
         <StatCard
-          label="Pending"
-          value={overview.totals.pending}
-          helper="Still waiting this week"
-          tone={overview.totals.pending > 0 ? "amber" : "green"}
+          label="Needs Attention"
+          value={attentionRows.length}
+          helper="Missed or escalated items"
+          tone={attentionRows.length > 0 ? "red" : "green"}
         />
         <StatCard
-          label="Week Escalations"
-          value={overview.totals.weeklyEscalations}
-          helper={`${overview.totals.openEscalations} still open`}
-          tone={overview.totals.weeklyEscalations > 0 ? "red" : "green"}
+          label="Resolved"
+          value={resolvedThisWeek}
+          helper="Responses or decisions this week"
+          tone="green"
         />
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
-        <TodayDutiesPanel rows={overview.todayDuties} focusedObligationId={focusedObligationId} />
-        <EscalationDayBreakdown days={overview.weeklyDays} focusedObligationId={focusedObligationId} />
+      <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
+        <NeedsAttentionPanel
+          rows={attentionRows}
+          focusedObligationId={focusedObligationId}
+        />
+        <TodayDutiesPanel rows={todayRows} focusedObligationId={focusedObligationId} />
       </div>
 
       <WeeklyDayBreakdown days={overview.weeklyDays} focusedObligationId={focusedObligationId} />

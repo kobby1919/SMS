@@ -86,3 +86,30 @@ export const teacherEscalationReviewSchema = z.object({
 export type TeacherEscalationReviewInput = z.infer<
   typeof teacherEscalationReviewSchema
 >;
+
+export const teacherEscalationResponseSchema = z.object({
+  obligationId: z.string().min(1, "Escalated duty is required."),
+  responseType: z.enum(["EXPLANATION", "CORRECTION_REQUEST"]),
+  requestedAction: z.enum([
+    "ADMIN_REVIEW",
+    "ALLOW_LATE_ENTRY",
+    "MARK_AS_RESOLVED",
+    "OTHER",
+  ]),
+  reason: z
+    .string()
+    .trim()
+    .min(10, "Explain what happened in at least 10 characters.")
+    .max(700, "Keep the explanation below 700 characters."),
+  evidenceUrl: z
+    .string()
+    .trim()
+    .max(500, "Keep the evidence link below 500 characters.")
+    .optional()
+    .transform((value) => value || undefined)
+    .pipe(z.string().url("Use a valid evidence link.").optional()),
+});
+
+export type TeacherEscalationResponseInput = z.infer<
+  typeof teacherEscalationResponseSchema
+>;
