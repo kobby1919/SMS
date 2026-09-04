@@ -215,7 +215,7 @@ const CAActivityManager = ({
         selectedActivity.scores.map((score) => [score.studentId, String(score.rawScore)]),
       ),
     );
-  }, [selectedActivity?.id, selectedActivity?.scores]);
+  }, [selectedActivity]);
 
   const handleCreateBucket = async () => {
     if (pendingAction) return;

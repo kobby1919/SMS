@@ -6,7 +6,6 @@ import {
   BellRing,
   BookOpenCheck,
   CalendarClock,
-  CheckCircle2,
   ClipboardCheck,
   GraduationCap,
   ShieldCheck,
@@ -357,4 +356,3 @@ export default function TeacherAccountabilitySettingsForm({
     </form>
   );
 }
-

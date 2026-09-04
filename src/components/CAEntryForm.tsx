@@ -82,7 +82,6 @@ const buildRows = (
   selectedSubjectId: number | "",
   selectedTerm: Term,
   selectedYear: string,
-  activityCAEnabled: boolean,
 ): CARow[] =>
   students.map((student) => {
     const existing = existingCA.find(
@@ -170,8 +169,8 @@ const CAEntryForm = ({
   );
 
   const baseRows = useMemo(
-    () => buildRows(students, existingCA, activityCAProgress, selectedSubjectId, selectedTerm, selectedYear, activityCAEnabled),
-    [students, existingCA, activityCAProgress, selectedSubjectId, selectedTerm, selectedYear, activityCAEnabled]
+    () => buildRows(students, existingCA, activityCAProgress, selectedSubjectId, selectedTerm, selectedYear),
+    [students, existingCA, activityCAProgress, selectedSubjectId, selectedTerm, selectedYear]
   );
 
   const rows = useMemo(

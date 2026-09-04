@@ -547,7 +547,7 @@ const ReportCardListPage = async ({
               </p>
             </div>
           ) : (
-            sorted.map((s, idx) => {
+            sorted.map((s) => {
               const statusLabel =
                 s.status === "ready"
                   ? "Report ready"
