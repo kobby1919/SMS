@@ -34,10 +34,14 @@ const StudentListPage = async ({
             query.classId = parseInt(value);
             break;
           case "search":
+            const search = value.trim();
             query.OR = [
-              { name: { contains: value, mode: "insensitive" } },
-              { surname: { contains: value, mode: "insensitive" } },
-              { username: { contains: value, mode: "insensitive" } },
+              { name: { contains: search, mode: "insensitive" } },
+              { surname: { contains: search, mode: "insensitive" } },
+              { username: { contains: search, mode: "insensitive" } },
+              { email: { contains: search, mode: "insensitive" } },
+              { phone: { contains: search, mode: "insensitive" } },
+              { class: { name: { contains: search, mode: "insensitive" } } },
             ];
             break;
         }
@@ -56,10 +60,15 @@ const StudentListPage = async ({
     }
 
     if (queryParams.search) {
+      const search = queryParams.search.trim();
       teacherQuery.OR = [
-        { name: { contains: queryParams.search, mode: "insensitive" } },
-        { surname: { contains: queryParams.search, mode: "insensitive" } },
-        { username: { contains: queryParams.search, mode: "insensitive" } },
+        { name: { contains: search, mode: "insensitive" } },
+        { surname: { contains: search, mode: "insensitive" } },
+        { username: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
+        { phone: { contains: search, mode: "insensitive" } },
+        { class: { name: { contains: search, mode: "insensitive" } } },
+        { class: { lessons: { some: { subject: { name: { contains: search, mode: "insensitive" } } } } } },
       ];
     }
 

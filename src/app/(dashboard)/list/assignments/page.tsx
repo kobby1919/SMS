@@ -5,8 +5,6 @@ import Pagination from "@/src/components/pagination";
 import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
 import {
-  Filter,
-  ArrowUpDown,
   Briefcase,
   Clock,
   CheckCircle2,
@@ -57,11 +55,6 @@ const AssignmentListPage = async ({
 
   const lessonQuery: Prisma.LessonWhereInput = {};
 
-  if (queryParams.search) {
-    lessonQuery.subject = {
-      name: { contains: queryParams.search, mode: "insensitive" },
-    };
-  }
   if (queryParams.classId) {
     lessonQuery.classId = parseInt(queryParams.classId);
   }
@@ -80,12 +73,33 @@ const AssignmentListPage = async ({
     // admin: no filter — oversight view only, cannot create
   }
 
-  const baseWhere = { schoolId, lesson: lessonQuery };
+  const assignmentConditions: Prisma.AssignmentWhereInput[] = [
+    { schoolId },
+    { lesson: lessonQuery },
+  ];
+
+  if (queryParams.search?.trim()) {
+    const search = queryParams.search.trim();
+    assignmentConditions.push({
+      OR: [
+        { title: { contains: search, mode: "insensitive" } },
+        { lesson: { subject: { name: { contains: search, mode: "insensitive" } } } },
+        { lesson: { class: { name: { contains: search, mode: "insensitive" } } } },
+        { lesson: { teacher: { name: { contains: search, mode: "insensitive" } } } },
+        { lesson: { teacher: { surname: { contains: search, mode: "insensitive" } } } },
+      ],
+    });
+  }
+
+  const baseWhere: Prisma.AssignmentWhereInput = { AND: assignmentConditions };
   const dateFilter = {
-    ...baseWhere,
-    dueDate: activeTab === "upcoming" ? { gte: todayStart } : { lt: todayStart },
+    AND: [
+      ...assignmentConditions,
+      { dueDate: activeTab === "upcoming" ? { gte: todayStart } : { lt: todayStart } },
+    ],
   };
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 86400000);
+  const searchQuery = queryParams.search ? `&search=${encodeURIComponent(queryParams.search)}` : "";
 
   const [assignments, upcomingCount, pastCount, overdueCount] =
     await Promise.all([
@@ -154,14 +168,6 @@ const AssignmentListPage = async ({
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
             <TableSearch />
             <div className="flex items-center gap-2">
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                <Filter size={14} />
-                <span className="hidden sm:inline">Filter</span>
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                <ArrowUpDown size={14} />
-                <span className="hidden sm:inline">Sort</span>
-              </button>
               {/* Teachers only — admins view but do not create */}
               {canManage && <FormModal table="assignment" type="create" />}
             </div>
@@ -226,7 +232,7 @@ const AssignmentListPage = async ({
         {(["upcoming", "past"] as const).map((t) => (
           <a
             key={t}
-            href={`?tab=${t}`}
+            href={`?tab=${t}${searchQuery}`}
             className={`px-5 py-2 rounded-lg text-sm font-bold transition-all
               ${activeTab === t ? "bg-white text-indigo-600 shadow-sm" : "text-gray-400 hover:text-gray-600"}`}
           >

@@ -89,8 +89,13 @@ const roleShortcuts: Record<string, SearchItem[]> = {
   teacher: [
     { label: "Teacher home", description: "Today and classes", href: "/teacher", keywords: "dashboard teacher home", icon: <Home size={15} /> },
     { label: "Take attendance", description: "Mark lessons quickly", href: "/list/attendance/take", keywords: "attendance take absent late present", icon: <CalendarDays size={15} /> },
+    { label: "My students", description: "Students grouped by class", href: "/list/students", keywords: "students learners class profile", icon: <GraduationCap size={15} /> },
     { label: "CA records", description: "Activities and exam entry", href: "/list/ca", keywords: "ca continuous assessment scores activities", icon: <BookOpenCheck size={15} /> },
+    { label: "Report cards", description: "Build exam results", href: "/list/report-cards", keywords: "report cards results exam entry", icon: <FileText size={15} /> },
     { label: "Homework", description: "Assignments", href: "/list/assignments", keywords: "homework assignments", icon: <FileText size={15} /> },
+    { label: "Syllabus", description: "Curriculum progress", href: "/list/syllabus", keywords: "syllabus curriculum topics progress", icon: <BookOpenCheck size={15} /> },
+    { label: "Notices", description: "School announcements", href: "/list/announcements", keywords: "notices announcements message school", icon: <BellRing size={15} /> },
+    { label: "Accountability", description: "Duties and escalations", href: "/teacher/accountability", keywords: "accountability duties escalations history", icon: <Check size={15} /> },
   ],
   bursar: [
     { label: "Finance home", description: "Bursar dashboard", href: "/bursar", keywords: "bursar finance dashboard", icon: <Home size={15} /> },
@@ -454,13 +459,6 @@ const NavbarClient = ({ user, parentContext, teacherContext }: NavbarClientProps
           ) : isTeacher ? (
             <>
               <TeacherBell alerts={teacherAlerts} />
-              <Link
-                href={searchItems[0]?.href ?? "/teacher"}
-                className="hidden h-10 items-center gap-2 rounded-full border border-gray-100 bg-white px-3 text-xs font-black text-gray-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 sm:flex"
-              >
-                <Menu size={15} />
-                Shortcuts
-              </Link>
             </>
           ) : (
             <Link

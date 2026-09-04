@@ -7,7 +7,7 @@ import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import { requirePageSession } from "@/src/lib/authz";
-import { AlertTriangle, ArrowUpDown, Filter, Megaphone } from "lucide-react";
+import { AlertTriangle, Megaphone } from "lucide-react";
 
 const priorityMeta = {
   NORMAL: { label: "Normal", className: "bg-slate-50 text-slate-600" },
@@ -26,41 +26,55 @@ const AnnouncementListPage = async ({
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
-  const query: Prisma.AnnouncementWhereInput = { schoolId };
+  const andConditions: Prisma.AnnouncementWhereInput[] = [
+    { OR: [{ expiresAt: null }, { expiresAt: { gte: new Date() } }] },
+  ];
 
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined) {
+      if (value !== undefined && value.trim()) {
         switch (key) {
           case "search":
-            query.title = { contains: value, mode: "insensitive" };
+            andConditions.push({
+              OR: [
+                { title: { contains: value.trim(), mode: "insensitive" } },
+                { description: { contains: value.trim(), mode: "insensitive" } },
+                { class: { name: { contains: value.trim(), mode: "insensitive" } } },
+              ],
+            });
             break;
         }
       }
     }
   }
 
-  query.OR = [
-    { expiresAt: null },
-    { expiresAt: { gte: new Date() } },
-  ];
-
   // ROLE CONDITIONS
   if (role !== "admin") {
-    const roleConditions = {
-      teacher: { lessons: { some: { teacherId: currentUserId! } } },
-      student: { students: { some: { id: currentUserId! } } },
-      parent: { students: { some: { parentId: currentUserId! } } },
-    };
-    query.AND = [
-      {
-        OR: [
-          { classId: null },
-          { class: roleConditions[role as keyof typeof roleConditions] || {} },
-        ],
-      },
-    ];
+    const roleCondition: Prisma.ClassWhereInput | null =
+      role === "teacher"
+        ? { lessons: { some: { teacherId: currentUserId } } }
+        : role === "student"
+          ? { students: { some: { id: currentUserId } } }
+          : role === "parent"
+            ? { students: { some: { parentId: currentUserId } } }
+            : null;
+
+    andConditions.push(
+      roleCondition
+        ? {
+            OR: [
+              { classId: null },
+              { class: roleCondition },
+            ],
+          }
+        : { classId: null },
+    );
   }
+
+  const query: Prisma.AnnouncementWhereInput = {
+    schoolId,
+    AND: andConditions,
+  };
 
 
   const [announcements, count] = await Promise.all([
@@ -95,14 +109,6 @@ const AnnouncementListPage = async ({
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
             <TableSearch />
             <div className="flex items-center gap-2">
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                <Filter size={14} />
-                <span className="hidden sm:inline">Filter</span>
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                <ArrowUpDown size={14} />
-                <span className="hidden sm:inline">Sort</span>
-              </button>
               {role === "admin" && (
                 <FormModal table="announcement" type="create" />
               )}
