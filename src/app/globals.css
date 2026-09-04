@@ -140,12 +140,12 @@
 
 @layer base {
   html {
-    font-size: 17px;
+    font-size: 18px;
   }
 
   @media (max-width: 640px) {
     html {
-      font-size: 16.5px;
+      font-size: 17px;
     }
   }
 }

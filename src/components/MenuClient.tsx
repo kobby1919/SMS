@@ -341,7 +341,7 @@ const MenuClient = ({ role }: { role: string }) => {
     menuItems;
 
   return (
-    <div className="mt-4 text-sm flex flex-col gap-0.5">
+    <div className="mt-4 flex flex-col gap-1 text-[0.95rem]">
       {visibleMenuItems.map((section) => {
         const visibleItems = section.items.filter((item) =>
           item.visible.includes(role),
@@ -349,8 +349,8 @@ const MenuClient = ({ role }: { role: string }) => {
         if (visibleItems.length === 0) return null;
 
         return (
-          <div key={section.title} className="flex flex-col gap-0.5 mb-2">
-            <span className="hidden md:block text-[9px] font-black text-gray-300 uppercase tracking-[0.15em] mt-4 mb-1 px-3">
+          <div key={section.title} className="mb-3 flex flex-col gap-1">
+            <span className="hidden md:block px-3 pt-4 pb-1 text-[0.62rem] font-black uppercase tracking-[0.14em] text-gray-400">
               {section.title}
             </span>
             <div className="md:hidden border-t border-gray-100 my-2 mx-2" />
@@ -371,23 +371,23 @@ const MenuClient = ({ role }: { role: string }) => {
                   href={item.href}
                   key={item.label + item.href}
                   className={`flex items-center justify-center md:justify-start gap-3
-                    py-2.5 px-0 md:px-3 rounded-xl transition-all group
+                    min-h-11 py-2.5 px-0 md:px-3.5 rounded-xl transition-all group
                     ${
                       isActive
-                        ? "bg-jayPurpleLight text-jayPurple font-semibold"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                        ? "bg-slate-950 text-white shadow-sm"
+                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-950"
                     }`}
                 >
                   <span className="flex-shrink-0 flex items-center justify-center">
                     <Icon
-                      size={20}
-                      strokeWidth={isActive ? 2.5 : 2}
-                      className={`transition-opacity ${isActive ? "opacity-100" : "opacity-60 group-hover:opacity-80"}`}
+                      size={21}
+                      strokeWidth={isActive ? 2.6 : 2.2}
+                      className={`transition-opacity ${isActive ? "opacity-100" : "opacity-75 group-hover:opacity-100"}`}
                     />
                   </span>
-                  <span className="hidden md:block min-w-0 truncate text-sm">{item.label}</span>
+                  <span className="hidden min-w-0 truncate text-[0.94rem] font-extrabold md:block">{item.label}</span>
                   {isActive && (
-                    <span className="hidden md:block ml-auto w-1.5 h-1.5 rounded-full bg-jayPurple shrink-0" />
+                    <span className="hidden h-1.5 w-1.5 shrink-0 rounded-full bg-white md:ml-auto md:block" />
                   )}
                 </Link>
               );
