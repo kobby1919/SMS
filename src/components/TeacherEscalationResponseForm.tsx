@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 import { Send } from "lucide-react";
 import {
   submitTeacherEscalationResponseWithState,
@@ -25,10 +26,12 @@ export default function TeacherEscalationResponseForm({
   obligationId,
   existingStatus,
   existingReason,
+  closeHref = "/teacher/accountability",
 }: {
   obligationId: string;
   existingStatus: string | null;
   existingReason: string | null;
+  closeHref?: string;
 }) {
   const [state, formAction, pending] = useActionState(
     submitTeacherEscalationResponseWithState,
@@ -43,14 +46,21 @@ export default function TeacherEscalationResponseForm({
 
   return (
     <div className="mt-4 rounded-lg border border-sky-200 bg-white p-4 shadow-sm">
-      <div className="flex flex-col gap-1">
-        <h3 className="text-sm font-black text-slate-950">
-          Teacher response
-        </h3>
-        <p className="text-xs font-semibold leading-relaxed text-slate-500">
-          Explain what happened or request permission for a correction. This goes
-          to management and is saved in the accountability history.
-        </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-col gap-1">
+          <h3 className="text-sm font-black text-slate-950">
+            Respond to management
+          </h3>
+          <p className="text-xs font-semibold leading-relaxed text-slate-500">
+            Send a short explanation or ask for permission to correct this duty.
+          </p>
+        </div>
+        <Link
+          href={closeHref}
+          className="inline-flex w-fit rounded-lg bg-slate-100 px-3 py-2 text-xs font-black text-slate-600 transition hover:bg-slate-200"
+        >
+          Close
+        </Link>
       </div>
 
       {copy ? (

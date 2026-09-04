@@ -27,6 +27,14 @@ function formatDateTime(date: Date) {
   }).format(date);
 }
 
+function sameCalendarDay(a: Date, b: Date) {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+}
+
 function statusClass(status: string) {
   if (status === "COMPLETED") return "bg-emerald-50 text-emerald-700";
   if (status === "COMPLETED_LATE") return "bg-amber-50 text-amber-700";
@@ -71,6 +79,17 @@ function dutyActionLabel(row: TeacherDutyRow) {
     return "View";
   }
   return "Open";
+}
+
+function cleanDutyTitle(row: TeacherDutyRow) {
+  const className = row.className ?? "Class";
+  const subjectName = row.subjectName ?? "Subject";
+  if (row.type === "ATTENDANCE") return `Mark ${className} ${subjectName} attendance`;
+  if (row.type === "CA_SCORE_PUBLISHING") return `Publish ${subjectName} CA scores`;
+  if (row.type === "HOMEWORK_CHECKING") return `Check ${subjectName} homework`;
+  if (row.type === "SYLLABUS_PROGRESS") return `Update ${subjectName} syllabus`;
+  if (row.type === "EXAM_ENTRY") return `Enter ${subjectName} exam scores`;
+  return row.title;
 }
 
 function historyRowMatchesFocus(row: { actionHref: string }, focusedObligationId?: string) {
@@ -152,7 +171,7 @@ function DutyRowItem({
             </div>
           )}
           <p className={(showType || row.escalationStatus) ? "mt-2 font-black text-slate-950" : "font-black text-slate-950"}>
-            {row.title}
+            {cleanDutyTitle(row)}
           </p>
           <p className="mt-1 text-sm font-semibold text-slate-600">
             {row.className ?? "Class"} - {row.subjectName ?? "Subject"}
@@ -160,7 +179,7 @@ function DutyRowItem({
           <p className="mt-1 text-xs font-bold text-slate-400">
             Due: {formatDateTime(row.expectedAt)}
           </p>
-          {row.studentCount !== null ? (
+          {row.studentCount !== null && !needsManagementReview(row) ? (
             <p className="mt-1 text-xs font-bold text-slate-500">
               {row.attendanceCount ?? 0}/{row.studentCount} records submitted
             </p>
@@ -193,6 +212,7 @@ function DutyRowItem({
           obligationId={row.id}
           existingStatus={row.teacherResponseStatus}
           existingReason={row.teacherResponseReason}
+          closeHref="/teacher/accountability"
         />
       ) : null}
     </div>
@@ -214,16 +234,16 @@ function NeedsAttentionPanel({
         </div>
         <div>
           <h2 className="text-base font-black text-slate-950">
-            Recent Escalations
+            Today&apos;s Escalations
           </h2>
           <p className="text-sm font-semibold text-slate-500">
-            Only duties that need a teacher response appear here.
+            Only today&apos;s escalated duties that need a response.
           </p>
         </div>
       </div>
 
       {rows.length === 0 ? (
-        <EmptyState message="No escalation needs your response right now." />
+        <EmptyState message="No escalation needs your response today." />
       ) : (
         <div className="divide-y divide-slate-100">
           {rows.map((row) => (
@@ -503,10 +523,17 @@ const TeacherAccountabilityPage = async ({
     schoolId,
     teacherId: userId,
   });
-  const attentionRows = overview.weeklyIssues.filter(needsTeacherAttention);
+  const attentionRows = overview.todayDuties.filter(needsTeacherAttention);
   const attentionIds = new Set(attentionRows.map((row) => row.id));
   const todayRows = overview.todayDuties.filter((row) => !attentionIds.has(row.id));
-  const resolvedThisWeek = overview.historyDays.reduce(
+  const pastHistoryWeeks = overview.historyWeeks.map((week) => ({
+    ...week,
+    rows: week.rows.filter((row) => {
+      const eventDate = row.dutyExpectedAt ?? row.createdAt;
+      return !sameCalendarDay(eventDate, new Date());
+    }),
+  }));
+  const resolvedThisWeek = pastHistoryWeeks.reduce(
     (count, day) =>
       count +
       day.rows.filter((row) =>
@@ -568,7 +595,7 @@ const TeacherAccountabilityPage = async ({
         <TodayDutiesPanel rows={todayRows} focusedObligationId={focusedObligationId} />
       </div>
 
-      <HistorySection weeks={overview.historyWeeks} focusedObligationId={focusedObligationId} />
+      <HistorySection weeks={pastHistoryWeeks} focusedObligationId={focusedObligationId} />
     </div>
   );
 };
