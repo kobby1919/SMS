@@ -48,17 +48,17 @@ const UpcomingExams = async ({ teacherId }: Props) => {
     new Intl.DateTimeFormat("en-GH", { hour: "2-digit", minute: "2-digit" }).format(d);
 
   return (
-    <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+    <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-amber-50 rounded-xl flex items-center justify-center">
             <Calendar size={15} className="text-amber-600" />
           </div>
-          <h2 className="font-nunito font-extrabold text-base text-gray-800">Upcoming Exams</h2>
+          <h2 className="font-nunito text-base font-extrabold text-edujay-ink">Exam Dates</h2>
         </div>
         <Link
           href="/list/exams"
-          className="text-xs text-indigo-500 font-bold hover:text-indigo-700 transition-colors"
+          className="text-xs text-edujay-primary font-bold hover:text-edujay-primaryDark transition-colors"
         >
           View All →
         </Link>
@@ -74,7 +74,7 @@ const UpcomingExams = async ({ teacherId }: Props) => {
           {exams.map((exam) => (
             <div
               key={exam.id}
-              className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-indigo-50/40 transition-colors"
+            className="flex items-center gap-3 rounded-xl bg-gray-50 p-3 transition-colors hover:bg-edujay-soft"
             >
               {/* Countdown badge */}
               <span className={`text-[10px] font-black px-2 py-1 rounded-lg shrink-0 ${getCountdownColor(exam.startTime)}`}>
@@ -83,7 +83,7 @@ const UpcomingExams = async ({ teacherId }: Props) => {
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-sm text-gray-800 truncate">
+                <p className="font-bold text-sm text-edujay-ink truncate">
                   {exam.lesson.subject.name}
                   <span className="font-semibold text-gray-400 ml-1.5 text-xs">· {exam.lesson.class.name}</span>
                 </p>

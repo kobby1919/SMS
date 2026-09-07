@@ -272,7 +272,10 @@ const ReportCardListPage = async ({
       : await prisma.class.findMany({
           where: {
             schoolId,
-            lessons: { some: { teacherId: userId } },
+            OR: [
+              { supervisorId: userId },
+              { lessons: { some: { teacherId: userId } } },
+            ],
           },
           orderBy: { name: "asc" },
           include: { grade: { select: { level: true } } },
@@ -300,6 +303,7 @@ const ReportCardListPage = async ({
   const activeClass =
     supervisedClasses.find((c) => c.id === activeClassId) ??
     supervisedClasses[0];
+  const isClassTeacher = role === "teacher" && activeClass.supervisorId === userId;
 
   // ── Academic years from configs ───────────────────────────────────────────
   const configs = await prisma.cAConfig.findMany({
@@ -328,7 +332,11 @@ const ReportCardListPage = async ({
   // ── CA records for this class / term / year ───────────────────────────────
   // ── Subjects for this class (from timetable) ──────────────────────────────
   const lessons = await prisma.lesson.findMany({
-    where: { schoolId, classId: activeClass.id },
+    where: {
+      schoolId,
+      classId: activeClass.id,
+      ...(role === "teacher" && !isClassTeacher ? { teacherId: userId } : {}),
+    },
     select: { subject: { select: { id: true, name: true } } },
   });
   const subjectMap = new Map<number, string>();

@@ -124,7 +124,6 @@ const CAActivityManager = ({
   const [bucketAllocation, setBucketAllocation] = useState("15");
   const [selectedBucketId, setSelectedBucketId] = useState<number | "">("");
   const [rawMaxScore, setRawMaxScore] = useState("100");
-  const [activityTitle, setActivityTitle] = useState("");
   const [activityAllocation, setActivityAllocation] = useState("");
   const [selectedActivityId, setSelectedActivityId] = useState<number | "">("");
   const [scoreEdits, setScoreEdits] = useState<Record<string, string>>({});
@@ -156,6 +155,10 @@ const CAActivityManager = ({
   );
 
   const usedAllocation = scopedBuckets.reduce((sum, bucket) => sum + bucket.allocationMarks, 0);
+  const nextActivitySequence = activities.reduce((max, activity) => Math.max(max, activity.sequence), 0) + 1;
+  const nextActivityTitle = selectedBucket
+    ? `${activityTypeLabels[selectedBucket.type]} ${nextActivitySequence}`
+    : "Select a bucket";
 
   const getCurrentSubjectCAForStudent = (studentId: string) => {
     const earnedMarks = scopedBuckets.reduce((subjectTotal, bucket) => {
@@ -266,7 +269,6 @@ const CAActivityManager = ({
     try {
       const activity = await createCAActivityAction({
         bucketId: bucket.id,
-        title: activityTitle || undefined,
         type: bucket.type,
         rawMaxScore: Number(rawMaxScore),
         allocationMarks:
@@ -275,7 +277,6 @@ const CAActivityManager = ({
             : null,
       });
       setSelectedActivityId(activity.id);
-      setActivityTitle("");
       setMessage("Activity added successfully. You can now enter student scores.");
       router.refresh();
     } catch (err) {
@@ -553,12 +554,10 @@ const CAActivityManager = ({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <input
-              value={activityTitle}
-              onChange={(event) => setActivityTitle(event.target.value)}
-              placeholder="Optional title"
-              className="ring-[1.5px] ring-gray-200 px-3 py-2.5 rounded-xl text-sm font-semibold outline-none focus:ring-indigo-500"
-            />
+            <div className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5">
+              <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Next activity</p>
+              <p className="text-sm font-black text-gray-800">{nextActivityTitle}</p>
+            </div>
             <input
               type="number"
               min={0}

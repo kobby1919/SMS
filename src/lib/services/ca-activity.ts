@@ -363,7 +363,7 @@ export async function createCAActivity(input: CAActivityInput) {
       subjectId: bucket.subjectId,
       teacherId: input.teacherId,
       type,
-      title: input.title?.trim() || defaultActivityTitle(type, sequence),
+      title: defaultActivityTitle(type, sequence),
       rawMaxScore: input.rawMaxScore,
       allocationMarks: bucket.aggregationMode === "SUM_ACTIVITIES" ? input.allocationMarks : null,
       activityDate: input.activityDate ?? new Date(),

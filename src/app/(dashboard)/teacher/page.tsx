@@ -404,7 +404,7 @@ const TeacherPage = async () => {
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-xs font-black uppercase text-gray-400">Today</p>
-              <h2 className="mt-1 text-xl font-black text-gray-900">{todayLabel}</h2>
+              <h2 className="mt-1 text-xl font-black text-edujay-ink">{todayLabel}</h2>
               <p className="mt-1 max-w-2xl text-sm font-medium text-gray-500">
                 {accountabilityAttentionCount > 0
                   ? `${accountabilityAttentionCount} thing${accountabilityAttentionCount === 1 ? "" : "s"} need action.`
@@ -415,7 +415,7 @@ const TeacherPage = async () => {
 
             <Link
               href={firstActionHref}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-black text-white transition hover:bg-slate-700 lg:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-edujay-ink px-4 py-3 text-sm font-black text-white transition hover:bg-edujay-primaryDark lg:w-auto"
             >
               {accountabilityAttentionCount > 0 ? <AlertTriangle size={16} /> : <CheckCircle2 size={16} />}
               {accountabilityAttentionCount > 0 ? "Start today's work" : "View today's plan"}
@@ -425,7 +425,7 @@ const TeacherPage = async () => {
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {todaySummaryStats.map((stat) => (
               <div key={stat.label} className="rounded-2xl bg-gray-50 px-3 py-3">
-                <p className="text-2xl font-black text-gray-900">{stat.value}</p>
+                <p className="text-2xl font-black text-edujay-ink">{stat.value}</p>
                 <p className="mt-1 text-[11px] font-black uppercase text-gray-400">{stat.label}</p>
               </div>
             ))}
@@ -434,8 +434,8 @@ const TeacherPage = async () => {
           {activeTodayDuties.length > 0 ? (
             <div className="mt-4 grid gap-2">
               {activeTodayDuties.slice(0, 4).map((duty) => (
-                <div key={duty.id} className="rounded-2xl border border-gray-100 bg-gray-50/80 p-3">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div key={duty.id} className="rounded-2xl border border-gray-100 bg-gray-50/80 p-3 sm:p-4">
+                  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="rounded-lg bg-white px-2 py-0.5 text-[10px] font-black uppercase text-gray-500">
@@ -445,7 +445,7 @@ const TeacherPage = async () => {
                           {duty.status.replaceAll("_", " ")}
                         </span>
                       </div>
-                      <p className="mt-2 truncate text-sm font-black text-gray-900">{duty.title}</p>
+                      <p className="mt-2 text-sm font-black leading-snug text-edujay-ink">{duty.title}</p>
                       <p className="mt-0.5 text-xs font-semibold text-gray-500">
                         {duty.className ?? "Class"} · {duty.subjectName ?? "Subject"} · Due {formatTime(duty.expectedAt)}
                       </p>
@@ -457,7 +457,7 @@ const TeacherPage = async () => {
                     </div>
                     <Link
                       href={needsManagementReview(duty) ? obligationReviewHref(duty.id) : duty.actionHref}
-                      className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-black text-slate-900 ring-1 ring-gray-200 transition hover:bg-slate-900 hover:text-white sm:w-auto"
+                      className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-3 py-3 text-xs font-black text-edujay-ink ring-1 ring-edujay-border transition hover:bg-edujay-ink hover:text-white md:w-auto"
                     >
                       {needsManagementReview(duty) ? "Review escalation" : dutyActionLabel(duty)}
                     </Link>
@@ -471,14 +471,14 @@ const TeacherPage = async () => {
         <section className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
           <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-lg font-black text-gray-800">Today&apos;s Lessons</h1>
+              <h1 className="text-lg font-black text-edujay-ink">Today&apos;s Lessons</h1>
               <p className="text-sm font-medium text-gray-400">
                 Your timetable for today, with attendance and CA actions beside each lesson.
               </p>
             </div>
             <Link
               href="/list/assignments"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-black text-white transition hover:bg-slate-700 sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-edujay-ink px-4 py-2.5 text-xs font-black text-white transition hover:bg-edujay-primaryDark sm:w-auto"
             >
               <NotebookPen size={14} />
               Homework
@@ -510,8 +510,8 @@ const TeacherPage = async () => {
                     <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
-                          <h2 className="truncate text-sm font-black text-gray-800">{lesson.subject.name}</h2>
-                          <span className="rounded-lg bg-white px-2 py-0.5 text-[11px] font-black text-indigo-600">
+                          <h2 className="truncate text-sm font-black text-edujay-ink">{lesson.subject.name}</h2>
+                          <span className="rounded-lg bg-white px-2 py-0.5 text-[11px] font-black text-edujay-primary">
                             {lesson.class.name}
                           </span>
                         </div>
@@ -531,20 +531,18 @@ const TeacherPage = async () => {
                           <CalendarCheck2 size={14} className="mr-1.5" />
                           {displayAttendanceState}
                         </span>
-                        <Link
-                          href={attendanceDuty && attendanceEscalated ? obligationReviewHref(attendanceDuty.id) : `/list/attendance/take?lessonId=${lesson.id}`}
-                          className={`inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-black text-white transition ${
-                            attendanceEscalated
-                              ? "bg-rose-600 hover:bg-rose-700"
-                              : "bg-emerald-600 hover:bg-emerald-700"
-                          }`}
-                        >
-                          <ClipboardCheck size={14} />
-                          {attendanceEscalated ? "Review escalation" : "Attendance"}
-                        </Link>
+                        {!attendanceEscalated ? (
+                          <Link
+                            href={`/list/attendance/take?lessonId=${lesson.id}`}
+                            className="inline-flex items-center justify-center gap-2 rounded-xl bg-edujay-primary px-3 py-2 text-xs font-black text-white transition hover:bg-edujay-primaryDark"
+                          >
+                            <ClipboardCheck size={14} />
+                            Attendance
+                          </Link>
+                        ) : null}
                         <Link
                           href={`/list/ca?classId=${lesson.class.id}&view=activity`}
-                          className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-3 py-2 text-xs font-black text-white transition hover:bg-indigo-700"
+                          className="inline-flex items-center justify-center gap-2 rounded-xl bg-edujay-ink px-3 py-2 text-xs font-black text-white transition hover:bg-edujay-primaryDark"
                         >
                           <Layers3 size={14} />
                           CA
@@ -572,10 +570,10 @@ const TeacherPage = async () => {
           <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-sm font-black text-gray-800">Syllabus Pace</h2>
+                <h2 className="text-sm font-black text-edujay-ink">Syllabus Pace</h2>
                 <p className="text-xs font-semibold text-gray-400">Simple teaching guide progress.</p>
               </div>
-              <BookOpenCheck size={18} className="text-emerald-500" />
+              <BookOpenCheck size={18} className="text-edujay-primary" />
             </div>
             {syllabusInsights.length === 0 ? (
               <p className="rounded-xl bg-gray-50 px-3 py-4 text-sm font-bold text-gray-400">
@@ -587,7 +585,7 @@ const TeacherPage = async () => {
                   <Link
                     key={`${item.syllabusId}-${item.className}`}
                     href={`/list/syllabus/${item.syllabusId}`}
-                    className="block rounded-xl border border-gray-100 px-3 py-2 transition hover:border-emerald-200 hover:bg-emerald-50"
+                    className="block rounded-xl border border-gray-100 px-3 py-2 transition hover:border-edujay-ring hover:bg-edujay-soft"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
@@ -603,13 +601,13 @@ const TeacherPage = async () => {
                           ? "bg-amber-50 text-amber-700"
                           : item.status === "Completed"
                             ? "bg-emerald-50 text-emerald-700"
-                            : "bg-sky-50 text-sky-700"
+                            : "bg-edujay-soft text-edujay-primary"
                       }`}>
                         {item.status}
                       </span>
                     </div>
                     <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-gray-100">
-                      <div className="h-full rounded-full bg-emerald-500" style={{ width: `${item.progressPct}%` }} />
+                      <div className="h-full rounded-full bg-edujay-primary" style={{ width: `${item.progressPct}%` }} />
                     </div>
                     {(item.overdueCount > 0 || item.dueNowCount > 0) && (
                       <p className="mt-1.5 text-[10px] font-bold text-gray-400">
@@ -625,10 +623,10 @@ const TeacherPage = async () => {
           <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-sm font-black text-gray-800">CA Scores Waiting</h2>
+                <h2 className="text-sm font-black text-edujay-ink">CA Scores Waiting</h2>
                 <p className="text-xs font-semibold text-gray-400">Activities created but not fully marked.</p>
               </div>
-              <FilePenLine size={18} className="text-indigo-500" />
+              <FilePenLine size={18} className="text-edujay-primary" />
             </div>
             {pendingCATasks.length === 0 ? (
               <p className="rounded-xl bg-gray-50 px-3 py-4 text-sm font-bold text-gray-400">No CA score task is waiting.</p>
@@ -638,7 +636,7 @@ const TeacherPage = async () => {
                   <Link
                     key={activity.id}
                     href={`/list/ca?classId=${activity.classId}&view=activity`}
-                    className="block rounded-xl border border-gray-100 px-3 py-2 transition hover:border-indigo-200 hover:bg-indigo-50"
+                    className="block rounded-xl border border-gray-100 px-3 py-2 transition hover:border-edujay-ring hover:bg-edujay-soft"
                   >
                     <p className="text-sm font-black text-gray-800">{activity.subject.name}: {activity.title}</p>
                     <p className="mt-0.5 text-xs font-semibold text-gray-400">
@@ -681,13 +679,13 @@ const TeacherPage = async () => {
 
         <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
           <div className="mb-2 flex items-center gap-2">
-            <Users size={16} className="text-emerald-500" />
+            <Users size={16} className="text-edujay-primary" />
             <p className="text-sm font-black text-gray-800">Teaching Classes</p>
           </div>
           <div className="flex flex-wrap gap-1.5">
               {taughtClasses.length > 0
                 ? taughtClasses.map((name) => (
-                    <span key={name} className="text-[11px] font-bold px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-lg">
+                    <span key={name} className="text-[11px] font-bold px-2 py-0.5 bg-edujay-soft text-edujay-primary rounded-lg">
                       {name}
                     </span>
                   ))
@@ -711,7 +709,7 @@ const TeacherPage = async () => {
                 <div
                   key={day}
                   className={`rounded-2xl border p-3 ${
-                    day === todayDay ? "border-indigo-200 bg-indigo-50/60" : "border-gray-100 bg-gray-50/70"
+                    day === todayDay ? "border-edujay-ring bg-edujay-soft" : "border-gray-100 bg-gray-50/70"
                   }`}
                 >
                   <div className="mb-2 flex items-center justify-between">
@@ -752,13 +750,13 @@ const TeacherPage = async () => {
               <h2 className="text-sm font-black text-gray-800">Quick Actions</h2>
               <p className="text-xs font-semibold text-gray-400">Common teacher tasks.</p>
             </div>
-            <GraduationCap size={18} className="text-indigo-500" />
+            <GraduationCap size={18} className="text-edujay-primary" />
           </div>
           <div className="grid gap-2">
-            <Link href="/list/attendance/take" className="flex items-center gap-2 rounded-xl bg-emerald-50 px-3 py-2.5 text-xs font-black text-emerald-700 transition hover:bg-emerald-100">
+            <Link href="/list/attendance/take" className="flex items-center gap-2 rounded-xl bg-edujay-soft px-3 py-2.5 text-xs font-black text-edujay-primary transition hover:bg-blue-100">
               <CalendarCheck2 size={14} /> Take Attendance
             </Link>
-            <Link href="/list/ca?view=activity" className="flex items-center gap-2 rounded-xl bg-indigo-50 px-3 py-2.5 text-xs font-black text-indigo-700 transition hover:bg-indigo-100">
+            <Link href="/list/ca?view=activity" className="flex items-center gap-2 rounded-xl bg-edujay-soft px-3 py-2.5 text-xs font-black text-edujay-primary transition hover:bg-blue-100">
               <Layers3 size={14} /> Add CA Activity
             </Link>
             <Link href="/list/assignments" className="flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2.5 text-xs font-black text-amber-700 transition hover:bg-amber-100">

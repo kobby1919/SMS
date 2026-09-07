@@ -619,7 +619,7 @@ export async function getTeacherSelfAccountabilityOverview({
     reliabilityScore: 0,
   };
 
-  let weeklyTotal = 0;
+  let reliabilityTotal = 0;
   let weeklyEarned = 0;
   const weeklyRows = weeklyDuties.map((obligation) =>
     toDutyRow(obligation, now, responseByObligationId.get(obligation.id)),
@@ -627,18 +627,23 @@ export async function getTeacherSelfAccountabilityOverview({
 
   for (const row of weeklyRows) {
     const status = row.status;
-    weeklyTotal += 1;
+    const shouldAffectReliability =
+      row.expectedAt.getTime() <= now.getTime() ||
+      ["COMPLETED", "COMPLETED_LATE", "MISSED", "ESCALATED", "CANCELLED"].includes(status);
+
+    if (shouldAffectReliability && status !== "CANCELLED") {
+      reliabilityTotal += 1;
+    }
     if (status === "PENDING") {
       totals.pending += 1;
-      weeklyEarned += 0.4;
     }
     if (status === "COMPLETED") {
       totals.completed += 1;
-      weeklyEarned += 1;
+      if (shouldAffectReliability) weeklyEarned += 1;
     }
     if (status === "COMPLETED_LATE") {
       totals.completedLate += 1;
-      weeklyEarned += 0.7;
+      if (shouldAffectReliability) weeklyEarned += 0.7;
     }
     if (status === "MISSED") totals.missed += 1;
     if (status === "ESCALATED") totals.escalated += 1;
@@ -647,7 +652,7 @@ export async function getTeacherSelfAccountabilityOverview({
     }
   }
   totals.reliabilityScore =
-    weeklyTotal > 0 ? Math.round((weeklyEarned / weeklyTotal) * 100) : 100;
+    reliabilityTotal > 0 ? Math.round((weeklyEarned / reliabilityTotal) * 100) : 100;
 
   const weeklyIssueRows = weeklyRows
     .filter((row) => isAccountabilityIssue(row.status))

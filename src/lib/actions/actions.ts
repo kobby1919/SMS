@@ -489,8 +489,8 @@ export async function createAssignment(data: AssignmentFormData): Promise<void> 
   await prisma.announcement.create({
     data: {
       schoolId:    ctx.schoolId,
-      title:       `📚 New Assignment: ${assignment.lesson.subject.name}`,
-      description: `${parsed.title} has been assigned to ${assignment.lesson.class.name} by ${assignment.lesson.teacher.name} ${assignment.lesson.teacher.surname}. Due: ${dueFmt}.`,
+      title:       `New Homework: ${assignment.lesson.subject.name}`,
+      description: `Homework has been assigned to ${assignment.lesson.class.name} by ${assignment.lesson.teacher.name} ${assignment.lesson.teacher.surname}. Due: ${dueFmt}.`,
       date:        new Date(),
       classId:     assignment.lesson.class.id,
     },
@@ -500,8 +500,8 @@ export async function createAssignment(data: AssignmentFormData): Promise<void> 
     schoolId: ctx.schoolId,
     classId: assignment.lesson.class.id,
     type: "ASSIGNMENT",
-    title: `${assignment.lesson.subject.name} assignment published`,
-    body: `${parsed.title} is due on ${dueFmt}. Teacher: ${assignment.lesson.teacher.name} ${assignment.lesson.teacher.surname}.`,
+    title: `${assignment.lesson.subject.name} homework published`,
+    body: `Homework is due on ${dueFmt}. Teacher: ${assignment.lesson.teacher.name} ${assignment.lesson.teacher.surname}.`,
     href: "/list/assignments",
     sourceModel: "Assignment",
     sourceId: String(assignment.id),
@@ -575,8 +575,8 @@ export async function updateAssignment(data: AssignmentFormData): Promise<void> 
 
   const announcementData = {
     schoolId:    ctx.schoolId,
-    title:       `📚 Assignment Updated: ${assignment.lesson.subject.name}`,
-    description: `${data.title} for ${assignment.lesson.class.name} has been updated. New due date: ${dueFmt}.`,
+    title:       `Homework Updated: ${assignment.lesson.subject.name}`,
+    description: `Homework for ${assignment.lesson.class.name} has been updated. New due date: ${dueFmt}.`,
     date:        new Date(),
     classId:     assignment.lesson.class.id,
   };
@@ -598,8 +598,8 @@ export async function updateAssignment(data: AssignmentFormData): Promise<void> 
     schoolId: ctx.schoolId,
     classId: assignment.lesson.class.id,
     type: "ASSIGNMENT",
-    title: `${assignment.lesson.subject.name} assignment updated`,
-    body: `${parsed.title} has been updated. New due date: ${dueFmt}.`,
+    title: `${assignment.lesson.subject.name} homework updated`,
+    body: `Homework has been updated. New due date: ${dueFmt}.`,
     href: "/list/assignments",
     sourceModel: "Assignment",
     sourceId: String(assignment.id),
@@ -665,6 +665,14 @@ function requireHomeworkTeacherAccess(
   }
 }
 
+function assertHomeworkCanBeChecked(dueDate: Date) {
+  const dueEnd = new Date(dueDate);
+  dueEnd.setHours(23, 59, 59, 999);
+  if (dueEnd >= new Date()) {
+    throw new Error("Homework is still open. Check submissions after the due date.");
+  }
+}
+
 export async function updateHomeworkSubmission(data: HomeworkSubmissionFormData): Promise<HomeworkSubmissionActionResult> {
   const parsed = parseActionInput(homeworkSubmissionSchema, data);
   const ctx = await requireAdminOrTeacher();
@@ -672,6 +680,7 @@ export async function updateHomeworkSubmission(data: HomeworkSubmissionFormData)
   const assignment = await getAssignmentForHomeworkAccess(parsed.assignmentId, ctx.schoolId);
   const assignmentInSchool = requireResourceAccess(assignment, ctx);
   requireHomeworkTeacherAccess(assignmentInSchool, ctx);
+  assertHomeworkCanBeChecked(assignmentInSchool.dueDate);
 
   const result = await markHomeworkSubmission({
     schoolId: ctx.schoolId,
@@ -746,6 +755,7 @@ export async function updateHomeworkSubmissionsBulk(data: HomeworkBulkSubmission
   const assignment = await getAssignmentForHomeworkAccess(parsed.assignmentId, ctx.schoolId);
   const assignmentInSchool = requireResourceAccess(assignment, ctx);
   requireHomeworkTeacherAccess(assignmentInSchool, ctx);
+  assertHomeworkCanBeChecked(assignmentInSchool.dueDate);
 
   const isPastDeadline = (() => {
     const end = new Date(assignmentInSchool.dueDate);

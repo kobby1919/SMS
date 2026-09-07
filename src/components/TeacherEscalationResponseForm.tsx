@@ -45,14 +45,14 @@ export default function TeacherEscalationResponseForm({
   const copy = statusCopy(existingStatus);
 
   return (
-    <div className="mt-4 rounded-lg border border-sky-200 bg-white p-4 shadow-sm">
+    <div className="mt-4 rounded-xl border border-edujay-ring bg-white p-4 shadow-sm">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-1">
-          <h3 className="text-sm font-black text-slate-950">
+          <h3 className="text-sm font-black text-edujay-ink">
             Respond to management
           </h3>
           <p className="text-xs font-semibold leading-relaxed text-slate-500">
-            Send a short explanation or ask for permission to correct this duty.
+            Tell management what happened and what action you need next.
           </p>
         </div>
         <Link
@@ -89,19 +89,22 @@ export default function TeacherEscalationResponseForm({
               Response type
               <select
                 name="responseType"
-                className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold normal-case tracking-normal text-slate-900 outline-none focus:border-sky-400"
+                className="h-10 rounded-lg border border-edujay-border bg-white px-3 text-sm font-semibold normal-case tracking-normal text-edujay-ink outline-none focus:border-edujay-primary"
                 defaultValue="EXPLANATION"
               >
                 <option value="EXPLANATION">Explanation only</option>
                 <option value="CORRECTION_REQUEST">Request correction</option>
               </select>
+              <span className="normal-case tracking-normal text-[11px] font-semibold text-slate-400">
+                Use explanation when you only need to account for the issue; use correction when the record must be reopened.
+              </span>
             </label>
 
             <label className="grid gap-1 text-xs font-black uppercase tracking-wide text-slate-500">
               Requested action
               <select
                 name="requestedAction"
-                className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold normal-case tracking-normal text-slate-900 outline-none focus:border-sky-400"
+                className="h-10 rounded-lg border border-edujay-border bg-white px-3 text-sm font-semibold normal-case tracking-normal text-edujay-ink outline-none focus:border-edujay-primary"
                 defaultValue="ADMIN_REVIEW"
               >
                 <option value="ADMIN_REVIEW">Management review</option>
@@ -109,6 +112,9 @@ export default function TeacherEscalationResponseForm({
                 <option value="MARK_AS_RESOLVED">Mark as resolved</option>
                 <option value="OTHER">Other</option>
               </select>
+              <span className="normal-case tracking-normal text-[11px] font-semibold text-slate-400">
+                Choose what you expect the headmaster or owner to do after reading your response.
+              </span>
             </label>
           </div>
 
@@ -117,7 +123,7 @@ export default function TeacherEscalationResponseForm({
             <textarea
               name="reason"
               rows={4}
-              className="resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold normal-case leading-relaxed tracking-normal text-slate-900 outline-none focus:border-sky-400"
+              className="resize-none rounded-lg border border-edujay-border bg-white px-3 py-2 text-sm font-semibold normal-case leading-relaxed tracking-normal text-edujay-ink outline-none focus:border-edujay-primary"
               placeholder="Example: I was unable to mark attendance because the timetable was changed after the lesson started."
               defaultValue={existingStatus === "NEEDS_MORE_INFO" ? existingReason ?? "" : ""}
               required
@@ -129,9 +135,12 @@ export default function TeacherEscalationResponseForm({
             <input
               name="evidenceUrl"
               type="url"
-              className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold normal-case tracking-normal text-slate-900 outline-none focus:border-sky-400"
+              className="h-10 rounded-lg border border-edujay-border bg-white px-3 text-sm font-semibold normal-case tracking-normal text-edujay-ink outline-none focus:border-edujay-primary"
               placeholder="Optional link to proof or document"
             />
+            <span className="normal-case tracking-normal text-[11px] font-semibold text-slate-400">
+              Optional. Add only when there is a photo, document, or shared file that supports your explanation.
+            </span>
           </label>
 
           {state.message ? (
@@ -149,7 +158,7 @@ export default function TeacherEscalationResponseForm({
           <button
             type="submit"
             disabled={pending}
-            className="inline-flex w-fit items-center gap-2 rounded-lg bg-slate-950 px-4 py-2 text-xs font-black text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex w-fit items-center gap-2 rounded-lg bg-edujay-ink px-4 py-2 text-xs font-black text-white transition hover:bg-edujay-primaryDark disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Send size={14} />
             {pending ? "Sending..." : "Send to management"}

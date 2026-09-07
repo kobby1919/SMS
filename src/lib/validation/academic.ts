@@ -43,7 +43,9 @@ export const examFormSchema = z.object({
 
 export const assignmentFormSchema = z.object({
   id: positiveIntSchema.optional(),
-  title: nonEmptyStringSchema,
+  title: z.literal("Homework", {
+    error: "Assignments in this workflow must be saved as Homework.",
+  }),
   lessonId: positiveIntSchema,
   startDate: isoDateStringSchema,
   dueDate: isoDateStringSchema,

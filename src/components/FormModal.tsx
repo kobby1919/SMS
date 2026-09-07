@@ -5,6 +5,7 @@
 import { X, AlertTriangle, Trash2, Edit, Plus, Loader2 } from "lucide-react";
 import { useState, useTransition } from "react";
 import dynamic from "next/dynamic";
+import { createPortal } from "react-dom";
 import {
   deleteLesson,
   deleteClass,
@@ -116,7 +117,7 @@ const modalWidths: Partial<Record<string, string>> = {
   lesson: "max-w-[95%] md:max-w-[680px]",
   exam: "max-w-[95%] md:max-w-[640px]",
   result: "max-w-[95%] md:max-w-[660px]",
-  assignment: "max-w-[95%] md:max-w-[640px]",
+  assignment: "max-w-[96vw] md:max-w-[760px]",
   announcement: "max-w-[95%] md:max-w-[680px]",
 };
 
@@ -155,9 +156,11 @@ const FormModal = ({ table, type, data, id }: Props) => {
 
   const buttonStyles = {
     create:
-      "bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm shadow-indigo-100 transition-all active:scale-95",
+      "bg-edujay-primary text-white hover:bg-edujay-primaryDark px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm shadow-blue-100 transition-all active:scale-95",
     update:
-      "w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors active:scale-90",
+      table === "assignment"
+        ? "inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-edujay-soft px-3 py-2 text-xs font-black text-edujay-primary ring-1 ring-edujay-ring transition hover:bg-blue-100 active:scale-95"
+        : "w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors active:scale-90",
     delete:
       "w-8 h-8 flex items-center justify-center rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 transition-colors active:scale-90",
   };
@@ -261,26 +264,32 @@ const FormModal = ({ table, type, data, id }: Props) => {
             </span>
           </>
         )}
-        {type === "update" && <Edit size={16} />}
+        {type === "update" && (
+          <>
+            <Edit size={16} />
+            {table === "assignment" && <span>Edit</span>}
+          </>
+        )}
         {type === "delete" && <Trash2 size={16} />}
       </button>
 
-      {open && (
-        <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+      {open && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[9999] flex items-start justify-center overflow-y-auto p-3 py-6 sm:items-center sm:p-4">
           <div
-            className={`bg-white rounded-3xl relative w-full ${modalWidth} shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300`}
+            className={`relative w-full ${modalWidth} overflow-hidden rounded-2xl bg-white shadow-2xl animate-in fade-in zoom-in duration-300`}
           >
             <button
-              className="absolute top-5 right-5 text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-100 rounded-lg z-10 transition-colors"
+              className="absolute right-3 top-3 z-10 rounded-lg bg-white/90 p-2 text-gray-400 shadow-sm ring-1 ring-gray-100 transition-colors hover:bg-gray-100 hover:text-gray-600 sm:right-5 sm:top-5"
               onClick={close}
             >
               <X size={20} />
             </button>
-            <div className="p-8 max-h-[90vh] overflow-y-auto">
+            <div className="max-h-[calc(100dvh-3rem)] overflow-y-auto p-4 pt-12 sm:p-8 sm:pt-8">
               {Form()}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );

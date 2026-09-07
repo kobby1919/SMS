@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   BellRing,
@@ -154,6 +155,8 @@ function SearchBox({
   onNavigate?: () => void;
 }) {
   const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
   const matches = useMemo(() => {
     const value = query.trim().toLowerCase();
     if (!value) return items.slice(0, mobile ? 8 : 5);
@@ -162,24 +165,47 @@ function SearchBox({
       .slice(0, mobile ? 10 : 6);
   }, [items, mobile, query]);
 
+  useEffect(() => {
+    if (mobile) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [mobile]);
+
+  const handleNavigate = () => {
+    setQuery("");
+    setOpen(false);
+    onNavigate?.();
+  };
+
   return (
-    <div className="relative w-full">
+    <div ref={rootRef} className="relative w-full">
       <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-2 text-sm transition focus-within:border-blue-200 focus-within:bg-white focus-within:ring-4 focus-within:ring-blue-50">
         <Search size={16} className="shrink-0 text-gray-400" />
         <input
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onFocus={() => setOpen(true)}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setOpen(true);
+          }}
           placeholder="Search Edujay..."
           className="w-full min-w-0 bg-transparent text-sm font-semibold text-gray-700 outline-none placeholder:text-gray-400"
         />
       </div>
-      {(query || mobile) && (
+      {(mobile || open) && (
         <div className={`${mobile ? "mt-3" : "absolute left-0 top-12 z-30"} w-full overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl`}>
           {matches.length > 0 ? matches.map((item) => (
             <Link
               key={`${item.href}-${item.label}`}
               href={item.href}
-              onClick={onNavigate}
+              onClick={handleNavigate}
               className="flex items-center gap-3 border-b border-gray-50 px-3 py-3 last:border-0 hover:bg-blue-50"
             >
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gray-50 text-gray-500">
@@ -331,6 +357,9 @@ function TeacherBell({ alerts }: { alerts: TeacherAlert[] }) {
 
   useEffect(() => {
     if (alerts.length === 0) return;
+    const storageKey = "edujay-teacher-alerts-opened";
+    if (window.sessionStorage.getItem(storageKey) === "true") return;
+    window.sessionStorage.setItem(storageKey, "true");
     const timer = window.setTimeout(() => setOpen(true), 0);
     return () => window.clearTimeout(timer);
   }, [alerts.length]);
@@ -340,12 +369,12 @@ function TeacherBell({ alerts }: { alerts: TeacherAlert[] }) {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="relative flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white text-gray-600 shadow-sm transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700"
+        className="relative flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white text-gray-600 shadow-sm transition hover:border-edujay-ring hover:bg-edujay-soft hover:text-edujay-primary"
         aria-label="Open teacher alerts"
       >
         <BellRing size={18} />
         {alerts.length > 0 && (
-          <span className={`absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-black text-white ${urgentCount > 0 ? "bg-rose-600" : "bg-indigo-600"}`}>
+          <span className={`absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-black text-white ${urgentCount > 0 ? "bg-rose-600" : "bg-edujay-primary"}`}>
             {alerts.length}
           </span>
         )}
@@ -365,10 +394,10 @@ function TeacherBell({ alerts }: { alerts: TeacherAlert[] }) {
                 key={alert.id}
                 href={alert.href}
                 onClick={() => setOpen(false)}
-                className="block border-b border-gray-50 px-4 py-3 last:border-0 hover:bg-indigo-50"
+                className="block border-b border-gray-50 px-4 py-3 last:border-0 hover:bg-edujay-soft"
               >
                 <div className="flex items-start gap-3">
-                  <span className={`mt-1 h-2 w-2 shrink-0 rounded-full ${["HIGH", "CRITICAL"].includes(alert.priority) ? "bg-rose-600" : "bg-indigo-600"}`} />
+                  <span className={`mt-1 h-2 w-2 shrink-0 rounded-full ${["HIGH", "CRITICAL"].includes(alert.priority) ? "bg-rose-600" : "bg-edujay-primary"}`} />
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm font-black text-gray-900">{alert.title}</span>
                     <span className="mt-1 whitespace-pre-line text-xs font-semibold text-gray-500">
@@ -391,7 +420,7 @@ function TeacherBell({ alerts }: { alerts: TeacherAlert[] }) {
           <Link
             href="/teacher/accountability"
             onClick={() => setOpen(false)}
-            className="block border-t border-gray-100 bg-gray-50 px-4 py-3 text-center text-xs font-black text-indigo-700"
+            className="block border-t border-gray-100 bg-gray-50 px-4 py-3 text-center text-xs font-black text-edujay-primary"
           >
             Open accountability
           </Link>
@@ -403,6 +432,7 @@ function TeacherBell({ alerts }: { alerts: TeacherAlert[] }) {
 
 const NavbarClient = ({ user, parentContext, teacherContext }: NavbarClientProps) => {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const pathname = usePathname();
   const isParent = user.role === "parent";
   const isTeacher = user.role === "teacher";
   const children = parentContext?.children ?? [];
@@ -438,7 +468,7 @@ const NavbarClient = ({ user, parentContext, teacherContext }: NavbarClientProps
         </div>
 
         <div className="hidden min-w-[16rem] max-w-md flex-1 md:block">
-          <SearchBox items={searchItems} />
+          <SearchBox key={`desktop-${pathname}`} items={searchItems} />
         </div>
 
         <div className="flex shrink-0 items-center justify-end gap-2">
@@ -503,7 +533,7 @@ const NavbarClient = ({ user, parentContext, teacherContext }: NavbarClientProps
               <X size={18} />
             </button>
           </div>
-          <SearchBox items={searchItems} mobile onNavigate={() => setMobileSearchOpen(false)} />
+          <SearchBox key={`mobile-${pathname}`} items={searchItems} mobile onNavigate={() => setMobileSearchOpen(false)} />
         </div>
       )}
     </motion.header>

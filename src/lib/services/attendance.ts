@@ -313,7 +313,24 @@ export async function saveAttendance({
 
         if (!existing) {
           return [
-            prisma.attendance.create({ data: nextData }),
+            prisma.attendance.upsert({
+              where: {
+                schoolId_studentId_lessonId_date: {
+                  schoolId,
+                  studentId: record.studentId,
+                  lessonId,
+                  date: attendanceDate,
+                },
+              },
+              create: nextData,
+              update: {
+                status: record.status,
+                present: record.status === "PRESENT",
+                note: record.note,
+                arrivalTime: record.arrivalTime,
+                followUpStatus: record.followUpStatus,
+              },
+            }),
           ];
         }
 

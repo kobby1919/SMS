@@ -13,7 +13,9 @@ import {
 import { createAssignment, updateAssignment } from "@/src/lib/actions/actions";
 
 const schema = z.object({
-  title:     z.string().min(1, "Title is required"),
+  title:     z.literal("Homework", {
+    error: "This workflow is strictly for homework.",
+  }),
   lessonId:  z.string().min(1, "Subject & class is required"),
   startDate: z.string().min(1, "Start date is required"),
   dueDate:   z.string().min(1, "Due date is required"),
@@ -82,7 +84,7 @@ const AssignmentForm = ({
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
     defaultValues: {
-      title:     data?.title     ?? "",
+      title:     "Homework",
       lessonId:  extractLessonId(data),
       startDate: toDateInput(data?.startDate),
       dueDate:   toDateInput(data?.dueDate),
@@ -160,7 +162,7 @@ const AssignmentForm = ({
     try {
       const payload = {
         ...(type === "update" && data?.id ? { id: data.id } : {}),
-        title:     formData.title,
+        title:     "Homework",
         lessonId:  parseInt(formData.lessonId),
         startDate: new Date(formData.startDate).toISOString(),
         dueDate:   new Date(formData.dueDate).toISOString(),
@@ -190,10 +192,10 @@ const AssignmentForm = ({
 
       <div>
         <h1 className="text-2xl font-black text-gray-800 tracking-tight">
-          {type === "create" ? "Give New Assignment" : "Update Assignment"}
+          {type === "create" ? "Give Homework" : "Update Homework"}
         </h1>
         <p className="text-sm text-gray-400 mt-1">
-          Pick the subject and class, set the title and due date.
+          Pick the subject and class, then set when this homework should be checked.
         </p>
       </div>
 
@@ -207,21 +209,24 @@ const AssignmentForm = ({
         <div className="flex items-center gap-2.5 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl">
           <CheckCircle2 size={15} className="text-emerald-500" />
           <p className="text-xs font-semibold text-emerald-700">
-            Assignment {type === "create" ? "created" : "updated"} successfully!
+            Homework {type === "create" ? "created" : "updated"} successfully!
           </p>
         </div>
       )}
 
-      {/* Title */}
       <div className="flex flex-col gap-1.5">
         <label className="text-xs text-gray-500 font-semibold uppercase tracking-wider flex items-center gap-1.5">
-          <FileText size={12} /> Assignment Title
+          <FileText size={12} /> Work Type
         </label>
         <input
           {...register("title")}
-          placeholder="e.g. Chapter 5 Exercise, Essay on Independence"
-          className="ring-[1.5px] ring-gray-200 p-2.5 rounded-xl text-sm focus:ring-indigo-500 outline-none transition-all"
+          value="Homework"
+          readOnly
+          className="ring-[1.5px] ring-gray-200 bg-gray-50 p-2.5 rounded-xl text-sm font-black text-gray-700 outline-none transition-all"
         />
+        <p className="text-[11px] font-semibold text-gray-400">
+          Class exercises and tests belong in CA, so this form only creates homework.
+        </p>
         {errors.title && (
           <p className="text-[10px] text-red-500 font-medium">{errors.title.message}</p>
         )}
@@ -361,7 +366,7 @@ const AssignmentForm = ({
         className="bg-indigo-600 text-white py-3 rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2 active:scale-[0.98]"
       >
         {submitting && <Loader2 size={16} className="animate-spin" />}
-        {submitting ? "Saving…" : type === "create" ? "Create Assignment" : "Update Assignment"}
+        {submitting ? "Saving…" : type === "create" ? "Create Homework" : "Update Homework"}
       </button>
     </form>
   );

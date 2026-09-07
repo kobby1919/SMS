@@ -37,7 +37,13 @@ const TableSearch = () => {
       onSubmit={handleSearch}
       className="flex items-center gap-2 bg-gray-100 rounded-xl px-3.5 py-2.5 w-full sm:w-64 transition-all focus-within:ring-2 focus-within:ring-indigo-300 focus-within:bg-white"
     >
-      <Search size={14} className="text-gray-400 shrink-0" />
+      <button
+        type="submit"
+        className="text-gray-400 transition hover:text-indigo-600"
+        aria-label="Run search"
+      >
+        <Search size={14} className="shrink-0" />
+      </button>
       <input
         type="text"
         value={value}

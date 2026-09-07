@@ -61,8 +61,11 @@ const SyllabusListPage = async ({
   if (filterGrade)               where.gradeId   = filterGrade;
   if (filterTerm)                where.term      = filterTerm as Term;
   if (filterYear)                where.academicYear = filterYear;
-  if (filterStatus)              where.status    = filterStatus as SyllabusStatus;
-  if (role === "teacher" && !filterStatus) where.status = "PUBLISHED";
+  if (role === "teacher") {
+    where.status = "PUBLISHED";
+  } else if (filterStatus) {
+    where.status = filterStatus as SyllabusStatus;
+  }
   if (teacherSyllabusPairs) {
     if (teacherSyllabusPairs.length === 0) {
       where.id = { in: [] };
@@ -158,11 +161,13 @@ const SyllabusListPage = async ({
             <option value="">All Years</option>
             {years.map((y) => <option key={y} value={y}>{y}</option>)}
           </select>
-          <select name="status" defaultValue={filterStatus ?? ""} className="appearance-none ring-[1.5px] ring-gray-200 px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 outline-none bg-white">
-            <option value="">All Status</option>
-            <option value="DRAFT">Draft</option>
-            <option value="PUBLISHED">Published</option>
-          </select>
+          {role === "admin" && (
+            <select name="status" defaultValue={filterStatus ?? ""} className="appearance-none ring-[1.5px] ring-gray-200 px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 outline-none bg-white">
+              <option value="">All Status</option>
+              <option value="DRAFT">Draft</option>
+              <option value="PUBLISHED">Published</option>
+            </select>
+          )}
           <button type="submit" className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-violet-700">
             Apply
           </button>

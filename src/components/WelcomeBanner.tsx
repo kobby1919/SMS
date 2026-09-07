@@ -17,42 +17,42 @@ const ROLE_CONFIG = {
   admin: {
     greeting:  "Welcome back",
     roleLabel: "Administrator",
-    accent:    "bg-indigo-600",
-    ring:      "ring-indigo-100",
-    initials:  "bg-indigo-50 text-indigo-700",
-    tagBg:     "bg-indigo-50 text-indigo-700",
+    accent:    "bg-edujay-primary",
+    ring:      "ring-edujay-ring",
+    initials:  "bg-edujay-soft text-edujay-primary",
+    tagBg:     "bg-edujay-soft text-edujay-primary",
   },
   teacher: {
     greeting:  "Welcome back",
     roleLabel: "Teacher",
-    accent:    "bg-emerald-600",
-    ring:      "ring-emerald-100",
-    initials:  "bg-emerald-50 text-emerald-700",
-    tagBg:     "bg-emerald-50 text-emerald-700",
+    accent:    "bg-edujay-primary",
+    ring:      "ring-edujay-ring",
+    initials:  "bg-edujay-soft text-edujay-primary",
+    tagBg:     "bg-edujay-soft text-edujay-primary",
   },
   student: {
     greeting:  "Welcome",
     roleLabel: "Student",
-    accent:    "bg-amber-500",
-    ring:      "ring-amber-100",
-    initials:  "bg-amber-50 text-amber-700",
-    tagBg:     "bg-amber-50 text-amber-700",
+    accent:    "bg-edujay-primary",
+    ring:      "ring-edujay-ring",
+    initials:  "bg-edujay-soft text-edujay-primary",
+    tagBg:     "bg-edujay-soft text-edujay-primary",
   },
   parent: {
     greeting:  "Welcome",
     roleLabel: "Parent",
-    accent:    "bg-violet-600",
-    ring:      "ring-violet-100",
-    initials:  "bg-violet-50 text-violet-700",
-    tagBg:     "bg-violet-50 text-violet-700",
+    accent:    "bg-edujay-primary",
+    ring:      "ring-edujay-ring",
+    initials:  "bg-edujay-soft text-edujay-primary",
+    tagBg:     "bg-edujay-soft text-edujay-primary",
   },
   bursar: {
     greeting:  "Welcome back",
     roleLabel: "Bursar",
-    accent:    "bg-teal-600",
-    ring:      "ring-teal-100",
-    initials:  "bg-teal-50 text-teal-700",
-    tagBg:     "bg-teal-50 text-teal-700",
+    accent:    "bg-edujay-primary",
+    ring:      "ring-edujay-ring",
+    initials:  "bg-edujay-soft text-edujay-primary",
+    tagBg:     "bg-edujay-soft text-edujay-primary",
   },
 };
 
@@ -74,7 +74,7 @@ const WelcomeBanner = ({ role, name, subtitle, tag }: Props) => {
       initial={{ opacity: 0, y: -12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
-      className="relative overflow-hidden rounded-2xl border border-gray-100 bg-white px-5 py-5 shadow-sm"
+      className="relative overflow-hidden rounded-2xl border border-edujay-border bg-white px-5 py-5 shadow-sm"
     >
       <div className={`absolute inset-y-0 left-0 w-1.5 ${cfg.accent}`} />
 
@@ -88,16 +88,16 @@ const WelcomeBanner = ({ role, name, subtitle, tag }: Props) => {
           </div>
 
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-0.5">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-edujay-muted mb-0.5">
               {date}
             </p>
 
-            <h1 className="font-nunito font-extrabold text-xl sm:text-2xl text-gray-900 leading-tight">
+            <h1 className="font-nunito font-extrabold text-xl sm:text-2xl text-edujay-ink leading-tight">
               {cfg.greeting}, {name}
             </h1>
 
             {subtitle && (
-              <p className="text-sm text-gray-500 mt-0.5 font-medium">
+              <p className="text-sm text-edujay-muted mt-0.5 font-medium">
                 {subtitle}
               </p>
             )}
@@ -110,7 +110,7 @@ const WelcomeBanner = ({ role, name, subtitle, tag }: Props) => {
               {tag}
             </span>
           )}
-          <span className="inline-flex items-center gap-1.5 rounded-xl bg-gray-900 px-3 py-1.5 text-xs font-bold text-white">
+          <span className="inline-flex items-center gap-1.5 rounded-xl bg-edujay-ink px-3 py-1.5 text-xs font-bold text-white">
             <BriefcaseBusiness size={13} />
             {cfg.roleLabel}
           </span>

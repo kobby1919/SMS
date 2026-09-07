@@ -54,6 +54,7 @@ export default function HomeworkSubmissionTracker({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const deadlinePassed = isPastDeadline(dueDate);
+  const canCheckHomework = deadlinePassed;
 
   const counts = useMemo(() => {
     return submissions.reduce(
@@ -66,6 +67,12 @@ export default function HomeworkSubmissionTracker({
   }, [submissions]);
 
   const mark = (studentId: string, nextStatus: HomeworkStatus) => {
+    if (!canCheckHomework) {
+      setError("Homework is still open. Check submissions after the due date so the record stays fair.");
+      setMessage(null);
+      return;
+    }
+
     const currentSubmission = submissions.find((submission) => submission.studentId === studentId);
     if (!currentSubmission || currentSubmission.status === nextStatus) {
       setMessage("No change detected. This record already has that status.");
@@ -135,6 +142,12 @@ export default function HomeworkSubmissionTracker({
   };
 
   const markPending = (nextStatus: HomeworkStatus) => {
+    if (!canCheckHomework) {
+      setError("Homework is still open. Bulk checks are available after the due date.");
+      setMessage(null);
+      return;
+    }
+
     const statusToSave =
       nextStatus === "SUBMITTED" && deadlinePassed
         ? "LATE"
@@ -193,13 +206,18 @@ export default function HomeworkSubmissionTracker({
               Deadline passed. New submissions are saved as late.
             </p>
           )}
+          {!deadlinePassed && (
+            <p className="mt-1 text-[11px] font-semibold text-indigo-600">
+              Homework is still open. Submission checks unlock after the due date.
+            </p>
+          )}
         </div>
         <div className="grid grid-cols-1 gap-1 sm:flex sm:flex-wrap">
           <button
             type="button"
-            disabled={isPending || counts.PENDING === 0 || deadlinePassed}
+            disabled={isPending || counts.PENDING === 0 || !canCheckHomework}
             onClick={() => markPending("SUBMITTED")}
-            className="rounded-lg bg-emerald-600 px-2.5 py-1.5 text-[11px] font-black text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-black text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {bulkStatus === "SUBMITTED" || bulkStatus === "LATE"
               ? "Saving..."
@@ -207,9 +225,9 @@ export default function HomeworkSubmissionTracker({
           </button>
           <button
             type="button"
-            disabled={isPending || counts.PENDING === 0}
+            disabled={isPending || counts.PENDING === 0 || !canCheckHomework}
             onClick={() => markPending("MISSING")}
-            className="rounded-lg bg-rose-50 px-2.5 py-1.5 text-[11px] font-black text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-xl bg-rose-50 px-4 py-2.5 text-xs font-black text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {bulkStatus === "MISSING" ? "Saving..." : "Mark pending missing"}
           </button>
@@ -224,12 +242,12 @@ export default function HomeworkSubmissionTracker({
       <div className="mt-3 grid gap-2">
         {submissions.map((submission) => {
           const saving = isPending && activeStudentId === submission.studentId;
-          const buttonDisabled = (status: HomeworkStatus) => saving || submission.status === status;
+          const buttonDisabled = (status: HomeworkStatus) => saving || !canCheckHomework || submission.status === status;
           const submittedTitle = deadlinePassed ? "Mark late submission" : "Mark submitted";
           return (
             <div
               key={submission.id}
-              className="flex flex-col gap-2 rounded-lg bg-white px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-3 rounded-xl bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="min-w-0">
                 <p className="truncate text-sm font-black text-slate-800">{submission.studentName}</p>
@@ -237,12 +255,12 @@ export default function HomeworkSubmissionTracker({
                   {statusLabel[submission.status]}
                 </span>
               </div>
-              <div className="grid grid-cols-3 gap-1 sm:flex sm:items-center">
+              <div className="grid grid-cols-3 gap-2 sm:flex sm:items-center">
                 <button
                   type="button"
                   disabled={buttonDisabled(deadlinePassed ? "LATE" : "SUBMITTED")}
                   onClick={() => mark(submission.studentId, "SUBMITTED")}
-                  className="inline-flex h-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 transition hover:bg-emerald-100 disabled:opacity-50"
+                  className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-emerald-50 px-3 text-emerald-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
                   title={submittedTitle}
                 >
                   {saving ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
@@ -251,7 +269,7 @@ export default function HomeworkSubmissionTracker({
                   type="button"
                   disabled={buttonDisabled("MISSING")}
                   onClick={() => mark(submission.studentId, "MISSING")}
-                  className="inline-flex h-8 items-center justify-center rounded-lg bg-rose-50 text-rose-700 transition hover:bg-rose-100 disabled:opacity-50"
+                  className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-rose-50 px-3 text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
                   title="Mark missing"
                 >
                   <XCircle size={14} />
@@ -260,7 +278,7 @@ export default function HomeworkSubmissionTracker({
                   type="button"
                   disabled={buttonDisabled("EXCUSED")}
                   onClick={() => mark(submission.studentId, "EXCUSED")}
-                  className="inline-flex h-8 items-center justify-center rounded-lg bg-blue-50 text-blue-700 transition hover:bg-blue-100 disabled:opacity-50"
+                  className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-blue-50 px-3 text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
                   title="Mark excused"
                 >
                   <Clock size={14} />

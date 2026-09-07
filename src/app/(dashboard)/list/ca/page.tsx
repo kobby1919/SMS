@@ -45,10 +45,7 @@ const CAPage = async ({
     supervisedClasses = await prisma.class.findMany({
       where: {
         schoolId,
-        OR: [
-          { supervisorId: userId },
-          { lessons: { some: { teacherId: userId } } },
-        ],
+        lessons: { some: { teacherId: userId } },
       },
       orderBy: { name: "asc" },
       include: { grade: { select: { level: true } } },
@@ -67,7 +64,7 @@ const CAPage = async ({
           </h2>
           <p className="text-sm text-gray-400 mt-1 max-w-xs">
             {role === "teacher"
-              ? "You are not assigned as supervisor to any class. Contact your admin."
+              ? "You do not have any timetable lessons yet. Contact your admin."
               : "No classes exist yet. Create classes first."}
           </p>
         </div>
@@ -136,6 +133,7 @@ const CAPage = async ({
     configs.length > 0
       ? configs.map((c) => c.academicYear)
       : [activePeriod.academicYear, "2026/27"];
+  const activeConfig = configs.find((config) => config.academicYear === activePeriod.academicYear);
 
   const examEntryWindow = await prisma.examEntryWindow.findUnique({
     where: {
@@ -186,30 +184,32 @@ const CAPage = async ({
     ).values(),
   );
 
-  const activityCAProgress = (
-    await Promise.all(
-      activityCAContexts.flatMap((context) =>
-        students.map(async (student) => {
-          const progress = await getSubjectCAProgress({
-            schoolId,
-            classId: activeClass.id,
-            studentId: student.id,
-            subjectId: context.subjectId,
-            term: context.term,
-            academicYear: context.academicYear,
-          });
+  const activityCAProgress = activeConfig
+    ? (
+        await Promise.all(
+          activityCAContexts.flatMap((context) =>
+            students.map(async (student) => {
+              const progress = await getSubjectCAProgress({
+                schoolId,
+                classId: activeClass.id,
+                studentId: student.id,
+                subjectId: context.subjectId,
+                term: context.term,
+                academicYear: context.academicYear,
+              });
 
-          return {
-            studentId: student.id,
-            subjectId: context.subjectId,
-            term: context.term,
-            academicYear: context.academicYear,
-            classworkScore: progress.earnedMarks,
-          };
-        }),
-      ),
-    )
-  ).flat();
+              return {
+                studentId: student.id,
+                subjectId: context.subjectId,
+                term: context.term,
+                academicYear: context.academicYear,
+                classworkScore: progress.earnedMarks,
+              };
+            }),
+          ),
+        )
+      ).flat()
+    : [];
 
   return (
     <div className="flex-1 m-3 mt-0 flex flex-col gap-4 sm:m-4 sm:mt-0">
@@ -273,14 +273,28 @@ const CAPage = async ({
         </div>
       )}
 
-      <ExamEntryWindowControls
-        classId={activeClass.id}
-        className={activeClass.name}
-        term={activePeriod.currentTerm}
-        academicYear={activePeriod.academicYear}
-        status={examEntryWindow?.status ?? "LOCKED"}
-        role={role}
-      />
+      {!activeConfig && (
+        <div className="flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4">
+          <AlertTriangle size={16} className="mt-0.5 shrink-0 text-rose-500" />
+          <div>
+            <p className="text-sm font-black text-rose-800">CA setup is required first</p>
+            <p className="mt-0.5 text-xs font-semibold text-rose-700">
+              Admin must set the CA/exam split for {activePeriod.academicYear} before teachers can create CA buckets, activities, or exam entries.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {activeConfig && (
+        <ExamEntryWindowControls
+          classId={activeClass.id}
+          className={activeClass.name}
+          term={activePeriod.currentTerm}
+          academicYear={activePeriod.academicYear}
+          status={examEntryWindow?.status ?? "LOCKED"}
+          role={role}
+        />
+      )}
 
       <div className="flex gap-4 flex-col lg:flex-row">
         {/* ── Sidebar: class selector ── */}
@@ -329,7 +343,15 @@ const CAPage = async ({
         {/* ── Main content ── */}
         <div className="flex-1 min-w-0">
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6">
-            {viewMode === "entry" ? (
+            {!activeConfig ? (
+              <div className="rounded-2xl border border-dashed border-rose-200 bg-rose-50/70 p-8 text-center">
+                <AlertTriangle size={28} className="mx-auto mb-3 text-rose-500" />
+                <p className="text-sm font-black text-rose-800">Assessment work is locked</p>
+                <p className="mx-auto mt-1 max-w-md text-xs font-semibold text-rose-700">
+                  This prevents teachers from recording CA against an academic year that has no approved grading structure.
+                </p>
+              </div>
+            ) : viewMode === "entry" ? (
               <CAEntryForm
                 classId={activeClass.id}
                 className={activeClass.name}
