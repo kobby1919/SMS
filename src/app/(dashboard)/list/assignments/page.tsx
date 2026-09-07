@@ -143,7 +143,7 @@ const AssignmentListPage = async ({
   const totalCount = activeTab === "upcoming" ? upcomingCount : pastCount;
 
   return (
-    <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
+    <div className="m-3 mt-0 flex flex-1 flex-col gap-4 sm:m-4 sm:mt-0">
       {/* Header */}
       <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -228,12 +228,12 @@ const AssignmentListPage = async ({
       </div>
 
       {/* Tabs */}
-      <div className="flex bg-gray-100 p-1 rounded-xl w-fit gap-1">
+      <div className="flex w-full gap-1 rounded-xl bg-gray-100 p-1 sm:w-fit">
         {(["upcoming", "past"] as const).map((t) => (
           <a
             key={t}
             href={`?tab=${t}${searchQuery}`}
-            className={`px-5 py-2 rounded-lg text-sm font-bold transition-all
+            className={`flex-1 rounded-lg px-3 py-2 text-center text-sm font-bold transition-all sm:flex-none sm:px-5
               ${activeTab === t ? "bg-white text-indigo-600 shadow-sm" : "text-gray-400 hover:text-gray-600"}`}
           >
             {t === "upcoming"
@@ -243,8 +243,94 @@ const AssignmentListPage = async ({
         ))}
       </div>
 
+      <div className="grid gap-3 md:hidden">
+        {assignments.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-5 py-12 text-center shadow-sm">
+            <Briefcase size={30} className="mx-auto mb-3 text-gray-200" />
+            <p className="text-sm font-semibold text-gray-400">
+              No {activeTab === "upcoming" ? "active" : "past"} assignments
+            </p>
+          </div>
+        ) : (
+          assignments.map((item) => {
+            const assignmentLockedForEdit = item.homeworkSubmissions.some(
+              (submission) => submission.checkedAt || submission.status !== "PENDING",
+            );
+
+            return (
+              <article
+                key={item.id}
+                className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-base font-black text-gray-900">
+                      {item.lesson.subject?.name}
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-gray-500">
+                      {item.title}
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <span className="rounded-lg bg-indigo-50 px-2.5 py-1 text-xs font-black text-indigo-600">
+                        {item.lesson.class.name}
+                      </span>
+                      <span className={`rounded-lg px-2.5 py-1 text-xs font-black ${getCountdownColor(item.dueDate)}`}>
+                        {getCountdown(item.dueDate)}
+                      </span>
+                    </div>
+                  </div>
+                  {canManage && activeTab === "upcoming" ? (
+                    assignmentLockedForEdit ? (
+                      <span className="shrink-0 rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-[11px] font-black uppercase tracking-wide text-gray-400">
+                        Locked
+                      </span>
+                    ) : (
+                      <FormModal
+                        table="assignment"
+                        type="update"
+                        data={{ ...item, lessonId: item.lesson.id }}
+                      />
+                    )
+                  ) : null}
+                </div>
+
+                <div className="mt-4 grid gap-1 text-sm font-semibold text-gray-500">
+                  <p>
+                    Teacher: {item.lesson.teacher.name} {item.lesson.teacher.surname}
+                  </p>
+                  <p>
+                    Due:{" "}
+                    {new Intl.DateTimeFormat("en-GH", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    }).format(item.dueDate)}
+                  </p>
+                </div>
+
+                {canManage ? (
+                  <div className="mt-4">
+                    <HomeworkSubmissionTracker
+                      assignmentId={item.id}
+                      dueDate={item.dueDate.toISOString()}
+                      initialSubmissions={item.homeworkSubmissions.map((submission) => ({
+                        id: submission.id,
+                        status: submission.status,
+                        studentId: submission.studentId,
+                        studentName: `${submission.student.name} ${submission.student.surname}`,
+                        checkedAt: submission.checkedAt?.toISOString() ?? null,
+                      }))}
+                    />
+                  </div>
+                ) : null}
+              </article>
+            );
+          })
+        )}
+      </div>
+
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-1">
+      <div className="hidden flex-1 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm md:block">
         <div className="w-full overflow-x-auto">
           <table className="w-full min-w-full">
             <thead>

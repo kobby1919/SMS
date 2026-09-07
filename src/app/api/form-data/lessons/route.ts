@@ -40,22 +40,32 @@ export async function GET(req: NextRequest) {
       return true;
     });
     const lessonIds = unique.map((lesson) => lesson.id);
-    const homeworkSequences = lessonIds.length > 0
-      ? await prisma.assignment.groupBy({
-          by: ["lessonId"],
+    const nextHomeworkByLessonId = new Map<number, number>();
+    if (lessonIds.length > 0) {
+      try {
+        const homeworkSequences = await prisma.assignment.findMany({
           where: {
             schoolId,
             lessonId: { in: lessonIds },
           },
-          _max: { homeworkSequence: true },
-        })
-      : [];
-    const nextHomeworkByLessonId = new Map(
-      homeworkSequences.map((item) => [
-        item.lessonId,
-        (item._max.homeworkSequence ?? 0) + 1,
-      ]),
-    );
+          select: {
+            lessonId: true,
+            homeworkSequence: true,
+          },
+          orderBy: [
+            { lessonId: "asc" },
+            { homeworkSequence: "desc" },
+          ],
+        });
+        for (const item of homeworkSequences) {
+          if (!nextHomeworkByLessonId.has(item.lessonId)) {
+            nextHomeworkByLessonId.set(item.lessonId, item.homeworkSequence + 1);
+          }
+        }
+      } catch (error) {
+        console.error("Could not calculate next homework sequence", error);
+      }
+    }
 
     return NextResponse.json(
       unique.map((l) => ({

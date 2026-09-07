@@ -45,7 +45,7 @@ export default function TeacherEscalationResponseForm({
   const copy = statusCopy(existingStatus);
 
   return (
-    <div className="mt-4 rounded-xl border border-edujay-ring bg-white p-4 shadow-sm">
+    <div className="mt-4 min-w-0 rounded-xl border border-edujay-ring bg-white p-3 shadow-sm sm:p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-1">
           <h3 className="text-sm font-black text-edujay-ink">
@@ -81,44 +81,44 @@ export default function TeacherEscalationResponseForm({
       ) : null}
 
       {isLocked ? null : (
-        <form action={formAction} className="mt-4 grid gap-3">
+        <form action={formAction} className="mt-4 grid min-w-0 gap-3">
           <input type="hidden" name="obligationId" value={obligationId} />
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <label className="grid gap-1 text-xs font-black uppercase tracking-wide text-slate-500">
+          <div className="grid min-w-0 gap-3 lg:grid-cols-2">
+            <label className="grid min-w-0 gap-1 text-xs font-black uppercase tracking-wide text-slate-500">
               Response type
               <select
                 name="responseType"
-                className="h-10 rounded-lg border border-edujay-border bg-white px-3 text-sm font-semibold normal-case tracking-normal text-edujay-ink outline-none focus:border-edujay-primary"
+                className="h-11 min-w-0 rounded-lg border border-edujay-border bg-white px-3 text-sm font-semibold normal-case tracking-normal text-edujay-ink outline-none focus:border-edujay-primary"
                 defaultValue="EXPLANATION"
               >
-                <option value="EXPLANATION">Explain what happened only</option>
-                <option value="CORRECTION_REQUEST">Ask to correct or reopen this record</option>
+                <option value="EXPLANATION">Explanation only</option>
+                <option value="CORRECTION_REQUEST">Request correction</option>
               </select>
-              <span className="normal-case tracking-normal text-[11px] font-semibold text-slate-400">
-                Use explanation when you only need to account for the issue; use correction when the record must be reopened.
+              <span className="max-w-full whitespace-normal break-words normal-case tracking-normal text-[11px] font-semibold leading-relaxed text-slate-400">
+                Pick explanation when you only need to account for the issue. Pick correction when a record must be reopened.
               </span>
             </label>
 
-            <label className="grid gap-1 text-xs font-black uppercase tracking-wide text-slate-500">
+            <label className="grid min-w-0 gap-1 text-xs font-black uppercase tracking-wide text-slate-500">
               Requested action
               <select
                 name="requestedAction"
-                className="h-10 rounded-lg border border-edujay-border bg-white px-3 text-sm font-semibold normal-case tracking-normal text-edujay-ink outline-none focus:border-edujay-primary"
+                className="h-11 min-w-0 rounded-lg border border-edujay-border bg-white px-3 text-sm font-semibold normal-case tracking-normal text-edujay-ink outline-none focus:border-edujay-primary"
                 defaultValue="ADMIN_REVIEW"
               >
-                <option value="ADMIN_REVIEW">Please review my explanation</option>
-                <option value="ALLOW_LATE_ENTRY">Please allow me to submit this late</option>
-                <option value="MARK_AS_RESOLVED">This has been fixed, please close it</option>
-                <option value="OTHER">I need another kind of help</option>
+                <option value="ADMIN_REVIEW">Review explanation</option>
+                <option value="ALLOW_LATE_ENTRY">Allow late entry</option>
+                <option value="MARK_AS_RESOLVED">Close as fixed</option>
+                <option value="OTHER">Other support</option>
               </select>
-              <span className="normal-case tracking-normal text-[11px] font-semibold text-slate-400">
+              <span className="max-w-full whitespace-normal break-words normal-case tracking-normal text-[11px] font-semibold leading-relaxed text-slate-400">
                 Choose the exact decision you want the headmaster, owner, or admin to make.
               </span>
             </label>
           </div>
 
-          <label className="grid gap-1 text-xs font-black uppercase tracking-wide text-slate-500">
+          <label className="grid min-w-0 gap-1 text-xs font-black uppercase tracking-wide text-slate-500">
             Explanation
             <textarea
               name="reason"
@@ -130,15 +130,15 @@ export default function TeacherEscalationResponseForm({
             />
           </label>
 
-          <label className="grid gap-1 text-xs font-black uppercase tracking-wide text-slate-500">
+          <label className="grid min-w-0 gap-1 text-xs font-black uppercase tracking-wide text-slate-500">
             Evidence link
             <input
               name="evidenceUrl"
               type="url"
-              className="h-10 rounded-lg border border-edujay-border bg-white px-3 text-sm font-semibold normal-case tracking-normal text-edujay-ink outline-none focus:border-edujay-primary"
+              className="h-11 min-w-0 rounded-lg border border-edujay-border bg-white px-3 text-sm font-semibold normal-case tracking-normal text-edujay-ink outline-none focus:border-edujay-primary"
               placeholder="Optional link to proof or document"
             />
-            <span className="normal-case tracking-normal text-[11px] font-semibold text-slate-400">
+            <span className="max-w-full whitespace-normal break-words normal-case tracking-normal text-[11px] font-semibold leading-relaxed text-slate-400">
               Optional. Add only when there is a photo, document, or shared file that supports your explanation.
             </span>
           </label>
@@ -158,7 +158,7 @@ export default function TeacherEscalationResponseForm({
           <button
             type="submit"
             disabled={pending}
-            className="inline-flex w-fit items-center gap-2 rounded-lg bg-edujay-ink px-4 py-2 text-xs font-black text-white transition hover:bg-edujay-primaryDark disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-edujay-ink px-4 py-3 text-sm font-black text-white transition hover:bg-edujay-primaryDark disabled:cursor-not-allowed disabled:opacity-60 sm:w-fit"
           >
             <Send size={14} />
             {pending ? "Sending..." : "Send to management"}

@@ -322,17 +322,17 @@ function buildHistoryWeeks(rows: TeacherAuditRow[], now: Date) {
 
   return Array.from({ length: 3 }, (_, index) => {
     const weekStart = startOfWeek(currentWeekStart);
-    weekStart.setDate(currentWeekStart.getDate() - (index + 1) * 7);
+    weekStart.setDate(currentWeekStart.getDate() - index * 7);
     const weekEnd = endOfWeek(weekStart);
     const key = dayKey(weekStart);
-    const label = new Intl.DateTimeFormat("en-GH", {
+    const rangeLabel = new Intl.DateTimeFormat("en-GH", {
       day: "numeric",
       month: "short",
     }).formatRange(weekStart, weekEnd);
 
     return {
       key,
-      label,
+      label: index === 0 ? `This Week (${rangeLabel})` : rangeLabel,
       rows: rowsByWeek.get(key) ?? [],
     };
   });

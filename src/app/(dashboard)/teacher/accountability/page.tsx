@@ -27,14 +27,6 @@ function formatDateTime(date: Date) {
   }).format(date);
 }
 
-function sameCalendarDay(a: Date, b: Date) {
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  );
-}
-
 function statusClass(status: string) {
   if (status === "COMPLETED") return "bg-emerald-50 text-emerald-700";
   if (status === "COMPLETED_LATE") return "bg-amber-50 text-amber-700";
@@ -515,13 +507,7 @@ const TeacherAccountabilityPage = async ({
   const activeFocusedObligationId = attentionIds.has(focusedObligationId ?? "")
     ? focusedObligationId
     : undefined;
-  const pastHistoryWeeks = overview.historyWeeks.map((week) => ({
-    ...week,
-    rows: week.rows.filter((row) => {
-      const eventDate = row.dutyExpectedAt ?? row.createdAt;
-      return !sameCalendarDay(eventDate, new Date());
-    }),
-  }));
+  const pastHistoryWeeks = overview.historyWeeks;
   const resolvedThisWeek = pastHistoryWeeks.reduce(
     (count, day) =>
       count +
