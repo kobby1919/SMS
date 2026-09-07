@@ -960,10 +960,11 @@ model Exam {
 }
 
 model Assignment {
-  id        Int      @id @default(autoincrement())
-  title     String
-  startDate DateTime
-  dueDate   DateTime
+  id               Int      @id @default(autoincrement())
+  title            String
+  homeworkSequence Int      @default(1)
+  startDate        DateTime
+  dueDate          DateTime
 
   schoolId String @default("default-school")
   school   School @relation(fields: [schoolId], references: [id])
@@ -973,6 +974,7 @@ model Assignment {
   results             Result[]
   homeworkSubmissions HomeworkSubmission[]
 
+  @@unique([schoolId, lessonId, homeworkSequence])
   @@index([schoolId, dueDate])
   @@index([schoolId, lessonId])
 }

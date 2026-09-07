@@ -35912,17 +35912,20 @@ export namespace Prisma {
 
   export type AssignmentAvgAggregateOutputType = {
     id: number | null
+    homeworkSequence: number | null
     lessonId: number | null
   }
 
   export type AssignmentSumAggregateOutputType = {
     id: number | null
+    homeworkSequence: number | null
     lessonId: number | null
   }
 
   export type AssignmentMinAggregateOutputType = {
     id: number | null
     title: string | null
+    homeworkSequence: number | null
     startDate: Date | null
     dueDate: Date | null
     schoolId: string | null
@@ -35932,6 +35935,7 @@ export namespace Prisma {
   export type AssignmentMaxAggregateOutputType = {
     id: number | null
     title: string | null
+    homeworkSequence: number | null
     startDate: Date | null
     dueDate: Date | null
     schoolId: string | null
@@ -35941,6 +35945,7 @@ export namespace Prisma {
   export type AssignmentCountAggregateOutputType = {
     id: number
     title: number
+    homeworkSequence: number
     startDate: number
     dueDate: number
     schoolId: number
@@ -35951,17 +35956,20 @@ export namespace Prisma {
 
   export type AssignmentAvgAggregateInputType = {
     id?: true
+    homeworkSequence?: true
     lessonId?: true
   }
 
   export type AssignmentSumAggregateInputType = {
     id?: true
+    homeworkSequence?: true
     lessonId?: true
   }
 
   export type AssignmentMinAggregateInputType = {
     id?: true
     title?: true
+    homeworkSequence?: true
     startDate?: true
     dueDate?: true
     schoolId?: true
@@ -35971,6 +35979,7 @@ export namespace Prisma {
   export type AssignmentMaxAggregateInputType = {
     id?: true
     title?: true
+    homeworkSequence?: true
     startDate?: true
     dueDate?: true
     schoolId?: true
@@ -35980,6 +35989,7 @@ export namespace Prisma {
   export type AssignmentCountAggregateInputType = {
     id?: true
     title?: true
+    homeworkSequence?: true
     startDate?: true
     dueDate?: true
     schoolId?: true
@@ -36076,6 +36086,7 @@ export namespace Prisma {
   export type AssignmentGroupByOutputType = {
     id: number
     title: string
+    homeworkSequence: number
     startDate: Date
     dueDate: Date
     schoolId: string
@@ -36104,6 +36115,7 @@ export namespace Prisma {
   export type AssignmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
+    homeworkSequence?: boolean
     startDate?: boolean
     dueDate?: boolean
     schoolId?: boolean
@@ -36118,6 +36130,7 @@ export namespace Prisma {
   export type AssignmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
+    homeworkSequence?: boolean
     startDate?: boolean
     dueDate?: boolean
     schoolId?: boolean
@@ -36129,6 +36142,7 @@ export namespace Prisma {
   export type AssignmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
+    homeworkSequence?: boolean
     startDate?: boolean
     dueDate?: boolean
     schoolId?: boolean
@@ -36140,13 +36154,14 @@ export namespace Prisma {
   export type AssignmentSelectScalar = {
     id?: boolean
     title?: boolean
+    homeworkSequence?: boolean
     startDate?: boolean
     dueDate?: boolean
     schoolId?: boolean
     lessonId?: boolean
   }
 
-  export type AssignmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "startDate" | "dueDate" | "schoolId" | "lessonId", ExtArgs["result"]["assignment"]>
+  export type AssignmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "homeworkSequence" | "startDate" | "dueDate" | "schoolId" | "lessonId", ExtArgs["result"]["assignment"]>
   export type AssignmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     lesson?: boolean | LessonDefaultArgs<ExtArgs>
@@ -36174,6 +36189,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       title: string
+      homeworkSequence: number
       startDate: Date
       dueDate: Date
       schoolId: string
@@ -36607,6 +36623,7 @@ export namespace Prisma {
   interface AssignmentFieldRefs {
     readonly id: FieldRef<"Assignment", 'Int'>
     readonly title: FieldRef<"Assignment", 'String'>
+    readonly homeworkSequence: FieldRef<"Assignment", 'Int'>
     readonly startDate: FieldRef<"Assignment", 'DateTime'>
     readonly dueDate: FieldRef<"Assignment", 'DateTime'>
     readonly schoolId: FieldRef<"Assignment", 'String'>
@@ -77472,6 +77489,7 @@ export namespace Prisma {
   export const AssignmentScalarFieldEnum: {
     id: 'id',
     title: 'title',
+    homeworkSequence: 'homeworkSequence',
     startDate: 'startDate',
     dueDate: 'dueDate',
     schoolId: 'schoolId',
@@ -81122,6 +81140,7 @@ export namespace Prisma {
     NOT?: AssignmentWhereInput | AssignmentWhereInput[]
     id?: IntFilter<"Assignment"> | number
     title?: StringFilter<"Assignment"> | string
+    homeworkSequence?: IntFilter<"Assignment"> | number
     startDate?: DateTimeFilter<"Assignment"> | Date | string
     dueDate?: DateTimeFilter<"Assignment"> | Date | string
     schoolId?: StringFilter<"Assignment"> | string
@@ -81135,6 +81154,7 @@ export namespace Prisma {
   export type AssignmentOrderByWithRelationInput = {
     id?: SortOrder
     title?: SortOrder
+    homeworkSequence?: SortOrder
     startDate?: SortOrder
     dueDate?: SortOrder
     schoolId?: SortOrder
@@ -81147,10 +81167,12 @@ export namespace Prisma {
 
   export type AssignmentWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    schoolId_lessonId_homeworkSequence?: AssignmentSchoolIdLessonIdHomeworkSequenceCompoundUniqueInput
     AND?: AssignmentWhereInput | AssignmentWhereInput[]
     OR?: AssignmentWhereInput[]
     NOT?: AssignmentWhereInput | AssignmentWhereInput[]
     title?: StringFilter<"Assignment"> | string
+    homeworkSequence?: IntFilter<"Assignment"> | number
     startDate?: DateTimeFilter<"Assignment"> | Date | string
     dueDate?: DateTimeFilter<"Assignment"> | Date | string
     schoolId?: StringFilter<"Assignment"> | string
@@ -81159,11 +81181,12 @@ export namespace Prisma {
     lesson?: XOR<LessonScalarRelationFilter, LessonWhereInput>
     results?: ResultListRelationFilter
     homeworkSubmissions?: HomeworkSubmissionListRelationFilter
-  }, "id">
+  }, "id" | "schoolId_lessonId_homeworkSequence">
 
   export type AssignmentOrderByWithAggregationInput = {
     id?: SortOrder
     title?: SortOrder
+    homeworkSequence?: SortOrder
     startDate?: SortOrder
     dueDate?: SortOrder
     schoolId?: SortOrder
@@ -81181,6 +81204,7 @@ export namespace Prisma {
     NOT?: AssignmentScalarWhereWithAggregatesInput | AssignmentScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Assignment"> | number
     title?: StringWithAggregatesFilter<"Assignment"> | string
+    homeworkSequence?: IntWithAggregatesFilter<"Assignment"> | number
     startDate?: DateTimeWithAggregatesFilter<"Assignment"> | Date | string
     dueDate?: DateTimeWithAggregatesFilter<"Assignment"> | Date | string
     schoolId?: StringWithAggregatesFilter<"Assignment"> | string
@@ -86865,6 +86889,7 @@ export namespace Prisma {
 
   export type AssignmentCreateInput = {
     title: string
+    homeworkSequence?: number
     startDate: Date | string
     dueDate: Date | string
     school?: SchoolCreateNestedOneWithoutAssignmentsInput
@@ -86876,6 +86901,7 @@ export namespace Prisma {
   export type AssignmentUncheckedCreateInput = {
     id?: number
     title: string
+    homeworkSequence?: number
     startDate: Date | string
     dueDate: Date | string
     schoolId?: string
@@ -86886,6 +86912,7 @@ export namespace Prisma {
 
   export type AssignmentUpdateInput = {
     title?: StringFieldUpdateOperationsInput | string
+    homeworkSequence?: IntFieldUpdateOperationsInput | number
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutAssignmentsNestedInput
@@ -86897,6 +86924,7 @@ export namespace Prisma {
   export type AssignmentUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
+    homeworkSequence?: IntFieldUpdateOperationsInput | number
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -86908,6 +86936,7 @@ export namespace Prisma {
   export type AssignmentCreateManyInput = {
     id?: number
     title: string
+    homeworkSequence?: number
     startDate: Date | string
     dueDate: Date | string
     schoolId?: string
@@ -86916,6 +86945,7 @@ export namespace Prisma {
 
   export type AssignmentUpdateManyMutationInput = {
     title?: StringFieldUpdateOperationsInput | string
+    homeworkSequence?: IntFieldUpdateOperationsInput | number
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -86923,6 +86953,7 @@ export namespace Prisma {
   export type AssignmentUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
+    homeworkSequence?: IntFieldUpdateOperationsInput | number
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -92190,9 +92221,16 @@ export namespace Prisma {
     lessonId?: SortOrder
   }
 
+  export type AssignmentSchoolIdLessonIdHomeworkSequenceCompoundUniqueInput = {
+    schoolId: string
+    lessonId: number
+    homeworkSequence: number
+  }
+
   export type AssignmentCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
+    homeworkSequence?: SortOrder
     startDate?: SortOrder
     dueDate?: SortOrder
     schoolId?: SortOrder
@@ -92201,12 +92239,14 @@ export namespace Prisma {
 
   export type AssignmentAvgOrderByAggregateInput = {
     id?: SortOrder
+    homeworkSequence?: SortOrder
     lessonId?: SortOrder
   }
 
   export type AssignmentMaxOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
+    homeworkSequence?: SortOrder
     startDate?: SortOrder
     dueDate?: SortOrder
     schoolId?: SortOrder
@@ -92216,6 +92256,7 @@ export namespace Prisma {
   export type AssignmentMinOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
+    homeworkSequence?: SortOrder
     startDate?: SortOrder
     dueDate?: SortOrder
     schoolId?: SortOrder
@@ -92224,6 +92265,7 @@ export namespace Prisma {
 
   export type AssignmentSumOrderByAggregateInput = {
     id?: SortOrder
+    homeworkSequence?: SortOrder
     lessonId?: SortOrder
   }
 
@@ -103676,6 +103718,7 @@ export namespace Prisma {
 
   export type AssignmentCreateWithoutSchoolInput = {
     title: string
+    homeworkSequence?: number
     startDate: Date | string
     dueDate: Date | string
     lesson: LessonCreateNestedOneWithoutAssignmentsInput
@@ -103686,6 +103729,7 @@ export namespace Prisma {
   export type AssignmentUncheckedCreateWithoutSchoolInput = {
     id?: number
     title: string
+    homeworkSequence?: number
     startDate: Date | string
     dueDate: Date | string
     lessonId: number
@@ -105552,6 +105596,7 @@ export namespace Prisma {
     NOT?: AssignmentScalarWhereInput | AssignmentScalarWhereInput[]
     id?: IntFilter<"Assignment"> | number
     title?: StringFilter<"Assignment"> | string
+    homeworkSequence?: IntFilter<"Assignment"> | number
     startDate?: DateTimeFilter<"Assignment"> | Date | string
     dueDate?: DateTimeFilter<"Assignment"> | Date | string
     schoolId?: StringFilter<"Assignment"> | string
@@ -117806,6 +117851,7 @@ export namespace Prisma {
 
   export type AssignmentCreateWithoutLessonInput = {
     title: string
+    homeworkSequence?: number
     startDate: Date | string
     dueDate: Date | string
     school?: SchoolCreateNestedOneWithoutAssignmentsInput
@@ -117816,6 +117862,7 @@ export namespace Prisma {
   export type AssignmentUncheckedCreateWithoutLessonInput = {
     id?: number
     title: string
+    homeworkSequence?: number
     startDate: Date | string
     dueDate: Date | string
     schoolId?: string
@@ -119308,6 +119355,7 @@ export namespace Prisma {
 
   export type AssignmentCreateWithoutHomeworkSubmissionsInput = {
     title: string
+    homeworkSequence?: number
     startDate: Date | string
     dueDate: Date | string
     school?: SchoolCreateNestedOneWithoutAssignmentsInput
@@ -119318,6 +119366,7 @@ export namespace Prisma {
   export type AssignmentUncheckedCreateWithoutHomeworkSubmissionsInput = {
     id?: number
     title: string
+    homeworkSequence?: number
     startDate: Date | string
     dueDate: Date | string
     schoolId?: string
@@ -119616,6 +119665,7 @@ export namespace Prisma {
 
   export type AssignmentUpdateWithoutHomeworkSubmissionsInput = {
     title?: StringFieldUpdateOperationsInput | string
+    homeworkSequence?: IntFieldUpdateOperationsInput | number
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutAssignmentsNestedInput
@@ -119626,6 +119676,7 @@ export namespace Prisma {
   export type AssignmentUncheckedUpdateWithoutHomeworkSubmissionsInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
+    homeworkSequence?: IntFieldUpdateOperationsInput | number
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -119936,6 +119987,7 @@ export namespace Prisma {
 
   export type AssignmentCreateWithoutResultsInput = {
     title: string
+    homeworkSequence?: number
     startDate: Date | string
     dueDate: Date | string
     school?: SchoolCreateNestedOneWithoutAssignmentsInput
@@ -119946,6 +119998,7 @@ export namespace Prisma {
   export type AssignmentUncheckedCreateWithoutResultsInput = {
     id?: number
     title: string
+    homeworkSequence?: number
     startDate: Date | string
     dueDate: Date | string
     schoolId?: string
@@ -120207,6 +120260,7 @@ export namespace Prisma {
 
   export type AssignmentUpdateWithoutResultsInput = {
     title?: StringFieldUpdateOperationsInput | string
+    homeworkSequence?: IntFieldUpdateOperationsInput | number
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutAssignmentsNestedInput
@@ -120217,6 +120271,7 @@ export namespace Prisma {
   export type AssignmentUncheckedUpdateWithoutResultsInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
+    homeworkSequence?: IntFieldUpdateOperationsInput | number
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -133132,6 +133187,7 @@ export namespace Prisma {
   export type AssignmentCreateManySchoolInput = {
     id?: number
     title: string
+    homeworkSequence?: number
     startDate: Date | string
     dueDate: Date | string
     lessonId: number
@@ -134044,6 +134100,7 @@ export namespace Prisma {
 
   export type AssignmentUpdateWithoutSchoolInput = {
     title?: StringFieldUpdateOperationsInput | string
+    homeworkSequence?: IntFieldUpdateOperationsInput | number
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     lesson?: LessonUpdateOneRequiredWithoutAssignmentsNestedInput
@@ -134054,6 +134111,7 @@ export namespace Prisma {
   export type AssignmentUncheckedUpdateWithoutSchoolInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
+    homeworkSequence?: IntFieldUpdateOperationsInput | number
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     lessonId?: IntFieldUpdateOperationsInput | number
@@ -134064,6 +134122,7 @@ export namespace Prisma {
   export type AssignmentUncheckedUpdateManyWithoutSchoolInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
+    homeworkSequence?: IntFieldUpdateOperationsInput | number
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     lessonId?: IntFieldUpdateOperationsInput | number
@@ -138971,6 +139030,7 @@ export namespace Prisma {
   export type AssignmentCreateManyLessonInput = {
     id?: number
     title: string
+    homeworkSequence?: number
     startDate: Date | string
     dueDate: Date | string
     schoolId?: string
@@ -139039,6 +139099,7 @@ export namespace Prisma {
 
   export type AssignmentUpdateWithoutLessonInput = {
     title?: StringFieldUpdateOperationsInput | string
+    homeworkSequence?: IntFieldUpdateOperationsInput | number
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutAssignmentsNestedInput
@@ -139049,6 +139110,7 @@ export namespace Prisma {
   export type AssignmentUncheckedUpdateWithoutLessonInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
+    homeworkSequence?: IntFieldUpdateOperationsInput | number
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -139059,6 +139121,7 @@ export namespace Prisma {
   export type AssignmentUncheckedUpdateManyWithoutLessonInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
+    homeworkSequence?: IntFieldUpdateOperationsInput | number
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string

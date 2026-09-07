@@ -440,6 +440,7 @@ exports.Prisma.ExamScalarFieldEnum = {
 exports.Prisma.AssignmentScalarFieldEnum = {
   id: 'id',
   title: 'title',
+  homeworkSequence: 'homeworkSequence',
   startDate: 'startDate',
   dueDate: 'dueDate',
   schoolId: 'schoolId',

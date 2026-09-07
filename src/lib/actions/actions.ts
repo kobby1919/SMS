@@ -3,6 +3,7 @@
 // src/lib/actions/actions.ts
 
 import prisma from "@/src/lib/prisma";
+import type { Prisma } from "@/src/generated/prisma";
 import { AuthorizationError, requireRole } from "@/src/lib/authz";
 import { requireResourceAccess } from "@/src/lib/authz";
 import { assertSameSchool } from "@/src/lib/tenant";
@@ -454,29 +455,42 @@ export type AssignmentFormData = {
   dueDate:   string;
 };
 
+async function nextHomeworkSequence(tx: Prisma.TransactionClient, schoolId: string, lessonId: number) {
+  const latest = await tx.assignment.findFirst({
+    where: { schoolId, lessonId },
+    select: { homeworkSequence: true },
+    orderBy: { homeworkSequence: "desc" },
+  });
+  return (latest?.homeworkSequence ?? 0) + 1;
+}
+
 export async function createAssignment(data: AssignmentFormData): Promise<void> {
   const parsed = parseActionInput(assignmentFormSchema, data);
   const ctx = await requireAdminOrTeacher();
   const lesson = await getLessonInSchool(parsed.lessonId, ctx.schoolId);
   requireTeacherOwnsLesson(lesson, ctx);
 
-  const assignment = await prisma.assignment.create({
-    data: {
-      schoolId:  ctx.schoolId,
-      title:     parsed.title,
-      lessonId:  parsed.lessonId,
-      startDate: new Date(parsed.startDate),
-      dueDate:   new Date(parsed.dueDate),
-    },
-    include: {
-      lesson: {
-        select: {
-          subject: { select: { name: true } },
-          class:   { select: { id: true, name: true } },
-          teacher: { select: { name: true, surname: true } },
+  const assignment = await prisma.$transaction(async (tx) => {
+    const homeworkSequence = await nextHomeworkSequence(tx, ctx.schoolId, parsed.lessonId);
+    return tx.assignment.create({
+      data: {
+        schoolId:          ctx.schoolId,
+        title:             `Homework ${homeworkSequence}`,
+        homeworkSequence,
+        lessonId:          parsed.lessonId,
+        startDate:         new Date(parsed.startDate),
+        dueDate:           new Date(parsed.dueDate),
+      },
+      include: {
+        lesson: {
+          select: {
+            subject: { select: { name: true } },
+            class:   { select: { id: true, name: true } },
+            teacher: { select: { name: true, surname: true } },
+          },
         },
       },
-    },
+    });
   });
 
   const dueFmt = new Intl.DateTimeFormat("en-GH", { day: "numeric", month: "long", year: "numeric" }).format(new Date(parsed.dueDate));
@@ -490,7 +504,7 @@ export async function createAssignment(data: AssignmentFormData): Promise<void> 
     data: {
       schoolId:    ctx.schoolId,
       title:       `New Homework: ${assignment.lesson.subject.name}`,
-      description: `Homework has been assigned to ${assignment.lesson.class.name} by ${assignment.lesson.teacher.name} ${assignment.lesson.teacher.surname}. Due: ${dueFmt}.`,
+      description: `${assignment.title} has been assigned to ${assignment.lesson.class.name} by ${assignment.lesson.teacher.name} ${assignment.lesson.teacher.surname}. Due: ${dueFmt}.`,
       date:        new Date(),
       classId:     assignment.lesson.class.id,
     },
@@ -500,8 +514,8 @@ export async function createAssignment(data: AssignmentFormData): Promise<void> 
     schoolId: ctx.schoolId,
     classId: assignment.lesson.class.id,
     type: "ASSIGNMENT",
-    title: `${assignment.lesson.subject.name} homework published`,
-    body: `Homework is due on ${dueFmt}. Teacher: ${assignment.lesson.teacher.name} ${assignment.lesson.teacher.surname}.`,
+    title: `${assignment.lesson.subject.name}: ${assignment.title} published`,
+    body: `${assignment.title} is due on ${dueFmt}. Teacher: ${assignment.lesson.teacher.name} ${assignment.lesson.teacher.surname}.`,
     href: "/list/assignments",
     sourceModel: "Assignment",
     sourceId: String(assignment.id),
@@ -509,8 +523,9 @@ export async function createAssignment(data: AssignmentFormData): Promise<void> 
     teacherId: ctx.role === "teacher" ? ctx.userId : null,
     occurredAt: new Date(),
     payload: {
-      assignmentTitle: parsed.title,
+      assignmentTitle: assignment.title,
       subjectName: assignment.lesson.subject.name,
+      homeworkSequence: assignment.homeworkSequence,
       dueDate: parsed.dueDate,
     },
   });
@@ -544,13 +559,16 @@ export async function updateAssignment(data: AssignmentFormData): Promise<void> 
   if (hasCheckedHomework) {
     throw new Error("This homework already has student checks, so its details cannot be edited.");
   }
+  if (parsed.lessonId !== existingInSchool.lessonId) {
+    throw new Error("Homework subject and class cannot be changed after creation. Create a new homework instead.");
+  }
   const nextLesson = await getLessonInSchool(parsed.lessonId, ctx.schoolId);
   requireTeacherOwnsLesson(nextLesson, ctx);
 
   const assignment = await prisma.assignment.update({
     where: { id: data.id },
     data: {
-      title:     parsed.title,
+      title:     existingInSchool.title,
       lessonId:  parsed.lessonId,
       startDate: new Date(parsed.startDate),
       dueDate:   new Date(parsed.dueDate),
@@ -576,7 +594,7 @@ export async function updateAssignment(data: AssignmentFormData): Promise<void> 
   const announcementData = {
     schoolId:    ctx.schoolId,
     title:       `Homework Updated: ${assignment.lesson.subject.name}`,
-    description: `Homework for ${assignment.lesson.class.name} has been updated. New due date: ${dueFmt}.`,
+    description: `${assignment.title} for ${assignment.lesson.class.name} has been updated. New due date: ${dueFmt}.`,
     date:        new Date(),
     classId:     assignment.lesson.class.id,
   };
@@ -598,8 +616,8 @@ export async function updateAssignment(data: AssignmentFormData): Promise<void> 
     schoolId: ctx.schoolId,
     classId: assignment.lesson.class.id,
     type: "ASSIGNMENT",
-    title: `${assignment.lesson.subject.name} homework updated`,
-    body: `Homework has been updated. New due date: ${dueFmt}.`,
+    title: `${assignment.lesson.subject.name}: ${assignment.title} updated`,
+    body: `${assignment.title} has been updated. New due date: ${dueFmt}.`,
     href: "/list/assignments",
     sourceModel: "Assignment",
     sourceId: String(assignment.id),
@@ -607,8 +625,9 @@ export async function updateAssignment(data: AssignmentFormData): Promise<void> 
     teacherId: ctx.role === "teacher" ? ctx.userId : null,
     occurredAt: new Date(),
     payload: {
-      assignmentTitle: parsed.title,
+      assignmentTitle: assignment.title,
       subjectName: assignment.lesson.subject.name,
+      homeworkSequence: assignment.homeworkSequence,
       dueDate: parsed.dueDate,
     },
   });
