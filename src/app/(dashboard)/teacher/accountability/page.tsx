@@ -13,6 +13,7 @@ import {
   type TeacherHistoryWeekGroup,
   type TeacherDutyRow,
 } from "@/src/lib/queries/teacher-self-accountability";
+import { getTeacherAccountabilitySettings } from "@/src/lib/services/teacher-accountability-settings";
 import TeacherEscalationResponseForm from "@/src/components/TeacherEscalationResponseForm";
 
 export const dynamic = "force-dynamic";
@@ -496,6 +497,62 @@ function HistorySection({
   );
 }
 
+function DeadlineRulesPanel({
+  settings,
+}: {
+  settings: Awaited<ReturnType<typeof getTeacherAccountabilitySettings>>;
+}) {
+  const rules = [
+    {
+      title: "Attendance",
+      body: `Attendance opens ${settings.attendanceOpenMinutesBeforeLesson} minutes before a lesson. It becomes late ${settings.attendanceGraceMinutesAfterLesson} minutes after the lesson ends, and can escalate ${settings.attendanceEscalateMinutesAfterLesson} minutes after the lesson ends.`,
+    },
+    {
+      title: "CA scores",
+      body: `CA scores should be published within ${settings.caScorePublishWindowSchoolDays} school days after an activity. Reminders start after ${settings.caReminderAfterSchoolDays} school days, and escalation can happen after ${settings.caEscalateAfterSchoolDays} school days.`,
+    },
+    {
+      title: "Homework checks",
+      body: `Homework should be checked within ${settings.homeworkCheckWindowSchoolDays} school days after the due date. If it is still unchecked after ${settings.homeworkEscalateAfterSchoolDays} school days, it can escalate.`,
+    },
+    {
+      title: "Closeout time",
+      body: `Daily teacher deadlines use ${settings.teacherCloseoutTime} as the closeout time unless the duty has its own lesson time.`,
+    },
+  ];
+
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
+      <details>
+        <summary className="flex cursor-pointer list-none flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <span>
+            <span className="block text-base font-black text-slate-950">
+              Deadline Rules
+            </span>
+            <span className="mt-1 block text-sm font-semibold text-slate-500">
+              The current school rules used to mark duties as pending, late, missed, or escalated.
+            </span>
+          </span>
+          <span className="inline-flex w-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
+            View rules
+          </span>
+        </summary>
+
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          {rules.map((rule) => (
+            <div key={rule.title} className="rounded-lg border border-slate-100 bg-slate-50 p-3">
+              <p className="text-sm font-black text-slate-950">{rule.title}</p>
+              <p className="mt-1 text-sm font-semibold leading-relaxed text-slate-600">
+                {rule.body}
+              </p>
+            </div>
+          ))}
+        </div>
+      </details>
+    </section>
+  );
+}
+
 const TeacherAccountabilityPage = async ({
   searchParams,
 }: {
@@ -507,10 +564,13 @@ const TeacherAccountabilityPage = async ({
     schoolId,
     teacherId: userId,
   });
-  const overview = await getTeacherSelfAccountabilityOverview({
-    schoolId,
-    teacherId: userId,
-  });
+  const [overview, settings] = await Promise.all([
+    getTeacherSelfAccountabilityOverview({
+      schoolId,
+      teacherId: userId,
+    }),
+    getTeacherAccountabilitySettings(schoolId),
+  ]);
   const attentionRows = overview.todayDuties.filter(needsTeacherAttention);
   const attentionIds = new Set(attentionRows.map((row) => row.id));
   const todayRows = overview.todayDuties.filter((row) => !attentionIds.has(row.id));
@@ -588,6 +648,8 @@ const TeacherAccountabilityPage = async ({
           {resolvedThisWeek > 0 ? ` ${resolvedThisWeek} escalation response${resolvedThisWeek === 1 ? "" : "s"} or decision${resolvedThisWeek === 1 ? "" : "s"} are recorded in history.` : ""}
         </p>
       </div>
+
+      <DeadlineRulesPanel settings={settings} />
 
       <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
         <NeedsAttentionPanel
