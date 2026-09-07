@@ -32,6 +32,7 @@ type Lesson = {
   subjectName: string;
   className:   string;
   teacherName: string;
+  nextHomeworkTitle: string;
 };
 type AssignmentFormData = Partial<{
   id: number;
@@ -72,7 +73,7 @@ const AssignmentForm = ({
   const [loading,    setLoading]    = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [apiError,   setApiError]   = useState<string | null>(null);
-  const [success,    setSuccess]    = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const [search,     setSearch]     = useState("");
 
   const {
@@ -155,6 +156,10 @@ const AssignmentForm = ({
   }, {});
 
   const selectedLesson = deduped.find((l) => String(l.id) === selectedLessonId);
+  const displayedHomeworkTitle =
+    type === "update" && data?.title
+      ? data.title
+      : selectedLesson?.nextHomeworkTitle ?? "Select subject and class";
 
   const onSubmit = async (formData: Inputs) => {
     setApiError(null);
@@ -167,10 +172,11 @@ const AssignmentForm = ({
         startDate: new Date(formData.startDate).toISOString(),
         dueDate:   new Date(formData.dueDate).toISOString(),
       };
-      if (type === "create") await createAssignment(payload);
-      else                   await updateAssignment(payload);
-      setSuccess(true);
-      setTimeout(() => { setSuccess(false); onSuccess?.(); }, 1200);
+      const result = type === "create"
+        ? await createAssignment(payload)
+        : await updateAssignment(payload);
+      setSuccessMessage(`${result.title} ${type === "create" ? "created" : "updated"} successfully.`);
+      setTimeout(() => { setSuccessMessage(""); onSuccess?.(); }, 1200);
     } catch (e: unknown) {
       setApiError(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
@@ -205,25 +211,26 @@ const AssignmentForm = ({
           <p className="text-xs font-semibold text-rose-700">{apiError}</p>
         </div>
       )}
-      {success && (
+      {successMessage && (
         <div className="flex items-center gap-2.5 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl">
           <CheckCircle2 size={15} className="text-emerald-500" />
           <p className="text-xs font-semibold text-emerald-700">
-            Homework {type === "create" ? "created" : "updated"} successfully!
+            {successMessage}
           </p>
         </div>
       )}
 
       <div className="flex flex-col gap-1.5">
         <label className="text-xs text-gray-500 font-semibold uppercase tracking-wider flex items-center gap-1.5">
-          <FileText size={12} /> Work Type
+          <FileText size={12} /> Homework title
         </label>
-        <input
-          {...register("title")}
-          value="Homework"
-          readOnly
-          className="ring-[1.5px] ring-gray-200 bg-gray-50 p-2.5 rounded-xl text-sm font-black text-gray-700 outline-none transition-all"
-        />
+        <input type="hidden" {...register("title")} value="Homework" readOnly />
+        <div className="rounded-xl border border-gray-200 bg-gray-50 p-3">
+          <p className="text-sm font-black text-gray-800">{displayedHomeworkTitle}</p>
+          <p className="mt-1 text-[11px] font-semibold text-gray-400">
+            Edujay numbers homework automatically from the server, so every parent and teacher sees the same title.
+          </p>
+        </div>
         <p className="text-[11px] font-semibold text-gray-400">
           Class exercises and tests belong in CA, so this form only creates homework.
         </p>
@@ -288,7 +295,7 @@ const AssignmentForm = ({
                           {lesson.subjectName}
                         </p>
                         <p className="text-[11px] text-gray-400 mt-0.5">
-                          Taught by {lesson.teacherName}
+                          Taught by {lesson.teacherName} · Next: {lesson.nextHomeworkTitle}
                         </p>
                       </div>
                       {isSelected && (

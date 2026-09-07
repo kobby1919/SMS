@@ -557,6 +557,9 @@ const CAActivityManager = ({
             <div className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5">
               <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Next activity</p>
               <p className="text-sm font-black text-gray-800">{nextActivityTitle}</p>
+              <p className="mt-1 text-[11px] font-semibold leading-relaxed text-gray-400">
+                Edujay names this in order. The server confirms the final number when you save.
+              </p>
             </div>
             <input
               type="number"

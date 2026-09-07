@@ -92,8 +92,8 @@ export default function TeacherEscalationResponseForm({
                 className="h-10 rounded-lg border border-edujay-border bg-white px-3 text-sm font-semibold normal-case tracking-normal text-edujay-ink outline-none focus:border-edujay-primary"
                 defaultValue="EXPLANATION"
               >
-                <option value="EXPLANATION">Explanation only</option>
-                <option value="CORRECTION_REQUEST">Request correction</option>
+                <option value="EXPLANATION">Explain what happened only</option>
+                <option value="CORRECTION_REQUEST">Ask to correct or reopen this record</option>
               </select>
               <span className="normal-case tracking-normal text-[11px] font-semibold text-slate-400">
                 Use explanation when you only need to account for the issue; use correction when the record must be reopened.
@@ -107,13 +107,13 @@ export default function TeacherEscalationResponseForm({
                 className="h-10 rounded-lg border border-edujay-border bg-white px-3 text-sm font-semibold normal-case tracking-normal text-edujay-ink outline-none focus:border-edujay-primary"
                 defaultValue="ADMIN_REVIEW"
               >
-                <option value="ADMIN_REVIEW">Management review</option>
-                <option value="ALLOW_LATE_ENTRY">Allow late entry</option>
-                <option value="MARK_AS_RESOLVED">Mark as resolved</option>
-                <option value="OTHER">Other</option>
+                <option value="ADMIN_REVIEW">Please review my explanation</option>
+                <option value="ALLOW_LATE_ENTRY">Please allow me to submit this late</option>
+                <option value="MARK_AS_RESOLVED">This has been fixed, please close it</option>
+                <option value="OTHER">I need another kind of help</option>
               </select>
               <span className="normal-case tracking-normal text-[11px] font-semibold text-slate-400">
-                Choose what you expect the headmaster or owner to do after reading your response.
+                Choose the exact decision you want the headmaster, owner, or admin to make.
               </span>
             </label>
           </div>

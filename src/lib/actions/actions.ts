@@ -455,6 +455,18 @@ export type AssignmentFormData = {
   dueDate:   string;
 };
 
+type AssignmentWithLessonSummary = Prisma.AssignmentGetPayload<{
+  include: {
+    lesson: {
+      select: {
+        subject: { select: { name: true } };
+        class: { select: { id: true; name: true } };
+        teacher: { select: { name: true; surname: true } };
+      };
+    };
+  };
+}>;
+
 async function nextHomeworkSequence(tx: Prisma.TransactionClient, schoolId: string, lessonId: number) {
   const latest = await tx.assignment.findFirst({
     where: { schoolId, lessonId },
@@ -464,34 +476,52 @@ async function nextHomeworkSequence(tx: Prisma.TransactionClient, schoolId: stri
   return (latest?.homeworkSequence ?? 0) + 1;
 }
 
-export async function createAssignment(data: AssignmentFormData): Promise<void> {
+function isUniqueConstraintError(error: unknown) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: string }).code === "P2002"
+  );
+}
+
+export async function createAssignment(data: AssignmentFormData): Promise<{ id: number; title: string }> {
   const parsed = parseActionInput(assignmentFormSchema, data);
   const ctx = await requireAdminOrTeacher();
   const lesson = await getLessonInSchool(parsed.lessonId, ctx.schoolId);
   requireTeacherOwnsLesson(lesson, ctx);
 
-  const assignment = await prisma.$transaction(async (tx) => {
-    const homeworkSequence = await nextHomeworkSequence(tx, ctx.schoolId, parsed.lessonId);
-    return tx.assignment.create({
-      data: {
-        schoolId:          ctx.schoolId,
-        title:             `Homework ${homeworkSequence}`,
-        homeworkSequence,
-        lessonId:          parsed.lessonId,
-        startDate:         new Date(parsed.startDate),
-        dueDate:           new Date(parsed.dueDate),
-      },
-      include: {
-        lesson: {
-          select: {
-            subject: { select: { name: true } },
-            class:   { select: { id: true, name: true } },
-            teacher: { select: { name: true, surname: true } },
+  let assignment: AssignmentWithLessonSummary | null = null;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      assignment = await prisma.$transaction(async (tx) => {
+        const homeworkSequence = await nextHomeworkSequence(tx, ctx.schoolId, parsed.lessonId);
+        return tx.assignment.create({
+          data: {
+            schoolId:          ctx.schoolId,
+            title:             `Homework ${homeworkSequence}`,
+            homeworkSequence,
+            lessonId:          parsed.lessonId,
+            startDate:         new Date(parsed.startDate),
+            dueDate:           new Date(parsed.dueDate),
           },
-        },
-      },
-    });
-  });
+          include: {
+            lesson: {
+              select: {
+                subject: { select: { name: true } },
+                class:   { select: { id: true, name: true } },
+                teacher: { select: { name: true, surname: true } },
+              },
+            },
+          },
+        });
+      });
+      break;
+    } catch (error) {
+      if (!isUniqueConstraintError(error) || attempt === 2) throw error;
+    }
+  }
+  if (!assignment) throw new Error("Could not create homework. Please try again.");
 
   const dueFmt = new Intl.DateTimeFormat("en-GH", { day: "numeric", month: "long", year: "numeric" }).format(new Date(parsed.dueDate));
   await syncHomeworkSubmissionsForAssignment(assignment.id, ctx.schoolId);
@@ -533,9 +563,11 @@ export async function createAssignment(data: AssignmentFormData): Promise<void> 
   revalidatePath("/list/assignments");
   revalidatePath("/list/announcements");
   revalidateDashboard(ctx.schoolId);
+
+  return { id: assignment.id, title: assignment.title };
 }
 
-export async function updateAssignment(data: AssignmentFormData): Promise<void> {
+export async function updateAssignment(data: AssignmentFormData): Promise<{ id: number; title: string }> {
   if (!data.id) throw new Error("Assignment ID required for update.");
   const parsed = parseActionInput(assignmentFormSchema, data);
   const ctx = await requireAdminOrTeacher();
@@ -635,6 +667,8 @@ export async function updateAssignment(data: AssignmentFormData): Promise<void> 
   revalidatePath("/list/assignments");
   revalidatePath("/list/announcements");
   revalidateDashboard(ctx.schoolId);
+
+  return { id: assignment.id, title: assignment.title };
 }
 
 export async function deleteAssignment(id: number): Promise<void> {

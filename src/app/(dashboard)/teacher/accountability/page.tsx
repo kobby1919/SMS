@@ -569,9 +569,9 @@ const TeacherAccountabilityPage = async ({
           tone={attentionRows.length > 0 ? "red" : "green"}
         />
         <StatCard
-          label="Resolved"
+          label="Past Resolved"
           value={resolvedThisWeek}
-          helper="Responses or decisions this week"
+          helper="Responses or decisions in the last 3 past weeks"
           tone="green"
         />
       </div>
