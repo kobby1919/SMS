@@ -107,16 +107,32 @@ const AssignmentForm = ({
   useEffect(() => {
     let cancelled = false;
     fetch("/api/form-data/lessons")
-      .then((r) => r.json())
-      .then((d: Lesson[]) => {
+      .then(async (response) => {
+        const data = await response.json().catch(() => null);
+        if (!response.ok) {
+          throw new Error(
+            data && typeof data === "object" && "error" in data && typeof data.error === "string"
+              ? data.error
+              : "Failed to load lessons.",
+          );
+        }
+        if (!Array.isArray(data)) {
+          throw new Error("Lessons could not be loaded. Please refresh and try again.");
+        }
+        return data as Lesson[];
+      })
+      .then((d) => {
         if (cancelled) return;
         setLessons(d);
         // Restore selected lessonId for update mode
         const lid = extractLessonId(data);
         if (lid) setValue("lessonId", lid, { shouldValidate: false });
       })
-      .catch(() => {
-        if (!cancelled) setApiError("Failed to load lessons.");
+      .catch((error: unknown) => {
+        if (!cancelled) {
+          setLessons([]);
+          setApiError(error instanceof Error ? error.message : "Failed to load lessons.");
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -271,7 +287,9 @@ const AssignmentForm = ({
         {/* Lesson list — plain buttons, NOT radio inputs */}
         <div className="max-h-[220px] overflow-y-auto border border-gray-200 rounded-xl">
           {Object.keys(grouped).length === 0 ? (
-            <div className="py-6 text-center text-sm text-gray-400">No subjects found</div>
+            <div className="px-4 py-6 text-center text-sm font-semibold text-gray-400">
+              No timetable subject found for this teacher.
+            </div>
           ) : (
             Object.entries(grouped).map(([className, classLessons]) => (
               <div key={className}>
