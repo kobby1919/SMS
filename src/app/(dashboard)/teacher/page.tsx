@@ -8,6 +8,7 @@ import UpcomingExams from "@/src/components/UpcomingExams";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { prepareTeacherAccountabilityForView } from "@/src/lib/services/teacher-accountability-view";
 import { getTeacherSelfAccountabilityOverview } from "@/src/lib/queries/teacher-self-accountability";
+import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 import Link from "next/link";
 import {
   AlertTriangle,
@@ -124,7 +125,7 @@ const TeacherPage = async () => {
     now: today,
   });
 
-  const [teacher, lessons, activePeriod, accountability] = await Promise.all([
+  const [teacher, lessons, activePeriod, accountability, teacherScope] = await Promise.all([
     prisma.teacher.findFirst({
       where: { id: userId, schoolId },
       include: { classes: { select: { id: true, name: true } } },
@@ -146,6 +147,7 @@ const TeacherPage = async () => {
     }),
     getActiveAcademicPeriod(schoolId),
     getTeacherSelfAccountabilityOverview({ schoolId, teacherId: userId }),
+    getTeacherScope({ schoolId, teacherId: userId }),
   ]);
 
   const todayLessons = lessons.filter((lesson) => lesson.day === todayDay);
@@ -399,6 +401,53 @@ const TeacherPage = async () => {
           subtitle={`${todayLabel} · ${taskCount} item${taskCount === 1 ? "" : "s"} needing attention today`}
           tag={`${formatTerm(activePeriod.currentTerm)} · ${activePeriod.academicYear}`}
         />
+
+        <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase text-gray-400">Teaching scope</p>
+              <h2 className="mt-1 text-lg font-black text-edujay-ink">
+                {teacherScope.isClassTeacher ? "Class Teacher" : "Subject Teacher"}
+              </h2>
+              <p className="mt-1 max-w-2xl text-sm font-semibold leading-relaxed text-gray-500">
+                {teacherScope.isClassTeacher
+                  ? "You supervise class readiness, student follow-up, and report-card progress for your class. Subject scores still belong to the subject teachers."
+                  : "You manage your own timetable lessons, attendance, homework, CA scores, and syllabus progress."}
+              </p>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2 lg:min-w-[320px]">
+              <div className="rounded-2xl bg-edujay-soft px-4 py-3">
+                <p className="text-2xl font-black text-edujay-primary">
+                  {teacherScope.supervisedClasses.length}
+                </p>
+                <p className="mt-1 text-[11px] font-black uppercase text-gray-500">
+                  Supervised classes
+                </p>
+              </div>
+              <div className="rounded-2xl bg-gray-50 px-4 py-3">
+                <p className="text-2xl font-black text-edujay-ink">
+                  {teacherScope.taughtClasses.length}
+                </p>
+                <p className="mt-1 text-[11px] font-black uppercase text-gray-500">
+                  Taught classes
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {teacherScope.isClassTeacher ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {teacherScope.supervisedClasses.map((cls) => (
+                <span
+                  key={cls.id}
+                  className="rounded-xl bg-slate-950 px-3 py-2 text-xs font-black text-white"
+                >
+                  {cls.name} · {cls.studentCount} students
+                </span>
+              ))}
+            </div>
+          ) : null}
+        </section>
 
         <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">

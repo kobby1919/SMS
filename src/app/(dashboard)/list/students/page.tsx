@@ -10,6 +10,7 @@ import FormModal from "@/src/components/FormModal";
 import prisma from "@/src/lib/prisma";
 import { Prisma } from "@/src/generated/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 
 const StudentListPage = async ({
   searchParams,
@@ -50,9 +51,13 @@ const StudentListPage = async ({
   }
 
   if (role === "teacher") {
+    const teacherScope = await getTeacherScope({ schoolId, teacherId: userId });
     const teacherQuery: Prisma.StudentWhereInput = {
       schoolId,
-      class: { lessons: { some: { teacherId: userId } } },
+      OR: [
+        { class: { lessons: { some: { teacherId: userId } } } },
+        { classId: { in: teacherScope.supervisedClassIds } },
+      ],
     };
 
     if (queryParams.classId) {
@@ -113,6 +118,7 @@ const StudentListPage = async ({
       grade: string;
       students: TeacherStudent[];
       subjects: Map<number, string>;
+      isSupervised: boolean;
     };
 
     const groupedByClass = students.reduce((map, student) => {
@@ -122,6 +128,7 @@ const StudentListPage = async ({
           grade: student.class.grade.level,
           students: [],
           subjects: new Map<number, string>(),
+          isSupervised: teacherScope.supervisedClassIds.includes(student.classId),
         };
 
         student.class.lessons.forEach((lesson) => {
@@ -135,7 +142,7 @@ const StudentListPage = async ({
     const classGroups = Array.from(groupedByClass.values()).map((group) => ({
       ...group,
       subjectNames: Array.from(group.subjects.values()).sort((a, b) => a.localeCompare(b)),
-    }));
+    })).sort((a, b) => Number(b.isSupervised) - Number(a.isSupervised) || a.name.localeCompare(b.name));
 
     const boys = students.filter((student) => student.sex === "MALE").length;
     const girls = students.filter((student) => student.sex === "FEMALE").length;
@@ -190,7 +197,18 @@ const StudentListPage = async ({
                 <div className="border-b border-gray-100 px-5 py-4">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                      <h2 className="text-base font-black text-gray-800">{group.name}</h2>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h2 className="text-base font-black text-gray-800">{group.name}</h2>
+                        {group.isSupervised ? (
+                          <span className="rounded-full bg-slate-950 px-2.5 py-1 text-[10px] font-black uppercase text-white">
+                            My Class
+                          </span>
+                        ) : (
+                          <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-[10px] font-black uppercase text-indigo-600">
+                            I Teach
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs font-semibold text-gray-400">
                         Grade {group.grade} · {group.students.length} student{group.students.length === 1 ? "" : "s"}
                       </p>

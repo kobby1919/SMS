@@ -21,6 +21,7 @@ import ReportPublicationControls from "@/src/components/ReportPublicationControl
 import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { formatMark } from "@/src/lib/formatters/marks";
+import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 import type { Term } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
@@ -262,6 +263,9 @@ const ReportCardListPage = async ({
   }
 
   // ── Classes this user can access ─────────────────────────────────────────
+  const teacherScope = role === "teacher"
+    ? await getTeacherScope({ schoolId, teacherId: userId })
+    : null;
   const supervisedClasses =
     role === "admin"
       ? await prisma.class.findMany({
@@ -272,10 +276,7 @@ const ReportCardListPage = async ({
       : await prisma.class.findMany({
           where: {
             schoolId,
-            OR: [
-              { supervisorId: userId },
-              { lessons: { some: { teacherId: userId } } },
-            ],
+            id: { in: teacherScope?.accessibleClassIds ?? [] },
           },
           orderBy: { name: "asc" },
           include: { grade: { select: { level: true } } },
@@ -303,7 +304,7 @@ const ReportCardListPage = async ({
   const activeClass =
     supervisedClasses.find((c) => c.id === activeClassId) ??
     supervisedClasses[0];
-  const isClassTeacher = role === "teacher" && activeClass.supervisorId === userId;
+  const isClassTeacher = role === "teacher" && teacherScope?.supervisedClassIds.includes(activeClass.id);
 
   // ── Academic years from configs ───────────────────────────────────────────
   const configs = await prisma.cAConfig.findMany({
@@ -513,9 +514,18 @@ const ReportCardListPage = async ({
             ? "border-emerald-100 bg-emerald-50 text-emerald-700"
             : "border-amber-100 bg-amber-50 text-amber-700"
         }`}>
-          {isPublished
-            ? "Admin has published this class report set. Parents can now view and download final reports."
-            : "This class report set is still awaiting admin approval. Teachers can preview records, but parents cannot download final reports yet."}
+          <p className="font-black">
+            {isClassTeacher ? "Class teacher view" : "Subject teacher view"}
+          </p>
+          <p className="mt-1 leading-relaxed">
+            {isClassTeacher
+              ? "You can review the full class report readiness for your supervised class. Subject scores still belong to the subject teachers, and admin must approve before parents receive final reports."
+              : "You can preview only the subjects you teach. Your responsibility is to complete your subject CA and exam entries when the exam window opens."}
+            {" "}
+            {isPublished
+              ? "Admin has published this class report set."
+              : "This class report set is still awaiting admin approval."}
+          </p>
         </div>
       )}
 
