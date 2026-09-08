@@ -30,12 +30,13 @@ export default function ReportCardFilters({
   };
 
   return (
-    <div className="grid w-full grid-cols-1 gap-2 sm:w-auto sm:grid-cols-3">
+    <div className="grid w-full min-w-0 grid-cols-1 gap-2 sm:grid-cols-3 lg:min-w-[520px]">
       {/* Class Filter */}
       <select
         value={String(activeClassId)}
         onChange={(e) => updateFilter("classId", e.target.value)}
-        className="w-full appearance-none rounded-xl bg-white px-3 py-2 text-sm font-semibold text-gray-700 outline-none ring-[1.5px] ring-gray-200"
+        aria-label="Filter by class"
+        className="w-full min-w-0 appearance-none rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 outline-none ring-[1.5px] ring-gray-200"
       >
         {supervisedClasses.map((c) => (
           <option key={c.id} value={c.id}>{c.name}</option>
@@ -46,7 +47,8 @@ export default function ReportCardFilters({
       <select
         value={activeTerm}
         onChange={(e) => updateFilter("term", e.target.value)}
-        className="w-full appearance-none rounded-xl bg-white px-3 py-2 text-sm font-semibold text-gray-700 outline-none ring-[1.5px] ring-gray-200"
+        aria-label="Filter by term"
+        className="w-full min-w-0 appearance-none rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 outline-none ring-[1.5px] ring-gray-200"
       >
         {Object.entries(TERM_LABELS).map(([v, l]) => (
           <option key={v} value={v}>{l}</option>
@@ -57,7 +59,8 @@ export default function ReportCardFilters({
       <select
         value={activeYear}
         onChange={(e) => updateFilter("year", e.target.value)}
-        className="w-full appearance-none rounded-xl bg-white px-3 py-2 text-sm font-semibold text-gray-700 outline-none ring-[1.5px] ring-gray-200"
+        aria-label="Filter by academic year"
+        className="w-full min-w-0 appearance-none rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 outline-none ring-[1.5px] ring-gray-200"
       >
         {academicYears.map((y) => (
           <option key={y} value={y}>{y}</option>

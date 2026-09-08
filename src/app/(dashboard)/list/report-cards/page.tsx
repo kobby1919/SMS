@@ -115,16 +115,16 @@ const ReportCardListPage = async ({
     const publishedClassIds = new Set(publications.map((publication) => publication.classId));
 
     return (
-      <div className="m-3 mt-0 flex flex-1 flex-col gap-4 sm:m-4 sm:mt-0">
-        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="m-3 mt-0 flex min-w-0 flex-1 flex-col gap-4 sm:m-4 sm:mt-0">
+        <div className="min-w-0 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
                 <FileText size={20} />
               </div>
-              <div>
-                <h1 className="text-xl font-black text-gray-900">Ward Results</h1>
-                <p className="mt-0.5 text-sm font-semibold text-gray-400">
+              <div className="min-w-0">
+                <h1 className="break-words text-xl font-black text-gray-900">Ward Results</h1>
+                <p className="mt-0.5 break-words text-sm font-semibold leading-relaxed text-gray-400">
                   Report-card building summary for {TERM_LABELS[selectedTerm]} - {activeYear}
                 </p>
               </div>
@@ -157,8 +157,8 @@ const ReportCardListPage = async ({
               : 0;
 
             return (
-              <article key={child.id} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-                <div className="flex items-start gap-3">
+              <article key={child.id} className="min-w-0 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-blue-50 text-sm font-black text-blue-700">
                     {child.img ? (
                       <Image
@@ -174,10 +174,10 @@ const ReportCardListPage = async ({
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h2 className="truncate text-base font-black text-gray-900">{child.name} {child.surname}</h2>
-                    <p className="mt-0.5 text-xs font-bold text-gray-400">{child.class.name}</p>
+                    <h2 className="break-words text-base font-black text-gray-900">{child.name} {child.surname}</h2>
+                    <p className="mt-0.5 break-words text-xs font-bold text-gray-400">{child.class.name}</p>
                   </div>
-                  <span className="rounded-full bg-sky-50 px-2 py-1 text-[10px] font-black text-sky-700">
+                  <span className="w-fit rounded-full bg-sky-50 px-2 py-1 text-[10px] font-black text-sky-700 sm:shrink-0">
                     {caStarted}/{subjectTotal || caStarted} CA
                   </span>
                 </div>
@@ -205,8 +205,8 @@ const ReportCardListPage = async ({
                     {subjectRows.length > 0 ? subjectRows.map(({ subjectId, subjectName, record }) => (
                       <div key={subjectId} className="flex flex-col gap-1 px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                         <div className="min-w-0">
-                          <p className="truncate text-xs font-black text-gray-900">{subjectName}</p>
-                          <p className="text-[10px] font-semibold text-gray-400">
+                          <p className="break-words text-xs font-black text-gray-900">{subjectName}</p>
+                          <p className="break-words text-[10px] font-semibold leading-relaxed text-gray-400">
                             {record?.examScore && record.examScore > 0 ? "Report score ready" : record ? "CA building, exam pending" : "No CA yet"}
                             {record?.examScore && record.examScore > 0 && !isPublished ? " · awaiting school approval" : ""}
                           </p>
@@ -426,26 +426,26 @@ const ReportCardListPage = async ({
   const isPublished = publication?.status === "PUBLISHED";
 
   return (
-    <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
+    <div className="m-3 mt-0 flex min-w-0 flex-1 flex-col gap-4 sm:m-4 sm:mt-0">
       {/* Header */}
-      <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-11 h-11 bg-violet-50 rounded-2xl flex items-center justify-center shrink-0">
+      <div className="min-w-0 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+        <div className="flex flex-col justify-between gap-4 xl:flex-row xl:items-center">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-violet-50">
               <FileText size={20} className="text-violet-600" />
             </div>
-            <div>
-              <h1 className="text-xl font-black text-gray-800 tracking-tight">
+            <div className="min-w-0">
+              <h1 className="break-words text-xl font-black text-gray-800">
                 Class Report Builder
               </h1>
-              <p className="text-sm text-gray-400 mt-0.5 font-medium">
+              <p className="mt-0.5 break-words text-sm font-medium leading-relaxed text-gray-400">
                 {activeClass.name} · {TERM_LABELS[selectedTerm]} · {activeYear}
               </p>
             </div>
           </div>
 
           {/* Filters */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="w-full min-w-0 xl:w-auto">
             {/* Class */}
             <ReportCardFilters
               supervisedClasses={supervisedClasses}
@@ -459,7 +459,7 @@ const ReportCardListPage = async ({
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
           {
             label: "Students",
@@ -484,14 +484,14 @@ const ReportCardListPage = async ({
         ].map((s) => (
           <div
             key={s.label}
-            className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3"
+            className="flex min-w-0 items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm"
           >
             <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${s.color}`}
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${s.color}`}
             >
               <span className="text-xl font-black">{s.value}</span>
             </div>
-            <p className="text-sm font-bold text-gray-500">{s.label}</p>
+            <p className="min-w-0 break-words text-sm font-bold text-gray-500">{s.label}</p>
           </div>
         ))}
       </div>
@@ -536,7 +536,7 @@ const ReportCardListPage = async ({
       )}
 
       {role === "teacher" && (
-        <div className={`rounded-2xl border p-4 text-xs font-semibold ${
+        <div className={`min-w-0 rounded-2xl border p-4 text-xs font-semibold ${
           isPublished
             ? "border-emerald-100 bg-emerald-50 text-emerald-700"
             : "border-amber-100 bg-amber-50 text-amber-700"
@@ -558,9 +558,9 @@ const ReportCardListPage = async ({
 
       {/* Config warning */}
       {!config && (
-        <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-2xl">
+        <div className="flex min-w-0 items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4">
           <AlertTriangle size={16} className="text-amber-500 shrink-0 mt-0.5" />
-          <p className="text-xs font-semibold text-amber-700">
+          <p className="min-w-0 break-words text-xs font-semibold leading-relaxed text-amber-700">
             No CA configuration found for <strong>{activeYear}</strong>. Report
             cards will use the default 30% / 70% split. Ask your admin to
             configure weights at{" "}
@@ -573,8 +573,8 @@ const ReportCardListPage = async ({
       )}
 
       {/* Student list */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between">
+      <div className="min-w-0 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="flex flex-col gap-1 border-b border-gray-100 px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:px-5">
           <p className="text-xs font-black uppercase tracking-wider text-gray-400">
             Students in this class
           </p>
@@ -609,61 +609,66 @@ const ReportCardListPage = async ({
               return (
                 <div
                   key={s.id}
-                  className={`flex items-center gap-4 px-5 py-4 transition-colors group
+                  className={`flex flex-col gap-3 px-4 py-4 transition-colors group sm:flex-row sm:items-center sm:gap-4 sm:px-5
                     hover:bg-gray-50/60`}
                 >
-                  {/* Avatar */}
-                  <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-sm font-black text-indigo-600 shrink-0">
-                    {s.img ? (
-                      <Image
-                        unoptimized
-                        src={s.img}
-                        alt=""
-                        width={40}
-                        height={40}
-                        className="w-full h-full object-cover rounded-xl"
-                      />
-                    ) : (
-                      `${s.name[0]}${s.surname[0]}`
-                    )}
-                  </div>
+                  <div className="flex min-w-0 items-center gap-3 sm:flex-1">
+                    {/* Avatar */}
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-sm font-black text-indigo-600">
+                      {s.img ? (
+                        <Image
+                          unoptimized
+                          src={s.img}
+                          alt=""
+                          width={40}
+                          height={40}
+                          className="h-full w-full rounded-xl object-cover"
+                        />
+                      ) : (
+                        `${s.name[0]}${s.surname[0]}`
+                      )}
+                    </div>
 
-                  {/* Name */}
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-gray-800 text-sm">
-                      {s.surname} {s.name}
-                    </p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className={`flex items-center gap-1 text-[10px] font-bold ${statusClass}`}>
-                        {s.status === "ready" ? <CheckCircle2 size={10} /> : <Clock size={10} />}
-                        {statusLabel}
-                      </span>
+                    {/* Name */}
+                    <div className="min-w-0 flex-1">
+                      <p className="break-words text-sm font-bold text-gray-800">
+                        {s.surname} {s.name}
+                      </p>
+                      <div className="mt-0.5 flex items-center gap-2">
+                        <span className={`flex items-center gap-1 text-[10px] font-bold ${statusClass}`}>
+                          {s.status === "ready" ? <CheckCircle2 size={10} /> : <Clock size={10} />}
+                          <span className="break-words">{statusLabel}</span>
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="hidden sm:block text-right">
-                    <p className="text-xs text-gray-400 font-semibold">
-                      Progress
-                    </p>
-                    <p className="text-sm font-black text-gray-800">
-                      {s.subjectsDone}/{totalSubjects || 0} CA
-                    </p>
-                  </div>
-                  <div className="hidden md:block text-right">
-                    <p className="text-xs text-gray-400 font-semibold">
-                      Exams
-                    </p>
-                    <p className="text-sm font-black text-gray-800">
-                      {s.reportsReady}/{totalSubjects || 0} ready
-                    </p>
+                  <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:min-w-[170px]">
+                    <div className="rounded-xl bg-gray-50 p-2 sm:bg-transparent sm:p-0 sm:text-right">
+                      <p className="text-[10px] font-black uppercase text-gray-400">
+                        Progress
+                      </p>
+                      <p className="text-sm font-black text-gray-800">
+                        {s.subjectsDone}/{totalSubjects || 0} CA
+                      </p>
+                    </div>
+                    <div className="rounded-xl bg-gray-50 p-2 sm:bg-transparent sm:p-0 sm:text-right">
+                      <p className="text-[10px] font-black uppercase text-gray-400">
+                        Exams
+                      </p>
+                      <p className="text-sm font-black text-gray-800">
+                        {s.reportsReady}/{totalSubjects || 0} ready
+                      </p>
+                    </div>
                   </div>
 
                   <Link
                     href={`/list/report-cards/${s.id}?term=${selectedTerm}&year=${activeYear}&classId=${activeClass.id}`}
                     aria-label={`Open report card for ${s.name} ${s.surname}`}
                     title={`Open report card for ${s.name} ${s.surname}`}
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white transition-colors hover:bg-slate-800"
+                    className="flex h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-slate-900 px-3 text-xs font-black text-white transition-colors hover:bg-slate-800 sm:h-10 sm:w-10 sm:px-0"
                   >
+                    <span className="sm:hidden">Open report</span>
                     <ChevronRight size={16} />
                   </Link>
                 </div>

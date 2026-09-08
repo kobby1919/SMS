@@ -118,18 +118,18 @@ export default function ReportPublicationControls({
   };
 
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+    <div className="min-w-0 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${statusCopy.tone}`}>
+          <div className="flex items-start gap-2">
+            <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${statusCopy.tone}`}>
               {statusCopy.icon}
             </span>
-            <div>
-              <p className="text-sm font-black text-gray-900">
+            <div className="min-w-0">
+              <p className="break-words text-sm font-black text-gray-900">
                 {statusCopy.title}
               </p>
-              <p className="text-xs font-semibold text-gray-400">
+              <p className="break-words text-xs font-semibold text-gray-400">
                 {studentCount} students · {subjectCount} subjects · {missingCount} blocker{missingCount === 1 ? "" : "s"}
               </p>
             </div>
@@ -152,7 +152,7 @@ export default function ReportPublicationControls({
           {error && <p className="mt-3 text-xs font-bold text-rose-600">{error}</p>}
         </div>
 
-        <div className="flex w-full flex-col gap-2 lg:w-[300px]">
+        <div className="flex w-full min-w-0 flex-col gap-2 lg:w-[300px]">
           <textarea
             value={notes}
             onChange={(event) => setNotes(event.target.value)}
@@ -171,7 +171,7 @@ export default function ReportPublicationControls({
             Unpublish
           </button>
         ) : role === "admin" ? (
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-2">
             <button
               type="button"
               onClick={() => run("reject")}
