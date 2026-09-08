@@ -53,7 +53,12 @@ const SingleStudentPage = async ({
 
   if (!student) notFound();
 
-  if (role === "teacher" && !student.class.lessons.some((lesson) => lesson.teacherId === userId)) {
+  const isClassTeacherForStudent =
+    role === "teacher" && student.class.supervisorId === userId;
+  const teachesStudentClass =
+    role === "teacher" && student.class.lessons.some((lesson) => lesson.teacherId === userId);
+
+  if (role === "teacher" && !isClassTeacherForStudent && !teachesStudentClass) {
     notFound();
   }
 

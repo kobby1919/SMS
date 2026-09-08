@@ -4,25 +4,34 @@ import Pagination from "@/src/components/pagination";
 import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
 import Image from "next/image";
-import { Users, GraduationCap, LayoutGrid } from "lucide-react";
+import Link from "next/link";
+import { FileText, Users, GraduationCap, LayoutGrid } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
 import { getClassesPage } from "@/src/lib/services/classes";
+import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 
 const ClassListPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { role, schoolId } = await requirePageSession();
+  const { userId, role, schoolId } = await requirePageSession();
 
   const { page, ...queryParams } = await searchParams;
   const parsedPage = page ? parseInt(page) : 1;
   const p = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
 
+  const teacherScope = role === "teacher"
+    ? await getTeacherScope({ schoolId, teacherId: userId })
+    : null;
+  const accessibleClassIds = teacherScope?.accessibleClassIds ?? [];
   const { classes, count } = await getClassesPage(schoolId, p, {
     search: queryParams.search,
-    supervisorId: queryParams.supervisorId,
+    supervisorId: role === "admin" ? queryParams.supervisorId : undefined,
+    classIds: role === "teacher" ? accessibleClassIds : undefined,
   });
+  const supervisedClassIds = new Set(teacherScope?.supervisedClassIds ?? []);
+  const taughtClassIds = new Set(teacherScope?.taughtClassIds ?? []);
 
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
@@ -31,11 +40,18 @@ const ClassListPage = async ({
       <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-black text-gray-800 tracking-tight">Classes</h1>
-            <p className="text-sm text-gray-400 mt-0.5 font-medium">{count} classes registered</p>
+            <h1 className="text-xl font-black text-gray-800 tracking-tight">
+              {role === "teacher" ? "My Classes" : "Classes"}
+            </h1>
+            <p className="text-sm text-gray-400 mt-0.5 font-medium">
+              {role === "teacher"
+                ? `${count} class${count === 1 ? "" : "es"} connected to your timetable or supervision`
+                : `${count} classes registered`}
+            </p>
           </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
             <TableSearch />
+            {role === "admin" && (
             <div className="flex items-center gap-2">
               <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
                 <Image src="/filter.png" alt="" width={16} height={16} />
@@ -45,8 +61,9 @@ const ClassListPage = async ({
                 <Image src="/sort.png" alt="" width={16} height={16} />
                 <span className="hidden sm:inline">Sort</span>
               </button>
-              {role === "admin" && <FormModal table="class" type="create" />}
+              <FormModal table="class" type="create" />
             </div>
+            )}
           </div>
         </div>
       </div>
@@ -83,18 +100,36 @@ const ClassListPage = async ({
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">Capacity</th>
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">Students</th>
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">Supervisor</th>
-                {role === "admin" && (
-                  <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">Actions</th>
-                )}
+                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[160px]">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {classes.map((item) => (
+              {classes.map((item) => {
+                const isMyClass = supervisedClassIds.has(item.id);
+                const isTaughtClass = taughtClassIds.has(item.id);
+
+                return (
                 <tr key={item.id} className="hover:bg-indigo-50/30 transition-colors duration-150 group">
 
                   {/* Class name */}
                   <td className="px-5 py-4">
-                    <p className="font-black text-sm text-gray-800">{item.name}</p>
+                    <div className="flex flex-col gap-1">
+                      <p className="font-black text-sm text-gray-800">{item.name}</p>
+                      {role === "teacher" ? (
+                        <div className="flex flex-wrap gap-1.5">
+                          {isMyClass ? (
+                            <span className="w-fit rounded-full bg-slate-950 px-2 py-0.5 text-[10px] font-black uppercase text-white">
+                              My Class
+                            </span>
+                          ) : null}
+                          {isTaughtClass ? (
+                            <span className="w-fit rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-black uppercase text-indigo-600">
+                              I Teach
+                            </span>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </div>
                   </td>
 
                   {/* Grade level — from relation, NOT item.name[0] */}
@@ -147,14 +182,29 @@ const ClassListPage = async ({
                   </td>
 
                   {/* Actions */}
-                  <td className="px-5 py-4 w-[100px]">
+                  <td className="px-5 py-4 w-[160px]">
                     <div className="flex items-center justify-end gap-2">
+                      <Link
+                        href={`/list/students?classId=${item.id}`}
+                        className="inline-flex h-8 items-center justify-center gap-1 rounded-xl bg-indigo-50 px-2.5 text-xs font-black text-indigo-600 transition-colors hover:bg-indigo-100"
+                      >
+                        <Users size={13} />
+                        <span className="hidden xl:inline">Students</span>
+                      </Link>
+                      <Link
+                        href={`/list/report-cards?classId=${item.id}`}
+                        className="inline-flex h-8 items-center justify-center gap-1 rounded-xl bg-slate-900 px-2.5 text-xs font-black text-white transition-colors hover:bg-slate-800"
+                      >
+                        <FileText size={13} />
+                        <span className="hidden xl:inline">Reports</span>
+                      </Link>
                       {role === "admin" && <FormModal table="class" type="update" data={item} />}
                       {role === "admin" && <FormModal table="class" type="delete" id={item.id} />}
                     </div>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>

@@ -52,28 +52,33 @@ const StudentListPage = async ({
 
   if (role === "teacher") {
     const teacherScope = await getTeacherScope({ schoolId, teacherId: userId });
+    const scopedClassIds = teacherScope.accessibleClassIds;
+    const requestedClassId = queryParams.classId ? parseInt(queryParams.classId) : null;
     const teacherQuery: Prisma.StudentWhereInput = {
       schoolId,
-      OR: [
-        { class: { lessons: { some: { teacherId: userId } } } },
-        { classId: { in: teacherScope.supervisedClassIds } },
-      ],
+      classId: {
+        in: requestedClassId && scopedClassIds.includes(requestedClassId)
+          ? [requestedClassId]
+          : requestedClassId
+            ? []
+          : scopedClassIds,
+      },
     };
 
-    if (queryParams.classId) {
-      teacherQuery.classId = parseInt(queryParams.classId);
-    }
-
-    if (queryParams.search) {
-      const search = queryParams.search.trim();
-      teacherQuery.OR = [
-        { name: { contains: search, mode: "insensitive" } },
-        { surname: { contains: search, mode: "insensitive" } },
-        { username: { contains: search, mode: "insensitive" } },
-        { email: { contains: search, mode: "insensitive" } },
-        { phone: { contains: search, mode: "insensitive" } },
-        { class: { name: { contains: search, mode: "insensitive" } } },
-        { class: { lessons: { some: { subject: { name: { contains: search, mode: "insensitive" } } } } } },
+    const search = queryParams.search?.trim();
+    if (search) {
+      teacherQuery.AND = [
+        {
+          OR: [
+            { name: { contains: search, mode: "insensitive" } },
+            { surname: { contains: search, mode: "insensitive" } },
+            { username: { contains: search, mode: "insensitive" } },
+            { email: { contains: search, mode: "insensitive" } },
+            { phone: { contains: search, mode: "insensitive" } },
+            { class: { name: { contains: search, mode: "insensitive" } } },
+            { class: { lessons: { some: { teacherId: userId, subject: { name: { contains: search, mode: "insensitive" } } } } } },
+          ],
+        },
       ];
     }
 
@@ -131,9 +136,19 @@ const StudentListPage = async ({
           isSupervised: teacherScope.supervisedClassIds.includes(student.classId),
         };
 
-        student.class.lessons.forEach((lesson) => {
-          current.subjects.set(lesson.subject.id, lesson.subject.name);
-        });
+        if (current.isSupervised) {
+          const supervised = teacherScope.supervisedClasses.find((cls) => cls.id === student.classId);
+          if (supervised) {
+            teacherScope.taughtClasses
+              .filter((cls) => cls.id === supervised.id)
+              .flatMap((cls) => cls.subjects)
+              .forEach((subject) => current.subjects.set(subject.id, subject.name));
+          }
+        } else {
+          student.class.lessons.forEach((lesson) => {
+            current.subjects.set(lesson.subject.id, lesson.subject.name);
+          });
+        }
         current.students.push(student);
         map.set(student.classId, current);
         return map;
@@ -214,6 +229,11 @@ const StudentListPage = async ({
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-1.5">
+                      {group.isSupervised && group.subjectNames.length === 0 ? (
+                        <span className="rounded-lg bg-slate-50 px-2 py-1 text-[10px] font-black text-slate-600">
+                          Full class follow-up
+                        </span>
+                      ) : null}
                       {group.subjectNames.map((subject) => (
                         <span key={subject} className="rounded-lg bg-indigo-50 px-2 py-1 text-[10px] font-black text-indigo-600">
                           {subject}

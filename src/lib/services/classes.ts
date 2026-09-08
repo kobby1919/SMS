@@ -7,6 +7,7 @@ import { ITEM_PER_PAGE } from "@/src/lib/settings";
 type ClassListFilters = {
   search?: string;
   supervisorId?: string;
+  classIds?: number[];
 };
 
 export async function getClassesPage(
@@ -17,12 +18,15 @@ export async function getClassesPage(
   const normalizedPage = Number.isFinite(page) && page > 0 ? page : 1;
   const search = filters.search?.trim() ?? "";
   const supervisorId = filters.supervisorId?.trim() ?? "";
+  const hasClassScope = Array.isArray(filters.classIds);
+  const classIds = filters.classIds?.filter((id) => Number.isFinite(id)) ?? [];
 
   return unstable_cache(
     async () => {
       const where: Prisma.ClassWhereInput = {
         schoolId,
         ...(supervisorId ? { supervisorId } : {}),
+        ...(hasClassScope ? { id: { in: classIds } } : {}),
         ...(search
           ? { name: { contains: search, mode: "insensitive" } }
           : {}),
@@ -51,6 +55,7 @@ export async function getClassesPage(
       String(normalizedPage),
       search || "all",
       supervisorId || "all",
+      hasClassScope ? classIds.join(",") || "none" : "all",
     ],
     {
       revalidate: 60,
