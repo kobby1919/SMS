@@ -37,7 +37,23 @@ const requiredDelegates = [
 ] as const;
 
 function hasRequiredDelegates(client: ReturnType<typeof prismaClientSingleton>) {
-  return requiredDelegates.every((delegate) => delegate in client);
+  const hasDelegates = requiredDelegates.every((delegate) => delegate in client);
+  const runtimeModels = (client as unknown as {
+    _runtimeDataModel?: {
+      models?: Record<string, { fields?: Array<{ name: string }> }>;
+    };
+  })._runtimeDataModel?.models;
+  const reportFields = runtimeModels?.ReportCardPublication?.fields ?? [];
+  const reportFieldNames = new Set(reportFields.map((field) => field.name));
+  const hasReportWorkflowFields = [
+    "submittedAt",
+    "submittedBy",
+    "reviewedAt",
+    "reviewedBy",
+    "reviewNote",
+  ].every((field) => reportFieldNames.has(field));
+
+  return hasDelegates && hasReportWorkflowFields;
 }
 
 let prismaClient = customGlobal.prismaGlobal;
