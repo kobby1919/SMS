@@ -37,6 +37,8 @@ import {
 import { syncCAActivityScorePublishingObligation } from "@/src/lib/services/teacher-ca-obligations";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
+import { getClassReportReadiness } from "@/src/lib/services/report-card-readiness";
+import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 
 // ─── Ghana BECE Grading System ────────────────────────────────────────────────
 // Score ranges → letter grade + grade point
@@ -787,44 +789,37 @@ export async function publishClassReportCardsAction(data: {
     throw new Error("Open exam entry before publishing report cards for this class period.");
   }
 
-  const subjectsByClass = await listClassSubjectsFromTimetable(schoolId, [parsed.classId]);
-  const subjectIds = Array.from(subjectsByClass.get(parsed.classId)?.keys() ?? []);
-  if (subjectIds.length === 0) {
+  const readiness = await getClassReportReadiness({
+    schoolId,
+    classId: parsed.classId,
+    term: parsed.term,
+    academicYear: parsed.academicYear,
+  });
+  if (readiness.subjectCount === 0) {
     throw new Error("This class has no timetable subjects. Add subjects to the timetable before publishing reports.");
   }
-
-  const students = await prisma.student.findMany({
-    where: { schoolId, classId: parsed.classId },
-    select: { id: true },
-  });
-  if (students.length === 0) {
+  if (readiness.studentCount === 0) {
     throw new Error("This class has no students to publish report cards for.");
   }
-
-  const caRecords = await prisma.continuousAssessment.findMany({
-    where: {
-      schoolId,
-      classId: parsed.classId,
-      term: parsed.term,
-      academicYear: parsed.academicYear,
-      subjectId: { in: subjectIds },
-    },
-    select: { studentId: true, subjectId: true, examScore: true },
-  });
-
-  const readyKeys = new Set(
-    caRecords
-      .filter((record) => record.examScore > 0)
-      .map((record) => `${record.studentId}:${record.subjectId}`),
-  );
-  const missingCount = students.reduce((count, student) => {
-    return count + subjectIds.filter((subjectId) => !readyKeys.has(`${student.id}:${subjectId}`)).length;
-  }, 0);
-
-  if (missingCount > 0) {
+  if (!readiness.isReady) {
     throw new Error(
-      `Cannot publish yet. ${missingCount} student-subject report entry${missingCount === 1 ? " is" : " entries are"} still missing exam scores.`,
+      `Cannot publish yet. ${readiness.missingCount} student-subject report entr${readiness.missingCount === 1 ? "y is" : "ies are"} still incomplete.`,
     );
+  }
+
+  const currentPublication = await prisma.reportCardPublication.findUnique({
+    where: {
+      schoolId_classId_term_academicYear: {
+        schoolId,
+        classId: parsed.classId,
+        term: parsed.term,
+        academicYear: parsed.academicYear,
+      },
+    },
+    select: { status: true },
+  });
+  if (currentPublication?.status !== "SUBMITTED" && currentPublication?.status !== "PUBLISHED") {
+    throw new Error("The class teacher must submit this class report set for admin review before publishing.");
   }
 
   const publication = await prisma.reportCardPublication.upsert({
@@ -843,11 +838,18 @@ export async function publishClassReportCardsAction(data: {
       academicYear: parsed.academicYear,
       status: "PUBLISHED",
       notes: parsed.notes,
+      reviewedAt: new Date(),
+      reviewedBy: userId,
+      reviewNote: parsed.notes,
+      publishedAt: new Date(),
       publishedBy: userId,
     },
     update: {
       status: "PUBLISHED",
       notes: parsed.notes,
+      reviewedAt: new Date(),
+      reviewedBy: userId,
+      reviewNote: parsed.notes,
       publishedAt: new Date(),
       publishedBy: userId,
       unpublishedAt: null,
@@ -866,8 +868,8 @@ export async function publishClassReportCardsAction(data: {
       classId: parsed.classId,
       term: parsed.term,
       academicYear: parsed.academicYear,
-      studentCount: students.length,
-      subjectCount: subjectIds.length,
+      studentCount: readiness.studentCount,
+      subjectCount: readiness.subjectCount,
       notes: parsed.notes,
     },
   });
@@ -877,6 +879,154 @@ export async function publishClassReportCardsAction(data: {
   revalidateDashboard(schoolId);
   revalidateDocument(schoolId, "report-card");
   return { id: publication.id };
+}
+
+export async function submitClassReportCardsForReviewAction(data: {
+  classId: number;
+  term: Term;
+  academicYear: string;
+  notes?: string;
+}) {
+  const parsed = parseActionInput(reportPublicationSchema, data);
+  const { userId, role, schoolId } = await requireRole(["teacher"]);
+  const activePeriod = await getActiveAcademicPeriod(schoolId);
+  if (parsed.term !== activePeriod.currentTerm || parsed.academicYear !== activePeriod.academicYear) {
+    throw new Error("Class reports can only be submitted for the active academic period.");
+  }
+
+  const teacherScope = await getTeacherScope({ schoolId, teacherId: userId });
+  if (!teacherScope.supervisedClassIds.includes(parsed.classId)) {
+    throw new Error("Only the assigned class teacher can submit this class for report-card review.");
+  }
+
+  const cls = await prisma.class.findFirst({
+    where: { id: parsed.classId, schoolId },
+    select: { id: true, name: true },
+  });
+  if (!cls) throw new Error("Class not found.");
+
+  const readiness = await getClassReportReadiness({
+    schoolId,
+    classId: parsed.classId,
+    term: parsed.term,
+    academicYear: parsed.academicYear,
+  });
+  if (readiness.subjectCount === 0) {
+    throw new Error("This class has no timetable subjects. Add subjects to the timetable before submitting.");
+  }
+  if (readiness.studentCount === 0) {
+    throw new Error("This class has no students to submit.");
+  }
+  if (!readiness.isReady) {
+    throw new Error(
+      `Cannot submit yet. ${readiness.missingCount} student-subject report entr${readiness.missingCount === 1 ? "y is" : "ies are"} still incomplete.`,
+    );
+  }
+
+  const publication = await prisma.reportCardPublication.upsert({
+    where: {
+      schoolId_classId_term_academicYear: {
+        schoolId,
+        classId: parsed.classId,
+        term: parsed.term,
+        academicYear: parsed.academicYear,
+      },
+    },
+    create: {
+      schoolId,
+      classId: parsed.classId,
+      term: parsed.term,
+      academicYear: parsed.academicYear,
+      status: "SUBMITTED",
+      notes: parsed.notes,
+      submittedAt: new Date(),
+      submittedBy: userId,
+    },
+    update: {
+      status: "SUBMITTED",
+      notes: parsed.notes,
+      submittedAt: new Date(),
+      submittedBy: userId,
+      reviewedAt: null,
+      reviewedBy: null,
+      reviewNote: null,
+      unpublishedAt: null,
+      unpublishedBy: null,
+    },
+  });
+
+  await logCAAudit({
+    schoolId,
+    actorId: userId,
+    action: "REPORT_CARDS_SUBMITTED_FOR_REVIEW",
+    entityType: "ReportCardPublication",
+    entityId: publication.id,
+    message: `${cls.name} report cards were submitted for admin review for ${parsed.academicYear} ${parsed.term.replace("_", " ")}.`,
+    metadata: {
+      classId: parsed.classId,
+      term: parsed.term,
+      academicYear: parsed.academicYear,
+      studentCount: readiness.studentCount,
+      subjectCount: readiness.subjectCount,
+      notes: parsed.notes,
+      role,
+    },
+  });
+
+  revalidatePath("/list/report-cards");
+  revalidateDashboard(schoolId);
+  revalidateDocument(schoolId, "report-card");
+  return { id: publication.id };
+}
+
+export async function rejectClassReportCardsReviewAction(data: {
+  classId: number;
+  term: Term;
+  academicYear: string;
+  notes?: string;
+}) {
+  const parsed = parseActionInput(reportPublicationSchema, data);
+  const { userId, schoolId } = await requireRole(["admin"]);
+
+  const publication = await prisma.reportCardPublication.findUnique({
+    where: {
+      schoolId_classId_term_academicYear: {
+        schoolId,
+        classId: parsed.classId,
+        term: parsed.term,
+        academicYear: parsed.academicYear,
+      },
+    },
+    include: { class: { select: { name: true } } },
+  });
+  if (!publication || publication.status !== "SUBMITTED") {
+    throw new Error("Only submitted report-card sets can be rejected.");
+  }
+
+  const updated = await prisma.reportCardPublication.update({
+    where: { id: publication.id, schoolId },
+    data: {
+      status: "REJECTED",
+      reviewedAt: new Date(),
+      reviewedBy: userId,
+      reviewNote: parsed.notes || "Returned for correction.",
+    },
+  });
+
+  await logCAAudit({
+    schoolId,
+    actorId: userId,
+    action: "REPORT_CARDS_REJECTED",
+    entityType: "ReportCardPublication",
+    entityId: publication.id,
+    message: `${publication.class.name} report cards were returned for correction for ${parsed.academicYear} ${parsed.term.replace("_", " ")}.`,
+    metadata: parsed,
+  });
+
+  revalidatePath("/list/report-cards");
+  revalidateDashboard(schoolId);
+  revalidateDocument(schoolId, "report-card");
+  return { id: updated.id };
 }
 
 export async function unpublishClassReportCardsAction(data: {

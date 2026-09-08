@@ -595,6 +595,8 @@ export type CABucketAggregationMode = (typeof CABucketAggregationMode)[keyof typ
 
 
 export const ReportPublicationStatus: {
+  SUBMITTED: 'SUBMITTED',
+  REJECTED: 'REJECTED',
   PUBLISHED: 'PUBLISHED',
   UNPUBLISHED: 'UNPUBLISHED'
 };
@@ -51956,6 +51958,11 @@ export namespace Prisma {
     term: $Enums.Term | null
     status: $Enums.ReportPublicationStatus | null
     notes: string | null
+    submittedAt: Date | null
+    submittedBy: string | null
+    reviewedAt: Date | null
+    reviewedBy: string | null
+    reviewNote: string | null
     publishedAt: Date | null
     publishedBy: string | null
     unpublishedAt: Date | null
@@ -51972,6 +51979,11 @@ export namespace Prisma {
     term: $Enums.Term | null
     status: $Enums.ReportPublicationStatus | null
     notes: string | null
+    submittedAt: Date | null
+    submittedBy: string | null
+    reviewedAt: Date | null
+    reviewedBy: string | null
+    reviewNote: string | null
     publishedAt: Date | null
     publishedBy: string | null
     unpublishedAt: Date | null
@@ -51988,6 +52000,11 @@ export namespace Prisma {
     term: number
     status: number
     notes: number
+    submittedAt: number
+    submittedBy: number
+    reviewedAt: number
+    reviewedBy: number
+    reviewNote: number
     publishedAt: number
     publishedBy: number
     unpublishedAt: number
@@ -52016,6 +52033,11 @@ export namespace Prisma {
     term?: true
     status?: true
     notes?: true
+    submittedAt?: true
+    submittedBy?: true
+    reviewedAt?: true
+    reviewedBy?: true
+    reviewNote?: true
     publishedAt?: true
     publishedBy?: true
     unpublishedAt?: true
@@ -52032,6 +52054,11 @@ export namespace Prisma {
     term?: true
     status?: true
     notes?: true
+    submittedAt?: true
+    submittedBy?: true
+    reviewedAt?: true
+    reviewedBy?: true
+    reviewNote?: true
     publishedAt?: true
     publishedBy?: true
     unpublishedAt?: true
@@ -52048,6 +52075,11 @@ export namespace Prisma {
     term?: true
     status?: true
     notes?: true
+    submittedAt?: true
+    submittedBy?: true
+    reviewedAt?: true
+    reviewedBy?: true
+    reviewNote?: true
     publishedAt?: true
     publishedBy?: true
     unpublishedAt?: true
@@ -52151,8 +52183,13 @@ export namespace Prisma {
     term: $Enums.Term
     status: $Enums.ReportPublicationStatus
     notes: string | null
-    publishedAt: Date
-    publishedBy: string
+    submittedAt: Date | null
+    submittedBy: string | null
+    reviewedAt: Date | null
+    reviewedBy: string | null
+    reviewNote: string | null
+    publishedAt: Date | null
+    publishedBy: string | null
     unpublishedAt: Date | null
     unpublishedBy: string | null
     schoolId: string
@@ -52186,6 +52223,11 @@ export namespace Prisma {
     term?: boolean
     status?: boolean
     notes?: boolean
+    submittedAt?: boolean
+    submittedBy?: boolean
+    reviewedAt?: boolean
+    reviewedBy?: boolean
+    reviewNote?: boolean
     publishedAt?: boolean
     publishedBy?: boolean
     unpublishedAt?: boolean
@@ -52204,6 +52246,11 @@ export namespace Prisma {
     term?: boolean
     status?: boolean
     notes?: boolean
+    submittedAt?: boolean
+    submittedBy?: boolean
+    reviewedAt?: boolean
+    reviewedBy?: boolean
+    reviewNote?: boolean
     publishedAt?: boolean
     publishedBy?: boolean
     unpublishedAt?: boolean
@@ -52222,6 +52269,11 @@ export namespace Prisma {
     term?: boolean
     status?: boolean
     notes?: boolean
+    submittedAt?: boolean
+    submittedBy?: boolean
+    reviewedAt?: boolean
+    reviewedBy?: boolean
+    reviewNote?: boolean
     publishedAt?: boolean
     publishedBy?: boolean
     unpublishedAt?: boolean
@@ -52240,6 +52292,11 @@ export namespace Prisma {
     term?: boolean
     status?: boolean
     notes?: boolean
+    submittedAt?: boolean
+    submittedBy?: boolean
+    reviewedAt?: boolean
+    reviewedBy?: boolean
+    reviewNote?: boolean
     publishedAt?: boolean
     publishedBy?: boolean
     unpublishedAt?: boolean
@@ -52250,7 +52307,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ReportCardPublicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "academicYear" | "term" | "status" | "notes" | "publishedAt" | "publishedBy" | "unpublishedAt" | "unpublishedBy" | "schoolId" | "classId" | "createdAt" | "updatedAt", ExtArgs["result"]["reportCardPublication"]>
+  export type ReportCardPublicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "academicYear" | "term" | "status" | "notes" | "submittedAt" | "submittedBy" | "reviewedAt" | "reviewedBy" | "reviewNote" | "publishedAt" | "publishedBy" | "unpublishedAt" | "unpublishedBy" | "schoolId" | "classId" | "createdAt" | "updatedAt", ExtArgs["result"]["reportCardPublication"]>
   export type ReportCardPublicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     class?: boolean | ClassDefaultArgs<ExtArgs>
@@ -52276,8 +52333,13 @@ export namespace Prisma {
       term: $Enums.Term
       status: $Enums.ReportPublicationStatus
       notes: string | null
-      publishedAt: Date
-      publishedBy: string
+      submittedAt: Date | null
+      submittedBy: string | null
+      reviewedAt: Date | null
+      reviewedBy: string | null
+      reviewNote: string | null
+      publishedAt: Date | null
+      publishedBy: string | null
       unpublishedAt: Date | null
       unpublishedBy: string | null
       schoolId: string
@@ -52714,6 +52776,11 @@ export namespace Prisma {
     readonly term: FieldRef<"ReportCardPublication", 'Term'>
     readonly status: FieldRef<"ReportCardPublication", 'ReportPublicationStatus'>
     readonly notes: FieldRef<"ReportCardPublication", 'String'>
+    readonly submittedAt: FieldRef<"ReportCardPublication", 'DateTime'>
+    readonly submittedBy: FieldRef<"ReportCardPublication", 'String'>
+    readonly reviewedAt: FieldRef<"ReportCardPublication", 'DateTime'>
+    readonly reviewedBy: FieldRef<"ReportCardPublication", 'String'>
+    readonly reviewNote: FieldRef<"ReportCardPublication", 'String'>
     readonly publishedAt: FieldRef<"ReportCardPublication", 'DateTime'>
     readonly publishedBy: FieldRef<"ReportCardPublication", 'String'>
     readonly unpublishedAt: FieldRef<"ReportCardPublication", 'DateTime'>
@@ -77718,6 +77785,11 @@ export namespace Prisma {
     term: 'term',
     status: 'status',
     notes: 'notes',
+    submittedAt: 'submittedAt',
+    submittedBy: 'submittedBy',
+    reviewedAt: 'reviewedAt',
+    reviewedBy: 'reviewedBy',
+    reviewNote: 'reviewNote',
     publishedAt: 'publishedAt',
     publishedBy: 'publishedBy',
     unpublishedAt: 'unpublishedAt',
@@ -82406,8 +82478,13 @@ export namespace Prisma {
     term?: EnumTermFilter<"ReportCardPublication"> | $Enums.Term
     status?: EnumReportPublicationStatusFilter<"ReportCardPublication"> | $Enums.ReportPublicationStatus
     notes?: StringNullableFilter<"ReportCardPublication"> | string | null
-    publishedAt?: DateTimeFilter<"ReportCardPublication"> | Date | string
-    publishedBy?: StringFilter<"ReportCardPublication"> | string
+    submittedAt?: DateTimeNullableFilter<"ReportCardPublication"> | Date | string | null
+    submittedBy?: StringNullableFilter<"ReportCardPublication"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"ReportCardPublication"> | Date | string | null
+    reviewedBy?: StringNullableFilter<"ReportCardPublication"> | string | null
+    reviewNote?: StringNullableFilter<"ReportCardPublication"> | string | null
+    publishedAt?: DateTimeNullableFilter<"ReportCardPublication"> | Date | string | null
+    publishedBy?: StringNullableFilter<"ReportCardPublication"> | string | null
     unpublishedAt?: DateTimeNullableFilter<"ReportCardPublication"> | Date | string | null
     unpublishedBy?: StringNullableFilter<"ReportCardPublication"> | string | null
     schoolId?: StringFilter<"ReportCardPublication"> | string
@@ -82424,8 +82501,13 @@ export namespace Prisma {
     term?: SortOrder
     status?: SortOrder
     notes?: SortOrderInput | SortOrder
-    publishedAt?: SortOrder
-    publishedBy?: SortOrder
+    submittedAt?: SortOrderInput | SortOrder
+    submittedBy?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    reviewedBy?: SortOrderInput | SortOrder
+    reviewNote?: SortOrderInput | SortOrder
+    publishedAt?: SortOrderInput | SortOrder
+    publishedBy?: SortOrderInput | SortOrder
     unpublishedAt?: SortOrderInput | SortOrder
     unpublishedBy?: SortOrderInput | SortOrder
     schoolId?: SortOrder
@@ -82446,8 +82528,13 @@ export namespace Prisma {
     term?: EnumTermFilter<"ReportCardPublication"> | $Enums.Term
     status?: EnumReportPublicationStatusFilter<"ReportCardPublication"> | $Enums.ReportPublicationStatus
     notes?: StringNullableFilter<"ReportCardPublication"> | string | null
-    publishedAt?: DateTimeFilter<"ReportCardPublication"> | Date | string
-    publishedBy?: StringFilter<"ReportCardPublication"> | string
+    submittedAt?: DateTimeNullableFilter<"ReportCardPublication"> | Date | string | null
+    submittedBy?: StringNullableFilter<"ReportCardPublication"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"ReportCardPublication"> | Date | string | null
+    reviewedBy?: StringNullableFilter<"ReportCardPublication"> | string | null
+    reviewNote?: StringNullableFilter<"ReportCardPublication"> | string | null
+    publishedAt?: DateTimeNullableFilter<"ReportCardPublication"> | Date | string | null
+    publishedBy?: StringNullableFilter<"ReportCardPublication"> | string | null
     unpublishedAt?: DateTimeNullableFilter<"ReportCardPublication"> | Date | string | null
     unpublishedBy?: StringNullableFilter<"ReportCardPublication"> | string | null
     schoolId?: StringFilter<"ReportCardPublication"> | string
@@ -82464,8 +82551,13 @@ export namespace Prisma {
     term?: SortOrder
     status?: SortOrder
     notes?: SortOrderInput | SortOrder
-    publishedAt?: SortOrder
-    publishedBy?: SortOrder
+    submittedAt?: SortOrderInput | SortOrder
+    submittedBy?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    reviewedBy?: SortOrderInput | SortOrder
+    reviewNote?: SortOrderInput | SortOrder
+    publishedAt?: SortOrderInput | SortOrder
+    publishedBy?: SortOrderInput | SortOrder
     unpublishedAt?: SortOrderInput | SortOrder
     unpublishedBy?: SortOrderInput | SortOrder
     schoolId?: SortOrder
@@ -82488,8 +82580,13 @@ export namespace Prisma {
     term?: EnumTermWithAggregatesFilter<"ReportCardPublication"> | $Enums.Term
     status?: EnumReportPublicationStatusWithAggregatesFilter<"ReportCardPublication"> | $Enums.ReportPublicationStatus
     notes?: StringNullableWithAggregatesFilter<"ReportCardPublication"> | string | null
-    publishedAt?: DateTimeWithAggregatesFilter<"ReportCardPublication"> | Date | string
-    publishedBy?: StringWithAggregatesFilter<"ReportCardPublication"> | string
+    submittedAt?: DateTimeNullableWithAggregatesFilter<"ReportCardPublication"> | Date | string | null
+    submittedBy?: StringNullableWithAggregatesFilter<"ReportCardPublication"> | string | null
+    reviewedAt?: DateTimeNullableWithAggregatesFilter<"ReportCardPublication"> | Date | string | null
+    reviewedBy?: StringNullableWithAggregatesFilter<"ReportCardPublication"> | string | null
+    reviewNote?: StringNullableWithAggregatesFilter<"ReportCardPublication"> | string | null
+    publishedAt?: DateTimeNullableWithAggregatesFilter<"ReportCardPublication"> | Date | string | null
+    publishedBy?: StringNullableWithAggregatesFilter<"ReportCardPublication"> | string | null
     unpublishedAt?: DateTimeNullableWithAggregatesFilter<"ReportCardPublication"> | Date | string | null
     unpublishedBy?: StringNullableWithAggregatesFilter<"ReportCardPublication"> | string | null
     schoolId?: StringWithAggregatesFilter<"ReportCardPublication"> | string
@@ -88144,8 +88241,13 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.ReportPublicationStatus
     notes?: string | null
-    publishedAt?: Date | string
-    publishedBy: string
+    submittedAt?: Date | string | null
+    submittedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    publishedAt?: Date | string | null
+    publishedBy?: string | null
     unpublishedAt?: Date | string | null
     unpublishedBy?: string | null
     createdAt?: Date | string
@@ -88160,8 +88262,13 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.ReportPublicationStatus
     notes?: string | null
-    publishedAt?: Date | string
-    publishedBy: string
+    submittedAt?: Date | string | null
+    submittedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    publishedAt?: Date | string | null
+    publishedBy?: string | null
     unpublishedAt?: Date | string | null
     unpublishedBy?: string | null
     schoolId?: string
@@ -88175,8 +88282,13 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
-    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    publishedBy?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submittedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -88191,8 +88303,13 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
-    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    publishedBy?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submittedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -88207,8 +88324,13 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.ReportPublicationStatus
     notes?: string | null
-    publishedAt?: Date | string
-    publishedBy: string
+    submittedAt?: Date | string | null
+    submittedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    publishedAt?: Date | string | null
+    publishedBy?: string | null
     unpublishedAt?: Date | string | null
     unpublishedBy?: string | null
     schoolId?: string
@@ -88222,8 +88344,13 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
-    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    publishedBy?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submittedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -88236,8 +88363,13 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
-    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    publishedBy?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submittedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -93329,6 +93461,11 @@ export namespace Prisma {
     term?: SortOrder
     status?: SortOrder
     notes?: SortOrder
+    submittedAt?: SortOrder
+    submittedBy?: SortOrder
+    reviewedAt?: SortOrder
+    reviewedBy?: SortOrder
+    reviewNote?: SortOrder
     publishedAt?: SortOrder
     publishedBy?: SortOrder
     unpublishedAt?: SortOrder
@@ -93350,6 +93487,11 @@ export namespace Prisma {
     term?: SortOrder
     status?: SortOrder
     notes?: SortOrder
+    submittedAt?: SortOrder
+    submittedBy?: SortOrder
+    reviewedAt?: SortOrder
+    reviewedBy?: SortOrder
+    reviewNote?: SortOrder
     publishedAt?: SortOrder
     publishedBy?: SortOrder
     unpublishedAt?: SortOrder
@@ -93366,6 +93508,11 @@ export namespace Prisma {
     term?: SortOrder
     status?: SortOrder
     notes?: SortOrder
+    submittedAt?: SortOrder
+    submittedBy?: SortOrder
+    reviewedAt?: SortOrder
+    reviewedBy?: SortOrder
+    reviewNote?: SortOrder
     publishedAt?: SortOrder
     publishedBy?: SortOrder
     unpublishedAt?: SortOrder
@@ -104197,8 +104344,13 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.ReportPublicationStatus
     notes?: string | null
-    publishedAt?: Date | string
-    publishedBy: string
+    submittedAt?: Date | string | null
+    submittedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    publishedAt?: Date | string | null
+    publishedBy?: string | null
     unpublishedAt?: Date | string | null
     unpublishedBy?: string | null
     createdAt?: Date | string
@@ -104212,8 +104364,13 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.ReportPublicationStatus
     notes?: string | null
-    publishedAt?: Date | string
-    publishedBy: string
+    submittedAt?: Date | string | null
+    submittedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    publishedAt?: Date | string | null
+    publishedBy?: string | null
     unpublishedAt?: Date | string | null
     unpublishedBy?: string | null
     classId: number
@@ -106033,8 +106190,13 @@ export namespace Prisma {
     term?: EnumTermFilter<"ReportCardPublication"> | $Enums.Term
     status?: EnumReportPublicationStatusFilter<"ReportCardPublication"> | $Enums.ReportPublicationStatus
     notes?: StringNullableFilter<"ReportCardPublication"> | string | null
-    publishedAt?: DateTimeFilter<"ReportCardPublication"> | Date | string
-    publishedBy?: StringFilter<"ReportCardPublication"> | string
+    submittedAt?: DateTimeNullableFilter<"ReportCardPublication"> | Date | string | null
+    submittedBy?: StringNullableFilter<"ReportCardPublication"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"ReportCardPublication"> | Date | string | null
+    reviewedBy?: StringNullableFilter<"ReportCardPublication"> | string | null
+    reviewNote?: StringNullableFilter<"ReportCardPublication"> | string | null
+    publishedAt?: DateTimeNullableFilter<"ReportCardPublication"> | Date | string | null
+    publishedBy?: StringNullableFilter<"ReportCardPublication"> | string | null
     unpublishedAt?: DateTimeNullableFilter<"ReportCardPublication"> | Date | string | null
     unpublishedBy?: StringNullableFilter<"ReportCardPublication"> | string | null
     schoolId?: StringFilter<"ReportCardPublication"> | string
@@ -116370,8 +116532,13 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.ReportPublicationStatus
     notes?: string | null
-    publishedAt?: Date | string
-    publishedBy: string
+    submittedAt?: Date | string | null
+    submittedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    publishedAt?: Date | string | null
+    publishedBy?: string | null
     unpublishedAt?: Date | string | null
     unpublishedBy?: string | null
     createdAt?: Date | string
@@ -116385,8 +116552,13 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.ReportPublicationStatus
     notes?: string | null
-    publishedAt?: Date | string
-    publishedBy: string
+    submittedAt?: Date | string | null
+    submittedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    publishedAt?: Date | string | null
+    publishedBy?: string | null
     unpublishedAt?: Date | string | null
     unpublishedBy?: string | null
     schoolId?: string
@@ -133364,8 +133536,13 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.ReportPublicationStatus
     notes?: string | null
-    publishedAt?: Date | string
-    publishedBy: string
+    submittedAt?: Date | string | null
+    submittedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    publishedAt?: Date | string | null
+    publishedBy?: string | null
     unpublishedAt?: Date | string | null
     unpublishedBy?: string | null
     classId: number
@@ -134623,8 +134800,13 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
-    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    publishedBy?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submittedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -134638,8 +134820,13 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
-    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    publishedBy?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submittedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     classId?: IntFieldUpdateOperationsInput | number
@@ -134653,8 +134840,13 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
-    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    publishedBy?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submittedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     classId?: IntFieldUpdateOperationsInput | number
@@ -138153,8 +138345,13 @@ export namespace Prisma {
     term: $Enums.Term
     status?: $Enums.ReportPublicationStatus
     notes?: string | null
-    publishedAt?: Date | string
-    publishedBy: string
+    submittedAt?: Date | string | null
+    submittedBy?: string | null
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNote?: string | null
+    publishedAt?: Date | string | null
+    publishedBy?: string | null
     unpublishedAt?: Date | string | null
     unpublishedBy?: string | null
     schoolId?: string
@@ -138518,8 +138715,13 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
-    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    publishedBy?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submittedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -138533,8 +138735,13 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
-    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    publishedBy?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submittedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -138548,8 +138755,13 @@ export namespace Prisma {
     term?: EnumTermFieldUpdateOperationsInput | $Enums.Term
     status?: EnumReportPublicationStatusFieldUpdateOperationsInput | $Enums.ReportPublicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
-    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    publishedBy?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submittedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNote?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     unpublishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     unpublishedBy?: NullableStringFieldUpdateOperationsInput | string | null
     schoolId?: StringFieldUpdateOperationsInput | string

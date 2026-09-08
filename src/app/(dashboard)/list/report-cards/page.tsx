@@ -22,6 +22,7 @@ import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { formatMark } from "@/src/lib/formatters/marks";
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
+import { getClassReportReadiness } from "@/src/lib/services/report-card-readiness";
 import type { Term } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
@@ -348,7 +349,7 @@ const ReportCardListPage = async ({
   const totalSubjects = subjectMap.size;
   const subjectIds = Array.from(subjectMap.keys());
 
-  const [caRecords, publication] = await Promise.all([
+  const [caRecords, publication, readiness] = await Promise.all([
     prisma.continuousAssessment.findMany({
       where: {
         classId: activeClass.id,
@@ -373,6 +374,13 @@ const ReportCardListPage = async ({
           academicYear: activeYear,
         },
       },
+    }),
+    getClassReportReadiness({
+      schoolId,
+      classId: activeClass.id,
+      term: selectedTerm as Term,
+      academicYear: activeYear,
+      subjectIds: role === "teacher" && !isClassTeacher ? subjectIds : undefined,
     }),
   ]);
 
@@ -414,14 +422,7 @@ const ReportCardListPage = async ({
 
   const completeCount = studentRows.filter((s) => s.status === "ready").length;
   const buildingCount = studentRows.filter((s) => s.status === "building").length;
-  const readyKeys = new Set(
-    caRecords
-      .filter((record) => record.examScore > 0)
-      .map((record) => `${record.studentId}:${record.subjectId}`),
-  );
-  const missingReportEntries = students.reduce((count, student) => {
-    return count + subjectIds.filter((subjectId) => !readyKeys.has(`${student.id}:${subjectId}`)).length;
-  }, 0);
+  const missingReportEntries = readiness.missingCount;
   const isPublished = publication?.status === "PUBLISHED";
 
   return (
@@ -500,11 +501,37 @@ const ReportCardListPage = async ({
           classId={activeClass.id}
           term={selectedTerm}
           academicYear={activeYear}
-          isPublished={isPublished}
-          canPublish={students.length > 0 && totalSubjects > 0 && missingReportEntries === 0}
+          status={publication?.status ?? "UNSUBMITTED"}
+          role="admin"
+          canSubmit={readiness.isReady}
           missingCount={missingReportEntries}
-          studentCount={students.length}
-          subjectCount={totalSubjects}
+          missingCACount={readiness.missingCACount}
+          missingExamCount={readiness.missingExamCount}
+          studentCount={readiness.studentCount}
+          subjectCount={readiness.subjectCount}
+          submittedAt={publication?.submittedAt}
+          submittedBy={publication?.submittedBy}
+          reviewNote={publication?.reviewNote}
+        />
+      )}
+
+      {role === "teacher" && isClassTeacher && (
+        <ReportPublicationControls
+          classId={activeClass.id}
+          term={selectedTerm}
+          academicYear={activeYear}
+          status={publication?.status ?? "UNSUBMITTED"}
+          role="teacher"
+          isClassTeacher={isClassTeacher}
+          canSubmit={readiness.isReady}
+          missingCount={missingReportEntries}
+          missingCACount={readiness.missingCACount}
+          missingExamCount={readiness.missingExamCount}
+          studentCount={readiness.studentCount}
+          subjectCount={readiness.subjectCount}
+          submittedAt={publication?.submittedAt}
+          submittedBy={publication?.submittedBy}
+          reviewNote={publication?.reviewNote}
         />
       )}
 

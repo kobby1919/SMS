@@ -230,6 +230,8 @@ enum CABucketAggregationMode {
 }
 
 enum ReportPublicationStatus {
+  SUBMITTED
+  REJECTED
   PUBLISHED
   UNPUBLISHED
 }
@@ -1310,10 +1312,15 @@ model ReportCardPublication {
   id            Int                     @id @default(autoincrement())
   academicYear  String
   term          Term
-  status        ReportPublicationStatus @default(PUBLISHED)
+  status        ReportPublicationStatus @default(UNPUBLISHED)
   notes         String?
-  publishedAt   DateTime                @default(now())
-  publishedBy   String
+  submittedAt   DateTime?
+  submittedBy   String?
+  reviewedAt    DateTime?
+  reviewedBy    String?
+  reviewNote    String?
+  publishedAt   DateTime?
+  publishedBy   String?
   unpublishedAt DateTime?
   unpublishedBy String?
 

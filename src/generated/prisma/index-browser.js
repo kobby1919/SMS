@@ -630,6 +630,11 @@ exports.Prisma.ReportCardPublicationScalarFieldEnum = {
   term: 'term',
   status: 'status',
   notes: 'notes',
+  submittedAt: 'submittedAt',
+  submittedBy: 'submittedBy',
+  reviewedAt: 'reviewedAt',
+  reviewedBy: 'reviewedBy',
+  reviewNote: 'reviewNote',
   publishedAt: 'publishedAt',
   publishedBy: 'publishedBy',
   unpublishedAt: 'unpublishedAt',
@@ -1119,6 +1124,8 @@ exports.CABucketAggregationMode = exports.$Enums.CABucketAggregationMode = {
 };
 
 exports.ReportPublicationStatus = exports.$Enums.ReportPublicationStatus = {
+  SUBMITTED: 'SUBMITTED',
+  REJECTED: 'REJECTED',
   PUBLISHED: 'PUBLISHED',
   UNPUBLISHED: 'UNPUBLISHED'
 };
