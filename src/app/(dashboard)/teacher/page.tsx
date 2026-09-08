@@ -455,27 +455,13 @@ const TeacherPage = async () => {
                       My Class
                     </span>
                   </div>
-                  <div className="mt-3 grid grid-cols-2 gap-2">
+                  <div className="mt-3">
                     <Link
                       href={`/teacher/classes/${cls.id}`}
-                      className="col-span-2 inline-flex items-center justify-center gap-2 rounded-xl bg-edujay-ink px-3 py-2.5 text-xs font-black text-white transition hover:bg-edujay-primaryDark"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-edujay-ink px-3 py-2.5 text-xs font-black text-white transition hover:bg-edujay-primaryDark"
                     >
                       <GraduationCap size={14} />
                       Open class overview
-                    </Link>
-                    <Link
-                      href={`/list/students?classId=${cls.id}`}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-3 py-2.5 text-xs font-black text-edujay-ink ring-1 ring-edujay-border transition hover:bg-edujay-ink hover:text-white"
-                    >
-                      <Users size={14} />
-                      Students
-                    </Link>
-                    <Link
-                      href={`/list/report-cards?classId=${cls.id}`}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-edujay-primary px-3 py-2.5 text-xs font-black text-white transition hover:bg-edujay-primaryDark"
-                    >
-                      <FilePenLine size={14} />
-                      Reports
                     </Link>
                   </div>
                 </div>

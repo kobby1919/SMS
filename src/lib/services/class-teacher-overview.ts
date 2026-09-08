@@ -1,4 +1,4 @@
-import type { AttendanceStatus, BillStatus, Term } from "@/src/generated/prisma";
+import type { AttendanceStatus } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { getClassReportReadiness, type ReportReadinessBlocker } from "@/src/lib/services/report-card-readiness";
@@ -201,10 +201,28 @@ export async function getClassTeacherOverview({
     },
     { PRESENT: 0, ABSENT: 0, LATE: 0, EXCUSED: 0 } as Record<AttendanceStatus, number>,
   );
-  const unmarkedLessons = todayLessons.filter((lesson) => {
+  const lessonAttendanceStates = todayLessons.map((lesson) => {
     const records = attendanceByLesson.get(lesson.id) ?? [];
-    return records.length < studentCount;
+    const markedRecords = Math.min(records.length, studentCount);
+    return {
+      id: lesson.id,
+      subjectName: lesson.subject.name,
+      teacherName: `${lesson.teacher.name} ${lesson.teacher.surname}`,
+      markedRecords,
+      expectedRecords: studentCount,
+      missingRecords: Math.max(studentCount - markedRecords, 0),
+      isFullyMarked: studentCount > 0 && markedRecords >= studentCount,
+      isPartiallyMarked: markedRecords > 0 && markedRecords < studentCount,
+      isUnmarked: markedRecords === 0,
+    };
   });
+  const markedLessons = lessonAttendanceStates.filter((lesson) => lesson.isFullyMarked);
+  const partialLessons = lessonAttendanceStates.filter((lesson) => lesson.isPartiallyMarked);
+  const unmarkedLessons = lessonAttendanceStates.filter((lesson) => lesson.isUnmarked);
+  const incompleteLessons = lessonAttendanceStates.filter((lesson) => !lesson.isFullyMarked);
+  const expectedAttendanceRecords = todayLessons.length * studentCount;
+  const markedAttendanceRecords = Math.min(todayAttendance.length, expectedAttendanceRecords);
+  const missingAttendanceRecords = Math.max(expectedAttendanceRecords - markedAttendanceRecords, 0);
 
   const subjectTeacherBySubject = new Map<number, { id: string; name: string; phone: string | null }>();
   const subjectNames = new Map<number, string>();
@@ -286,9 +304,12 @@ export async function getClassTeacherOverview({
     .map((student) => {
       const counts = countByStudentStatus.get(student.id) ?? {};
       const studentCA = caByStudent.get(student.id) ?? [];
-      const lowSubjects = studentCA.filter(
-        (record) => activePeriod.classworkWeight > 0 && record.classworkScore / activePeriod.classworkWeight < 0.5,
-      );
+      const enoughCAEvidence = studentCA.length >= Math.max(2, Math.ceil(subjectIds.length / 2));
+      const lowSubjects = enoughCAEvidence
+        ? studentCA.filter(
+            (record) => activePeriod.classworkWeight > 0 && record.classworkScore / activePeriod.classworkWeight < 0.5,
+          )
+        : [];
       const reasons = [
         (counts.ABSENT ?? 0) >= 2 ? `${counts.ABSENT} absences in 30 days` : null,
         (counts.LATE ?? 0) >= 3 ? `${counts.LATE} late marks in 30 days` : null,
@@ -329,13 +350,15 @@ export async function getClassTeacherOverview({
       absent: attendanceSummary.ABSENT,
       late: attendanceSummary.LATE,
       excused: attendanceSummary.EXCUSED,
-      markedRecords: todayAttendance.length,
-      expectedRecords: todayLessons.length * studentCount,
-      unmarkedLessons: unmarkedLessons.map((lesson) => ({
-        id: lesson.id,
-        subjectName: lesson.subject.name,
-        teacherName: `${lesson.teacher.name} ${lesson.teacher.surname}`,
-      })),
+      lessonCount: todayLessons.length,
+      markedLessons: markedLessons.length,
+      partialLessons: partialLessons.length,
+      unmarkedLessonCount: unmarkedLessons.length,
+      incompleteLessonCount: incompleteLessons.length,
+      markedRecords: markedAttendanceRecords,
+      expectedRecords: expectedAttendanceRecords,
+      missingRecords: missingAttendanceRecords,
+      incompleteLessons,
     },
     studentsNeedingAttention,
     academicReadiness,

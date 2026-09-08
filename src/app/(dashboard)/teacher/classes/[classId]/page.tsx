@@ -38,24 +38,24 @@ const ClassTeacherControlPage = async ({
   const overview = await getClassTeacherOverview({ schoolId, teacherId: userId, classId });
   if (!overview) notFound();
 
-  const attendanceMarkedPct = overview.todayAttendance.expectedRecords > 0
-    ? Math.round((overview.todayAttendance.markedRecords / overview.todayAttendance.expectedRecords) * 100)
+  const attendanceMarkedPct = overview.todayAttendance.lessonCount > 0
+    ? Math.round((overview.todayAttendance.markedLessons / overview.todayAttendance.lessonCount) * 100)
     : 0;
 
   return (
-    <div className="m-3 mt-0 flex flex-1 flex-col gap-4 sm:m-4 sm:mt-0">
+    <div className="m-3 mt-0 flex min-w-0 flex-1 flex-col gap-4 sm:m-4 sm:mt-0">
       <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="min-w-0">
             <p className="text-xs font-black uppercase text-gray-400">Class Teacher Control Center</p>
-            <h1 className="mt-1 text-2xl font-black text-edujay-ink">
+            <h1 className="mt-1 break-words text-2xl font-black text-edujay-ink sm:text-3xl">
               {overview.class.name}
             </h1>
             <p className="mt-1 text-sm font-semibold text-gray-500">
               Grade {overview.class.gradeLevel} · {TERM_LABELS[overview.activePeriod.currentTerm]} · {overview.activePeriod.academicYear}
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:flex lg:flex-wrap">
             <Link
               href={`/list/students?classId=${overview.class.id}`}
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-edujay-soft px-3 py-2.5 text-xs font-black text-edujay-primary transition hover:bg-blue-100"
@@ -85,8 +85,8 @@ const ClassTeacherControlPage = async ({
           },
           {
             label: "Attendance Today",
-            value: `${attendanceMarkedPct}%`,
-            detail: `${overview.todayAttendance.unmarkedLessons.length} unmarked lesson${overview.todayAttendance.unmarkedLessons.length === 1 ? "" : "s"}`,
+            value: `${overview.todayAttendance.markedLessons}/${overview.todayAttendance.lessonCount}`,
+            detail: `${attendanceMarkedPct}% lessons fully marked · ${overview.todayAttendance.incompleteLessonCount} need attention`,
             icon: <CalendarCheck2 size={16} />,
             tone: "bg-emerald-50 text-emerald-700",
           },
@@ -105,25 +105,27 @@ const ClassTeacherControlPage = async ({
             tone: reportTone(overview.report.status),
           },
         ].map((item) => (
-          <div key={item.label} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div key={item.label} className="min-w-0 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
             <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-xl ${item.tone}`}>
               {item.icon}
             </div>
-            <p className="text-2xl font-black text-edujay-ink">{item.value}</p>
+            <p className="break-words text-2xl font-black text-edujay-ink">{item.value}</p>
             <p className="mt-1 text-xs font-black uppercase text-gray-400">{item.label}</p>
-            <p className="mt-1 text-xs font-semibold text-gray-500">{item.detail}</p>
+            <p className="mt-1 text-xs font-semibold leading-relaxed text-gray-500">{item.detail}</p>
           </div>
         ))}
       </section>
 
       <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
-        <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <div>
+        <section className="min-w-0 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
               <h2 className="text-base font-black text-edujay-ink">Today&apos;s Attendance Health</h2>
-              <p className="text-xs font-semibold text-gray-400">Class attendance records from today&apos;s lessons.</p>
+              <p className="text-xs font-semibold leading-relaxed text-gray-400">
+                Calculated from today&apos;s timetable lessons and attendance saved for this class.
+              </p>
             </div>
-            <CalendarCheck2 size={18} className="text-edujay-primary" />
+            <CalendarCheck2 size={18} className="shrink-0 text-edujay-primary" />
           </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {[
@@ -139,28 +141,50 @@ const ClassTeacherControlPage = async ({
             ))}
           </div>
           <div className="mt-3 rounded-xl bg-gray-50 p-3">
-            {overview.todayAttendance.unmarkedLessons.length === 0 ? (
+            {overview.todayAttendance.incompleteLessons.length === 0 ? (
               <p className="text-sm font-bold text-gray-500">All expected lesson attendance is marked for today.</p>
             ) : (
               <div className="space-y-2">
-                <p className="text-xs font-black uppercase text-gray-400">Unmarked lessons</p>
-                {overview.todayAttendance.unmarkedLessons.slice(0, 4).map((lesson) => (
-                  <p key={lesson.id} className="text-sm font-semibold text-gray-600">
-                    {lesson.subjectName} · {lesson.teacherName}
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-xs font-black uppercase text-gray-400">Lessons needing attendance</p>
+                  <p className="text-xs font-bold text-gray-500">
+                    {overview.todayAttendance.missingRecords} missing student record{overview.todayAttendance.missingRecords === 1 ? "" : "s"}
                   </p>
+                </div>
+                {overview.todayAttendance.incompleteLessons.slice(0, 4).map((lesson) => (
+                  <div key={lesson.id} className="rounded-lg bg-white p-3 ring-1 ring-gray-100">
+                    <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="break-words text-sm font-black text-edujay-ink">
+                        {lesson.subjectName}
+                      </p>
+                      <p className="text-xs font-bold text-gray-500">
+                        {lesson.markedRecords}/{lesson.expectedRecords} marked
+                      </p>
+                    </div>
+                    <p className="mt-1 break-words text-xs font-semibold text-gray-500">
+                      Teacher: {lesson.teacherName}
+                    </p>
+                  </div>
                 ))}
+                {overview.todayAttendance.incompleteLessons.length > 4 ? (
+                  <p className="text-xs font-bold text-gray-500">
+                    +{overview.todayAttendance.incompleteLessons.length - 4} more lesson{overview.todayAttendance.incompleteLessons.length - 4 === 1 ? "" : "s"} need attendance.
+                  </p>
+                ) : null}
               </div>
             )}
           </div>
         </section>
 
-        <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <div>
+        <section className="min-w-0 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
               <h2 className="text-base font-black text-edujay-ink">Students Needing Attention</h2>
-              <p className="text-xs font-semibold text-gray-400">Patterns from attendance, homework, CA, and fee status.</p>
+              <p className="text-xs font-semibold leading-relaxed text-gray-400">
+                Only students crossing clear follow-up thresholds appear here.
+              </p>
             </div>
-            <ClipboardList size={18} className="text-edujay-primary" />
+            <ClipboardList size={18} className="shrink-0 text-edujay-primary" />
           </div>
           {overview.studentsNeedingAttention.length === 0 ? (
             <p className="rounded-xl bg-gray-50 p-4 text-sm font-bold text-gray-500">
@@ -175,8 +199,8 @@ const ClassTeacherControlPage = async ({
                   className="flex items-center justify-between gap-3 py-3 transition hover:bg-gray-50"
                 >
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-black text-edujay-ink">{student.name}</p>
-                    <p className="mt-0.5 line-clamp-1 text-xs font-semibold text-gray-500">
+                    <p className="break-words text-sm font-black text-edujay-ink">{student.name}</p>
+                    <p className="mt-0.5 break-words text-xs font-semibold leading-relaxed text-gray-500">
                       {student.reasons.join(" · ")}
                     </p>
                   </div>
@@ -188,25 +212,25 @@ const ClassTeacherControlPage = async ({
         </section>
       </div>
 
-      <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <div>
+      <section className="min-w-0 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+        <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
             <h2 className="text-base font-black text-edujay-ink">Academic Readiness</h2>
-            <p className="text-xs font-semibold text-gray-400">CA and exam completion by timetable subject.</p>
+            <p className="text-xs font-semibold leading-relaxed text-gray-400">CA and exam completion by timetable subject.</p>
           </div>
-          <GraduationCap size={18} className="text-edujay-primary" />
+          <GraduationCap size={18} className="shrink-0 text-edujay-primary" />
         </div>
         <div className="grid gap-2 md:grid-cols-2">
           {overview.academicReadiness.map((subject) => (
-            <div key={subject.subjectId} className="rounded-xl border border-gray-100 p-3">
-              <div className="flex items-start justify-between gap-3">
+            <div key={subject.subjectId} className="min-w-0 rounded-xl border border-gray-100 p-3">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-black text-edujay-ink">{subject.subjectName}</p>
-                  <p className="mt-0.5 text-xs font-semibold text-gray-400">
+                  <p className="break-words text-sm font-black text-edujay-ink">{subject.subjectName}</p>
+                  <p className="mt-0.5 break-words text-xs font-semibold text-gray-400">
                     {subject.teacher?.name ?? "No teacher"}{subject.teacher?.phone ? ` · ${subject.teacher.phone}` : ""}
                   </p>
                 </div>
-                <p className="shrink-0 text-xs font-black text-gray-500">
+                <p className="shrink-0 text-xs font-black text-gray-500 sm:text-right">
                   {subject.examReady}/{subject.studentCount} ready
                 </p>
               </div>
@@ -236,13 +260,13 @@ const ClassTeacherControlPage = async ({
       </section>
 
       <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
-        <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <div>
+        <section className="min-w-0 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
               <h2 className="text-base font-black text-edujay-ink">Teacher Follow-Up</h2>
-              <p className="text-xs font-semibold text-gray-400">Subject teachers blocking report readiness.</p>
+              <p className="text-xs font-semibold leading-relaxed text-gray-400">Subject teachers blocking report readiness.</p>
             </div>
-            <Users size={18} className="text-edujay-primary" />
+            <Users size={18} className="shrink-0 text-edujay-primary" />
           </div>
           {overview.teacherFollowUp.length === 0 ? (
             <p className="rounded-xl bg-emerald-50 p-4 text-sm font-bold text-emerald-700">
@@ -252,10 +276,10 @@ const ClassTeacherControlPage = async ({
             <div className="divide-y divide-gray-50">
               {overview.teacherFollowUp.map((item) => (
                 <div key={item.subjectId} className="py-3">
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-black text-edujay-ink">{item.subjectName}</p>
-                      <p className="mt-0.5 text-xs font-semibold text-gray-400">
+                      <p className="break-words text-sm font-black text-edujay-ink">{item.subjectName}</p>
+                      <p className="mt-0.5 break-words text-xs font-semibold text-gray-400">
                         {item.teacher?.name ?? "No teacher"}{item.teacher?.phone ? ` · ${item.teacher.phone}` : ""}
                       </p>
                     </div>
@@ -272,13 +296,13 @@ const ClassTeacherControlPage = async ({
           )}
         </section>
 
-        <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <div>
+        <section className="min-w-0 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
               <h2 className="text-base font-black text-edujay-ink">Report Submission Status</h2>
-              <p className="text-xs font-semibold text-gray-400">Class teacher review before admin publishing.</p>
+              <p className="text-xs font-semibold leading-relaxed text-gray-400">Class teacher review before admin publishing.</p>
             </div>
-            <FileText size={18} className="text-edujay-primary" />
+            <FileText size={18} className="shrink-0 text-edujay-primary" />
           </div>
           <div className={`rounded-xl p-4 ${reportTone(overview.report.status)}`}>
             <p className="text-lg font-black">{overview.report.label}</p>
