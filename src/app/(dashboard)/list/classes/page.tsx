@@ -184,6 +184,15 @@ const ClassListPage = async ({
                   {/* Actions */}
                   <td className="px-5 py-4 w-[160px]">
                     <div className="flex items-center justify-end gap-2">
+                      {role === "teacher" && isMyClass ? (
+                        <Link
+                          href={`/teacher/classes/${item.id}`}
+                          className="inline-flex h-8 items-center justify-center gap-1 rounded-xl bg-slate-900 px-2.5 text-xs font-black text-white transition-colors hover:bg-slate-800"
+                        >
+                          <GraduationCap size={13} />
+                          <span className="hidden xl:inline">Overview</span>
+                        </Link>
+                      ) : null}
                       <Link
                         href={`/list/students?classId=${item.id}`}
                         className="inline-flex h-8 items-center justify-center gap-1 rounded-xl bg-indigo-50 px-2.5 text-xs font-black text-indigo-600 transition-colors hover:bg-indigo-100"
@@ -193,7 +202,7 @@ const ClassListPage = async ({
                       </Link>
                       <Link
                         href={`/list/report-cards?classId=${item.id}`}
-                        className="inline-flex h-8 items-center justify-center gap-1 rounded-xl bg-slate-900 px-2.5 text-xs font-black text-white transition-colors hover:bg-slate-800"
+                        className="inline-flex h-8 items-center justify-center gap-1 rounded-xl bg-gray-50 px-2.5 text-xs font-black text-gray-700 transition-colors hover:bg-gray-100"
                       >
                         <FileText size={13} />
                         <span className="hidden xl:inline">Reports</span>
