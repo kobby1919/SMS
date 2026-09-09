@@ -835,7 +835,7 @@ export async function requestAttendanceCorrection(data: {
   }
 
   const sourceKey = `attendance:${attendance.id}:status-correction`;
-  const pendingRequest = await prisma.teacherCorrectionRequest.findUnique({
+  const existingRequest = await prisma.teacherCorrectionRequest.findUnique({
     where: {
       schoolId_teacherId_sourceKey_fieldName: {
         schoolId: ctx.schoolId,
@@ -847,61 +847,40 @@ export async function requestAttendanceCorrection(data: {
     select: { id: true, status: true },
   });
 
-  if (pendingRequest?.status === "PENDING") {
+  if (existingRequest) {
     return {
-      message: "A correction request for this attendance record is already waiting for admin review.",
+      message:
+        existingRequest.status === "PENDING"
+          ? "A correction request for this attendance record is already waiting for admin review."
+          : "This attendance record has already gone through a correction request. Please visit the admin office if it still needs another change.",
     };
   }
 
   await prisma.$transaction(async (tx) => {
-    const request = pendingRequest
-      ? await tx.teacherCorrectionRequest.update({
-          where: { id: pendingRequest.id },
-          data: {
-            status: "PENDING",
-            reviewedBy: null,
-            reviewedAt: null,
-            reviewNote: null,
-            reason: parsed.reason,
-            oldValue: {
-              status: attendance.status,
-              note: attendance.note,
-              arrivalTime: attendance.arrivalTime,
-            },
-            newValue: {
-              status: parsed.newStatus,
-              note: newNote,
-              arrivalTime: newArrivalTime,
-              attendanceId: attendance.id,
-              studentId: attendance.studentId,
-              lessonId: attendance.lessonId,
-            },
-          },
-        })
-      : await tx.teacherCorrectionRequest.create({
-          data: {
-            schoolId: ctx.schoolId,
-            teacherId: ctx.userId,
-            sourceModel: "Attendance",
-            sourceId: String(attendance.id),
-            sourceKey,
-            fieldName: "attendanceStatus",
-            reason: parsed.reason,
-            oldValue: {
-              status: attendance.status,
-              note: attendance.note,
-              arrivalTime: attendance.arrivalTime,
-            },
-            newValue: {
-              status: parsed.newStatus,
-              note: newNote,
-              arrivalTime: newArrivalTime,
-              attendanceId: attendance.id,
-              studentId: attendance.studentId,
-              lessonId: attendance.lessonId,
-            },
-          },
-        });
+    const request = await tx.teacherCorrectionRequest.create({
+      data: {
+        schoolId: ctx.schoolId,
+        teacherId: ctx.userId,
+        sourceModel: "Attendance",
+        sourceId: String(attendance.id),
+        sourceKey,
+        fieldName: "attendanceStatus",
+        reason: parsed.reason,
+        oldValue: {
+          status: attendance.status,
+          note: attendance.note,
+          arrivalTime: attendance.arrivalTime,
+        },
+        newValue: {
+          status: parsed.newStatus,
+          note: newNote,
+          arrivalTime: newArrivalTime,
+          attendanceId: attendance.id,
+          studentId: attendance.studentId,
+          lessonId: attendance.lessonId,
+        },
+      },
+    });
 
     await tx.teacherAccountabilityAuditLog.create({
       data: {

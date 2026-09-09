@@ -74,6 +74,7 @@ export default function AttendanceCorrectionRequestForm({
       setNewArrivalTime("");
       return;
     }
+    if (!open) return;
 
     const currentRecord = recordByStudentId.get(studentId);
     const nextRecord = currentRecord ?? availableAttendance[0];
@@ -83,7 +84,7 @@ export default function AttendanceCorrectionRequestForm({
     setNewStatus(nextRecord.status);
     setNewNote(nextRecord.note ?? "");
     setNewArrivalTime(nextRecord.arrivalTime ?? "");
-  }, [availableAttendance, recordByStudentId, studentId]);
+  }, [availableAttendance, open, recordByStudentId, studentId]);
 
   const submit = () => {
     setMessage(null);
@@ -104,13 +105,12 @@ export default function AttendanceCorrectionRequestForm({
         });
         setMessage(result.message);
         setSubmittedAttendanceIds((current) => new Set(current).add(selectedRecord.id));
-        const nextRecord = availableAttendance.find((record) => record.id !== selectedRecord.id);
-        setStudentId(nextRecord?.studentId ?? "");
-        setNewStatus(nextRecord?.status ?? "PRESENT");
+        setStudentId("");
+        setNewStatus("PRESENT");
         setReason("");
-        setNewNote(nextRecord?.note ?? "");
-        setNewArrivalTime(nextRecord?.arrivalTime ?? "");
-        setOpen(Boolean(nextRecord));
+        setNewNote("");
+        setNewArrivalTime("");
+        setOpen(false);
         router.refresh();
       } catch (caught) {
         setError(caught instanceof Error ? caught.message : "Could not request attendance correction.");
@@ -131,7 +131,12 @@ export default function AttendanceCorrectionRequestForm({
         </div>
         <button
           type="button"
-          onClick={() => setOpen((value) => !value)}
+          onClick={() => {
+            if (!open && !studentId && availableAttendance[0]) {
+              setStudentId(availableAttendance[0].studentId);
+            }
+            setOpen((value) => !value);
+          }}
           disabled={availableAttendance.length === 0}
           className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-black text-white transition hover:bg-slate-800 sm:w-auto"
         >

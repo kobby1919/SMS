@@ -122,7 +122,6 @@ const TakeAttendancePage = async ({
             sourceModel: "Attendance",
             sourceId: { in: existingAttendance.map((record) => String(record.id)) },
             fieldName: "attendanceStatus",
-            status: "PENDING",
           },
           select: { sourceId: true },
         });
