@@ -13,10 +13,12 @@ import {
   getTeacherAccountabilityOverview,
   type AccountabilityAuditRow,
   type AccountabilityEscalationRow,
+  type HomeworkCorrectionRequestRow,
   type AccountabilityObligationRow,
   type TeacherAccountabilitySummaryRow,
 } from "@/src/lib/queries/teacher-accountability-dashboard";
 import TeacherEscalationActions from "@/src/components/TeacherEscalationActions";
+import HomeworkCorrectionReviewActions from "@/src/components/HomeworkCorrectionReviewActions";
 
 export const dynamic = "force-dynamic";
 
@@ -304,6 +306,55 @@ function EscalationList({
   );
 }
 
+function HomeworkCorrectionList({ rows }: { rows: HomeworkCorrectionRequestRow[] }) {
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="mb-4 flex items-center gap-2">
+        <div className="rounded-lg bg-amber-50 p-2 text-amber-700">
+          <ShieldCheck size={18} />
+        </div>
+        <div>
+          <h2 className="text-base font-black text-slate-950">Homework Correction Requests</h2>
+          <p className="text-xs font-semibold text-slate-400">
+            Admin must approve before a saved homework status changes.
+          </p>
+        </div>
+      </div>
+
+      {rows.length === 0 ? (
+        <EmptyState message="No homework correction requests are waiting for review." />
+      ) : (
+        <div className="divide-y divide-slate-100">
+          {rows.map((row) => (
+            <div key={row.id} className="py-3 first:pt-0 last:pb-0">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <p className="break-words font-black text-slate-950">
+                    {row.studentName}
+                  </p>
+                  <p className="mt-1 break-words text-sm font-semibold text-slate-600">
+                    {row.subjectName}: {row.assignmentTitle} · {row.className}
+                  </p>
+                  <p className="mt-1 text-xs font-bold text-slate-400">
+                    Requested by {row.teacherName} · {formatDateTime(row.createdAt)}
+                  </p>
+                </div>
+                <span className="w-fit rounded-full bg-amber-50 px-2.5 py-1 text-xs font-black text-amber-700">
+                  {row.currentStatus} to {row.requestedStatus}
+                </span>
+              </div>
+              <p className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-sm font-semibold leading-relaxed text-slate-600">
+                Reason: {row.reason}
+              </p>
+              <HomeworkCorrectionReviewActions requestId={row.id} />
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
 function AuditList({ rows }: { rows: AccountabilityAuditRow[] }) {
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
@@ -423,6 +474,8 @@ const AdminAccountabilityPage = async ({
           focusedEscalationId={focusedEscalationId}
         />
       </div>
+
+      <HomeworkCorrectionList rows={overview.homeworkCorrectionRequests} />
 
       <TeacherSummaryTable rows={overview.teacherSummaries} />
 

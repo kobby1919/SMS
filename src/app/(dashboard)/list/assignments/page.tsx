@@ -143,19 +143,19 @@ const AssignmentListPage = async ({
   const totalCount = activeTab === "upcoming" ? upcomingCount : pastCount;
 
   return (
-    <div className="m-3 mt-0 flex flex-1 flex-col gap-4 sm:m-4 sm:mt-0">
+    <div className="m-3 mt-0 flex min-w-0 flex-1 flex-col gap-4 sm:m-4 sm:mt-0">
       {/* Header */}
-      <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-11 h-11 bg-amber-50 rounded-2xl flex items-center justify-center shrink-0">
+      <div className="min-w-0 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+        <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-amber-50">
               <Briefcase size={20} className="text-amber-600" />
             </div>
-            <div>
-              <h1 className="text-xl font-black text-gray-800 tracking-tight">
-                Assignments
+            <div className="min-w-0">
+              <h1 className="break-words text-xl font-black text-gray-800">
+                Homework
               </h1>
-              <p className="text-sm text-gray-400 mt-0.5 font-medium">
+              <p className="mt-0.5 break-words text-sm font-medium leading-relaxed text-gray-400">
                 {upcomingCount} active · {pastCount} past
                 {overdueCount > 0 && (
                   <span className="ml-2 text-[11px] font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full">
@@ -165,7 +165,7 @@ const AssignmentListPage = async ({
               </p>
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+          <div className="flex w-full min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-center lg:w-auto">
             <TableSearch />
             <div className="flex items-center gap-2">
               {/* Teachers only — admins view but do not create */}
@@ -176,7 +176,7 @@ const AssignmentListPage = async ({
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
           {
             label: "Active",
@@ -208,10 +208,10 @@ const AssignmentListPage = async ({
         ].map((s) => (
           <div
             key={s.label}
-            className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3"
+            className="flex min-w-0 items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm"
           >
             <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${s.color}`}
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${s.color}`}
             >
               {s.icon}
             </div>
@@ -219,7 +219,7 @@ const AssignmentListPage = async ({
               <p className="text-xl font-black text-gray-800 leading-none">
                 {s.value}
               </p>
-              <p className="text-xs text-gray-400 font-medium mt-0.5">
+              <p className="mt-0.5 text-xs font-medium text-gray-400">
                 {s.label}
               </p>
             </div>
@@ -260,14 +260,14 @@ const AssignmentListPage = async ({
             return (
               <article
                 key={item.id}
-                className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm"
+                className="min-w-0 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm"
               >
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0">
-                    <p className="text-base font-black text-gray-900">
+                    <p className="break-words text-base font-black text-gray-900">
                       {item.lesson.subject?.name}
                     </p>
-                    <p className="mt-1 text-sm font-semibold text-gray-500">
+                    <p className="mt-1 break-words text-sm font-semibold text-gray-500">
                       {item.title}
                     </p>
                     <div className="mt-3 flex flex-wrap gap-2">
@@ -327,6 +327,10 @@ const AssignmentListPage = async ({
             );
           })
         )}
+      </div>
+
+      <div className="rounded-2xl border border-gray-100 bg-white md:hidden">
+        <Pagination page={p} count={totalCount} />
       </div>
 
       {/* Table */}

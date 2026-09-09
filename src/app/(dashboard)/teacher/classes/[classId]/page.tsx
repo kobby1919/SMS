@@ -86,7 +86,7 @@ const ClassTeacherControlPage = async ({
           {
             label: "Attendance Today",
             value: `${overview.todayAttendance.markedLessons}/${overview.todayAttendance.lessonCount}`,
-            detail: `${attendanceMarkedPct}% lessons fully marked · ${overview.todayAttendance.incompleteLessonCount} need attention`,
+            detail: `${attendanceMarkedPct}% lessons fully marked · ${overview.todayAttendance.incompleteLessonCount} lesson${overview.todayAttendance.incompleteLessonCount === 1 ? "" : "s"} need attendance`,
             icon: <CalendarCheck2 size={16} />,
             tone: "bg-emerald-50 text-emerald-700",
           },
@@ -148,10 +148,13 @@ const ClassTeacherControlPage = async ({
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-xs font-black uppercase text-gray-400">Lessons needing attendance</p>
                   <p className="text-xs font-bold text-gray-500">
-                    {overview.todayAttendance.missingRecords} missing student record{overview.todayAttendance.missingRecords === 1 ? "" : "s"}
+                    {overview.todayAttendance.incompleteLessonCount} lesson{overview.todayAttendance.incompleteLessonCount === 1 ? "" : "s"} · {overview.todayAttendance.missingRecords} missing student record{overview.todayAttendance.missingRecords === 1 ? "" : "s"}
                   </p>
                 </div>
-                {overview.todayAttendance.incompleteLessons.slice(0, 4).map((lesson) => (
+                <p className="rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold leading-relaxed text-blue-700">
+                  Lesson count and student-record count are different. For example, if 9 lessons are incomplete in a class of 2 students, that creates 18 missing student attendance records.
+                </p>
+                {overview.todayAttendance.incompleteLessons.map((lesson) => (
                   <div key={lesson.id} className="rounded-lg bg-white p-3 ring-1 ring-gray-100">
                     <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                       <p className="break-words text-sm font-black text-edujay-ink">
@@ -164,13 +167,14 @@ const ClassTeacherControlPage = async ({
                     <p className="mt-1 break-words text-xs font-semibold text-gray-500">
                       Teacher: {lesson.teacherName}
                     </p>
+                    <Link
+                      href={`/list/attendance/take?lessonId=${lesson.id}`}
+                      className="mt-2 inline-flex w-full items-center justify-center rounded-lg bg-edujay-soft px-3 py-2 text-xs font-black text-edujay-primary transition hover:bg-blue-100 sm:w-fit"
+                    >
+                      Open attendance
+                    </Link>
                   </div>
                 ))}
-                {overview.todayAttendance.incompleteLessons.length > 4 ? (
-                  <p className="text-xs font-bold text-gray-500">
-                    +{overview.todayAttendance.incompleteLessons.length - 4} more lesson{overview.todayAttendance.incompleteLessons.length - 4 === 1 ? "" : "s"} need attendance.
-                  </p>
-                ) : null}
               </div>
             )}
           </div>

@@ -52,6 +52,12 @@ export default function HomeworkSubmissionTracker({
   const [bulkStatus, setBulkStatus] = useState<HomeworkStatus | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [correctionDraft, setCorrectionDraft] = useState<{
+    studentId: string;
+    status: HomeworkStatus;
+    reason: string;
+    mode: "CORRECTION" | "EXCUSE";
+  } | null>(null);
   const [isPending, startTransition] = useTransition();
   const deadlinePassed = isPastDeadline(dueDate);
   const canCheckHomework = deadlinePassed;
@@ -65,6 +71,41 @@ export default function HomeworkSubmissionTracker({
       { PENDING: 0, SUBMITTED: 0, LATE: 0, MISSING: 0, EXCUSED: 0 } satisfies Record<HomeworkStatus, number>,
     );
   }, [submissions]);
+
+  const submitMark = (studentId: string, nextStatus: HomeworkStatus, note: string | null = null) => {
+    setActiveStudentId(studentId);
+    setMessage(null);
+    setError(null);
+
+    startTransition(async () => {
+      try {
+        const result = await updateHomeworkSubmission({
+          assignmentId,
+          studentId,
+          status: nextStatus,
+          submittedAt: nextStatus === "SUBMITTED" || nextStatus === "LATE"
+            ? new Date().toISOString()
+            : null,
+          note,
+        });
+        setSubmissions((current) =>
+          current.map((submission) =>
+            submission.studentId === studentId
+              ? result.changed
+                ? { ...submission, status: result.status, checkedAt: new Date().toISOString() }
+                : submission
+              : submission,
+          ),
+        );
+        setCorrectionDraft(null);
+        setMessage(result.message);
+      } catch (caught) {
+        setError(caught instanceof Error ? caught.message : "Could not save homework status.");
+      } finally {
+        setActiveStudentId(null);
+      }
+    });
+  };
 
   const mark = (studentId: string, nextStatus: HomeworkStatus) => {
     if (!canCheckHomework) {
@@ -89,56 +130,20 @@ export default function HomeworkSubmissionTracker({
       finalStatuses.has(currentSubmission.status) &&
       currentSubmission.status !== statusToSave;
     const needsExcuseNote = statusToSave === "EXCUSED";
-    const note = needsReason || needsExcuseNote
-      ? window.prompt(
-          needsReason
-            ? "Give a short reason for correcting this homework record."
-            : "Give a short reason why this homework is excused.",
-        )?.trim()
-      : "";
 
-    if (needsReason && !note) {
-      setError("A reason is required before correcting an already checked homework record.");
+    if (needsReason || needsExcuseNote) {
+      setCorrectionDraft({
+        studentId,
+        status: statusToSave,
+        reason: "",
+        mode: needsReason ? "CORRECTION" : "EXCUSE",
+      });
       setMessage(null);
-      return;
-    }
-    if (needsExcuseNote && !note) {
-      setError("A short note is required before marking homework as excused.");
-      setMessage(null);
+      setError(null);
       return;
     }
 
-    setActiveStudentId(studentId);
-    setMessage(null);
-    setError(null);
-
-    startTransition(async () => {
-      try {
-        const result = await updateHomeworkSubmission({
-          assignmentId,
-          studentId,
-          status: statusToSave,
-          submittedAt: statusToSave === "SUBMITTED" || statusToSave === "LATE"
-            ? new Date().toISOString()
-            : null,
-          note: note || null,
-        });
-        setSubmissions((current) =>
-          current.map((submission) =>
-            submission.studentId === studentId
-              ? result.changed
-                ? { ...submission, status: result.status, checkedAt: new Date().toISOString() }
-                : submission
-              : submission,
-          ),
-        );
-        setMessage(result.message);
-      } catch (caught) {
-        setError(caught instanceof Error ? caught.message : "Could not save homework status.");
-      } finally {
-        setActiveStudentId(null);
-      }
-    });
+    submitMark(studentId, statusToSave);
   };
 
   const markPending = (nextStatus: HomeworkStatus) => {
@@ -247,43 +252,85 @@ export default function HomeworkSubmissionTracker({
           return (
             <div
               key={submission.id}
-              className="flex flex-col gap-3 rounded-xl bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+              className="rounded-xl bg-white px-4 py-3"
             >
-              <div className="min-w-0">
-                <p className="truncate text-sm font-black text-slate-800">{submission.studentName}</p>
-                <span className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-black ${statusTone[submission.status]}`}>
-                  {statusLabel[submission.status]}
-                </span>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <p className="break-words text-sm font-black text-slate-800">{submission.studentName}</p>
+                  <span className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-black ${statusTone[submission.status]}`}>
+                    {statusLabel[submission.status]}
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 gap-2 sm:flex sm:items-center">
+                  <button
+                    type="button"
+                    disabled={buttonDisabled(deadlinePassed ? "LATE" : "SUBMITTED")}
+                    onClick={() => mark(submission.studentId, "SUBMITTED")}
+                    className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-emerald-50 px-3 text-emerald-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
+                    title={submittedTitle}
+                  >
+                    {saving ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={buttonDisabled("MISSING")}
+                    onClick={() => mark(submission.studentId, "MISSING")}
+                    className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-rose-50 px-3 text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
+                    title="Mark missing"
+                  >
+                    <XCircle size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    disabled={buttonDisabled("EXCUSED")}
+                    onClick={() => mark(submission.studentId, "EXCUSED")}
+                    className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-blue-50 px-3 text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
+                    title="Mark excused"
+                  >
+                    <Clock size={14} />
+                  </button>
+                </div>
               </div>
-              <div className="grid grid-cols-3 gap-2 sm:flex sm:items-center">
-                <button
-                  type="button"
-                  disabled={buttonDisabled(deadlinePassed ? "LATE" : "SUBMITTED")}
-                  onClick={() => mark(submission.studentId, "SUBMITTED")}
-                  className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-emerald-50 px-3 text-emerald-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
-                  title={submittedTitle}
-                >
-                  {saving ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
-                </button>
-                <button
-                  type="button"
-                  disabled={buttonDisabled("MISSING")}
-                  onClick={() => mark(submission.studentId, "MISSING")}
-                  className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-rose-50 px-3 text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
-                  title="Mark missing"
-                >
-                  <XCircle size={14} />
-                </button>
-                <button
-                  type="button"
-                  disabled={buttonDisabled("EXCUSED")}
-                  onClick={() => mark(submission.studentId, "EXCUSED")}
-                  className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-blue-50 px-3 text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
-                  title="Mark excused"
-                >
-                  <Clock size={14} />
-                </button>
-              </div>
+              {correctionDraft?.studentId === submission.studentId ? (
+                <div className="mt-3 rounded-xl border border-amber-100 bg-amber-50 p-3">
+                  <p className="text-xs font-black uppercase text-amber-700">
+                    {correctionDraft.mode === "CORRECTION"
+                      ? "Request admin approval"
+                      : "Excuse reason required"}
+                  </p>
+                  <p className="mt-1 text-xs font-semibold leading-relaxed text-amber-700">
+                    {correctionDraft.mode === "CORRECTION"
+                      ? "This homework was already checked. Edujay will send this change to admin first and keep the saved status unchanged until approval."
+                      : "Explain why this homework is excused before saving."}
+                  </p>
+                  <textarea
+                    value={correctionDraft.reason}
+                    onChange={(event) =>
+                      setCorrectionDraft({ ...correctionDraft, reason: event.target.value })
+                    }
+                    rows={3}
+                    placeholder="Type the reason clearly..."
+                    className="mt-2 w-full resize-none rounded-xl border border-amber-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 outline-none transition focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
+                  />
+                  <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() => setCorrectionDraft(null)}
+                      className="rounded-xl bg-white px-3 py-2.5 text-xs font-black text-slate-600 ring-1 ring-slate-200 transition hover:bg-slate-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      disabled={saving || correctionDraft.reason.trim().length < 5}
+                      onClick={() => submitMark(submission.studentId, correctionDraft.status, correctionDraft.reason.trim())}
+                      className="rounded-xl bg-slate-950 px-3 py-2.5 text-xs font-black text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {correctionDraft.mode === "CORRECTION" ? "Send to admin" : "Save excused"}
+                    </button>
+                  </div>
+                </div>
+              ) : null}
             </div>
           );
         })}

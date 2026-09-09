@@ -1,5 +1,6 @@
 import prisma from "@/src/lib/prisma";
 import type {
+  HomeworkSubmissionStatus,
   TeacherAccountabilityAuditAction,
   TeacherCorrectionRequestStatus,
   TeacherObligationPriority,
@@ -45,6 +46,7 @@ export type TeacherAccountabilityOverview = {
   issues: AccountabilityObligationRow[];
   teacherSummaries: TeacherAccountabilitySummaryRow[];
   openEscalations: AccountabilityEscalationRow[];
+  homeworkCorrectionRequests: HomeworkCorrectionRequestRow[];
   recentAuditLogs: AccountabilityAuditRow[];
 };
 
@@ -93,6 +95,19 @@ export type AccountabilityEscalationRow = {
   teacherResponseCreatedAt: Date | null;
 };
 
+export type HomeworkCorrectionRequestRow = {
+  id: string;
+  teacherName: string;
+  studentName: string;
+  className: string;
+  subjectName: string;
+  assignmentTitle: string;
+  currentStatus: HomeworkSubmissionStatus;
+  requestedStatus: HomeworkSubmissionStatus;
+  reason: string;
+  createdAt: Date;
+};
+
 export type AccountabilityAuditRow = {
   id: string;
   action: TeacherAccountabilityAuditAction;
@@ -131,6 +146,15 @@ function readMetadata(metadata: unknown): ObligationMetadata {
     return {};
   }
   return metadata as ObligationMetadata;
+}
+
+function readRequestedHomeworkStatus(value: unknown): HomeworkSubmissionStatus | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const status = (value as { status?: unknown }).status;
+  return typeof status === "string" &&
+    ["PENDING", "SUBMITTED", "LATE", "MISSING", "EXCUSED"].includes(status)
+    ? status as HomeworkSubmissionStatus
+    : null;
 }
 
 function toObligationRow(obligation: {
@@ -189,6 +213,7 @@ export async function getTeacherAccountabilityOverview(
     issueObligations,
     weeklyStatusGroups,
     openEscalations,
+    homeworkCorrectionRequests,
     openEscalationCount,
     remindersPending,
     recentAuditLogs,
@@ -258,6 +283,19 @@ export async function getTeacherAccountabilityOverview(
         },
       },
       orderBy: [{ escalatedAt: "desc" }],
+      take: 30,
+    }),
+    prisma.teacherCorrectionRequest.findMany({
+      where: {
+        schoolId,
+        sourceModel: "HomeworkSubmission",
+        fieldName: "homeworkSubmissionStatus",
+        status: "PENDING",
+      },
+      include: {
+        teacher: { select: { id: true, name: true, surname: true } },
+      },
+      orderBy: { createdAt: "desc" },
       take: 30,
     }),
     prisma.teacherEscalation.count({
@@ -378,6 +416,31 @@ export async function getTeacherAccountabilityOverview(
     }
   }
 
+  const homeworkSubmissionIds = homeworkCorrectionRequests
+    .map((request) => Number.parseInt(request.sourceId, 10))
+    .filter((id) => Number.isFinite(id));
+  const homeworkSubmissions = homeworkSubmissionIds.length > 0
+    ? await prisma.homeworkSubmission.findMany({
+        where: { schoolId, id: { in: homeworkSubmissionIds } },
+        include: {
+          student: { select: { name: true, surname: true } },
+          assignment: {
+            include: {
+              lesson: {
+                select: {
+                  class: { select: { name: true } },
+                  subject: { select: { name: true } },
+                },
+              },
+            },
+          },
+        },
+      })
+    : [];
+  const homeworkSubmissionById = new Map(
+    homeworkSubmissions.map((submission) => [submission.id, submission]),
+  );
+
   const todayRows = todayObligations.map((obligation) =>
     toObligationRow(obligation, now),
   );
@@ -412,6 +475,24 @@ export async function getTeacherAccountabilityOverview(
     upcoming: todayRows.filter((row) => row.status === "PENDING").slice(0, 12),
     issues: issueRows,
     teacherSummaries,
+    homeworkCorrectionRequests: homeworkCorrectionRequests.flatMap((request) => {
+      const submissionId = Number.parseInt(request.sourceId, 10);
+      const submission = homeworkSubmissionById.get(submissionId);
+      const requestedStatus = readRequestedHomeworkStatus(request.newValue);
+      if (!submission || !requestedStatus) return [];
+      return [{
+        id: request.id,
+        teacherName: fullName(request.teacher),
+        studentName: `${submission.student.name} ${submission.student.surname}`,
+        className: submission.assignment.lesson.class.name,
+        subjectName: submission.assignment.lesson.subject.name,
+        assignmentTitle: submission.assignment.title,
+        currentStatus: submission.status,
+        requestedStatus,
+        reason: request.reason,
+        createdAt: request.createdAt,
+      }];
+    }),
     openEscalations: openEscalations.map((escalation) => {
       const metadata = readMetadata(escalation.obligation.metadata);
       const response = responseByObligationId.get(escalation.obligationId);

@@ -282,7 +282,7 @@ const TeacherPage = async () => {
       pending: assignment.homeworkSubmissions.filter((submission) => submission.status === "PENDING").length,
       missing: assignment.homeworkSubmissions.filter((submission) => submission.status === "MISSING").length,
     }))
-    .filter((item) => item.pending > 0 || item.missing > 0);
+    .filter((item) => item.pending > 0);
   const pendingCATasks = caTasks
     .map((activity) => ({
       activity,
