@@ -77,6 +77,7 @@ const TakeAttendancePage = async ({
   let selectedLesson: LessonWithSummary | null = null;
   let students: StudentSummary[] = [];
   let existingAttendance: AttendanceSummary[] = [];
+  let pendingAttendanceCorrectionIds: number[] = [];
 
   // Only proceed with lesson details if it's a weekday and we have an ID
   if (lessonId && !isWeekend) {
@@ -112,6 +113,23 @@ const TakeAttendancePage = async ({
         },
         select: { id: true, studentId: true, status: true, note: true, arrivalTime: true },
       });
+
+      if (role === "teacher" && existingAttendance.length > 0) {
+        const pendingCorrectionRequests = await prisma.teacherCorrectionRequest.findMany({
+          where: {
+            schoolId,
+            teacherId: userId,
+            sourceModel: "Attendance",
+            sourceId: { in: existingAttendance.map((record) => String(record.id)) },
+            fieldName: "attendanceStatus",
+            status: "PENDING",
+          },
+          select: { sourceId: true },
+        });
+        pendingAttendanceCorrectionIds = pendingCorrectionRequests
+          .map((request) => Number(request.sourceId))
+          .filter(Number.isFinite);
+      }
     }
   }
 
@@ -158,6 +176,7 @@ const TakeAttendancePage = async ({
           }
           students={students}
           existingAttendance={existingAttendance}
+          pendingAttendanceCorrectionIds={pendingAttendanceCorrectionIds}
           dateStr={dateStr}
           todayStr={todayStr}
           role={role!}

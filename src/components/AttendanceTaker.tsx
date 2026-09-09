@@ -63,6 +63,7 @@ type Props = {
   selectedLesson:    { id: number; subjectName: string; className: string } | null;
   students:          Student[];
   existingAttendance: ExistingRecord[];
+  pendingAttendanceCorrectionIds: number[];
   dateStr:           string;
   todayStr:          string;
   role:              string;
@@ -187,6 +188,7 @@ const AttendanceTaker = ({
   selectedLesson,
   students,
   existingAttendance,
+  pendingAttendanceCorrectionIds,
   dateStr,
   todayStr,
   role,
@@ -773,6 +775,7 @@ const AttendanceTaker = ({
                 <AttendanceCorrectionRequestForm
                   students={students}
                   existingAttendance={existingAttendance}
+                  pendingAttendanceCorrectionIds={pendingAttendanceCorrectionIds}
                 />
               ) : null}
             </div>
