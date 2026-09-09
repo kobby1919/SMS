@@ -1,5 +1,6 @@
 import prisma from "@/src/lib/prisma";
 import type {
+  AttendanceStatus,
   HomeworkSubmissionStatus,
   TeacherAccountabilityAuditAction,
   TeacherCorrectionRequestStatus,
@@ -46,6 +47,7 @@ export type TeacherAccountabilityOverview = {
   issues: AccountabilityObligationRow[];
   teacherSummaries: TeacherAccountabilitySummaryRow[];
   openEscalations: AccountabilityEscalationRow[];
+  attendanceCorrectionRequests: AttendanceCorrectionRequestRow[];
   homeworkCorrectionRequests: HomeworkCorrectionRequestRow[];
   recentAuditLogs: AccountabilityAuditRow[];
 };
@@ -108,6 +110,20 @@ export type HomeworkCorrectionRequestRow = {
   createdAt: Date;
 };
 
+export type AttendanceCorrectionRequestRow = {
+  id: string;
+  teacherName: string;
+  studentName: string;
+  className: string;
+  subjectName: string;
+  currentStatus: AttendanceStatus;
+  requestedStatus: AttendanceStatus;
+  requestedNote: string | null;
+  requestedArrivalTime: string | null;
+  reason: string;
+  createdAt: Date;
+};
+
 export type AccountabilityAuditRow = {
   id: string;
   action: TeacherAccountabilityAuditAction;
@@ -154,6 +170,23 @@ function readRequestedHomeworkStatus(value: unknown): HomeworkSubmissionStatus |
   return typeof status === "string" &&
     ["PENDING", "SUBMITTED", "LATE", "MISSING", "EXCUSED"].includes(status)
     ? status as HomeworkSubmissionStatus
+    : null;
+}
+
+function readRequestedAttendanceValue(value: unknown): {
+  status: AttendanceStatus;
+  note: string | null;
+  arrivalTime: string | null;
+} | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const payload = value as { status?: unknown; note?: unknown; arrivalTime?: unknown };
+  return typeof payload.status === "string" &&
+    ["PRESENT", "ABSENT", "LATE", "EXCUSED"].includes(payload.status)
+    ? {
+        status: payload.status as AttendanceStatus,
+        note: typeof payload.note === "string" ? payload.note : null,
+        arrivalTime: typeof payload.arrivalTime === "string" ? payload.arrivalTime : null,
+      }
     : null;
 }
 
@@ -213,6 +246,7 @@ export async function getTeacherAccountabilityOverview(
     issueObligations,
     weeklyStatusGroups,
     openEscalations,
+    attendanceCorrectionRequests,
     homeworkCorrectionRequests,
     openEscalationCount,
     remindersPending,
@@ -283,6 +317,19 @@ export async function getTeacherAccountabilityOverview(
         },
       },
       orderBy: [{ escalatedAt: "desc" }],
+      take: 30,
+    }),
+    prisma.teacherCorrectionRequest.findMany({
+      where: {
+        schoolId,
+        sourceModel: "Attendance",
+        fieldName: "attendanceStatus",
+        status: "PENDING",
+      },
+      include: {
+        teacher: { select: { id: true, name: true, surname: true } },
+      },
+      orderBy: { createdAt: "desc" },
       take: 30,
     }),
     prisma.teacherCorrectionRequest.findMany({
@@ -440,6 +487,26 @@ export async function getTeacherAccountabilityOverview(
   const homeworkSubmissionById = new Map(
     homeworkSubmissions.map((submission) => [submission.id, submission]),
   );
+  const attendanceIds = attendanceCorrectionRequests
+    .map((request) => Number.parseInt(request.sourceId, 10))
+    .filter((id) => Number.isFinite(id));
+  const attendanceRows = attendanceIds.length > 0
+    ? await prisma.attendance.findMany({
+        where: { schoolId, id: { in: attendanceIds } },
+        include: {
+          student: { select: { name: true, surname: true } },
+          lesson: {
+            select: {
+              class: { select: { name: true } },
+              subject: { select: { name: true } },
+            },
+          },
+        },
+      })
+    : [];
+  const attendanceById = new Map(
+    attendanceRows.map((attendance) => [attendance.id, attendance]),
+  );
 
   const todayRows = todayObligations.map((obligation) =>
     toObligationRow(obligation, now),
@@ -475,6 +542,25 @@ export async function getTeacherAccountabilityOverview(
     upcoming: todayRows.filter((row) => row.status === "PENDING").slice(0, 12),
     issues: issueRows,
     teacherSummaries,
+    attendanceCorrectionRequests: attendanceCorrectionRequests.flatMap((request) => {
+      const attendanceId = Number.parseInt(request.sourceId, 10);
+      const attendance = attendanceById.get(attendanceId);
+      const requested = readRequestedAttendanceValue(request.newValue);
+      if (!attendance || !requested) return [];
+      return [{
+        id: request.id,
+        teacherName: fullName(request.teacher),
+        studentName: `${attendance.student.name} ${attendance.student.surname}`,
+        className: attendance.lesson.class.name,
+        subjectName: attendance.lesson.subject.name,
+        currentStatus: attendance.status,
+        requestedStatus: requested.status,
+        requestedNote: requested.note,
+        requestedArrivalTime: requested.arrivalTime,
+        reason: request.reason,
+        createdAt: request.createdAt,
+      }];
+    }),
     homeworkCorrectionRequests: homeworkCorrectionRequests.flatMap((request) => {
       const submissionId = Number.parseInt(request.sourceId, 10);
       const submission = homeworkSubmissionById.get(submissionId);

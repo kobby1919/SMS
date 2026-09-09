@@ -3,7 +3,7 @@
 // src/lib/actions/actions.ts
 
 import prisma from "@/src/lib/prisma";
-import type { HomeworkSubmissionStatus, Prisma } from "@/src/generated/prisma";
+import type { AttendanceStatus, HomeworkSubmissionStatus, Prisma } from "@/src/generated/prisma";
 import { AuthorizationError, requireRole } from "@/src/lib/authz";
 import { requireResourceAccess } from "@/src/lib/authz";
 import { assertSameSchool } from "@/src/lib/tenant";
@@ -19,6 +19,8 @@ import { syncHomeworkCheckingObligation } from "@/src/lib/services/teacher-homew
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   announcementFormSchema,
+  attendanceCorrectionRequestSchema,
+  attendanceCorrectionReviewSchema,
   assignmentFormSchema,
   classCreateSchema,
   classUpdateSchema,
@@ -31,6 +33,13 @@ import {
   subjectCreateSchema,
   subjectUpdateSchema,
 } from "@/src/lib/validation/academic";
+
+const ATTENDANCE_STATUS_LABELS: Record<AttendanceStatus, string> = {
+  PRESENT: "Present",
+  ABSENT: "Absent",
+  LATE: "Late",
+  EXCUSED: "Excused",
+};
 
 // ─── Auth guards ──────────────────────────────────────────────────────────────
 const requireAdmin = () => requireRole(["admin"]);
@@ -751,6 +760,350 @@ function readHomeworkCorrectionStatus(value: Prisma.JsonValue | null | undefined
     ["PENDING", "SUBMITTED", "LATE", "MISSING", "EXCUSED"].includes(status)
     ? status as HomeworkSubmissionStatus
     : null;
+}
+
+function readAttendanceCorrectionValue(value: Prisma.JsonValue | null | undefined): {
+  status: AttendanceStatus;
+  note: string | null;
+  arrivalTime: string | null;
+} | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const payload = value as {
+    status?: unknown;
+    note?: unknown;
+    arrivalTime?: unknown;
+  };
+  if (
+    typeof payload.status !== "string" ||
+    !["PRESENT", "ABSENT", "LATE", "EXCUSED"].includes(payload.status)
+  ) {
+    return null;
+  }
+  return {
+    status: payload.status as AttendanceStatus,
+    note: typeof payload.note === "string" ? payload.note : null,
+    arrivalTime: typeof payload.arrivalTime === "string" ? payload.arrivalTime : null,
+  };
+}
+
+function attendanceStatusLabel(status: AttendanceStatus) {
+  return ATTENDANCE_STATUS_LABELS[status] ?? status;
+}
+
+export async function requestAttendanceCorrection(data: {
+  attendanceId: number;
+  newStatus: AttendanceStatus;
+  newNote?: string | null;
+  newArrivalTime?: string | null;
+  reason: string;
+}): Promise<{ message: string }> {
+  const parsed = parseActionInput(attendanceCorrectionRequestSchema, data);
+  const ctx = await requireRole(["teacher"]);
+
+  const attendance = await prisma.attendance.findFirst({
+    where: {
+      id: parsed.attendanceId,
+      schoolId: ctx.schoolId,
+    },
+    include: {
+      student: { select: { id: true, name: true, surname: true } },
+      lesson: {
+        select: {
+          id: true,
+          teacherId: true,
+          class: { select: { name: true } },
+          subject: { select: { name: true } },
+        },
+      },
+    },
+  });
+
+  if (!attendance) throw new Error("Attendance record not found.");
+  if (attendance.lesson.teacherId !== ctx.userId) {
+    throw new AuthorizationError("You can only request corrections for attendance you are responsible for.", 403);
+  }
+
+  const newNote = parsed.newNote?.trim() || null;
+  const newArrivalTime = parsed.newStatus === "LATE" ? parsed.newArrivalTime?.trim() ?? null : null;
+  const hasChange =
+    attendance.status !== parsed.newStatus ||
+    (attendance.note ?? null) !== newNote ||
+    (attendance.arrivalTime ?? null) !== newArrivalTime;
+
+  if (!hasChange) {
+    throw new Error("Choose a different attendance value before requesting correction.");
+  }
+
+  const sourceKey = `attendance:${attendance.id}:status-correction`;
+  const pendingRequest = await prisma.teacherCorrectionRequest.findUnique({
+    where: {
+      schoolId_teacherId_sourceKey_fieldName: {
+        schoolId: ctx.schoolId,
+        teacherId: ctx.userId,
+        sourceKey,
+        fieldName: "attendanceStatus",
+      },
+    },
+    select: { id: true, status: true },
+  });
+
+  if (pendingRequest?.status === "PENDING") {
+    return {
+      message: "A correction request for this attendance record is already waiting for admin review.",
+    };
+  }
+
+  await prisma.$transaction(async (tx) => {
+    const request = pendingRequest
+      ? await tx.teacherCorrectionRequest.update({
+          where: { id: pendingRequest.id },
+          data: {
+            status: "PENDING",
+            reviewedBy: null,
+            reviewedAt: null,
+            reviewNote: null,
+            reason: parsed.reason,
+            oldValue: {
+              status: attendance.status,
+              note: attendance.note,
+              arrivalTime: attendance.arrivalTime,
+            },
+            newValue: {
+              status: parsed.newStatus,
+              note: newNote,
+              arrivalTime: newArrivalTime,
+              attendanceId: attendance.id,
+              studentId: attendance.studentId,
+              lessonId: attendance.lessonId,
+            },
+          },
+        })
+      : await tx.teacherCorrectionRequest.create({
+          data: {
+            schoolId: ctx.schoolId,
+            teacherId: ctx.userId,
+            sourceModel: "Attendance",
+            sourceId: String(attendance.id),
+            sourceKey,
+            fieldName: "attendanceStatus",
+            reason: parsed.reason,
+            oldValue: {
+              status: attendance.status,
+              note: attendance.note,
+              arrivalTime: attendance.arrivalTime,
+            },
+            newValue: {
+              status: parsed.newStatus,
+              note: newNote,
+              arrivalTime: newArrivalTime,
+              attendanceId: attendance.id,
+              studentId: attendance.studentId,
+              lessonId: attendance.lessonId,
+            },
+          },
+        });
+
+    await tx.teacherAccountabilityAuditLog.create({
+      data: {
+        schoolId: ctx.schoolId,
+        teacherId: ctx.userId,
+        actorId: ctx.userId,
+        actorRole: ctx.role,
+        action: "CORRECTION_REQUESTED",
+        sourceModel: "Attendance",
+        sourceId: String(attendance.id),
+        before: {
+          status: attendance.status,
+          student: `${attendance.student.name} ${attendance.student.surname}`,
+        },
+        after: {
+          correctionRequestId: request.id,
+          requestedStatus: parsed.newStatus,
+          status: request.status,
+        },
+        message: `Attendance correction requested for ${attendance.student.name} ${attendance.student.surname} in ${attendance.lesson.subject.name}.`,
+      },
+    });
+  });
+
+  revalidatePath("/list/attendance");
+  revalidatePath("/list/attendance/take");
+  revalidatePath("/teacher/accountability");
+  revalidatePath("/admin/accountability");
+
+  return {
+    message: "Correction request sent to admin for review. The saved attendance record has not changed yet.",
+  };
+}
+
+export async function reviewAttendanceCorrectionRequest(data: {
+  requestId: string;
+  action: "APPROVE" | "REJECT";
+  note?: string | null;
+}): Promise<{ message: string }> {
+  const parsed = parseActionInput(attendanceCorrectionReviewSchema, data);
+  const ctx = await requireRole(["admin"]);
+  const reviewNote = parsed.note?.trim() || null;
+
+  const request = await prisma.teacherCorrectionRequest.findFirst({
+    where: {
+      id: parsed.requestId,
+      schoolId: ctx.schoolId,
+      sourceModel: "Attendance",
+      fieldName: "attendanceStatus",
+      status: "PENDING",
+    },
+    include: {
+      teacher: { select: { id: true, name: true, surname: true } },
+    },
+  });
+
+  if (!request) throw new Error("Pending attendance correction request not found.");
+
+  const requested = readAttendanceCorrectionValue(request.newValue);
+  const previous = readAttendanceCorrectionValue(request.oldValue);
+  if (!requested || !previous) {
+    throw new Error("Attendance correction request is missing valid status data.");
+  }
+
+  const attendance = await prisma.attendance.findFirst({
+    where: {
+      id: Number.parseInt(request.sourceId, 10),
+      schoolId: ctx.schoolId,
+    },
+    include: {
+      student: { select: { id: true, name: true, surname: true } },
+      lesson: {
+        select: {
+          id: true,
+          teacherId: true,
+          subject: { select: { name: true } },
+          teacher: { select: { name: true, surname: true } },
+        },
+      },
+    },
+  });
+
+  if (!attendance) throw new Error("Attendance record for this correction request no longer exists.");
+
+  const now = new Date();
+  await prisma.$transaction(async (tx) => {
+    if (parsed.action === "APPROVE") {
+      await tx.attendance.update({
+        where: { id: attendance.id },
+        data: {
+          status: requested.status,
+          present: requested.status === "PRESENT",
+          note: requested.note,
+          arrivalTime: requested.status === "LATE" ? requested.arrivalTime : null,
+          followUpStatus: requested.status === "ABSENT" && !requested.note ? "PENDING_REASON" : "NOT_REQUIRED",
+          correctionCount: { increment: 1 },
+          lastCorrectedAt: now,
+        },
+      });
+
+      await tx.attendanceAuditLog.create({
+        data: {
+          schoolId: ctx.schoolId,
+          attendanceId: attendance.id,
+          studentId: attendance.studentId,
+          lessonId: attendance.lessonId,
+          actorId: ctx.userId,
+          action: "ATTENDANCE_CORRECTION_APPROVED",
+          previousStatus: attendance.status,
+          newStatus: requested.status,
+          previousNote: attendance.note,
+          newNote: requested.note,
+          previousArrivalTime: attendance.arrivalTime,
+          newArrivalTime: requested.arrivalTime,
+          previousFollowUp: attendance.followUpStatus,
+          newFollowUp: requested.status === "ABSENT" && !requested.note ? "PENDING_REASON" : "NOT_REQUIRED",
+          reason: request.reason,
+        },
+      });
+    }
+
+    await tx.teacherCorrectionRequest.update({
+      where: { id: request.id },
+      data: {
+        status: parsed.action === "APPROVE" ? "APPROVED" : "REJECTED",
+        reviewedBy: ctx.userId,
+        reviewedAt: now,
+        reviewNote,
+      },
+    });
+
+    await tx.teacherAccountabilityAuditLog.create({
+      data: {
+        schoolId: ctx.schoolId,
+        teacherId: request.teacherId,
+        actorId: ctx.userId,
+        actorRole: ctx.role,
+        action: parsed.action === "APPROVE" ? "CORRECTION_APPROVED" : "CORRECTION_REJECTED",
+        sourceModel: "Attendance",
+        sourceId: String(attendance.id),
+        before: {
+          status: attendance.status,
+          correctionRequestId: request.id,
+        },
+        after: {
+          requestedStatus: requested.status,
+          requestStatus: parsed.action === "APPROVE" ? "APPROVED" : "REJECTED",
+          reviewNote,
+        },
+        message: parsed.action === "APPROVE"
+          ? `Attendance correction approved for ${attendance.student.name} ${attendance.student.surname}.`
+          : `Attendance correction rejected for ${attendance.student.name} ${attendance.student.surname}.`,
+      },
+    });
+  });
+
+  if (parsed.action === "APPROVE") {
+    const teacherName = `${attendance.lesson.teacher.name} ${attendance.lesson.teacher.surname}`.trim();
+    const statusLabel = attendanceStatusLabel(requested.status);
+    await recordParentActivityEvents({
+      schoolId: ctx.schoolId,
+      studentIds: [attendance.studentId],
+      teacherId: attendance.lesson.teacherId,
+      type: "ATTENDANCE",
+      title: `${attendance.lesson.subject.name} attendance corrected: ${statusLabel}`,
+      body: [
+        `${statusLabel} for ${attendance.lesson.subject.name}${requested.arrivalTime ? ` at ${requested.arrivalTime}` : ""}.`,
+        `Teacher: ${teacherName}`,
+        `Approved by admin`,
+        request.reason ? `Reason: ${request.reason}` : null,
+      ].filter(Boolean).join("\n"),
+      href: "/parent/updates",
+      sourceModel: "Attendance",
+      sourceId: String(attendance.id),
+      sourceKey: `attendance:${attendance.id}:approved:${requested.status}:${now.getTime()}`,
+      occurredAt: now,
+      payload: {
+        studentName: `${attendance.student.name} ${attendance.student.surname}`,
+        status: requested.status,
+        statusLabel,
+        note: requested.note,
+        arrivalTime: requested.arrivalTime,
+        subjectName: attendance.lesson.subject.name,
+        teacherName,
+        correctionApproved: true,
+      },
+    });
+  }
+
+  revalidatePath("/list/attendance");
+  revalidatePath("/list/attendance/take");
+  revalidatePath("/teacher/accountability");
+  revalidatePath("/admin/accountability");
+  revalidatePath("/parent");
+  revalidatePath("/parent/updates");
+  revalidateDashboard(ctx.schoolId);
+
+  return {
+    message: parsed.action === "APPROVE"
+      ? "Attendance correction approved and applied."
+      : "Attendance correction rejected. The saved attendance record was not changed.",
+  };
 }
 
 export async function updateHomeworkSubmission(data: HomeworkSubmissionFormData): Promise<HomeworkSubmissionActionResult> {

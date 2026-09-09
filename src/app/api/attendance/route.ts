@@ -11,6 +11,7 @@ import { parseBody, parseSearchParams } from "@/src/lib/validation/parse";
 import { enforceRateLimit } from "@/src/lib/rate-limit";
 import { revalidateDashboard } from "@/src/lib/cacheTags";
 import {
+  AttendanceSubmissionLockedError,
   deleteAttendanceRecord,
   getAttendanceRecords,
   saveAttendance,
@@ -69,6 +70,12 @@ export async function POST(req: NextRequest) {
     revalidateDashboard(schoolId);
     return NextResponse.json({ saved }, { status: 201 });
   } catch (error) {
+    if (error instanceof AttendanceSubmissionLockedError) {
+      return NextResponse.json(
+        { error: error.message, code: "ATTENDANCE_LOCKED" },
+        { status: 409 },
+      );
+    }
     return unauthorizedResponse(error);
   }
 }

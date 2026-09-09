@@ -2,7 +2,7 @@
 
 // src/components/AttendanceTaker.tsx
 
-import { useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,6 +11,7 @@ import {
   ChevronRight, Loader2, AlertCircle, Users,
   CalendarDays, BookOpen, Save, CheckCheck,
 } from "lucide-react";
+import AttendanceCorrectionRequestForm from "@/src/components/AttendanceCorrectionRequestForm";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type TeacherLesson = {
@@ -49,6 +50,7 @@ type AttendanceRecord = {
 };
 
 type ExistingRecord = {
+  id: number;
   studentId: string;
   status:    "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";
   note:      string | null;
@@ -210,11 +212,11 @@ const AttendanceTaker = ({
   const [attendance, setAttendance] = useState<Record<string, AttendanceRecord>>(buildInitialState);
   const [noteTarget, setNoteTarget] = useState<string | null>(null);
   const [saving,     setSaving]     = useState(false);
-  const [saved,      setSaved]      = useState(false);
   const [error,      setError]      = useState<string | null>(null);
 
   const isToday    = dateStr === todayStr;
   const isPastDate = dateStr < todayStr;
+  const hasStoredAttendance = existingAttendance.length > 0;
   const selectedLessonAccountability = teacherLessons.find(
     (lesson) => lesson.id === selectedLessonId,
   )?.accountability;
@@ -223,8 +225,10 @@ const AttendanceTaker = ({
   const selectedLessonWindowClosed = selectedLessonGroup === "issue";
   const selectedLessonNotOpenYet = selectedLessonGroup === "upcoming";
   const selectedLessonSubmitted = selectedLessonGroup === "submitted";
-  const selectedLessonLockedForTeacher =
-    role === "teacher" && (selectedLessonWindowClosed || selectedLessonNotOpenYet || selectedLessonSubmitted);
+  const initiallyLocked = hasStoredAttendance || selectedLessonSubmitted;
+  const [saved, setSaved] = useState(initiallyLocked);
+  const attendanceLocked =
+    hasStoredAttendance || saved || (role === "teacher" && (selectedLessonWindowClosed || selectedLessonNotOpenYet));
   const lessonGroups = teacherLessons.reduce(
     (groups, lesson) => {
       groups[getLessonUiGroup(lesson)].push(lesson);
@@ -245,9 +249,31 @@ const AttendanceTaker = ({
     arrivalTime: "",
   });
 
+  useEffect(() => {
+    const state: Record<string, AttendanceRecord> = {};
+    students.forEach((student) => {
+      const existing = existingAttendance.find((record) => record.studentId === student.id);
+      state[student.id] = {
+        studentId: student.id,
+        status: existing?.status ?? "PRESENT",
+        note: existing?.note ?? "",
+        arrivalTime: existing?.arrivalTime ?? "",
+      };
+    });
+    setAttendance(state);
+    setSaved(hasStoredAttendance || selectedLessonSubmitted);
+    setError(null);
+    setNoteTarget(null);
+  }, [dateStr, selectedLessonId, existingAttendance, students, hasStoredAttendance, selectedLessonSubmitted]);
+
+  const exceptionCount = useMemo(
+    () => Object.values(attendance).filter((r) => r.status !== "PRESENT").length,
+    [attendance],
+  );
+
   // ── Mark single student ──────────────────────────────────────────────────
   const markStudent = (studentId: string, status: AttendanceRecord["status"]) => {
-    if (selectedLessonLockedForTeacher) return;
+    if (attendanceLocked) return;
     setAttendance((prev) => ({
       ...prev,
       [studentId]: {
@@ -263,7 +289,7 @@ const AttendanceTaker = ({
   };
 
   const setNote = (studentId: string, note: string) => {
-    if (selectedLessonLockedForTeacher) return;
+    if (attendanceLocked) return;
     setAttendance((prev) => ({
       ...prev,
       [studentId]: { ...(prev[studentId] ?? defaultRecordFor(studentId)), studentId, note },
@@ -271,7 +297,7 @@ const AttendanceTaker = ({
   };
 
   const setArrivalTime = (studentId: string, arrivalTime: string) => {
-    if (selectedLessonLockedForTeacher) return;
+    if (attendanceLocked) return;
     setAttendance((prev) => ({
       ...prev,
       [studentId]: { ...(prev[studentId] ?? defaultRecordFor(studentId)), studentId, arrivalTime },
@@ -280,7 +306,7 @@ const AttendanceTaker = ({
 
   // ── Bulk mark all ────────────────────────────────────────────────────────
   const markAll = (status: AttendanceRecord["status"]) => {
-    if (selectedLessonLockedForTeacher) return;
+    if (attendanceLocked) return;
     const updated: Record<string, AttendanceRecord> = {};
     students.forEach((s) => {
       updated[s.id] = {
@@ -305,6 +331,11 @@ const AttendanceTaker = ({
   // ── Submit ───────────────────────────────────────────────────────────────
   const handleSubmit = async () => {
     if (!selectedLessonId) return;
+    if (attendanceLocked) {
+      setSaved(true);
+      setError("Attendance has already been submitted. Use the correction workflow for changes.");
+      return;
+    }
     const records = students.map((student) => {
       const record = attendance[student.id] ?? defaultRecordFor(student.id);
       return {
@@ -345,9 +376,12 @@ const AttendanceTaker = ({
         }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(getApiErrorMessage(data)); return; }
+      if (!res.ok) {
+        if (data?.code === "ATTENDANCE_LOCKED") setSaved(true);
+        setError(getApiErrorMessage(data));
+        return;
+      }
       setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
     } catch {
       setError("Network error. Please try again.");
     } finally {
@@ -534,7 +568,7 @@ const AttendanceTaker = ({
                         <button
                           key={status}
                           onClick={() => markAll(status)}
-                          disabled={selectedLessonLockedForTeacher}
+                          disabled={attendanceLocked}
                           className={`flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold transition-all ${cfg.bg} ${cfg.text} hover:opacity-90`}
                         >
                           {cfg.icon}
@@ -641,7 +675,7 @@ const AttendanceTaker = ({
                                 <button
                                   key={s}
                                   onClick={() => markStudent(student.id, s)}
-                                  disabled={selectedLessonLockedForTeacher}
+                                  disabled={attendanceLocked}
                                   title={c.label}
                                   className={`flex h-9 w-full items-center justify-center rounded-lg text-xs font-black transition-all sm:h-8 sm:w-8
                                     ${active
@@ -656,7 +690,7 @@ const AttendanceTaker = ({
                             {/* Note button */}
                             <button
                               onClick={() => setNoteTarget(isNoting ? null : student.id)}
-                              disabled={selectedLessonLockedForTeacher}
+                              disabled={attendanceLocked}
                               className={`flex h-9 w-full items-center justify-center rounded-lg transition-all sm:h-8 sm:w-8
                                 ${isNoting ? "bg-indigo-100 text-indigo-600" : "bg-gray-100 text-gray-400 hover:bg-gray-200"}`}
                               title="Add note"
@@ -681,7 +715,7 @@ const AttendanceTaker = ({
                                     type="time"
                                     value={record?.arrivalTime ?? ""}
                                     onChange={(e) => setArrivalTime(student.id, e.target.value)}
-                                    disabled={selectedLessonLockedForTeacher}
+                                    disabled={attendanceLocked}
                                     className="w-full px-3 py-2 text-xs rounded-lg border border-amber-200 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-300 text-gray-700"
                                     aria-label={`Arrival time for ${student.name} ${student.surname}`}
                                   />
@@ -691,7 +725,7 @@ const AttendanceTaker = ({
                                   placeholder={status === "LATE" ? "Reason for lateness" : "Add a note (e.g. sick, left early, parent called)"}
                                   value={record?.note ?? ""}
                                   onChange={(e) => setNote(student.id, e.target.value)}
-                                  disabled={selectedLessonLockedForTeacher}
+                                  disabled={attendanceLocked}
                                   className="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 text-gray-700"
                                   autoFocus
                                 />
@@ -712,27 +746,35 @@ const AttendanceTaker = ({
                     ? "Attendance window closed. Ask an admin to approve correction."
                     : selectedLessonNotOpenYet
                       ? `Attendance opens at ${selectedLessonAccountability?.openAt ? formatTime(selectedLessonAccountability.openAt) : "the scheduled time"}.`
-                      : selectedLessonSubmitted
-                        ? "Attendance already submitted. Corrections will go through approval."
-                        : `${Object.values(attendance).filter((r) => r.status !== "PRESENT").length} exception${Object.values(attendance).filter((r) => r.status !== "PRESENT").length !== 1 ? "s" : ""} marked`}
+                      : saved
+                        ? "Attendance saved and locked. Corrections must go through approval."
+                        : `${exceptionCount} exception${exceptionCount !== 1 ? "s" : ""} marked`}
                 </p>
-                <button
-                  onClick={handleSubmit}
-                  disabled={saving || students.length === 0 || selectedLessonLockedForTeacher}
-                  className={`w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all shadow-sm
-                    ${saved
-                      ? "bg-emerald-500 text-white"
-                      : "bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50"}`}
-                >
-                  {saving ? (
-                    <><Loader2 size={15} className="animate-spin" /> Saving…</>
-                  ) : saved ? (
-                    <><CheckCheck size={15} /> Saved!</>
-                  ) : (
-                    <><Save size={15} /> Save Attendance</>
-                  )}
-                </button>
+                <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                  <button
+                    onClick={handleSubmit}
+                    disabled={saving || students.length === 0 || attendanceLocked}
+                    className={`flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-bold shadow-sm transition-all sm:w-auto
+                      ${saved
+                        ? "bg-emerald-500 text-white disabled:opacity-100"
+                        : "bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50"}`}
+                  >
+                    {saving ? (
+                      <><Loader2 size={15} className="animate-spin" /> Saving...</>
+                    ) : saved ? (
+                      <><CheckCheck size={15} /> Attendance saved</>
+                    ) : (
+                      <><Save size={15} /> Save attendance</>
+                    )}
+                  </button>
+                </div>
               </div>
+              {saved ? (
+                <AttendanceCorrectionRequestForm
+                  students={students}
+                  existingAttendance={existingAttendance}
+                />
+              ) : null}
             </div>
           )}
         </div>

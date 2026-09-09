@@ -3,6 +3,7 @@ import Navbar from "@/src/components/Navbar";
 import Image from "next/image";
 import Link from "next/link";
 import { requirePageSession } from "@/src/lib/authz";
+import NavigationProgress from "@/src/components/NavigationProgress";
 
 export default async function DashboardLayout({
   children,
@@ -28,6 +29,7 @@ export default async function DashboardLayout({
 
       <div className="flex-1 min-w-0 h-full bg-[#F7F8FA] overflow-y-auto overflow-x-hidden">
         <Navbar role={session.role} userId={session.userId} schoolId={session.schoolId} />
+        <NavigationProgress />
         {children}
       </div>
     </div>

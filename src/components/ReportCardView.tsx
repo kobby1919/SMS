@@ -196,11 +196,11 @@ function DownloadButton({
   };
 
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div className="flex w-full flex-col items-stretch gap-1 sm:w-auto sm:items-end">
       <button
         onClick={handleDownload}
         disabled={loading}
-        className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-xl text-sm font-bold hover:bg-gray-900 transition-colors disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-800 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-gray-900 disabled:opacity-60 sm:w-auto"
       >
         {loading ? (
           <>
@@ -263,19 +263,19 @@ const ReportCardView = ({
       : undefined;
 
   return (
-    <div className="m-3 mt-0 flex flex-1 flex-col gap-4 sm:m-4 sm:mt-0">
+    <div className="m-2 mt-0 flex min-w-0 flex-1 flex-col gap-4 sm:m-4 sm:mt-0">
       {/* ── Action bar ── */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-3 sm:flex-row sm:items-center sm:justify-between sm:p-4">
         <Link
           href="/list/report-cards"
-          className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-gray-700 transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-bold text-gray-500 transition-colors hover:text-gray-700"
         >
           <ArrowLeft size={16} /> {role === "parent" ? "Back to results" : "Back to report cards"}
         </Link>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end sm:gap-3">
           {/* Role badge */}
           <span
-            className={`text-xs font-bold px-3 py-1.5 rounded-xl border
+            className={`inline-flex w-full items-center justify-center px-3 py-1.5 text-xs font-bold sm:w-auto rounded-xl border
             ${
               role === "student"
                 ? "bg-indigo-50 text-indigo-600 border-indigo-100"
@@ -303,7 +303,7 @@ const ReportCardView = ({
             <button
               type="button"
               disabled
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-400 rounded-xl text-sm font-bold"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-100 px-4 py-2 text-sm font-bold text-gray-400 sm:w-auto"
             >
               <Download size={14} /> {reportReady ? "PDF pending approval" : "PDF pending exams"}
             </button>
@@ -312,7 +312,7 @@ const ReportCardView = ({
       </div>
 
       {/* ── Report Card (screen view) ── */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="min-w-0 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
         {/* School header */}
         <div
           className="relative overflow-hidden"
@@ -323,24 +323,24 @@ const ReportCardView = ({
         >
           <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full opacity-10 bg-white" />
           <div className="absolute -bottom-4 -left-4 w-24 h-24 rounded-full opacity-10 bg-white" />
-          <div className="relative px-8 py-8 text-white">
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-              <div className="text-center sm:text-left flex-1">
-                <p className="text-white/60 text-xs font-bold uppercase tracking-[0.2em] mb-1">
+          <div className="relative px-4 py-6 text-white sm:px-8 sm:py-8">
+            <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0 flex-1">
+                <p className="mb-1 text-xs font-bold uppercase text-white/60">
                   {branding.displayName}
                 </p>
-                <h1 className="text-2xl font-black tracking-tight">
+                <h1 className="break-words text-2xl font-black leading-tight sm:text-3xl">
                   ACADEMIC REPORT CARD
                 </h1>
                 <p className="text-white/70 text-sm mt-1 font-medium">
                   {TERM_LABELS[term]} · {academicYear} Academic Year
                 </p>
               </div>
-              <div className="text-center sm:text-right">
-                <p className="text-white/50 text-[10px] font-bold uppercase tracking-widest">
+              <div className="w-full rounded-2xl border border-white/10 bg-white/10 p-4 sm:w-auto sm:min-w-44 sm:text-right">
+                <p className="text-[10px] font-bold uppercase text-white/50">
                   Aggregate
                 </p>
-                <p className="text-5xl font-black text-white leading-none">
+                <p className="break-words text-4xl font-black leading-none text-white sm:text-5xl">
                   {reportReady ? overallStats.aggregate : "Pending"}
                 </p>
                 <p className="text-white/60 text-xs font-semibold mt-1">
@@ -353,10 +353,10 @@ const ReportCardView = ({
           </div>
         </div>
 
-        <div className="p-6 sm:p-8 flex flex-col gap-6">
+        <div className="flex min-w-0 flex-col gap-6 p-4 sm:p-8">
           {/* Student + class info */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-6 border-b border-gray-100">
-            <div className="flex items-start gap-4">
+            <div className="flex min-w-0 items-start gap-4">
               <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center text-xl font-black text-indigo-600 shrink-0 overflow-hidden">
                 {student.img ? (
                   <Image
@@ -371,17 +371,17 @@ const ReportCardView = ({
                   `${student.name[0]}${student.surname[0]}`
                 )}
               </div>
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">
+              <div className="min-w-0">
+                <p className="text-[10px] font-black uppercase text-gray-400 mb-0.5">
                   Student
                 </p>
-                <p className="text-lg font-black text-gray-900">
+                <p className="break-words text-lg font-black text-gray-900">
                   {student.surname.toUpperCase()}, {student.name}
                 </p>
                 <p className="text-sm text-gray-500 mt-0.5">
                   {classInfo.gradeLevel} · {classInfo.name}
                 </p>
-                <div className="flex items-center gap-2 mt-1.5">
+                <div className="mt-1.5 flex flex-wrap items-center gap-2">
                   <span className="text-[10px] font-bold px-2 py-0.5 bg-gray-100 text-gray-500 rounded-lg">
                     {student.sex === "MALE" ? "Male" : "Female"}
                   </span>
@@ -391,7 +391,7 @@ const ReportCardView = ({
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {[
                 { label: "Class Teacher", value: classInfo.supervisor },
                 {
@@ -405,17 +405,17 @@ const ReportCardView = ({
                 { label: "Contact", value: parent.phone || "—" },
               ].map((f) => (
                 <div key={f.label}>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
+                  <p className="text-[10px] font-black uppercase text-gray-400 mb-1">
                     {f.label}
                   </p>
-                  <p className="text-sm font-bold text-gray-800">{f.value}</p>
+                  <p className="break-words text-sm font-bold text-gray-800">{f.value}</p>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Weight pill */}
-          <div className="flex items-center gap-3 p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
+          <div className="flex flex-col gap-3 rounded-xl border border-indigo-100 bg-indigo-50 p-3 sm:flex-row sm:items-center">
             <div className="flex h-3 w-24 rounded-full overflow-hidden shrink-0">
               <div
                 className="bg-indigo-500 h-full"
@@ -426,7 +426,7 @@ const ReportCardView = ({
                 style={{ width: `${exWeight}%` }}
               />
             </div>
-            <p className="text-xs text-indigo-700 font-semibold">
+            <p className="text-xs font-semibold leading-relaxed text-indigo-700">
               Scoring: <strong>{cwWeight}% Class Activities</strong> +{" "}
               <strong>{exWeight}% End-of-Term Exam</strong>
             </p>
@@ -474,7 +474,7 @@ const ReportCardView = ({
             <div className="rounded-2xl border border-gray-100 bg-white p-4">
               <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                  <p className="text-[10px] font-black uppercase text-gray-400">
                     CA Progress Insight
                   </p>
                   <h2 className="text-base font-black text-gray-900">
@@ -505,19 +505,19 @@ const ReportCardView = ({
 
                   return (
                     <div key={row.id} className="rounded-xl border border-gray-100 p-3">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="min-w-0">
                           <p className="text-sm font-black text-gray-900">{row.name}</p>
-                        <p className="mt-0.5 text-xs font-semibold text-gray-400">
-                          CA {formatMark(row.classworkScore)} / {formatMark(cwWeight)}
-                        </p>
-                        {row.hasNewerCARecord && (
-                          <p className="mt-1 text-[10px] font-black uppercase tracking-wide text-amber-600">
-                            Newer CA exists in the latest parent update
+                          <p className="mt-0.5 text-xs font-semibold text-gray-400">
+                            CA {formatMark(row.classworkScore)} / {formatMark(cwWeight)}
                           </p>
-                        )}
-                      </div>
-                        <span className={`rounded-full px-2.5 py-1 text-[10px] font-black ${trendClass}`}>
+                          {row.hasNewerCARecord && (
+                            <p className="mt-1 text-[10px] font-black uppercase text-amber-600">
+                              Newer CA exists in the latest parent update
+                            </p>
+                          )}
+                        </div>
+                        <span className={`w-fit rounded-full px-2.5 py-1 text-[10px] font-black ${trendClass}`}>
                           {trendLabel}
                         </span>
                       </div>
@@ -533,32 +533,91 @@ const ReportCardView = ({
 
           {/* Subject table */}
           <div>
-            <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">
+            <p className="text-xs font-black uppercase text-gray-400 mb-3">
               Subject Results
             </p>
-            <div className="rounded-2xl border border-gray-100 overflow-hidden">
+            <div className="grid gap-3 lg:hidden">
+              {subjectRows.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-gray-200 py-10 text-center text-sm font-semibold text-gray-300">
+                  No CA records for this term
+                </div>
+              ) : (
+                subjectRows.map((row) => {
+                  const band = row.isComplete ? getGradeBandByGrade(row.grade) : null;
+                  return (
+                    <div key={row.id} className="rounded-2xl border border-gray-100 bg-white p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="break-words text-base font-black text-gray-900">{row.name}</p>
+                          <p className="mt-1 text-xs font-semibold text-gray-500">
+                            {row.isComplete
+                              ? row.remarks || band?.label
+                              : "Exam not recorded yet. Current CA is still building."}
+                          </p>
+                        </div>
+                        {row.isComplete ? (
+                          <GradeBadge grade={row.grade} />
+                        ) : (
+                          <span className="shrink-0 rounded-lg border border-sky-100 bg-sky-50 px-2 py-1 text-[10px] font-black text-sky-700">
+                            CA in build
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="mt-4 grid grid-cols-2 gap-3">
+                        <div className="rounded-xl bg-gray-50 p-3">
+                          <p className="text-[10px] font-black uppercase text-gray-400">CA</p>
+                          <p className="mt-1 text-sm font-black text-gray-800">
+                            {formatMark(row.classworkScore)} / {formatMark(cwWeight)}
+                          </p>
+                        </div>
+                        <div className="rounded-xl bg-gray-50 p-3">
+                          <p className="text-[10px] font-black uppercase text-gray-400">Exam</p>
+                          <p className="mt-1 text-sm font-black text-gray-800">
+                            {row.examScore > 0 ? `${row.examScore.toFixed(1)} / ${formatMark(exWeight)}` : "Pending"}
+                          </p>
+                        </div>
+                        <div className="rounded-xl bg-gray-50 p-3">
+                          <p className="text-[10px] font-black uppercase text-gray-400">Total</p>
+                          <p className="mt-1 text-sm font-black text-gray-800">
+                            {row.isComplete ? `${row.totalScore.toFixed(1)}%` : "Pending"}
+                          </p>
+                        </div>
+                        <div className="rounded-xl bg-gray-50 p-3">
+                          <p className="text-[10px] font-black uppercase text-gray-400">Position</p>
+                          <p className="mt-1 text-sm font-black text-gray-800">
+                            {row.isComplete ? <PosBadge pos={row.position} /> : "Pending"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+            <div className="hidden overflow-hidden rounded-2xl border border-gray-100 lg:block">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100">
-                    <th className="text-left px-4 py-3 text-[10px] font-black uppercase tracking-wider text-gray-400">
+                    <th className="text-left px-4 py-3 text-[10px] font-black uppercase text-gray-400">
                       Subject
                     </th>
-                    <th className="text-center px-3 py-3 text-[10px] font-black uppercase tracking-wider text-gray-400">
+                    <th className="text-center px-3 py-3 text-[10px] font-black uppercase text-gray-400">
                       CW ({cwWeight}%)
                     </th>
-                    <th className="text-center px-3 py-3 text-[10px] font-black uppercase tracking-wider text-gray-400">
+                    <th className="text-center px-3 py-3 text-[10px] font-black uppercase text-gray-400">
                       Exam ({exWeight}%)
                     </th>
-                    <th className="text-center px-3 py-3 text-[10px] font-black uppercase tracking-wider text-gray-400">
+                    <th className="text-center px-3 py-3 text-[10px] font-black uppercase text-gray-400">
                       Total
                     </th>
-                    <th className="text-center px-3 py-3 text-[10px] font-black uppercase tracking-wider text-gray-400">
+                    <th className="text-center px-3 py-3 text-[10px] font-black uppercase text-gray-400">
                       Grade
                     </th>
-                    <th className="text-center px-3 py-3 text-[10px] font-black uppercase tracking-wider text-gray-400">
+                    <th className="text-center px-3 py-3 text-[10px] font-black uppercase text-gray-400">
                       Pos.
                     </th>
-                    <th className="text-left px-4 py-3 text-[10px] font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">
+                    <th className="text-left px-4 py-3 text-[10px] font-black uppercase text-gray-400">
                       Remark
                     </th>
                   </tr>
@@ -608,7 +667,7 @@ const ReportCardView = ({
                           <td className="px-3 py-3 text-center">
                             {row.isComplete ? <PosBadge pos={row.position} /> : <span className="text-xs text-gray-300">-</span>}
                           </td>
-                          <td className="px-4 py-3 hidden lg:table-cell">
+                          <td className="px-4 py-3">
                             <span className="text-xs text-gray-400 italic">
                               {row.isComplete && band
                                 ? row.remarks || band.label
@@ -654,6 +713,32 @@ const ReportCardView = ({
                 )}
               </table>
             </div>
+            {subjectRows.length > 0 && (
+              <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-4 lg:hidden">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-indigo-400">Total / Average</p>
+                    <p className="mt-1 text-sm font-black text-indigo-900">
+                      {reportReady
+                        ? `${overallStats.totalRawScore.toFixed(1)} / ${overallStats.totalPossible}`
+                        : "Pending"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-indigo-400">Average</p>
+                    <p className="mt-1 text-sm font-black text-indigo-900">
+                      {reportReady ? `${overallStats.avgScore.toFixed(1)}%` : "Pending"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-indigo-400">Aggregate</p>
+                    <p className="mt-1 text-sm font-black text-indigo-900">
+                      {reportReady ? overallStats.aggregate : "Pending"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Grade scale */}

@@ -38,6 +38,7 @@ const TakeAttendancePage = async ({
     img: string | null;
   };
   type AttendanceSummary = {
+    id: number;
     studentId: string;
     status: AttendanceStatus;
     note: string | null;
@@ -109,7 +110,7 @@ const TakeAttendancePage = async ({
           lessonId,
           date: { gte: dayStart, lte: dayEnd },
         },
-        select: { studentId: true, status: true, note: true, arrivalTime: true },
+        select: { id: true, studentId: true, status: true, note: true, arrivalTime: true },
       });
     }
   }

@@ -138,6 +138,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes edujay-progress {
+  0% {
+    transform: translateX(-120%);
+  }
+  55% {
+    transform: translateX(80%);
+  }
+  100% {
+    transform: translateX(220%);
+  }
+}
+
 @layer base {
   html {
     font-size: 18px;
@@ -148,6 +160,10 @@
       font-size: 17px;
     }
   }
+}
+
+.animate-edujay-progress {
+  animation: edujay-progress 1.05s ease-in-out infinite;
 }
 
 @media (max-width: 640px) {

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  attendanceStatusSchema,
   isoDateStringSchema,
   nonEmptyStringSchema,
   positiveIntSchema,
@@ -93,6 +94,46 @@ export const homeworkBulkSubmissionSchema = z.object({
   status: z.enum(["PENDING", "SUBMITTED", "LATE", "MISSING", "EXCUSED"]),
   onlyPending: z.boolean().optional().default(true),
   note: z.string().trim().max(500).nullable().optional(),
+});
+
+const optionalTimeSchema = z.preprocess(
+  (value) => (typeof value === "string" && value.trim() === "" ? null : value),
+  z
+    .string()
+    .trim()
+    .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Use HH:mm time format.")
+    .nullable()
+    .optional(),
+);
+
+export const attendanceCorrectionRequestSchema = z.object({
+  attendanceId: positiveIntSchema,
+  newStatus: attendanceStatusSchema,
+  newNote: z.string().trim().max(500).nullable().optional(),
+  newArrivalTime: optionalTimeSchema,
+  reason: nonEmptyStringSchema.max(700),
+}).superRefine((value, ctx) => {
+  if (value.newStatus === "LATE" && !value.newArrivalTime?.trim()) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Arrival time is required when correcting attendance to late.",
+      path: ["newArrivalTime"],
+    });
+  }
+});
+
+export const attendanceCorrectionReviewSchema = z.object({
+  requestId: stringIdSchema,
+  action: z.enum(["APPROVE", "REJECT"]),
+  note: z.string().trim().max(700).nullable().optional(),
+}).superRefine((value, ctx) => {
+  if (value.action === "REJECT" && !value.note?.trim()) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Add a short note before rejecting an attendance correction request.",
+      path: ["note"],
+    });
+  }
 });
 
 export const reportCardPdfQuerySchema = z.object({
