@@ -9,7 +9,7 @@ import {
   CheckCircle2, AlertCircle, Loader2, ChevronDown,
   BookOpen, Users, TrendingUp, Save, RefreshCw,
 } from "lucide-react";
-import { bulkUpsertCA } from "@/src/lib/actions/caActions";
+import { bulkUpsertCA, requestExamScoreCorrection } from "@/src/lib/actions/caActions";
 import { getGradeBand, TERM_LABELS } from "@/src/lib/caGrades";
 import { formatMark } from "@/src/lib/formatters/marks";
 import type { ExamEntryStatus, Term } from "@/src/generated/prisma";
@@ -135,6 +135,9 @@ const CAEntryForm = ({
   const [caConfig,          setCAConfig]          = useState<{ classworkWeight: number; examWeight: number } | null>(null);
   const [configLoading,     setConfigLoading]     = useState(true);
   const [rowEdits,          setRowEdits]          = useState<Record<string, RowEdit>>({});
+  const [examCorrectionStudentId, setExamCorrectionStudentId] = useState("");
+  const [examCorrectionScore, setExamCorrectionScore] = useState("");
+  const [examCorrectionReason, setExamCorrectionReason] = useState("");
   const [apiError,          setApiError]          = useState<string | null>(null);
   const [success,           setSuccess]           = useState(false);
   const [isPending,         startTransition]      = useTransition();
@@ -187,6 +190,29 @@ const CAEntryForm = ({
       [studentId]: { ...prev[studentId], [field]: value },
     }));
   };
+
+  const selectedSubjectExamRecords = useMemo(
+    () =>
+      existingCA.filter(
+        (record) =>
+          record.subjectId === selectedSubjectId &&
+          record.term === selectedTerm &&
+          record.academicYear === selectedYear &&
+          record.examScore > 0,
+      ),
+    [existingCA, selectedSubjectId, selectedTerm, selectedYear],
+  );
+
+  const examRecordByStudentId = useMemo(
+    () => new Map(selectedSubjectExamRecords.map((record) => [record.studentId, record])),
+    [selectedSubjectExamRecords],
+  );
+
+  useEffect(() => {
+    setExamCorrectionStudentId("");
+    setExamCorrectionScore("");
+    setExamCorrectionReason("");
+  }, [selectedSubjectId]);
 
   const handleSubmit = () => {
     setApiError(null);
@@ -246,6 +272,52 @@ const CAEntryForm = ({
         setTimeout(() => { setSuccess(false); onSuccess?.(); }, 1800);
       } catch (e: unknown) {
         setApiError(e instanceof Error ? e.message : "Failed to save CA records.");
+      }
+    });
+  };
+
+  const handleExamCorrectionRequest = () => {
+    setApiError(null);
+    setSuccess(false);
+    if (!selectedSubjectId) {
+      setApiError("Select a subject before requesting an exam correction.");
+      return;
+    }
+    if (!examCorrectionStudentId) {
+      setApiError("Choose the student whose exam score needs correction.");
+      return;
+    }
+    const nextScore = Number(examCorrectionScore);
+    if (!Number.isFinite(nextScore) || nextScore < 0 || nextScore > exWeight) {
+      setApiError(`Corrected exam score must be between 0 and ${exWeight}.`);
+      return;
+    }
+    if (!examCorrectionReason.trim()) {
+      setApiError("Add a reason for the exam score correction.");
+      return;
+    }
+
+    startTransition(async () => {
+      try {
+        await requestExamScoreCorrection({
+          studentId: examCorrectionStudentId,
+          subjectId: selectedSubjectId as number,
+          classId,
+          term: selectedTerm,
+          academicYear: selectedYear,
+          newExamScore: nextScore,
+          reason: examCorrectionReason,
+        });
+        setExamCorrectionStudentId("");
+        setExamCorrectionScore("");
+        setExamCorrectionReason("");
+        setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false);
+          onSuccess?.();
+        }, 1800);
+      } catch (e: unknown) {
+        setApiError(e instanceof Error ? e.message : "Failed to request exam score correction.");
       }
     });
   };
@@ -312,7 +384,7 @@ const CAEntryForm = ({
         <div className="flex items-center gap-2.5 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl">
           <CheckCircle2 size={15} className="text-emerald-500" />
           <p className="text-xs font-semibold text-emerald-700">
-            CA records saved successfully!
+            Action completed successfully.
           </p>
         </div>
       )}
@@ -420,6 +492,8 @@ const CAEntryForm = ({
               const cw = parseFloat(row.classworkScore);
               const ex = parseFloat(row.examScore);
               const bothValid = !isNaN(cw) && !isNaN(ex) && cw >= 0 && cw <= (activityCAEnabled ? cwWeight : 100) && ex >= 0 && ex <= (activityCAEnabled ? exWeight : 100);
+              const savedExamRecord = examRecordByStudentId.get(row.studentId);
+              const examScoreLocked = Boolean(savedExamRecord);
 
               return (
                 <div
@@ -485,13 +559,18 @@ const CAEntryForm = ({
                       placeholder="—"
                       value={row.examScore}
                       onChange={(e) => updateRow(idx, "examScore", e.target.value)}
-                      disabled={!examEntryOpen}
+                      disabled={!examEntryOpen || examScoreLocked}
                       className={`ring-[1.5px] p-2 rounded-xl text-sm font-bold text-center outline-none transition-all w-full ${
-                        examEntryOpen
+                        examEntryOpen && !examScoreLocked
                           ? "ring-gray-200 text-gray-800 focus:ring-indigo-500"
                           : "ring-amber-100 bg-amber-50 text-amber-400 cursor-not-allowed"
                       }`}
                     />
+                    {examScoreLocked ? (
+                      <span className="mt-1 block text-[10px] font-bold text-amber-600">
+                        Locked after save
+                      </span>
+                    ) : null}
                   </label>
 
                   {/* Live grade preview */}
@@ -533,6 +612,73 @@ const CAEntryForm = ({
           </div>
         </div>
       )}
+
+      {selectedSubjectId && selectedSubjectExamRecords.length > 0 ? (
+        <div className="rounded-2xl border border-amber-100 bg-amber-50/70 p-3 sm:p-4">
+          <div className="mb-3">
+            <p className="text-sm font-black text-amber-900">Need to correct a saved exam score?</p>
+            <p className="mt-1 text-xs font-semibold leading-relaxed text-amber-700">
+              Saved exam scores are locked. Send a correction request and admin must approve before the report card changes.
+            </p>
+          </div>
+          <div className="grid gap-3 md:grid-cols-[1.2fr_0.8fr]">
+            <label className="text-xs font-black uppercase text-amber-800">
+              Student exam score
+              <select
+                value={examCorrectionStudentId}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  setExamCorrectionStudentId(value);
+                  const record = examRecordByStudentId.get(value);
+                  setExamCorrectionScore(record ? String(record.examScore) : "");
+                }}
+                className="mt-2 w-full rounded-xl border border-amber-100 bg-white px-3 py-2.5 text-sm font-bold normal-case text-slate-700 outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-100"
+              >
+                <option value="">Choose score...</option>
+                {selectedSubjectExamRecords.map((record) => {
+                  const student = students.find((item) => item.id === record.studentId);
+                  return (
+                    <option key={record.studentId} value={record.studentId}>
+                      {student ? `${student.name} ${student.surname}` : record.studentId} - {formatMark(record.examScore)}
+                    </option>
+                  );
+                })}
+              </select>
+            </label>
+            <label className="text-xs font-black uppercase text-amber-800">
+              Corrected exam score
+              <input
+                type="number"
+                min={0}
+                max={exWeight}
+                step={0.5}
+                value={examCorrectionScore}
+                onChange={(event) => setExamCorrectionScore(event.target.value)}
+                className="mt-2 w-full rounded-xl border border-amber-100 bg-white px-3 py-2.5 text-sm font-bold normal-case text-slate-700 outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-100"
+              />
+            </label>
+          </div>
+          <label className="mt-3 block text-xs font-black uppercase text-amber-800">
+            Reason for correction
+            <textarea
+              value={examCorrectionReason}
+              onChange={(event) => setExamCorrectionReason(event.target.value)}
+              rows={3}
+              placeholder="Example: Totaling error found after script review."
+              className="mt-2 w-full resize-none rounded-xl border border-amber-100 bg-white px-3 py-2.5 text-sm font-semibold normal-case text-slate-700 outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-100"
+            />
+          </label>
+          <button
+            type="button"
+            onClick={handleExamCorrectionRequest}
+            disabled={isPending}
+            className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-sm font-black text-white transition hover:bg-slate-800 disabled:opacity-50 sm:w-auto"
+          >
+            {isPending ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+            Send correction request
+          </button>
+        </div>
+      ) : null}
 
       {/* Actions */}
       <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center">

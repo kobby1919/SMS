@@ -11,6 +11,7 @@ import {
 import { requirePageSession } from "@/src/lib/authz";
 import {
   getTeacherAccountabilityOverview,
+  type AcademicCorrectionRequestRow,
   type AttendanceCorrectionRequestRow,
   type AccountabilityAuditRow,
   type AccountabilityEscalationRow,
@@ -19,6 +20,7 @@ import {
   type TeacherAccountabilitySummaryRow,
 } from "@/src/lib/queries/teacher-accountability-dashboard";
 import TeacherEscalationActions from "@/src/components/TeacherEscalationActions";
+import AcademicCorrectionReviewActions from "@/src/components/AcademicCorrectionReviewActions";
 import AttendanceCorrectionReviewActions from "@/src/components/AttendanceCorrectionReviewActions";
 import HomeworkCorrectionReviewActions from "@/src/components/HomeworkCorrectionReviewActions";
 
@@ -412,6 +414,61 @@ function AttendanceCorrectionList({ rows }: { rows: AttendanceCorrectionRequestR
   );
 }
 
+function AcademicCorrectionList({ rows }: { rows: AcademicCorrectionRequestRow[] }) {
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm xl:col-span-2">
+      <div className="mb-4 flex items-center gap-2">
+        <div className="rounded-lg bg-indigo-50 p-2 text-indigo-700">
+          <ShieldCheck size={18} />
+        </div>
+        <div>
+          <h2 className="text-base font-black text-slate-950">Academic Correction Requests</h2>
+          <p className="text-xs font-semibold text-slate-400">
+            CA and exam score changes must be approved before reports or parents are updated.
+          </p>
+        </div>
+      </div>
+
+      {rows.length === 0 ? (
+        <EmptyState message="No academic correction requests are waiting for review." />
+      ) : (
+        <div className="divide-y divide-slate-100">
+          {rows.map((row) => (
+            <div key={row.id} className="py-3 first:pt-0 last:pb-0">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <p className="break-words font-black text-slate-950">{row.studentName}</p>
+                  <p className="mt-1 break-words text-sm font-semibold text-slate-600">
+                    {row.subjectName}: {row.itemTitle} · {row.className}
+                  </p>
+                  <p className="mt-1 text-xs font-bold text-slate-400">
+                    Requested by {row.teacherName} · {formatDateTime(row.createdAt)}
+                  </p>
+                </div>
+                <span className="w-fit rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-black text-indigo-700">
+                  {row.correctionType === "CA_SCORE" ? "CA score" : "Exam score"}
+                </span>
+              </div>
+              <div className="mt-2 grid gap-2 sm:grid-cols-3">
+                <p className="rounded-lg bg-slate-50 px-3 py-2 text-sm font-semibold leading-relaxed text-slate-600">
+                  Current: <span className="font-black text-slate-900">{row.currentValue}</span>
+                </p>
+                <p className="rounded-lg bg-slate-50 px-3 py-2 text-sm font-semibold leading-relaxed text-slate-600">
+                  Requested: <span className="font-black text-slate-900">{row.requestedValue}</span>
+                </p>
+                <p className="rounded-lg bg-slate-50 px-3 py-2 text-sm font-semibold leading-relaxed text-slate-600">
+                  Reason: {row.reason}
+                </p>
+              </div>
+              <AcademicCorrectionReviewActions requestId={row.id} />
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
 function AuditList({ rows }: { rows: AccountabilityAuditRow[] }) {
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
@@ -535,6 +592,7 @@ const AdminAccountabilityPage = async ({
       <div className="grid gap-5 xl:grid-cols-2">
         <AttendanceCorrectionList rows={overview.attendanceCorrectionRequests} />
         <HomeworkCorrectionList rows={overview.homeworkCorrectionRequests} />
+        <AcademicCorrectionList rows={overview.academicCorrectionRequests} />
       </div>
 
       <TeacherSummaryTable rows={overview.teacherSummaries} />

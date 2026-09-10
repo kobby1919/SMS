@@ -49,6 +49,7 @@ export type TeacherAccountabilityOverview = {
   openEscalations: AccountabilityEscalationRow[];
   attendanceCorrectionRequests: AttendanceCorrectionRequestRow[];
   homeworkCorrectionRequests: HomeworkCorrectionRequestRow[];
+  academicCorrectionRequests: AcademicCorrectionRequestRow[];
   recentAuditLogs: AccountabilityAuditRow[];
 };
 
@@ -124,6 +125,20 @@ export type AttendanceCorrectionRequestRow = {
   createdAt: Date;
 };
 
+export type AcademicCorrectionRequestRow = {
+  id: string;
+  teacherName: string;
+  studentName: string;
+  className: string;
+  subjectName: string;
+  itemTitle: string;
+  correctionType: "CA_SCORE" | "EXAM_SCORE";
+  currentValue: string;
+  requestedValue: string;
+  reason: string;
+  createdAt: Date;
+};
+
 export type AccountabilityAuditRow = {
   id: string;
   action: TeacherAccountabilityAuditAction;
@@ -190,6 +205,17 @@ function readRequestedAttendanceValue(value: unknown): {
     : null;
 }
 
+function readNumberValue(value: unknown, key: string): number | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const raw = (value as Record<string, unknown>)[key];
+  return typeof raw === "number" && Number.isFinite(raw) ? raw : null;
+}
+
+function formatAcademicValue(value: number, maximum?: number | null) {
+  const rounded = Math.round(value * 100) / 100;
+  return maximum ? `${rounded}/${maximum}` : String(rounded);
+}
+
 function toObligationRow(obligation: {
   id: string;
   title: string;
@@ -248,6 +274,7 @@ export async function getTeacherAccountabilityOverview(
     openEscalations,
     attendanceCorrectionRequests,
     homeworkCorrectionRequests,
+    academicCorrectionRequests,
     openEscalationCount,
     remindersPending,
     recentAuditLogs,
@@ -338,6 +365,21 @@ export async function getTeacherAccountabilityOverview(
         sourceModel: "HomeworkSubmission",
         fieldName: "homeworkSubmissionStatus",
         status: "PENDING",
+      },
+      include: {
+        teacher: { select: { id: true, name: true, surname: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 30,
+    }),
+    prisma.teacherCorrectionRequest.findMany({
+      where: {
+        schoolId,
+        status: "PENDING",
+        OR: [
+          { sourceModel: "CAActivityScore", fieldName: "rawScore" },
+          { sourceModel: "ContinuousAssessment", fieldName: "examScore" },
+        ],
       },
       include: {
         teacher: { select: { id: true, name: true, surname: true } },
@@ -507,6 +549,40 @@ export async function getTeacherAccountabilityOverview(
   const attendanceById = new Map(
     attendanceRows.map((attendance) => [attendance.id, attendance]),
   );
+  const caScoreIds = academicCorrectionRequests
+    .filter((request) => request.sourceModel === "CAActivityScore")
+    .map((request) => Number.parseInt(request.sourceId, 10))
+    .filter((id) => Number.isFinite(id));
+  const caScoreRows = caScoreIds.length > 0
+    ? await prisma.cAActivityScore.findMany({
+        where: { schoolId, id: { in: caScoreIds } },
+        include: {
+          student: { select: { name: true, surname: true } },
+          activity: {
+            include: {
+              class: { select: { name: true } },
+              subject: { select: { name: true } },
+            },
+          },
+        },
+      })
+    : [];
+  const caScoreById = new Map(caScoreRows.map((score) => [score.id, score]));
+  const examRecordIds = academicCorrectionRequests
+    .filter((request) => request.sourceModel === "ContinuousAssessment")
+    .map((request) => Number.parseInt(request.sourceId, 10))
+    .filter((id) => Number.isFinite(id));
+  const examRows = examRecordIds.length > 0
+    ? await prisma.continuousAssessment.findMany({
+        where: { schoolId, id: { in: examRecordIds } },
+        include: {
+          student: { select: { name: true, surname: true } },
+          class: { select: { name: true } },
+          subject: { select: { name: true } },
+        },
+      })
+    : [];
+  const examById = new Map(examRows.map((record) => [record.id, record]));
 
   const todayRows = todayObligations.map((obligation) =>
     toObligationRow(obligation, now),
@@ -575,6 +651,46 @@ export async function getTeacherAccountabilityOverview(
         assignmentTitle: submission.assignment.title,
         currentStatus: submission.status,
         requestedStatus,
+        reason: request.reason,
+        createdAt: request.createdAt,
+      }];
+    }),
+    academicCorrectionRequests: academicCorrectionRequests.flatMap<AcademicCorrectionRequestRow>((request) => {
+      if (request.sourceModel === "CAActivityScore") {
+        const scoreId = Number.parseInt(request.sourceId, 10);
+        const score = caScoreById.get(scoreId);
+        const requestedRawScore = readNumberValue(request.newValue, "rawScore");
+        if (!score || requestedRawScore === null) return [];
+        const rawMaxScore = Number(score.activity.rawMaxScore);
+        return [{
+          id: request.id,
+          teacherName: fullName(request.teacher),
+          studentName: `${score.student.name} ${score.student.surname}`,
+          className: score.activity.class.name,
+          subjectName: score.activity.subject.name,
+          itemTitle: score.activity.title,
+          correctionType: "CA_SCORE" as const,
+          currentValue: formatAcademicValue(Number(score.rawScore), rawMaxScore),
+          requestedValue: formatAcademicValue(requestedRawScore, rawMaxScore),
+          reason: request.reason,
+          createdAt: request.createdAt,
+        }];
+      }
+
+      const recordId = Number.parseInt(request.sourceId, 10);
+      const record = examById.get(recordId);
+      const requestedExamScore = readNumberValue(request.newValue, "examScore");
+      if (!record || requestedExamScore === null) return [];
+      return [{
+        id: request.id,
+        teacherName: fullName(request.teacher),
+        studentName: `${record.student.name} ${record.student.surname}`,
+        className: record.class.name,
+        subjectName: record.subject.name,
+        itemTitle: `${record.term.replace("_", " ")} exam score`,
+        correctionType: "EXAM_SCORE" as const,
+        currentValue: formatAcademicValue(record.examScore),
+        requestedValue: formatAcademicValue(requestedExamScore),
         reason: request.reason,
         createdAt: request.createdAt,
       }];

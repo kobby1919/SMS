@@ -20,9 +20,10 @@ import {
   reportPublicationSchema,
 } from "@/src/lib/validation/ca";
 import { nonEmptyStringSchema, positiveIntSchema } from "@/src/lib/validation/common";
-import type { Term } from "@/src/generated/prisma";
+import type { Prisma, Term } from "@/src/generated/prisma";
 import {
   assertTeacherCanManageCAContext,
+  calculateAllocatedMark,
   createCAActivity,
   createCABucket,
   getSubjectCAProgress,
@@ -39,6 +40,7 @@ import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 import { getClassReportReadiness } from "@/src/lib/services/report-card-readiness";
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
+import { recordApprovedCorrectionParentEvent } from "@/src/lib/services/correction-parent-events";
 
 // ─── Ghana BECE Grading System ────────────────────────────────────────────────
 // Score ranges → letter grade + grade point
@@ -355,6 +357,17 @@ export type BulkCARow = {
   remarks?:       string;
 };
 
+function readNumberPayload(value: Prisma.JsonValue | null | undefined, key: string) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const raw = (value as Record<string, unknown>)[key];
+  return typeof raw === "number" && Number.isFinite(raw) ? raw : null;
+}
+
+function formatAcademicMark(value: number, maximum?: number | null) {
+  const rounded = Math.round(value * 100) / 100;
+  return maximum ? `${rounded}/${maximum}` : String(rounded);
+}
+
 export async function bulkUpsertCA(
   rows: BulkCARow[],
   subjectId:    number,
@@ -385,6 +398,37 @@ export async function bulkUpsertCA(
   }
   if (rows.some((row) => row.examScore > 0)) {
     await assertExamEntryOpen({ schoolId, classId, term, academicYear });
+  }
+
+  const submittedStudentIds = rows.map((row) => row.studentId);
+  const existingExamRecords = await prisma.continuousAssessment.findMany({
+    where: {
+      schoolId,
+      classId,
+      subjectId,
+      term,
+      academicYear,
+      studentId: { in: submittedStudentIds },
+      examScore: { gt: 0 },
+    },
+    select: {
+      studentId: true,
+      examScore: true,
+      student: { select: { name: true, surname: true } },
+    },
+  });
+  const existingExamByStudentId = new Map(existingExamRecords.map((record) => [record.studentId, record]));
+  const attemptedOverwrite = rows.find((row) => {
+    const existing = existingExamByStudentId.get(row.studentId);
+    return existing && Math.round(existing.examScore * 100) / 100 !== Math.round(row.examScore * 100) / 100;
+  });
+  if (attemptedOverwrite) {
+    const existing = existingExamByStudentId.get(attemptedOverwrite.studentId);
+    throw new Error(
+      existing
+        ? `${existing.student.name} ${existing.student.surname} already has a saved exam score. Use the correction request workflow for changes.`
+        : "Saved exam scores can only be changed through the correction request workflow.",
+    );
   }
 
   const results = await Promise.all(
@@ -711,6 +755,505 @@ export async function bulkUpsertCAActivityScores(data: {
     revalidateDocument(schoolId, "report-card", studentId);
   }
   return { count: allScores.length, changedCount: changedScores.length, eventCount: events.length };
+}
+
+export async function requestCAActivityScoreCorrection(data: {
+  scoreId: number;
+  newRawScore: number;
+  reason: string;
+}) {
+  const scoreId = parseActionInput(positiveIntSchema, data.scoreId);
+  const newRawScore = Number(data.newRawScore);
+  const reason = parseActionInput(nonEmptyStringSchema, data.reason);
+  if (!Number.isFinite(newRawScore) || newRawScore < 0) {
+    throw new Error("Enter a valid corrected CA score.");
+  }
+
+  const { userId, schoolId } = await requireRole(["teacher"]);
+  const score = await prisma.cAActivityScore.findFirst({
+    where: { id: scoreId, schoolId },
+    include: {
+      student: { select: { id: true, name: true, surname: true } },
+      activity: {
+        include: {
+          bucket: { select: { name: true, allocationMarks: true, aggregationMode: true, term: true, academicYear: true } },
+          class: { select: { id: true, name: true } },
+          subject: { select: { id: true, name: true } },
+        },
+      },
+    },
+  });
+  if (!score) throw new Error("CA activity score not found.");
+
+  await assertTeacherCanManageCAContext({
+    userId,
+    role: "teacher",
+    schoolId,
+    classId: score.activity.classId,
+    subjectId: score.activity.subjectId,
+  });
+
+  const rawMaxScore = Number(score.activity.rawMaxScore);
+  if (newRawScore > rawMaxScore) {
+    throw new Error(`Corrected score cannot exceed ${rawMaxScore}.`);
+  }
+  if (Math.round(Number(score.rawScore) * 100) / 100 === Math.round(newRawScore * 100) / 100) {
+    throw new Error("Choose a different CA score before requesting correction.");
+  }
+
+  const sourceKey = `ca-activity-score:${score.id}:raw-score-correction`;
+  const existingRequest = await prisma.teacherCorrectionRequest.findUnique({
+    where: {
+      schoolId_teacherId_sourceKey_fieldName: {
+        schoolId,
+        teacherId: userId,
+        sourceKey,
+        fieldName: "rawScore",
+      },
+    },
+    select: { status: true },
+  });
+  if (existingRequest) {
+    return {
+      message:
+        existingRequest.status === "PENDING"
+          ? "A CA score correction request is already waiting for admin review."
+          : "This CA score has already gone through a correction request. Please visit the admin office if it still needs another change.",
+    };
+  }
+
+  await prisma.$transaction(async (tx) => {
+    const request = await tx.teacherCorrectionRequest.create({
+      data: {
+        schoolId,
+        teacherId: userId,
+        sourceModel: "CAActivityScore",
+        sourceId: String(score.id),
+        sourceKey,
+        fieldName: "rawScore",
+        reason,
+        oldValue: {
+          rawScore: Number(score.rawScore),
+          normalizedContribution: Number(score.normalizedContribution),
+          rawMaxScore,
+          studentId: score.studentId,
+          activityId: score.activityId,
+        },
+        newValue: {
+          rawScore: newRawScore,
+          rawMaxScore,
+          studentId: score.studentId,
+          activityId: score.activityId,
+        },
+      },
+    });
+
+    await tx.teacherAccountabilityAuditLog.create({
+      data: {
+        schoolId,
+        teacherId: userId,
+        actorId: userId,
+        actorRole: "teacher",
+        action: "CORRECTION_REQUESTED",
+        sourceModel: "CAActivityScore",
+        sourceId: String(score.id),
+        before: {
+          rawScore: Number(score.rawScore),
+          student: `${score.student.name} ${score.student.surname}`,
+        },
+        after: {
+          correctionRequestId: request.id,
+          requestedRawScore: newRawScore,
+        },
+        message: `CA score correction requested for ${score.student.name} ${score.student.surname} in ${score.activity.subject.name}.`,
+      },
+    });
+  });
+
+  revalidatePath("/list/ca");
+  revalidatePath("/teacher/accountability");
+  revalidatePath("/admin/accountability");
+  return { message: "CA score correction request sent to admin. The saved score has not changed yet." };
+}
+
+export async function requestExamScoreCorrection(data: {
+  studentId: string;
+  subjectId: number;
+  classId: number;
+  term: Term;
+  academicYear: string;
+  newExamScore: number;
+  reason: string;
+}) {
+  const parsed = parseActionInput(caRecordSchema.extend({
+    newExamScore: caRecordSchema.shape.examScore,
+    reason: nonEmptyStringSchema,
+  }).pick({
+    studentId: true,
+    subjectId: true,
+    classId: true,
+    term: true,
+    academicYear: true,
+    newExamScore: true,
+    reason: true,
+  }), data);
+  const { userId, schoolId } = await requireRole(["teacher"]);
+
+  await assertTeacherCanManageCAContext({
+    userId,
+    role: "teacher",
+    schoolId,
+    classId: parsed.classId,
+    subjectId: parsed.subjectId,
+  });
+  await assertTeacherUsesActivePeriod({
+    schoolId,
+    role: "teacher",
+    term: parsed.term,
+    academicYear: parsed.academicYear,
+  });
+
+  const config = await prisma.cAConfig.findUnique({
+    where: { schoolId_academicYear: { schoolId, academicYear: parsed.academicYear } },
+  });
+  if (!config) throw new Error(`No CA configuration found for ${parsed.academicYear}.`);
+  if (parsed.newExamScore > config.examWeight) {
+    throw new Error(`Corrected exam score cannot exceed ${config.examWeight}.`);
+  }
+
+  const record = await prisma.continuousAssessment.findUnique({
+    where: {
+      schoolId_studentId_subjectId_classId_term_academicYear: {
+        schoolId,
+        studentId: parsed.studentId,
+        subjectId: parsed.subjectId,
+        classId: parsed.classId,
+        term: parsed.term,
+        academicYear: parsed.academicYear,
+      },
+    },
+    include: {
+      student: { select: { name: true, surname: true } },
+      subject: { select: { name: true } },
+      class: { select: { name: true } },
+    },
+  });
+  if (!record || record.examScore <= 0) {
+    throw new Error("No saved exam score exists yet. Use normal exam entry for the first save.");
+  }
+  if (Math.round(record.examScore * 100) / 100 === Math.round(parsed.newExamScore * 100) / 100) {
+    throw new Error("Choose a different exam score before requesting correction.");
+  }
+
+  const sourceKey = `continuous-assessment:${record.id}:exam-score-correction`;
+  const existingRequest = await prisma.teacherCorrectionRequest.findUnique({
+    where: {
+      schoolId_teacherId_sourceKey_fieldName: {
+        schoolId,
+        teacherId: userId,
+        sourceKey,
+        fieldName: "examScore",
+      },
+    },
+    select: { status: true },
+  });
+  if (existingRequest) {
+    return {
+      message:
+        existingRequest.status === "PENDING"
+          ? "An exam score correction request is already waiting for admin review."
+          : "This exam score has already gone through a correction request. Please visit the admin office if it still needs another change.",
+    };
+  }
+
+  await prisma.$transaction(async (tx) => {
+    const request = await tx.teacherCorrectionRequest.create({
+      data: {
+        schoolId,
+        teacherId: userId,
+        sourceModel: "ContinuousAssessment",
+        sourceId: String(record.id),
+        sourceKey,
+        fieldName: "examScore",
+        reason: parsed.reason,
+        oldValue: {
+          examScore: record.examScore,
+          totalScore: record.totalScore,
+          grade: record.grade,
+          studentId: record.studentId,
+        },
+        newValue: {
+          examScore: parsed.newExamScore,
+          studentId: record.studentId,
+          subjectId: record.subjectId,
+          classId: record.classId,
+          term: record.term,
+          academicYear: record.academicYear,
+        },
+      },
+    });
+
+    await tx.teacherAccountabilityAuditLog.create({
+      data: {
+        schoolId,
+        teacherId: userId,
+        actorId: userId,
+        actorRole: "teacher",
+        action: "CORRECTION_REQUESTED",
+        sourceModel: "ContinuousAssessment",
+        sourceId: String(record.id),
+        before: {
+          examScore: record.examScore,
+          totalScore: record.totalScore,
+          student: `${record.student.name} ${record.student.surname}`,
+        },
+        after: {
+          correctionRequestId: request.id,
+          requestedExamScore: parsed.newExamScore,
+        },
+        message: `Exam score correction requested for ${record.student.name} ${record.student.surname} in ${record.subject.name}.`,
+      },
+    });
+  });
+
+  revalidatePath("/list/ca");
+  revalidatePath("/list/report-cards");
+  revalidatePath("/teacher/accountability");
+  revalidatePath("/admin/accountability");
+  return { message: "Exam score correction request sent to admin. The saved exam score has not changed yet." };
+}
+
+export async function reviewAcademicCorrectionRequest(data: {
+  requestId: string;
+  action: "APPROVE" | "REJECT";
+  note?: string | null;
+}) {
+  const { userId, schoolId } = await requireRole(["admin"]);
+  const requestId = parseActionInput(nonEmptyStringSchema, data.requestId);
+  const reviewNote = data.note?.trim() || null;
+  if (data.action === "REJECT" && !reviewNote) {
+    throw new Error("Add a short note before rejecting an academic correction request.");
+  }
+
+  const request = await prisma.teacherCorrectionRequest.findFirst({
+    where: {
+      id: requestId,
+      schoolId,
+      status: "PENDING",
+      OR: [
+        { sourceModel: "CAActivityScore", fieldName: "rawScore" },
+        { sourceModel: "ContinuousAssessment", fieldName: "examScore" },
+      ],
+    },
+    include: {
+      teacher: { select: { id: true, name: true, surname: true } },
+    },
+  });
+  if (!request) throw new Error("Pending academic correction request not found.");
+
+  const now = new Date();
+  if (request.sourceModel === "CAActivityScore") {
+    const newRawScore = readNumberPayload(request.newValue, "rawScore");
+    if (newRawScore === null) throw new Error("Correction request is missing a valid CA score.");
+    const score = await prisma.cAActivityScore.findFirst({
+      where: { id: Number.parseInt(request.sourceId, 10), schoolId },
+      include: {
+        student: { select: { id: true, name: true, surname: true } },
+        activity: {
+          include: {
+            bucket: { select: { name: true, allocationMarks: true, aggregationMode: true, term: true, academicYear: true } },
+            class: { select: { name: true } },
+            subject: { select: { name: true } },
+            teacher: { select: { name: true, surname: true } },
+          },
+        },
+      },
+    });
+    if (!score) throw new Error("CA score for this correction request no longer exists.");
+
+    const allocation =
+      score.activity.bucket.aggregationMode === "SUM_ACTIVITIES"
+        ? Number(score.activity.allocationMarks ?? 0)
+        : Number(score.activity.bucket.allocationMarks);
+    const normalizedContribution = calculateAllocatedMark(
+      newRawScore,
+      Number(score.activity.rawMaxScore),
+      allocation,
+    );
+
+    await prisma.$transaction(async (tx) => {
+      if (data.action === "APPROVE") {
+        await tx.cAActivityScore.update({
+          where: { id: score.id },
+          data: {
+            rawScore: newRawScore,
+            normalizedContribution,
+          },
+        });
+      }
+      await tx.teacherCorrectionRequest.update({
+        where: { id: request.id },
+        data: {
+          status: data.action === "APPROVE" ? "APPROVED" : "REJECTED",
+          reviewedBy: userId,
+          reviewedAt: now,
+          reviewNote,
+        },
+      });
+      await tx.teacherAccountabilityAuditLog.create({
+        data: {
+          schoolId,
+          teacherId: request.teacherId,
+          actorId: userId,
+          actorRole: "admin",
+          action: data.action === "APPROVE" ? "CORRECTION_APPROVED" : "CORRECTION_REJECTED",
+          sourceModel: "CAActivityScore",
+          sourceId: String(score.id),
+          before: { rawScore: Number(score.rawScore), normalizedContribution: Number(score.normalizedContribution) },
+          after: { requestedRawScore: newRawScore, requestStatus: data.action === "APPROVE" ? "APPROVED" : "REJECTED", reviewNote },
+          message: data.action === "APPROVE"
+            ? `CA score correction approved for ${score.student.name} ${score.student.surname}.`
+            : `CA score correction rejected for ${score.student.name} ${score.student.surname}.`,
+        },
+      });
+    });
+
+    if (data.action === "APPROVE") {
+      await syncComputedCARecordsForActivity({
+        schoolId,
+        activityId: score.activityId,
+        studentIds: [score.studentId],
+      });
+      const teacherName = `${score.activity.teacher.name} ${score.activity.teacher.surname}`.trim();
+      await recordApprovedCorrectionParentEvent({
+        schoolId,
+        studentId: score.studentId,
+        teacherId: request.teacherId,
+        type: "ASSESSMENT",
+        title: `${score.activity.subject.name} CA score correction approved`,
+        itemLabel: `${score.activity.subject.name}: ${score.activity.title}`,
+        previousLabel: formatAcademicMark(Number(score.rawScore), Number(score.activity.rawMaxScore)),
+        correctedLabel: formatAcademicMark(newRawScore, Number(score.activity.rawMaxScore)),
+        reason: request.reason,
+        reviewNote,
+        href: `/list/report-cards/${score.studentId}?caScoreId=${score.id}`,
+        sourceModel: "CAActivityScore",
+        sourceId: String(score.id),
+        sourceKey: `ca-activity-score:${score.id}`,
+        occurredAt: now,
+        payload: {
+          studentName: `${score.student.name} ${score.student.surname}`,
+          subjectName: score.activity.subject.name,
+          teacherName,
+          previousRawScore: Number(score.rawScore),
+          rawScore: newRawScore,
+          rawMaxScore: Number(score.activity.rawMaxScore),
+          correctionApproved: true,
+        },
+      });
+    }
+  }
+
+  if (request.sourceModel === "ContinuousAssessment") {
+    const newExamScore = readNumberPayload(request.newValue, "examScore");
+    if (newExamScore === null) throw new Error("Correction request is missing a valid exam score.");
+    const record = await prisma.continuousAssessment.findFirst({
+      where: { id: Number.parseInt(request.sourceId, 10), schoolId },
+      include: {
+        student: { select: { id: true, name: true, surname: true } },
+        subject: { select: { name: true } },
+        class: { select: { name: true } },
+        teacher: { select: { name: true, surname: true } },
+      },
+    });
+    if (!record) throw new Error("Exam score record for this correction request no longer exists.");
+    const totalScore = Math.round((record.classworkScore + newExamScore) * 100) / 100;
+    const { grade, gradePoint } = await getBECEGrade(totalScore);
+
+    await prisma.$transaction(async (tx) => {
+      if (data.action === "APPROVE") {
+        await tx.continuousAssessment.update({
+          where: { id: record.id },
+          data: {
+            examScore: newExamScore,
+            totalScore,
+            grade,
+            gradePoint,
+          },
+        });
+      }
+      await tx.teacherCorrectionRequest.update({
+        where: { id: request.id },
+        data: {
+          status: data.action === "APPROVE" ? "APPROVED" : "REJECTED",
+          reviewedBy: userId,
+          reviewedAt: now,
+          reviewNote,
+        },
+      });
+      await tx.teacherAccountabilityAuditLog.create({
+        data: {
+          schoolId,
+          teacherId: request.teacherId,
+          actorId: userId,
+          actorRole: "admin",
+          action: data.action === "APPROVE" ? "CORRECTION_APPROVED" : "CORRECTION_REJECTED",
+          sourceModel: "ContinuousAssessment",
+          sourceId: String(record.id),
+          before: { examScore: record.examScore, totalScore: record.totalScore, grade: record.grade },
+          after: { requestedExamScore: newExamScore, totalScore, grade, requestStatus: data.action === "APPROVE" ? "APPROVED" : "REJECTED", reviewNote },
+          message: data.action === "APPROVE"
+            ? `Exam score correction approved for ${record.student.name} ${record.student.surname}.`
+            : `Exam score correction rejected for ${record.student.name} ${record.student.surname}.`,
+        },
+      });
+    });
+
+    if (data.action === "APPROVE") {
+      const teacherName = `${record.teacher.name} ${record.teacher.surname}`.trim();
+      await recordApprovedCorrectionParentEvent({
+        schoolId,
+        studentId: record.studentId,
+        teacherId: request.teacherId,
+        type: "ASSESSMENT",
+        title: `${record.subject.name} exam score correction approved`,
+        itemLabel: `${record.subject.name} exam score`,
+        previousLabel: formatAcademicMark(record.examScore, null),
+        correctedLabel: formatAcademicMark(newExamScore, null),
+        reason: request.reason,
+        reviewNote,
+        href: `/list/report-cards/${record.studentId}`,
+        sourceModel: "ContinuousAssessment",
+        sourceId: String(record.id),
+        sourceKey: `continuous-assessment:${record.id}`,
+        occurredAt: now,
+        payload: {
+          studentName: `${record.student.name} ${record.student.surname}`,
+          subjectName: record.subject.name,
+          teacherName,
+          previousExamScore: record.examScore,
+          examScore: newExamScore,
+          totalScore,
+          grade,
+          correctionApproved: true,
+        },
+      });
+    }
+  }
+
+  revalidatePath("/list/ca");
+  revalidatePath("/list/report-cards");
+  revalidatePath("/teacher/accountability");
+  revalidatePath("/admin/accountability");
+  revalidatePath("/parent");
+  revalidatePath("/parent/updates");
+  revalidateDashboard(schoolId);
+
+  return {
+    message: data.action === "APPROVE"
+      ? "Academic correction approved and applied."
+      : "Academic correction rejected. The saved academic record was not changed.",
+  };
 }
 
 export async function lockCABucketAction(bucketId: number) {

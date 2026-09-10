@@ -24,6 +24,7 @@ import {
   bulkUpsertCAActivityScores,
   lockCAActivityAction,
   lockCABucketAction,
+  requestCAActivityScoreCorrection,
 } from "@/src/lib/actions/caActions";
 import { TERM_LABELS } from "@/src/lib/caGrades";
 
@@ -39,6 +40,7 @@ type Subject = {
 };
 
 type ActivityScore = {
+  id: number;
   studentId: string;
   rawScore: number;
   normalizedContribution: number;
@@ -127,6 +129,9 @@ const CAActivityManager = ({
   const [activityAllocation, setActivityAllocation] = useState("");
   const [selectedActivityId, setSelectedActivityId] = useState<number | "">("");
   const [scoreEdits, setScoreEdits] = useState<Record<string, string>>({});
+  const [correctionScoreId, setCorrectionScoreId] = useState<number | "">("");
+  const [correctionRawScore, setCorrectionRawScore] = useState("");
+  const [correctionReason, setCorrectionReason] = useState("");
   const [locallyLockedActivityIds, setLocallyLockedActivityIds] = useState<Set<number>>(new Set());
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -210,6 +215,9 @@ const CAActivityManager = ({
   useEffect(() => {
     if (!selectedActivity) {
       setScoreEdits({});
+      setCorrectionScoreId("");
+      setCorrectionRawScore("");
+      setCorrectionReason("");
       return;
     }
 
@@ -218,6 +226,9 @@ const CAActivityManager = ({
         selectedActivity.scores.map((score) => [score.studentId, String(score.rawScore)]),
       ),
     );
+    setCorrectionScoreId("");
+    setCorrectionRawScore("");
+    setCorrectionReason("");
   }, [selectedActivity]);
 
   const handleCreateBucket = async () => {
@@ -331,6 +342,43 @@ const CAActivityManager = ({
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save scores.");
+    } finally {
+      setPendingAction(null);
+    }
+  };
+
+  const handleRequestScoreCorrection = async () => {
+    if (pendingAction) return;
+    setError(null);
+    setMessage(null);
+    if (!selectedActivity || !correctionScoreId) {
+      setError("Choose the saved score that needs correction.");
+      return;
+    }
+    const nextScore = Number(correctionRawScore);
+    if (!Number.isFinite(nextScore) || nextScore < 0 || nextScore > selectedActivity.rawMaxScore) {
+      setError(`Corrected score must be between 0 and ${formatMark(selectedActivity.rawMaxScore)}.`);
+      return;
+    }
+    if (!correctionReason.trim()) {
+      setError("Add a reason for the correction request.");
+      return;
+    }
+
+    setPendingAction("score-correction");
+    try {
+      const result = await requestCAActivityScoreCorrection({
+        scoreId: correctionScoreId,
+        newRawScore: nextScore,
+        reason: correctionReason,
+      });
+      setMessage(result.message);
+      setCorrectionScoreId("");
+      setCorrectionRawScore("");
+      setCorrectionReason("");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not request CA score correction.");
     } finally {
       setPendingAction(null);
     }
@@ -764,6 +812,73 @@ const CAActivityManager = ({
                 })}
               </div>
             </div>
+
+            {selectedActivityLockedForEntry && selectedActivity.scores.length > 0 ? (
+              <div className="mt-4 rounded-2xl border border-amber-100 bg-amber-50/70 p-3 sm:p-4">
+                <div className="mb-3">
+                  <p className="text-sm font-black text-amber-900">Need to correct a saved CA score?</p>
+                  <p className="mt-1 text-xs font-semibold leading-relaxed text-amber-700">
+                    The saved marks are locked. Send a correction request and admin will approve or reject it before Edujay updates the report record.
+                  </p>
+                </div>
+                <div className="grid gap-3 md:grid-cols-[1.2fr_0.8fr]">
+                  <label className="text-xs font-black uppercase text-amber-800">
+                    Student score
+                    <select
+                      value={correctionScoreId}
+                      onChange={(event) => {
+                        const value = Number(event.target.value) || "";
+                        setCorrectionScoreId(value);
+                        const score = selectedActivity.scores.find((item) => item.id === value);
+                        setCorrectionRawScore(score ? String(score.rawScore) : "");
+                      }}
+                      className="mt-2 w-full rounded-xl border border-amber-100 bg-white px-3 py-2.5 text-sm font-bold normal-case text-slate-700 outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-100"
+                    >
+                      <option value="">Choose score...</option>
+                      {selectedActivity.scores.map((score) => {
+                        const student = students.find((item) => item.id === score.studentId);
+                        return (
+                          <option key={score.id} value={score.id}>
+                            {student ? `${student.name} ${student.surname}` : score.studentId} - {formatMark(score.rawScore)}/{formatMark(selectedActivity.rawMaxScore)}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </label>
+                  <label className="text-xs font-black uppercase text-amber-800">
+                    Corrected score
+                    <input
+                      type="number"
+                      min={0}
+                      max={selectedActivity.rawMaxScore}
+                      step={0.5}
+                      value={correctionRawScore}
+                      onChange={(event) => setCorrectionRawScore(event.target.value)}
+                      className="mt-2 w-full rounded-xl border border-amber-100 bg-white px-3 py-2.5 text-sm font-bold normal-case text-slate-700 outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-100"
+                    />
+                  </label>
+                </div>
+                <label className="mt-3 block text-xs font-black uppercase text-amber-800">
+                  Reason for correction
+                  <textarea
+                    value={correctionReason}
+                    onChange={(event) => setCorrectionReason(event.target.value)}
+                    rows={3}
+                    placeholder="Example: Script was retotaled after a marking error."
+                    className="mt-2 w-full resize-none rounded-xl border border-amber-100 bg-white px-3 py-2.5 text-sm font-semibold normal-case text-slate-700 outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-100"
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={handleRequestScoreCorrection}
+                  disabled={pendingAction !== null}
+                  className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-sm font-black text-white transition hover:bg-slate-800 disabled:opacity-50 sm:w-auto"
+                >
+                  {pendingAction === "score-correction" ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+                  Send correction request
+                </button>
+              </div>
+            ) : null}
           </>
         )}
       </section>

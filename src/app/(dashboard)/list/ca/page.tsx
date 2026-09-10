@@ -160,6 +160,7 @@ const CAPage = async ({
           teacher: { select: { name: true, surname: true } },
           scores: {
             select: {
+              id: true,
               studentId: true,
               rawScore: true,
               normalizedContribution: true,
@@ -404,6 +405,7 @@ const CAPage = async ({
                     activityDate: activity.activityDate,
                     teacherName: `${activity.teacher.name} ${activity.teacher.surname}`,
                     scores: activity.scores.map((score) => ({
+                      id: score.id,
                       studentId: score.studentId,
                       rawScore: Number(score.rawScore),
                       normalizedContribution: Number(score.normalizedContribution),
