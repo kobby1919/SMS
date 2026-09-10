@@ -215,6 +215,31 @@ exports.Prisma.SchoolNotificationSettingScalarFieldEnum = {
   schoolId: 'schoolId'
 };
 
+exports.Prisma.SchoolCommunicationPolicyScalarFieldEnum = {
+  id: 'id',
+  enabled: 'enabled',
+  allowParentTeacherMessaging: 'allowParentTeacherMessaging',
+  allowInAppMessages: 'allowInAppMessages',
+  allowEmailMessages: 'allowEmailMessages',
+  allowSmsMessages: 'allowSmsMessages',
+  allowWhatsappMessages: 'allowWhatsappMessages',
+  exposeTeacherPhone: 'exposeTeacherPhone',
+  exposeTeacherEmail: 'exposeTeacherEmail',
+  requireParentReason: 'requireParentReason',
+  requireTeacherResponse: 'requireTeacherResponse',
+  contactStartTime: 'contactStartTime',
+  contactEndTime: 'contactEndTime',
+  quietHoursStart: 'quietHoursStart',
+  quietHoursEnd: 'quietHoursEnd',
+  responseSlaHours: 'responseSlaHours',
+  escalationEnabled: 'escalationEnabled',
+  escalateAfterHours: 'escalateAfterHours',
+  urgentBypassesQuietHours: 'urgentBypassesQuietHours',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId'
+};
+
 exports.Prisma.TeacherAccountabilitySettingScalarFieldEnum = {
   id: 'id',
   attendanceOpenMinutesBeforeLesson: 'attendanceOpenMinutesBeforeLesson',
@@ -1305,6 +1330,7 @@ exports.Prisma.ModelName = {
   Teacher: 'Teacher',
   Parent: 'Parent',
   SchoolNotificationSetting: 'SchoolNotificationSetting',
+  SchoolCommunicationPolicy: 'SchoolCommunicationPolicy',
   TeacherAccountabilitySetting: 'TeacherAccountabilitySetting',
   TeacherObligation: 'TeacherObligation',
   TeacherReminder: 'TeacherReminder',

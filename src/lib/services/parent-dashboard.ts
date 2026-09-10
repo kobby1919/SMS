@@ -273,7 +273,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  const [lessons, attendance, assessments, caActivityScores, classCounts, assignments, homeworkSubmissions, announcements, bills, payments, caConfigs, activePeriod] = await Promise.all([
+  const [lessons, attendance, assessments, caActivityScores, classCounts, assignments, homeworkSubmissions, announcements, bills, payments, caConfigs, activePeriod, communicationPolicy] = await Promise.all([
     prisma.lesson.findMany({
       where: { schoolId, classId: { in: classIds } },
       include: {
@@ -403,6 +403,15 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       select: { academicYear: true, classworkWeight: true },
     }),
     getActiveAcademicPeriod(schoolId),
+    prisma.schoolCommunicationPolicy.findUnique({
+      where: { schoolId },
+      select: {
+        enabled: true,
+        allowParentTeacherMessaging: true,
+        exposeTeacherPhone: true,
+        exposeTeacherEmail: true,
+      },
+    }),
   ]);
   const caConfigByYear = new Map(caConfigs.map((config) => [config.academicYear, config]));
   const gradeIds = [...new Set(children.map((child) => child.class.gradeId))];
@@ -839,8 +848,12 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
           id: teacher.id,
           name: teacher.name,
           subjectNames: Array.from(teacher.subjectNames).sort(),
-          phone: teacher.phone,
-          email: teacher.email,
+          phone: communicationPolicy?.enabled && communicationPolicy.allowParentTeacherMessaging && communicationPolicy.exposeTeacherPhone
+            ? teacher.phone
+            : null,
+          email: communicationPolicy?.enabled && communicationPolicy.allowParentTeacherMessaging && communicationPolicy.exposeTeacherEmail
+            ? teacher.email
+            : null,
         }))
         .slice(0, 6),
       latestAnnouncement: childAnnouncements[0]

@@ -424,6 +424,7 @@ model School {
   parentNotifications            ParentNotification[]
   parentActivityEvents           ParentActivityEvent[]
   notificationSettings           SchoolNotificationSetting?
+  communicationPolicy            SchoolCommunicationPolicy?
   accountabilitySettings         TeacherAccountabilitySetting?
   teacherObligations             TeacherObligation[]
   teacherReminders               TeacherReminder[]
@@ -567,6 +568,33 @@ model SchoolNotificationSetting {
   lastWeeklySummaryRunAt DateTime?
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @updatedAt
+
+  schoolId String @unique
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+}
+
+model SchoolCommunicationPolicy {
+  id                          String   @id @default(cuid())
+  enabled                     Boolean  @default(true)
+  allowParentTeacherMessaging Boolean  @default(false)
+  allowInAppMessages          Boolean  @default(true)
+  allowEmailMessages          Boolean  @default(true)
+  allowSmsMessages            Boolean  @default(false)
+  allowWhatsappMessages       Boolean  @default(false)
+  exposeTeacherPhone          Boolean  @default(false)
+  exposeTeacherEmail          Boolean  @default(false)
+  requireParentReason         Boolean  @default(true)
+  requireTeacherResponse      Boolean  @default(true)
+  contactStartTime            String   @default("07:00")
+  contactEndTime              String   @default("17:00")
+  quietHoursStart             String   @default("20:00")
+  quietHoursEnd               String   @default("06:00")
+  responseSlaHours            Int      @default(24)
+  escalationEnabled           Boolean  @default(true)
+  escalateAfterHours          Int      @default(48)
+  urgentBypassesQuietHours    Boolean  @default(true)
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
 
   schoolId String @unique
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
