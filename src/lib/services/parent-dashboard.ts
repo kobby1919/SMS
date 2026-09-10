@@ -50,7 +50,7 @@ export type ParentLearningProgressSubject = {
 };
 
 export type ParentLearningProgress = {
-  currentWeek: number;
+  currentWeek: number | null;
   subjects: ParentLearningProgressSubject[];
 };
 
@@ -232,22 +232,6 @@ function buildAttendanceInsight({
   };
 }
 
-function startMonthForTerm(term: string) {
-  if (term === "TERM_1") return 8;
-  if (term === "TERM_2") return 0;
-  return 4;
-}
-
-function currentSyllabusWeek(term: string, academicYear: string) {
-  const startYear = Number.parseInt(academicYear.split("/")[0], 10);
-  const now = new Date();
-  const fallbackYear = Number.isFinite(startYear) ? startYear : now.getFullYear();
-  const termStart = new Date(fallbackYear, startMonthForTerm(term), 1);
-  const diffMs = now.getTime() - termStart.getTime();
-  const week = Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000)) + 1;
-  return Math.max(1, Math.min(16, week));
-}
-
 function topicEndWeek(topic: { weekNumber: number; durationWeeks: number }) {
   return topic.weekNumber + topic.durationWeeks - 1;
 }
@@ -421,7 +405,6 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     getActiveAcademicPeriod(schoolId),
   ]);
   const caConfigByYear = new Map(caConfigs.map((config) => [config.academicYear, config]));
-  const syllabusWeek = currentSyllabusWeek(activePeriod.currentTerm, activePeriod.academicYear);
   const gradeIds = [...new Set(children.map((child) => child.class.gradeId))];
   const publishedSyllabi = gradeIds.length
     ? await prisma.syllabus.findMany({
@@ -761,7 +744,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       expectedSubjects.has(syllabus.subjectId),
     );
     const learningProgress: ParentLearningProgress = {
-      currentWeek: syllabusWeek,
+      currentWeek: null,
       subjects: childSyllabi.map((syllabus) => {
         const coveredTopicIds = new Set(
           syllabus.topics
@@ -769,19 +752,16 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
             .map((topic) => topic.id),
         );
         const currentTopics = syllabus.topics
-          .filter((topic) => topic.weekNumber <= syllabusWeek && topicEndWeek(topic) >= syllabusWeek)
-          .map((topic) => topic.title);
-        const overdueCount = syllabus.topics.filter(
-          (topic) => topicEndWeek(topic) < syllabusWeek && !coveredTopicIds.has(topic.id),
-        ).length;
+          .filter((topic) => coveredTopicIds.has(topic.id))
+          .map((topic) => topic.title)
+          .slice(-2);
         const nextTopic = syllabus.topics.find((topic) => !coveredTopicIds.has(topic.id)) ?? null;
         const totalTopics = syllabus.topics.length;
         const coveredTopics = coveredTopicIds.size;
         const status =
           totalTopics === 0 ? "not-started" :
           coveredTopics >= totalTopics ? "completed" :
-          overdueCount > 0 ? "behind" :
-          currentTopics.length > 0 ? "learning-now" :
+          coveredTopics > 0 ? "learning-now" :
           "on-track";
 
         return {

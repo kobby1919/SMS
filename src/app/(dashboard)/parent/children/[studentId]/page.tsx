@@ -121,6 +121,42 @@ function learningStatusMeta(status: string) {
   }
 }
 
+function activityTypeLabel(type: string) {
+  switch (type) {
+    case "ATTENDANCE":
+      return "Attendance";
+    case "ASSESSMENT":
+      return "Academics";
+    case "ASSIGNMENT":
+      return "Homework";
+    case "BILL":
+    case "PAYMENT":
+      return "Fees";
+    case "ANNOUNCEMENT":
+      return "Notices";
+    default:
+      return "School update";
+  }
+}
+
+function activityToneClass(type: string) {
+  switch (type) {
+    case "ATTENDANCE":
+      return "bg-emerald-50 text-emerald-700 ring-emerald-100";
+    case "ASSESSMENT":
+      return "bg-sky-50 text-sky-700 ring-sky-100";
+    case "ASSIGNMENT":
+      return "bg-violet-50 text-violet-700 ring-violet-100";
+    case "BILL":
+    case "PAYMENT":
+      return "bg-amber-50 text-amber-700 ring-amber-100";
+    case "ANNOUNCEMENT":
+      return "bg-slate-100 text-slate-700 ring-slate-200";
+    default:
+      return "bg-slate-50 text-slate-600 ring-slate-100";
+  }
+}
+
 export default async function ParentChildCheckupPage({
   params,
 }: {
@@ -167,6 +203,11 @@ export default async function ParentChildCheckupPage({
         : "No issue";
   const subjectTotal = child.academicProgress.expectedSubjects || child.academicProgress.subjects.length;
   const recentItems = child.activityFeed.slice(0, 5);
+  const recentItemsByType = recentItems.reduce((groups, item) => {
+    const key = activityTypeLabel(item.type);
+    groups.set(key, [...(groups.get(key) ?? []), item]);
+    return groups;
+  }, new Map<string, typeof recentItems>());
 
   return (
     <div className="flex flex-col gap-5 p-4">
@@ -272,7 +313,7 @@ export default async function ParentChildCheckupPage({
             </p>
           </div>
           <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-black text-emerald-700">
-            Week {child.learningProgress.currentWeek}
+            {child.learningProgress.currentWeek ? `Week ${child.learningProgress.currentWeek}` : "Published guide"}
           </span>
         </div>
 
@@ -281,15 +322,17 @@ export default async function ParentChildCheckupPage({
             {child.learningProgress.subjects.map((subject) => {
               const meta = learningStatusMeta(subject.status);
               const currentTopicLabel = subject.currentTopics.length > 0
-                ? subject.currentTopics.join(", ")
-                : subject.nextTopic ?? "Waiting for the next topic";
+                ? `Covered: ${subject.currentTopics.join(", ")}`
+                : subject.nextTopic
+                  ? `Next: ${subject.nextTopic}`
+                  : "Waiting for teacher progress updates";
               return (
                 <div key={subject.syllabusId} className="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="truncate text-sm font-black text-gray-900">{subject.subjectName}</p>
                       <p className="mt-1 line-clamp-2 text-xs font-semibold leading-relaxed text-gray-500">
-                        This week: {currentTopicLabel}
+                        {currentTopicLabel}
                       </p>
                     </div>
                     <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-black ring-1 ${meta.className}`}>
@@ -505,13 +548,31 @@ export default async function ParentChildCheckupPage({
       <section className="grid gap-3 md:grid-cols-2">
         <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
           <h2 className="text-sm font-black text-gray-900">Recent activity</h2>
-          {recentItems.length > 0 ? (
-            <div className="mt-3 space-y-2">
-              {recentItems.map((item) => (
-                <Link key={item.id} href={item.href ?? "/parent/updates"} className="block rounded-xl bg-slate-50 px-3 py-2">
-                  <p className="text-sm font-black text-gray-900">{item.title}</p>
-                  <p className="mt-0.5 line-clamp-2 text-xs font-semibold text-gray-500">{item.description}</p>
-                </Link>
+          <p className="mt-1 text-xs font-semibold text-gray-400">
+            Ward-specific updates first. School-wide notices are labelled clearly.
+          </p>
+          {recentItemsByType.size > 0 ? (
+            <div className="mt-3 space-y-4">
+              {[...recentItemsByType.entries()].map(([group, items]) => (
+                <div key={group}>
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-wide text-gray-400">{group}</p>
+                  <div className="space-y-2">
+                    {items.map((item) => (
+                      <Link key={item.id} href={item.href ?? "/parent/updates"} className="block rounded-xl bg-slate-50 px-3 py-3 ring-1 ring-slate-100 transition hover:bg-slate-100">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="text-sm font-black text-gray-900">{item.title}</p>
+                            <p className="mt-0.5 line-clamp-3 text-xs font-semibold leading-relaxed text-gray-500">{item.description}</p>
+                            <p className="mt-2 text-[10px] font-bold text-gray-400">{formatDate(item.occurredAt)}</p>
+                          </div>
+                          <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-black ring-1 ${activityToneClass(item.type)}`}>
+                            {item.childId ? "Ward" : "School-wide"}
+                          </span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           ) : (

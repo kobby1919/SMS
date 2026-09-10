@@ -134,8 +134,11 @@ export default function AnnouncementForm({
           {type === "create" ? "Publish Notice" : "Update Notice"}
         </h1>
         <p className="mt-1 text-sm font-semibold text-gray-400">
-          Keep it short, clear, and targeted to the right audience.
+          Use notices for official school messages: what is happening, who it affects, when it happens, and what parents or staff should do.
         </p>
+        <div className="mt-3 rounded-xl bg-slate-50 px-3 py-2 text-xs font-semibold leading-relaxed text-slate-500">
+          Attendance, CA scores, homework status, payments, and report changes are sent from their own records. Notices are for general communication such as PTA meetings, closures, events, deadlines, and urgent school instructions.
+        </div>
       </div>
 
       {apiError && (
