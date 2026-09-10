@@ -10,6 +10,7 @@ import { assertSameSchool } from "@/src/lib/tenant";
 import { revalidatePath } from "next/cache";
 import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
+import { recordApprovedCorrectionParentEvent } from "@/src/lib/services/correction-parent-events";
 import {
   markHomeworkSubmission,
   markHomeworkSubmissionsForAssignment,
@@ -1073,25 +1074,31 @@ export async function reviewAttendanceCorrectionRequest(data: {
   if (parsed.action === "APPROVE") {
     const teacherName = `${attendance.lesson.teacher.name} ${attendance.lesson.teacher.surname}`.trim();
     const statusLabel = attendanceStatusLabel(requested.status);
-    await recordParentActivityEvents({
+    const previousStatusLabel = attendanceStatusLabel(previous.status);
+    await recordApprovedCorrectionParentEvent({
       schoolId: ctx.schoolId,
-      studentIds: [attendance.studentId],
+      studentId: attendance.studentId,
       teacherId: attendance.lesson.teacherId,
       type: "ATTENDANCE",
-      title: `${attendance.lesson.subject.name} attendance corrected: ${statusLabel}`,
-      body: [
-        `${statusLabel} for ${attendance.lesson.subject.name}${requested.arrivalTime ? ` at ${requested.arrivalTime}` : ""}.`,
-        `Teacher: ${teacherName}`,
-        `Approved by admin`,
-        request.reason ? `Reason: ${request.reason}` : null,
-      ].filter(Boolean).join("\n"),
+      title: `${attendance.lesson.subject.name} attendance correction approved`,
+      itemLabel: `${attendance.lesson.subject.name} attendance`,
+      previousLabel: previous.arrivalTime
+        ? `${previousStatusLabel} at ${previous.arrivalTime}`
+        : previousStatusLabel,
+      correctedLabel: requested.arrivalTime
+        ? `${statusLabel} at ${requested.arrivalTime}`
+        : statusLabel,
+      reason: request.reason,
+      reviewNote,
       href: "/parent/updates",
       sourceModel: "Attendance",
       sourceId: String(attendance.id),
-      sourceKey: `attendance:${attendance.id}:approved:${requested.status}:${now.getTime()}`,
+      sourceKey: `attendance:${attendance.id}`,
       occurredAt: now,
       payload: {
         studentName: `${attendance.student.name} ${attendance.student.surname}`,
+        previousStatus: previous.status,
+        previousStatusLabel,
         status: requested.status,
         statusLabel,
         note: requested.note,
@@ -1452,26 +1459,28 @@ export async function reviewHomeworkSubmissionCorrectionRequest(data: {
 
   if (data.action === "APPROVE") {
     const statusLabel = homeworkStatusLabel(requestedStatus);
-    await recordParentActivityEvents({
+    const previousStatusLabel = homeworkStatusLabel(submission.status);
+    await recordApprovedCorrectionParentEvent({
       schoolId: ctx.schoolId,
-      studentIds: [submission.studentId],
+      studentId: submission.studentId,
       teacherId: submission.assignment.lesson.teacherId,
       type: "ASSIGNMENT",
-      title: `${submission.assignment.lesson.subject.name} homework ${statusLabel}`,
-      body: [
-        `${submission.assignment.lesson.subject.name}: ${submission.assignment.title}`,
-        `Status corrected to: ${statusLabel}`,
-        `Approved by admin`,
-        request.reason ? `Reason: ${request.reason}` : null,
-      ].filter(Boolean).join("\n"),
+      title: `${submission.assignment.lesson.subject.name} homework correction approved`,
+      itemLabel: `${submission.assignment.lesson.subject.name}: ${submission.assignment.title}`,
+      previousLabel: previousStatusLabel,
+      correctedLabel: statusLabel,
+      reason: request.reason,
+      reviewNote,
       href: "/list/assignments",
       sourceModel: "HomeworkSubmission",
       sourceId: String(submission.id),
-      sourceKey: `homework-submission:${submission.id}:approved:${requestedStatus}:${now.getTime()}`,
+      sourceKey: `homework-submission:${submission.id}`,
       occurredAt: now,
       payload: {
         assignmentTitle: submission.assignment.title,
         subjectName: submission.assignment.lesson.subject.name,
+        previousStatus: submission.status,
+        previousStatusLabel,
         status: requestedStatus,
         note: request.reason,
       },

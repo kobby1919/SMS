@@ -86,13 +86,31 @@ function dateHref(date: Date) {
   return `/parent/updates?date=${date.toISOString().slice(0, 10)}`;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function textFromPayload(payload: unknown, key: string) {
+  if (!isRecord(payload)) return null;
+  const value = payload[key];
+  return typeof value === "string" ? value : null;
+}
+
+function isApprovedCorrectionPayload(payload: unknown) {
+  return isRecord(payload) && payload.correctionApproved === true;
+}
+
 function eventDedupeKey(event: {
   type: ParentNotificationType;
   body: string;
   sourceModel: string;
   sourceId: string;
   sourceKey?: string;
+  payload?: unknown;
 }) {
+  if (isApprovedCorrectionPayload(event.payload)) {
+    return event.sourceKey || `${event.sourceModel}:${event.sourceId}:correction:${event.body}`;
+  }
   if (event.type === "ATTENDANCE" && event.sourceModel === "Attendance") {
     return `${event.sourceModel}:${event.sourceId}`;
   }
@@ -105,6 +123,7 @@ function dedupeEvents<T extends {
   sourceModel: string;
   sourceId: string;
   sourceKey?: string;
+  payload?: unknown;
 }>(events: T[]) {
   const seen = new Set<string>();
   return events.filter((event) => {
@@ -134,6 +153,57 @@ function formatDayLabel(date: Date) {
   });
 }
 
+function CorrectionEventBody({ body, payload }: { body: string; payload: unknown }) {
+  const previousLabel = textFromPayload(payload, "previousLabel");
+  const correctedLabel = textFromPayload(payload, "correctedLabel");
+  const reason = textFromPayload(payload, "reason");
+  const reviewNote = textFromPayload(payload, "reviewNote");
+  const detailLines = body
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .filter((line) =>
+      !line.startsWith("Previous record:") &&
+      !line.startsWith("Corrected record:") &&
+      !line.startsWith("Correction reason:") &&
+      !line.startsWith("Admin note:"),
+    );
+
+  return (
+    <div className="mt-2 rounded-2xl border border-amber-100 bg-amber-50/70 p-3">
+      <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-amber-700">
+        <CheckCircle2 size={12} />
+        Correction approved
+      </div>
+      <div className="grid gap-2 sm:grid-cols-2">
+        {previousLabel && (
+          <div className="rounded-xl bg-white px-3 py-2">
+            <p className="text-[10px] font-black uppercase tracking-wide text-gray-400">Previous record</p>
+            <p className="mt-1 text-sm font-black text-gray-800">{previousLabel}</p>
+          </div>
+        )}
+        {correctedLabel && (
+          <div className="rounded-xl bg-white px-3 py-2">
+            <p className="text-[10px] font-black uppercase tracking-wide text-gray-400">Corrected record</p>
+            <p className="mt-1 text-sm font-black text-emerald-700">{correctedLabel}</p>
+          </div>
+        )}
+      </div>
+      {detailLines.length > 0 && (
+        <p className="mt-2 whitespace-pre-line text-sm font-semibold leading-relaxed text-amber-800">
+          {detailLines.join("\n")}
+        </p>
+      )}
+      {(reason || reviewNote) && (
+        <div className="mt-2 space-y-1 text-xs font-bold text-amber-800">
+          {reason && <p>Reason: {reason}</p>}
+          {reviewNote && <p>Admin note: {reviewNote}</p>}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function isSameDay(a: Date, b: Date) {
   return a.getFullYear() === b.getFullYear() &&
     a.getMonth() === b.getMonth() &&
@@ -153,14 +223,22 @@ async function buildAttendanceEventBodies(
     body: string;
     sourceModel: string;
     sourceId: string;
+    payload?: unknown;
   }>,
 ) {
   const attendanceIds = events
-    .filter((event) => event.type === "ATTENDANCE" && event.sourceModel === "Attendance")
+    .filter((event) => event.type === "ATTENDANCE" && event.sourceModel === "Attendance" && !isApprovedCorrectionPayload(event.payload))
     .map((event) => toInt(event.sourceId))
     .filter((id): id is number => id !== null);
 
-  if (attendanceIds.length === 0) return new Map<string, string>();
+  const bodies = new Map<string, string>();
+  for (const event of events) {
+    if (event.type === "ATTENDANCE" && isApprovedCorrectionPayload(event.payload)) {
+      bodies.set(event.id, event.body);
+    }
+  }
+
+  if (attendanceIds.length === 0) return bodies;
 
   const records = await prisma.attendance.findMany({
     where: { schoolId, id: { in: attendanceIds } },
@@ -176,9 +254,8 @@ async function buildAttendanceEventBodies(
   });
 
   const recordById = new Map(records.map((record) => [record.id, record]));
-  const bodies = new Map<string, string>();
-
   for (const event of events) {
+    if (isApprovedCorrectionPayload(event.payload)) continue;
     const id = toInt(event.sourceId);
     if (!id) continue;
 
@@ -206,6 +283,7 @@ function buildAttendanceUpdateGroups(
   events: Array<{
     id: string;
     type: ParentNotificationType;
+    title: string;
     body: string;
     href: string | null;
     occurredAt: Date;
@@ -213,6 +291,7 @@ function buildAttendanceUpdateGroups(
     sourceId: string;
     studentId: string | null;
     student: { name: string; surname: string } | null;
+    payload?: unknown;
   }>,
   bodies: Map<string, string>,
 ) {
@@ -220,15 +299,32 @@ function buildAttendanceUpdateGroups(
   const grouped = new Map<string, typeof attendanceEvents>();
 
   for (const event of attendanceEvents) {
-    const key = event.studentId ?? event.id;
+    const key = isApprovedCorrectionPayload(event.payload)
+      ? event.id
+      : event.studentId ?? event.id;
     grouped.set(key, [...(grouped.get(key) ?? []), event]);
   }
 
   return Array.from(grouped.entries()).map(([key, groupEvents]) => {
     const firstEvent = groupEvents[0];
+    const correctionPayload =
+      groupEvents.length === 1 && isApprovedCorrectionPayload(firstEvent.payload)
+        ? firstEvent.payload
+        : null;
     const studentName = firstEvent.student
       ? `${firstEvent.student.name} ${firstEvent.student.surname}`
       : "Your child";
+    if (correctionPayload) {
+      return {
+        key,
+        title: firstEvent.title,
+        body: bodies.get(firstEvent.id) ?? firstEvent.body,
+        href: firstEvent.href,
+        occurredAt: firstEvent.occurredAt,
+        studentName,
+        correctionPayload,
+      };
+    }
     const bodyLines = groupEvents
       .map((event) => bodies.get(event.id) ?? "")
       .filter(Boolean);
@@ -261,6 +357,7 @@ function buildAttendanceUpdateGroups(
       href: firstEvent.href,
       occurredAt: firstEvent.occurredAt,
       studentName,
+      correctionPayload,
     };
   });
 }
@@ -506,7 +603,11 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
                             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                               <div className="min-w-0">
                                 <p className="text-sm font-black text-gray-900">{group.title}</p>
-                                <p className="mt-1 whitespace-pre-line text-sm font-medium leading-relaxed text-gray-500">{group.body}</p>
+                                {group.correctionPayload ? (
+                                  <CorrectionEventBody body={group.body} payload={group.correctionPayload} />
+                                ) : (
+                                  <p className="mt-1 whitespace-pre-line text-sm font-medium leading-relaxed text-gray-500">{group.body}</p>
+                                )}
                                 <p className="mt-2 text-xs font-black text-gray-400">{formatDateTime(group.occurredAt)}</p>
                                 <p className="mt-2 text-xs font-bold text-gray-400">Child: {group.studentName}</p>
                               </div>
@@ -531,7 +632,11 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
                                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                                   <div className="min-w-0">
                                     <p className="text-sm font-black text-gray-900">{event.title}</p>
-                                    <p className="mt-1 whitespace-pre-line text-sm font-medium leading-relaxed text-gray-500">{event.body}</p>
+                                    {isApprovedCorrectionPayload(event.payload) ? (
+                                      <CorrectionEventBody body={event.body} payload={event.payload} />
+                                    ) : (
+                                      <p className="mt-1 whitespace-pre-line text-sm font-medium leading-relaxed text-gray-500">{event.body}</p>
+                                    )}
                                     <p className="mt-2 text-xs font-black text-blue-500">{formatDateTime(event.occurredAt)}</p>
                                     {event.student && (
                                       <p className="mt-2 text-xs font-bold text-gray-400">
@@ -561,9 +666,16 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
                         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                           <div className="min-w-0">
                             <p className="text-sm font-black text-gray-900">{event.title}</p>
-                            <p className="mt-1 whitespace-pre-line text-sm font-medium leading-relaxed text-gray-500">
-                              {enrichedEventBodies.get(event.id) ?? event.body}
-                            </p>
+                            {isApprovedCorrectionPayload(event.payload) ? (
+                              <CorrectionEventBody
+                                body={enrichedEventBodies.get(event.id) ?? event.body}
+                                payload={event.payload}
+                              />
+                            ) : (
+                              <p className="mt-1 whitespace-pre-line text-sm font-medium leading-relaxed text-gray-500">
+                                {enrichedEventBodies.get(event.id) ?? event.body}
+                              </p>
+                            )}
                             <p className="mt-2 text-xs font-black text-gray-400">{formatDateTime(event.occurredAt)}</p>
                             {event.student && (
                               <p className="mt-2 text-xs font-bold text-gray-400">

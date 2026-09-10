@@ -369,10 +369,10 @@ const CAActivityManager = ({
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex min-w-0 flex-col gap-5">
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-black text-gray-800 tracking-tight">Activity-Based CA</h1>
-        <p className="text-sm text-gray-400 font-medium">
+        <h1 className="text-xl font-black tracking-tight text-gray-800 sm:text-2xl">Activity-Based CA</h1>
+        <p className="text-sm font-medium leading-relaxed text-gray-400">
           {className} · build CA from midterms, class tests, exercises, homework, projects, and more.
         </p>
       </div>
@@ -390,7 +390,7 @@ const CAActivityManager = ({
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <label className="flex flex-col gap-1.5">
           <span className="text-xs text-gray-500 font-black uppercase tracking-wider flex items-center gap-1.5">
             <BookOpen size={11} /> Subject
@@ -422,10 +422,10 @@ const CAActivityManager = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-          <div className="mb-4 flex items-start justify-between gap-3">
-            <div>
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <section className="min-w-0 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm sm:p-4">
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
               <h2 className="text-sm font-black text-gray-800">1. CA Buckets</h2>
               <p className="text-xs font-medium text-gray-400">
                 Used allocation: {formatMark(usedAllocation)} marks
@@ -434,7 +434,7 @@ const CAActivityManager = ({
             <ClipboardList size={18} className="text-indigo-500" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <input
               value={bucketName}
               onChange={(event) => setBucketName(event.target.value)}
@@ -496,12 +496,12 @@ const CAActivityManager = ({
                   setSelectedBucketId(bucket.id);
                   setSelectedActivityId("");
                 }}
-                className={`flex w-full items-center justify-between gap-3 rounded-xl border px-3 py-2.5 text-left ${
+                className={`flex w-full flex-col gap-3 rounded-xl border px-3 py-3 text-left sm:flex-row sm:items-center sm:justify-between sm:py-2.5 ${
                   selectedBucket?.id === bucket.id ? "border-indigo-200 bg-indigo-50" : "border-gray-100 bg-white"
                 }`}
               >
-                <span>
-                  <span className="flex items-center gap-2 text-sm font-black text-gray-800">
+                <span className="min-w-0">
+                  <span className="flex flex-wrap items-center gap-2 text-sm font-black text-gray-800">
                     {bucket.name}
                     {bucket.isLocked && (
                       <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[9px] font-black uppercase text-amber-700">
@@ -509,11 +509,11 @@ const CAActivityManager = ({
                       </span>
                     )}
                   </span>
-                  <span className="text-[11px] font-semibold text-gray-400">
+                  <span className="block text-[11px] font-semibold text-gray-400">
                     {activityTypeLabels[bucket.type]} · {bucket.aggregationMode === "AVERAGE_TO_BUCKET" ? "average" : "allocated"}
                   </span>
                 </span>
-                <span className="flex items-center gap-2">
+                <span className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-end">
                   <span className="text-xs font-black text-indigo-600">{formatMark(bucket.allocationMarks)} marks</span>
                   {canLock && !bucket.isLocked && (
                     <span
@@ -542,9 +542,9 @@ const CAActivityManager = ({
           </div>
         </section>
 
-        <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-          <div className="mb-4 flex items-start justify-between gap-3">
-            <div>
+        <section className="min-w-0 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm sm:p-4">
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
               <h2 className="text-sm font-black text-gray-800">2. Activities</h2>
               <p className="text-xs font-medium text-gray-400">
                 {selectedBucket ? `${selectedBucket.name} · ${activities.length} recorded` : "Select a bucket first"}
@@ -553,7 +553,7 @@ const CAActivityManager = ({
             <ChevronDown size={18} className="text-indigo-500" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5">
               <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">Next activity</p>
               <p className="text-sm font-black text-gray-800">{nextActivityTitle}</p>
@@ -608,12 +608,12 @@ const CAActivityManager = ({
                     Object.fromEntries(activity.scores.map((score) => [score.studentId, String(score.rawScore)])),
                   );
                 }}
-                className={`flex w-full items-center justify-between gap-3 rounded-xl border px-3 py-2.5 text-left ${
+                className={`flex w-full flex-col gap-3 rounded-xl border px-3 py-3 text-left sm:flex-row sm:items-center sm:justify-between sm:py-2.5 ${
                   selectedActivity?.id === activity.id ? "border-slate-300 bg-slate-50" : "border-gray-100 bg-white"
                 }`}
               >
-                <span>
-                  <span className="flex items-center gap-2 text-sm font-black text-gray-800">
+                <span className="min-w-0">
+                  <span className="flex flex-wrap items-center gap-2 text-sm font-black text-gray-800">
                     {activity.title}
                     {activity.isLocked && (
                       <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[9px] font-black uppercase text-amber-700">
@@ -621,11 +621,11 @@ const CAActivityManager = ({
                       </span>
                     )}
                   </span>
-                  <span className="text-[11px] font-semibold text-gray-400">
+                  <span className="block text-[11px] font-semibold text-gray-400">
                     /{formatMark(activity.rawMaxScore)} · {activity.teacherName}
                   </span>
                 </span>
-                <span className="flex items-center gap-2">
+                <span className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-end">
                   <span className="text-xs font-black text-slate-600">{activity.scores.length}/{students.length}</span>
                   {canLock && !activity.isLocked && (
                     <span
@@ -655,9 +655,9 @@ const CAActivityManager = ({
         </section>
       </div>
 
-      <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-        <div className="mb-4 flex items-start justify-between gap-3">
-          <div>
+      <section className="min-w-0 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm sm:p-4">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
             <h2 className="text-sm font-black text-gray-800">3. Enter Scores</h2>
             <p className="text-xs font-medium text-gray-400">
               {selectedActivity
@@ -674,7 +674,7 @@ const CAActivityManager = ({
             type="button"
             onClick={handleSaveScores}
             disabled={pendingAction !== null || !selectedActivity || selectedActivityLockedForEntry}
-            className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-black text-white hover:bg-emerald-700 disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-black text-white hover:bg-emerald-700 disabled:opacity-50 sm:w-auto"
           >
             {pendingAction === "scores" ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
             {pendingAction === "scores" ? "Saving Scores..." : selectedActivityLockedForEntry ? "Scores Locked" : "Save Scores"}
@@ -686,44 +686,85 @@ const CAActivityManager = ({
             Create or select an activity before entering student scores.
           </p>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-gray-100">
-            <div className="grid min-w-[560px] grid-cols-[2fr_1fr_1fr] gap-3 border-b border-gray-100 bg-gray-50 px-4 py-3">
-              <span className="text-xs font-black uppercase tracking-wider text-gray-400">Student</span>
-              <span className="text-xs font-black uppercase tracking-wider text-gray-400">Raw Score</span>
-              <span className="text-right text-xs font-black uppercase tracking-wider text-gray-400">Current Subject CA</span>
-            </div>
-            <div className="min-w-[560px] divide-y divide-gray-50">
+          <>
+            <div className="space-y-3 sm:hidden">
               {students.map((student) => {
                 const savedScore = selectedActivity.scores.find((score) => score.studentId === student.id);
                 const value = scoreEdits[student.id] ?? (savedScore ? String(savedScore.rawScore) : "");
                 const currentSubjectCA = getCurrentSubjectCAForStudent(student.id);
 
                 return (
-                  <div key={student.id} className="grid grid-cols-[2fr_1fr_1fr] items-center gap-3 px-4 py-3">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-black text-gray-800">{student.name} {student.surname}</p>
-                      <p className="text-[10px] font-semibold text-gray-400">{student.id}</p>
+                  <div key={student.id} className="rounded-2xl border border-gray-100 bg-white p-3 shadow-sm">
+                    <div className="mb-3 flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-black text-gray-800">{student.name} {student.surname}</p>
+                        <p className="text-[10px] font-semibold text-gray-400">{student.id}</p>
+                      </div>
+                      <p className="shrink-0 rounded-full bg-indigo-50 px-2 py-1 text-[11px] font-black text-indigo-600">
+                        {formatMark(currentSubjectCA)} CA
+                      </p>
                     </div>
-                    <input
-                      type="number"
-                      min={0}
-                      max={selectedActivity.rawMaxScore}
-                      step={0.5}
-                      value={value}
-                      disabled={selectedActivityLockedForEntry}
-                      onChange={(event) =>
-                        setScoreEdits((prev) => ({ ...prev, [student.id]: event.target.value }))
-                      }
-                      className="w-full rounded-xl border border-gray-200 px-3 py-2 text-center text-sm font-black text-gray-800 outline-none focus:border-indigo-500 disabled:bg-gray-50 disabled:text-gray-400"
-                    />
-                    <p className="text-right text-xs font-black text-indigo-600">
-                      {formatMark(currentSubjectCA)} current CA
-                    </p>
+                    <label className="block">
+                      <span className="mb-1.5 block text-[10px] font-black uppercase tracking-wider text-gray-400">
+                        Raw score out of {formatMark(selectedActivity.rawMaxScore)}
+                      </span>
+                      <input
+                        type="number"
+                        min={0}
+                        max={selectedActivity.rawMaxScore}
+                        step={0.5}
+                        value={value}
+                        disabled={selectedActivityLockedForEntry}
+                        onChange={(event) =>
+                          setScoreEdits((prev) => ({ ...prev, [student.id]: event.target.value }))
+                        }
+                        className="w-full rounded-xl border border-gray-200 px-3 py-3 text-center text-base font-black text-gray-800 outline-none focus:border-indigo-500 disabled:bg-gray-50 disabled:text-gray-400"
+                      />
+                    </label>
                   </div>
                 );
               })}
             </div>
-          </div>
+
+            <div className="hidden overflow-hidden rounded-2xl border border-gray-100 sm:block">
+              <div className="grid grid-cols-[2fr_1fr_1fr] gap-3 border-b border-gray-100 bg-gray-50 px-4 py-3">
+                <span className="text-xs font-black uppercase tracking-wider text-gray-400">Student</span>
+                <span className="text-xs font-black uppercase tracking-wider text-gray-400">Raw Score</span>
+                <span className="text-right text-xs font-black uppercase tracking-wider text-gray-400">Current Subject CA</span>
+              </div>
+              <div className="divide-y divide-gray-50">
+                {students.map((student) => {
+                  const savedScore = selectedActivity.scores.find((score) => score.studentId === student.id);
+                  const value = scoreEdits[student.id] ?? (savedScore ? String(savedScore.rawScore) : "");
+                  const currentSubjectCA = getCurrentSubjectCAForStudent(student.id);
+
+                  return (
+                    <div key={student.id} className="grid grid-cols-[2fr_1fr_1fr] items-center gap-3 px-4 py-3">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-black text-gray-800">{student.name} {student.surname}</p>
+                        <p className="text-[10px] font-semibold text-gray-400">{student.id}</p>
+                      </div>
+                      <input
+                        type="number"
+                        min={0}
+                        max={selectedActivity.rawMaxScore}
+                        step={0.5}
+                        value={value}
+                        disabled={selectedActivityLockedForEntry}
+                        onChange={(event) =>
+                          setScoreEdits((prev) => ({ ...prev, [student.id]: event.target.value }))
+                        }
+                        className="w-full rounded-xl border border-gray-200 px-3 py-2 text-center text-sm font-black text-gray-800 outline-none focus:border-indigo-500 disabled:bg-gray-50 disabled:text-gray-400"
+                      />
+                      <p className="text-right text-xs font-black text-indigo-600">
+                        {formatMark(currentSubjectCA)} current CA
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </>
         )}
       </section>
     </div>
