@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   BellRing,
@@ -138,11 +138,23 @@ function parentSearchItems(children: ParentChild[], notifications: ParentNotific
     ...notifications.slice(0, 5).map((notification) => ({
       label: notification.title,
       description: notification.childName ?? "School update",
-      href: notification.href,
+      href: parentNotificationHref(notification),
       keywords: `${notification.title} ${notification.description} ${notification.childName ?? ""}`,
       icon: <BellRing size={15} />,
     })),
   ];
+}
+
+function parentNotificationHref(notification: ParentNotification) {
+  const day = new Date(notification.occurredAt);
+  const date = Number.isNaN(day.getTime()) ? null : day.toISOString().slice(0, 10);
+  const href = notification.href || "/parent/updates";
+
+  if (href === "/parent/updates" || href.startsWith("/parent/updates?")) {
+    return date ? `/parent/updates?date=${date}` : "/parent/updates";
+  }
+
+  return href;
 }
 
 function SearchBox({
@@ -226,12 +238,56 @@ function SearchBox({
 }
 
 function ParentBell({ notifications }: { notifications: ParentNotification[] }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [localNotifications, setLocalNotifications] = useState(notifications);
   const [isPending, startTransition] = useTransition();
-  const unreadCount = notifications.filter((notification) => !notification.readAt).length;
+  const rootRef = useRef<HTMLDivElement>(null);
+  const unreadCount = localNotifications.filter((notification) => !notification.readAt).length;
+
+  useEffect(() => {
+    setLocalNotifications(notifications);
+  }, [notifications]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [open]);
+
+  const markLocallyRead = (notificationId: string) => {
+    const now = new Date().toISOString();
+    setLocalNotifications((current) =>
+      current.map((notification) =>
+        notification.id === notificationId ? { ...notification, readAt: notification.readAt ?? now } : notification,
+      ),
+    );
+  };
+
+  const openNotification = (notification: ParentNotification) => {
+    const href = parentNotificationHref(notification);
+    setOpen(false);
+    if (!notification.readAt) {
+      markLocallyRead(notification.id);
+      startTransition(async () => {
+        await markParentNotificationRead(notification.id);
+        router.push(href);
+      });
+      return;
+    }
+
+    router.push(href);
+  };
 
   return (
-    <div className="relative">
+    <div ref={rootRef} className="relative">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
@@ -256,24 +312,25 @@ function ParentBell({ notifications }: { notifications: ParentNotification[] }) 
             <button
               type="button"
               disabled={isPending || unreadCount === 0}
-              onClick={() => startTransition(() => markParentNotificationsRead())}
+              onClick={() => {
+                const now = new Date().toISOString();
+                setLocalNotifications((current) =>
+                  current.map((notification) => ({ ...notification, readAt: notification.readAt ?? now })),
+                );
+                startTransition(() => markParentNotificationsRead());
+              }}
               className="rounded-full bg-gray-50 px-3 py-1.5 text-[11px] font-black text-gray-600 disabled:opacity-40"
             >
               Mark all read
             </button>
           </div>
           <div className="max-h-[24rem] overflow-y-auto">
-            {notifications.length > 0 ? notifications.map((notification) => (
-              <Link
+            {localNotifications.length > 0 ? localNotifications.map((notification) => (
+              <button
                 key={notification.id}
-                href={notification.href}
-                onClick={() => {
-                  setOpen(false);
-                  if (!notification.readAt) {
-                    startTransition(() => markParentNotificationRead(notification.id));
-                  }
-                }}
-                className="block border-b border-gray-50 px-4 py-3 last:border-0 hover:bg-blue-50"
+                type="button"
+                onClick={() => openNotification(notification)}
+                className="block w-full border-b border-gray-50 px-4 py-3 text-left last:border-0 hover:bg-blue-50"
               >
                 <div className="flex items-start gap-3">
                   <span className={`mt-1 h-2 w-2 shrink-0 rounded-full ${notification.readAt ? "bg-gray-200" : "bg-blue-600"}`} />
@@ -288,7 +345,7 @@ function ParentBell({ notifications }: { notifications: ParentNotification[] }) 
                     </span>
                   </span>
                 </div>
-              </Link>
+              </button>
             )) : (
               <div className="px-4 py-8 text-center">
                 <Check className="mx-auto mb-2 text-emerald-500" size={22} />

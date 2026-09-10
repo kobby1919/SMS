@@ -611,11 +611,6 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
                                 <p className="mt-2 text-xs font-black text-gray-400">{formatDateTime(group.occurredAt)}</p>
                                 <p className="mt-2 text-xs font-bold text-gray-400">Child: {group.studentName}</p>
                               </div>
-                              {group.href && (
-                                <Link href={group.href} className="shrink-0 rounded-xl bg-gray-900 px-3 py-2 text-center text-xs font-black text-white">
-                                  Open
-                                </Link>
-                              )}
                             </div>
                           </div>
                         ))
@@ -651,11 +646,6 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
                                       </p>
                                     )}
                                   </div>
-                                  {event.href && (
-                                    <Link href={event.href} className="shrink-0 rounded-xl bg-gray-900 px-3 py-2 text-center text-xs font-black text-white">
-                                      Open
-                                    </Link>
-                                  )}
                                 </div>
                               </div>
                             ))}
@@ -690,11 +680,6 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
                               </p>
                             )}
                           </div>
-                          {event.href && (
-                            <Link href={event.href} className="shrink-0 rounded-xl bg-gray-900 px-3 py-2 text-center text-xs font-black text-white">
-                              Open
-                            </Link>
-                          )}
                         </div>
                       </div>
                     ))}

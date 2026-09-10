@@ -17,6 +17,7 @@ export async function markParentNotificationsRead() {
   });
 
   revalidatePath("/parent");
+  revalidatePath("/parent/updates");
 }
 
 export async function markParentNotificationRead(notificationId: string) {
