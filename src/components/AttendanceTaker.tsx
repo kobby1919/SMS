@@ -64,6 +64,7 @@ type Props = {
   students:          Student[];
   existingAttendance: ExistingRecord[];
   pendingAttendanceCorrectionIds: number[];
+  hasAttendanceCorrectionRequest: boolean;
   dateStr:           string;
   todayStr:          string;
   role:              string;
@@ -189,6 +190,7 @@ const AttendanceTaker = ({
   students,
   existingAttendance,
   pendingAttendanceCorrectionIds,
+  hasAttendanceCorrectionRequest,
   dateStr,
   todayStr,
   role,
@@ -776,6 +778,7 @@ const AttendanceTaker = ({
                   students={students}
                   existingAttendance={existingAttendance}
                   pendingAttendanceCorrectionIds={pendingAttendanceCorrectionIds}
+                  correctionRequestLocked={hasAttendanceCorrectionRequest}
                 />
               ) : null}
             </div>

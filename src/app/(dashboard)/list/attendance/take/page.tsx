@@ -78,6 +78,7 @@ const TakeAttendancePage = async ({
   let students: StudentSummary[] = [];
   let existingAttendance: AttendanceSummary[] = [];
   let pendingAttendanceCorrectionIds: number[] = [];
+  let hasAttendanceCorrectionRequest = false;
 
   // Only proceed with lesson details if it's a weekday and we have an ID
   if (lessonId && !isWeekend) {
@@ -128,6 +129,7 @@ const TakeAttendancePage = async ({
         pendingAttendanceCorrectionIds = pendingCorrectionRequests
           .map((request) => Number(request.sourceId))
           .filter(Number.isFinite);
+        hasAttendanceCorrectionRequest = pendingAttendanceCorrectionIds.length > 0;
       }
     }
   }
@@ -176,6 +178,7 @@ const TakeAttendancePage = async ({
           students={students}
           existingAttendance={existingAttendance}
           pendingAttendanceCorrectionIds={pendingAttendanceCorrectionIds}
+          hasAttendanceCorrectionRequest={hasAttendanceCorrectionRequest}
           dateStr={dateStr}
           todayStr={todayStr}
           role={role!}

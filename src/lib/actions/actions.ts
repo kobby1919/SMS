@@ -834,6 +834,39 @@ export async function requestAttendanceCorrection(data: {
     throw new Error("Choose a different attendance value before requesting correction.");
   }
 
+  const lessonDayStart = new Date(attendance.date);
+  lessonDayStart.setHours(0, 0, 0, 0);
+  const lessonDayEnd = new Date(attendance.date);
+  lessonDayEnd.setHours(23, 59, 59, 999);
+  const lessonAttendanceRecords = await prisma.attendance.findMany({
+    where: {
+      schoolId: ctx.schoolId,
+      lessonId: attendance.lessonId,
+      date: { gte: lessonDayStart, lte: lessonDayEnd },
+    },
+    select: { id: true },
+  });
+  const lessonAttendanceIds = lessonAttendanceRecords.map((record) => String(record.id));
+  const existingLessonRequest = await prisma.teacherCorrectionRequest.findFirst({
+    where: {
+      schoolId: ctx.schoolId,
+      teacherId: ctx.userId,
+      sourceModel: "Attendance",
+      sourceId: { in: lessonAttendanceIds },
+      fieldName: "attendanceStatus",
+    },
+    select: { id: true, status: true },
+  });
+
+  if (existingLessonRequest) {
+    return {
+      message:
+        existingLessonRequest.status === "PENDING"
+          ? "A correction request for this lesson attendance is already waiting for admin review."
+          : "This lesson attendance has already gone through a correction request. Please visit the admin office if it still needs another change.",
+    };
+  }
+
   const sourceKey = `attendance:${attendance.id}:status-correction`;
   const existingRequest = await prisma.teacherCorrectionRequest.findUnique({
     where: {

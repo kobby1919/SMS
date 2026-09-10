@@ -32,14 +32,16 @@ export default function AttendanceCorrectionRequestForm({
   students,
   existingAttendance,
   pendingAttendanceCorrectionIds,
+  correctionRequestLocked = false,
 }: {
   students: StudentOption[];
   existingAttendance: ExistingAttendanceRecord[];
   pendingAttendanceCorrectionIds?: number[];
+  correctionRequestLocked?: boolean;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [studentId, setStudentId] = useState(existingAttendance[0]?.studentId ?? "");
+  const [studentId, setStudentId] = useState("");
   const [newStatus, setNewStatus] = useState<AttendanceStatus>("PRESENT");
   const [newNote, setNewNote] = useState("");
   const [newArrivalTime, setNewArrivalTime] = useState("");
@@ -119,6 +121,21 @@ export default function AttendanceCorrectionRequestForm({
   };
 
   if (existingAttendance.length === 0 && submittedAttendanceIds.size === 0) return null;
+  if (correctionRequestLocked || submittedAttendanceIds.size > 0) {
+    return (
+      <div className="rounded-2xl border border-amber-100 bg-amber-50/60 p-3 sm:p-4">
+        <p className="text-sm font-black text-amber-900">Correction request already sent</p>
+        <p className="mt-1 text-xs font-semibold leading-relaxed text-amber-700">
+          This lesson attendance already has a correction request. For another change, please see the admin office so it can be handled with proper approval.
+        </p>
+        {message ? (
+          <p className="mt-3 rounded-xl bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">
+            {message}
+          </p>
+        ) : null}
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-2xl border border-amber-100 bg-amber-50/60 p-3 sm:p-4">
