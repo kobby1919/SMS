@@ -400,6 +400,30 @@ exports.Prisma.ParentNotificationDeliveryLogScalarFieldEnum = {
   notificationId: 'notificationId'
 };
 
+exports.Prisma.ParentTeacherContactRequestScalarFieldEnum = {
+  id: 'id',
+  category: 'category',
+  preferredChannel: 'preferredChannel',
+  priority: 'priority',
+  subject: 'subject',
+  message: 'message',
+  status: 'status',
+  responseDueAt: 'responseDueAt',
+  acknowledgedAt: 'acknowledgedAt',
+  respondedAt: 'respondedAt',
+  closedAt: 'closedAt',
+  cancelledAt: 'cancelledAt',
+  lastParentMessageAt: 'lastParentMessageAt',
+  lastTeacherResponseAt: 'lastTeacherResponseAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId',
+  parentId: 'parentId',
+  studentId: 'studentId',
+  teacherId: 'teacherId'
+};
+
 exports.Prisma.ParentActivityEventScalarFieldEnum = {
   id: 'id',
   type: 'type',
@@ -1089,6 +1113,30 @@ exports.ParentDeliveryStatus = exports.$Enums.ParentDeliveryStatus = {
   SKIPPED: 'SKIPPED'
 };
 
+exports.ParentTeacherContactCategory = exports.$Enums.ParentTeacherContactCategory = {
+  ATTENDANCE: 'ATTENDANCE',
+  ACADEMIC_SUPPORT: 'ACADEMIC_SUPPORT',
+  HOMEWORK: 'HOMEWORK',
+  WELLBEING: 'WELLBEING',
+  GENERAL: 'GENERAL'
+};
+
+exports.ParentTeacherContactChannel = exports.$Enums.ParentTeacherContactChannel = {
+  IN_APP: 'IN_APP',
+  EMAIL: 'EMAIL',
+  SMS: 'SMS',
+  WHATSAPP: 'WHATSAPP'
+};
+
+exports.ParentTeacherContactStatus = exports.$Enums.ParentTeacherContactStatus = {
+  PENDING: 'PENDING',
+  ACKNOWLEDGED: 'ACKNOWLEDGED',
+  RESPONDED: 'RESPONDED',
+  ESCALATED: 'ESCALATED',
+  CLOSED: 'CLOSED',
+  CANCELLED: 'CANCELLED'
+};
+
 exports.Day = exports.$Enums.Day = {
   MONDAY: 'MONDAY',
   TUESDAY: 'TUESDAY',
@@ -1340,6 +1388,7 @@ exports.Prisma.ModelName = {
   ParentNotificationPreference: 'ParentNotificationPreference',
   ParentNotification: 'ParentNotification',
   ParentNotificationDeliveryLog: 'ParentNotificationDeliveryLog',
+  ParentTeacherContactRequest: 'ParentTeacherContactRequest',
   ParentActivityEvent: 'ParentActivityEvent',
   Grade: 'Grade',
   Class: 'Class',

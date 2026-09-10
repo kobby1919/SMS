@@ -17,6 +17,7 @@ import { requirePageSession } from "@/src/lib/authz";
 import { getParentDashboardData } from "@/src/lib/services/parent-dashboard";
 import { getSchoolBranding } from "@/src/lib/services/school-branding";
 import { formatMark } from "@/src/lib/formatters/marks";
+import ParentTeacherContactForm from "@/src/components/ParentTeacherContactForm";
 
 export const dynamic = "force-dynamic";
 
@@ -507,7 +508,9 @@ export default async function ParentChildCheckupPage({
 
         <div id="teachers" className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
           <h2 className="text-sm font-black text-gray-900">Teacher contacts</h2>
-          <p className="mt-1 text-xs font-semibold text-gray-400">Use these when the school has shared a contact for this ward&apos;s teachers.</p>
+          <p className="mt-1 text-xs font-semibold text-gray-400">
+            Send a tracked request when you need follow-up about this ward.
+          </p>
           {child.communicationSummary.teacherContacts.length > 0 ? (
             <div className="mt-3 space-y-2">
               {child.communicationSummary.teacherContacts.map((teacher) => (
@@ -534,6 +537,12 @@ export default async function ParentChildCheckupPage({
                       )}
                     </div>
                   </div>
+                  <ParentTeacherContactForm
+                    studentId={child.id}
+                    teacherId={teacher.id}
+                    teacherName={teacher.name}
+                    policy={child.communicationSummary.policy}
+                  />
                 </div>
               ))}
             </div>
@@ -541,6 +550,26 @@ export default async function ParentChildCheckupPage({
             <p className="mt-3 rounded-xl bg-slate-50 px-3 py-3 text-sm font-semibold text-gray-400">
               Teacher contacts have not been shared yet. Please contact the school office.
             </p>
+          )}
+          {child.communicationSummary.recentRequests.length > 0 && (
+            <div className="mt-4 rounded-xl border border-slate-100 bg-slate-50 p-3">
+              <p className="text-xs font-black uppercase tracking-wide text-gray-400">Recent contact requests</p>
+              <div className="mt-2 space-y-2">
+                {child.communicationSummary.recentRequests.slice(0, 3).map((request) => (
+                  <div key={request.id} className="rounded-lg bg-white px-3 py-2">
+                    <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="text-sm font-black text-gray-900">{request.subject}</p>
+                      <span className="w-fit rounded-full bg-blue-50 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-blue-700">
+                        {request.status.toLowerCase().replaceAll("_", " ")}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-xs font-semibold text-gray-500">
+                      {request.category.toLowerCase().replaceAll("_", " ")} via {request.preferredChannel.toLowerCase().replaceAll("_", " ")} - sent {formatDate(request.createdAt)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </div>
       </section>

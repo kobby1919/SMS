@@ -7,6 +7,7 @@ import {
   type ParentNotificationFeedItem,
 } from "@/src/lib/services/parent-notifications";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
+import { schoolCommunicationPolicyDefaults } from "@/src/lib/services/school-communication-policy";
 
 export type ParentActivityFeedItem = ParentNotificationFeedItem;
 
@@ -108,6 +109,25 @@ export type ParentCommunicationSummary = {
     subjectNames: string[];
     phone?: string | null;
     email?: string | null;
+  }[];
+  policy: {
+    enabled: boolean;
+    allowParentTeacherMessaging: boolean;
+    allowInAppMessages: boolean;
+    allowEmailMessages: boolean;
+    allowSmsMessages: boolean;
+    allowWhatsappMessages: boolean;
+    responseSlaHours: number;
+  };
+  recentRequests: {
+    id: string;
+    teacherId: string;
+    subject: string;
+    status: string;
+    category: string;
+    preferredChannel: string;
+    createdAt: Date;
+    responseDueAt: Date | null;
   }[];
   latestAnnouncement?: {
     title: string;
@@ -273,7 +293,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  const [lessons, attendance, assessments, caActivityScores, classCounts, assignments, homeworkSubmissions, announcements, bills, payments, caConfigs, activePeriod, communicationPolicy] = await Promise.all([
+  const [lessons, attendance, assessments, caActivityScores, classCounts, assignments, homeworkSubmissions, announcements, bills, payments, caConfigs, activePeriod, communicationPolicy, contactRequests] = await Promise.all([
     prisma.lesson.findMany({
       where: { schoolId, classId: { in: classIds } },
       include: {
@@ -408,11 +428,40 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       select: {
         enabled: true,
         allowParentTeacherMessaging: true,
+        allowInAppMessages: true,
+        allowEmailMessages: true,
+        allowSmsMessages: true,
+        allowWhatsappMessages: true,
         exposeTeacherPhone: true,
         exposeTeacherEmail: true,
+        responseSlaHours: true,
       },
     }),
+    prisma.parentTeacherContactRequest.findMany({
+      where: {
+        schoolId,
+        parentId: userId,
+        studentId: { in: childIds },
+      },
+      select: {
+        id: true,
+        studentId: true,
+        teacherId: true,
+        subject: true,
+        status: true,
+        category: true,
+        preferredChannel: true,
+        createdAt: true,
+        responseDueAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 40,
+    }),
   ]);
+  const effectiveCommunicationPolicy = {
+    ...schoolCommunicationPolicyDefaults,
+    ...(communicationPolicy ?? {}),
+  };
   const caConfigByYear = new Map(caConfigs.map((config) => [config.academicYear, config]));
   const gradeIds = [...new Set(children.map((child) => child.class.gradeId))];
   const publishedSyllabi = gradeIds.length
@@ -841,6 +890,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     const childAnnouncements = announcements.filter(
       (announcement) => announcement.classId === null || announcement.classId === child.classId,
     );
+    const childContactRequests = contactRequests.filter((request) => request.studentId === child.id);
     const communicationSummary: ParentCommunicationSummary = {
       teacherNames: Array.from(teacherNamesByClass.get(child.classId) ?? []).slice(0, 4),
       teacherContacts: Array.from(teacherContactsByClass.get(child.classId)?.values() ?? [])
@@ -848,14 +898,33 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
           id: teacher.id,
           name: teacher.name,
           subjectNames: Array.from(teacher.subjectNames).sort(),
-          phone: communicationPolicy?.enabled && communicationPolicy.allowParentTeacherMessaging && communicationPolicy.exposeTeacherPhone
+          phone: effectiveCommunicationPolicy.enabled && effectiveCommunicationPolicy.allowParentTeacherMessaging && effectiveCommunicationPolicy.exposeTeacherPhone
             ? teacher.phone
             : null,
-          email: communicationPolicy?.enabled && communicationPolicy.allowParentTeacherMessaging && communicationPolicy.exposeTeacherEmail
+          email: effectiveCommunicationPolicy.enabled && effectiveCommunicationPolicy.allowParentTeacherMessaging && effectiveCommunicationPolicy.exposeTeacherEmail
             ? teacher.email
             : null,
         }))
         .slice(0, 6),
+      policy: {
+        enabled: effectiveCommunicationPolicy.enabled,
+        allowParentTeacherMessaging: effectiveCommunicationPolicy.allowParentTeacherMessaging,
+        allowInAppMessages: effectiveCommunicationPolicy.allowInAppMessages,
+        allowEmailMessages: effectiveCommunicationPolicy.allowEmailMessages,
+        allowSmsMessages: effectiveCommunicationPolicy.allowSmsMessages,
+        allowWhatsappMessages: effectiveCommunicationPolicy.allowWhatsappMessages,
+        responseSlaHours: effectiveCommunicationPolicy.responseSlaHours,
+      },
+      recentRequests: childContactRequests.map((request) => ({
+        id: request.id,
+        teacherId: request.teacherId,
+        subject: request.subject,
+        status: request.status,
+        category: request.category,
+        preferredChannel: request.preferredChannel,
+        createdAt: request.createdAt,
+        responseDueAt: request.responseDueAt,
+      })),
       latestAnnouncement: childAnnouncements[0]
         ? { title: childAnnouncements[0].title, date: childAnnouncements[0].date }
         : undefined,

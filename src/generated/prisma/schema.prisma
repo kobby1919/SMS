@@ -264,6 +264,30 @@ enum ParentDeliveryChannel {
   WHATSAPP
 }
 
+enum ParentTeacherContactChannel {
+  IN_APP
+  EMAIL
+  SMS
+  WHATSAPP
+}
+
+enum ParentTeacherContactCategory {
+  ATTENDANCE
+  ACADEMIC_SUPPORT
+  HOMEWORK
+  WELLBEING
+  GENERAL
+}
+
+enum ParentTeacherContactStatus {
+  PENDING
+  ACKNOWLEDGED
+  RESPONDED
+  ESCALATED
+  CLOSED
+  CANCELLED
+}
+
 enum ParentDeliveryStatus {
   PENDING
   SENT
@@ -433,6 +457,7 @@ model School {
   teacherAccountabilityAuditLogs TeacherAccountabilityAuditLog[]
   parentPreferences              ParentNotificationPreference[]
   parentDeliveryLogs             ParentNotificationDeliveryLog[]
+  parentTeacherContactRequests   ParentTeacherContactRequest[]
 }
 
 model Admin {
@@ -468,16 +493,17 @@ model Student {
   gradeId  Int
   grade    Grade  @relation(fields: [gradeId], references: [id])
 
-  attendances           Attendance[]
-  attendanceAuditLogs   AttendanceAuditLog[]
-  results               Result[]
-  continuousAssessments ContinuousAssessment[]
-  caActivityScores      CAActivityScore[]
-  bills                 StudentBill[]
-  homeworkSubmissions   HomeworkSubmission[]
-  parentNotifications   ParentNotification[]
-  parentActivityEvents  ParentActivityEvent[]
-  financeQueries        FinanceQuery[]
+  attendances            Attendance[]
+  attendanceAuditLogs    AttendanceAuditLog[]
+  results                Result[]
+  continuousAssessments  ContinuousAssessment[]
+  caActivityScores       CAActivityScore[]
+  bills                  StudentBill[]
+  homeworkSubmissions    HomeworkSubmission[]
+  parentNotifications    ParentNotification[]
+  parentActivityEvents   ParentActivityEvent[]
+  financeQueries         FinanceQuery[]
+  teacherContactRequests ParentTeacherContactRequest[]
 
   @@index([schoolId])
   @@index([schoolId, classId])
@@ -518,6 +544,7 @@ model Teacher {
   accountabilityReminders   TeacherReminder[]
   accountabilityEscalations TeacherEscalation[]
   correctionRequests        TeacherCorrectionRequest[]
+  parentContactRequests     ParentTeacherContactRequest[]
   accountabilityAuditLogs   TeacherAccountabilityAuditLog[]
 
   @@index([schoolId])
@@ -543,6 +570,7 @@ model Parent {
   notificationPreference ParentNotificationPreference?
   notificationDeliveries ParentNotificationDeliveryLog[]
   financeQueries         FinanceQuery[]
+  teacherContactRequests ParentTeacherContactRequest[]
 
   @@index([schoolId])
   @@index([schoolId, createdAt])
@@ -844,6 +872,43 @@ model ParentNotificationDeliveryLog {
   @@index([schoolId, parentId, attemptedAt])
   @@index([schoolId, channel, attemptedAt])
   @@index([notificationId])
+}
+
+model ParentTeacherContactRequest {
+  id                    String                       @id @default(cuid())
+  category              ParentTeacherContactCategory
+  preferredChannel      ParentTeacherContactChannel  @default(IN_APP)
+  priority              ParentNotificationPriority   @default(NORMAL)
+  subject               String
+  message               String
+  status                ParentTeacherContactStatus   @default(PENDING)
+  responseDueAt         DateTime?
+  acknowledgedAt        DateTime?
+  respondedAt           DateTime?
+  closedAt              DateTime?
+  cancelledAt           DateTime?
+  lastParentMessageAt   DateTime                     @default(now())
+  lastTeacherResponseAt DateTime?
+  metadata              Json?
+  createdAt             DateTime                     @default(now())
+  updatedAt             DateTime                     @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  parentId String
+  parent   Parent @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId, parentId, status, createdAt])
+  @@index([schoolId, teacherId, status, responseDueAt])
+  @@index([schoolId, studentId, createdAt])
+  @@index([schoolId, status, responseDueAt])
 }
 
 model ParentActivityEvent {
