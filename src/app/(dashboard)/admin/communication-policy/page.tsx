@@ -1,13 +1,25 @@
 import { MessageCircle } from "lucide-react";
 import { requirePageSession } from "@/src/lib/authz";
 import CommunicationPolicyForm from "@/src/components/CommunicationPolicyForm";
-import { ensureSchoolCommunicationPolicy } from "@/src/lib/services/school-communication-policy";
+import {
+  ensureSchoolCommunicationPolicy,
+  ensureSchoolCommunicationRoutes,
+} from "@/src/lib/services/school-communication-policy";
+import prisma from "@/src/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 const AdminCommunicationPolicyPage = async () => {
   const { schoolId } = await requirePageSession(["admin"]);
-  const policy = await ensureSchoolCommunicationPolicy(schoolId);
+  const [policy, routes, teachers] = await Promise.all([
+    ensureSchoolCommunicationPolicy(schoolId),
+    ensureSchoolCommunicationRoutes(schoolId),
+    prisma.teacher.findMany({
+      where: { schoolId },
+      select: { id: true, name: true, surname: true },
+      orderBy: [{ name: "asc" }, { surname: "asc" }],
+    }),
+  ]);
 
   return (
     <div className="flex flex-col gap-5 p-4">
@@ -25,7 +37,7 @@ const AdminCommunicationPolicyPage = async () => {
         </div>
       </div>
 
-      <CommunicationPolicyForm policy={policy} />
+      <CommunicationPolicyForm policy={policy} routes={routes} teachers={teachers} />
     </div>
   );
 };

@@ -288,6 +288,13 @@ enum ParentTeacherContactStatus {
   CANCELLED
 }
 
+enum ParentTeacherContactRouteTarget {
+  SUBJECT_TEACHER
+  CLASS_TEACHER
+  SELECTED_TEACHER
+  SCHOOL_OFFICE
+}
+
 enum ParentDeliveryStatus {
   PENDING
   SENT
@@ -449,6 +456,7 @@ model School {
   parentActivityEvents           ParentActivityEvent[]
   notificationSettings           SchoolNotificationSetting?
   communicationPolicy            SchoolCommunicationPolicy?
+  communicationRoutes            SchoolCommunicationRoute[]
   accountabilitySettings         TeacherAccountabilitySetting?
   teacherObligations             TeacherObligation[]
   teacherReminders               TeacherReminder[]
@@ -545,6 +553,7 @@ model Teacher {
   accountabilityEscalations TeacherEscalation[]
   correctionRequests        TeacherCorrectionRequest[]
   parentContactRequests     ParentTeacherContactRequest[]
+  communicationRouteTargets SchoolCommunicationRoute[]      @relation("SelectedCommunicationRouteTeacher")
   accountabilityAuditLogs   TeacherAccountabilityAuditLog[]
 
   @@index([schoolId])
@@ -626,6 +635,25 @@ model SchoolCommunicationPolicy {
 
   schoolId String @unique
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+}
+
+model SchoolCommunicationRoute {
+  id                String                          @id @default(cuid())
+  category          ParentTeacherContactCategory
+  target            ParentTeacherContactRouteTarget @default(SUBJECT_TEACHER)
+  selectedTeacherId String?
+  notes             String?
+  createdAt         DateTime                        @default(now())
+  updatedAt         DateTime                        @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  selectedTeacher Teacher? @relation("SelectedCommunicationRouteTeacher", fields: [selectedTeacherId], references: [id], onDelete: SetNull)
+
+  @@unique([schoolId, category])
+  @@index([schoolId, target])
+  @@index([schoolId, selectedTeacherId])
 }
 
 model TeacherAccountabilitySetting {

@@ -240,6 +240,17 @@ exports.Prisma.SchoolCommunicationPolicyScalarFieldEnum = {
   schoolId: 'schoolId'
 };
 
+exports.Prisma.SchoolCommunicationRouteScalarFieldEnum = {
+  id: 'id',
+  category: 'category',
+  target: 'target',
+  selectedTeacherId: 'selectedTeacherId',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId'
+};
+
 exports.Prisma.TeacherAccountabilitySettingScalarFieldEnum = {
   id: 'id',
   attendanceOpenMinutesBeforeLesson: 'attendanceOpenMinutesBeforeLesson',
@@ -1015,6 +1026,21 @@ exports.ParentSummaryCadence = exports.$Enums.ParentSummaryCadence = {
   OFF: 'OFF'
 };
 
+exports.ParentTeacherContactCategory = exports.$Enums.ParentTeacherContactCategory = {
+  ATTENDANCE: 'ATTENDANCE',
+  ACADEMIC_SUPPORT: 'ACADEMIC_SUPPORT',
+  HOMEWORK: 'HOMEWORK',
+  WELLBEING: 'WELLBEING',
+  GENERAL: 'GENERAL'
+};
+
+exports.ParentTeacherContactRouteTarget = exports.$Enums.ParentTeacherContactRouteTarget = {
+  SUBJECT_TEACHER: 'SUBJECT_TEACHER',
+  CLASS_TEACHER: 'CLASS_TEACHER',
+  SELECTED_TEACHER: 'SELECTED_TEACHER',
+  SCHOOL_OFFICE: 'SCHOOL_OFFICE'
+};
+
 exports.TeacherObligationType = exports.$Enums.TeacherObligationType = {
   ATTENDANCE: 'ATTENDANCE',
   CA_SCORE_PUBLISHING: 'CA_SCORE_PUBLISHING',
@@ -1111,14 +1137,6 @@ exports.ParentDeliveryStatus = exports.$Enums.ParentDeliveryStatus = {
   SENT: 'SENT',
   FAILED: 'FAILED',
   SKIPPED: 'SKIPPED'
-};
-
-exports.ParentTeacherContactCategory = exports.$Enums.ParentTeacherContactCategory = {
-  ATTENDANCE: 'ATTENDANCE',
-  ACADEMIC_SUPPORT: 'ACADEMIC_SUPPORT',
-  HOMEWORK: 'HOMEWORK',
-  WELLBEING: 'WELLBEING',
-  GENERAL: 'GENERAL'
 };
 
 exports.ParentTeacherContactChannel = exports.$Enums.ParentTeacherContactChannel = {
@@ -1379,6 +1397,7 @@ exports.Prisma.ModelName = {
   Parent: 'Parent',
   SchoolNotificationSetting: 'SchoolNotificationSetting',
   SchoolCommunicationPolicy: 'SchoolCommunicationPolicy',
+  SchoolCommunicationRoute: 'SchoolCommunicationRoute',
   TeacherAccountabilitySetting: 'TeacherAccountabilitySetting',
   TeacherObligation: 'TeacherObligation',
   TeacherReminder: 'TeacherReminder',

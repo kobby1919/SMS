@@ -49,6 +49,11 @@ export type SchoolNotificationSetting = $Result.DefaultSelection<Prisma.$SchoolN
  */
 export type SchoolCommunicationPolicy = $Result.DefaultSelection<Prisma.$SchoolCommunicationPolicyPayload>
 /**
+ * Model SchoolCommunicationRoute
+ * 
+ */
+export type SchoolCommunicationRoute = $Result.DefaultSelection<Prisma.$SchoolCommunicationRoutePayload>
+/**
  * Model TeacherAccountabilitySetting
  * 
  */
@@ -687,6 +692,16 @@ export const ParentTeacherContactStatus: {
 export type ParentTeacherContactStatus = (typeof ParentTeacherContactStatus)[keyof typeof ParentTeacherContactStatus]
 
 
+export const ParentTeacherContactRouteTarget: {
+  SUBJECT_TEACHER: 'SUBJECT_TEACHER',
+  CLASS_TEACHER: 'CLASS_TEACHER',
+  SELECTED_TEACHER: 'SELECTED_TEACHER',
+  SCHOOL_OFFICE: 'SCHOOL_OFFICE'
+};
+
+export type ParentTeacherContactRouteTarget = (typeof ParentTeacherContactRouteTarget)[keyof typeof ParentTeacherContactRouteTarget]
+
+
 export const ParentDeliveryStatus: {
   PENDING: 'PENDING',
   SENT: 'SENT',
@@ -958,6 +973,10 @@ export type ParentTeacherContactStatus = $Enums.ParentTeacherContactStatus
 
 export const ParentTeacherContactStatus: typeof $Enums.ParentTeacherContactStatus
 
+export type ParentTeacherContactRouteTarget = $Enums.ParentTeacherContactRouteTarget
+
+export const ParentTeacherContactRouteTarget: typeof $Enums.ParentTeacherContactRouteTarget
+
 export type ParentDeliveryStatus = $Enums.ParentDeliveryStatus
 
 export const ParentDeliveryStatus: typeof $Enums.ParentDeliveryStatus
@@ -1192,6 +1211,16 @@ export class PrismaClient<
     * ```
     */
   get schoolCommunicationPolicy(): Prisma.SchoolCommunicationPolicyDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.schoolCommunicationRoute`: Exposes CRUD operations for the **SchoolCommunicationRoute** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SchoolCommunicationRoutes
+    * const schoolCommunicationRoutes = await prisma.schoolCommunicationRoute.findMany()
+    * ```
+    */
+  get schoolCommunicationRoute(): Prisma.SchoolCommunicationRouteDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.teacherAccountabilitySetting`: Exposes CRUD operations for the **TeacherAccountabilitySetting** model.
@@ -2133,6 +2162,7 @@ export namespace Prisma {
     Parent: 'Parent',
     SchoolNotificationSetting: 'SchoolNotificationSetting',
     SchoolCommunicationPolicy: 'SchoolCommunicationPolicy',
+    SchoolCommunicationRoute: 'SchoolCommunicationRoute',
     TeacherAccountabilitySetting: 'TeacherAccountabilitySetting',
     TeacherObligation: 'TeacherObligation',
     TeacherReminder: 'TeacherReminder',
@@ -2198,7 +2228,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "schoolNotificationSetting" | "schoolCommunicationPolicy" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentTeacherContactRequest" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
+      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "schoolNotificationSetting" | "schoolCommunicationPolicy" | "schoolCommunicationRoute" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentTeacherContactRequest" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2717,6 +2747,80 @@ export namespace Prisma {
           count: {
             args: Prisma.SchoolCommunicationPolicyCountArgs<ExtArgs>
             result: $Utils.Optional<SchoolCommunicationPolicyCountAggregateOutputType> | number
+          }
+        }
+      }
+      SchoolCommunicationRoute: {
+        payload: Prisma.$SchoolCommunicationRoutePayload<ExtArgs>
+        fields: Prisma.SchoolCommunicationRouteFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SchoolCommunicationRouteFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolCommunicationRoutePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SchoolCommunicationRouteFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolCommunicationRoutePayload>
+          }
+          findFirst: {
+            args: Prisma.SchoolCommunicationRouteFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolCommunicationRoutePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SchoolCommunicationRouteFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolCommunicationRoutePayload>
+          }
+          findMany: {
+            args: Prisma.SchoolCommunicationRouteFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolCommunicationRoutePayload>[]
+          }
+          create: {
+            args: Prisma.SchoolCommunicationRouteCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolCommunicationRoutePayload>
+          }
+          createMany: {
+            args: Prisma.SchoolCommunicationRouteCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SchoolCommunicationRouteCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolCommunicationRoutePayload>[]
+          }
+          delete: {
+            args: Prisma.SchoolCommunicationRouteDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolCommunicationRoutePayload>
+          }
+          update: {
+            args: Prisma.SchoolCommunicationRouteUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolCommunicationRoutePayload>
+          }
+          deleteMany: {
+            args: Prisma.SchoolCommunicationRouteDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SchoolCommunicationRouteUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SchoolCommunicationRouteUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolCommunicationRoutePayload>[]
+          }
+          upsert: {
+            args: Prisma.SchoolCommunicationRouteUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolCommunicationRoutePayload>
+          }
+          aggregate: {
+            args: Prisma.SchoolCommunicationRouteAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSchoolCommunicationRoute>
+          }
+          groupBy: {
+            args: Prisma.SchoolCommunicationRouteGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SchoolCommunicationRouteGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SchoolCommunicationRouteCountArgs<ExtArgs>
+            result: $Utils.Optional<SchoolCommunicationRouteCountAggregateOutputType> | number
           }
         }
       }
@@ -6535,6 +6639,7 @@ export namespace Prisma {
     parent?: ParentOmit
     schoolNotificationSetting?: SchoolNotificationSettingOmit
     schoolCommunicationPolicy?: SchoolCommunicationPolicyOmit
+    schoolCommunicationRoute?: SchoolCommunicationRouteOmit
     teacherAccountabilitySetting?: TeacherAccountabilitySettingOmit
     teacherObligation?: TeacherObligationOmit
     teacherReminder?: TeacherReminderOmit
@@ -6706,6 +6811,7 @@ export namespace Prisma {
     paymentWebhookEvents: number
     parentNotifications: number
     parentActivityEvents: number
+    communicationRoutes: number
     teacherObligations: number
     teacherReminders: number
     teacherEscalations: number
@@ -6758,6 +6864,7 @@ export namespace Prisma {
     paymentWebhookEvents?: boolean | SchoolCountOutputTypeCountPaymentWebhookEventsArgs
     parentNotifications?: boolean | SchoolCountOutputTypeCountParentNotificationsArgs
     parentActivityEvents?: boolean | SchoolCountOutputTypeCountParentActivityEventsArgs
+    communicationRoutes?: boolean | SchoolCountOutputTypeCountCommunicationRoutesArgs
     teacherObligations?: boolean | SchoolCountOutputTypeCountTeacherObligationsArgs
     teacherReminders?: boolean | SchoolCountOutputTypeCountTeacherRemindersArgs
     teacherEscalations?: boolean | SchoolCountOutputTypeCountTeacherEscalationsArgs
@@ -7069,6 +7176,13 @@ export namespace Prisma {
   /**
    * SchoolCountOutputType without action
    */
+  export type SchoolCountOutputTypeCountCommunicationRoutesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SchoolCommunicationRouteWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
   export type SchoolCountOutputTypeCountTeacherObligationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TeacherObligationWhereInput
   }
@@ -7264,6 +7378,7 @@ export namespace Prisma {
     accountabilityEscalations: number
     correctionRequests: number
     parentContactRequests: number
+    communicationRouteTargets: number
     accountabilityAuditLogs: number
   }
 
@@ -7283,6 +7398,7 @@ export namespace Prisma {
     accountabilityEscalations?: boolean | TeacherCountOutputTypeCountAccountabilityEscalationsArgs
     correctionRequests?: boolean | TeacherCountOutputTypeCountCorrectionRequestsArgs
     parentContactRequests?: boolean | TeacherCountOutputTypeCountParentContactRequestsArgs
+    communicationRouteTargets?: boolean | TeacherCountOutputTypeCountCommunicationRouteTargetsArgs
     accountabilityAuditLogs?: boolean | TeacherCountOutputTypeCountAccountabilityAuditLogsArgs
   }
 
@@ -7400,6 +7516,13 @@ export namespace Prisma {
    */
   export type TeacherCountOutputTypeCountParentContactRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ParentTeacherContactRequestWhereInput
+  }
+
+  /**
+   * TeacherCountOutputType without action
+   */
+  export type TeacherCountOutputTypeCountCommunicationRouteTargetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SchoolCommunicationRouteWhereInput
   }
 
   /**
@@ -8563,6 +8686,7 @@ export namespace Prisma {
     parentActivityEvents?: boolean | School$parentActivityEventsArgs<ExtArgs>
     notificationSettings?: boolean | School$notificationSettingsArgs<ExtArgs>
     communicationPolicy?: boolean | School$communicationPolicyArgs<ExtArgs>
+    communicationRoutes?: boolean | School$communicationRoutesArgs<ExtArgs>
     accountabilitySettings?: boolean | School$accountabilitySettingsArgs<ExtArgs>
     teacherObligations?: boolean | School$teacherObligationsArgs<ExtArgs>
     teacherReminders?: boolean | School$teacherRemindersArgs<ExtArgs>
@@ -8680,6 +8804,7 @@ export namespace Prisma {
     parentActivityEvents?: boolean | School$parentActivityEventsArgs<ExtArgs>
     notificationSettings?: boolean | School$notificationSettingsArgs<ExtArgs>
     communicationPolicy?: boolean | School$communicationPolicyArgs<ExtArgs>
+    communicationRoutes?: boolean | School$communicationRoutesArgs<ExtArgs>
     accountabilitySettings?: boolean | School$accountabilitySettingsArgs<ExtArgs>
     teacherObligations?: boolean | School$teacherObligationsArgs<ExtArgs>
     teacherReminders?: boolean | School$teacherRemindersArgs<ExtArgs>
@@ -8740,6 +8865,7 @@ export namespace Prisma {
       parentActivityEvents: Prisma.$ParentActivityEventPayload<ExtArgs>[]
       notificationSettings: Prisma.$SchoolNotificationSettingPayload<ExtArgs> | null
       communicationPolicy: Prisma.$SchoolCommunicationPolicyPayload<ExtArgs> | null
+      communicationRoutes: Prisma.$SchoolCommunicationRoutePayload<ExtArgs>[]
       accountabilitySettings: Prisma.$TeacherAccountabilitySettingPayload<ExtArgs> | null
       teacherObligations: Prisma.$TeacherObligationPayload<ExtArgs>[]
       teacherReminders: Prisma.$TeacherReminderPayload<ExtArgs>[]
@@ -9205,6 +9331,7 @@ export namespace Prisma {
     parentActivityEvents<T extends School$parentActivityEventsArgs<ExtArgs> = {}>(args?: Subset<T, School$parentActivityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentActivityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notificationSettings<T extends School$notificationSettingsArgs<ExtArgs> = {}>(args?: Subset<T, School$notificationSettingsArgs<ExtArgs>>): Prisma__SchoolNotificationSettingClient<$Result.GetResult<Prisma.$SchoolNotificationSettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     communicationPolicy<T extends School$communicationPolicyArgs<ExtArgs> = {}>(args?: Subset<T, School$communicationPolicyArgs<ExtArgs>>): Prisma__SchoolCommunicationPolicyClient<$Result.GetResult<Prisma.$SchoolCommunicationPolicyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    communicationRoutes<T extends School$communicationRoutesArgs<ExtArgs> = {}>(args?: Subset<T, School$communicationRoutesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolCommunicationRoutePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accountabilitySettings<T extends School$accountabilitySettingsArgs<ExtArgs> = {}>(args?: Subset<T, School$accountabilitySettingsArgs<ExtArgs>>): Prisma__TeacherAccountabilitySettingClient<$Result.GetResult<Prisma.$TeacherAccountabilitySettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     teacherObligations<T extends School$teacherObligationsArgs<ExtArgs> = {}>(args?: Subset<T, School$teacherObligationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherObligationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teacherReminders<T extends School$teacherRemindersArgs<ExtArgs> = {}>(args?: Subset<T, School$teacherRemindersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherReminderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -10672,6 +10799,30 @@ export namespace Prisma {
      */
     include?: SchoolCommunicationPolicyInclude<ExtArgs> | null
     where?: SchoolCommunicationPolicyWhereInput
+  }
+
+  /**
+   * School.communicationRoutes
+   */
+  export type School$communicationRoutesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolCommunicationRoute
+     */
+    select?: SchoolCommunicationRouteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolCommunicationRoute
+     */
+    omit?: SchoolCommunicationRouteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolCommunicationRouteInclude<ExtArgs> | null
+    where?: SchoolCommunicationRouteWhereInput
+    orderBy?: SchoolCommunicationRouteOrderByWithRelationInput | SchoolCommunicationRouteOrderByWithRelationInput[]
+    cursor?: SchoolCommunicationRouteWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SchoolCommunicationRouteScalarFieldEnum | SchoolCommunicationRouteScalarFieldEnum[]
   }
 
   /**
@@ -13784,6 +13935,7 @@ export namespace Prisma {
     accountabilityEscalations?: boolean | Teacher$accountabilityEscalationsArgs<ExtArgs>
     correctionRequests?: boolean | Teacher$correctionRequestsArgs<ExtArgs>
     parentContactRequests?: boolean | Teacher$parentContactRequestsArgs<ExtArgs>
+    communicationRouteTargets?: boolean | Teacher$communicationRouteTargetsArgs<ExtArgs>
     accountabilityAuditLogs?: boolean | Teacher$accountabilityAuditLogsArgs<ExtArgs>
     _count?: boolean | TeacherCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["teacher"]>
@@ -13856,6 +14008,7 @@ export namespace Prisma {
     accountabilityEscalations?: boolean | Teacher$accountabilityEscalationsArgs<ExtArgs>
     correctionRequests?: boolean | Teacher$correctionRequestsArgs<ExtArgs>
     parentContactRequests?: boolean | Teacher$parentContactRequestsArgs<ExtArgs>
+    communicationRouteTargets?: boolean | Teacher$communicationRouteTargetsArgs<ExtArgs>
     accountabilityAuditLogs?: boolean | Teacher$accountabilityAuditLogsArgs<ExtArgs>
     _count?: boolean | TeacherCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -13885,6 +14038,7 @@ export namespace Prisma {
       accountabilityEscalations: Prisma.$TeacherEscalationPayload<ExtArgs>[]
       correctionRequests: Prisma.$TeacherCorrectionRequestPayload<ExtArgs>[]
       parentContactRequests: Prisma.$ParentTeacherContactRequestPayload<ExtArgs>[]
+      communicationRouteTargets: Prisma.$SchoolCommunicationRoutePayload<ExtArgs>[]
       accountabilityAuditLogs: Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -14311,6 +14465,7 @@ export namespace Prisma {
     accountabilityEscalations<T extends Teacher$accountabilityEscalationsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$accountabilityEscalationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherEscalationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     correctionRequests<T extends Teacher$correctionRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$correctionRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherCorrectionRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentContactRequests<T extends Teacher$parentContactRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$parentContactRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentTeacherContactRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    communicationRouteTargets<T extends Teacher$communicationRouteTargetsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$communicationRouteTargetsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolCommunicationRoutePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accountabilityAuditLogs<T extends Teacher$accountabilityAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, Teacher$accountabilityAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherAccountabilityAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -15112,6 +15267,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ParentTeacherContactRequestScalarFieldEnum | ParentTeacherContactRequestScalarFieldEnum[]
+  }
+
+  /**
+   * Teacher.communicationRouteTargets
+   */
+  export type Teacher$communicationRouteTargetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolCommunicationRoute
+     */
+    select?: SchoolCommunicationRouteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolCommunicationRoute
+     */
+    omit?: SchoolCommunicationRouteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolCommunicationRouteInclude<ExtArgs> | null
+    where?: SchoolCommunicationRouteWhereInput
+    orderBy?: SchoolCommunicationRouteOrderByWithRelationInput | SchoolCommunicationRouteOrderByWithRelationInput[]
+    cursor?: SchoolCommunicationRouteWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SchoolCommunicationRouteScalarFieldEnum | SchoolCommunicationRouteScalarFieldEnum[]
   }
 
   /**
@@ -19038,6 +19217,1135 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: SchoolCommunicationPolicyInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SchoolCommunicationRoute
+   */
+
+  export type AggregateSchoolCommunicationRoute = {
+    _count: SchoolCommunicationRouteCountAggregateOutputType | null
+    _min: SchoolCommunicationRouteMinAggregateOutputType | null
+    _max: SchoolCommunicationRouteMaxAggregateOutputType | null
+  }
+
+  export type SchoolCommunicationRouteMinAggregateOutputType = {
+    id: string | null
+    category: $Enums.ParentTeacherContactCategory | null
+    target: $Enums.ParentTeacherContactRouteTarget | null
+    selectedTeacherId: string | null
+    notes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+  }
+
+  export type SchoolCommunicationRouteMaxAggregateOutputType = {
+    id: string | null
+    category: $Enums.ParentTeacherContactCategory | null
+    target: $Enums.ParentTeacherContactRouteTarget | null
+    selectedTeacherId: string | null
+    notes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+  }
+
+  export type SchoolCommunicationRouteCountAggregateOutputType = {
+    id: number
+    category: number
+    target: number
+    selectedTeacherId: number
+    notes: number
+    createdAt: number
+    updatedAt: number
+    schoolId: number
+    _all: number
+  }
+
+
+  export type SchoolCommunicationRouteMinAggregateInputType = {
+    id?: true
+    category?: true
+    target?: true
+    selectedTeacherId?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+  }
+
+  export type SchoolCommunicationRouteMaxAggregateInputType = {
+    id?: true
+    category?: true
+    target?: true
+    selectedTeacherId?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+  }
+
+  export type SchoolCommunicationRouteCountAggregateInputType = {
+    id?: true
+    category?: true
+    target?: true
+    selectedTeacherId?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    _all?: true
+  }
+
+  export type SchoolCommunicationRouteAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SchoolCommunicationRoute to aggregate.
+     */
+    where?: SchoolCommunicationRouteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SchoolCommunicationRoutes to fetch.
+     */
+    orderBy?: SchoolCommunicationRouteOrderByWithRelationInput | SchoolCommunicationRouteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SchoolCommunicationRouteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SchoolCommunicationRoutes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SchoolCommunicationRoutes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SchoolCommunicationRoutes
+    **/
+    _count?: true | SchoolCommunicationRouteCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SchoolCommunicationRouteMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SchoolCommunicationRouteMaxAggregateInputType
+  }
+
+  export type GetSchoolCommunicationRouteAggregateType<T extends SchoolCommunicationRouteAggregateArgs> = {
+        [P in keyof T & keyof AggregateSchoolCommunicationRoute]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSchoolCommunicationRoute[P]>
+      : GetScalarType<T[P], AggregateSchoolCommunicationRoute[P]>
+  }
+
+
+
+
+  export type SchoolCommunicationRouteGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SchoolCommunicationRouteWhereInput
+    orderBy?: SchoolCommunicationRouteOrderByWithAggregationInput | SchoolCommunicationRouteOrderByWithAggregationInput[]
+    by: SchoolCommunicationRouteScalarFieldEnum[] | SchoolCommunicationRouteScalarFieldEnum
+    having?: SchoolCommunicationRouteScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SchoolCommunicationRouteCountAggregateInputType | true
+    _min?: SchoolCommunicationRouteMinAggregateInputType
+    _max?: SchoolCommunicationRouteMaxAggregateInputType
+  }
+
+  export type SchoolCommunicationRouteGroupByOutputType = {
+    id: string
+    category: $Enums.ParentTeacherContactCategory
+    target: $Enums.ParentTeacherContactRouteTarget
+    selectedTeacherId: string | null
+    notes: string | null
+    createdAt: Date
+    updatedAt: Date
+    schoolId: string
+    _count: SchoolCommunicationRouteCountAggregateOutputType | null
+    _min: SchoolCommunicationRouteMinAggregateOutputType | null
+    _max: SchoolCommunicationRouteMaxAggregateOutputType | null
+  }
+
+  type GetSchoolCommunicationRouteGroupByPayload<T extends SchoolCommunicationRouteGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SchoolCommunicationRouteGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SchoolCommunicationRouteGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SchoolCommunicationRouteGroupByOutputType[P]>
+            : GetScalarType<T[P], SchoolCommunicationRouteGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SchoolCommunicationRouteSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    category?: boolean
+    target?: boolean
+    selectedTeacherId?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    selectedTeacher?: boolean | SchoolCommunicationRoute$selectedTeacherArgs<ExtArgs>
+  }, ExtArgs["result"]["schoolCommunicationRoute"]>
+
+  export type SchoolCommunicationRouteSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    category?: boolean
+    target?: boolean
+    selectedTeacherId?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    selectedTeacher?: boolean | SchoolCommunicationRoute$selectedTeacherArgs<ExtArgs>
+  }, ExtArgs["result"]["schoolCommunicationRoute"]>
+
+  export type SchoolCommunicationRouteSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    category?: boolean
+    target?: boolean
+    selectedTeacherId?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    selectedTeacher?: boolean | SchoolCommunicationRoute$selectedTeacherArgs<ExtArgs>
+  }, ExtArgs["result"]["schoolCommunicationRoute"]>
+
+  export type SchoolCommunicationRouteSelectScalar = {
+    id?: boolean
+    category?: boolean
+    target?: boolean
+    selectedTeacherId?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+  }
+
+  export type SchoolCommunicationRouteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "category" | "target" | "selectedTeacherId" | "notes" | "createdAt" | "updatedAt" | "schoolId", ExtArgs["result"]["schoolCommunicationRoute"]>
+  export type SchoolCommunicationRouteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    selectedTeacher?: boolean | SchoolCommunicationRoute$selectedTeacherArgs<ExtArgs>
+  }
+  export type SchoolCommunicationRouteIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    selectedTeacher?: boolean | SchoolCommunicationRoute$selectedTeacherArgs<ExtArgs>
+  }
+  export type SchoolCommunicationRouteIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    selectedTeacher?: boolean | SchoolCommunicationRoute$selectedTeacherArgs<ExtArgs>
+  }
+
+  export type $SchoolCommunicationRoutePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SchoolCommunicationRoute"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      selectedTeacher: Prisma.$TeacherPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      category: $Enums.ParentTeacherContactCategory
+      target: $Enums.ParentTeacherContactRouteTarget
+      selectedTeacherId: string | null
+      notes: string | null
+      createdAt: Date
+      updatedAt: Date
+      schoolId: string
+    }, ExtArgs["result"]["schoolCommunicationRoute"]>
+    composites: {}
+  }
+
+  type SchoolCommunicationRouteGetPayload<S extends boolean | null | undefined | SchoolCommunicationRouteDefaultArgs> = $Result.GetResult<Prisma.$SchoolCommunicationRoutePayload, S>
+
+  type SchoolCommunicationRouteCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SchoolCommunicationRouteFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SchoolCommunicationRouteCountAggregateInputType | true
+    }
+
+  export interface SchoolCommunicationRouteDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SchoolCommunicationRoute'], meta: { name: 'SchoolCommunicationRoute' } }
+    /**
+     * Find zero or one SchoolCommunicationRoute that matches the filter.
+     * @param {SchoolCommunicationRouteFindUniqueArgs} args - Arguments to find a SchoolCommunicationRoute
+     * @example
+     * // Get one SchoolCommunicationRoute
+     * const schoolCommunicationRoute = await prisma.schoolCommunicationRoute.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SchoolCommunicationRouteFindUniqueArgs>(args: SelectSubset<T, SchoolCommunicationRouteFindUniqueArgs<ExtArgs>>): Prisma__SchoolCommunicationRouteClient<$Result.GetResult<Prisma.$SchoolCommunicationRoutePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SchoolCommunicationRoute that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SchoolCommunicationRouteFindUniqueOrThrowArgs} args - Arguments to find a SchoolCommunicationRoute
+     * @example
+     * // Get one SchoolCommunicationRoute
+     * const schoolCommunicationRoute = await prisma.schoolCommunicationRoute.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SchoolCommunicationRouteFindUniqueOrThrowArgs>(args: SelectSubset<T, SchoolCommunicationRouteFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SchoolCommunicationRouteClient<$Result.GetResult<Prisma.$SchoolCommunicationRoutePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SchoolCommunicationRoute that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolCommunicationRouteFindFirstArgs} args - Arguments to find a SchoolCommunicationRoute
+     * @example
+     * // Get one SchoolCommunicationRoute
+     * const schoolCommunicationRoute = await prisma.schoolCommunicationRoute.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SchoolCommunicationRouteFindFirstArgs>(args?: SelectSubset<T, SchoolCommunicationRouteFindFirstArgs<ExtArgs>>): Prisma__SchoolCommunicationRouteClient<$Result.GetResult<Prisma.$SchoolCommunicationRoutePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SchoolCommunicationRoute that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolCommunicationRouteFindFirstOrThrowArgs} args - Arguments to find a SchoolCommunicationRoute
+     * @example
+     * // Get one SchoolCommunicationRoute
+     * const schoolCommunicationRoute = await prisma.schoolCommunicationRoute.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SchoolCommunicationRouteFindFirstOrThrowArgs>(args?: SelectSubset<T, SchoolCommunicationRouteFindFirstOrThrowArgs<ExtArgs>>): Prisma__SchoolCommunicationRouteClient<$Result.GetResult<Prisma.$SchoolCommunicationRoutePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SchoolCommunicationRoutes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolCommunicationRouteFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SchoolCommunicationRoutes
+     * const schoolCommunicationRoutes = await prisma.schoolCommunicationRoute.findMany()
+     * 
+     * // Get first 10 SchoolCommunicationRoutes
+     * const schoolCommunicationRoutes = await prisma.schoolCommunicationRoute.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const schoolCommunicationRouteWithIdOnly = await prisma.schoolCommunicationRoute.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SchoolCommunicationRouteFindManyArgs>(args?: SelectSubset<T, SchoolCommunicationRouteFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolCommunicationRoutePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SchoolCommunicationRoute.
+     * @param {SchoolCommunicationRouteCreateArgs} args - Arguments to create a SchoolCommunicationRoute.
+     * @example
+     * // Create one SchoolCommunicationRoute
+     * const SchoolCommunicationRoute = await prisma.schoolCommunicationRoute.create({
+     *   data: {
+     *     // ... data to create a SchoolCommunicationRoute
+     *   }
+     * })
+     * 
+     */
+    create<T extends SchoolCommunicationRouteCreateArgs>(args: SelectSubset<T, SchoolCommunicationRouteCreateArgs<ExtArgs>>): Prisma__SchoolCommunicationRouteClient<$Result.GetResult<Prisma.$SchoolCommunicationRoutePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SchoolCommunicationRoutes.
+     * @param {SchoolCommunicationRouteCreateManyArgs} args - Arguments to create many SchoolCommunicationRoutes.
+     * @example
+     * // Create many SchoolCommunicationRoutes
+     * const schoolCommunicationRoute = await prisma.schoolCommunicationRoute.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SchoolCommunicationRouteCreateManyArgs>(args?: SelectSubset<T, SchoolCommunicationRouteCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SchoolCommunicationRoutes and returns the data saved in the database.
+     * @param {SchoolCommunicationRouteCreateManyAndReturnArgs} args - Arguments to create many SchoolCommunicationRoutes.
+     * @example
+     * // Create many SchoolCommunicationRoutes
+     * const schoolCommunicationRoute = await prisma.schoolCommunicationRoute.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SchoolCommunicationRoutes and only return the `id`
+     * const schoolCommunicationRouteWithIdOnly = await prisma.schoolCommunicationRoute.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SchoolCommunicationRouteCreateManyAndReturnArgs>(args?: SelectSubset<T, SchoolCommunicationRouteCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolCommunicationRoutePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SchoolCommunicationRoute.
+     * @param {SchoolCommunicationRouteDeleteArgs} args - Arguments to delete one SchoolCommunicationRoute.
+     * @example
+     * // Delete one SchoolCommunicationRoute
+     * const SchoolCommunicationRoute = await prisma.schoolCommunicationRoute.delete({
+     *   where: {
+     *     // ... filter to delete one SchoolCommunicationRoute
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SchoolCommunicationRouteDeleteArgs>(args: SelectSubset<T, SchoolCommunicationRouteDeleteArgs<ExtArgs>>): Prisma__SchoolCommunicationRouteClient<$Result.GetResult<Prisma.$SchoolCommunicationRoutePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SchoolCommunicationRoute.
+     * @param {SchoolCommunicationRouteUpdateArgs} args - Arguments to update one SchoolCommunicationRoute.
+     * @example
+     * // Update one SchoolCommunicationRoute
+     * const schoolCommunicationRoute = await prisma.schoolCommunicationRoute.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SchoolCommunicationRouteUpdateArgs>(args: SelectSubset<T, SchoolCommunicationRouteUpdateArgs<ExtArgs>>): Prisma__SchoolCommunicationRouteClient<$Result.GetResult<Prisma.$SchoolCommunicationRoutePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SchoolCommunicationRoutes.
+     * @param {SchoolCommunicationRouteDeleteManyArgs} args - Arguments to filter SchoolCommunicationRoutes to delete.
+     * @example
+     * // Delete a few SchoolCommunicationRoutes
+     * const { count } = await prisma.schoolCommunicationRoute.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SchoolCommunicationRouteDeleteManyArgs>(args?: SelectSubset<T, SchoolCommunicationRouteDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SchoolCommunicationRoutes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolCommunicationRouteUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SchoolCommunicationRoutes
+     * const schoolCommunicationRoute = await prisma.schoolCommunicationRoute.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SchoolCommunicationRouteUpdateManyArgs>(args: SelectSubset<T, SchoolCommunicationRouteUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SchoolCommunicationRoutes and returns the data updated in the database.
+     * @param {SchoolCommunicationRouteUpdateManyAndReturnArgs} args - Arguments to update many SchoolCommunicationRoutes.
+     * @example
+     * // Update many SchoolCommunicationRoutes
+     * const schoolCommunicationRoute = await prisma.schoolCommunicationRoute.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SchoolCommunicationRoutes and only return the `id`
+     * const schoolCommunicationRouteWithIdOnly = await prisma.schoolCommunicationRoute.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SchoolCommunicationRouteUpdateManyAndReturnArgs>(args: SelectSubset<T, SchoolCommunicationRouteUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolCommunicationRoutePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SchoolCommunicationRoute.
+     * @param {SchoolCommunicationRouteUpsertArgs} args - Arguments to update or create a SchoolCommunicationRoute.
+     * @example
+     * // Update or create a SchoolCommunicationRoute
+     * const schoolCommunicationRoute = await prisma.schoolCommunicationRoute.upsert({
+     *   create: {
+     *     // ... data to create a SchoolCommunicationRoute
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SchoolCommunicationRoute we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SchoolCommunicationRouteUpsertArgs>(args: SelectSubset<T, SchoolCommunicationRouteUpsertArgs<ExtArgs>>): Prisma__SchoolCommunicationRouteClient<$Result.GetResult<Prisma.$SchoolCommunicationRoutePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SchoolCommunicationRoutes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolCommunicationRouteCountArgs} args - Arguments to filter SchoolCommunicationRoutes to count.
+     * @example
+     * // Count the number of SchoolCommunicationRoutes
+     * const count = await prisma.schoolCommunicationRoute.count({
+     *   where: {
+     *     // ... the filter for the SchoolCommunicationRoutes we want to count
+     *   }
+     * })
+    **/
+    count<T extends SchoolCommunicationRouteCountArgs>(
+      args?: Subset<T, SchoolCommunicationRouteCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SchoolCommunicationRouteCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SchoolCommunicationRoute.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolCommunicationRouteAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SchoolCommunicationRouteAggregateArgs>(args: Subset<T, SchoolCommunicationRouteAggregateArgs>): Prisma.PrismaPromise<GetSchoolCommunicationRouteAggregateType<T>>
+
+    /**
+     * Group by SchoolCommunicationRoute.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolCommunicationRouteGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SchoolCommunicationRouteGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SchoolCommunicationRouteGroupByArgs['orderBy'] }
+        : { orderBy?: SchoolCommunicationRouteGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SchoolCommunicationRouteGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSchoolCommunicationRouteGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SchoolCommunicationRoute model
+   */
+  readonly fields: SchoolCommunicationRouteFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SchoolCommunicationRoute.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SchoolCommunicationRouteClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    selectedTeacher<T extends SchoolCommunicationRoute$selectedTeacherArgs<ExtArgs> = {}>(args?: Subset<T, SchoolCommunicationRoute$selectedTeacherArgs<ExtArgs>>): Prisma__TeacherClient<$Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SchoolCommunicationRoute model
+   */
+  interface SchoolCommunicationRouteFieldRefs {
+    readonly id: FieldRef<"SchoolCommunicationRoute", 'String'>
+    readonly category: FieldRef<"SchoolCommunicationRoute", 'ParentTeacherContactCategory'>
+    readonly target: FieldRef<"SchoolCommunicationRoute", 'ParentTeacherContactRouteTarget'>
+    readonly selectedTeacherId: FieldRef<"SchoolCommunicationRoute", 'String'>
+    readonly notes: FieldRef<"SchoolCommunicationRoute", 'String'>
+    readonly createdAt: FieldRef<"SchoolCommunicationRoute", 'DateTime'>
+    readonly updatedAt: FieldRef<"SchoolCommunicationRoute", 'DateTime'>
+    readonly schoolId: FieldRef<"SchoolCommunicationRoute", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SchoolCommunicationRoute findUnique
+   */
+  export type SchoolCommunicationRouteFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolCommunicationRoute
+     */
+    select?: SchoolCommunicationRouteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolCommunicationRoute
+     */
+    omit?: SchoolCommunicationRouteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolCommunicationRouteInclude<ExtArgs> | null
+    /**
+     * Filter, which SchoolCommunicationRoute to fetch.
+     */
+    where: SchoolCommunicationRouteWhereUniqueInput
+  }
+
+  /**
+   * SchoolCommunicationRoute findUniqueOrThrow
+   */
+  export type SchoolCommunicationRouteFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolCommunicationRoute
+     */
+    select?: SchoolCommunicationRouteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolCommunicationRoute
+     */
+    omit?: SchoolCommunicationRouteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolCommunicationRouteInclude<ExtArgs> | null
+    /**
+     * Filter, which SchoolCommunicationRoute to fetch.
+     */
+    where: SchoolCommunicationRouteWhereUniqueInput
+  }
+
+  /**
+   * SchoolCommunicationRoute findFirst
+   */
+  export type SchoolCommunicationRouteFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolCommunicationRoute
+     */
+    select?: SchoolCommunicationRouteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolCommunicationRoute
+     */
+    omit?: SchoolCommunicationRouteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolCommunicationRouteInclude<ExtArgs> | null
+    /**
+     * Filter, which SchoolCommunicationRoute to fetch.
+     */
+    where?: SchoolCommunicationRouteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SchoolCommunicationRoutes to fetch.
+     */
+    orderBy?: SchoolCommunicationRouteOrderByWithRelationInput | SchoolCommunicationRouteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SchoolCommunicationRoutes.
+     */
+    cursor?: SchoolCommunicationRouteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SchoolCommunicationRoutes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SchoolCommunicationRoutes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SchoolCommunicationRoutes.
+     */
+    distinct?: SchoolCommunicationRouteScalarFieldEnum | SchoolCommunicationRouteScalarFieldEnum[]
+  }
+
+  /**
+   * SchoolCommunicationRoute findFirstOrThrow
+   */
+  export type SchoolCommunicationRouteFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolCommunicationRoute
+     */
+    select?: SchoolCommunicationRouteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolCommunicationRoute
+     */
+    omit?: SchoolCommunicationRouteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolCommunicationRouteInclude<ExtArgs> | null
+    /**
+     * Filter, which SchoolCommunicationRoute to fetch.
+     */
+    where?: SchoolCommunicationRouteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SchoolCommunicationRoutes to fetch.
+     */
+    orderBy?: SchoolCommunicationRouteOrderByWithRelationInput | SchoolCommunicationRouteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SchoolCommunicationRoutes.
+     */
+    cursor?: SchoolCommunicationRouteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SchoolCommunicationRoutes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SchoolCommunicationRoutes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SchoolCommunicationRoutes.
+     */
+    distinct?: SchoolCommunicationRouteScalarFieldEnum | SchoolCommunicationRouteScalarFieldEnum[]
+  }
+
+  /**
+   * SchoolCommunicationRoute findMany
+   */
+  export type SchoolCommunicationRouteFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolCommunicationRoute
+     */
+    select?: SchoolCommunicationRouteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolCommunicationRoute
+     */
+    omit?: SchoolCommunicationRouteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolCommunicationRouteInclude<ExtArgs> | null
+    /**
+     * Filter, which SchoolCommunicationRoutes to fetch.
+     */
+    where?: SchoolCommunicationRouteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SchoolCommunicationRoutes to fetch.
+     */
+    orderBy?: SchoolCommunicationRouteOrderByWithRelationInput | SchoolCommunicationRouteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SchoolCommunicationRoutes.
+     */
+    cursor?: SchoolCommunicationRouteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SchoolCommunicationRoutes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SchoolCommunicationRoutes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SchoolCommunicationRoutes.
+     */
+    distinct?: SchoolCommunicationRouteScalarFieldEnum | SchoolCommunicationRouteScalarFieldEnum[]
+  }
+
+  /**
+   * SchoolCommunicationRoute create
+   */
+  export type SchoolCommunicationRouteCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolCommunicationRoute
+     */
+    select?: SchoolCommunicationRouteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolCommunicationRoute
+     */
+    omit?: SchoolCommunicationRouteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolCommunicationRouteInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SchoolCommunicationRoute.
+     */
+    data: XOR<SchoolCommunicationRouteCreateInput, SchoolCommunicationRouteUncheckedCreateInput>
+  }
+
+  /**
+   * SchoolCommunicationRoute createMany
+   */
+  export type SchoolCommunicationRouteCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SchoolCommunicationRoutes.
+     */
+    data: SchoolCommunicationRouteCreateManyInput | SchoolCommunicationRouteCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SchoolCommunicationRoute createManyAndReturn
+   */
+  export type SchoolCommunicationRouteCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolCommunicationRoute
+     */
+    select?: SchoolCommunicationRouteSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolCommunicationRoute
+     */
+    omit?: SchoolCommunicationRouteOmit<ExtArgs> | null
+    /**
+     * The data used to create many SchoolCommunicationRoutes.
+     */
+    data: SchoolCommunicationRouteCreateManyInput | SchoolCommunicationRouteCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolCommunicationRouteIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SchoolCommunicationRoute update
+   */
+  export type SchoolCommunicationRouteUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolCommunicationRoute
+     */
+    select?: SchoolCommunicationRouteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolCommunicationRoute
+     */
+    omit?: SchoolCommunicationRouteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolCommunicationRouteInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SchoolCommunicationRoute.
+     */
+    data: XOR<SchoolCommunicationRouteUpdateInput, SchoolCommunicationRouteUncheckedUpdateInput>
+    /**
+     * Choose, which SchoolCommunicationRoute to update.
+     */
+    where: SchoolCommunicationRouteWhereUniqueInput
+  }
+
+  /**
+   * SchoolCommunicationRoute updateMany
+   */
+  export type SchoolCommunicationRouteUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SchoolCommunicationRoutes.
+     */
+    data: XOR<SchoolCommunicationRouteUpdateManyMutationInput, SchoolCommunicationRouteUncheckedUpdateManyInput>
+    /**
+     * Filter which SchoolCommunicationRoutes to update
+     */
+    where?: SchoolCommunicationRouteWhereInput
+    /**
+     * Limit how many SchoolCommunicationRoutes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SchoolCommunicationRoute updateManyAndReturn
+   */
+  export type SchoolCommunicationRouteUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolCommunicationRoute
+     */
+    select?: SchoolCommunicationRouteSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolCommunicationRoute
+     */
+    omit?: SchoolCommunicationRouteOmit<ExtArgs> | null
+    /**
+     * The data used to update SchoolCommunicationRoutes.
+     */
+    data: XOR<SchoolCommunicationRouteUpdateManyMutationInput, SchoolCommunicationRouteUncheckedUpdateManyInput>
+    /**
+     * Filter which SchoolCommunicationRoutes to update
+     */
+    where?: SchoolCommunicationRouteWhereInput
+    /**
+     * Limit how many SchoolCommunicationRoutes to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolCommunicationRouteIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SchoolCommunicationRoute upsert
+   */
+  export type SchoolCommunicationRouteUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolCommunicationRoute
+     */
+    select?: SchoolCommunicationRouteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolCommunicationRoute
+     */
+    omit?: SchoolCommunicationRouteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolCommunicationRouteInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SchoolCommunicationRoute to update in case it exists.
+     */
+    where: SchoolCommunicationRouteWhereUniqueInput
+    /**
+     * In case the SchoolCommunicationRoute found by the `where` argument doesn't exist, create a new SchoolCommunicationRoute with this data.
+     */
+    create: XOR<SchoolCommunicationRouteCreateInput, SchoolCommunicationRouteUncheckedCreateInput>
+    /**
+     * In case the SchoolCommunicationRoute was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SchoolCommunicationRouteUpdateInput, SchoolCommunicationRouteUncheckedUpdateInput>
+  }
+
+  /**
+   * SchoolCommunicationRoute delete
+   */
+  export type SchoolCommunicationRouteDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolCommunicationRoute
+     */
+    select?: SchoolCommunicationRouteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolCommunicationRoute
+     */
+    omit?: SchoolCommunicationRouteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolCommunicationRouteInclude<ExtArgs> | null
+    /**
+     * Filter which SchoolCommunicationRoute to delete.
+     */
+    where: SchoolCommunicationRouteWhereUniqueInput
+  }
+
+  /**
+   * SchoolCommunicationRoute deleteMany
+   */
+  export type SchoolCommunicationRouteDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SchoolCommunicationRoutes to delete
+     */
+    where?: SchoolCommunicationRouteWhereInput
+    /**
+     * Limit how many SchoolCommunicationRoutes to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SchoolCommunicationRoute.selectedTeacher
+   */
+  export type SchoolCommunicationRoute$selectedTeacherArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Teacher
+     */
+    select?: TeacherSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Teacher
+     */
+    omit?: TeacherOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherInclude<ExtArgs> | null
+    where?: TeacherWhereInput
+  }
+
+  /**
+   * SchoolCommunicationRoute without action
+   */
+  export type SchoolCommunicationRouteDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolCommunicationRoute
+     */
+    select?: SchoolCommunicationRouteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolCommunicationRoute
+     */
+    omit?: SchoolCommunicationRouteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolCommunicationRouteInclude<ExtArgs> | null
   }
 
 
@@ -80325,6 +81633,20 @@ export namespace Prisma {
   export type SchoolCommunicationPolicyScalarFieldEnum = (typeof SchoolCommunicationPolicyScalarFieldEnum)[keyof typeof SchoolCommunicationPolicyScalarFieldEnum]
 
 
+  export const SchoolCommunicationRouteScalarFieldEnum: {
+    id: 'id',
+    category: 'category',
+    target: 'target',
+    selectedTeacherId: 'selectedTeacherId',
+    notes: 'notes',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    schoolId: 'schoolId'
+  };
+
+  export type SchoolCommunicationRouteScalarFieldEnum = (typeof SchoolCommunicationRouteScalarFieldEnum)[keyof typeof SchoolCommunicationRouteScalarFieldEnum]
+
+
   export const TeacherAccountabilitySettingScalarFieldEnum: {
     id: 'id',
     attendanceOpenMinutesBeforeLesson: 'attendanceOpenMinutesBeforeLesson',
@@ -81346,6 +82668,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ParentTeacherContactCategory'
+   */
+  export type EnumParentTeacherContactCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentTeacherContactCategory'>
+    
+
+
+  /**
+   * Reference to a field of type 'ParentTeacherContactCategory[]'
+   */
+  export type ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentTeacherContactCategory[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ParentTeacherContactRouteTarget'
+   */
+  export type EnumParentTeacherContactRouteTargetFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentTeacherContactRouteTarget'>
+    
+
+
+  /**
+   * Reference to a field of type 'ParentTeacherContactRouteTarget[]'
+   */
+  export type ListEnumParentTeacherContactRouteTargetFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentTeacherContactRouteTarget[]'>
+    
+
+
+  /**
    * Reference to a field of type 'TeacherObligationType'
    */
   export type EnumTeacherObligationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherObligationType'>
@@ -81510,20 +82860,6 @@ export namespace Prisma {
    * Reference to a field of type 'ParentDeliveryStatus[]'
    */
   export type ListEnumParentDeliveryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentDeliveryStatus[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'ParentTeacherContactCategory'
-   */
-  export type EnumParentTeacherContactCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentTeacherContactCategory'>
-    
-
-
-  /**
-   * Reference to a field of type 'ParentTeacherContactCategory[]'
-   */
-  export type ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentTeacherContactCategory[]'>
     
 
 
@@ -82056,6 +83392,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventListRelationFilter
     notificationSettings?: XOR<SchoolNotificationSettingNullableScalarRelationFilter, SchoolNotificationSettingWhereInput> | null
     communicationPolicy?: XOR<SchoolCommunicationPolicyNullableScalarRelationFilter, SchoolCommunicationPolicyWhereInput> | null
+    communicationRoutes?: SchoolCommunicationRouteListRelationFilter
     accountabilitySettings?: XOR<TeacherAccountabilitySettingNullableScalarRelationFilter, TeacherAccountabilitySettingWhereInput> | null
     teacherObligations?: TeacherObligationListRelationFilter
     teacherReminders?: TeacherReminderListRelationFilter
@@ -82128,6 +83465,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventOrderByRelationAggregateInput
     notificationSettings?: SchoolNotificationSettingOrderByWithRelationInput
     communicationPolicy?: SchoolCommunicationPolicyOrderByWithRelationInput
+    communicationRoutes?: SchoolCommunicationRouteOrderByRelationAggregateInput
     accountabilitySettings?: TeacherAccountabilitySettingOrderByWithRelationInput
     teacherObligations?: TeacherObligationOrderByRelationAggregateInput
     teacherReminders?: TeacherReminderOrderByRelationAggregateInput
@@ -82203,6 +83541,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventListRelationFilter
     notificationSettings?: XOR<SchoolNotificationSettingNullableScalarRelationFilter, SchoolNotificationSettingWhereInput> | null
     communicationPolicy?: XOR<SchoolCommunicationPolicyNullableScalarRelationFilter, SchoolCommunicationPolicyWhereInput> | null
+    communicationRoutes?: SchoolCommunicationRouteListRelationFilter
     accountabilitySettings?: XOR<TeacherAccountabilitySettingNullableScalarRelationFilter, TeacherAccountabilitySettingWhereInput> | null
     teacherObligations?: TeacherObligationListRelationFilter
     teacherReminders?: TeacherReminderListRelationFilter
@@ -82487,6 +83826,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationListRelationFilter
     correctionRequests?: TeacherCorrectionRequestListRelationFilter
     parentContactRequests?: ParentTeacherContactRequestListRelationFilter
+    communicationRouteTargets?: SchoolCommunicationRouteListRelationFilter
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogListRelationFilter
   }
 
@@ -82520,6 +83860,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationOrderByRelationAggregateInput
     correctionRequests?: TeacherCorrectionRequestOrderByRelationAggregateInput
     parentContactRequests?: ParentTeacherContactRequestOrderByRelationAggregateInput
+    communicationRouteTargets?: SchoolCommunicationRouteOrderByRelationAggregateInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogOrderByRelationAggregateInput
   }
 
@@ -82556,6 +83897,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationListRelationFilter
     correctionRequests?: TeacherCorrectionRequestListRelationFilter
     parentContactRequests?: ParentTeacherContactRequestListRelationFilter
+    communicationRouteTargets?: SchoolCommunicationRouteListRelationFilter
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogListRelationFilter
   }, "id" | "username">
 
@@ -82965,6 +84307,80 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"SchoolCommunicationPolicy"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"SchoolCommunicationPolicy"> | Date | string
     schoolId?: StringWithAggregatesFilter<"SchoolCommunicationPolicy"> | string
+  }
+
+  export type SchoolCommunicationRouteWhereInput = {
+    AND?: SchoolCommunicationRouteWhereInput | SchoolCommunicationRouteWhereInput[]
+    OR?: SchoolCommunicationRouteWhereInput[]
+    NOT?: SchoolCommunicationRouteWhereInput | SchoolCommunicationRouteWhereInput[]
+    id?: StringFilter<"SchoolCommunicationRoute"> | string
+    category?: EnumParentTeacherContactCategoryFilter<"SchoolCommunicationRoute"> | $Enums.ParentTeacherContactCategory
+    target?: EnumParentTeacherContactRouteTargetFilter<"SchoolCommunicationRoute"> | $Enums.ParentTeacherContactRouteTarget
+    selectedTeacherId?: StringNullableFilter<"SchoolCommunicationRoute"> | string | null
+    notes?: StringNullableFilter<"SchoolCommunicationRoute"> | string | null
+    createdAt?: DateTimeFilter<"SchoolCommunicationRoute"> | Date | string
+    updatedAt?: DateTimeFilter<"SchoolCommunicationRoute"> | Date | string
+    schoolId?: StringFilter<"SchoolCommunicationRoute"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    selectedTeacher?: XOR<TeacherNullableScalarRelationFilter, TeacherWhereInput> | null
+  }
+
+  export type SchoolCommunicationRouteOrderByWithRelationInput = {
+    id?: SortOrder
+    category?: SortOrder
+    target?: SortOrder
+    selectedTeacherId?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+    selectedTeacher?: TeacherOrderByWithRelationInput
+  }
+
+  export type SchoolCommunicationRouteWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    schoolId_category?: SchoolCommunicationRouteSchoolIdCategoryCompoundUniqueInput
+    AND?: SchoolCommunicationRouteWhereInput | SchoolCommunicationRouteWhereInput[]
+    OR?: SchoolCommunicationRouteWhereInput[]
+    NOT?: SchoolCommunicationRouteWhereInput | SchoolCommunicationRouteWhereInput[]
+    category?: EnumParentTeacherContactCategoryFilter<"SchoolCommunicationRoute"> | $Enums.ParentTeacherContactCategory
+    target?: EnumParentTeacherContactRouteTargetFilter<"SchoolCommunicationRoute"> | $Enums.ParentTeacherContactRouteTarget
+    selectedTeacherId?: StringNullableFilter<"SchoolCommunicationRoute"> | string | null
+    notes?: StringNullableFilter<"SchoolCommunicationRoute"> | string | null
+    createdAt?: DateTimeFilter<"SchoolCommunicationRoute"> | Date | string
+    updatedAt?: DateTimeFilter<"SchoolCommunicationRoute"> | Date | string
+    schoolId?: StringFilter<"SchoolCommunicationRoute"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    selectedTeacher?: XOR<TeacherNullableScalarRelationFilter, TeacherWhereInput> | null
+  }, "id" | "schoolId_category">
+
+  export type SchoolCommunicationRouteOrderByWithAggregationInput = {
+    id?: SortOrder
+    category?: SortOrder
+    target?: SortOrder
+    selectedTeacherId?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    _count?: SchoolCommunicationRouteCountOrderByAggregateInput
+    _max?: SchoolCommunicationRouteMaxOrderByAggregateInput
+    _min?: SchoolCommunicationRouteMinOrderByAggregateInput
+  }
+
+  export type SchoolCommunicationRouteScalarWhereWithAggregatesInput = {
+    AND?: SchoolCommunicationRouteScalarWhereWithAggregatesInput | SchoolCommunicationRouteScalarWhereWithAggregatesInput[]
+    OR?: SchoolCommunicationRouteScalarWhereWithAggregatesInput[]
+    NOT?: SchoolCommunicationRouteScalarWhereWithAggregatesInput | SchoolCommunicationRouteScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SchoolCommunicationRoute"> | string
+    category?: EnumParentTeacherContactCategoryWithAggregatesFilter<"SchoolCommunicationRoute"> | $Enums.ParentTeacherContactCategory
+    target?: EnumParentTeacherContactRouteTargetWithAggregatesFilter<"SchoolCommunicationRoute"> | $Enums.ParentTeacherContactRouteTarget
+    selectedTeacherId?: StringNullableWithAggregatesFilter<"SchoolCommunicationRoute"> | string | null
+    notes?: StringNullableWithAggregatesFilter<"SchoolCommunicationRoute"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"SchoolCommunicationRoute"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"SchoolCommunicationRoute"> | Date | string
+    schoolId?: StringWithAggregatesFilter<"SchoolCommunicationRoute"> | string
   }
 
   export type TeacherAccountabilitySettingWhereInput = {
@@ -87858,6 +89274,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -87930,6 +89347,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -88002,6 +89420,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -88074,6 +89493,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -88381,6 +89801,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -88413,6 +89834,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -88445,6 +89867,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -88477,6 +89900,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -88967,6 +90391,81 @@ export namespace Prisma {
     escalationEnabled?: BoolFieldUpdateOperationsInput | boolean
     escalateAfterHours?: IntFieldUpdateOperationsInput | number
     urgentBypassesQuietHours?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type SchoolCommunicationRouteCreateInput = {
+    id?: string
+    category: $Enums.ParentTeacherContactCategory
+    target?: $Enums.ParentTeacherContactRouteTarget
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutCommunicationRoutesInput
+    selectedTeacher?: TeacherCreateNestedOneWithoutCommunicationRouteTargetsInput
+  }
+
+  export type SchoolCommunicationRouteUncheckedCreateInput = {
+    id?: string
+    category: $Enums.ParentTeacherContactCategory
+    target?: $Enums.ParentTeacherContactRouteTarget
+    selectedTeacherId?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+  }
+
+  export type SchoolCommunicationRouteUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumParentTeacherContactCategoryFieldUpdateOperationsInput | $Enums.ParentTeacherContactCategory
+    target?: EnumParentTeacherContactRouteTargetFieldUpdateOperationsInput | $Enums.ParentTeacherContactRouteTarget
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutCommunicationRoutesNestedInput
+    selectedTeacher?: TeacherUpdateOneWithoutCommunicationRouteTargetsNestedInput
+  }
+
+  export type SchoolCommunicationRouteUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumParentTeacherContactCategoryFieldUpdateOperationsInput | $Enums.ParentTeacherContactCategory
+    target?: EnumParentTeacherContactRouteTargetFieldUpdateOperationsInput | $Enums.ParentTeacherContactRouteTarget
+    selectedTeacherId?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type SchoolCommunicationRouteCreateManyInput = {
+    id?: string
+    category: $Enums.ParentTeacherContactCategory
+    target?: $Enums.ParentTeacherContactRouteTarget
+    selectedTeacherId?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+  }
+
+  export type SchoolCommunicationRouteUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumParentTeacherContactCategoryFieldUpdateOperationsInput | $Enums.ParentTeacherContactCategory
+    target?: EnumParentTeacherContactRouteTargetFieldUpdateOperationsInput | $Enums.ParentTeacherContactRouteTarget
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SchoolCommunicationRouteUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumParentTeacherContactCategoryFieldUpdateOperationsInput | $Enums.ParentTeacherContactCategory
+    target?: EnumParentTeacherContactRouteTargetFieldUpdateOperationsInput | $Enums.ParentTeacherContactRouteTarget
+    selectedTeacherId?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -94330,6 +95829,12 @@ export namespace Prisma {
     isNot?: SchoolCommunicationPolicyWhereInput | null
   }
 
+  export type SchoolCommunicationRouteListRelationFilter = {
+    every?: SchoolCommunicationRouteWhereInput
+    some?: SchoolCommunicationRouteWhereInput
+    none?: SchoolCommunicationRouteWhereInput
+  }
+
   export type TeacherAccountabilitySettingNullableScalarRelationFilter = {
     is?: TeacherAccountabilitySettingWhereInput | null
     isNot?: TeacherAccountabilitySettingWhereInput | null
@@ -94549,6 +96054,10 @@ export namespace Prisma {
   }
 
   export type ParentActivityEventOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SchoolCommunicationRouteOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -95151,6 +96660,83 @@ export namespace Prisma {
     escalateAfterHours?: SortOrder
   }
 
+  export type EnumParentTeacherContactCategoryFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentTeacherContactCategory | EnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentTeacherContactCategory[] | ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentTeacherContactCategory[] | ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentTeacherContactCategoryFilter<$PrismaModel> | $Enums.ParentTeacherContactCategory
+  }
+
+  export type EnumParentTeacherContactRouteTargetFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentTeacherContactRouteTarget | EnumParentTeacherContactRouteTargetFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentTeacherContactRouteTarget[] | ListEnumParentTeacherContactRouteTargetFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentTeacherContactRouteTarget[] | ListEnumParentTeacherContactRouteTargetFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentTeacherContactRouteTargetFilter<$PrismaModel> | $Enums.ParentTeacherContactRouteTarget
+  }
+
+  export type TeacherNullableScalarRelationFilter = {
+    is?: TeacherWhereInput | null
+    isNot?: TeacherWhereInput | null
+  }
+
+  export type SchoolCommunicationRouteSchoolIdCategoryCompoundUniqueInput = {
+    schoolId: string
+    category: $Enums.ParentTeacherContactCategory
+  }
+
+  export type SchoolCommunicationRouteCountOrderByAggregateInput = {
+    id?: SortOrder
+    category?: SortOrder
+    target?: SortOrder
+    selectedTeacherId?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+  }
+
+  export type SchoolCommunicationRouteMaxOrderByAggregateInput = {
+    id?: SortOrder
+    category?: SortOrder
+    target?: SortOrder
+    selectedTeacherId?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+  }
+
+  export type SchoolCommunicationRouteMinOrderByAggregateInput = {
+    id?: SortOrder
+    category?: SortOrder
+    target?: SortOrder
+    selectedTeacherId?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+  }
+
+  export type EnumParentTeacherContactCategoryWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentTeacherContactCategory | EnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentTeacherContactCategory[] | ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentTeacherContactCategory[] | ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentTeacherContactCategoryWithAggregatesFilter<$PrismaModel> | $Enums.ParentTeacherContactCategory
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumParentTeacherContactCategoryFilter<$PrismaModel>
+    _max?: NestedEnumParentTeacherContactCategoryFilter<$PrismaModel>
+  }
+
+  export type EnumParentTeacherContactRouteTargetWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentTeacherContactRouteTarget | EnumParentTeacherContactRouteTargetFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentTeacherContactRouteTarget[] | ListEnumParentTeacherContactRouteTargetFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentTeacherContactRouteTarget[] | ListEnumParentTeacherContactRouteTargetFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentTeacherContactRouteTargetWithAggregatesFilter<$PrismaModel> | $Enums.ParentTeacherContactRouteTarget
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumParentTeacherContactRouteTargetFilter<$PrismaModel>
+    _max?: NestedEnumParentTeacherContactRouteTargetFilter<$PrismaModel>
+  }
+
   export type TeacherAccountabilitySettingCountOrderByAggregateInput = {
     id?: SortOrder
     attendanceOpenMinutesBeforeLesson?: SortOrder
@@ -95637,11 +97223,6 @@ export namespace Prisma {
     not?: NestedEnumTeacherAccountabilityAuditActionFilter<$PrismaModel> | $Enums.TeacherAccountabilityAuditAction
   }
 
-  export type TeacherNullableScalarRelationFilter = {
-    is?: TeacherWhereInput | null
-    isNot?: TeacherWhereInput | null
-  }
-
   export type TeacherAccountabilityAuditLogCountOrderByAggregateInput = {
     id?: SortOrder
     action?: SortOrder
@@ -95931,13 +97512,6 @@ export namespace Prisma {
     _max?: NestedEnumParentDeliveryStatusFilter<$PrismaModel>
   }
 
-  export type EnumParentTeacherContactCategoryFilter<$PrismaModel = never> = {
-    equals?: $Enums.ParentTeacherContactCategory | EnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
-    in?: $Enums.ParentTeacherContactCategory[] | ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ParentTeacherContactCategory[] | ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
-    not?: NestedEnumParentTeacherContactCategoryFilter<$PrismaModel> | $Enums.ParentTeacherContactCategory
-  }
-
   export type EnumParentTeacherContactChannelFilter<$PrismaModel = never> = {
     equals?: $Enums.ParentTeacherContactChannel | EnumParentTeacherContactChannelFieldRefInput<$PrismaModel>
     in?: $Enums.ParentTeacherContactChannel[] | ListEnumParentTeacherContactChannelFieldRefInput<$PrismaModel>
@@ -96025,16 +97599,6 @@ export namespace Prisma {
     parentId?: SortOrder
     studentId?: SortOrder
     teacherId?: SortOrder
-  }
-
-  export type EnumParentTeacherContactCategoryWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ParentTeacherContactCategory | EnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
-    in?: $Enums.ParentTeacherContactCategory[] | ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ParentTeacherContactCategory[] | ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
-    not?: NestedEnumParentTeacherContactCategoryWithAggregatesFilter<$PrismaModel> | $Enums.ParentTeacherContactCategory
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumParentTeacherContactCategoryFilter<$PrismaModel>
-    _max?: NestedEnumParentTeacherContactCategoryFilter<$PrismaModel>
   }
 
   export type EnumParentTeacherContactChannelWithAggregatesFilter<$PrismaModel = never> = {
@@ -99378,6 +100942,13 @@ export namespace Prisma {
     connect?: SchoolCommunicationPolicyWhereUniqueInput
   }
 
+  export type SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<SchoolCommunicationRouteCreateWithoutSchoolInput, SchoolCommunicationRouteUncheckedCreateWithoutSchoolInput> | SchoolCommunicationRouteCreateWithoutSchoolInput[] | SchoolCommunicationRouteUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: SchoolCommunicationRouteCreateOrConnectWithoutSchoolInput | SchoolCommunicationRouteCreateOrConnectWithoutSchoolInput[]
+    createMany?: SchoolCommunicationRouteCreateManySchoolInputEnvelope
+    connect?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+  }
+
   export type TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput = {
     create?: XOR<TeacherAccountabilitySettingCreateWithoutSchoolInput, TeacherAccountabilitySettingUncheckedCreateWithoutSchoolInput>
     connectOrCreate?: TeacherAccountabilitySettingCreateOrConnectWithoutSchoolInput
@@ -99737,6 +101308,13 @@ export namespace Prisma {
     create?: XOR<SchoolCommunicationPolicyCreateWithoutSchoolInput, SchoolCommunicationPolicyUncheckedCreateWithoutSchoolInput>
     connectOrCreate?: SchoolCommunicationPolicyCreateOrConnectWithoutSchoolInput
     connect?: SchoolCommunicationPolicyWhereUniqueInput
+  }
+
+  export type SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<SchoolCommunicationRouteCreateWithoutSchoolInput, SchoolCommunicationRouteUncheckedCreateWithoutSchoolInput> | SchoolCommunicationRouteCreateWithoutSchoolInput[] | SchoolCommunicationRouteUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: SchoolCommunicationRouteCreateOrConnectWithoutSchoolInput | SchoolCommunicationRouteCreateOrConnectWithoutSchoolInput[]
+    createMany?: SchoolCommunicationRouteCreateManySchoolInputEnvelope
+    connect?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
   }
 
   export type TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput = {
@@ -100413,6 +101991,20 @@ export namespace Prisma {
     delete?: SchoolCommunicationPolicyWhereInput | boolean
     connect?: SchoolCommunicationPolicyWhereUniqueInput
     update?: XOR<XOR<SchoolCommunicationPolicyUpdateToOneWithWhereWithoutSchoolInput, SchoolCommunicationPolicyUpdateWithoutSchoolInput>, SchoolCommunicationPolicyUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<SchoolCommunicationRouteCreateWithoutSchoolInput, SchoolCommunicationRouteUncheckedCreateWithoutSchoolInput> | SchoolCommunicationRouteCreateWithoutSchoolInput[] | SchoolCommunicationRouteUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: SchoolCommunicationRouteCreateOrConnectWithoutSchoolInput | SchoolCommunicationRouteCreateOrConnectWithoutSchoolInput[]
+    upsert?: SchoolCommunicationRouteUpsertWithWhereUniqueWithoutSchoolInput | SchoolCommunicationRouteUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: SchoolCommunicationRouteCreateManySchoolInputEnvelope
+    set?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+    disconnect?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+    delete?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+    connect?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+    update?: SchoolCommunicationRouteUpdateWithWhereUniqueWithoutSchoolInput | SchoolCommunicationRouteUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: SchoolCommunicationRouteUpdateManyWithWhereWithoutSchoolInput | SchoolCommunicationRouteUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: SchoolCommunicationRouteScalarWhereInput | SchoolCommunicationRouteScalarWhereInput[]
   }
 
   export type TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput = {
@@ -101129,6 +102721,20 @@ export namespace Prisma {
     delete?: SchoolCommunicationPolicyWhereInput | boolean
     connect?: SchoolCommunicationPolicyWhereUniqueInput
     update?: XOR<XOR<SchoolCommunicationPolicyUpdateToOneWithWhereWithoutSchoolInput, SchoolCommunicationPolicyUpdateWithoutSchoolInput>, SchoolCommunicationPolicyUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<SchoolCommunicationRouteCreateWithoutSchoolInput, SchoolCommunicationRouteUncheckedCreateWithoutSchoolInput> | SchoolCommunicationRouteCreateWithoutSchoolInput[] | SchoolCommunicationRouteUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: SchoolCommunicationRouteCreateOrConnectWithoutSchoolInput | SchoolCommunicationRouteCreateOrConnectWithoutSchoolInput[]
+    upsert?: SchoolCommunicationRouteUpsertWithWhereUniqueWithoutSchoolInput | SchoolCommunicationRouteUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: SchoolCommunicationRouteCreateManySchoolInputEnvelope
+    set?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+    disconnect?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+    delete?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+    connect?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+    update?: SchoolCommunicationRouteUpdateWithWhereUniqueWithoutSchoolInput | SchoolCommunicationRouteUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: SchoolCommunicationRouteUpdateManyWithWhereWithoutSchoolInput | SchoolCommunicationRouteUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: SchoolCommunicationRouteScalarWhereInput | SchoolCommunicationRouteScalarWhereInput[]
   }
 
   export type TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput = {
@@ -101907,6 +103513,13 @@ export namespace Prisma {
     connect?: ParentTeacherContactRequestWhereUniqueInput | ParentTeacherContactRequestWhereUniqueInput[]
   }
 
+  export type SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput = {
+    create?: XOR<SchoolCommunicationRouteCreateWithoutSelectedTeacherInput, SchoolCommunicationRouteUncheckedCreateWithoutSelectedTeacherInput> | SchoolCommunicationRouteCreateWithoutSelectedTeacherInput[] | SchoolCommunicationRouteUncheckedCreateWithoutSelectedTeacherInput[]
+    connectOrCreate?: SchoolCommunicationRouteCreateOrConnectWithoutSelectedTeacherInput | SchoolCommunicationRouteCreateOrConnectWithoutSelectedTeacherInput[]
+    createMany?: SchoolCommunicationRouteCreateManySelectedTeacherInputEnvelope
+    connect?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+  }
+
   export type TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput = {
     create?: XOR<TeacherAccountabilityAuditLogCreateWithoutTeacherInput, TeacherAccountabilityAuditLogUncheckedCreateWithoutTeacherInput> | TeacherAccountabilityAuditLogCreateWithoutTeacherInput[] | TeacherAccountabilityAuditLogUncheckedCreateWithoutTeacherInput[]
     connectOrCreate?: TeacherAccountabilityAuditLogCreateOrConnectWithoutTeacherInput | TeacherAccountabilityAuditLogCreateOrConnectWithoutTeacherInput[]
@@ -102016,6 +103629,13 @@ export namespace Prisma {
     connectOrCreate?: ParentTeacherContactRequestCreateOrConnectWithoutTeacherInput | ParentTeacherContactRequestCreateOrConnectWithoutTeacherInput[]
     createMany?: ParentTeacherContactRequestCreateManyTeacherInputEnvelope
     connect?: ParentTeacherContactRequestWhereUniqueInput | ParentTeacherContactRequestWhereUniqueInput[]
+  }
+
+  export type SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput = {
+    create?: XOR<SchoolCommunicationRouteCreateWithoutSelectedTeacherInput, SchoolCommunicationRouteUncheckedCreateWithoutSelectedTeacherInput> | SchoolCommunicationRouteCreateWithoutSelectedTeacherInput[] | SchoolCommunicationRouteUncheckedCreateWithoutSelectedTeacherInput[]
+    connectOrCreate?: SchoolCommunicationRouteCreateOrConnectWithoutSelectedTeacherInput | SchoolCommunicationRouteCreateOrConnectWithoutSelectedTeacherInput[]
+    createMany?: SchoolCommunicationRouteCreateManySelectedTeacherInputEnvelope
+    connect?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
   }
 
   export type TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput = {
@@ -102242,6 +103862,20 @@ export namespace Prisma {
     deleteMany?: ParentTeacherContactRequestScalarWhereInput | ParentTeacherContactRequestScalarWhereInput[]
   }
 
+  export type SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput = {
+    create?: XOR<SchoolCommunicationRouteCreateWithoutSelectedTeacherInput, SchoolCommunicationRouteUncheckedCreateWithoutSelectedTeacherInput> | SchoolCommunicationRouteCreateWithoutSelectedTeacherInput[] | SchoolCommunicationRouteUncheckedCreateWithoutSelectedTeacherInput[]
+    connectOrCreate?: SchoolCommunicationRouteCreateOrConnectWithoutSelectedTeacherInput | SchoolCommunicationRouteCreateOrConnectWithoutSelectedTeacherInput[]
+    upsert?: SchoolCommunicationRouteUpsertWithWhereUniqueWithoutSelectedTeacherInput | SchoolCommunicationRouteUpsertWithWhereUniqueWithoutSelectedTeacherInput[]
+    createMany?: SchoolCommunicationRouteCreateManySelectedTeacherInputEnvelope
+    set?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+    disconnect?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+    delete?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+    connect?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+    update?: SchoolCommunicationRouteUpdateWithWhereUniqueWithoutSelectedTeacherInput | SchoolCommunicationRouteUpdateWithWhereUniqueWithoutSelectedTeacherInput[]
+    updateMany?: SchoolCommunicationRouteUpdateManyWithWhereWithoutSelectedTeacherInput | SchoolCommunicationRouteUpdateManyWithWhereWithoutSelectedTeacherInput[]
+    deleteMany?: SchoolCommunicationRouteScalarWhereInput | SchoolCommunicationRouteScalarWhereInput[]
+  }
+
   export type TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput = {
     create?: XOR<TeacherAccountabilityAuditLogCreateWithoutTeacherInput, TeacherAccountabilityAuditLogUncheckedCreateWithoutTeacherInput> | TeacherAccountabilityAuditLogCreateWithoutTeacherInput[] | TeacherAccountabilityAuditLogUncheckedCreateWithoutTeacherInput[]
     connectOrCreate?: TeacherAccountabilityAuditLogCreateOrConnectWithoutTeacherInput | TeacherAccountabilityAuditLogCreateOrConnectWithoutTeacherInput[]
@@ -102463,6 +104097,20 @@ export namespace Prisma {
     update?: ParentTeacherContactRequestUpdateWithWhereUniqueWithoutTeacherInput | ParentTeacherContactRequestUpdateWithWhereUniqueWithoutTeacherInput[]
     updateMany?: ParentTeacherContactRequestUpdateManyWithWhereWithoutTeacherInput | ParentTeacherContactRequestUpdateManyWithWhereWithoutTeacherInput[]
     deleteMany?: ParentTeacherContactRequestScalarWhereInput | ParentTeacherContactRequestScalarWhereInput[]
+  }
+
+  export type SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput = {
+    create?: XOR<SchoolCommunicationRouteCreateWithoutSelectedTeacherInput, SchoolCommunicationRouteUncheckedCreateWithoutSelectedTeacherInput> | SchoolCommunicationRouteCreateWithoutSelectedTeacherInput[] | SchoolCommunicationRouteUncheckedCreateWithoutSelectedTeacherInput[]
+    connectOrCreate?: SchoolCommunicationRouteCreateOrConnectWithoutSelectedTeacherInput | SchoolCommunicationRouteCreateOrConnectWithoutSelectedTeacherInput[]
+    upsert?: SchoolCommunicationRouteUpsertWithWhereUniqueWithoutSelectedTeacherInput | SchoolCommunicationRouteUpsertWithWhereUniqueWithoutSelectedTeacherInput[]
+    createMany?: SchoolCommunicationRouteCreateManySelectedTeacherInputEnvelope
+    set?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+    disconnect?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+    delete?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+    connect?: SchoolCommunicationRouteWhereUniqueInput | SchoolCommunicationRouteWhereUniqueInput[]
+    update?: SchoolCommunicationRouteUpdateWithWhereUniqueWithoutSelectedTeacherInput | SchoolCommunicationRouteUpdateWithWhereUniqueWithoutSelectedTeacherInput[]
+    updateMany?: SchoolCommunicationRouteUpdateManyWithWhereWithoutSelectedTeacherInput | SchoolCommunicationRouteUpdateManyWithWhereWithoutSelectedTeacherInput[]
+    deleteMany?: SchoolCommunicationRouteScalarWhereInput | SchoolCommunicationRouteScalarWhereInput[]
   }
 
   export type TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput = {
@@ -102820,6 +104468,44 @@ export namespace Prisma {
     upsert?: SchoolUpsertWithoutCommunicationPolicyInput
     connect?: SchoolWhereUniqueInput
     update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutCommunicationPolicyInput, SchoolUpdateWithoutCommunicationPolicyInput>, SchoolUncheckedUpdateWithoutCommunicationPolicyInput>
+  }
+
+  export type SchoolCreateNestedOneWithoutCommunicationRoutesInput = {
+    create?: XOR<SchoolCreateWithoutCommunicationRoutesInput, SchoolUncheckedCreateWithoutCommunicationRoutesInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutCommunicationRoutesInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type TeacherCreateNestedOneWithoutCommunicationRouteTargetsInput = {
+    create?: XOR<TeacherCreateWithoutCommunicationRouteTargetsInput, TeacherUncheckedCreateWithoutCommunicationRouteTargetsInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutCommunicationRouteTargetsInput
+    connect?: TeacherWhereUniqueInput
+  }
+
+  export type EnumParentTeacherContactCategoryFieldUpdateOperationsInput = {
+    set?: $Enums.ParentTeacherContactCategory
+  }
+
+  export type EnumParentTeacherContactRouteTargetFieldUpdateOperationsInput = {
+    set?: $Enums.ParentTeacherContactRouteTarget
+  }
+
+  export type SchoolUpdateOneRequiredWithoutCommunicationRoutesNestedInput = {
+    create?: XOR<SchoolCreateWithoutCommunicationRoutesInput, SchoolUncheckedCreateWithoutCommunicationRoutesInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutCommunicationRoutesInput
+    upsert?: SchoolUpsertWithoutCommunicationRoutesInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutCommunicationRoutesInput, SchoolUpdateWithoutCommunicationRoutesInput>, SchoolUncheckedUpdateWithoutCommunicationRoutesInput>
+  }
+
+  export type TeacherUpdateOneWithoutCommunicationRouteTargetsNestedInput = {
+    create?: XOR<TeacherCreateWithoutCommunicationRouteTargetsInput, TeacherUncheckedCreateWithoutCommunicationRouteTargetsInput>
+    connectOrCreate?: TeacherCreateOrConnectWithoutCommunicationRouteTargetsInput
+    upsert?: TeacherUpsertWithoutCommunicationRouteTargetsInput
+    disconnect?: TeacherWhereInput | boolean
+    delete?: TeacherWhereInput | boolean
+    connect?: TeacherWhereUniqueInput
+    update?: XOR<XOR<TeacherUpdateToOneWithWhereWithoutCommunicationRouteTargetsInput, TeacherUpdateWithoutCommunicationRouteTargetsInput>, TeacherUncheckedUpdateWithoutCommunicationRouteTargetsInput>
   }
 
   export type SchoolCreateNestedOneWithoutAccountabilitySettingsInput = {
@@ -103314,10 +105000,6 @@ export namespace Prisma {
     create?: XOR<TeacherCreateWithoutParentContactRequestsInput, TeacherUncheckedCreateWithoutParentContactRequestsInput>
     connectOrCreate?: TeacherCreateOrConnectWithoutParentContactRequestsInput
     connect?: TeacherWhereUniqueInput
-  }
-
-  export type EnumParentTeacherContactCategoryFieldUpdateOperationsInput = {
-    set?: $Enums.ParentTeacherContactCategory
   }
 
   export type EnumParentTeacherContactChannelFieldUpdateOperationsInput = {
@@ -106888,6 +108570,40 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type NestedEnumParentTeacherContactCategoryFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentTeacherContactCategory | EnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentTeacherContactCategory[] | ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentTeacherContactCategory[] | ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentTeacherContactCategoryFilter<$PrismaModel> | $Enums.ParentTeacherContactCategory
+  }
+
+  export type NestedEnumParentTeacherContactRouteTargetFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentTeacherContactRouteTarget | EnumParentTeacherContactRouteTargetFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentTeacherContactRouteTarget[] | ListEnumParentTeacherContactRouteTargetFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentTeacherContactRouteTarget[] | ListEnumParentTeacherContactRouteTargetFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentTeacherContactRouteTargetFilter<$PrismaModel> | $Enums.ParentTeacherContactRouteTarget
+  }
+
+  export type NestedEnumParentTeacherContactCategoryWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentTeacherContactCategory | EnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentTeacherContactCategory[] | ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentTeacherContactCategory[] | ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentTeacherContactCategoryWithAggregatesFilter<$PrismaModel> | $Enums.ParentTeacherContactCategory
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumParentTeacherContactCategoryFilter<$PrismaModel>
+    _max?: NestedEnumParentTeacherContactCategoryFilter<$PrismaModel>
+  }
+
+  export type NestedEnumParentTeacherContactRouteTargetWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentTeacherContactRouteTarget | EnumParentTeacherContactRouteTargetFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentTeacherContactRouteTarget[] | ListEnumParentTeacherContactRouteTargetFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentTeacherContactRouteTarget[] | ListEnumParentTeacherContactRouteTargetFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentTeacherContactRouteTargetWithAggregatesFilter<$PrismaModel> | $Enums.ParentTeacherContactRouteTarget
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumParentTeacherContactRouteTargetFilter<$PrismaModel>
+    _max?: NestedEnumParentTeacherContactRouteTargetFilter<$PrismaModel>
+  }
+
   export type NestedEnumTeacherObligationTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.TeacherObligationType | EnumTeacherObligationTypeFieldRefInput<$PrismaModel>
     in?: $Enums.TeacherObligationType[] | ListEnumTeacherObligationTypeFieldRefInput<$PrismaModel>
@@ -107098,13 +108814,6 @@ export namespace Prisma {
     _max?: NestedEnumParentDeliveryStatusFilter<$PrismaModel>
   }
 
-  export type NestedEnumParentTeacherContactCategoryFilter<$PrismaModel = never> = {
-    equals?: $Enums.ParentTeacherContactCategory | EnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
-    in?: $Enums.ParentTeacherContactCategory[] | ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ParentTeacherContactCategory[] | ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
-    not?: NestedEnumParentTeacherContactCategoryFilter<$PrismaModel> | $Enums.ParentTeacherContactCategory
-  }
-
   export type NestedEnumParentTeacherContactChannelFilter<$PrismaModel = never> = {
     equals?: $Enums.ParentTeacherContactChannel | EnumParentTeacherContactChannelFieldRefInput<$PrismaModel>
     in?: $Enums.ParentTeacherContactChannel[] | ListEnumParentTeacherContactChannelFieldRefInput<$PrismaModel>
@@ -107117,16 +108826,6 @@ export namespace Prisma {
     in?: $Enums.ParentTeacherContactStatus[] | ListEnumParentTeacherContactStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.ParentTeacherContactStatus[] | ListEnumParentTeacherContactStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumParentTeacherContactStatusFilter<$PrismaModel> | $Enums.ParentTeacherContactStatus
-  }
-
-  export type NestedEnumParentTeacherContactCategoryWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ParentTeacherContactCategory | EnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
-    in?: $Enums.ParentTeacherContactCategory[] | ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ParentTeacherContactCategory[] | ListEnumParentTeacherContactCategoryFieldRefInput<$PrismaModel>
-    not?: NestedEnumParentTeacherContactCategoryWithAggregatesFilter<$PrismaModel> | $Enums.ParentTeacherContactCategory
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumParentTeacherContactCategoryFilter<$PrismaModel>
-    _max?: NestedEnumParentTeacherContactCategoryFilter<$PrismaModel>
   }
 
   export type NestedEnumParentTeacherContactChannelWithAggregatesFilter<$PrismaModel = never> = {
@@ -107927,6 +109626,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -107958,6 +109658,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -109499,6 +111200,36 @@ export namespace Prisma {
   export type SchoolCommunicationPolicyCreateOrConnectWithoutSchoolInput = {
     where: SchoolCommunicationPolicyWhereUniqueInput
     create: XOR<SchoolCommunicationPolicyCreateWithoutSchoolInput, SchoolCommunicationPolicyUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type SchoolCommunicationRouteCreateWithoutSchoolInput = {
+    id?: string
+    category: $Enums.ParentTeacherContactCategory
+    target?: $Enums.ParentTeacherContactRouteTarget
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    selectedTeacher?: TeacherCreateNestedOneWithoutCommunicationRouteTargetsInput
+  }
+
+  export type SchoolCommunicationRouteUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    category: $Enums.ParentTeacherContactCategory
+    target?: $Enums.ParentTeacherContactRouteTarget
+    selectedTeacherId?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SchoolCommunicationRouteCreateOrConnectWithoutSchoolInput = {
+    where: SchoolCommunicationRouteWhereUniqueInput
+    create: XOR<SchoolCommunicationRouteCreateWithoutSchoolInput, SchoolCommunicationRouteUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type SchoolCommunicationRouteCreateManySchoolInputEnvelope = {
+    data: SchoolCommunicationRouteCreateManySchoolInput | SchoolCommunicationRouteCreateManySchoolInput[]
+    skipDuplicates?: boolean
   }
 
   export type TeacherAccountabilitySettingCreateWithoutSchoolInput = {
@@ -111362,6 +113093,36 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SchoolCommunicationRouteUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: SchoolCommunicationRouteWhereUniqueInput
+    update: XOR<SchoolCommunicationRouteUpdateWithoutSchoolInput, SchoolCommunicationRouteUncheckedUpdateWithoutSchoolInput>
+    create: XOR<SchoolCommunicationRouteCreateWithoutSchoolInput, SchoolCommunicationRouteUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type SchoolCommunicationRouteUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: SchoolCommunicationRouteWhereUniqueInput
+    data: XOR<SchoolCommunicationRouteUpdateWithoutSchoolInput, SchoolCommunicationRouteUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type SchoolCommunicationRouteUpdateManyWithWhereWithoutSchoolInput = {
+    where: SchoolCommunicationRouteScalarWhereInput
+    data: XOR<SchoolCommunicationRouteUpdateManyMutationInput, SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type SchoolCommunicationRouteScalarWhereInput = {
+    AND?: SchoolCommunicationRouteScalarWhereInput | SchoolCommunicationRouteScalarWhereInput[]
+    OR?: SchoolCommunicationRouteScalarWhereInput[]
+    NOT?: SchoolCommunicationRouteScalarWhereInput | SchoolCommunicationRouteScalarWhereInput[]
+    id?: StringFilter<"SchoolCommunicationRoute"> | string
+    category?: EnumParentTeacherContactCategoryFilter<"SchoolCommunicationRoute"> | $Enums.ParentTeacherContactCategory
+    target?: EnumParentTeacherContactRouteTargetFilter<"SchoolCommunicationRoute"> | $Enums.ParentTeacherContactRouteTarget
+    selectedTeacherId?: StringNullableFilter<"SchoolCommunicationRoute"> | string | null
+    notes?: StringNullableFilter<"SchoolCommunicationRoute"> | string | null
+    createdAt?: DateTimeFilter<"SchoolCommunicationRoute"> | Date | string
+    updatedAt?: DateTimeFilter<"SchoolCommunicationRoute"> | Date | string
+    schoolId?: StringFilter<"SchoolCommunicationRoute"> | string
+  }
+
   export type TeacherAccountabilitySettingUpsertWithoutSchoolInput = {
     update: XOR<TeacherAccountabilitySettingUpdateWithoutSchoolInput, TeacherAccountabilitySettingUncheckedUpdateWithoutSchoolInput>
     create: XOR<TeacherAccountabilitySettingCreateWithoutSchoolInput, TeacherAccountabilitySettingUncheckedCreateWithoutSchoolInput>
@@ -111770,6 +113531,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -111841,6 +113603,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -111928,6 +113691,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -111999,6 +113763,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -112070,6 +113835,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -112141,6 +113907,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -112812,6 +114579,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -112883,6 +114651,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -113255,6 +115024,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -113326,6 +115096,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -113964,6 +115735,36 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type SchoolCommunicationRouteCreateWithoutSelectedTeacherInput = {
+    id?: string
+    category: $Enums.ParentTeacherContactCategory
+    target?: $Enums.ParentTeacherContactRouteTarget
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutCommunicationRoutesInput
+  }
+
+  export type SchoolCommunicationRouteUncheckedCreateWithoutSelectedTeacherInput = {
+    id?: string
+    category: $Enums.ParentTeacherContactCategory
+    target?: $Enums.ParentTeacherContactRouteTarget
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+  }
+
+  export type SchoolCommunicationRouteCreateOrConnectWithoutSelectedTeacherInput = {
+    where: SchoolCommunicationRouteWhereUniqueInput
+    create: XOR<SchoolCommunicationRouteCreateWithoutSelectedTeacherInput, SchoolCommunicationRouteUncheckedCreateWithoutSelectedTeacherInput>
+  }
+
+  export type SchoolCommunicationRouteCreateManySelectedTeacherInputEnvelope = {
+    data: SchoolCommunicationRouteCreateManySelectedTeacherInput | SchoolCommunicationRouteCreateManySelectedTeacherInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TeacherAccountabilityAuditLogCreateWithoutTeacherInput = {
     id?: string
     action: $Enums.TeacherAccountabilityAuditAction
@@ -114073,6 +115874,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -114144,6 +115946,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -114395,6 +116198,22 @@ export namespace Prisma {
     data: XOR<ParentTeacherContactRequestUpdateManyMutationInput, ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherInput>
   }
 
+  export type SchoolCommunicationRouteUpsertWithWhereUniqueWithoutSelectedTeacherInput = {
+    where: SchoolCommunicationRouteWhereUniqueInput
+    update: XOR<SchoolCommunicationRouteUpdateWithoutSelectedTeacherInput, SchoolCommunicationRouteUncheckedUpdateWithoutSelectedTeacherInput>
+    create: XOR<SchoolCommunicationRouteCreateWithoutSelectedTeacherInput, SchoolCommunicationRouteUncheckedCreateWithoutSelectedTeacherInput>
+  }
+
+  export type SchoolCommunicationRouteUpdateWithWhereUniqueWithoutSelectedTeacherInput = {
+    where: SchoolCommunicationRouteWhereUniqueInput
+    data: XOR<SchoolCommunicationRouteUpdateWithoutSelectedTeacherInput, SchoolCommunicationRouteUncheckedUpdateWithoutSelectedTeacherInput>
+  }
+
+  export type SchoolCommunicationRouteUpdateManyWithWhereWithoutSelectedTeacherInput = {
+    where: SchoolCommunicationRouteScalarWhereInput
+    data: XOR<SchoolCommunicationRouteUpdateManyMutationInput, SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherInput>
+  }
+
   export type TeacherAccountabilityAuditLogUpsertWithWhereUniqueWithoutTeacherInput = {
     where: TeacherAccountabilityAuditLogWhereUniqueInput
     update: XOR<TeacherAccountabilityAuditLogUpdateWithoutTeacherInput, TeacherAccountabilityAuditLogUncheckedUpdateWithoutTeacherInput>
@@ -114471,6 +116290,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -114542,6 +116362,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -114961,6 +116782,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -115032,6 +116854,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -115240,6 +117063,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -115311,6 +117135,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -115398,6 +117223,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -115469,6 +117295,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -115540,6 +117367,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -115611,6 +117439,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -115698,6 +117527,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -115769,6 +117599,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -115778,6 +117609,454 @@ export namespace Prisma {
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolCreateWithoutCommunicationRoutesInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutCommunicationRoutesInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutCommunicationRoutesInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutCommunicationRoutesInput, SchoolUncheckedCreateWithoutCommunicationRoutesInput>
+  }
+
+  export type TeacherCreateWithoutCommunicationRouteTargetsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    school?: SchoolCreateNestedOneWithoutTeachersInput
+    subjects?: SubjectCreateNestedManyWithoutTeachersInput
+    lessons?: LessonCreateNestedManyWithoutTeacherInput
+    classes?: ClassCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutTeacherInput
+    caBuckets?: CABucketCreateNestedManyWithoutCreatorInput
+    caActivities?: CAActivityCreateNestedManyWithoutTeacherInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionCreateNestedManyWithoutCheckedByInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherUncheckedCreateWithoutCommunicationRouteTargetsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    maxClasses?: number
+    schoolId?: string
+    subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSupervisorInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutTeacherInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutCreatorInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutTeacherInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutTeacherInput
+    checkedHomework?: HomeworkSubmissionUncheckedCreateNestedManyWithoutCheckedByInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutTeacherInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityObligations?: TeacherObligationUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherCreateOrConnectWithoutCommunicationRouteTargetsInput = {
+    where: TeacherWhereUniqueInput
+    create: XOR<TeacherCreateWithoutCommunicationRouteTargetsInput, TeacherUncheckedCreateWithoutCommunicationRouteTargetsInput>
+  }
+
+  export type SchoolUpsertWithoutCommunicationRoutesInput = {
+    update: XOR<SchoolUpdateWithoutCommunicationRoutesInput, SchoolUncheckedUpdateWithoutCommunicationRoutesInput>
+    create: XOR<SchoolCreateWithoutCommunicationRoutesInput, SchoolUncheckedCreateWithoutCommunicationRoutesInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutCommunicationRoutesInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutCommunicationRoutesInput, SchoolUncheckedUpdateWithoutCommunicationRoutesInput>
+  }
+
+  export type SchoolUpdateWithoutCommunicationRoutesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutCommunicationRoutesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type TeacherUpsertWithoutCommunicationRouteTargetsInput = {
+    update: XOR<TeacherUpdateWithoutCommunicationRouteTargetsInput, TeacherUncheckedUpdateWithoutCommunicationRouteTargetsInput>
+    create: XOR<TeacherCreateWithoutCommunicationRouteTargetsInput, TeacherUncheckedCreateWithoutCommunicationRouteTargetsInput>
+    where?: TeacherWhereInput
+  }
+
+  export type TeacherUpdateToOneWithWhereWithoutCommunicationRouteTargetsInput = {
+    where?: TeacherWhereInput
+    data: XOR<TeacherUpdateWithoutCommunicationRouteTargetsInput, TeacherUncheckedUpdateWithoutCommunicationRouteTargetsInput>
+  }
+
+  export type TeacherUpdateWithoutCommunicationRouteTargetsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
+    subjects?: SubjectUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutTeacherNestedInput
+    caBuckets?: CABucketUpdateManyWithoutCreatorNestedInput
+    caActivities?: CAActivityUpdateManyWithoutTeacherNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUpdateManyWithoutCheckedByNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
+  }
+
+  export type TeacherUncheckedUpdateWithoutCommunicationRouteTargetsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maxClasses?: IntFieldUpdateOperationsInput | number
+    schoolId?: StringFieldUpdateOperationsInput | string
+    subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSupervisorNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutTeacherNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutCreatorNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutTeacherNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutTeacherNestedInput
+    checkedHomework?: HomeworkSubmissionUncheckedUpdateManyWithoutCheckedByNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutTeacherNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityObligations?: TeacherObligationUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
+    correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type SchoolCreateWithoutAccountabilitySettingsInput = {
@@ -115841,6 +118120,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
     teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
@@ -115912,6 +118192,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
     teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
@@ -115999,6 +118280,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
     teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
@@ -116070,6 +118352,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
     teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
@@ -116141,6 +118424,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
     teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
@@ -116212,6 +118496,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
     teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
@@ -116255,6 +118540,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -116286,6 +118572,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -116444,6 +118731,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
     teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
@@ -116515,6 +118803,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
     teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
@@ -116564,6 +118853,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -116595,6 +118885,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -116691,6 +118982,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
@@ -116762,6 +119054,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
@@ -116805,6 +119098,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -116836,6 +119130,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -116961,6 +119256,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
@@ -117032,6 +119328,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
@@ -117081,6 +119378,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -117112,6 +119410,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -117227,6 +119526,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -117298,6 +119598,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -117341,6 +119642,7 @@ export namespace Prisma {
     accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -117372,6 +119674,7 @@ export namespace Prisma {
     accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -117497,6 +119800,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -117568,6 +119872,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -117617,6 +119922,7 @@ export namespace Prisma {
     accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -117648,6 +119954,7 @@ export namespace Prisma {
     accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -117763,6 +120070,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -117834,6 +120142,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -117877,6 +120186,7 @@ export namespace Prisma {
     accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -117908,6 +120218,7 @@ export namespace Prisma {
     accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -117988,6 +120299,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -118059,6 +120371,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -118108,6 +120421,7 @@ export namespace Prisma {
     accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -118139,6 +120453,7 @@ export namespace Prisma {
     accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -118203,6 +120518,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -118274,6 +120590,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -118318,6 +120635,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutAccountabilityAuditLogsInput = {
@@ -118349,6 +120667,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
   }
 
   export type TeacherCreateOrConnectWithoutAccountabilityAuditLogsInput = {
@@ -118428,6 +120747,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -118499,6 +120819,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -118549,6 +120870,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutAccountabilityAuditLogsInput = {
@@ -118580,6 +120902,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
   }
 
   export type SchoolCreateWithoutParentPreferencesInput = {
@@ -118643,6 +120966,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -118714,6 +121038,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -118842,6 +121167,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -118913,6 +121239,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -119030,6 +121357,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -119101,6 +121429,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -119330,6 +121659,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -119401,6 +121731,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -119603,6 +121934,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -119674,6 +122006,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -119847,6 +122180,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -119918,6 +122252,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -120087,6 +122422,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -120158,6 +122494,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -120303,6 +122640,7 @@ export namespace Prisma {
     accountabilityReminders?: TeacherReminderCreateNestedManyWithoutTeacherInput
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -120334,6 +122672,7 @@ export namespace Prisma {
     accountabilityReminders?: TeacherReminderUncheckedCreateNestedManyWithoutTeacherInput
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -120414,6 +122753,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -120485,6 +122825,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -120648,6 +122989,7 @@ export namespace Prisma {
     accountabilityReminders?: TeacherReminderUpdateManyWithoutTeacherNestedInput
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -120679,6 +123021,7 @@ export namespace Prisma {
     accountabilityReminders?: TeacherReminderUncheckedUpdateManyWithoutTeacherNestedInput
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -120742,6 +123085,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -120813,6 +123157,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -120959,6 +123304,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -120990,6 +123336,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -121069,6 +123416,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -121140,6 +123488,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -121304,6 +123653,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -121335,6 +123685,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -121398,6 +123749,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -121469,6 +123821,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -121747,6 +124100,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -121818,6 +124172,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -121953,6 +124308,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -122024,6 +124380,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -122068,6 +124425,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -122099,6 +124457,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -122617,6 +124976,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -122688,6 +125048,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -122738,6 +125099,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -122769,6 +125131,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -123022,6 +125385,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -123093,6 +125457,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -123137,6 +125502,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -123168,6 +125534,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -123458,6 +125825,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -123529,6 +125897,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -123696,6 +126065,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -123767,6 +126137,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -123879,6 +126250,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -123910,6 +126282,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -124140,6 +126513,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -124211,6 +126585,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -124341,6 +126716,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -124372,6 +126748,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -124499,6 +126876,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -124570,6 +126948,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -124720,6 +127099,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -124791,6 +127171,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -124918,6 +127299,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -124989,6 +127371,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -125174,6 +127557,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -125245,6 +127629,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -125388,6 +127773,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -125459,6 +127845,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -125590,6 +127977,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -125621,6 +128009,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -125700,6 +128089,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -125771,6 +128161,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -125920,6 +128311,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -125951,6 +128343,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -126014,6 +128407,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -126085,6 +128479,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -126281,6 +128676,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -126352,6 +128748,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -126550,6 +128947,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -126621,6 +129019,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -126851,6 +129250,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -126922,6 +129322,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -127116,6 +129517,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -127187,6 +129589,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -127409,6 +129812,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -127480,6 +129884,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -127704,6 +130109,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -127775,6 +130181,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -127904,6 +130311,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -127975,6 +130383,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -128094,6 +130503,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -128165,6 +130575,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -128294,6 +130705,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -128365,6 +130777,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -128484,6 +130897,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -128555,6 +130969,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -128642,6 +131057,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -128713,6 +131129,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -128784,6 +131201,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -128855,6 +131273,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -128967,6 +131386,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -128998,6 +131418,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -129122,6 +131543,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -129193,6 +131615,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -129323,6 +131746,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -129354,6 +131778,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -129433,6 +131858,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -129504,6 +131930,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -129656,6 +132083,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -129687,6 +132115,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -129799,6 +132228,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -129870,6 +132300,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -130046,6 +132477,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -130077,6 +132509,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -130156,6 +132589,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -130227,6 +132661,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -130372,6 +132807,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -130403,6 +132839,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -130482,6 +132919,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -130553,6 +132991,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -130716,6 +133155,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -130747,6 +133187,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -130810,6 +133251,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -130881,6 +133323,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -130968,6 +133411,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -131039,6 +133483,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -131110,6 +133555,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -131181,6 +133627,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -131286,6 +133733,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -131317,6 +133765,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -131464,6 +133913,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -131535,6 +133985,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -131652,6 +134103,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -131683,6 +134135,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -131826,6 +134279,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -131897,6 +134351,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -132026,6 +134481,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -132097,6 +134553,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -132216,6 +134673,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -132287,6 +134745,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -132416,6 +134875,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -132487,6 +134947,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -132606,6 +135067,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -132677,6 +135139,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -132853,6 +135316,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -132924,6 +135388,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -133202,6 +135667,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -133273,6 +135739,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -133393,6 +135860,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutTeacherInput
   }
 
@@ -133424,6 +135892,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutTeacherInput
     correctionRequests?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutTeacherInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutTeacherInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSelectedTeacherInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -133503,6 +135972,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -133574,6 +136044,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -133712,6 +136183,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -133743,6 +136215,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -133806,6 +136279,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -133877,6 +136351,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -134068,6 +136543,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -134139,6 +136615,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -134430,6 +136907,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -134501,6 +136979,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -134849,6 +137328,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -134920,6 +137400,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -135318,6 +137799,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -135389,6 +137871,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -135619,6 +138102,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -135690,6 +138174,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -135869,6 +138354,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -135940,6 +138426,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -136073,6 +138560,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -136144,6 +138632,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -136267,6 +138756,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -136338,6 +138828,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -136469,6 +138960,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -136540,6 +139032,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -136661,6 +139154,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -136732,6 +139226,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -136819,6 +139314,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -136890,6 +139386,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -136961,6 +139458,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -137032,6 +139530,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -137119,6 +139618,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -137190,6 +139690,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -137261,6 +139762,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -137332,6 +139834,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -137611,6 +140114,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -137682,6 +140186,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -137969,6 +140474,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -138040,6 +140546,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -138127,6 +140634,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -138198,6 +140706,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -138269,6 +140778,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -138340,6 +140850,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -138473,6 +140984,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -138544,6 +141056,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -138667,6 +141180,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -138738,6 +141252,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -138825,6 +141340,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -138896,6 +141412,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -138967,6 +141484,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -139038,6 +141556,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -139125,6 +141644,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -139196,6 +141716,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -139267,6 +141788,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
@@ -139338,6 +141860,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
     teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
     teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
@@ -139425,6 +141948,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
@@ -139496,6 +142020,7 @@ export namespace Prisma {
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
     accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
     teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
     teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
@@ -140035,6 +142560,16 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type SchoolCommunicationRouteCreateManySchoolInput = {
+    id?: string
+    category: $Enums.ParentTeacherContactCategory
+    target?: $Enums.ParentTeacherContactRouteTarget
+    selectedTeacherId?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type TeacherObligationCreateManySchoolInput = {
     id?: string
     type: $Enums.TeacherObligationType
@@ -140284,6 +142819,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -140315,6 +142851,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
@@ -141872,6 +144409,36 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SchoolCommunicationRouteUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumParentTeacherContactCategoryFieldUpdateOperationsInput | $Enums.ParentTeacherContactCategory
+    target?: EnumParentTeacherContactRouteTargetFieldUpdateOperationsInput | $Enums.ParentTeacherContactRouteTarget
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedTeacher?: TeacherUpdateOneWithoutCommunicationRouteTargetsNestedInput
+  }
+
+  export type SchoolCommunicationRouteUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumParentTeacherContactCategoryFieldUpdateOperationsInput | $Enums.ParentTeacherContactCategory
+    target?: EnumParentTeacherContactRouteTargetFieldUpdateOperationsInput | $Enums.ParentTeacherContactRouteTarget
+    selectedTeacherId?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumParentTeacherContactCategoryFieldUpdateOperationsInput | $Enums.ParentTeacherContactCategory
+    target?: EnumParentTeacherContactRouteTargetFieldUpdateOperationsInput | $Enums.ParentTeacherContactRouteTarget
+    selectedTeacherId?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type TeacherObligationUpdateWithoutSchoolInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumTeacherObligationTypeFieldUpdateOperationsInput | $Enums.TeacherObligationType
@@ -143218,6 +145785,16 @@ export namespace Prisma {
     studentId: string
   }
 
+  export type SchoolCommunicationRouteCreateManySelectedTeacherInput = {
+    id?: string
+    category: $Enums.ParentTeacherContactCategory
+    target?: $Enums.ParentTeacherContactRouteTarget
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+  }
+
   export type TeacherAccountabilityAuditLogCreateManyTeacherInput = {
     id?: string
     action: $Enums.TeacherAccountabilityAuditAction
@@ -143927,6 +146504,36 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
     studentId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type SchoolCommunicationRouteUpdateWithoutSelectedTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumParentTeacherContactCategoryFieldUpdateOperationsInput | $Enums.ParentTeacherContactCategory
+    target?: EnumParentTeacherContactRouteTargetFieldUpdateOperationsInput | $Enums.ParentTeacherContactRouteTarget
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutCommunicationRoutesNestedInput
+  }
+
+  export type SchoolCommunicationRouteUncheckedUpdateWithoutSelectedTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumParentTeacherContactCategoryFieldUpdateOperationsInput | $Enums.ParentTeacherContactCategory
+    target?: EnumParentTeacherContactRouteTargetFieldUpdateOperationsInput | $Enums.ParentTeacherContactRouteTarget
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumParentTeacherContactCategoryFieldUpdateOperationsInput | $Enums.ParentTeacherContactCategory
+    target?: EnumParentTeacherContactRouteTargetFieldUpdateOperationsInput | $Enums.ParentTeacherContactRouteTarget
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
   }
 
   export type TeacherAccountabilityAuditLogUpdateWithoutTeacherInput = {
@@ -145564,6 +148171,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutTeacherNestedInput
   }
 
@@ -145595,6 +148203,7 @@ export namespace Prisma {
     accountabilityEscalations?: TeacherEscalationUncheckedUpdateManyWithoutTeacherNestedInput
     correctionRequests?: TeacherCorrectionRequestUncheckedUpdateManyWithoutTeacherNestedInput
     parentContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutTeacherNestedInput
+    communicationRouteTargets?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSelectedTeacherNestedInput
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 

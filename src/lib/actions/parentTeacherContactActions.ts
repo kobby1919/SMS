@@ -5,7 +5,10 @@ import prisma from "@/src/lib/prisma";
 import { requireRole } from "@/src/lib/authz";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import { parentTeacherContactRequestSchema } from "@/src/lib/validation/parent-teacher-contact";
-import { schoolCommunicationPolicyDefaults } from "@/src/lib/services/school-communication-policy";
+import {
+  communicationRouteDefaults,
+  schoolCommunicationPolicyDefaults,
+} from "@/src/lib/services/school-communication-policy";
 
 function formValue(data: FormData, key: string, fallback = "") {
   return String(data.get(key) ?? fallback);
@@ -48,8 +51,16 @@ export async function createParentTeacherContactRequest(data: unknown) {
       : data;
   const parsed = parseActionInput(parentTeacherContactRequestSchema, input);
 
-  const [policy, student, teacherLesson] = await Promise.all([
+  const [policy, route, student, teacherLesson] = await Promise.all([
     prisma.schoolCommunicationPolicy.findUnique({ where: { schoolId } }),
+    prisma.schoolCommunicationRoute.findUnique({
+      where: {
+        schoolId_category: {
+          schoolId,
+          category: parsed.category,
+        },
+      },
+    }),
     prisma.student.findFirst({
       where: {
         id: parsed.studentId,
@@ -59,6 +70,11 @@ export async function createParentTeacherContactRequest(data: unknown) {
       select: {
         id: true,
         classId: true,
+        class: {
+          select: {
+            supervisorId: true,
+          },
+        },
       },
     }),
     prisma.lesson.findFirst({
@@ -87,10 +103,6 @@ export async function createParentTeacherContactRequest(data: unknown) {
     throw new Error("This ward was not found for your account.");
   }
 
-  if (!teacherLesson || teacherLesson.classId !== student.classId) {
-    throw new Error("This teacher is not assigned to this ward's class.");
-  }
-
   const effectivePolicy = policy ?? schoolCommunicationPolicyDefaults;
   if (!effectivePolicy.enabled || !effectivePolicy.allowParentTeacherMessaging) {
     throw new Error("Parent-teacher messaging is currently disabled by the school.");
@@ -98,6 +110,48 @@ export async function createParentTeacherContactRequest(data: unknown) {
 
   if (!channelAllowed(parsed.preferredChannel, effectivePolicy)) {
     throw new Error("The selected contact channel is not enabled by the school.");
+  }
+
+  const routeTarget = route?.target ?? communicationRouteDefaults[parsed.category];
+  let routedTeacherId = parsed.teacherId;
+  let routedSubjectName = teacherLesson?.subject.name ?? null;
+
+  if (routeTarget === "SUBJECT_TEACHER") {
+    if (!teacherLesson || teacherLesson.classId !== student.classId) {
+      throw new Error("This teacher is not assigned to this ward's class.");
+    }
+  } else if (routeTarget === "CLASS_TEACHER") {
+    if (!student.class.supervisorId) {
+      throw new Error("No class teacher has been assigned for this ward's class yet.");
+    }
+    routedTeacherId = student.class.supervisorId;
+  } else if (routeTarget === "SELECTED_TEACHER") {
+    if (!route?.selectedTeacherId) {
+      throw new Error("The school has not selected a teacher for this contact category yet.");
+    }
+    const selectedTeacher = await prisma.teacher.findFirst({
+      where: {
+        id: route.selectedTeacherId,
+        schoolId,
+      },
+      select: { id: true },
+    });
+    if (!selectedTeacher) {
+      throw new Error("The selected contact teacher is no longer available.");
+    }
+    routedTeacherId = selectedTeacher.id;
+  } else {
+    routedTeacherId = route?.selectedTeacherId ?? student.class.supervisorId ?? parsed.teacherId;
+    const fallbackTeacher = await prisma.teacher.findFirst({
+      where: {
+        id: routedTeacherId,
+        schoolId,
+      },
+      select: { id: true },
+    });
+    if (!fallbackTeacher) {
+      throw new Error("The school office route is not ready yet. Please contact the school office directly.");
+    }
   }
 
   const responseDueAt = new Date();
@@ -108,7 +162,7 @@ export async function createParentTeacherContactRequest(data: unknown) {
       schoolId,
       parentId: userId,
       studentId: parsed.studentId,
-      teacherId: parsed.teacherId,
+      teacherId: routedTeacherId,
       category: parsed.category,
       preferredChannel: parsed.preferredChannel,
       priority: parsed.priority,
@@ -116,8 +170,11 @@ export async function createParentTeacherContactRequest(data: unknown) {
       message: parsed.message,
       responseDueAt,
       metadata: {
-        lessonId: teacherLesson.id,
-        subjectName: teacherLesson.subject.name,
+        requestedTeacherId: parsed.teacherId,
+        routeTarget,
+        routedTeacherId,
+        lessonId: teacherLesson?.id ?? null,
+        subjectName: routedSubjectName,
       },
     },
   });

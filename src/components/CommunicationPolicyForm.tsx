@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { Clock3, MessageCircle, ShieldCheck } from "lucide-react";
-import type { SchoolCommunicationPolicy } from "@/src/generated/prisma";
+import type { SchoolCommunicationPolicy, SchoolCommunicationRoute } from "@/src/generated/prisma";
 import {
   updateSchoolCommunicationPolicyWithState,
   type CommunicationPolicyActionState,
@@ -51,10 +51,22 @@ function Toggle({
 
 export default function CommunicationPolicyForm({
   policy,
+  routes,
+  teachers,
 }: {
   policy: SchoolCommunicationPolicy;
+  routes: SchoolCommunicationRoute[];
+  teachers: { id: string; name: string; surname: string }[];
 }) {
   const [state, formAction] = useActionState(updateSchoolCommunicationPolicyWithState, initialState);
+  const routeByCategory = new Map(routes.map((route) => [route.category, route]));
+  const routeLabels = [
+    { category: "ATTENDANCE", label: "Attendance", help: "Late, absent, or attendance follow-up." },
+    { category: "ACADEMIC_SUPPORT", label: "Academic support", help: "CA progress, classwork, exam preparation." },
+    { category: "HOMEWORK", label: "Homework", help: "Homework issue, submission, missing work." },
+    { category: "WELLBEING", label: "Wellbeing", help: "Behaviour, health, safety, emotional support." },
+    { category: "GENERAL", label: "General", help: "Anything that does not fit another category." },
+  ] as const;
 
   return (
     <form action={formAction} className="flex flex-col gap-5">
@@ -108,6 +120,57 @@ export default function CommunicationPolicyForm({
             description="Open parent messages remain trackable until a teacher responds."
             defaultChecked={policy.requireTeacherResponse}
           />
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div className="mb-4 flex items-start gap-3">
+          <div className="rounded-xl bg-emerald-50 p-2 text-emerald-700">
+            <MessageCircle size={18} />
+          </div>
+          <div>
+            <h2 className="text-base font-black text-gray-950">Concern Routing</h2>
+            <p className="mt-1 text-sm font-medium leading-relaxed text-gray-500">
+              Choose who receives each parent concern type. This keeps parents from guessing and protects teachers from random contact.
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          {routeLabels.map((item) => {
+            const route = routeByCategory.get(item.category);
+            const routeTargetName = `routeTarget_${item.category}`;
+            const selectedTeacherName = `selectedTeacherId_${item.category}`;
+
+            return (
+              <div key={item.category} className="grid gap-3 rounded-2xl border border-gray-100 bg-gray-50 p-4 lg:grid-cols-[1fr_220px_260px]">
+                <div>
+                  <p className="text-sm font-black text-gray-900">{item.label}</p>
+                  <p className="mt-1 text-xs font-semibold leading-relaxed text-gray-500">{item.help}</p>
+                </div>
+                <label className="flex flex-col gap-1">
+                  <span className="text-[10px] font-black uppercase tracking-wide text-gray-400">Route to</span>
+                  <select name={routeTargetName} defaultValue={route?.target ?? (item.category === "ACADEMIC_SUPPORT" || item.category === "HOMEWORK" ? "SUBJECT_TEACHER" : "CLASS_TEACHER")} className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold outline-none focus:border-sky-400">
+                    <option value="SUBJECT_TEACHER">Subject teacher</option>
+                    <option value="CLASS_TEACHER">Class teacher</option>
+                    <option value="SELECTED_TEACHER">Selected teacher</option>
+                    <option value="SCHOOL_OFFICE">School office fallback</option>
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="text-[10px] font-black uppercase tracking-wide text-gray-400">Selected teacher</span>
+                  <select name={selectedTeacherName} defaultValue={route?.selectedTeacherId ?? ""} className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold outline-none focus:border-sky-400">
+                    <option value="">Only needed for selected teacher</option>
+                    {teachers.map((teacher) => (
+                      <option key={teacher.id} value={teacher.id}>
+                        {teacher.name} {teacher.surname}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            );
+          })}
         </div>
       </section>
 

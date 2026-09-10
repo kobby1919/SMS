@@ -1,5 +1,21 @@
 import prisma from "@/src/lib/prisma";
 
+export const communicationRouteCategories = [
+  "ATTENDANCE",
+  "ACADEMIC_SUPPORT",
+  "HOMEWORK",
+  "WELLBEING",
+  "GENERAL",
+] as const;
+
+export const communicationRouteDefaults = {
+  ATTENDANCE: "CLASS_TEACHER",
+  ACADEMIC_SUPPORT: "SUBJECT_TEACHER",
+  HOMEWORK: "SUBJECT_TEACHER",
+  WELLBEING: "CLASS_TEACHER",
+  GENERAL: "CLASS_TEACHER",
+} as const;
+
 export const schoolCommunicationPolicyDefaults = {
   enabled: true,
   allowParentTeacherMessaging: false,
@@ -22,12 +38,40 @@ export const schoolCommunicationPolicyDefaults = {
 };
 
 export async function ensureSchoolCommunicationPolicy(schoolId: string) {
-  return prisma.schoolCommunicationPolicy.upsert({
+  const [policy] = await prisma.$transaction([
+    prisma.schoolCommunicationPolicy.upsert({
+      where: { schoolId },
+      create: {
+        schoolId,
+        ...schoolCommunicationPolicyDefaults,
+      },
+      update: {},
+    }),
+    ...communicationRouteCategories.map((category) =>
+      prisma.schoolCommunicationRoute.upsert({
+        where: {
+          schoolId_category: {
+            schoolId,
+            category,
+          },
+        },
+        create: {
+          schoolId,
+          category,
+          target: communicationRouteDefaults[category],
+        },
+        update: {},
+      }),
+    ),
+  ]);
+
+  return policy;
+}
+
+export async function ensureSchoolCommunicationRoutes(schoolId: string) {
+  await ensureSchoolCommunicationPolicy(schoolId);
+  return prisma.schoolCommunicationRoute.findMany({
     where: { schoolId },
-    create: {
-      schoolId,
-      ...schoolCommunicationPolicyDefaults,
-    },
-    update: {},
+    orderBy: { category: "asc" },
   });
 }

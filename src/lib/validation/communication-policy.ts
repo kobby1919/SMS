@@ -48,3 +48,26 @@ export const schoolCommunicationPolicySchema = z
       message: "Enable at least one communication channel.",
     },
   );
+
+export const parentTeacherContactRouteTargetSchema = z.enum([
+  "SUBJECT_TEACHER",
+  "CLASS_TEACHER",
+  "SELECTED_TEACHER",
+  "SCHOOL_OFFICE",
+]);
+
+export const communicationRouteSchema = z
+  .object({
+    category: z.enum(["ATTENDANCE", "ACADEMIC_SUPPORT", "HOMEWORK", "WELLBEING", "GENERAL"]),
+    target: parentTeacherContactRouteTargetSchema,
+    selectedTeacherId: z.string().trim().optional().nullable(),
+  })
+  .refine(
+    (data) => data.target !== "SELECTED_TEACHER" || Boolean(data.selectedTeacherId),
+    {
+      path: ["selectedTeacherId"],
+      message: "Choose a teacher when the route target is selected teacher.",
+    },
+  );
+
+export const communicationRoutesSchema = z.array(communicationRouteSchema).length(5);

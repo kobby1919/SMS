@@ -4,7 +4,11 @@ import { revalidatePath } from "next/cache";
 import prisma from "@/src/lib/prisma";
 import { requireRole } from "@/src/lib/authz";
 import { parseActionInput } from "@/src/lib/validation/parse";
-import { schoolCommunicationPolicySchema } from "@/src/lib/validation/communication-policy";
+import {
+  communicationRoutesSchema,
+  schoolCommunicationPolicySchema,
+} from "@/src/lib/validation/communication-policy";
+import { communicationRouteCategories } from "@/src/lib/services/school-communication-policy";
 
 function boolFromFormData(data: FormData, key: string) {
   return data.get(key) === "on" || data.get(key) === "true";
@@ -40,12 +44,63 @@ export async function updateSchoolCommunicationPolicy(data: unknown) {
         }
       : data;
   const parsed = parseActionInput(schoolCommunicationPolicySchema, input);
+  const routeInput = communicationRouteCategories.map((category) => ({
+    category,
+    target:
+      data instanceof FormData
+        ? formValue(data, `routeTarget_${category}`, category === "ACADEMIC_SUPPORT" || category === "HOMEWORK" ? "SUBJECT_TEACHER" : "CLASS_TEACHER")
+        : category === "ACADEMIC_SUPPORT" || category === "HOMEWORK"
+          ? "SUBJECT_TEACHER"
+          : "CLASS_TEACHER",
+    selectedTeacherId:
+      data instanceof FormData ? formValue(data, `selectedTeacherId_${category}`) || null : null,
+  }));
+  const parsedRoutes = parseActionInput(communicationRoutesSchema, routeInput);
 
-  await prisma.schoolCommunicationPolicy.upsert({
-    where: { schoolId },
-    create: { schoolId, ...parsed },
-    update: parsed,
-  });
+  const selectedTeacherIds = parsedRoutes
+    .map((route) => route.selectedTeacherId)
+    .filter((teacherId): teacherId is string => Boolean(teacherId));
+
+  if (selectedTeacherIds.length > 0) {
+    const teacherCount = await prisma.teacher.count({
+      where: {
+        schoolId,
+        id: { in: selectedTeacherIds },
+      },
+    });
+
+    if (teacherCount !== new Set(selectedTeacherIds).size) {
+      throw new Error("One or more selected route teachers do not belong to this school.");
+    }
+  }
+
+  await prisma.$transaction([
+    prisma.schoolCommunicationPolicy.upsert({
+      where: { schoolId },
+      create: { schoolId, ...parsed },
+      update: parsed,
+    }),
+    ...parsedRoutes.map((route) =>
+      prisma.schoolCommunicationRoute.upsert({
+        where: {
+          schoolId_category: {
+            schoolId,
+            category: route.category,
+          },
+        },
+        create: {
+          schoolId,
+          category: route.category,
+          target: route.target,
+          selectedTeacherId: route.target === "SELECTED_TEACHER" ? route.selectedTeacherId : null,
+        },
+        update: {
+          target: route.target,
+          selectedTeacherId: route.target === "SELECTED_TEACHER" ? route.selectedTeacherId : null,
+        },
+      }),
+    ),
+  ]);
 
   revalidatePath("/admin/communication-policy");
   revalidatePath("/parent");
