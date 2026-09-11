@@ -36,6 +36,19 @@ function statusClass(status: string) {
   }
 }
 
+function deliveryStatusClass(status: string) {
+  switch (status) {
+    case "SENT":
+      return "bg-emerald-50 text-emerald-700 ring-emerald-100";
+    case "FAILED":
+      return "bg-rose-50 text-rose-700 ring-rose-100";
+    case "SKIPPED":
+      return "bg-amber-50 text-amber-700 ring-amber-100";
+    default:
+      return "bg-gray-50 text-gray-600 ring-gray-100";
+  }
+}
+
 const AdminCommunicationsPage = async () => {
   const { schoolId } = await requirePageSession(["admin"]);
   const now = new Date();
@@ -63,6 +76,35 @@ const AdminCommunicationsPage = async () => {
     ],
     take: 120,
   });
+  const messageIds = requests.flatMap((request) => request.messages.map((message) => message.id));
+  const contactNotifications = messageIds.length
+    ? await prisma.parentNotification.findMany({
+        where: {
+          schoolId,
+          sourceModel: "ParentTeacherContactMessage",
+          sourceId: { in: messageIds },
+        },
+        select: {
+          sourceId: true,
+          deliveries: {
+            orderBy: { attemptedAt: "desc" },
+            take: 1,
+            select: {
+              id: true,
+              channel: true,
+              status: true,
+              provider: true,
+              recipient: true,
+              errorMessage: true,
+              attemptedAt: true,
+            },
+          },
+        },
+      })
+    : [];
+  const latestDeliveryByMessageId = new Map(
+    contactNotifications.map((notification) => [notification.sourceId, notification.deliveries[0]] as const),
+  );
 
   const activeRequests = requests.filter(
     (request) => request.status !== "CLOSED" && request.status !== "CANCELLED",
@@ -179,6 +221,31 @@ const AdminCommunicationsPage = async () => {
                               <p className="text-[10px] font-bold text-gray-400">{formatDateTime(message.createdAt)}</p>
                             </div>
                             <p className="mt-1 text-sm font-semibold leading-relaxed text-gray-700">{message.body}</p>
+                            {latestDeliveryByMessageId.get(message.id) ? (
+                              <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-bold text-gray-500">
+                                <span
+                                  className={`rounded-full px-2 py-1 uppercase tracking-wide ring-1 ${deliveryStatusClass(
+                                    latestDeliveryByMessageId.get(message.id)?.status ?? "PENDING",
+                                  )}`}
+                                >
+                                  {readable(latestDeliveryByMessageId.get(message.id)?.status ?? "PENDING")}
+                                </span>
+                                <span>
+                                  {readable(latestDeliveryByMessageId.get(message.id)?.channel ?? "EMAIL")} via{" "}
+                                  {latestDeliveryByMessageId.get(message.id)?.provider ?? "unknown"}
+                                </span>
+                                {latestDeliveryByMessageId.get(message.id)?.recipient && (
+                                  <span className="truncate">to {latestDeliveryByMessageId.get(message.id)?.recipient}</span>
+                                )}
+                                {latestDeliveryByMessageId.get(message.id)?.errorMessage && (
+                                  <span className="basis-full text-rose-600">
+                                    {latestDeliveryByMessageId.get(message.id)?.errorMessage}
+                                  </span>
+                                )}
+                              </div>
+                            ) : message.senderRole === "TEACHER" || message.senderRole === "ADMIN" || message.senderRole === "SYSTEM" ? (
+                              <p className="mt-2 text-[11px] font-bold text-gray-400">No external delivery recorded yet.</p>
+                            ) : null}
                           </div>
                         ))
                       ) : (
