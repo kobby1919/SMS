@@ -17,3 +17,7 @@ export const teacherContactRequestIdSchema = z.object({
 export const teacherContactResponseSchema = teacherContactRequestIdSchema.extend({
   response: z.string().trim().min(5, "Response must be at least 5 characters.").max(1000),
 });
+
+export const adminContactRequestReviewSchema = teacherContactRequestIdSchema.extend({
+  note: z.string().trim().max(500, "Note must be 500 characters or less.").optional(),
+});

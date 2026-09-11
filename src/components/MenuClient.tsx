@@ -296,6 +296,12 @@ const menuItems = [
         href: "/admin/communication-policy",
         visible: ["admin"],
       },
+      {
+        icon: MessageCircle,
+        label: "Contact Requests",
+        href: "/admin/communications",
+        visible: ["admin"],
+      },
     ],
   },
   {

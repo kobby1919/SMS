@@ -4,8 +4,9 @@ import { revalidatePath } from "next/cache";
 import prisma from "@/src/lib/prisma";
 import { requireRole } from "@/src/lib/authz";
 import { parseActionInput } from "@/src/lib/validation/parse";
-import { parentTeacherContactRequestSchema } from "@/src/lib/validation/parent-teacher-contact";
 import {
+  adminContactRequestReviewSchema,
+  parentTeacherContactRequestSchema,
   teacherContactRequestIdSchema,
   teacherContactResponseSchema,
 } from "@/src/lib/validation/parent-teacher-contact";
@@ -231,6 +232,39 @@ async function getTeacherOwnedContactRequest({
   return request;
 }
 
+async function getAdminOwnedContactRequest({
+  schoolId,
+  requestId,
+}: {
+  schoolId: string;
+  requestId: string;
+}) {
+  const request = await prisma.parentTeacherContactRequest.findFirst({
+    where: {
+      id: requestId,
+      schoolId,
+    },
+    select: {
+      id: true,
+      status: true,
+      subject: true,
+      parentId: true,
+      studentId: true,
+      teacherId: true,
+    },
+  });
+
+  if (!request) {
+    throw new Error("This contact request was not found for your school.");
+  }
+
+  if (request.status === "CLOSED" || request.status === "CANCELLED") {
+    throw new Error("This contact request is already closed.");
+  }
+
+  return request;
+}
+
 export async function acknowledgeParentTeacherContactRequest(data: unknown) {
   const { userId, schoolId } = await requireRole(["teacher"]);
   const input =
@@ -360,6 +394,89 @@ export async function closeParentTeacherContactRequest(data: unknown) {
   revalidatePath(`/parent/children/${request.studentId}`);
 }
 
+export async function escalateParentTeacherContactRequestAsAdmin(data: unknown) {
+  const { userId, schoolId } = await requireRole(["admin"]);
+  const input =
+    data instanceof FormData
+      ? {
+          requestId: formValue(data, "requestId"),
+          note: formValue(data, "note"),
+        }
+      : data;
+  const parsed = parseActionInput(adminContactRequestReviewSchema, input);
+  const request = await getAdminOwnedContactRequest({
+    schoolId,
+    requestId: parsed.requestId,
+  });
+
+  await prisma.parentTeacherContactRequest.update({
+    where: { id: request.id },
+    data: {
+      status: "ESCALATED",
+      messages: {
+        create: {
+          schoolId,
+          teacherId: request.teacherId,
+          parentId: request.parentId,
+          studentId: request.studentId,
+          senderRole: "ADMIN",
+          senderId: userId,
+          body: parsed.note
+            ? `The school has escalated this contact request. Note: ${parsed.note}`
+            : "The school has escalated this contact request for follow-up.",
+          internalOnly: false,
+        },
+      },
+    },
+  });
+
+  revalidatePath("/admin/communications");
+  revalidatePath("/teacher/communications");
+  revalidatePath(`/parent/children/${request.studentId}`);
+}
+
+export async function closeParentTeacherContactRequestAsAdmin(data: unknown) {
+  const { userId, schoolId } = await requireRole(["admin"]);
+  const input =
+    data instanceof FormData
+      ? {
+          requestId: formValue(data, "requestId"),
+          note: formValue(data, "note"),
+        }
+      : data;
+  const parsed = parseActionInput(adminContactRequestReviewSchema, input);
+  const request = await getAdminOwnedContactRequest({
+    schoolId,
+    requestId: parsed.requestId,
+  });
+
+  await prisma.parentTeacherContactRequest.update({
+    where: { id: request.id },
+    data: {
+      status: "CLOSED",
+      closedAt: new Date(),
+      messages: {
+        create: {
+          schoolId,
+          teacherId: request.teacherId,
+          parentId: request.parentId,
+          studentId: request.studentId,
+          senderRole: "ADMIN",
+          senderId: userId,
+          body: parsed.note
+            ? `The school closed this contact request. Note: ${parsed.note}`
+            : "The school closed this contact request after review.",
+          internalOnly: false,
+        },
+      },
+    },
+  });
+
+  revalidatePath("/admin/communications");
+  revalidatePath("/teacher/communications");
+  revalidatePath(`/parent/children/${request.studentId}`);
+}
+
 export type ParentTeacherContactActionState = {
   status: "idle" | "success" | "error";
   message: string;
@@ -428,6 +545,42 @@ export async function closeParentTeacherContactRequestWithState(
     return {
       status: "success",
       message: "Request closed.",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Could not close request.",
+    };
+  }
+}
+
+export async function escalateParentTeacherContactRequestAsAdminWithState(
+  _state: ParentTeacherContactActionState,
+  data: FormData,
+): Promise<ParentTeacherContactActionState> {
+  try {
+    await escalateParentTeacherContactRequestAsAdmin(data);
+    return {
+      status: "success",
+      message: "Request escalated for school follow-up.",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Could not escalate request.",
+    };
+  }
+}
+
+export async function closeParentTeacherContactRequestAsAdminWithState(
+  _state: ParentTeacherContactActionState,
+  data: FormData,
+): Promise<ParentTeacherContactActionState> {
+  try {
+    await closeParentTeacherContactRequestAsAdmin(data);
+    return {
+      status: "success",
+      message: "Request closed after school review.",
     };
   } catch (error) {
     return {
