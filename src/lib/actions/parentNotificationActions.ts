@@ -16,6 +16,7 @@ export async function markParentNotificationsRead() {
     data: { readAt: new Date() },
   });
 
+  revalidatePath("/", "layout");
   revalidatePath("/parent");
   revalidatePath("/parent/updates");
 }
@@ -33,6 +34,7 @@ export async function markParentNotificationRead(notificationId: string) {
     data: { readAt: new Date() },
   });
 
+  revalidatePath("/", "layout");
   revalidatePath("/parent");
   revalidatePath("/parent/updates");
 }

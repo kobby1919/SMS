@@ -4,6 +4,7 @@ export const communicationRouteCategories = [
   "ATTENDANCE",
   "ACADEMIC_SUPPORT",
   "HOMEWORK",
+  "FINANCE",
   "WELLBEING",
   "GENERAL",
 ] as const;
@@ -12,6 +13,7 @@ export const communicationRouteDefaults = {
   ATTENDANCE: "CLASS_TEACHER",
   ACADEMIC_SUPPORT: "SUBJECT_TEACHER",
   HOMEWORK: "SUBJECT_TEACHER",
+  FINANCE: "SCHOOL_OFFICE",
   WELLBEING: "CLASS_TEACHER",
   GENERAL: "CLASS_TEACHER",
 } as const;

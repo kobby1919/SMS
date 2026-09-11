@@ -53,7 +53,6 @@ export default function ReportPublicationControls({
   const [isPending, startTransition] = useTransition();
   const isPublished = status === "PUBLISHED";
   const isSubmitted = status === "SUBMITTED";
-  const isRejected = status === "REJECTED";
   const canPublish = role === "admin" && isSubmitted && canSubmit;
   const canTeacherSubmit = role === "teacher" && isClassTeacher && canSubmit && !isPublished;
 

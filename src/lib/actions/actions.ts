@@ -17,6 +17,7 @@ import {
   syncHomeworkSubmissionsForAssignment,
 } from "@/src/lib/services/homework";
 import { syncHomeworkCheckingObligation } from "@/src/lib/services/teacher-homework-obligations";
+import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   announcementFormSchema,
@@ -61,6 +62,15 @@ function requireTeacherOwnsLesson(
 ) {
   if (ctx.role === "teacher" && lesson.teacherId !== ctx.userId) {
     throw new AuthorizationError("You can only assign homework for lessons assigned to you.", 403);
+  }
+}
+
+async function assertTeacherActionWithinSchoolHours(
+  ctx: { role?: string | null; schoolId: string },
+  actionLabel: string,
+) {
+  if (ctx.role === "teacher") {
+    await assertWithinSchoolOperatingHours(ctx.schoolId, actionLabel);
   }
 }
 
@@ -500,6 +510,7 @@ export async function createAssignment(data: AssignmentFormData): Promise<{ id: 
   const ctx = await requireAdminOrTeacher();
   const lesson = await getLessonInSchool(parsed.lessonId, ctx.schoolId);
   requireTeacherOwnsLesson(lesson, ctx);
+  await assertTeacherActionWithinSchoolHours(ctx, "Creating homework");
 
   let assignment: AssignmentWithLessonSummary | null = null;
   for (let attempt = 0; attempt < 3; attempt += 1) {
@@ -606,6 +617,7 @@ export async function updateAssignment(data: AssignmentFormData): Promise<{ id: 
   }
   const nextLesson = await getLessonInSchool(parsed.lessonId, ctx.schoolId);
   requireTeacherOwnsLesson(nextLesson, ctx);
+  await assertTeacherActionWithinSchoolHours(ctx, "Updating homework");
 
   const assignment = await prisma.assignment.update({
     where: { id: data.id },
@@ -823,6 +835,7 @@ export async function requestAttendanceCorrection(data: {
   if (attendance.lesson.teacherId !== ctx.userId) {
     throw new AuthorizationError("You can only request corrections for attendance you are responsible for.", 403);
   }
+  await assertWithinSchoolOperatingHours(ctx.schoolId, "Requesting attendance correction");
 
   const newNote = parsed.newNote?.trim() || null;
   const newArrivalTime = parsed.newStatus === "LATE" ? parsed.newArrivalTime?.trim() ?? null : null;
@@ -1133,6 +1146,7 @@ export async function updateHomeworkSubmission(data: HomeworkSubmissionFormData)
   const assignmentInSchool = requireResourceAccess(assignment, ctx);
   requireHomeworkTeacherAccess(assignmentInSchool, ctx);
   assertHomeworkCanBeChecked(assignmentInSchool.dueDate);
+  await assertTeacherActionWithinSchoolHours(ctx, "Checking homework");
 
   const existingSubmission = await prisma.homeworkSubmission.findUnique({
     where: {
@@ -1520,6 +1534,7 @@ export async function updateHomeworkSubmissionsBulk(data: HomeworkBulkSubmission
   const assignmentInSchool = requireResourceAccess(assignment, ctx);
   requireHomeworkTeacherAccess(assignmentInSchool, ctx);
   assertHomeworkCanBeChecked(assignmentInSchool.dueDate);
+  await assertTeacherActionWithinSchoolHours(ctx, "Checking homework in bulk");
 
   const isPastDeadline = (() => {
     const end = new Date(assignmentInSchool.dueDate);
@@ -1601,6 +1616,7 @@ export type ResultFormData = {
 export async function createResult(data: ResultFormData): Promise<void> {
   const parsed = parseActionInput(resultFormSchema, data);
   const ctx = await requireAdminOrTeacher();
+  await assertTeacherActionWithinSchoolHours(ctx, "Creating a result");
 
   const student = await prisma.student.findFirst({
     where: { id: parsed.studentId, schoolId: ctx.schoolId },
@@ -1626,6 +1642,7 @@ export async function updateResult(data: ResultFormData): Promise<void> {
   const parsed = parseActionInput(resultFormSchema, data);
   const existing = await prisma.result.findFirst({ where: { id: data.id, schoolId: ctx.schoolId } });
   requireResourceAccess(existing, ctx);
+  await assertTeacherActionWithinSchoolHours(ctx, "Updating a result");
 
   await prisma.result.update({
     where: { id: data.id },
@@ -1642,7 +1659,9 @@ export async function updateResult(data: ResultFormData): Promise<void> {
 
 export async function deleteResult(id: number): Promise<void> {
   ({ id } = parseActionInput(numericIdSchema, { id }));
-  const { schoolId } = await requireAdminOrTeacher();
+  const ctx = await requireAdminOrTeacher();
+  await assertTeacherActionWithinSchoolHours(ctx, "Deleting a result");
+  const { schoolId } = ctx;
   await prisma.result.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/results");
   revalidateDashboard(schoolId);

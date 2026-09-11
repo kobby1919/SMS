@@ -69,23 +69,27 @@ export default function AttendanceCorrectionRequestForm({
   const selectedRecord = recordByStudentId.get(studentId);
 
   useEffect(() => {
-    if (availableAttendance.length === 0) {
-      setStudentId("");
-      setNewStatus("PRESENT");
-      setNewNote("");
-      setNewArrivalTime("");
-      return;
-    }
-    if (!open) return;
+    const timeout = window.setTimeout(() => {
+      if (availableAttendance.length === 0) {
+        setStudentId("");
+        setNewStatus("PRESENT");
+        setNewNote("");
+        setNewArrivalTime("");
+        return;
+      }
+      if (!open) return;
 
-    const currentRecord = recordByStudentId.get(studentId);
-    const nextRecord = currentRecord ?? availableAttendance[0];
-    if (!currentRecord) {
-      setStudentId(nextRecord.studentId);
-    }
-    setNewStatus(nextRecord.status);
-    setNewNote(nextRecord.note ?? "");
-    setNewArrivalTime(nextRecord.arrivalTime ?? "");
+      const currentRecord = recordByStudentId.get(studentId);
+      const nextRecord = currentRecord ?? availableAttendance[0];
+      if (!currentRecord) {
+        setStudentId(nextRecord.studentId);
+      }
+      setNewStatus(nextRecord.status);
+      setNewNote(nextRecord.note ?? "");
+      setNewArrivalTime(nextRecord.arrivalTime ?? "");
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
   }, [availableAttendance, open, recordByStudentId, studentId]);
 
   const submit = () => {

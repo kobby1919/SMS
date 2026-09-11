@@ -48,9 +48,19 @@ export async function updateSchoolCommunicationPolicy(data: unknown) {
     category,
     target:
       data instanceof FormData
-        ? formValue(data, `routeTarget_${category}`, category === "ACADEMIC_SUPPORT" || category === "HOMEWORK" ? "SUBJECT_TEACHER" : "CLASS_TEACHER")
+        ? formValue(
+            data,
+            `routeTarget_${category}`,
+            category === "ACADEMIC_SUPPORT" || category === "HOMEWORK"
+              ? "SUBJECT_TEACHER"
+              : category === "FINANCE"
+                ? "SCHOOL_OFFICE"
+                : "CLASS_TEACHER",
+          )
         : category === "ACADEMIC_SUPPORT" || category === "HOMEWORK"
           ? "SUBJECT_TEACHER"
+          : category === "FINANCE"
+            ? "SCHOOL_OFFICE"
           : "CLASS_TEACHER",
     selectedTeacherId:
       data instanceof FormData ? formValue(data, `selectedTeacherId_${category}`) || null : null,

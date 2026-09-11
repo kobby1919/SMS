@@ -260,10 +260,6 @@ function buildAttendanceInsight({
   };
 }
 
-function topicEndWeek(topic: { weekNumber: number; durationWeeks: number }) {
-  return topic.weekNumber + topic.durationWeeks - 1;
-}
-
 export async function getParentDashboardData(userId: string, schoolId: string) {
   const parent = await prisma.parent.findFirst({
     where: { id: userId, schoolId },

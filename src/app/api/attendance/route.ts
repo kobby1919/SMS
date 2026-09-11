@@ -10,6 +10,7 @@ import {
 import { parseBody, parseSearchParams } from "@/src/lib/validation/parse";
 import { enforceRateLimit } from "@/src/lib/rate-limit";
 import { revalidateDashboard } from "@/src/lib/cacheTags";
+import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
 import {
   AttendanceSubmissionLockedError,
   deleteAttendanceRecord,
@@ -57,6 +58,10 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const parsed = parseBody(attendanceSubmitSchema, body);
     if (!parsed.ok) return parsed.response;
+
+    if (role === "teacher") {
+      await assertWithinSchoolOperatingHours(schoolId, "Submitting attendance");
+    }
 
     const saved = await saveAttendance({
       schoolId,

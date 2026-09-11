@@ -1044,6 +1044,7 @@ exports.ParentTeacherContactCategory = exports.$Enums.ParentTeacherContactCatego
   ATTENDANCE: 'ATTENDANCE',
   ACADEMIC_SUPPORT: 'ACADEMIC_SUPPORT',
   HOMEWORK: 'HOMEWORK',
+  FINANCE: 'FINANCE',
   WELLBEING: 'WELLBEING',
   GENERAL: 'GENERAL'
 };

@@ -82,6 +82,11 @@ type Props = {
   activeYear: string;
   buckets: Bucket[];
   canLock?: boolean;
+  scoreEntryWindow: {
+    allowed: boolean;
+    label: string;
+    reason: string | null;
+  };
 };
 
 const activityTypeLabels: Record<CAActivityType, string> = {
@@ -115,6 +120,7 @@ const CAActivityManager = ({
   activeYear,
   buckets,
   canLock = false,
+  scoreEntryWindow,
 }: Props) => {
   const router = useRouter();
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | "">(subjects[0]?.id ?? "");
@@ -275,6 +281,10 @@ const CAActivityManager = ({
       setError("This CA bucket is locked. Admin correction is required before adding activities.");
       return;
     }
+    if (!scoreEntryWindow.allowed) {
+      setError(scoreEntryWindow.reason ?? "CA activities can only be created during school hours.");
+      return;
+    }
 
     setPendingAction("activity");
     try {
@@ -307,6 +317,10 @@ const CAActivityManager = ({
     }
     if (selectedActivityLockedForEntry) {
       setError("Scores for this CA activity have already been saved. Corrections must go through an admin-approved correction process.");
+      return;
+    }
+    if (!scoreEntryWindow.allowed) {
+      setError(scoreEntryWindow.reason ?? "CA scores can only be saved during school hours.");
       return;
     }
 
@@ -362,6 +376,10 @@ const CAActivityManager = ({
     }
     if (!correctionReason.trim()) {
       setError("Add a reason for the correction request.");
+      return;
+    }
+    if (!scoreEntryWindow.allowed) {
+      setError(scoreEntryWindow.reason ?? "CA score corrections can only be requested during school hours.");
       return;
     }
 
@@ -437,6 +455,19 @@ const CAActivityManager = ({
           <p className="text-xs font-semibold text-emerald-700">{message}</p>
         </div>
       )}
+      <div
+        className={`rounded-xl border px-3 py-3 text-xs font-bold ${
+          scoreEntryWindow.allowed
+            ? "border-emerald-100 bg-emerald-50 text-emerald-800"
+            : "border-amber-200 bg-amber-50 text-amber-800"
+        }`}
+      >
+        <p className="font-black">CA score entry window: {scoreEntryWindow.allowed ? "Open" : "Closed"}</p>
+        <p className="mt-1 leading-relaxed">
+          Teachers can create CA activities, publish CA scores, and request CA score corrections during {scoreEntryWindow.label}.
+          {!scoreEntryWindow.allowed && scoreEntryWindow.reason ? ` ${scoreEntryWindow.reason}` : ""}
+        </p>
+      </div>
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <label className="flex flex-col gap-1.5">
@@ -634,7 +665,7 @@ const CAActivityManager = ({
           <button
             type="button"
             onClick={handleCreateActivity}
-            disabled={pendingAction !== null || !selectedBucket || selectedBucket.isLocked}
+            disabled={pendingAction !== null || !selectedBucket || selectedBucket.isLocked || !scoreEntryWindow.allowed}
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-black text-white hover:bg-slate-700 disabled:opacity-50"
           >
             {pendingAction === "activity" ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
@@ -721,11 +752,17 @@ const CAActivityManager = ({
           <button
             type="button"
             onClick={handleSaveScores}
-            disabled={pendingAction !== null || !selectedActivity || selectedActivityLockedForEntry}
+            disabled={pendingAction !== null || !selectedActivity || selectedActivityLockedForEntry || !scoreEntryWindow.allowed}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-black text-white hover:bg-emerald-700 disabled:opacity-50 sm:w-auto"
           >
             {pendingAction === "scores" ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
-            {pendingAction === "scores" ? "Saving Scores..." : selectedActivityLockedForEntry ? "Scores Locked" : "Save Scores"}
+            {pendingAction === "scores"
+              ? "Saving Scores..."
+              : selectedActivityLockedForEntry
+                ? "Scores Locked"
+                : scoreEntryWindow.allowed
+                  ? "Save Scores"
+                  : "School Hours Closed"}
           </button>
         </div>
 
@@ -762,7 +799,7 @@ const CAActivityManager = ({
                         max={selectedActivity.rawMaxScore}
                         step={0.5}
                         value={value}
-                        disabled={selectedActivityLockedForEntry}
+                        disabled={selectedActivityLockedForEntry || !scoreEntryWindow.allowed}
                         onChange={(event) =>
                           setScoreEdits((prev) => ({ ...prev, [student.id]: event.target.value }))
                         }
@@ -798,7 +835,7 @@ const CAActivityManager = ({
                         max={selectedActivity.rawMaxScore}
                         step={0.5}
                         value={value}
-                        disabled={selectedActivityLockedForEntry}
+                        disabled={selectedActivityLockedForEntry || !scoreEntryWindow.allowed}
                         onChange={(event) =>
                           setScoreEdits((prev) => ({ ...prev, [student.id]: event.target.value }))
                         }
@@ -871,7 +908,7 @@ const CAActivityManager = ({
                 <button
                   type="button"
                   onClick={handleRequestScoreCorrection}
-                  disabled={pendingAction !== null}
+                  disabled={pendingAction !== null || !scoreEntryWindow.allowed}
                   className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-sm font-black text-white transition hover:bg-slate-800 disabled:opacity-50 sm:w-auto"
                 >
                   {pendingAction === "score-correction" ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}

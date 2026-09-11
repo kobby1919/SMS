@@ -1,0 +1,1 @@
+ALTER TYPE "ParentTeacherContactCategory" ADD VALUE IF NOT EXISTS 'FINANCE';

@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache";
 import type { Term, SyllabusStatus } from "@/src/generated/prisma";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import { revalidateDashboard, revalidateDocument } from "@/src/lib/cacheTags";
+import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
 import {
   syllabusCreateSchema,
   syllabusProgressSchema,
@@ -87,6 +88,8 @@ async function requireSyllabusProgressAccess({
     if (!lesson) {
       throw new Error("You can only update syllabus progress for classes and subjects assigned to you in the timetable.");
     }
+
+    await assertWithinSchoolOperatingHours(schoolId, "Updating syllabus progress");
   }
 
   return topic;

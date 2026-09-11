@@ -225,7 +225,7 @@ export default async function ParentChildCheckupPage({
   }, new Map<string, typeof recentItems>());
 
   return (
-    <div className="flex flex-col gap-5 p-4">
+    <div className="flex w-full min-w-0 flex-col gap-5 px-3 py-4 sm:p-4">
       <div>
         <Link href="/parent" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wide text-slate-500 hover:text-slate-900">
           <ArrowLeft size={14} />
@@ -238,17 +238,17 @@ export default async function ParentChildCheckupPage({
         <h1 className="mt-2 text-2xl font-black text-gray-900">{child.name} {child.surname}</h1>
         <p className="mt-1 text-sm font-semibold text-gray-400">{child.className}</p>
 
-        <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { label: "Today", value: attendanceToday, icon: <CheckCircle2 size={16} />, tone: "text-emerald-700 bg-emerald-50" },
             { label: "CA subjects", value: `${child.academicProgress.completedSubjects}/${subjectTotal}`, icon: <Award size={16} />, tone: "text-sky-700 bg-sky-50" },
             { label: "Homework", value: homeworkLabel, icon: <ClipboardList size={16} />, tone: "text-violet-700 bg-violet-50" },
             { label: "Balance", value: formatGHS(child.financeSummary.outstanding), icon: <WalletCards size={16} />, tone: "text-amber-700 bg-amber-50" },
           ].map((item) => (
-            <div key={item.label} className={`rounded-xl p-3 ${item.tone}`}>
+            <div key={item.label} className={`min-w-0 rounded-xl p-3 ${item.tone}`}>
               <div className="flex items-center justify-between gap-2">
                 {item.icon}
-                <span className="text-sm font-black">{item.value}</span>
+                <span className="min-w-0 break-words text-right text-sm font-black">{item.value}</span>
               </div>
               <p className="mt-2 text-[10px] font-black uppercase tracking-wide">{item.label}</p>
             </div>
@@ -393,7 +393,7 @@ export default async function ParentChildCheckupPage({
                     {todayAttendanceRecords.length} {todayLessonLabel}
                   </span>
                 </div>
-                <div className="grid grid-cols-4 gap-1">
+                <div className="grid grid-cols-2 gap-1 sm:grid-cols-4">
                   <span className="rounded-lg bg-white px-2 py-1 text-center font-black text-emerald-700 ring-1 ring-slate-100">
                     {todayCounts.present} present
                   </span>
@@ -437,7 +437,7 @@ export default async function ParentChildCheckupPage({
             )}
           </div>
 
-          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-5">
+          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
             {[
               { label: "Rate", value: `${child.stats.rate}%`, tone: "text-emerald-700 bg-emerald-50" },
               { label: "Present", value: String(child.stats.present), tone: "text-slate-700 bg-slate-50" },
@@ -445,7 +445,7 @@ export default async function ParentChildCheckupPage({
               { label: "Absent", value: String(child.stats.absent), tone: "text-rose-700 bg-rose-50" },
               { label: "Excused", value: String(child.stats.excused), tone: "text-sky-700 bg-sky-50" },
             ].map((item) => (
-              <div key={item.label} className={`rounded-xl p-3 ${item.tone}`}>
+            <div key={item.label} className={`min-w-0 rounded-xl p-3 ${item.tone}`}>
                 <p className="text-lg font-black">{item.value}</p>
                 <p className="text-[10px] font-black uppercase">{item.label}</p>
               </div>
@@ -520,10 +520,10 @@ export default async function ParentChildCheckupPage({
           )}
         </div>
 
-        <div id="teachers" className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+        <div id="teachers" className="min-w-0 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
           <h2 className="text-sm font-black text-gray-900">Teacher contacts</h2>
           <p className="mt-1 text-xs font-semibold text-gray-400">
-            Send a tracked request when you need follow-up about this ward.
+            Send a tracked request about this ward. Fees and payment concerns are routed by school policy.
           </p>
           {child.communicationSummary.teacherContacts.length > 0 ? (
             <div className="mt-3 space-y-2">
@@ -572,7 +572,7 @@ export default async function ParentChildCheckupPage({
                 {child.communicationSummary.recentRequests.slice(0, 3).map((request) => (
                   <div key={request.id} className="rounded-xl bg-white px-3 py-3 ring-1 ring-slate-100">
                     <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                      <p className="text-sm font-black text-gray-900">{request.subject}</p>
+                      <p className="break-words text-sm font-black text-gray-900">{request.subject}</p>
                       <div className="flex flex-wrap gap-1.5">
                         <span className="w-fit rounded-full bg-blue-50 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-blue-700">
                           {readable(request.status)}
@@ -615,7 +615,7 @@ export default async function ParentChildCheckupPage({
         </div>
       </section>
 
-      <section className="grid gap-3 md:grid-cols-2">
+      <section className="grid gap-3">
         <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
           <h2 className="text-sm font-black text-gray-900">Recent activity</h2>
           <p className="mt-1 text-xs font-semibold text-gray-400">

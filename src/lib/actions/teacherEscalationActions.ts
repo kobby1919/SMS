@@ -8,6 +8,7 @@ import type {
 } from "@/src/generated/prisma";
 import { requireRole } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
+import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   teacherEscalationResponseSchema,
@@ -194,6 +195,7 @@ export async function reviewTeacherEscalationWithState(
 
 export async function submitTeacherEscalationResponse(data: unknown) {
   const context = await requireRole(["teacher"]);
+  await assertWithinSchoolOperatingHours(context.schoolId, "Responding to an escalation");
   const input = parseActionInput(
     teacherEscalationResponseSchema,
     actionInput(data),

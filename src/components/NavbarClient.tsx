@@ -157,6 +157,32 @@ function parentNotificationHref(notification: ParentNotification) {
   return href;
 }
 
+const parentReadNotificationsStorageKey = "edujay:parent-read-notifications";
+
+function loadStoredReadNotificationIds() {
+  if (typeof window === "undefined") return new Set<string>();
+
+  try {
+    const stored = window.sessionStorage.getItem(parentReadNotificationsStorageKey);
+    const parsed = stored ? JSON.parse(stored) : [];
+    return new Set(Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === "string") : []);
+  } catch {
+    return new Set<string>();
+  }
+}
+
+function storeReadNotificationIds(ids: Set<string>) {
+  if (typeof window === "undefined") return;
+  window.sessionStorage.setItem(parentReadNotificationsStorageKey, JSON.stringify([...ids].slice(-100)));
+}
+
+function applyLocalReadState(notifications: ParentNotification[], readIds: Set<string>) {
+  const now = new Date().toISOString();
+  return notifications.map((notification) =>
+    readIds.has(notification.id) ? { ...notification, readAt: notification.readAt ?? now } : notification,
+  );
+}
+
 function SearchBox({
   items,
   mobile = false,
@@ -240,14 +266,17 @@ function SearchBox({
 function ParentBell({ notifications }: { notifications: ParentNotification[] }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [localNotifications, setLocalNotifications] = useState(notifications);
+  const [localReadIds, setLocalReadIds] = useState<Set<string>>(() => loadStoredReadNotificationIds());
+  const [localNotifications, setLocalNotifications] = useState(() =>
+    applyLocalReadState(notifications, loadStoredReadNotificationIds()),
+  );
   const [isPending, startTransition] = useTransition();
   const rootRef = useRef<HTMLDivElement>(null);
   const unreadCount = localNotifications.filter((notification) => !notification.readAt).length;
 
   useEffect(() => {
-    setLocalNotifications(notifications);
-  }, [notifications]);
+    setLocalNotifications(applyLocalReadState(notifications, localReadIds));
+  }, [notifications, localReadIds]);
 
   useEffect(() => {
     if (!open) return;
@@ -262,11 +291,17 @@ function ParentBell({ notifications }: { notifications: ParentNotification[] }) 
     return () => document.removeEventListener("pointerdown", handlePointerDown);
   }, [open]);
 
-  const markLocallyRead = (notificationId: string) => {
+  const markLocallyRead = (notificationIds: string[]) => {
     const now = new Date().toISOString();
+    setLocalReadIds((current) => {
+      const next = new Set(current);
+      notificationIds.forEach((notificationId) => next.add(notificationId));
+      storeReadNotificationIds(next);
+      return next;
+    });
     setLocalNotifications((current) =>
       current.map((notification) =>
-        notification.id === notificationId ? { ...notification, readAt: notification.readAt ?? now } : notification,
+        notificationIds.includes(notification.id) ? { ...notification, readAt: notification.readAt ?? now } : notification,
       ),
     );
   };
@@ -275,10 +310,11 @@ function ParentBell({ notifications }: { notifications: ParentNotification[] }) 
     const href = parentNotificationHref(notification);
     setOpen(false);
     if (!notification.readAt) {
-      markLocallyRead(notification.id);
+      markLocallyRead([notification.id]);
       startTransition(async () => {
         await markParentNotificationRead(notification.id);
         router.push(href);
+        router.refresh();
       });
       return;
     }
@@ -313,11 +349,11 @@ function ParentBell({ notifications }: { notifications: ParentNotification[] }) 
               type="button"
               disabled={isPending || unreadCount === 0}
               onClick={() => {
-                const now = new Date().toISOString();
-                setLocalNotifications((current) =>
-                  current.map((notification) => ({ ...notification, readAt: notification.readAt ?? now })),
-                );
-                startTransition(() => markParentNotificationsRead());
+                markLocallyRead(localNotifications.filter((notification) => !notification.readAt).map((notification) => notification.id));
+                startTransition(async () => {
+                  await markParentNotificationsRead();
+                  router.refresh();
+                });
               }}
               className="rounded-full bg-gray-50 px-3 py-1.5 text-[11px] font-black text-gray-600 disabled:opacity-40"
             >

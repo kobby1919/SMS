@@ -11,6 +11,7 @@ import CAActivityManager from "@/src/components/CAActivityManager";
 import ExamEntryWindowControls from "@/src/components/ExamEntryWindowControls";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { getSubjectCAProgress } from "@/src/lib/services/ca-activity";
+import { getSchoolOperatingWindowStatus } from "@/src/lib/services/school-operating-hours";
 import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 import { ClipboardList, AlertTriangle, BookOpen, Users, Layers3 } from "lucide-react";
 
@@ -122,12 +123,13 @@ const CAPage = async ({
   });
 
   // ── Academic years from CA configs ────────────────────────────────────────
-  const [configs, activePeriod] = await Promise.all([
+  const [configs, activePeriod, scoreEntryWindow] = await Promise.all([
     prisma.cAConfig.findMany({
       where: { schoolId },
       orderBy: [{ isActive: "desc" }, { academicYear: "desc" }],
     }),
     getActiveAcademicPeriod(schoolId),
+    getSchoolOperatingWindowStatus(schoolId),
   ]);
   const academicYears =
     configs.length > 0
@@ -384,6 +386,11 @@ const CAPage = async ({
                 activeTerm={activePeriod.currentTerm}
                 activeYear={activePeriod.academicYear}
                 canLock={role === "admin"}
+                scoreEntryWindow={{
+                  allowed: scoreEntryWindow.allowed,
+                  label: scoreEntryWindow.label,
+                  reason: scoreEntryWindow.reason,
+                }}
                 buckets={caBuckets.map((bucket) => ({
                   id: bucket.id,
                   name: bucket.name,

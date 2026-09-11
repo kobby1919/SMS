@@ -120,7 +120,7 @@ export async function createParentTeacherContactRequest(data: unknown) {
 
   const routeTarget = route?.target ?? communicationRouteDefaults[parsed.category];
   let routedTeacherId = parsed.teacherId;
-  let routedSubjectName = teacherLesson?.subject.name ?? null;
+  const routedSubjectName = teacherLesson?.subject.name ?? null;
 
   if (routeTarget === "SUBJECT_TEACHER") {
     if (!teacherLesson || teacherLesson.classId !== student.classId) {

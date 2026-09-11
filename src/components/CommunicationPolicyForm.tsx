@@ -64,6 +64,7 @@ export default function CommunicationPolicyForm({
     { category: "ATTENDANCE", label: "Attendance", help: "Late, absent, or attendance follow-up." },
     { category: "ACADEMIC_SUPPORT", label: "Academic support", help: "CA progress, classwork, exam preparation." },
     { category: "HOMEWORK", label: "Homework", help: "Homework issue, submission, missing work." },
+    { category: "FINANCE", label: "Fees and payments", help: "Bill balance, receipt, payment, discount, or finance follow-up." },
     { category: "WELLBEING", label: "Wellbeing", help: "Behaviour, health, safety, emotional support." },
     { category: "GENERAL", label: "General", help: "Anything that does not fit another category." },
   ] as const;
@@ -150,7 +151,7 @@ export default function CommunicationPolicyForm({
                 </div>
                 <label className="flex flex-col gap-1">
                   <span className="text-[10px] font-black uppercase tracking-wide text-gray-400">Route to</span>
-                  <select name={routeTargetName} defaultValue={route?.target ?? (item.category === "ACADEMIC_SUPPORT" || item.category === "HOMEWORK" ? "SUBJECT_TEACHER" : "CLASS_TEACHER")} className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold outline-none focus:border-sky-400">
+                  <select name={routeTargetName} defaultValue={route?.target ?? (item.category === "ACADEMIC_SUPPORT" || item.category === "HOMEWORK" ? "SUBJECT_TEACHER" : item.category === "FINANCE" ? "SCHOOL_OFFICE" : "CLASS_TEACHER")} className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold outline-none focus:border-sky-400">
                     <option value="SUBJECT_TEACHER">Subject teacher</option>
                     <option value="CLASS_TEACHER">Class teacher</option>
                     <option value="SELECTED_TEACHER">Selected teacher</option>

@@ -276,6 +276,7 @@ enum ParentTeacherContactCategory {
   ATTENDANCE
   ACADEMIC_SUPPORT
   HOMEWORK
+  FINANCE
   WELLBEING
   GENERAL
 }

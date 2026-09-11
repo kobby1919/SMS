@@ -58,7 +58,7 @@ export const parentTeacherContactRouteTargetSchema = z.enum([
 
 export const communicationRouteSchema = z
   .object({
-    category: z.enum(["ATTENDANCE", "ACADEMIC_SUPPORT", "HOMEWORK", "WELLBEING", "GENERAL"]),
+    category: z.enum(["ATTENDANCE", "ACADEMIC_SUPPORT", "HOMEWORK", "FINANCE", "WELLBEING", "GENERAL"]),
     target: parentTeacherContactRouteTargetSchema,
     selectedTeacherId: z.string().trim().optional().nullable(),
   })
@@ -70,4 +70,4 @@ export const communicationRouteSchema = z
     },
   );
 
-export const communicationRoutesSchema = z.array(communicationRouteSchema).length(5);
+export const communicationRoutesSchema = z.array(communicationRouteSchema).length(6);

@@ -37,10 +37,10 @@ import {
 } from "@/src/lib/services/parent-daily-summary";
 import { syncCAActivityScorePublishingObligation } from "@/src/lib/services/teacher-ca-obligations";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
-import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 import { getClassReportReadiness } from "@/src/lib/services/report-card-readiness";
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 import { recordApprovedCorrectionParentEvent } from "@/src/lib/services/correction-parent-events";
+import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
 
 // ─── Ghana BECE Grading System ────────────────────────────────────────────────
 // Score ranges → letter grade + grade point
@@ -233,6 +233,9 @@ export async function createCA(data: CAInput) {
   const parsed = parseActionInput(caRecordSchema, data);
   const { userId: teacherId, role, schoolId } = await requireCAAccess(parsed.classId);
   await assertTeacherUsesActivePeriod({ schoolId, role, term: parsed.term, academicYear: parsed.academicYear });
+  if (role === "teacher") {
+    await assertWithinSchoolOperatingHours(schoolId, "Creating an assessment record");
+  }
 
   // Get active config
   const config = await prisma.cAConfig.findUnique({
@@ -290,6 +293,9 @@ export async function updateCA(data: CAInput) {
   const parsed = parseActionInput(caRecordUpdateSchema, data);
   const { userId: teacherId, role, schoolId } = await requireCAAccess(parsed.classId);
   await assertTeacherUsesActivePeriod({ schoolId, role, term: parsed.term, academicYear: parsed.academicYear });
+  if (role === "teacher") {
+    await assertWithinSchoolOperatingHours(schoolId, "Updating an assessment record");
+  }
 
   const config = await prisma.cAConfig.findUnique({
     where: { schoolId_academicYear: { schoolId, academicYear: parsed.academicYear } },
@@ -389,6 +395,9 @@ export async function bulkUpsertCA(
   academicYear = parsed.academicYear;
   const { userId: teacherId, role, schoolId } = await requireCAAccess(classId);
   await assertTeacherUsesActivePeriod({ schoolId, role, term, academicYear });
+  if (role === "teacher") {
+    await assertWithinSchoolOperatingHours(schoolId, "Saving assessment scores");
+  }
 
   const config = await prisma.cAConfig.findUnique({
     where: { schoolId_academicYear: { schoolId, academicYear } },
@@ -584,6 +593,7 @@ export async function createCAActivityAction(data: {
     term: bucket.term,
     academicYear: bucket.academicYear,
   });
+  await assertWithinSchoolOperatingHours(schoolId, "Creating a CA activity");
 
   const activity = await createCAActivity({
     schoolId,
@@ -668,6 +678,7 @@ export async function bulkUpsertCAActivityScores(data: {
     term: activity.bucket.term,
     academicYear: activity.bucket.academicYear,
   });
+  await assertWithinSchoolOperatingHours(schoolId, "Publishing CA scores");
 
   const studentIds = parsed.rows.map((row) => row.studentId);
   const uniqueStudentIds = new Set(studentIds);
@@ -792,6 +803,7 @@ export async function requestCAActivityScoreCorrection(data: {
     classId: score.activity.classId,
     subjectId: score.activity.subjectId,
   });
+  await assertWithinSchoolOperatingHours(schoolId, "Requesting a CA score correction");
 
   const rawMaxScore = Number(score.activity.rawMaxScore);
   if (newRawScore > rawMaxScore) {
@@ -912,6 +924,7 @@ export async function requestExamScoreCorrection(data: {
     term: parsed.term,
     academicYear: parsed.academicYear,
   });
+  await assertWithinSchoolOperatingHours(schoolId, "Requesting exam score correction");
 
   const config = await prisma.cAConfig.findUnique({
     where: { schoolId_academicYear: { schoolId, academicYear: parsed.academicYear } },
@@ -1432,6 +1445,7 @@ export async function submitClassReportCardsForReviewAction(data: {
 }) {
   const parsed = parseActionInput(reportPublicationSchema, data);
   const { userId, role, schoolId } = await requireRole(["teacher"]);
+  await assertWithinSchoolOperatingHours(schoolId, "Submitting class report cards");
   const activePeriod = await getActiveAcademicPeriod(schoolId);
   if (parsed.term !== activePeriod.currentTerm || parsed.academicYear !== activePeriod.academicYear) {
     throw new Error("Class reports can only be submitted for the active academic period.");

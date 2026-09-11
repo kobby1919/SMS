@@ -209,9 +209,13 @@ const CAEntryForm = ({
   );
 
   useEffect(() => {
-    setExamCorrectionStudentId("");
-    setExamCorrectionScore("");
-    setExamCorrectionReason("");
+    const timeout = window.setTimeout(() => {
+      setExamCorrectionStudentId("");
+      setExamCorrectionScore("");
+      setExamCorrectionReason("");
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
   }, [selectedSubjectId]);
 
   const handleSubmit = () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { MessageCircle } from "lucide-react";
 import {
@@ -27,9 +27,15 @@ const categories = [
   { value: "ATTENDANCE", label: "Attendance" },
   { value: "ACADEMIC_SUPPORT", label: "Academic support" },
   { value: "HOMEWORK", label: "Homework" },
+  { value: "FINANCE", label: "Fees / finance" },
   { value: "WELLBEING", label: "Wellbeing" },
   { value: "GENERAL", label: "General" },
 ];
+
+function contactSubjectFor(category: string, teacherName: string) {
+  const label = categories.find((item) => item.value === category)?.label ?? "General";
+  return `${label} follow-up for ${teacherName}`;
+}
 
 function SubmitButton({ disabled }: { disabled: boolean }) {
   const { pending } = useFormStatus();
@@ -58,6 +64,7 @@ export default function ParentTeacherContactForm({
   policy: ContactPolicy;
 }) {
   const [state, formAction] = useActionState(createParentTeacherContactRequestWithState, initialState);
+  const [category, setCategory] = useState("GENERAL");
   const enabled = policy.enabled && policy.allowParentTeacherMessaging;
   const channels = [
     policy.allowInAppMessages ? { value: "IN_APP", label: "In-app" } : null,
@@ -78,10 +85,16 @@ export default function ParentTeacherContactForm({
     <form action={formAction} className="mt-3 rounded-xl border border-slate-100 bg-white p-3">
       <input type="hidden" name="studentId" value={studentId} />
       <input type="hidden" name="teacherId" value={teacherId} />
+      <input type="hidden" name="subject" value={contactSubjectFor(category, teacherName)} />
       <div className="grid gap-3 md:grid-cols-2">
         <label className="flex flex-col gap-1">
-          <span className="text-[10px] font-black uppercase tracking-wide text-gray-400">Reason</span>
-          <select name="category" defaultValue="GENERAL" className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold outline-none focus:border-sky-400">
+          <span className="text-[10px] font-black uppercase tracking-wide text-gray-400">What do you need help with?</span>
+          <select
+            name="category"
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+            className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold outline-none focus:border-sky-400"
+          >
             {categories.map((category) => (
               <option key={category.value} value={category.value}>
                 {category.label}
@@ -100,22 +113,16 @@ export default function ParentTeacherContactForm({
           </select>
         </label>
       </div>
+      <p className="mt-3 rounded-xl bg-slate-50 px-3 py-2 text-xs font-semibold leading-relaxed text-slate-500">
+        Edujay will label and route this request based on the reason selected.
+      </p>
       <label className="mt-3 flex flex-col gap-1">
-        <span className="text-[10px] font-black uppercase tracking-wide text-gray-400">Subject</span>
-        <input
-          name="subject"
-          defaultValue={`Question for ${teacherName}`}
-          maxLength={120}
-          className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold outline-none focus:border-sky-400"
-        />
-      </label>
-      <label className="mt-3 flex flex-col gap-1">
-        <span className="text-[10px] font-black uppercase tracking-wide text-gray-400">Message</span>
+        <span className="text-[10px] font-black uppercase tracking-wide text-gray-400">Tell us what happened</span>
         <textarea
           name="message"
           rows={3}
           maxLength={1000}
-          placeholder="Write the concern clearly so the teacher can respond properly."
+          placeholder="Write the concern clearly. Edujay will route it according to the school's communication policy."
           className="resize-none rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold outline-none focus:border-sky-400"
         />
       </label>
