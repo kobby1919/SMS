@@ -122,12 +122,20 @@ export type ParentCommunicationSummary = {
   recentRequests: {
     id: string;
     teacherId: string;
+    teacherName: string;
     subject: string;
+    message: string;
     status: string;
     category: string;
     preferredChannel: string;
     createdAt: Date;
     responseDueAt: Date | null;
+    messages: {
+      id: string;
+      senderRole: string;
+      body: string;
+      createdAt: Date;
+    }[];
   }[];
   latestAnnouncement?: {
     title: string;
@@ -447,12 +455,30 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
         id: true,
         studentId: true,
         teacherId: true,
+        teacher: {
+          select: {
+            name: true,
+            surname: true,
+          },
+        },
         subject: true,
+        message: true,
         status: true,
         category: true,
         preferredChannel: true,
         createdAt: true,
         responseDueAt: true,
+        messages: {
+          where: { internalOnly: false },
+          select: {
+            id: true,
+            senderRole: true,
+            body: true,
+            createdAt: true,
+          },
+          orderBy: { createdAt: "asc" },
+          take: 8,
+        },
       },
       orderBy: { createdAt: "desc" },
       take: 40,
@@ -918,12 +944,20 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       recentRequests: childContactRequests.map((request) => ({
         id: request.id,
         teacherId: request.teacherId,
+        teacherName: `${request.teacher.name} ${request.teacher.surname}`,
         subject: request.subject,
+        message: request.message,
         status: request.status,
         category: request.category,
         preferredChannel: request.preferredChannel,
         createdAt: request.createdAt,
         responseDueAt: request.responseDueAt,
+        messages: request.messages.map((message) => ({
+          id: message.id,
+          senderRole: message.senderRole,
+          body: message.body,
+          createdAt: message.createdAt,
+        })),
       })),
       latestAnnouncement: childAnnouncements[0]
         ? { title: childAnnouncements[0].title, date: childAnnouncements[0].date }

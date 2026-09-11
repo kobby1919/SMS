@@ -36,9 +36,23 @@ function formatDate(date: Date) {
   });
 }
 
+function formatDateTime(date: Date | null) {
+  if (!date) return "Not set";
+  return date.toLocaleString("en-GH", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 function formatTimeLabel(value?: string | null) {
   if (!value) return null;
   return value;
+}
+
+function readable(value: string) {
+  return value.toLowerCase().replaceAll("_", " ");
 }
 
 function attendanceStatusMeta(status?: string) {
@@ -554,18 +568,45 @@ export default async function ParentChildCheckupPage({
           {child.communicationSummary.recentRequests.length > 0 && (
             <div className="mt-4 rounded-xl border border-slate-100 bg-slate-50 p-3">
               <p className="text-xs font-black uppercase tracking-wide text-gray-400">Recent contact requests</p>
-              <div className="mt-2 space-y-2">
+              <div className="mt-3 space-y-3">
                 {child.communicationSummary.recentRequests.slice(0, 3).map((request) => (
-                  <div key={request.id} className="rounded-lg bg-white px-3 py-2">
+                  <div key={request.id} className="rounded-xl bg-white px-3 py-3 ring-1 ring-slate-100">
                     <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                       <p className="text-sm font-black text-gray-900">{request.subject}</p>
-                      <span className="w-fit rounded-full bg-blue-50 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-blue-700">
-                        {request.status.toLowerCase().replaceAll("_", " ")}
-                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        <span className="w-fit rounded-full bg-blue-50 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-blue-700">
+                          {readable(request.status)}
+                        </span>
+                        <span className="w-fit rounded-full bg-slate-50 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-slate-600">
+                          {readable(request.category)}
+                        </span>
+                      </div>
                     </div>
-                    <p className="mt-1 text-xs font-semibold text-gray-500">
-                      {request.category.toLowerCase().replaceAll("_", " ")} via {request.preferredChannel.toLowerCase().replaceAll("_", " ")} - sent {formatDate(request.createdAt)}
+                    <p className="mt-1 text-xs font-semibold leading-relaxed text-gray-500">
+                      Sent to {request.teacherName} via {readable(request.preferredChannel)} on {formatDate(request.createdAt)}.
+                      Expected response: {formatDateTime(request.responseDueAt)}.
                     </p>
+                    <div className="mt-3 space-y-2">
+                      {request.messages.length > 0 ? (
+                        request.messages.map((message) => (
+                          <div key={message.id} className="rounded-xl bg-slate-50 px-3 py-2">
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <p className="text-[10px] font-black uppercase tracking-wide text-gray-400">
+                                {readable(message.senderRole)}
+                              </p>
+                              <p className="text-[10px] font-bold text-gray-400">
+                                {formatDateTime(message.createdAt)}
+                              </p>
+                            </div>
+                            <p className="mt-1 text-xs font-semibold leading-relaxed text-gray-600">{message.body}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="rounded-xl bg-slate-50 px-3 py-2 text-xs font-semibold text-gray-400">
+                          Waiting for conversation history.
+                        </p>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
