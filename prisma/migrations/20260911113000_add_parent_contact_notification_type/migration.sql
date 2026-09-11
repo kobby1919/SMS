@@ -1,0 +1,1 @@
+ALTER TYPE "ParentNotificationType" ADD VALUE IF NOT EXISTS 'CONTACT';

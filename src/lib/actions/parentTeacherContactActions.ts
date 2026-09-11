@@ -214,6 +214,8 @@ async function getTeacherOwnedContactRequest({
     select: {
       id: true,
       status: true,
+      subject: true,
+      parentId: true,
       studentId: true,
     },
   });
@@ -273,27 +275,54 @@ export async function respondToParentTeacherContactRequest(data: unknown) {
   });
   const now = new Date();
 
-  await prisma.parentTeacherContactRequest.update({
-    where: { id: request.id },
-    data: {
-      status: "RESPONDED",
-      acknowledgedAt: request.status === "PENDING" ? now : undefined,
-      respondedAt: now,
-      lastTeacherResponseAt: now,
-      messages: {
-        create: {
+  await prisma.$transaction(async (tx) => {
+    await tx.parentTeacherContactRequest.update({
+      where: { id: request.id },
+      data: {
+        status: "RESPONDED",
+        acknowledgedAt: request.status === "PENDING" ? now : undefined,
+        respondedAt: now,
+        lastTeacherResponseAt: now,
+      },
+    });
+
+    const message = await tx.parentTeacherContactMessage.create({
+      data: {
           schoolId,
           teacherId: userId,
           senderRole: "TEACHER",
           senderId: userId,
           body: parsed.response,
+        requestId: request.id,
+      },
+    });
+
+    await tx.parentNotification.create({
+      data: {
+        schoolId,
+        parentId: request.parentId,
+        studentId: request.studentId,
+        type: "CONTACT",
+        priority: "NORMAL",
+        title: "Teacher response received",
+        body: `A teacher responded to: ${request.subject}`,
+        href: `/parent/children/${request.studentId}#teachers`,
+        sourceModel: "ParentTeacherContactMessage",
+        sourceId: message.id,
+        sourceKey: `parent-contact-response:${message.id}`,
+        occurredAt: now,
+        payload: {
+          requestId: request.id,
+          messageId: message.id,
         },
       },
-    },
+    });
   });
 
   revalidatePath("/teacher/communications");
   revalidatePath(`/parent/children/${request.studentId}`);
+  revalidatePath("/parent/updates");
+  revalidatePath("/parent");
 }
 
 export async function closeParentTeacherContactRequest(data: unknown) {

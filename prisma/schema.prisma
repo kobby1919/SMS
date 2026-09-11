@@ -248,6 +248,7 @@ enum ParentNotificationType {
   ASSESSMENT
   ASSIGNMENT
   ANNOUNCEMENT
+  CONTACT
   BILL
   PAYMENT
 }

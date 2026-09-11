@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   ClipboardList,
   Megaphone,
+  MessageCircle,
   ReceiptText,
   WalletCards,
 } from "lucide-react";
@@ -50,6 +51,11 @@ const typeMeta: Record<ParentNotificationType, { label: string; icon: React.Reac
     label: "Notices",
     icon: <Megaphone size={16} />,
     tone: "bg-slate-50 text-slate-700 border-slate-100",
+  },
+  CONTACT: {
+    label: "Teacher replies",
+    icon: <MessageCircle size={16} />,
+    tone: "bg-cyan-50 text-cyan-700 border-cyan-100",
   },
   BILL: {
     label: "Fees",
@@ -523,6 +529,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
     "ATTENDANCE",
     "ASSESSMENT",
     "ASSIGNMENT",
+    "CONTACT",
     "BILL",
     "ANNOUNCEMENT",
   ];

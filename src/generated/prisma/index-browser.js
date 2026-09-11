@@ -1136,6 +1136,7 @@ exports.ParentNotificationType = exports.$Enums.ParentNotificationType = {
   ASSESSMENT: 'ASSESSMENT',
   ASSIGNMENT: 'ASSIGNMENT',
   ANNOUNCEMENT: 'ANNOUNCEMENT',
+  CONTACT: 'CONTACT',
   BILL: 'BILL',
   PAYMENT: 'PAYMENT'
 };
