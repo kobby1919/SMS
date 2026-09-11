@@ -288,6 +288,13 @@ enum ParentTeacherContactStatus {
   CANCELLED
 }
 
+enum ParentTeacherContactMessageSender {
+  PARENT
+  TEACHER
+  ADMIN
+  SYSTEM
+}
+
 enum ParentTeacherContactRouteTarget {
   SUBJECT_TEACHER
   CLASS_TEACHER
@@ -466,6 +473,7 @@ model School {
   parentPreferences              ParentNotificationPreference[]
   parentDeliveryLogs             ParentNotificationDeliveryLog[]
   parentTeacherContactRequests   ParentTeacherContactRequest[]
+  parentTeacherContactMessages   ParentTeacherContactMessage[]
 }
 
 model Admin {
@@ -512,6 +520,7 @@ model Student {
   parentActivityEvents   ParentActivityEvent[]
   financeQueries         FinanceQuery[]
   teacherContactRequests ParentTeacherContactRequest[]
+  teacherContactMessages ParentTeacherContactMessage[]
 
   @@index([schoolId])
   @@index([schoolId, classId])
@@ -553,6 +562,7 @@ model Teacher {
   accountabilityEscalations TeacherEscalation[]
   correctionRequests        TeacherCorrectionRequest[]
   parentContactRequests     ParentTeacherContactRequest[]
+  parentContactMessages     ParentTeacherContactMessage[]
   communicationRouteTargets SchoolCommunicationRoute[]      @relation("SelectedCommunicationRouteTeacher")
   accountabilityAuditLogs   TeacherAccountabilityAuditLog[]
 
@@ -580,6 +590,7 @@ model Parent {
   notificationDeliveries ParentNotificationDeliveryLog[]
   financeQueries         FinanceQuery[]
   teacherContactRequests ParentTeacherContactRequest[]
+  teacherContactMessages ParentTeacherContactMessage[]
 
   @@index([schoolId])
   @@index([schoolId, createdAt])
@@ -933,10 +944,39 @@ model ParentTeacherContactRequest {
   teacherId String
   teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 
+  messages ParentTeacherContactMessage[]
+
   @@index([schoolId, parentId, status, createdAt])
   @@index([schoolId, teacherId, status, responseDueAt])
   @@index([schoolId, studentId, createdAt])
   @@index([schoolId, status, responseDueAt])
+}
+
+model ParentTeacherContactMessage {
+  id           String                            @id @default(cuid())
+  senderRole   ParentTeacherContactMessageSender
+  senderId     String?
+  body         String
+  internalOnly Boolean                           @default(false)
+  createdAt    DateTime                          @default(now())
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  requestId String
+  request   ParentTeacherContactRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  parentId String?
+  parent   Parent? @relation(fields: [parentId], references: [id], onDelete: SetNull)
+
+  teacherId String?
+  teacher   Teacher? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  student   Student? @relation(fields: [studentId], references: [id])
+  studentId String?
+
+  @@index([schoolId, requestId, createdAt])
+  @@index([schoolId, teacherId, createdAt])
+  @@index([schoolId, parentId, createdAt])
 }
 
 model ParentActivityEvent {

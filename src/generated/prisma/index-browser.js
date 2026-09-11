@@ -435,6 +435,20 @@ exports.Prisma.ParentTeacherContactRequestScalarFieldEnum = {
   teacherId: 'teacherId'
 };
 
+exports.Prisma.ParentTeacherContactMessageScalarFieldEnum = {
+  id: 'id',
+  senderRole: 'senderRole',
+  senderId: 'senderId',
+  body: 'body',
+  internalOnly: 'internalOnly',
+  createdAt: 'createdAt',
+  schoolId: 'schoolId',
+  requestId: 'requestId',
+  parentId: 'parentId',
+  teacherId: 'teacherId',
+  studentId: 'studentId'
+};
+
 exports.Prisma.ParentActivityEventScalarFieldEnum = {
   id: 'id',
   type: 'type',
@@ -1155,6 +1169,13 @@ exports.ParentTeacherContactStatus = exports.$Enums.ParentTeacherContactStatus =
   CANCELLED: 'CANCELLED'
 };
 
+exports.ParentTeacherContactMessageSender = exports.$Enums.ParentTeacherContactMessageSender = {
+  PARENT: 'PARENT',
+  TEACHER: 'TEACHER',
+  ADMIN: 'ADMIN',
+  SYSTEM: 'SYSTEM'
+};
+
 exports.Day = exports.$Enums.Day = {
   MONDAY: 'MONDAY',
   TUESDAY: 'TUESDAY',
@@ -1408,6 +1429,7 @@ exports.Prisma.ModelName = {
   ParentNotification: 'ParentNotification',
   ParentNotificationDeliveryLog: 'ParentNotificationDeliveryLog',
   ParentTeacherContactRequest: 'ParentTeacherContactRequest',
+  ParentTeacherContactMessage: 'ParentTeacherContactMessage',
   ParentActivityEvent: 'ParentActivityEvent',
   Grade: 'Grade',
   Class: 'Class',

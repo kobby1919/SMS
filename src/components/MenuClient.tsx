@@ -95,6 +95,12 @@ const teacherMenuItems = [
         href: "/teacher/accountability",
         visible: ["teacher"],
       },
+      {
+        icon: MessageCircle,
+        label: "Parent Contacts",
+        href: "/teacher/communications",
+        visible: ["teacher"],
+      },
     ],
   },
   {

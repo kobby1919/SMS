@@ -6,6 +6,10 @@ import { requireRole } from "@/src/lib/authz";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import { parentTeacherContactRequestSchema } from "@/src/lib/validation/parent-teacher-contact";
 import {
+  teacherContactRequestIdSchema,
+  teacherContactResponseSchema,
+} from "@/src/lib/validation/parent-teacher-contact";
+import {
   communicationRouteDefaults,
   schoolCommunicationPolicyDefaults,
 } from "@/src/lib/services/school-communication-policy";
@@ -176,11 +180,155 @@ export async function createParentTeacherContactRequest(data: unknown) {
         lessonId: teacherLesson?.id ?? null,
         subjectName: routedSubjectName,
       },
+      messages: {
+        create: {
+          schoolId,
+          parentId: userId,
+          senderRole: "PARENT",
+          senderId: userId,
+          body: parsed.message,
+        },
+      },
     },
   });
 
   revalidatePath(`/parent/children/${parsed.studentId}`);
   revalidatePath("/parent");
+}
+
+async function getTeacherOwnedContactRequest({
+  schoolId,
+  teacherId,
+  requestId,
+}: {
+  schoolId: string;
+  teacherId: string;
+  requestId: string;
+}) {
+  const request = await prisma.parentTeacherContactRequest.findFirst({
+    where: {
+      id: requestId,
+      schoolId,
+      teacherId,
+    },
+    select: {
+      id: true,
+      status: true,
+      studentId: true,
+    },
+  });
+
+  if (!request) {
+    throw new Error("This contact request was not found for your teacher account.");
+  }
+
+  if (request.status === "CLOSED" || request.status === "CANCELLED") {
+    throw new Error("This contact request is already closed.");
+  }
+
+  return request;
+}
+
+export async function acknowledgeParentTeacherContactRequest(data: unknown) {
+  const { userId, schoolId } = await requireRole(["teacher"]);
+  const input =
+    data instanceof FormData
+      ? { requestId: formValue(data, "requestId") }
+      : data;
+  const parsed = parseActionInput(teacherContactRequestIdSchema, input);
+  const request = await getTeacherOwnedContactRequest({
+    schoolId,
+    teacherId: userId,
+    requestId: parsed.requestId,
+  });
+
+  if (request.status === "PENDING") {
+    await prisma.parentTeacherContactRequest.update({
+      where: { id: request.id },
+      data: {
+        status: "ACKNOWLEDGED",
+        acknowledgedAt: new Date(),
+      },
+    });
+  }
+
+  revalidatePath("/teacher/communications");
+  revalidatePath(`/parent/children/${request.studentId}`);
+}
+
+export async function respondToParentTeacherContactRequest(data: unknown) {
+  const { userId, schoolId } = await requireRole(["teacher"]);
+  const input =
+    data instanceof FormData
+      ? {
+          requestId: formValue(data, "requestId"),
+          response: formValue(data, "response"),
+        }
+      : data;
+  const parsed = parseActionInput(teacherContactResponseSchema, input);
+  const request = await getTeacherOwnedContactRequest({
+    schoolId,
+    teacherId: userId,
+    requestId: parsed.requestId,
+  });
+  const now = new Date();
+
+  await prisma.parentTeacherContactRequest.update({
+    where: { id: request.id },
+    data: {
+      status: "RESPONDED",
+      acknowledgedAt: request.status === "PENDING" ? now : undefined,
+      respondedAt: now,
+      lastTeacherResponseAt: now,
+      messages: {
+        create: {
+          schoolId,
+          teacherId: userId,
+          senderRole: "TEACHER",
+          senderId: userId,
+          body: parsed.response,
+        },
+      },
+    },
+  });
+
+  revalidatePath("/teacher/communications");
+  revalidatePath(`/parent/children/${request.studentId}`);
+}
+
+export async function closeParentTeacherContactRequest(data: unknown) {
+  const { userId, schoolId } = await requireRole(["teacher"]);
+  const input =
+    data instanceof FormData
+      ? { requestId: formValue(data, "requestId") }
+      : data;
+  const parsed = parseActionInput(teacherContactRequestIdSchema, input);
+  const request = await getTeacherOwnedContactRequest({
+    schoolId,
+    teacherId: userId,
+    requestId: parsed.requestId,
+  });
+
+  await prisma.parentTeacherContactRequest.update({
+    where: { id: request.id },
+    data: {
+      status: "CLOSED",
+      closedAt: new Date(),
+      messages: {
+        create: {
+          schoolId,
+          teacherId: userId,
+          senderRole: "SYSTEM",
+          senderId: userId,
+          body: "The teacher marked this parent contact request as closed.",
+          internalOnly: false,
+        },
+      },
+    },
+  });
+
+  revalidatePath("/teacher/communications");
+  revalidatePath(`/parent/children/${request.studentId}`);
 }
 
 export type ParentTeacherContactActionState = {
@@ -202,6 +350,60 @@ export async function createParentTeacherContactRequestWithState(
     return {
       status: "error",
       message: error instanceof Error ? error.message : "Could not send contact request.",
+    };
+  }
+}
+
+export async function acknowledgeParentTeacherContactRequestWithState(
+  _state: ParentTeacherContactActionState,
+  data: FormData,
+): Promise<ParentTeacherContactActionState> {
+  try {
+    await acknowledgeParentTeacherContactRequest(data);
+    return {
+      status: "success",
+      message: "Request acknowledged.",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Could not acknowledge request.",
+    };
+  }
+}
+
+export async function respondToParentTeacherContactRequestWithState(
+  _state: ParentTeacherContactActionState,
+  data: FormData,
+): Promise<ParentTeacherContactActionState> {
+  try {
+    await respondToParentTeacherContactRequest(data);
+    return {
+      status: "success",
+      message: "Response sent.",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Could not send response.",
+    };
+  }
+}
+
+export async function closeParentTeacherContactRequestWithState(
+  _state: ParentTeacherContactActionState,
+  data: FormData,
+): Promise<ParentTeacherContactActionState> {
+  try {
+    await closeParentTeacherContactRequest(data);
+    return {
+      status: "success",
+      message: "Request closed.",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Could not close request.",
     };
   }
 }

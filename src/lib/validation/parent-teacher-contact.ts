@@ -9,3 +9,11 @@ export const parentTeacherContactRequestSchema = z.object({
   subject: z.string().trim().min(4, "Subject must be at least 4 characters.").max(120),
   message: z.string().trim().min(10, "Message must be at least 10 characters.").max(1000),
 });
+
+export const teacherContactRequestIdSchema = z.object({
+  requestId: z.string().min(1, "Request is required."),
+});
+
+export const teacherContactResponseSchema = teacherContactRequestIdSchema.extend({
+  response: z.string().trim().min(5, "Response must be at least 5 characters.").max(1000),
+});
