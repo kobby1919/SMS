@@ -14,6 +14,7 @@ import {
   communicationRouteDefaults,
   schoolCommunicationPolicyDefaults,
 } from "@/src/lib/services/school-communication-policy";
+import { deliverParentContactNotification } from "@/src/lib/services/parent-notification-delivery";
 
 function formValue(data: FormData, key: string, fallback = "") {
   return String(data.get(key) ?? fallback);
@@ -309,7 +310,7 @@ export async function respondToParentTeacherContactRequest(data: unknown) {
   });
   const now = new Date();
 
-  await prisma.$transaction(async (tx) => {
+  const notification = await prisma.$transaction(async (tx) => {
     await tx.parentTeacherContactRequest.update({
       where: { id: request.id },
       data: {
@@ -331,7 +332,7 @@ export async function respondToParentTeacherContactRequest(data: unknown) {
       },
     });
 
-    await tx.parentNotification.create({
+    return tx.parentNotification.create({
       data: {
         schoolId,
         parentId: request.parentId,
@@ -351,6 +352,12 @@ export async function respondToParentTeacherContactRequest(data: unknown) {
         },
       },
     });
+  });
+
+  await deliverParentContactNotification({
+    schoolId,
+    parentId: request.parentId,
+    notification,
   });
 
   revalidatePath("/teacher/communications");
@@ -409,13 +416,11 @@ export async function escalateParentTeacherContactRequestAsAdmin(data: unknown) 
     requestId: parsed.requestId,
   });
 
-  await prisma.parentTeacherContactRequest.update({
-    where: { id: request.id },
-    data: {
-      status: "ESCALATED",
-      messages: {
-        create: {
+  const notification = await prisma.$transaction(async (tx) => {
+    const message = await tx.parentTeacherContactMessage.create({
+      data: {
           schoolId,
+          requestId: request.id,
           teacherId: request.teacherId,
           parentId: request.parentId,
           studentId: request.studentId,
@@ -426,8 +431,50 @@ export async function escalateParentTeacherContactRequestAsAdmin(data: unknown) 
             : "The school has escalated this contact request for follow-up.",
           internalOnly: false,
         },
+    });
+
+    await tx.parentTeacherContactRequest.update({
+      where: { id: request.id },
+      data: {
+        status: "ESCALATED",
       },
-    },
+    });
+
+    return tx.parentNotification.upsert({
+      where: {
+        schoolId_parentId_sourceKey: {
+          schoolId,
+          parentId: request.parentId,
+          sourceKey: `parent-contact-admin-escalated:${request.id}`,
+        },
+      },
+      create: {
+        schoolId,
+        parentId: request.parentId,
+        studentId: request.studentId,
+        type: "CONTACT",
+        priority: "NORMAL",
+        title: "School follow-up started",
+        body: `The school escalated your contact request: ${request.subject}`,
+        href: `/parent/children/${request.studentId}#teachers`,
+        sourceModel: "ParentTeacherContactMessage",
+        sourceId: message.id,
+        sourceKey: `parent-contact-admin-escalated:${request.id}`,
+        occurredAt: new Date(),
+        payload: {
+          requestId: request.id,
+          messageId: message.id,
+          action: "ADMIN_ESCALATED",
+        },
+      },
+      update: {},
+    });
+  });
+
+  await deliverParentContactNotification({
+    schoolId,
+    parentId: request.parentId,
+    notification,
   });
 
   revalidatePath("/admin/communications");
@@ -450,14 +497,11 @@ export async function closeParentTeacherContactRequestAsAdmin(data: unknown) {
     requestId: parsed.requestId,
   });
 
-  await prisma.parentTeacherContactRequest.update({
-    where: { id: request.id },
-    data: {
-      status: "CLOSED",
-      closedAt: new Date(),
-      messages: {
-        create: {
+  const notification = await prisma.$transaction(async (tx) => {
+    const message = await tx.parentTeacherContactMessage.create({
+      data: {
           schoolId,
+          requestId: request.id,
           teacherId: request.teacherId,
           parentId: request.parentId,
           studentId: request.studentId,
@@ -468,8 +512,43 @@ export async function closeParentTeacherContactRequestAsAdmin(data: unknown) {
             : "The school closed this contact request after review.",
           internalOnly: false,
         },
+    });
+
+    await tx.parentTeacherContactRequest.update({
+      where: { id: request.id },
+      data: {
+        status: "CLOSED",
+        closedAt: new Date(),
       },
-    },
+    });
+
+    return tx.parentNotification.create({
+      data: {
+        schoolId,
+        parentId: request.parentId,
+        studentId: request.studentId,
+        type: "CONTACT",
+        priority: "NORMAL",
+        title: "Contact request closed",
+        body: `The school closed your contact request: ${request.subject}`,
+        href: `/parent/children/${request.studentId}#teachers`,
+        sourceModel: "ParentTeacherContactMessage",
+        sourceId: message.id,
+        sourceKey: `parent-contact-admin-closed:${message.id}`,
+        occurredAt: new Date(),
+        payload: {
+          requestId: request.id,
+          messageId: message.id,
+          action: "ADMIN_CLOSED",
+        },
+      },
+    });
+  });
+
+  await deliverParentContactNotification({
+    schoolId,
+    parentId: request.parentId,
+    notification,
   });
 
   revalidatePath("/admin/communications");

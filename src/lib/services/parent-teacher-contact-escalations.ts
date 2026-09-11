@@ -1,4 +1,5 @@
 import prisma from "@/src/lib/prisma";
+import { deliverParentContactNotification } from "@/src/lib/services/parent-notification-delivery";
 import { schoolCommunicationPolicyDefaults } from "@/src/lib/services/school-communication-policy";
 
 export type ParentTeacherContactEscalationResult = {
@@ -93,7 +94,7 @@ export async function processParentTeacherContactEscalationsForSchool({
       continue;
     }
 
-    await prisma.$transaction(async (tx) => {
+    const notification = await prisma.$transaction(async (tx) => {
       await tx.parentTeacherContactRequest.update({
         where: { id: request.id },
         data: { status: "ESCALATED" },
@@ -114,7 +115,7 @@ export async function processParentTeacherContactEscalationsForSchool({
       });
 
       const sourceKey = `parent-contact-auto-escalated:${request.id}`;
-      await tx.parentNotification.upsert({
+      return tx.parentNotification.upsert({
         where: {
           schoolId_parentId_sourceKey: {
             schoolId,
@@ -143,6 +144,12 @@ export async function processParentTeacherContactEscalationsForSchool({
         },
         update: {},
       });
+    });
+
+    await deliverParentContactNotification({
+      schoolId,
+      parentId: request.parentId,
+      notification,
     });
 
     escalatedRequests += 1;

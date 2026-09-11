@@ -182,6 +182,7 @@ function notificationLabel(notification: ParentNotification) {
     return summaryLabel(notification);
   }
   if (notification.type === "ATTENDANCE") return "Attendance Alert";
+  if (notification.type === "CONTACT") return "Teacher Contact Update";
   return "School Update";
 }
 
@@ -462,6 +463,143 @@ export async function deliverParentUrgentNotification(input: {
     status: "SKIPPED",
     messagePreview: input.notification.body,
     errorMessage: "No enabled delivery channel with a reachable parent contact.",
+  });
+}
+
+export async function deliverParentContactNotification(input: {
+  schoolId: string;
+  parentId: string;
+  notification: ParentNotification;
+}) {
+  const existingDelivery = await prisma.parentNotificationDeliveryLog.findFirst({
+    where: {
+      schoolId: input.schoolId,
+      parentId: input.parentId,
+      notificationId: input.notification.id,
+      status: "SENT",
+    },
+    select: { id: true },
+  });
+  if (existingDelivery) return null;
+
+  const requestId =
+    input.notification.payload &&
+    typeof input.notification.payload === "object" &&
+    !Array.isArray(input.notification.payload) &&
+    "requestId" in input.notification.payload
+      ? String(input.notification.payload.requestId)
+      : null;
+
+  const [settings, parent, notificationPreference, branding, policy, request] = await Promise.all([
+    getOrCreateSettings(input.schoolId),
+    prisma.parent.findFirst({
+      where: { id: input.parentId, schoolId: input.schoolId },
+      select: {
+        id: true,
+        email: true,
+        phone: true,
+        students: {
+          where: { id: input.notification.studentId ?? undefined },
+          select: { name: true, surname: true },
+          take: 1,
+        },
+      },
+    }),
+    getParentNotificationPreference({ parentId: input.parentId }),
+    getSchoolBranding(input.schoolId),
+    prisma.schoolCommunicationPolicy.findUnique({
+      where: { schoolId: input.schoolId },
+      select: {
+        enabled: true,
+        allowParentTeacherMessaging: true,
+        allowEmailMessages: true,
+        allowSmsMessages: true,
+        allowWhatsappMessages: true,
+      },
+    }),
+    requestId
+      ? prisma.parentTeacherContactRequest.findFirst({
+          where: {
+            id: requestId,
+            schoolId: input.schoolId,
+            parentId: input.parentId,
+          },
+          select: { preferredChannel: true },
+        })
+      : Promise.resolve(null),
+  ]);
+
+  if (!parent) return null;
+
+  if (!policy?.enabled || !policy.allowParentTeacherMessaging) {
+    return logDelivery({
+      schoolId: input.schoolId,
+      parentId: parent.id,
+      notificationId: input.notification.id,
+      channel: notificationPreference?.preferredChannel ?? "EMAIL",
+      status: "SKIPPED",
+      messagePreview: input.notification.body,
+      errorMessage: "Parent-teacher messaging delivery is disabled by school policy.",
+    });
+  }
+
+  const parentWithPreference = { ...parent, notificationPreference };
+  const studentLabel = parent.students
+    .map((student) => `${student.name} ${student.surname}`)
+    .join(", ");
+  const preferredExternalChannel =
+    request?.preferredChannel === "EMAIL"
+      ? "EMAIL"
+      : request?.preferredChannel === "SMS"
+        ? "SMS"
+        : request?.preferredChannel === "WHATSAPP"
+          ? "WHATSAPP"
+          : null;
+  const channels: ParentDeliveryChannel[] = preferredExternalChannel
+    ? [preferredExternalChannel, ...channelOrder(parentWithPreference)]
+    : channelOrder(parentWithPreference);
+
+  for (const channel of [...new Set(channels)]) {
+    if (channel === "EMAIL" && !policy.allowEmailMessages) continue;
+    if (channel === "SMS" && !policy.allowSmsMessages) continue;
+    if (channel === "WHATSAPP" && !policy.allowWhatsappMessages) continue;
+    if (!isChannelEnabled(channel, settings)) continue;
+    if (!isParentChannelEnabled(channel, notificationPreference)) continue;
+
+    const recipient = recipientForChannel(channel, parentWithPreference);
+    if (!recipient) continue;
+
+    const result = await sendThroughChannel({
+      channel,
+      recipient,
+      notification: input.notification,
+      branding,
+      studentLabel,
+    });
+
+    if (result.skipped) continue;
+
+    return logDelivery({
+      schoolId: input.schoolId,
+      parentId: parent.id,
+      notificationId: input.notification.id,
+      channel,
+      recipient,
+      status: result.ok ? "SENT" : "FAILED",
+      provider: result.provider,
+      messagePreview: `${branding.displayName} contact update: ${input.notification.body}`,
+      errorMessage: result.ok ? undefined : result.message,
+    });
+  }
+
+  return logDelivery({
+    schoolId: input.schoolId,
+    parentId: parent.id,
+    notificationId: input.notification.id,
+    channel: notificationPreference?.preferredChannel ?? "EMAIL",
+    status: "SKIPPED",
+    messagePreview: input.notification.body,
+    errorMessage: "No enabled contact delivery channel with a reachable parent contact.",
   });
 }
 
