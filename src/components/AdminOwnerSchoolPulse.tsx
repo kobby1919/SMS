@@ -3,13 +3,10 @@
 import { useState } from "react";
 import type { AdminOwnerDashboardData } from "@/src/lib/queries/admin-owner-dashboard";
 import {
-  AlertTriangle,
-  CalendarCheck2,
   ChevronDown,
   CheckCircle2,
   ClipboardCheck,
   Clock3,
-  ExternalLink,
   School,
   XCircle,
 } from "lucide-react";
@@ -203,11 +200,6 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
                 style={{ width: `${Math.min(Math.max(pulse.attendanceRate, 0), 100)}%` }}
               />
             </div>
-            {!isClosedDay ? (
-              <p className="mt-3 rounded-lg bg-white px-3 py-2 text-[11px] font-semibold leading-5 text-gray-500">
-                Some incomplete duties may be for lessons that have not started yet. Treat a duty as urgent only when its lesson window has passed or it appears in accountability.
-              </p>
-            ) : null}
           </div>
         </div>
 
@@ -226,6 +218,11 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
               <p className="text-[10px] font-black uppercase text-gray-400">Marked</p>
             </div>
           </div>
+          {!isClosedDay ? (
+            <p className="mt-3 rounded-lg bg-white px-3 py-2 text-[11px] font-semibold leading-5 text-gray-500">
+              Some duties may remain incomplete until their lesson time arrives. Use the review action when a duty is late, missed, or escalated.
+            </p>
+          ) : null}
 
           <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4">
             <div className="rounded-lg bg-white p-2.5">
@@ -343,87 +340,6 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
             )}
           </div>
         </div>
-      </div>
-
-      <div className="mt-4 rounded-lg border border-gray-200">
-        <div className="flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-3">
-          <div className="flex items-center gap-2">
-            {!isClosedDay && pulse.unmarkedLessons.length > 0 ? (
-              <AlertTriangle size={16} className="text-amber-600" />
-            ) : (
-              <CalendarCheck2 size={16} className="text-emerald-600" />
-            )}
-            <p className="text-sm font-black text-gray-900">
-              {isClosedDay
-                ? "School Closed Today"
-                : pulse.unmarkedLessons.length > 0
-                  ? "Lessons Needing Attendance"
-                  : "Attendance Completion"}
-            </p>
-          </div>
-          {!isClosedDay ? (
-            <a
-              href="/admin/accountability?type=ATTENDANCE&date=today"
-              className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-2 text-xs font-black text-gray-700 transition hover:bg-gray-50"
-            >
-              Review attendance
-              <ExternalLink size={12} />
-            </a>
-          ) : null}
-        </div>
-
-        {isClosedDay ? (
-          <div className="px-4 py-5">
-            <p className="text-sm font-semibold text-slate-700">
-              Edujay is not expecting attendance today because {formatDay(pulse.operatingStatus.currentDay)} is outside the active school days.
-            </p>
-          </div>
-        ) : pulse.unmarkedLessons.length > 0 ? (
-          <div>
-            <div className="border-b border-gray-100 px-4 py-2">
-              <p className="text-xs font-semibold text-gray-500">
-                Showing {pulse.unmarkedLessons.length} of {pulse.unmarkedLessonsToday} incomplete duties.
-              </p>
-            </div>
-            <div className="divide-y divide-gray-100">
-            {pulse.unmarkedLessons.map((lesson) => (
-              <div key={lesson.lessonId} className="grid gap-3 px-4 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
-                <div className="min-w-0">
-                  <p className="text-sm font-black text-gray-950">
-                    {lesson.className} · {lesson.subjectName}
-                  </p>
-                  <p className="mt-1 text-xs font-semibold text-gray-500">
-                    {lesson.teacherName} · {formatTimeRange(lesson.startTime, lesson.endTime)}
-                  </p>
-                  {lesson.obligationStatus ? (
-                    <p className="mt-1 text-[11px] font-bold uppercase tracking-wide text-gray-400">
-                      Duty status: {lesson.obligationStatus.replace("_", " ")}
-                    </p>
-                  ) : null}
-                </div>
-                <div className="flex items-center gap-2 sm:justify-end">
-                  <div className="rounded-lg bg-amber-50 px-3 py-2 text-xs font-black text-amber-700">
-                    {lesson.markedRecords}/{lesson.expectedRecords} records
-                  </div>
-                  <a
-                    href={lesson.reviewHref}
-                    className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-2 text-xs font-black text-gray-700 transition hover:bg-gray-50"
-                  >
-                    Review
-                    <ExternalLink size={11} />
-                  </a>
-                </div>
-              </div>
-            ))}
-            </div>
-          </div>
-        ) : (
-          <div className="px-4 py-5">
-            <p className="text-sm font-semibold text-emerald-700">
-              All scheduled lessons with students have attendance submitted.
-            </p>
-          </div>
-        )}
       </div>
     </section>
   );
