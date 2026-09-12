@@ -8,6 +8,7 @@ import {
   ClipboardCheck,
   Clock3,
   ExternalLink,
+  School,
   XCircle,
 } from "lucide-react";
 
@@ -106,10 +107,14 @@ function MetricCard({
 export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
   const status = getPulseStatus(pulse);
   const isClosedDay = !pulse.operatingStatus.isActiveDay;
+  const expectedDuties = pulse.lessonsMarkedToday + pulse.unmarkedLessonsToday;
   const completionRate =
-    pulse.lessonsScheduledToday > 0
-      ? Math.round((pulse.lessonsMarkedToday / pulse.lessonsScheduledToday) * 100)
+    expectedDuties > 0
+      ? Math.round((pulse.lessonsMarkedToday / expectedDuties) * 100)
       : 0;
+  const fullyCoveredClasses = pulse.classDutySummary.filter((item) => item.incompleteDuties === 0).length;
+  const classesNeedingFollowUp = pulse.classDutySummary.filter((item) => item.incompleteDuties > 0).length;
+  const displayedClassSummary = pulse.classDutySummary.slice(0, 6);
 
   return (
     <section className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
@@ -200,11 +205,11 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-sm font-black text-gray-900">Lesson Completion</p>
+              <p className="text-sm font-black text-gray-900">Attendance Duties</p>
               <p className="text-xs font-semibold text-gray-500">
                 {isClosedDay
                   ? "No lesson completion is expected today."
-                  : "Confirms whether today&apos;s attendance data can be trusted."}
+                  : "One duty means one scheduled class lesson that needs attendance."}
               </p>
             </div>
             <div className="rounded-lg bg-white px-3 py-2 text-right">
@@ -215,21 +220,57 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
 
           <div className="mt-4 grid grid-cols-2 gap-3">
             <div className="rounded-lg bg-white p-3">
-              <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Scheduled</p>
-              <p className="mt-1 text-2xl font-black text-gray-950">{pulse.lessonsScheduledToday}</p>
+              <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Expected</p>
+              <p className="mt-1 text-2xl font-black text-gray-950">{expectedDuties}</p>
             </div>
             <div className="rounded-lg bg-white p-3">
-              <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Fully Marked</p>
+              <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Completed</p>
               <p className="mt-1 text-2xl font-black text-gray-950">{pulse.lessonsMarkedToday}</p>
             </div>
             <div className="rounded-lg bg-white p-3">
-              <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Unmarked</p>
+              <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Incomplete</p>
               <p className="mt-1 text-2xl font-black text-gray-950">{pulse.unmarkedLessonsToday}</p>
             </div>
             <div className="rounded-lg bg-white p-3">
               <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Records</p>
               <p className="mt-1 text-2xl font-black text-gray-950">{pulse.attendanceRecordsToday}</p>
             </div>
+          </div>
+
+          <div className="mt-4 rounded-lg bg-white p-3">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <School size={15} className="text-gray-500" />
+                <p className="text-xs font-black uppercase tracking-wide text-gray-500">
+                  Classes Today
+                </p>
+              </div>
+              <p className="text-xs font-bold text-gray-500">
+                {fullyCoveredClasses} covered · {classesNeedingFollowUp} need follow-up
+              </p>
+            </div>
+            {displayedClassSummary.length > 0 ? (
+              <div className="space-y-2">
+                {displayedClassSummary.map((item) => (
+                  <div key={item.classId} className="grid gap-2 sm:grid-cols-[90px_1fr_auto] sm:items-center">
+                    <p className="truncate text-xs font-black text-gray-800">{item.className}</p>
+                    <div className="h-2 overflow-hidden rounded-full bg-gray-100">
+                      <div
+                        className={`h-full rounded-full ${item.incompleteDuties > 0 ? "bg-amber-500" : "bg-emerald-500"}`}
+                        style={{ width: `${Math.min(Math.max(item.completionRate, 0), 100)}%` }}
+                      />
+                    </div>
+                    <p className="text-xs font-black text-gray-600">
+                      {item.completedDuties}/{item.expectedDuties}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm font-semibold text-gray-500">
+                No attendance duties are expected for classes today.
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -268,7 +309,13 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
             </p>
           </div>
         ) : pulse.unmarkedLessons.length > 0 ? (
-          <div className="divide-y divide-gray-100">
+          <div>
+            <div className="border-b border-gray-100 px-4 py-2">
+              <p className="text-xs font-semibold text-gray-500">
+                Showing {pulse.unmarkedLessons.length} of {pulse.unmarkedLessonsToday} incomplete duties.
+              </p>
+            </div>
+            <div className="divide-y divide-gray-100">
             {pulse.unmarkedLessons.map((lesson) => (
               <div key={lesson.lessonId} className="grid gap-3 px-4 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
                 <div className="min-w-0">
@@ -298,6 +345,7 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
                 </div>
               </div>
             ))}
+            </div>
           </div>
         ) : (
           <div className="px-4 py-5">

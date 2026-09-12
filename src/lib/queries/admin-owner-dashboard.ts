@@ -70,6 +70,14 @@ export type AdminOwnerDashboardData = {
     late: number;
     excused: number;
     attendanceRate: number;
+    classDutySummary: {
+      classId: number;
+      className: string;
+      expectedDuties: number;
+      completedDuties: number;
+      incompleteDuties: number;
+      completionRate: number;
+    }[];
     unmarkedLessons: {
       lessonId: number;
       className: string;
@@ -545,23 +553,65 @@ export async function getAdminOwnerDashboardData(
   const attendanceCounts = applyStatusGroups(todayAttendanceGroups, ["PRESENT", "ABSENT", "LATE", "EXCUSED"] as const);
   const attendanceRecordsToday =
     attendanceCounts.PRESENT + attendanceCounts.ABSENT + attendanceCounts.LATE + attendanceCounts.EXCUSED;
-  const lessonsMarkedToday = todaysLessons.filter((lesson) => {
+  const lessonDutyRows = todaysLessons.map((lesson) => {
     const expected = lesson.class._count.students;
     const marked = lessonAttendanceCount.get(lesson.id) ?? 0;
-    return expected > 0 && marked >= expected;
-  }).length;
-  const unmarkedLessons = todaysLessons
-    .map((lesson) => {
-      const expectedRecords = lesson.class._count.students;
-      const markedRecords = lessonAttendanceCount.get(lesson.id) ?? 0;
+    const isRelevant = expected > 0;
+    const isComplete = isRelevant && marked >= expected;
+    return {
+      lesson,
+      expectedRecords: expected,
+      markedRecords: marked,
+      isRelevant,
+      isComplete,
+    };
+  });
+
+  const relevantLessonDuties = lessonDutyRows.filter((row) => row.isRelevant);
+  const incompleteLessonDuties = relevantLessonDuties.filter((row) => !row.isComplete);
+  const lessonsMarkedToday = relevantLessonDuties.filter((row) => row.isComplete).length;
+
+  const classDutyMap = new Map<number, {
+    classId: number;
+    className: string;
+    expectedDuties: number;
+    completedDuties: number;
+  }>();
+
+  for (const row of relevantLessonDuties) {
+    const existing = classDutyMap.get(row.lesson.class.id) ?? {
+      classId: row.lesson.class.id,
+      className: row.lesson.class.name,
+      expectedDuties: 0,
+      completedDuties: 0,
+    };
+    existing.expectedDuties += 1;
+    if (row.isComplete) existing.completedDuties += 1;
+    classDutyMap.set(row.lesson.class.id, existing);
+  }
+
+  const classDutySummary = Array.from(classDutyMap.values())
+    .map((item) => ({
+      ...item,
+      incompleteDuties: item.expectedDuties - item.completedDuties,
+      completionRate: percentage(item.completedDuties, item.expectedDuties),
+    }))
+    .sort((a, b) => {
+      if (b.incompleteDuties !== a.incompleteDuties) return b.incompleteDuties - a.incompleteDuties;
+      return a.className.localeCompare(b.className);
+    });
+
+  const unmarkedLessons = incompleteLessonDuties
+    .map((row) => {
+      const lesson = row.lesson;
       const obligation = attendanceObligationBySourceKey.get(attendanceObligationSourceKey(lesson.id, todayStart)) ?? null;
       return {
         lessonId: lesson.id,
         className: lesson.class.name,
         subjectName: lesson.subject.name,
         teacherName: personName(lesson.teacher),
-        expectedRecords,
-        markedRecords,
+        expectedRecords: row.expectedRecords,
+        markedRecords: row.markedRecords,
         obligationId: obligation?.id ?? null,
         obligationStatus: obligation?.status ?? null,
         reviewHref: obligation
@@ -571,7 +621,6 @@ export async function getAdminOwnerDashboardData(
         endTime: lesson.endTime,
       };
     })
-    .filter((lesson) => lesson.expectedRecords > 0 && lesson.markedRecords < lesson.expectedRecords)
     .slice(0, 6);
 
   const billCounts = applyStatusGroups(
@@ -655,13 +704,14 @@ export async function getAdminOwnerDashboardData(
       totalClasses,
       lessonsScheduledToday: todaysLessons.length,
       lessonsMarkedToday,
-      unmarkedLessonsToday: unmarkedLessons.length,
+      unmarkedLessonsToday: incompleteLessonDuties.length,
       attendanceRecordsToday,
       present: attendanceCounts.PRESENT,
       absent: attendanceCounts.ABSENT,
       late: attendanceCounts.LATE,
       excused: attendanceCounts.EXCUSED,
       attendanceRate: percentage(attendanceCounts.PRESENT, attendanceRecordsToday),
+      classDutySummary,
       unmarkedLessons,
     },
     financeSnapshot: {
