@@ -77,6 +77,19 @@ export type AdminOwnerDashboardData = {
       completedDuties: number;
       incompleteDuties: number;
       completionRate: number;
+      duties: {
+        lessonId: number;
+        subjectName: string;
+        teacherName: string;
+        expectedRecords: number;
+        markedRecords: number;
+        isComplete: boolean;
+        obligationId: string | null;
+        obligationStatus: TeacherObligationStatus | null;
+        reviewHref: string;
+        startTime: Date;
+        endTime: Date;
+      }[];
     }[];
     unmarkedLessons: {
       lessonId: number;
@@ -576,6 +589,7 @@ export async function getAdminOwnerDashboardData(
     className: string;
     expectedDuties: number;
     completedDuties: number;
+    duties: AdminOwnerDashboardData["schoolPulse"]["classDutySummary"][number]["duties"];
   }>();
 
   for (const row of relevantLessonDuties) {
@@ -584,9 +598,26 @@ export async function getAdminOwnerDashboardData(
       className: row.lesson.class.name,
       expectedDuties: 0,
       completedDuties: 0,
+      duties: [],
     };
+    const obligation = attendanceObligationBySourceKey.get(attendanceObligationSourceKey(row.lesson.id, todayStart)) ?? null;
     existing.expectedDuties += 1;
     if (row.isComplete) existing.completedDuties += 1;
+    existing.duties.push({
+      lessonId: row.lesson.id,
+      subjectName: row.lesson.subject.name,
+      teacherName: personName(row.lesson.teacher),
+      expectedRecords: row.expectedRecords,
+      markedRecords: row.markedRecords,
+      isComplete: row.isComplete,
+      obligationId: obligation?.id ?? null,
+      obligationStatus: obligation?.status ?? null,
+      reviewHref: obligation
+        ? `/admin/accountability?obligationId=${encodeURIComponent(obligation.id)}`
+        : "/admin/accountability?type=ATTENDANCE&date=today",
+      startTime: row.lesson.startTime,
+      endTime: row.lesson.endTime,
+    });
     classDutyMap.set(row.lesson.class.id, existing);
   }
 

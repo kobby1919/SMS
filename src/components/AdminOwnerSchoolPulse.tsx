@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import type { AdminOwnerDashboardData } from "@/src/lib/queries/admin-owner-dashboard";
 import {
   AlertTriangle,
   CalendarCheck2,
+  ChevronDown,
   CheckCircle2,
   ClipboardCheck,
   Clock3,
@@ -105,6 +107,8 @@ function MetricCard({
 }
 
 export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
+  const [expandedClassId, setExpandedClassId] = useState<number | null>(null);
+  const [showAllClasses, setShowAllClasses] = useState(false);
   const status = getPulseStatus(pulse);
   const isClosedDay = !pulse.operatingStatus.isActiveDay;
   const expectedDuties = pulse.lessonsMarkedToday + pulse.unmarkedLessonsToday;
@@ -114,7 +118,7 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
       : 0;
   const fullyCoveredClasses = pulse.classDutySummary.filter((item) => item.incompleteDuties === 0).length;
   const classesNeedingFollowUp = pulse.classDutySummary.filter((item) => item.incompleteDuties > 0).length;
-  const displayedClassSummary = pulse.classDutySummary.slice(0, 6);
+  const displayedClassSummary = showAllClasses ? pulse.classDutySummary : pulse.classDutySummary.slice(0, 6);
 
   return (
     <section className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
@@ -252,19 +256,80 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
             {displayedClassSummary.length > 0 ? (
               <div className="space-y-2">
                 {displayedClassSummary.map((item) => (
-                  <div key={item.classId} className="grid gap-2 sm:grid-cols-[90px_1fr_auto] sm:items-center">
-                    <p className="truncate text-xs font-black text-gray-800">{item.className}</p>
-                    <div className="h-2 overflow-hidden rounded-full bg-gray-100">
-                      <div
-                        className={`h-full rounded-full ${item.incompleteDuties > 0 ? "bg-amber-500" : "bg-emerald-500"}`}
-                        style={{ width: `${Math.min(Math.max(item.completionRate, 0), 100)}%` }}
+                  <div key={item.classId} className="rounded-lg border border-gray-100">
+                    <button
+                      type="button"
+                      onClick={() => setExpandedClassId((current) => current === item.classId ? null : item.classId)}
+                      className="grid w-full gap-2 p-2 text-left transition hover:bg-gray-50 sm:grid-cols-[100px_1fr_auto_auto] sm:items-center"
+                    >
+                      <p className="truncate text-xs font-black text-gray-800">{item.className}</p>
+                      <div className="h-2 overflow-hidden rounded-full bg-gray-100">
+                        <div
+                          className={`h-full rounded-full ${item.incompleteDuties > 0 ? "bg-amber-500" : "bg-emerald-500"}`}
+                          style={{ width: `${Math.min(Math.max(item.completionRate, 0), 100)}%` }}
+                        />
+                      </div>
+                      <p className="text-xs font-black text-gray-600">
+                        {item.completedDuties}/{item.expectedDuties}
+                      </p>
+                      <ChevronDown
+                        size={14}
+                        className={`text-gray-400 transition ${expandedClassId === item.classId ? "rotate-180" : ""}`}
                       />
-                    </div>
-                    <p className="text-xs font-black text-gray-600">
-                      {item.completedDuties}/{item.expectedDuties}
-                    </p>
+                    </button>
+
+                    {expandedClassId === item.classId ? (
+                      <div className="space-y-2 border-t border-gray-100 p-2">
+                        {item.duties.map((duty) => (
+                          <div
+                            key={duty.lessonId}
+                            className="grid gap-2 rounded-lg bg-gray-50 p-2 sm:grid-cols-[1fr_auto] sm:items-center"
+                          >
+                            <div className="min-w-0">
+                              <p className="text-xs font-black text-gray-900">{duty.subjectName}</p>
+                              <p className="mt-0.5 text-[11px] font-semibold text-gray-500">
+                                {duty.teacherName} · {formatTimeRange(duty.startTime, duty.endTime)}
+                              </p>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                              <span
+                                className={`rounded-full px-2 py-1 text-[10px] font-black uppercase ${
+                                  duty.isComplete
+                                    ? "bg-emerald-100 text-emerald-700"
+                                    : "bg-amber-100 text-amber-700"
+                                }`}
+                              >
+                                {duty.isComplete ? "Complete" : "Incomplete"}
+                              </span>
+                              <span className="rounded-lg bg-white px-2 py-1 text-[11px] font-black text-gray-700">
+                                {duty.markedRecords}/{duty.expectedRecords}
+                              </span>
+                              {!duty.isComplete ? (
+                                <a
+                                  href={duty.reviewHref}
+                                  className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-[11px] font-black text-gray-700 transition hover:bg-gray-50"
+                                >
+                                  Review
+                                </a>
+                              ) : null}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
                   </div>
                 ))}
+                {pulse.classDutySummary.length > 6 ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllClasses((value) => !value)}
+                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs font-black text-gray-700 transition hover:bg-gray-50"
+                  >
+                    {showAllClasses
+                      ? "Show fewer classes"
+                      : `Show all ${pulse.classDutySummary.length} classes`}
+                  </button>
+                ) : null}
               </div>
             ) : (
               <p className="text-sm font-semibold text-gray-500">
