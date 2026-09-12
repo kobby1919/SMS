@@ -236,6 +236,21 @@ function personName(person: { name: string; surname: string }) {
   return `${person.name} ${person.surname}`.trim();
 }
 
+function schoolClassSortValue(name: string) {
+  const normalized = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (normalized.includes("nursery") || normalized === "creche" || normalized.includes("preschool")) return 10;
+  if (normalized === "kg1" || normalized.includes("kindergarten1")) return 20;
+  if (normalized === "kg2" || normalized.includes("kindergarten2")) return 30;
+
+  const classMatch = normalized.match(/(?:class|primary|basic)(\d+)/);
+  if (classMatch?.[1]) return 100 + Number(classMatch[1]);
+
+  const jhsMatch = normalized.match(/jhs(\d+)/) ?? normalized.match(/juniorhigh(\d+)/);
+  if (jhsMatch?.[1]) return 200 + Number(jhsMatch[1]);
+
+  return 900;
+}
+
 function buildActionItems(data: Omit<AdminOwnerDashboardData, "actionCenter">): AdminOwnerActionItem[] {
   const items: AdminOwnerActionItem[] = [];
 
@@ -628,7 +643,8 @@ export async function getAdminOwnerDashboardData(
       completionRate: percentage(item.completedDuties, item.expectedDuties),
     }))
     .sort((a, b) => {
-      if (b.incompleteDuties !== a.incompleteDuties) return b.incompleteDuties - a.incompleteDuties;
+      const orderDiff = schoolClassSortValue(a.className) - schoolClassSortValue(b.className);
+      if (orderDiff !== 0) return orderDiff;
       return a.className.localeCompare(b.className);
     });
 

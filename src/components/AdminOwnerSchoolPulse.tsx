@@ -96,12 +96,12 @@ function MetricCard({
   icon: React.ReactNode;
 }) {
   return (
-    <div className={`rounded-lg border p-3 ${tone}`}>
-      <div className="mb-2 flex items-center gap-2 text-[11px] font-black uppercase tracking-wide opacity-75">
+    <div className={`rounded-lg border px-3 py-2 ${tone}`}>
+      <div className="mb-1.5 flex items-center gap-2 text-[10px] font-black uppercase tracking-wide opacity-75">
         {icon}
         <span>{label}</span>
       </div>
-      <p className="text-2xl font-black leading-none sm:text-3xl">{value}</p>
+      <p className="text-xl font-black leading-none sm:text-2xl">{value}</p>
     </div>
   );
 }
@@ -156,9 +156,9 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
         </div>
       </div>
 
-      <div className="mt-5 grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="mt-5 space-y-4">
+        <div className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
+          <div className="grid grid-cols-2 gap-3">
             <MetricCard
               label="Present"
               value={pulse.present}
@@ -185,17 +185,17 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
             />
           </div>
 
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-black text-gray-900">Attendance Rate</p>
-              <p className="text-xs font-semibold text-gray-500">
-                {isClosedDay
-                  ? "Paused because today is not an active school day."
-                  : "Based only on submitted records, not unmarked lessons."}
-              </p>
-            </div>
-              <p className="text-2xl font-black text-gray-950">{pulse.attendanceRate}%</p>
+                <p className="text-xs font-semibold text-gray-500">
+                  {isClosedDay
+                    ? "Paused because today is not an active school day."
+                    : "Based only on submitted records, not unmarked lessons."}
+                </p>
+              </div>
+              <p className="text-xl font-black text-gray-950">{pulse.attendanceRate}%</p>
             </div>
             <div className="mt-3 h-2 overflow-hidden rounded-full bg-white">
               <div
@@ -203,10 +203,15 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
                 style={{ width: `${Math.min(Math.max(pulse.attendanceRate, 0), 100)}%` }}
               />
             </div>
+            {!isClosedDay ? (
+              <p className="mt-3 rounded-lg bg-white px-3 py-2 text-[11px] font-semibold leading-5 text-gray-500">
+                Some incomplete duties may be for lessons that have not started yet. Treat a duty as urgent only when its lesson window has passed or it appears in accountability.
+              </p>
+            ) : null}
           </div>
         </div>
 
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-sm font-black text-gray-900">Attendance Duties</p>
@@ -222,26 +227,26 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
             </div>
           </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="rounded-lg bg-white p-3">
+          <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4">
+            <div className="rounded-lg bg-white p-2.5">
               <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Expected</p>
-              <p className="mt-1 text-2xl font-black text-gray-950">{expectedDuties}</p>
+              <p className="mt-1 text-xl font-black text-gray-950">{expectedDuties}</p>
             </div>
-            <div className="rounded-lg bg-white p-3">
+            <div className="rounded-lg bg-white p-2.5">
               <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Completed</p>
-              <p className="mt-1 text-2xl font-black text-gray-950">{pulse.lessonsMarkedToday}</p>
+              <p className="mt-1 text-xl font-black text-gray-950">{pulse.lessonsMarkedToday}</p>
             </div>
-            <div className="rounded-lg bg-white p-3">
+            <div className="rounded-lg bg-white p-2.5">
               <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Incomplete</p>
-              <p className="mt-1 text-2xl font-black text-gray-950">{pulse.unmarkedLessonsToday}</p>
+              <p className="mt-1 text-xl font-black text-gray-950">{pulse.unmarkedLessonsToday}</p>
             </div>
-            <div className="rounded-lg bg-white p-3">
+            <div className="rounded-lg bg-white p-2.5">
               <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Records</p>
-              <p className="mt-1 text-2xl font-black text-gray-950">{pulse.attendanceRecordsToday}</p>
+              <p className="mt-1 text-xl font-black text-gray-950">{pulse.attendanceRecordsToday}</p>
             </div>
           </div>
 
-          <div className="mt-4 rounded-lg bg-white p-3">
+          <div className="mt-3 rounded-lg bg-white p-3">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <School size={15} className="text-gray-500" />
