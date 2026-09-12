@@ -218,11 +218,11 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
               <p className="text-[10px] font-black uppercase text-gray-400">Marked</p>
             </div>
           </div>
-          {!isClosedDay ? (
-            <p className="mt-3 rounded-lg bg-white px-3 py-2 text-[11px] font-semibold leading-5 text-gray-500">
-              Some duties may remain incomplete until their lesson time arrives. Use the review action when a duty is late, missed, or escalated.
-            </p>
-          ) : null}
+          <p className="mt-3 rounded-lg bg-white px-3 py-2 text-[11px] font-semibold leading-5 text-gray-500">
+            {isClosedDay
+              ? "Today is outside the school calendar, so Edujay is not expecting attendance duties."
+              : "Some duties may remain incomplete until their lesson time arrives. Use Review when a duty is late, missed, or escalated."}
+          </p>
 
           <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4">
             <div className="rounded-lg bg-white p-2.5">
