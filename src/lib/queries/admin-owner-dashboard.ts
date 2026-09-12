@@ -12,6 +12,8 @@ import type {
 import prisma from "@/src/lib/prisma";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { getClassReportReadiness } from "@/src/lib/services/report-card-readiness";
+import { attendanceObligationSourceKey } from "@/src/lib/services/teacher-attendance-obligations";
+import { getSchoolOperatingWindowStatus } from "@/src/lib/services/school-operating-hours";
 
 const DAY_ENUM_MAP: Record<number, Day> = {
   1: "MONDAY",
@@ -45,6 +47,18 @@ export type AdminOwnerDashboardData = {
   };
   schoolPulse: {
     todayLabel: string;
+    operatingStatus: {
+      allowed: boolean;
+      label: string;
+      timezone: string;
+      openingTime: string;
+      closingTime: string;
+      activeDays: string[];
+      currentDay: string;
+      isActiveDay: boolean;
+      isWithinSchoolHours: boolean;
+      reason: string | null;
+    };
     totalStudents: number;
     totalClasses: number;
     lessonsScheduledToday: number;
@@ -63,6 +77,9 @@ export type AdminOwnerDashboardData = {
       teacherName: string;
       expectedRecords: number;
       markedRecords: number;
+      obligationId: string | null;
+      obligationStatus: TeacherObligationStatus | null;
+      reviewHref: string;
       startTime: Date;
       endTime: Date;
     }[];
@@ -201,7 +218,7 @@ function personName(person: { name: string; surname: string }) {
 function buildActionItems(data: Omit<AdminOwnerDashboardData, "actionCenter">): AdminOwnerActionItem[] {
   const items: AdminOwnerActionItem[] = [];
 
-  if (data.schoolPulse.unmarkedLessonsToday > 0) {
+  if (data.schoolPulse.operatingStatus.isActiveDay && data.schoolPulse.unmarkedLessonsToday > 0) {
     items.push({
       id: "pulse-unmarked-attendance",
       section: "schoolPulse",
@@ -292,6 +309,7 @@ export async function getAdminOwnerDashboardData(
   const todayDay = DAY_ENUM_MAP[now.getDay()] ?? "MONDAY";
   const todayLabel = now.toLocaleDateString("en-US", { weekday: "long" });
   const activePeriod = await getActiveAcademicPeriod(schoolId);
+  const operatingStatus = await getSchoolOperatingWindowStatus(schoolId, now);
 
   const [
     totalStudents,
@@ -510,6 +528,19 @@ export async function getAdminOwnerDashboardData(
   const lessonAttendanceCount = new Map(
     attendanceByLesson.map((row) => [row.lessonId, row._count._all]),
   );
+  const attendanceObligationKeys = todaysLessonIds.map((lessonId) => attendanceObligationSourceKey(lessonId, todayStart));
+  const attendanceObligations = attendanceObligationKeys.length
+    ? await prisma.teacherObligation.findMany({
+        where: {
+          schoolId,
+          sourceKey: { in: attendanceObligationKeys },
+        },
+        select: { id: true, sourceKey: true, status: true },
+      })
+    : [];
+  const attendanceObligationBySourceKey = new Map(
+    attendanceObligations.map((obligation) => [obligation.sourceKey, obligation]),
+  );
 
   const attendanceCounts = applyStatusGroups(todayAttendanceGroups, ["PRESENT", "ABSENT", "LATE", "EXCUSED"] as const);
   const attendanceRecordsToday =
@@ -523,6 +554,7 @@ export async function getAdminOwnerDashboardData(
     .map((lesson) => {
       const expectedRecords = lesson.class._count.students;
       const markedRecords = lessonAttendanceCount.get(lesson.id) ?? 0;
+      const obligation = attendanceObligationBySourceKey.get(attendanceObligationSourceKey(lesson.id, todayStart)) ?? null;
       return {
         lessonId: lesson.id,
         className: lesson.class.name,
@@ -530,6 +562,11 @@ export async function getAdminOwnerDashboardData(
         teacherName: personName(lesson.teacher),
         expectedRecords,
         markedRecords,
+        obligationId: obligation?.id ?? null,
+        obligationStatus: obligation?.status ?? null,
+        reviewHref: obligation
+          ? `/admin/accountability?obligationId=${encodeURIComponent(obligation.id)}`
+          : "/admin/accountability?type=ATTENDANCE&date=today",
         startTime: lesson.startTime,
         endTime: lesson.endTime,
       };
@@ -613,6 +650,7 @@ export async function getAdminOwnerDashboardData(
     },
     schoolPulse: {
       todayLabel,
+      operatingStatus,
       totalStudents,
       totalClasses,
       lessonsScheduledToday: todaysLessons.length,

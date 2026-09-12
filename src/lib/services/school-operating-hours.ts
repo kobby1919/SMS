@@ -84,6 +84,9 @@ export async function getSchoolOperatingWindowStatus(schoolId: string, now = new
       openingTime,
       closingTime,
       activeDays,
+      currentDay: localDay,
+      isActiveDay: false,
+      isWithinSchoolHours: false,
       reason: `This action is only allowed on school days (${dayRangeLabel(activeDays)}).`,
     };
   }
@@ -96,6 +99,9 @@ export async function getSchoolOperatingWindowStatus(schoolId: string, now = new
       openingTime,
       closingTime,
       activeDays,
+      currentDay: localDay,
+      isActiveDay: true,
+      isWithinSchoolHours: false,
       reason: `This action is only allowed during school hours (${openingTime}-${closingTime}, ${timezone}).`,
     };
   }
@@ -107,6 +113,9 @@ export async function getSchoolOperatingWindowStatus(schoolId: string, now = new
     openingTime,
     closingTime,
     activeDays,
+    currentDay: localDay,
+    isActiveDay: true,
+    isWithinSchoolHours: true,
     reason: null,
   };
 }

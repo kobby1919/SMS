@@ -28,7 +28,31 @@ function formatTimeRange(startTime: Date, endTime: Date) {
   return `${formatter.format(new Date(startTime))} - ${formatter.format(new Date(endTime))}`;
 }
 
+function formatDay(day: string) {
+  return day.charAt(0) + day.slice(1).toLowerCase();
+}
+
+function formatActiveDays(days: string[]) {
+  if (
+    days.length === 5 &&
+    days[0] === "MONDAY" &&
+    days[4] === "FRIDAY"
+  ) {
+    return "Monday to Friday";
+  }
+  return days.map(formatDay).join(", ");
+}
+
 function getPulseStatus(pulse: Props["pulse"]) {
+  if (!pulse.operatingStatus.isActiveDay) {
+    return {
+      label: "School Closed",
+      tone: "border-slate-200 bg-slate-50 text-slate-700",
+      bar: "bg-slate-400",
+      message: "Today is outside this school's active operating days, so attendance and lesson completion are not expected.",
+    };
+  }
+
   if (pulse.unmarkedLessonsToday > 3) {
     return {
       label: "Critical",
@@ -81,6 +105,7 @@ function MetricCard({
 
 export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
   const status = getPulseStatus(pulse);
+  const isClosedDay = !pulse.operatingStatus.isActiveDay;
   const completionRate =
     pulse.lessonsScheduledToday > 0
       ? Math.round((pulse.lessonsMarkedToday / pulse.lessonsScheduledToday) * 100)
@@ -102,6 +127,12 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
           <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-gray-600">
             {status.message}
           </p>
+          {isClosedDay ? (
+            <p className="mt-2 text-xs font-bold text-gray-500">
+              Active days: {formatActiveDays(pulse.operatingStatus.activeDays)} · School hours:{" "}
+              {pulse.operatingStatus.openingTime}-{pulse.operatingStatus.closingTime}
+            </p>
+          ) : null}
         </div>
 
         <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end">
@@ -149,10 +180,12 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-black text-gray-900">Attendance Rate</p>
-                <p className="text-xs font-semibold text-gray-500">
-                  Based only on submitted records, not unmarked lessons.
-                </p>
-              </div>
+              <p className="text-xs font-semibold text-gray-500">
+                {isClosedDay
+                  ? "Paused because today is not an active school day."
+                  : "Based only on submitted records, not unmarked lessons."}
+              </p>
+            </div>
               <p className="text-2xl font-black text-gray-950">{pulse.attendanceRate}%</p>
             </div>
             <div className="mt-3 h-2 overflow-hidden rounded-full bg-white">
@@ -169,7 +202,9 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
             <div>
               <p className="text-sm font-black text-gray-900">Lesson Completion</p>
               <p className="text-xs font-semibold text-gray-500">
-                Confirms whether today&apos;s attendance data can be trusted.
+                {isClosedDay
+                  ? "No lesson completion is expected today."
+                  : "Confirms whether today&apos;s attendance data can be trusted."}
               </p>
             </div>
             <div className="rounded-lg bg-white px-3 py-2 text-right">
@@ -202,38 +237,64 @@ export default function AdminOwnerSchoolPulse({ pulse, activePeriod }: Props) {
       <div className="mt-4 rounded-lg border border-gray-200">
         <div className="flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-3">
           <div className="flex items-center gap-2">
-            {pulse.unmarkedLessons.length > 0 ? (
+            {!isClosedDay && pulse.unmarkedLessons.length > 0 ? (
               <AlertTriangle size={16} className="text-amber-600" />
             ) : (
               <CalendarCheck2 size={16} className="text-emerald-600" />
             )}
             <p className="text-sm font-black text-gray-900">
-              {pulse.unmarkedLessons.length > 0 ? "Lessons Needing Attendance" : "Attendance Completion"}
+              {isClosedDay
+                ? "School Closed Today"
+                : pulse.unmarkedLessons.length > 0
+                  ? "Lessons Needing Attendance"
+                  : "Attendance Completion"}
             </p>
           </div>
-          <a
-            href="/admin/accountability"
-            className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-2 text-xs font-black text-gray-700 transition hover:bg-gray-50"
-          >
-            Review
-            <ExternalLink size={12} />
-          </a>
+          {!isClosedDay ? (
+            <a
+              href="/admin/accountability?type=ATTENDANCE&date=today"
+              className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-2 text-xs font-black text-gray-700 transition hover:bg-gray-50"
+            >
+              Review attendance
+              <ExternalLink size={12} />
+            </a>
+          ) : null}
         </div>
 
-        {pulse.unmarkedLessons.length > 0 ? (
+        {isClosedDay ? (
+          <div className="px-4 py-5">
+            <p className="text-sm font-semibold text-slate-700">
+              Edujay is not expecting attendance today because {formatDay(pulse.operatingStatus.currentDay)} is outside the active school days.
+            </p>
+          </div>
+        ) : pulse.unmarkedLessons.length > 0 ? (
           <div className="divide-y divide-gray-100">
             {pulse.unmarkedLessons.map((lesson) => (
               <div key={lesson.lessonId} className="grid gap-3 px-4 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
                 <div className="min-w-0">
-                  <p className="font-black text-gray-950">
+                  <p className="text-sm font-black text-gray-950">
                     {lesson.className} · {lesson.subjectName}
                   </p>
-                  <p className="mt-1 text-sm font-semibold text-gray-500">
+                  <p className="mt-1 text-xs font-semibold text-gray-500">
                     {lesson.teacherName} · {formatTimeRange(lesson.startTime, lesson.endTime)}
                   </p>
+                  {lesson.obligationStatus ? (
+                    <p className="mt-1 text-[11px] font-bold uppercase tracking-wide text-gray-400">
+                      Duty status: {lesson.obligationStatus.replace("_", " ")}
+                    </p>
+                  ) : null}
                 </div>
-                <div className="rounded-lg bg-amber-50 px-3 py-2 text-sm font-black text-amber-700">
-                  {lesson.markedRecords}/{lesson.expectedRecords} records
+                <div className="flex items-center gap-2 sm:justify-end">
+                  <div className="rounded-lg bg-amber-50 px-3 py-2 text-xs font-black text-amber-700">
+                    {lesson.markedRecords}/{lesson.expectedRecords} records
+                  </div>
+                  <a
+                    href={lesson.reviewHref}
+                    className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-2 text-xs font-black text-gray-700 transition hover:bg-gray-50"
+                  >
+                    Review
+                    <ExternalLink size={11} />
+                  </a>
                 </div>
               </div>
             ))}
