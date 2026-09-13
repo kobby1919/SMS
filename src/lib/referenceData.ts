@@ -109,6 +109,7 @@ export async function getCachedTimetableLessons(schoolId: string) {
           subject: { select: { id: true, name: true } },
           class: { select: { id: true, name: true } },
           teacher: { select: { id: true, name: true, surname: true } },
+          periodTemplate: { select: { id: true, name: true, type: true, startTime: true, endTime: true, order: true } },
         },
         orderBy: [{ day: "asc" }, { startTime: "asc" }],
       });
@@ -121,9 +122,21 @@ export async function getCachedTimetableLessons(schoolId: string) {
         subject: lesson.subject,
         class: lesson.class,
         teacher: lesson.teacher,
+        periodTemplate: lesson.periodTemplate,
       }));
     },
     ["reference-data", "timetable-lessons", schoolId],
+    { revalidate: 60, tags: [referenceDataTag(schoolId, "timetable")] },
+  )();
+}
+
+export async function getCachedPeriodTemplates(schoolId: string) {
+  return unstable_cache(
+    async () => {
+      const { listPeriodTemplates } = await import("@/src/lib/services/period-templates");
+      return listPeriodTemplates(schoolId);
+    },
+    ["reference-data", "period-templates", schoolId],
     { revalidate: 60, tags: [referenceDataTag(schoolId, "timetable")] },
   )();
 }

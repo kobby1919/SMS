@@ -2,11 +2,12 @@
 
 import { requirePageSession } from "@/src/lib/authz";
 import TimetableBuilder from "@/src/components/TimetableBuilder";
-import type { TBClass, TBTeacher, TBLesson } from "@/src/components/TimetableBuilder";
+import type { TBClass, TBTeacher, TBLesson, TBPeriodTemplate } from "@/src/components/TimetableBuilder";
 import TimetableHealthPanel from "@/src/components/TimetableHealthPanel";
 import { Calendar } from "lucide-react";
 import {
   getCachedClasses,
+  getCachedPeriodTemplates,
   getCachedTimetableLessons,
   getCachedTimetableTeachers,
 } from "@/src/lib/referenceData";
@@ -16,10 +17,11 @@ import { getTimetableHealthSummary } from "@/src/lib/services/timetable-health";
 const TimetablePage = async () => {
   const { schoolId } = await requirePageSession(["admin"]);
 
-  const [classes, teachers, lessons, operatingRules, timetableHealth] = await Promise.all([
+  const [classes, teachers, lessons, periodTemplates, operatingRules, timetableHealth] = await Promise.all([
     getCachedClasses(schoolId),
     getCachedTimetableTeachers(schoolId),
     getCachedTimetableLessons(schoolId),
+    getCachedPeriodTemplates(schoolId),
     getSchoolOperatingWindowStatus(schoolId),
     getTimetableHealthSummary(schoolId),
   ]);
@@ -33,12 +35,23 @@ const TimetablePage = async () => {
     subject:   l.subject,
     class:     l.class,
     teacher:   l.teacher,
+    periodTemplate: l.periodTemplate,
   }));
 
   const serializedClasses: TBClass[] = classes.map((c) => ({
     id:    c.id,
     name:  c.name,
     grade: { level: c.grade.level, order: c.grade.order },
+  }));
+
+  const serializedPeriodTemplates: TBPeriodTemplate[] = periodTemplates.map((period) => ({
+    id: period.id,
+    name: period.name,
+    type: period.type,
+    startTime: period.startTime,
+    endTime: period.endTime,
+    order: period.order,
+    isActive: period.isActive,
   }));
 
   const serializedTeachers: TBTeacher[] = teachers.map((t) => ({
@@ -84,6 +97,7 @@ const TimetablePage = async () => {
         subjects={[]} // ✅ no longer needed globally — each teacher carries their own
         teachers={serializedTeachers}
         initialLessons={serializedLessons}
+        initialPeriodTemplates={serializedPeriodTemplates}
         operatingRules={{
           activeDays: operatingRules.activeDays,
           openingTime: operatingRules.openingTime,

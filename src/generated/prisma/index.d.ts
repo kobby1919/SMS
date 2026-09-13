@@ -54,6 +54,11 @@ export type SchoolCommunicationPolicy = $Result.DefaultSelection<Prisma.$SchoolC
  */
 export type SchoolCommunicationRoute = $Result.DefaultSelection<Prisma.$SchoolCommunicationRoutePayload>
 /**
+ * Model SchoolPeriodTemplate
+ * 
+ */
+export type SchoolPeriodTemplate = $Result.DefaultSelection<Prisma.$SchoolPeriodTemplatePayload>
+/**
  * Model TeacherAccountabilitySetting
  * 
  */
@@ -330,6 +335,18 @@ export const Day: {
 };
 
 export type Day = (typeof Day)[keyof typeof Day]
+
+
+export const SchoolPeriodType: {
+  TEACHING: 'TEACHING',
+  BREAK: 'BREAK',
+  ASSEMBLY: 'ASSEMBLY',
+  LUNCH: 'LUNCH',
+  CLOSING: 'CLOSING',
+  OTHER: 'OTHER'
+};
+
+export type SchoolPeriodType = (typeof SchoolPeriodType)[keyof typeof SchoolPeriodType]
 
 
 export const AttendanceStatus: {
@@ -858,6 +875,10 @@ export type Day = $Enums.Day
 
 export const Day: typeof $Enums.Day
 
+export type SchoolPeriodType = $Enums.SchoolPeriodType
+
+export const SchoolPeriodType: typeof $Enums.SchoolPeriodType
+
 export type AttendanceStatus = $Enums.AttendanceStatus
 
 export const AttendanceStatus: typeof $Enums.AttendanceStatus
@@ -1242,6 +1263,16 @@ export class PrismaClient<
     * ```
     */
   get schoolCommunicationRoute(): Prisma.SchoolCommunicationRouteDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.schoolPeriodTemplate`: Exposes CRUD operations for the **SchoolPeriodTemplate** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SchoolPeriodTemplates
+    * const schoolPeriodTemplates = await prisma.schoolPeriodTemplate.findMany()
+    * ```
+    */
+  get schoolPeriodTemplate(): Prisma.SchoolPeriodTemplateDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.teacherAccountabilitySetting`: Exposes CRUD operations for the **TeacherAccountabilitySetting** model.
@@ -2194,6 +2225,7 @@ export namespace Prisma {
     SchoolNotificationSetting: 'SchoolNotificationSetting',
     SchoolCommunicationPolicy: 'SchoolCommunicationPolicy',
     SchoolCommunicationRoute: 'SchoolCommunicationRoute',
+    SchoolPeriodTemplate: 'SchoolPeriodTemplate',
     TeacherAccountabilitySetting: 'TeacherAccountabilitySetting',
     TeacherObligation: 'TeacherObligation',
     TeacherReminder: 'TeacherReminder',
@@ -2260,7 +2292,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "schoolNotificationSetting" | "schoolCommunicationPolicy" | "schoolCommunicationRoute" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentTeacherContactRequest" | "parentTeacherContactMessage" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
+      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "schoolNotificationSetting" | "schoolCommunicationPolicy" | "schoolCommunicationRoute" | "schoolPeriodTemplate" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentTeacherContactRequest" | "parentTeacherContactMessage" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "onboardingAuditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2853,6 +2885,80 @@ export namespace Prisma {
           count: {
             args: Prisma.SchoolCommunicationRouteCountArgs<ExtArgs>
             result: $Utils.Optional<SchoolCommunicationRouteCountAggregateOutputType> | number
+          }
+        }
+      }
+      SchoolPeriodTemplate: {
+        payload: Prisma.$SchoolPeriodTemplatePayload<ExtArgs>
+        fields: Prisma.SchoolPeriodTemplateFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SchoolPeriodTemplateFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolPeriodTemplatePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SchoolPeriodTemplateFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolPeriodTemplatePayload>
+          }
+          findFirst: {
+            args: Prisma.SchoolPeriodTemplateFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolPeriodTemplatePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SchoolPeriodTemplateFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolPeriodTemplatePayload>
+          }
+          findMany: {
+            args: Prisma.SchoolPeriodTemplateFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolPeriodTemplatePayload>[]
+          }
+          create: {
+            args: Prisma.SchoolPeriodTemplateCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolPeriodTemplatePayload>
+          }
+          createMany: {
+            args: Prisma.SchoolPeriodTemplateCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SchoolPeriodTemplateCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolPeriodTemplatePayload>[]
+          }
+          delete: {
+            args: Prisma.SchoolPeriodTemplateDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolPeriodTemplatePayload>
+          }
+          update: {
+            args: Prisma.SchoolPeriodTemplateUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolPeriodTemplatePayload>
+          }
+          deleteMany: {
+            args: Prisma.SchoolPeriodTemplateDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SchoolPeriodTemplateUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SchoolPeriodTemplateUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolPeriodTemplatePayload>[]
+          }
+          upsert: {
+            args: Prisma.SchoolPeriodTemplateUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SchoolPeriodTemplatePayload>
+          }
+          aggregate: {
+            args: Prisma.SchoolPeriodTemplateAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSchoolPeriodTemplate>
+          }
+          groupBy: {
+            args: Prisma.SchoolPeriodTemplateGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SchoolPeriodTemplateGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SchoolPeriodTemplateCountArgs<ExtArgs>
+            result: $Utils.Optional<SchoolPeriodTemplateCountAggregateOutputType> | number
           }
         }
       }
@@ -6746,6 +6852,7 @@ export namespace Prisma {
     schoolNotificationSetting?: SchoolNotificationSettingOmit
     schoolCommunicationPolicy?: SchoolCommunicationPolicyOmit
     schoolCommunicationRoute?: SchoolCommunicationRouteOmit
+    schoolPeriodTemplate?: SchoolPeriodTemplateOmit
     teacherAccountabilitySetting?: TeacherAccountabilitySettingOmit
     teacherObligation?: TeacherObligationOmit
     teacherReminder?: TeacherReminderOmit
@@ -6885,6 +6992,7 @@ export namespace Prisma {
     classes: number
     subjects: number
     lessons: number
+    periodTemplates: number
     exams: number
     assignments: number
     homeworkSubmissions: number
@@ -6939,6 +7047,7 @@ export namespace Prisma {
     classes?: boolean | SchoolCountOutputTypeCountClassesArgs
     subjects?: boolean | SchoolCountOutputTypeCountSubjectsArgs
     lessons?: boolean | SchoolCountOutputTypeCountLessonsArgs
+    periodTemplates?: boolean | SchoolCountOutputTypeCountPeriodTemplatesArgs
     exams?: boolean | SchoolCountOutputTypeCountExamsArgs
     assignments?: boolean | SchoolCountOutputTypeCountAssignmentsArgs
     homeworkSubmissions?: boolean | SchoolCountOutputTypeCountHomeworkSubmissionsArgs
@@ -7049,6 +7158,13 @@ export namespace Prisma {
    */
   export type SchoolCountOutputTypeCountLessonsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: LessonWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountPeriodTemplatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SchoolPeriodTemplateWhereInput
   }
 
   /**
@@ -7749,6 +7865,37 @@ export namespace Prisma {
    */
   export type ParentCountOutputTypeCountTeacherContactMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ParentTeacherContactMessageWhereInput
+  }
+
+
+  /**
+   * Count Type SchoolPeriodTemplateCountOutputType
+   */
+
+  export type SchoolPeriodTemplateCountOutputType = {
+    lessons: number
+  }
+
+  export type SchoolPeriodTemplateCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    lessons?: boolean | SchoolPeriodTemplateCountOutputTypeCountLessonsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * SchoolPeriodTemplateCountOutputType without action
+   */
+  export type SchoolPeriodTemplateCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolPeriodTemplateCountOutputType
+     */
+    select?: SchoolPeriodTemplateCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * SchoolPeriodTemplateCountOutputType without action
+   */
+  export type SchoolPeriodTemplateCountOutputTypeCountLessonsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LessonWhereInput
   }
 
 
@@ -8825,6 +8972,7 @@ export namespace Prisma {
     classes?: boolean | School$classesArgs<ExtArgs>
     subjects?: boolean | School$subjectsArgs<ExtArgs>
     lessons?: boolean | School$lessonsArgs<ExtArgs>
+    periodTemplates?: boolean | School$periodTemplatesArgs<ExtArgs>
     exams?: boolean | School$examsArgs<ExtArgs>
     assignments?: boolean | School$assignmentsArgs<ExtArgs>
     homeworkSubmissions?: boolean | School$homeworkSubmissionsArgs<ExtArgs>
@@ -8944,6 +9092,7 @@ export namespace Prisma {
     classes?: boolean | School$classesArgs<ExtArgs>
     subjects?: boolean | School$subjectsArgs<ExtArgs>
     lessons?: boolean | School$lessonsArgs<ExtArgs>
+    periodTemplates?: boolean | School$periodTemplatesArgs<ExtArgs>
     exams?: boolean | School$examsArgs<ExtArgs>
     assignments?: boolean | School$assignmentsArgs<ExtArgs>
     homeworkSubmissions?: boolean | School$homeworkSubmissionsArgs<ExtArgs>
@@ -9006,6 +9155,7 @@ export namespace Prisma {
       classes: Prisma.$ClassPayload<ExtArgs>[]
       subjects: Prisma.$SubjectPayload<ExtArgs>[]
       lessons: Prisma.$LessonPayload<ExtArgs>[]
+      periodTemplates: Prisma.$SchoolPeriodTemplatePayload<ExtArgs>[]
       exams: Prisma.$ExamPayload<ExtArgs>[]
       assignments: Prisma.$AssignmentPayload<ExtArgs>[]
       homeworkSubmissions: Prisma.$HomeworkSubmissionPayload<ExtArgs>[]
@@ -9473,6 +9623,7 @@ export namespace Prisma {
     classes<T extends School$classesArgs<ExtArgs> = {}>(args?: Subset<T, School$classesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClassPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     subjects<T extends School$subjectsArgs<ExtArgs> = {}>(args?: Subset<T, School$subjectsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SubjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     lessons<T extends School$lessonsArgs<ExtArgs> = {}>(args?: Subset<T, School$lessonsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    periodTemplates<T extends School$periodTemplatesArgs<ExtArgs> = {}>(args?: Subset<T, School$periodTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolPeriodTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     exams<T extends School$examsArgs<ExtArgs> = {}>(args?: Subset<T, School$examsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     assignments<T extends School$assignmentsArgs<ExtArgs> = {}>(args?: Subset<T, School$assignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     homeworkSubmissions<T extends School$homeworkSubmissionsArgs<ExtArgs> = {}>(args?: Subset<T, School$homeworkSubmissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -10147,6 +10298,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: LessonScalarFieldEnum | LessonScalarFieldEnum[]
+  }
+
+  /**
+   * School.periodTemplates
+   */
+  export type School$periodTemplatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolPeriodTemplate
+     */
+    select?: SchoolPeriodTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolPeriodTemplate
+     */
+    omit?: SchoolPeriodTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolPeriodTemplateInclude<ExtArgs> | null
+    where?: SchoolPeriodTemplateWhereInput
+    orderBy?: SchoolPeriodTemplateOrderByWithRelationInput | SchoolPeriodTemplateOrderByWithRelationInput[]
+    cursor?: SchoolPeriodTemplateWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SchoolPeriodTemplateScalarFieldEnum | SchoolPeriodTemplateScalarFieldEnum[]
   }
 
   /**
@@ -20632,6 +20807,1198 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: SchoolCommunicationRouteInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SchoolPeriodTemplate
+   */
+
+  export type AggregateSchoolPeriodTemplate = {
+    _count: SchoolPeriodTemplateCountAggregateOutputType | null
+    _avg: SchoolPeriodTemplateAvgAggregateOutputType | null
+    _sum: SchoolPeriodTemplateSumAggregateOutputType | null
+    _min: SchoolPeriodTemplateMinAggregateOutputType | null
+    _max: SchoolPeriodTemplateMaxAggregateOutputType | null
+  }
+
+  export type SchoolPeriodTemplateAvgAggregateOutputType = {
+    order: number | null
+  }
+
+  export type SchoolPeriodTemplateSumAggregateOutputType = {
+    order: number | null
+  }
+
+  export type SchoolPeriodTemplateMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    type: $Enums.SchoolPeriodType | null
+    startTime: string | null
+    endTime: string | null
+    order: number | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+  }
+
+  export type SchoolPeriodTemplateMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    type: $Enums.SchoolPeriodType | null
+    startTime: string | null
+    endTime: string | null
+    order: number | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+  }
+
+  export type SchoolPeriodTemplateCountAggregateOutputType = {
+    id: number
+    name: number
+    type: number
+    startTime: number
+    endTime: number
+    order: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    schoolId: number
+    _all: number
+  }
+
+
+  export type SchoolPeriodTemplateAvgAggregateInputType = {
+    order?: true
+  }
+
+  export type SchoolPeriodTemplateSumAggregateInputType = {
+    order?: true
+  }
+
+  export type SchoolPeriodTemplateMinAggregateInputType = {
+    id?: true
+    name?: true
+    type?: true
+    startTime?: true
+    endTime?: true
+    order?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+  }
+
+  export type SchoolPeriodTemplateMaxAggregateInputType = {
+    id?: true
+    name?: true
+    type?: true
+    startTime?: true
+    endTime?: true
+    order?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+  }
+
+  export type SchoolPeriodTemplateCountAggregateInputType = {
+    id?: true
+    name?: true
+    type?: true
+    startTime?: true
+    endTime?: true
+    order?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    _all?: true
+  }
+
+  export type SchoolPeriodTemplateAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SchoolPeriodTemplate to aggregate.
+     */
+    where?: SchoolPeriodTemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SchoolPeriodTemplates to fetch.
+     */
+    orderBy?: SchoolPeriodTemplateOrderByWithRelationInput | SchoolPeriodTemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SchoolPeriodTemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SchoolPeriodTemplates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SchoolPeriodTemplates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SchoolPeriodTemplates
+    **/
+    _count?: true | SchoolPeriodTemplateCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SchoolPeriodTemplateAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SchoolPeriodTemplateSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SchoolPeriodTemplateMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SchoolPeriodTemplateMaxAggregateInputType
+  }
+
+  export type GetSchoolPeriodTemplateAggregateType<T extends SchoolPeriodTemplateAggregateArgs> = {
+        [P in keyof T & keyof AggregateSchoolPeriodTemplate]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSchoolPeriodTemplate[P]>
+      : GetScalarType<T[P], AggregateSchoolPeriodTemplate[P]>
+  }
+
+
+
+
+  export type SchoolPeriodTemplateGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SchoolPeriodTemplateWhereInput
+    orderBy?: SchoolPeriodTemplateOrderByWithAggregationInput | SchoolPeriodTemplateOrderByWithAggregationInput[]
+    by: SchoolPeriodTemplateScalarFieldEnum[] | SchoolPeriodTemplateScalarFieldEnum
+    having?: SchoolPeriodTemplateScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SchoolPeriodTemplateCountAggregateInputType | true
+    _avg?: SchoolPeriodTemplateAvgAggregateInputType
+    _sum?: SchoolPeriodTemplateSumAggregateInputType
+    _min?: SchoolPeriodTemplateMinAggregateInputType
+    _max?: SchoolPeriodTemplateMaxAggregateInputType
+  }
+
+  export type SchoolPeriodTemplateGroupByOutputType = {
+    id: string
+    name: string
+    type: $Enums.SchoolPeriodType
+    startTime: string
+    endTime: string
+    order: number
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    schoolId: string
+    _count: SchoolPeriodTemplateCountAggregateOutputType | null
+    _avg: SchoolPeriodTemplateAvgAggregateOutputType | null
+    _sum: SchoolPeriodTemplateSumAggregateOutputType | null
+    _min: SchoolPeriodTemplateMinAggregateOutputType | null
+    _max: SchoolPeriodTemplateMaxAggregateOutputType | null
+  }
+
+  type GetSchoolPeriodTemplateGroupByPayload<T extends SchoolPeriodTemplateGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SchoolPeriodTemplateGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SchoolPeriodTemplateGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SchoolPeriodTemplateGroupByOutputType[P]>
+            : GetScalarType<T[P], SchoolPeriodTemplateGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SchoolPeriodTemplateSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    type?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    order?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    lessons?: boolean | SchoolPeriodTemplate$lessonsArgs<ExtArgs>
+    _count?: boolean | SchoolPeriodTemplateCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["schoolPeriodTemplate"]>
+
+  export type SchoolPeriodTemplateSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    type?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    order?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["schoolPeriodTemplate"]>
+
+  export type SchoolPeriodTemplateSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    type?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    order?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["schoolPeriodTemplate"]>
+
+  export type SchoolPeriodTemplateSelectScalar = {
+    id?: boolean
+    name?: boolean
+    type?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    order?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+  }
+
+  export type SchoolPeriodTemplateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "type" | "startTime" | "endTime" | "order" | "isActive" | "createdAt" | "updatedAt" | "schoolId", ExtArgs["result"]["schoolPeriodTemplate"]>
+  export type SchoolPeriodTemplateInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    lessons?: boolean | SchoolPeriodTemplate$lessonsArgs<ExtArgs>
+    _count?: boolean | SchoolPeriodTemplateCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type SchoolPeriodTemplateIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }
+  export type SchoolPeriodTemplateIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+  }
+
+  export type $SchoolPeriodTemplatePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SchoolPeriodTemplate"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      lessons: Prisma.$LessonPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      type: $Enums.SchoolPeriodType
+      startTime: string
+      endTime: string
+      order: number
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+      schoolId: string
+    }, ExtArgs["result"]["schoolPeriodTemplate"]>
+    composites: {}
+  }
+
+  type SchoolPeriodTemplateGetPayload<S extends boolean | null | undefined | SchoolPeriodTemplateDefaultArgs> = $Result.GetResult<Prisma.$SchoolPeriodTemplatePayload, S>
+
+  type SchoolPeriodTemplateCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SchoolPeriodTemplateFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SchoolPeriodTemplateCountAggregateInputType | true
+    }
+
+  export interface SchoolPeriodTemplateDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SchoolPeriodTemplate'], meta: { name: 'SchoolPeriodTemplate' } }
+    /**
+     * Find zero or one SchoolPeriodTemplate that matches the filter.
+     * @param {SchoolPeriodTemplateFindUniqueArgs} args - Arguments to find a SchoolPeriodTemplate
+     * @example
+     * // Get one SchoolPeriodTemplate
+     * const schoolPeriodTemplate = await prisma.schoolPeriodTemplate.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SchoolPeriodTemplateFindUniqueArgs>(args: SelectSubset<T, SchoolPeriodTemplateFindUniqueArgs<ExtArgs>>): Prisma__SchoolPeriodTemplateClient<$Result.GetResult<Prisma.$SchoolPeriodTemplatePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SchoolPeriodTemplate that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SchoolPeriodTemplateFindUniqueOrThrowArgs} args - Arguments to find a SchoolPeriodTemplate
+     * @example
+     * // Get one SchoolPeriodTemplate
+     * const schoolPeriodTemplate = await prisma.schoolPeriodTemplate.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SchoolPeriodTemplateFindUniqueOrThrowArgs>(args: SelectSubset<T, SchoolPeriodTemplateFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SchoolPeriodTemplateClient<$Result.GetResult<Prisma.$SchoolPeriodTemplatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SchoolPeriodTemplate that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolPeriodTemplateFindFirstArgs} args - Arguments to find a SchoolPeriodTemplate
+     * @example
+     * // Get one SchoolPeriodTemplate
+     * const schoolPeriodTemplate = await prisma.schoolPeriodTemplate.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SchoolPeriodTemplateFindFirstArgs>(args?: SelectSubset<T, SchoolPeriodTemplateFindFirstArgs<ExtArgs>>): Prisma__SchoolPeriodTemplateClient<$Result.GetResult<Prisma.$SchoolPeriodTemplatePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SchoolPeriodTemplate that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolPeriodTemplateFindFirstOrThrowArgs} args - Arguments to find a SchoolPeriodTemplate
+     * @example
+     * // Get one SchoolPeriodTemplate
+     * const schoolPeriodTemplate = await prisma.schoolPeriodTemplate.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SchoolPeriodTemplateFindFirstOrThrowArgs>(args?: SelectSubset<T, SchoolPeriodTemplateFindFirstOrThrowArgs<ExtArgs>>): Prisma__SchoolPeriodTemplateClient<$Result.GetResult<Prisma.$SchoolPeriodTemplatePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SchoolPeriodTemplates that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolPeriodTemplateFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SchoolPeriodTemplates
+     * const schoolPeriodTemplates = await prisma.schoolPeriodTemplate.findMany()
+     * 
+     * // Get first 10 SchoolPeriodTemplates
+     * const schoolPeriodTemplates = await prisma.schoolPeriodTemplate.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const schoolPeriodTemplateWithIdOnly = await prisma.schoolPeriodTemplate.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SchoolPeriodTemplateFindManyArgs>(args?: SelectSubset<T, SchoolPeriodTemplateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolPeriodTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SchoolPeriodTemplate.
+     * @param {SchoolPeriodTemplateCreateArgs} args - Arguments to create a SchoolPeriodTemplate.
+     * @example
+     * // Create one SchoolPeriodTemplate
+     * const SchoolPeriodTemplate = await prisma.schoolPeriodTemplate.create({
+     *   data: {
+     *     // ... data to create a SchoolPeriodTemplate
+     *   }
+     * })
+     * 
+     */
+    create<T extends SchoolPeriodTemplateCreateArgs>(args: SelectSubset<T, SchoolPeriodTemplateCreateArgs<ExtArgs>>): Prisma__SchoolPeriodTemplateClient<$Result.GetResult<Prisma.$SchoolPeriodTemplatePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SchoolPeriodTemplates.
+     * @param {SchoolPeriodTemplateCreateManyArgs} args - Arguments to create many SchoolPeriodTemplates.
+     * @example
+     * // Create many SchoolPeriodTemplates
+     * const schoolPeriodTemplate = await prisma.schoolPeriodTemplate.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SchoolPeriodTemplateCreateManyArgs>(args?: SelectSubset<T, SchoolPeriodTemplateCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SchoolPeriodTemplates and returns the data saved in the database.
+     * @param {SchoolPeriodTemplateCreateManyAndReturnArgs} args - Arguments to create many SchoolPeriodTemplates.
+     * @example
+     * // Create many SchoolPeriodTemplates
+     * const schoolPeriodTemplate = await prisma.schoolPeriodTemplate.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SchoolPeriodTemplates and only return the `id`
+     * const schoolPeriodTemplateWithIdOnly = await prisma.schoolPeriodTemplate.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SchoolPeriodTemplateCreateManyAndReturnArgs>(args?: SelectSubset<T, SchoolPeriodTemplateCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolPeriodTemplatePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SchoolPeriodTemplate.
+     * @param {SchoolPeriodTemplateDeleteArgs} args - Arguments to delete one SchoolPeriodTemplate.
+     * @example
+     * // Delete one SchoolPeriodTemplate
+     * const SchoolPeriodTemplate = await prisma.schoolPeriodTemplate.delete({
+     *   where: {
+     *     // ... filter to delete one SchoolPeriodTemplate
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SchoolPeriodTemplateDeleteArgs>(args: SelectSubset<T, SchoolPeriodTemplateDeleteArgs<ExtArgs>>): Prisma__SchoolPeriodTemplateClient<$Result.GetResult<Prisma.$SchoolPeriodTemplatePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SchoolPeriodTemplate.
+     * @param {SchoolPeriodTemplateUpdateArgs} args - Arguments to update one SchoolPeriodTemplate.
+     * @example
+     * // Update one SchoolPeriodTemplate
+     * const schoolPeriodTemplate = await prisma.schoolPeriodTemplate.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SchoolPeriodTemplateUpdateArgs>(args: SelectSubset<T, SchoolPeriodTemplateUpdateArgs<ExtArgs>>): Prisma__SchoolPeriodTemplateClient<$Result.GetResult<Prisma.$SchoolPeriodTemplatePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SchoolPeriodTemplates.
+     * @param {SchoolPeriodTemplateDeleteManyArgs} args - Arguments to filter SchoolPeriodTemplates to delete.
+     * @example
+     * // Delete a few SchoolPeriodTemplates
+     * const { count } = await prisma.schoolPeriodTemplate.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SchoolPeriodTemplateDeleteManyArgs>(args?: SelectSubset<T, SchoolPeriodTemplateDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SchoolPeriodTemplates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolPeriodTemplateUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SchoolPeriodTemplates
+     * const schoolPeriodTemplate = await prisma.schoolPeriodTemplate.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SchoolPeriodTemplateUpdateManyArgs>(args: SelectSubset<T, SchoolPeriodTemplateUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SchoolPeriodTemplates and returns the data updated in the database.
+     * @param {SchoolPeriodTemplateUpdateManyAndReturnArgs} args - Arguments to update many SchoolPeriodTemplates.
+     * @example
+     * // Update many SchoolPeriodTemplates
+     * const schoolPeriodTemplate = await prisma.schoolPeriodTemplate.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SchoolPeriodTemplates and only return the `id`
+     * const schoolPeriodTemplateWithIdOnly = await prisma.schoolPeriodTemplate.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SchoolPeriodTemplateUpdateManyAndReturnArgs>(args: SelectSubset<T, SchoolPeriodTemplateUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolPeriodTemplatePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SchoolPeriodTemplate.
+     * @param {SchoolPeriodTemplateUpsertArgs} args - Arguments to update or create a SchoolPeriodTemplate.
+     * @example
+     * // Update or create a SchoolPeriodTemplate
+     * const schoolPeriodTemplate = await prisma.schoolPeriodTemplate.upsert({
+     *   create: {
+     *     // ... data to create a SchoolPeriodTemplate
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SchoolPeriodTemplate we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SchoolPeriodTemplateUpsertArgs>(args: SelectSubset<T, SchoolPeriodTemplateUpsertArgs<ExtArgs>>): Prisma__SchoolPeriodTemplateClient<$Result.GetResult<Prisma.$SchoolPeriodTemplatePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SchoolPeriodTemplates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolPeriodTemplateCountArgs} args - Arguments to filter SchoolPeriodTemplates to count.
+     * @example
+     * // Count the number of SchoolPeriodTemplates
+     * const count = await prisma.schoolPeriodTemplate.count({
+     *   where: {
+     *     // ... the filter for the SchoolPeriodTemplates we want to count
+     *   }
+     * })
+    **/
+    count<T extends SchoolPeriodTemplateCountArgs>(
+      args?: Subset<T, SchoolPeriodTemplateCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SchoolPeriodTemplateCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SchoolPeriodTemplate.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolPeriodTemplateAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SchoolPeriodTemplateAggregateArgs>(args: Subset<T, SchoolPeriodTemplateAggregateArgs>): Prisma.PrismaPromise<GetSchoolPeriodTemplateAggregateType<T>>
+
+    /**
+     * Group by SchoolPeriodTemplate.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SchoolPeriodTemplateGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SchoolPeriodTemplateGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SchoolPeriodTemplateGroupByArgs['orderBy'] }
+        : { orderBy?: SchoolPeriodTemplateGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SchoolPeriodTemplateGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSchoolPeriodTemplateGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SchoolPeriodTemplate model
+   */
+  readonly fields: SchoolPeriodTemplateFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SchoolPeriodTemplate.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SchoolPeriodTemplateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    lessons<T extends SchoolPeriodTemplate$lessonsArgs<ExtArgs> = {}>(args?: Subset<T, SchoolPeriodTemplate$lessonsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SchoolPeriodTemplate model
+   */
+  interface SchoolPeriodTemplateFieldRefs {
+    readonly id: FieldRef<"SchoolPeriodTemplate", 'String'>
+    readonly name: FieldRef<"SchoolPeriodTemplate", 'String'>
+    readonly type: FieldRef<"SchoolPeriodTemplate", 'SchoolPeriodType'>
+    readonly startTime: FieldRef<"SchoolPeriodTemplate", 'String'>
+    readonly endTime: FieldRef<"SchoolPeriodTemplate", 'String'>
+    readonly order: FieldRef<"SchoolPeriodTemplate", 'Int'>
+    readonly isActive: FieldRef<"SchoolPeriodTemplate", 'Boolean'>
+    readonly createdAt: FieldRef<"SchoolPeriodTemplate", 'DateTime'>
+    readonly updatedAt: FieldRef<"SchoolPeriodTemplate", 'DateTime'>
+    readonly schoolId: FieldRef<"SchoolPeriodTemplate", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SchoolPeriodTemplate findUnique
+   */
+  export type SchoolPeriodTemplateFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolPeriodTemplate
+     */
+    select?: SchoolPeriodTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolPeriodTemplate
+     */
+    omit?: SchoolPeriodTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolPeriodTemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which SchoolPeriodTemplate to fetch.
+     */
+    where: SchoolPeriodTemplateWhereUniqueInput
+  }
+
+  /**
+   * SchoolPeriodTemplate findUniqueOrThrow
+   */
+  export type SchoolPeriodTemplateFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolPeriodTemplate
+     */
+    select?: SchoolPeriodTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolPeriodTemplate
+     */
+    omit?: SchoolPeriodTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolPeriodTemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which SchoolPeriodTemplate to fetch.
+     */
+    where: SchoolPeriodTemplateWhereUniqueInput
+  }
+
+  /**
+   * SchoolPeriodTemplate findFirst
+   */
+  export type SchoolPeriodTemplateFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolPeriodTemplate
+     */
+    select?: SchoolPeriodTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolPeriodTemplate
+     */
+    omit?: SchoolPeriodTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolPeriodTemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which SchoolPeriodTemplate to fetch.
+     */
+    where?: SchoolPeriodTemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SchoolPeriodTemplates to fetch.
+     */
+    orderBy?: SchoolPeriodTemplateOrderByWithRelationInput | SchoolPeriodTemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SchoolPeriodTemplates.
+     */
+    cursor?: SchoolPeriodTemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SchoolPeriodTemplates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SchoolPeriodTemplates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SchoolPeriodTemplates.
+     */
+    distinct?: SchoolPeriodTemplateScalarFieldEnum | SchoolPeriodTemplateScalarFieldEnum[]
+  }
+
+  /**
+   * SchoolPeriodTemplate findFirstOrThrow
+   */
+  export type SchoolPeriodTemplateFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolPeriodTemplate
+     */
+    select?: SchoolPeriodTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolPeriodTemplate
+     */
+    omit?: SchoolPeriodTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolPeriodTemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which SchoolPeriodTemplate to fetch.
+     */
+    where?: SchoolPeriodTemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SchoolPeriodTemplates to fetch.
+     */
+    orderBy?: SchoolPeriodTemplateOrderByWithRelationInput | SchoolPeriodTemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SchoolPeriodTemplates.
+     */
+    cursor?: SchoolPeriodTemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SchoolPeriodTemplates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SchoolPeriodTemplates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SchoolPeriodTemplates.
+     */
+    distinct?: SchoolPeriodTemplateScalarFieldEnum | SchoolPeriodTemplateScalarFieldEnum[]
+  }
+
+  /**
+   * SchoolPeriodTemplate findMany
+   */
+  export type SchoolPeriodTemplateFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolPeriodTemplate
+     */
+    select?: SchoolPeriodTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolPeriodTemplate
+     */
+    omit?: SchoolPeriodTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolPeriodTemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which SchoolPeriodTemplates to fetch.
+     */
+    where?: SchoolPeriodTemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SchoolPeriodTemplates to fetch.
+     */
+    orderBy?: SchoolPeriodTemplateOrderByWithRelationInput | SchoolPeriodTemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SchoolPeriodTemplates.
+     */
+    cursor?: SchoolPeriodTemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SchoolPeriodTemplates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SchoolPeriodTemplates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SchoolPeriodTemplates.
+     */
+    distinct?: SchoolPeriodTemplateScalarFieldEnum | SchoolPeriodTemplateScalarFieldEnum[]
+  }
+
+  /**
+   * SchoolPeriodTemplate create
+   */
+  export type SchoolPeriodTemplateCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolPeriodTemplate
+     */
+    select?: SchoolPeriodTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolPeriodTemplate
+     */
+    omit?: SchoolPeriodTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolPeriodTemplateInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SchoolPeriodTemplate.
+     */
+    data: XOR<SchoolPeriodTemplateCreateInput, SchoolPeriodTemplateUncheckedCreateInput>
+  }
+
+  /**
+   * SchoolPeriodTemplate createMany
+   */
+  export type SchoolPeriodTemplateCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SchoolPeriodTemplates.
+     */
+    data: SchoolPeriodTemplateCreateManyInput | SchoolPeriodTemplateCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SchoolPeriodTemplate createManyAndReturn
+   */
+  export type SchoolPeriodTemplateCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolPeriodTemplate
+     */
+    select?: SchoolPeriodTemplateSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolPeriodTemplate
+     */
+    omit?: SchoolPeriodTemplateOmit<ExtArgs> | null
+    /**
+     * The data used to create many SchoolPeriodTemplates.
+     */
+    data: SchoolPeriodTemplateCreateManyInput | SchoolPeriodTemplateCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolPeriodTemplateIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SchoolPeriodTemplate update
+   */
+  export type SchoolPeriodTemplateUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolPeriodTemplate
+     */
+    select?: SchoolPeriodTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolPeriodTemplate
+     */
+    omit?: SchoolPeriodTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolPeriodTemplateInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SchoolPeriodTemplate.
+     */
+    data: XOR<SchoolPeriodTemplateUpdateInput, SchoolPeriodTemplateUncheckedUpdateInput>
+    /**
+     * Choose, which SchoolPeriodTemplate to update.
+     */
+    where: SchoolPeriodTemplateWhereUniqueInput
+  }
+
+  /**
+   * SchoolPeriodTemplate updateMany
+   */
+  export type SchoolPeriodTemplateUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SchoolPeriodTemplates.
+     */
+    data: XOR<SchoolPeriodTemplateUpdateManyMutationInput, SchoolPeriodTemplateUncheckedUpdateManyInput>
+    /**
+     * Filter which SchoolPeriodTemplates to update
+     */
+    where?: SchoolPeriodTemplateWhereInput
+    /**
+     * Limit how many SchoolPeriodTemplates to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SchoolPeriodTemplate updateManyAndReturn
+   */
+  export type SchoolPeriodTemplateUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolPeriodTemplate
+     */
+    select?: SchoolPeriodTemplateSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolPeriodTemplate
+     */
+    omit?: SchoolPeriodTemplateOmit<ExtArgs> | null
+    /**
+     * The data used to update SchoolPeriodTemplates.
+     */
+    data: XOR<SchoolPeriodTemplateUpdateManyMutationInput, SchoolPeriodTemplateUncheckedUpdateManyInput>
+    /**
+     * Filter which SchoolPeriodTemplates to update
+     */
+    where?: SchoolPeriodTemplateWhereInput
+    /**
+     * Limit how many SchoolPeriodTemplates to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolPeriodTemplateIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SchoolPeriodTemplate upsert
+   */
+  export type SchoolPeriodTemplateUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolPeriodTemplate
+     */
+    select?: SchoolPeriodTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolPeriodTemplate
+     */
+    omit?: SchoolPeriodTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolPeriodTemplateInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SchoolPeriodTemplate to update in case it exists.
+     */
+    where: SchoolPeriodTemplateWhereUniqueInput
+    /**
+     * In case the SchoolPeriodTemplate found by the `where` argument doesn't exist, create a new SchoolPeriodTemplate with this data.
+     */
+    create: XOR<SchoolPeriodTemplateCreateInput, SchoolPeriodTemplateUncheckedCreateInput>
+    /**
+     * In case the SchoolPeriodTemplate was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SchoolPeriodTemplateUpdateInput, SchoolPeriodTemplateUncheckedUpdateInput>
+  }
+
+  /**
+   * SchoolPeriodTemplate delete
+   */
+  export type SchoolPeriodTemplateDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolPeriodTemplate
+     */
+    select?: SchoolPeriodTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolPeriodTemplate
+     */
+    omit?: SchoolPeriodTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolPeriodTemplateInclude<ExtArgs> | null
+    /**
+     * Filter which SchoolPeriodTemplate to delete.
+     */
+    where: SchoolPeriodTemplateWhereUniqueInput
+  }
+
+  /**
+   * SchoolPeriodTemplate deleteMany
+   */
+  export type SchoolPeriodTemplateDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SchoolPeriodTemplates to delete
+     */
+    where?: SchoolPeriodTemplateWhereInput
+    /**
+     * Limit how many SchoolPeriodTemplates to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SchoolPeriodTemplate.lessons
+   */
+  export type SchoolPeriodTemplate$lessonsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Lesson
+     */
+    select?: LessonSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lesson
+     */
+    omit?: LessonOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LessonInclude<ExtArgs> | null
+    where?: LessonWhereInput
+    orderBy?: LessonOrderByWithRelationInput | LessonOrderByWithRelationInput[]
+    cursor?: LessonWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LessonScalarFieldEnum | LessonScalarFieldEnum[]
+  }
+
+  /**
+   * SchoolPeriodTemplate without action
+   */
+  export type SchoolPeriodTemplateDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolPeriodTemplate
+     */
+    select?: SchoolPeriodTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolPeriodTemplate
+     */
+    omit?: SchoolPeriodTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolPeriodTemplateInclude<ExtArgs> | null
   }
 
 
@@ -39352,6 +40719,7 @@ export namespace Prisma {
     subjectId: number | null
     classId: number | null
     teacherId: string | null
+    periodTemplateId: string | null
   }
 
   export type LessonMaxAggregateOutputType = {
@@ -39364,6 +40732,7 @@ export namespace Prisma {
     subjectId: number | null
     classId: number | null
     teacherId: string | null
+    periodTemplateId: string | null
   }
 
   export type LessonCountAggregateOutputType = {
@@ -39376,6 +40745,7 @@ export namespace Prisma {
     subjectId: number
     classId: number
     teacherId: number
+    periodTemplateId: number
     _all: number
   }
 
@@ -39402,6 +40772,7 @@ export namespace Prisma {
     subjectId?: true
     classId?: true
     teacherId?: true
+    periodTemplateId?: true
   }
 
   export type LessonMaxAggregateInputType = {
@@ -39414,6 +40785,7 @@ export namespace Prisma {
     subjectId?: true
     classId?: true
     teacherId?: true
+    periodTemplateId?: true
   }
 
   export type LessonCountAggregateInputType = {
@@ -39426,6 +40798,7 @@ export namespace Prisma {
     subjectId?: true
     classId?: true
     teacherId?: true
+    periodTemplateId?: true
     _all?: true
   }
 
@@ -39525,6 +40898,7 @@ export namespace Prisma {
     subjectId: number
     classId: number
     teacherId: string
+    periodTemplateId: string | null
     _count: LessonCountAggregateOutputType | null
     _avg: LessonAvgAggregateOutputType | null
     _sum: LessonSumAggregateOutputType | null
@@ -39556,10 +40930,12 @@ export namespace Prisma {
     subjectId?: boolean
     classId?: boolean
     teacherId?: boolean
+    periodTemplateId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     subject?: boolean | SubjectDefaultArgs<ExtArgs>
     class?: boolean | ClassDefaultArgs<ExtArgs>
     teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    periodTemplate?: boolean | Lesson$periodTemplateArgs<ExtArgs>
     exams?: boolean | Lesson$examsArgs<ExtArgs>
     assignments?: boolean | Lesson$assignmentsArgs<ExtArgs>
     attendances?: boolean | Lesson$attendancesArgs<ExtArgs>
@@ -39577,10 +40953,12 @@ export namespace Prisma {
     subjectId?: boolean
     classId?: boolean
     teacherId?: boolean
+    periodTemplateId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     subject?: boolean | SubjectDefaultArgs<ExtArgs>
     class?: boolean | ClassDefaultArgs<ExtArgs>
     teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    periodTemplate?: boolean | Lesson$periodTemplateArgs<ExtArgs>
   }, ExtArgs["result"]["lesson"]>
 
   export type LessonSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -39593,10 +40971,12 @@ export namespace Prisma {
     subjectId?: boolean
     classId?: boolean
     teacherId?: boolean
+    periodTemplateId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     subject?: boolean | SubjectDefaultArgs<ExtArgs>
     class?: boolean | ClassDefaultArgs<ExtArgs>
     teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    periodTemplate?: boolean | Lesson$periodTemplateArgs<ExtArgs>
   }, ExtArgs["result"]["lesson"]>
 
   export type LessonSelectScalar = {
@@ -39609,14 +40989,16 @@ export namespace Prisma {
     subjectId?: boolean
     classId?: boolean
     teacherId?: boolean
+    periodTemplateId?: boolean
   }
 
-  export type LessonOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "day" | "startTime" | "endTime" | "schoolId" | "subjectId" | "classId" | "teacherId", ExtArgs["result"]["lesson"]>
+  export type LessonOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "day" | "startTime" | "endTime" | "schoolId" | "subjectId" | "classId" | "teacherId" | "periodTemplateId", ExtArgs["result"]["lesson"]>
   export type LessonInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     subject?: boolean | SubjectDefaultArgs<ExtArgs>
     class?: boolean | ClassDefaultArgs<ExtArgs>
     teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    periodTemplate?: boolean | Lesson$periodTemplateArgs<ExtArgs>
     exams?: boolean | Lesson$examsArgs<ExtArgs>
     assignments?: boolean | Lesson$assignmentsArgs<ExtArgs>
     attendances?: boolean | Lesson$attendancesArgs<ExtArgs>
@@ -39628,12 +41010,14 @@ export namespace Prisma {
     subject?: boolean | SubjectDefaultArgs<ExtArgs>
     class?: boolean | ClassDefaultArgs<ExtArgs>
     teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    periodTemplate?: boolean | Lesson$periodTemplateArgs<ExtArgs>
   }
   export type LessonIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     subject?: boolean | SubjectDefaultArgs<ExtArgs>
     class?: boolean | ClassDefaultArgs<ExtArgs>
     teacher?: boolean | TeacherDefaultArgs<ExtArgs>
+    periodTemplate?: boolean | Lesson$periodTemplateArgs<ExtArgs>
   }
 
   export type $LessonPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -39643,6 +41027,7 @@ export namespace Prisma {
       subject: Prisma.$SubjectPayload<ExtArgs>
       class: Prisma.$ClassPayload<ExtArgs>
       teacher: Prisma.$TeacherPayload<ExtArgs>
+      periodTemplate: Prisma.$SchoolPeriodTemplatePayload<ExtArgs> | null
       exams: Prisma.$ExamPayload<ExtArgs>[]
       assignments: Prisma.$AssignmentPayload<ExtArgs>[]
       attendances: Prisma.$AttendancePayload<ExtArgs>[]
@@ -39658,6 +41043,7 @@ export namespace Prisma {
       subjectId: number
       classId: number
       teacherId: string
+      periodTemplateId: string | null
     }, ExtArgs["result"]["lesson"]>
     composites: {}
   }
@@ -40056,6 +41442,7 @@ export namespace Prisma {
     subject<T extends SubjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SubjectDefaultArgs<ExtArgs>>): Prisma__SubjectClient<$Result.GetResult<Prisma.$SubjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     class<T extends ClassDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClassDefaultArgs<ExtArgs>>): Prisma__ClassClient<$Result.GetResult<Prisma.$ClassPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     teacher<T extends TeacherDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TeacherDefaultArgs<ExtArgs>>): Prisma__TeacherClient<$Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    periodTemplate<T extends Lesson$periodTemplateArgs<ExtArgs> = {}>(args?: Subset<T, Lesson$periodTemplateArgs<ExtArgs>>): Prisma__SchoolPeriodTemplateClient<$Result.GetResult<Prisma.$SchoolPeriodTemplatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     exams<T extends Lesson$examsArgs<ExtArgs> = {}>(args?: Subset<T, Lesson$examsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     assignments<T extends Lesson$assignmentsArgs<ExtArgs> = {}>(args?: Subset<T, Lesson$assignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     attendances<T extends Lesson$attendancesArgs<ExtArgs> = {}>(args?: Subset<T, Lesson$attendancesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -40098,6 +41485,7 @@ export namespace Prisma {
     readonly subjectId: FieldRef<"Lesson", 'Int'>
     readonly classId: FieldRef<"Lesson", 'Int'>
     readonly teacherId: FieldRef<"Lesson", 'String'>
+    readonly periodTemplateId: FieldRef<"Lesson", 'String'>
   }
     
 
@@ -40496,6 +41884,25 @@ export namespace Prisma {
      * Limit how many Lessons to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Lesson.periodTemplate
+   */
+  export type Lesson$periodTemplateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SchoolPeriodTemplate
+     */
+    select?: SchoolPeriodTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SchoolPeriodTemplate
+     */
+    omit?: SchoolPeriodTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SchoolPeriodTemplateInclude<ExtArgs> | null
+    where?: SchoolPeriodTemplateWhereInput
   }
 
   /**
@@ -83193,6 +84600,22 @@ export namespace Prisma {
   export type SchoolCommunicationRouteScalarFieldEnum = (typeof SchoolCommunicationRouteScalarFieldEnum)[keyof typeof SchoolCommunicationRouteScalarFieldEnum]
 
 
+  export const SchoolPeriodTemplateScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    type: 'type',
+    startTime: 'startTime',
+    endTime: 'endTime',
+    order: 'order',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    schoolId: 'schoolId'
+  };
+
+  export type SchoolPeriodTemplateScalarFieldEnum = (typeof SchoolPeriodTemplateScalarFieldEnum)[keyof typeof SchoolPeriodTemplateScalarFieldEnum]
+
+
   export const TeacherAccountabilitySettingScalarFieldEnum: {
     id: 'id',
     attendanceOpenMinutesBeforeLesson: 'attendanceOpenMinutesBeforeLesson',
@@ -83486,7 +84909,8 @@ export namespace Prisma {
     schoolId: 'schoolId',
     subjectId: 'subjectId',
     classId: 'classId',
-    teacherId: 'teacherId'
+    teacherId: 'teacherId',
+    periodTemplateId: 'periodTemplateId'
   };
 
   export type LessonScalarFieldEnum = (typeof LessonScalarFieldEnum)[keyof typeof LessonScalarFieldEnum]
@@ -84259,6 +85683,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'SchoolPeriodType'
+   */
+  export type EnumSchoolPeriodTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SchoolPeriodType'>
+    
+
+
+  /**
+   * Reference to a field of type 'SchoolPeriodType[]'
+   */
+  export type ListEnumSchoolPeriodTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SchoolPeriodType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'TeacherObligationType'
    */
   export type EnumTeacherObligationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherObligationType'>
@@ -84934,6 +86372,7 @@ export namespace Prisma {
     classes?: ClassListRelationFilter
     subjects?: SubjectListRelationFilter
     lessons?: LessonListRelationFilter
+    periodTemplates?: SchoolPeriodTemplateListRelationFilter
     exams?: ExamListRelationFilter
     assignments?: AssignmentListRelationFilter
     homeworkSubmissions?: HomeworkSubmissionListRelationFilter
@@ -85008,6 +86447,7 @@ export namespace Prisma {
     classes?: ClassOrderByRelationAggregateInput
     subjects?: SubjectOrderByRelationAggregateInput
     lessons?: LessonOrderByRelationAggregateInput
+    periodTemplates?: SchoolPeriodTemplateOrderByRelationAggregateInput
     exams?: ExamOrderByRelationAggregateInput
     assignments?: AssignmentOrderByRelationAggregateInput
     homeworkSubmissions?: HomeworkSubmissionOrderByRelationAggregateInput
@@ -85085,6 +86525,7 @@ export namespace Prisma {
     classes?: ClassListRelationFilter
     subjects?: SubjectListRelationFilter
     lessons?: LessonListRelationFilter
+    periodTemplates?: SchoolPeriodTemplateListRelationFilter
     exams?: ExamListRelationFilter
     assignments?: AssignmentListRelationFilter
     homeworkSubmissions?: HomeworkSubmissionListRelationFilter
@@ -85970,6 +87411,93 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"SchoolCommunicationRoute"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"SchoolCommunicationRoute"> | Date | string
     schoolId?: StringWithAggregatesFilter<"SchoolCommunicationRoute"> | string
+  }
+
+  export type SchoolPeriodTemplateWhereInput = {
+    AND?: SchoolPeriodTemplateWhereInput | SchoolPeriodTemplateWhereInput[]
+    OR?: SchoolPeriodTemplateWhereInput[]
+    NOT?: SchoolPeriodTemplateWhereInput | SchoolPeriodTemplateWhereInput[]
+    id?: StringFilter<"SchoolPeriodTemplate"> | string
+    name?: StringFilter<"SchoolPeriodTemplate"> | string
+    type?: EnumSchoolPeriodTypeFilter<"SchoolPeriodTemplate"> | $Enums.SchoolPeriodType
+    startTime?: StringFilter<"SchoolPeriodTemplate"> | string
+    endTime?: StringFilter<"SchoolPeriodTemplate"> | string
+    order?: IntFilter<"SchoolPeriodTemplate"> | number
+    isActive?: BoolFilter<"SchoolPeriodTemplate"> | boolean
+    createdAt?: DateTimeFilter<"SchoolPeriodTemplate"> | Date | string
+    updatedAt?: DateTimeFilter<"SchoolPeriodTemplate"> | Date | string
+    schoolId?: StringFilter<"SchoolPeriodTemplate"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    lessons?: LessonListRelationFilter
+  }
+
+  export type SchoolPeriodTemplateOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    type?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    order?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+    lessons?: LessonOrderByRelationAggregateInput
+  }
+
+  export type SchoolPeriodTemplateWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    schoolId_name?: SchoolPeriodTemplateSchoolIdNameCompoundUniqueInput
+    schoolId_order?: SchoolPeriodTemplateSchoolIdOrderCompoundUniqueInput
+    AND?: SchoolPeriodTemplateWhereInput | SchoolPeriodTemplateWhereInput[]
+    OR?: SchoolPeriodTemplateWhereInput[]
+    NOT?: SchoolPeriodTemplateWhereInput | SchoolPeriodTemplateWhereInput[]
+    name?: StringFilter<"SchoolPeriodTemplate"> | string
+    type?: EnumSchoolPeriodTypeFilter<"SchoolPeriodTemplate"> | $Enums.SchoolPeriodType
+    startTime?: StringFilter<"SchoolPeriodTemplate"> | string
+    endTime?: StringFilter<"SchoolPeriodTemplate"> | string
+    order?: IntFilter<"SchoolPeriodTemplate"> | number
+    isActive?: BoolFilter<"SchoolPeriodTemplate"> | boolean
+    createdAt?: DateTimeFilter<"SchoolPeriodTemplate"> | Date | string
+    updatedAt?: DateTimeFilter<"SchoolPeriodTemplate"> | Date | string
+    schoolId?: StringFilter<"SchoolPeriodTemplate"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    lessons?: LessonListRelationFilter
+  }, "id" | "schoolId_name" | "schoolId_order">
+
+  export type SchoolPeriodTemplateOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    type?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    order?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    _count?: SchoolPeriodTemplateCountOrderByAggregateInput
+    _avg?: SchoolPeriodTemplateAvgOrderByAggregateInput
+    _max?: SchoolPeriodTemplateMaxOrderByAggregateInput
+    _min?: SchoolPeriodTemplateMinOrderByAggregateInput
+    _sum?: SchoolPeriodTemplateSumOrderByAggregateInput
+  }
+
+  export type SchoolPeriodTemplateScalarWhereWithAggregatesInput = {
+    AND?: SchoolPeriodTemplateScalarWhereWithAggregatesInput | SchoolPeriodTemplateScalarWhereWithAggregatesInput[]
+    OR?: SchoolPeriodTemplateScalarWhereWithAggregatesInput[]
+    NOT?: SchoolPeriodTemplateScalarWhereWithAggregatesInput | SchoolPeriodTemplateScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SchoolPeriodTemplate"> | string
+    name?: StringWithAggregatesFilter<"SchoolPeriodTemplate"> | string
+    type?: EnumSchoolPeriodTypeWithAggregatesFilter<"SchoolPeriodTemplate"> | $Enums.SchoolPeriodType
+    startTime?: StringWithAggregatesFilter<"SchoolPeriodTemplate"> | string
+    endTime?: StringWithAggregatesFilter<"SchoolPeriodTemplate"> | string
+    order?: IntWithAggregatesFilter<"SchoolPeriodTemplate"> | number
+    isActive?: BoolWithAggregatesFilter<"SchoolPeriodTemplate"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"SchoolPeriodTemplate"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"SchoolPeriodTemplate"> | Date | string
+    schoolId?: StringWithAggregatesFilter<"SchoolPeriodTemplate"> | string
   }
 
   export type TeacherAccountabilitySettingWhereInput = {
@@ -87567,10 +89095,12 @@ export namespace Prisma {
     subjectId?: IntFilter<"Lesson"> | number
     classId?: IntFilter<"Lesson"> | number
     teacherId?: StringFilter<"Lesson"> | string
+    periodTemplateId?: StringNullableFilter<"Lesson"> | string | null
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     subject?: XOR<SubjectScalarRelationFilter, SubjectWhereInput>
     class?: XOR<ClassScalarRelationFilter, ClassWhereInput>
     teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
+    periodTemplate?: XOR<SchoolPeriodTemplateNullableScalarRelationFilter, SchoolPeriodTemplateWhereInput> | null
     exams?: ExamListRelationFilter
     assignments?: AssignmentListRelationFilter
     attendances?: AttendanceListRelationFilter
@@ -87587,10 +89117,12 @@ export namespace Prisma {
     subjectId?: SortOrder
     classId?: SortOrder
     teacherId?: SortOrder
+    periodTemplateId?: SortOrderInput | SortOrder
     school?: SchoolOrderByWithRelationInput
     subject?: SubjectOrderByWithRelationInput
     class?: ClassOrderByWithRelationInput
     teacher?: TeacherOrderByWithRelationInput
+    periodTemplate?: SchoolPeriodTemplateOrderByWithRelationInput
     exams?: ExamOrderByRelationAggregateInput
     assignments?: AssignmentOrderByRelationAggregateInput
     attendances?: AttendanceOrderByRelationAggregateInput
@@ -87610,10 +89142,12 @@ export namespace Prisma {
     subjectId?: IntFilter<"Lesson"> | number
     classId?: IntFilter<"Lesson"> | number
     teacherId?: StringFilter<"Lesson"> | string
+    periodTemplateId?: StringNullableFilter<"Lesson"> | string | null
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     subject?: XOR<SubjectScalarRelationFilter, SubjectWhereInput>
     class?: XOR<ClassScalarRelationFilter, ClassWhereInput>
     teacher?: XOR<TeacherScalarRelationFilter, TeacherWhereInput>
+    periodTemplate?: XOR<SchoolPeriodTemplateNullableScalarRelationFilter, SchoolPeriodTemplateWhereInput> | null
     exams?: ExamListRelationFilter
     assignments?: AssignmentListRelationFilter
     attendances?: AttendanceListRelationFilter
@@ -87630,6 +89164,7 @@ export namespace Prisma {
     subjectId?: SortOrder
     classId?: SortOrder
     teacherId?: SortOrder
+    periodTemplateId?: SortOrderInput | SortOrder
     _count?: LessonCountOrderByAggregateInput
     _avg?: LessonAvgOrderByAggregateInput
     _max?: LessonMaxOrderByAggregateInput
@@ -87650,6 +89185,7 @@ export namespace Prisma {
     subjectId?: IntWithAggregatesFilter<"Lesson"> | number
     classId?: IntWithAggregatesFilter<"Lesson"> | number
     teacherId?: StringWithAggregatesFilter<"Lesson"> | string
+    periodTemplateId?: StringNullableWithAggregatesFilter<"Lesson"> | string | null
   }
 
   export type ExamWhereInput = {
@@ -90928,6 +92464,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -91002,6 +92539,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -91076,6 +92614,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -91150,6 +92689,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -92171,6 +93711,100 @@ export namespace Prisma {
     target?: EnumParentTeacherContactRouteTargetFieldUpdateOperationsInput | $Enums.ParentTeacherContactRouteTarget
     selectedTeacherId?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type SchoolPeriodTemplateCreateInput = {
+    id?: string
+    name: string
+    type?: $Enums.SchoolPeriodType
+    startTime: string
+    endTime: string
+    order: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutPeriodTemplatesInput
+    lessons?: LessonCreateNestedManyWithoutPeriodTemplateInput
+  }
+
+  export type SchoolPeriodTemplateUncheckedCreateInput = {
+    id?: string
+    name: string
+    type?: $Enums.SchoolPeriodType
+    startTime: string
+    endTime: string
+    order: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    lessons?: LessonUncheckedCreateNestedManyWithoutPeriodTemplateInput
+  }
+
+  export type SchoolPeriodTemplateUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    type?: EnumSchoolPeriodTypeFieldUpdateOperationsInput | $Enums.SchoolPeriodType
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutPeriodTemplatesNestedInput
+    lessons?: LessonUpdateManyWithoutPeriodTemplateNestedInput
+  }
+
+  export type SchoolPeriodTemplateUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    type?: EnumSchoolPeriodTypeFieldUpdateOperationsInput | $Enums.SchoolPeriodType
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    lessons?: LessonUncheckedUpdateManyWithoutPeriodTemplateNestedInput
+  }
+
+  export type SchoolPeriodTemplateCreateManyInput = {
+    id?: string
+    name: string
+    type?: $Enums.SchoolPeriodType
+    startTime: string
+    endTime: string
+    order: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+  }
+
+  export type SchoolPeriodTemplateUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    type?: EnumSchoolPeriodTypeFieldUpdateOperationsInput | $Enums.SchoolPeriodType
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SchoolPeriodTemplateUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    type?: EnumSchoolPeriodTypeFieldUpdateOperationsInput | $Enums.SchoolPeriodType
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
@@ -93906,6 +95540,7 @@ export namespace Prisma {
     subject: SubjectCreateNestedOneWithoutLessonsInput
     class: ClassCreateNestedOneWithoutLessonsInput
     teacher: TeacherCreateNestedOneWithoutLessonsInput
+    periodTemplate?: SchoolPeriodTemplateCreateNestedOneWithoutLessonsInput
     exams?: ExamCreateNestedManyWithoutLessonInput
     assignments?: AssignmentCreateNestedManyWithoutLessonInput
     attendances?: AttendanceCreateNestedManyWithoutLessonInput
@@ -93922,6 +95557,7 @@ export namespace Prisma {
     subjectId: number
     classId: number
     teacherId: string
+    periodTemplateId?: string | null
     exams?: ExamUncheckedCreateNestedManyWithoutLessonInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutLessonInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutLessonInput
@@ -93937,6 +95573,7 @@ export namespace Prisma {
     subject?: SubjectUpdateOneRequiredWithoutLessonsNestedInput
     class?: ClassUpdateOneRequiredWithoutLessonsNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutLessonsNestedInput
+    periodTemplate?: SchoolPeriodTemplateUpdateOneWithoutLessonsNestedInput
     exams?: ExamUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUpdateManyWithoutLessonNestedInput
     attendances?: AttendanceUpdateManyWithoutLessonNestedInput
@@ -93953,6 +95590,7 @@ export namespace Prisma {
     subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
+    periodTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     exams?: ExamUncheckedUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutLessonNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutLessonNestedInput
@@ -93969,6 +95607,7 @@ export namespace Prisma {
     subjectId: number
     classId: number
     teacherId: string
+    periodTemplateId?: string | null
   }
 
   export type LessonUpdateManyMutationInput = {
@@ -93988,6 +95627,7 @@ export namespace Prisma {
     subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
+    periodTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ExamCreateInput = {
@@ -97423,6 +99063,12 @@ export namespace Prisma {
     none?: LessonWhereInput
   }
 
+  export type SchoolPeriodTemplateListRelationFilter = {
+    every?: SchoolPeriodTemplateWhereInput
+    some?: SchoolPeriodTemplateWhereInput
+    none?: SchoolPeriodTemplateWhereInput
+  }
+
   export type ExamListRelationFilter = {
     every?: ExamWhereInput
     some?: ExamWhereInput
@@ -97730,6 +99376,10 @@ export namespace Prisma {
   }
 
   export type LessonOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SchoolPeriodTemplateOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -98547,6 +100197,80 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumParentTeacherContactRouteTargetFilter<$PrismaModel>
     _max?: NestedEnumParentTeacherContactRouteTargetFilter<$PrismaModel>
+  }
+
+  export type EnumSchoolPeriodTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.SchoolPeriodType | EnumSchoolPeriodTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.SchoolPeriodType[] | ListEnumSchoolPeriodTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SchoolPeriodType[] | ListEnumSchoolPeriodTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumSchoolPeriodTypeFilter<$PrismaModel> | $Enums.SchoolPeriodType
+  }
+
+  export type SchoolPeriodTemplateSchoolIdNameCompoundUniqueInput = {
+    schoolId: string
+    name: string
+  }
+
+  export type SchoolPeriodTemplateSchoolIdOrderCompoundUniqueInput = {
+    schoolId: string
+    order: number
+  }
+
+  export type SchoolPeriodTemplateCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    type?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    order?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+  }
+
+  export type SchoolPeriodTemplateAvgOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
+  export type SchoolPeriodTemplateMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    type?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    order?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+  }
+
+  export type SchoolPeriodTemplateMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    type?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    order?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+  }
+
+  export type SchoolPeriodTemplateSumOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
+  export type EnumSchoolPeriodTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SchoolPeriodType | EnumSchoolPeriodTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.SchoolPeriodType[] | ListEnumSchoolPeriodTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SchoolPeriodType[] | ListEnumSchoolPeriodTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumSchoolPeriodTypeWithAggregatesFilter<$PrismaModel> | $Enums.SchoolPeriodType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSchoolPeriodTypeFilter<$PrismaModel>
+    _max?: NestedEnumSchoolPeriodTypeFilter<$PrismaModel>
   }
 
   export type TeacherAccountabilitySettingCountOrderByAggregateInput = {
@@ -99691,6 +101415,11 @@ export namespace Prisma {
     isNot?: SubjectWhereInput
   }
 
+  export type SchoolPeriodTemplateNullableScalarRelationFilter = {
+    is?: SchoolPeriodTemplateWhereInput | null
+    isNot?: SchoolPeriodTemplateWhereInput | null
+  }
+
   export type LessonCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -99701,6 +101430,7 @@ export namespace Prisma {
     subjectId?: SortOrder
     classId?: SortOrder
     teacherId?: SortOrder
+    periodTemplateId?: SortOrder
   }
 
   export type LessonAvgOrderByAggregateInput = {
@@ -99719,6 +101449,7 @@ export namespace Prisma {
     subjectId?: SortOrder
     classId?: SortOrder
     teacherId?: SortOrder
+    periodTemplateId?: SortOrder
   }
 
   export type LessonMinOrderByAggregateInput = {
@@ -99731,6 +101462,7 @@ export namespace Prisma {
     subjectId?: SortOrder
     classId?: SortOrder
     teacherId?: SortOrder
+    periodTemplateId?: SortOrder
   }
 
   export type LessonSumOrderByAggregateInput = {
@@ -102580,6 +104312,13 @@ export namespace Prisma {
     connect?: LessonWhereUniqueInput | LessonWhereUniqueInput[]
   }
 
+  export type SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<SchoolPeriodTemplateCreateWithoutSchoolInput, SchoolPeriodTemplateUncheckedCreateWithoutSchoolInput> | SchoolPeriodTemplateCreateWithoutSchoolInput[] | SchoolPeriodTemplateUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: SchoolPeriodTemplateCreateOrConnectWithoutSchoolInput | SchoolPeriodTemplateCreateOrConnectWithoutSchoolInput[]
+    createMany?: SchoolPeriodTemplateCreateManySchoolInputEnvelope
+    connect?: SchoolPeriodTemplateWhereUniqueInput | SchoolPeriodTemplateWhereUniqueInput[]
+  }
+
   export type ExamCreateNestedManyWithoutSchoolInput = {
     create?: XOR<ExamCreateWithoutSchoolInput, ExamUncheckedCreateWithoutSchoolInput> | ExamCreateWithoutSchoolInput[] | ExamUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: ExamCreateOrConnectWithoutSchoolInput | ExamCreateOrConnectWithoutSchoolInput[]
@@ -102953,6 +104692,13 @@ export namespace Prisma {
     connectOrCreate?: LessonCreateOrConnectWithoutSchoolInput | LessonCreateOrConnectWithoutSchoolInput[]
     createMany?: LessonCreateManySchoolInputEnvelope
     connect?: LessonWhereUniqueInput | LessonWhereUniqueInput[]
+  }
+
+  export type SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<SchoolPeriodTemplateCreateWithoutSchoolInput, SchoolPeriodTemplateUncheckedCreateWithoutSchoolInput> | SchoolPeriodTemplateCreateWithoutSchoolInput[] | SchoolPeriodTemplateUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: SchoolPeriodTemplateCreateOrConnectWithoutSchoolInput | SchoolPeriodTemplateCreateOrConnectWithoutSchoolInput[]
+    createMany?: SchoolPeriodTemplateCreateManySchoolInputEnvelope
+    connect?: SchoolPeriodTemplateWhereUniqueInput | SchoolPeriodTemplateWhereUniqueInput[]
   }
 
   export type ExamUncheckedCreateNestedManyWithoutSchoolInput = {
@@ -103404,6 +105150,20 @@ export namespace Prisma {
     update?: LessonUpdateWithWhereUniqueWithoutSchoolInput | LessonUpdateWithWhereUniqueWithoutSchoolInput[]
     updateMany?: LessonUpdateManyWithWhereWithoutSchoolInput | LessonUpdateManyWithWhereWithoutSchoolInput[]
     deleteMany?: LessonScalarWhereInput | LessonScalarWhereInput[]
+  }
+
+  export type SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<SchoolPeriodTemplateCreateWithoutSchoolInput, SchoolPeriodTemplateUncheckedCreateWithoutSchoolInput> | SchoolPeriodTemplateCreateWithoutSchoolInput[] | SchoolPeriodTemplateUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: SchoolPeriodTemplateCreateOrConnectWithoutSchoolInput | SchoolPeriodTemplateCreateOrConnectWithoutSchoolInput[]
+    upsert?: SchoolPeriodTemplateUpsertWithWhereUniqueWithoutSchoolInput | SchoolPeriodTemplateUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: SchoolPeriodTemplateCreateManySchoolInputEnvelope
+    set?: SchoolPeriodTemplateWhereUniqueInput | SchoolPeriodTemplateWhereUniqueInput[]
+    disconnect?: SchoolPeriodTemplateWhereUniqueInput | SchoolPeriodTemplateWhereUniqueInput[]
+    delete?: SchoolPeriodTemplateWhereUniqueInput | SchoolPeriodTemplateWhereUniqueInput[]
+    connect?: SchoolPeriodTemplateWhereUniqueInput | SchoolPeriodTemplateWhereUniqueInput[]
+    update?: SchoolPeriodTemplateUpdateWithWhereUniqueWithoutSchoolInput | SchoolPeriodTemplateUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: SchoolPeriodTemplateUpdateManyWithWhereWithoutSchoolInput | SchoolPeriodTemplateUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: SchoolPeriodTemplateScalarWhereInput | SchoolPeriodTemplateScalarWhereInput[]
   }
 
   export type ExamUpdateManyWithoutSchoolNestedInput = {
@@ -104148,6 +105908,20 @@ export namespace Prisma {
     update?: LessonUpdateWithWhereUniqueWithoutSchoolInput | LessonUpdateWithWhereUniqueWithoutSchoolInput[]
     updateMany?: LessonUpdateManyWithWhereWithoutSchoolInput | LessonUpdateManyWithWhereWithoutSchoolInput[]
     deleteMany?: LessonScalarWhereInput | LessonScalarWhereInput[]
+  }
+
+  export type SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<SchoolPeriodTemplateCreateWithoutSchoolInput, SchoolPeriodTemplateUncheckedCreateWithoutSchoolInput> | SchoolPeriodTemplateCreateWithoutSchoolInput[] | SchoolPeriodTemplateUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: SchoolPeriodTemplateCreateOrConnectWithoutSchoolInput | SchoolPeriodTemplateCreateOrConnectWithoutSchoolInput[]
+    upsert?: SchoolPeriodTemplateUpsertWithWhereUniqueWithoutSchoolInput | SchoolPeriodTemplateUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: SchoolPeriodTemplateCreateManySchoolInputEnvelope
+    set?: SchoolPeriodTemplateWhereUniqueInput | SchoolPeriodTemplateWhereUniqueInput[]
+    disconnect?: SchoolPeriodTemplateWhereUniqueInput | SchoolPeriodTemplateWhereUniqueInput[]
+    delete?: SchoolPeriodTemplateWhereUniqueInput | SchoolPeriodTemplateWhereUniqueInput[]
+    connect?: SchoolPeriodTemplateWhereUniqueInput | SchoolPeriodTemplateWhereUniqueInput[]
+    update?: SchoolPeriodTemplateUpdateWithWhereUniqueWithoutSchoolInput | SchoolPeriodTemplateUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: SchoolPeriodTemplateUpdateManyWithWhereWithoutSchoolInput | SchoolPeriodTemplateUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: SchoolPeriodTemplateScalarWhereInput | SchoolPeriodTemplateScalarWhereInput[]
   }
 
   export type ExamUncheckedUpdateManyWithoutSchoolNestedInput = {
@@ -106557,6 +108331,66 @@ export namespace Prisma {
     update?: XOR<XOR<TeacherUpdateToOneWithWhereWithoutCommunicationRouteTargetsInput, TeacherUpdateWithoutCommunicationRouteTargetsInput>, TeacherUncheckedUpdateWithoutCommunicationRouteTargetsInput>
   }
 
+  export type SchoolCreateNestedOneWithoutPeriodTemplatesInput = {
+    create?: XOR<SchoolCreateWithoutPeriodTemplatesInput, SchoolUncheckedCreateWithoutPeriodTemplatesInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutPeriodTemplatesInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type LessonCreateNestedManyWithoutPeriodTemplateInput = {
+    create?: XOR<LessonCreateWithoutPeriodTemplateInput, LessonUncheckedCreateWithoutPeriodTemplateInput> | LessonCreateWithoutPeriodTemplateInput[] | LessonUncheckedCreateWithoutPeriodTemplateInput[]
+    connectOrCreate?: LessonCreateOrConnectWithoutPeriodTemplateInput | LessonCreateOrConnectWithoutPeriodTemplateInput[]
+    createMany?: LessonCreateManyPeriodTemplateInputEnvelope
+    connect?: LessonWhereUniqueInput | LessonWhereUniqueInput[]
+  }
+
+  export type LessonUncheckedCreateNestedManyWithoutPeriodTemplateInput = {
+    create?: XOR<LessonCreateWithoutPeriodTemplateInput, LessonUncheckedCreateWithoutPeriodTemplateInput> | LessonCreateWithoutPeriodTemplateInput[] | LessonUncheckedCreateWithoutPeriodTemplateInput[]
+    connectOrCreate?: LessonCreateOrConnectWithoutPeriodTemplateInput | LessonCreateOrConnectWithoutPeriodTemplateInput[]
+    createMany?: LessonCreateManyPeriodTemplateInputEnvelope
+    connect?: LessonWhereUniqueInput | LessonWhereUniqueInput[]
+  }
+
+  export type EnumSchoolPeriodTypeFieldUpdateOperationsInput = {
+    set?: $Enums.SchoolPeriodType
+  }
+
+  export type SchoolUpdateOneRequiredWithoutPeriodTemplatesNestedInput = {
+    create?: XOR<SchoolCreateWithoutPeriodTemplatesInput, SchoolUncheckedCreateWithoutPeriodTemplatesInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutPeriodTemplatesInput
+    upsert?: SchoolUpsertWithoutPeriodTemplatesInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutPeriodTemplatesInput, SchoolUpdateWithoutPeriodTemplatesInput>, SchoolUncheckedUpdateWithoutPeriodTemplatesInput>
+  }
+
+  export type LessonUpdateManyWithoutPeriodTemplateNestedInput = {
+    create?: XOR<LessonCreateWithoutPeriodTemplateInput, LessonUncheckedCreateWithoutPeriodTemplateInput> | LessonCreateWithoutPeriodTemplateInput[] | LessonUncheckedCreateWithoutPeriodTemplateInput[]
+    connectOrCreate?: LessonCreateOrConnectWithoutPeriodTemplateInput | LessonCreateOrConnectWithoutPeriodTemplateInput[]
+    upsert?: LessonUpsertWithWhereUniqueWithoutPeriodTemplateInput | LessonUpsertWithWhereUniqueWithoutPeriodTemplateInput[]
+    createMany?: LessonCreateManyPeriodTemplateInputEnvelope
+    set?: LessonWhereUniqueInput | LessonWhereUniqueInput[]
+    disconnect?: LessonWhereUniqueInput | LessonWhereUniqueInput[]
+    delete?: LessonWhereUniqueInput | LessonWhereUniqueInput[]
+    connect?: LessonWhereUniqueInput | LessonWhereUniqueInput[]
+    update?: LessonUpdateWithWhereUniqueWithoutPeriodTemplateInput | LessonUpdateWithWhereUniqueWithoutPeriodTemplateInput[]
+    updateMany?: LessonUpdateManyWithWhereWithoutPeriodTemplateInput | LessonUpdateManyWithWhereWithoutPeriodTemplateInput[]
+    deleteMany?: LessonScalarWhereInput | LessonScalarWhereInput[]
+  }
+
+  export type LessonUncheckedUpdateManyWithoutPeriodTemplateNestedInput = {
+    create?: XOR<LessonCreateWithoutPeriodTemplateInput, LessonUncheckedCreateWithoutPeriodTemplateInput> | LessonCreateWithoutPeriodTemplateInput[] | LessonUncheckedCreateWithoutPeriodTemplateInput[]
+    connectOrCreate?: LessonCreateOrConnectWithoutPeriodTemplateInput | LessonCreateOrConnectWithoutPeriodTemplateInput[]
+    upsert?: LessonUpsertWithWhereUniqueWithoutPeriodTemplateInput | LessonUpsertWithWhereUniqueWithoutPeriodTemplateInput[]
+    createMany?: LessonCreateManyPeriodTemplateInputEnvelope
+    set?: LessonWhereUniqueInput | LessonWhereUniqueInput[]
+    disconnect?: LessonWhereUniqueInput | LessonWhereUniqueInput[]
+    delete?: LessonWhereUniqueInput | LessonWhereUniqueInput[]
+    connect?: LessonWhereUniqueInput | LessonWhereUniqueInput[]
+    update?: LessonUpdateWithWhereUniqueWithoutPeriodTemplateInput | LessonUpdateWithWhereUniqueWithoutPeriodTemplateInput[]
+    updateMany?: LessonUpdateManyWithWhereWithoutPeriodTemplateInput | LessonUpdateManyWithWhereWithoutPeriodTemplateInput[]
+    deleteMany?: LessonScalarWhereInput | LessonScalarWhereInput[]
+  }
+
   export type SchoolCreateNestedOneWithoutAccountabilitySettingsInput = {
     create?: XOR<SchoolCreateWithoutAccountabilitySettingsInput, SchoolUncheckedCreateWithoutAccountabilitySettingsInput>
     connectOrCreate?: SchoolCreateOrConnectWithoutAccountabilitySettingsInput
@@ -108205,6 +110039,12 @@ export namespace Prisma {
     connect?: TeacherWhereUniqueInput
   }
 
+  export type SchoolPeriodTemplateCreateNestedOneWithoutLessonsInput = {
+    create?: XOR<SchoolPeriodTemplateCreateWithoutLessonsInput, SchoolPeriodTemplateUncheckedCreateWithoutLessonsInput>
+    connectOrCreate?: SchoolPeriodTemplateCreateOrConnectWithoutLessonsInput
+    connect?: SchoolPeriodTemplateWhereUniqueInput
+  }
+
   export type ExamCreateNestedManyWithoutLessonInput = {
     create?: XOR<ExamCreateWithoutLessonInput, ExamUncheckedCreateWithoutLessonInput> | ExamCreateWithoutLessonInput[] | ExamUncheckedCreateWithoutLessonInput[]
     connectOrCreate?: ExamCreateOrConnectWithoutLessonInput | ExamCreateOrConnectWithoutLessonInput[]
@@ -108295,6 +110135,16 @@ export namespace Prisma {
     upsert?: TeacherUpsertWithoutLessonsInput
     connect?: TeacherWhereUniqueInput
     update?: XOR<XOR<TeacherUpdateToOneWithWhereWithoutLessonsInput, TeacherUpdateWithoutLessonsInput>, TeacherUncheckedUpdateWithoutLessonsInput>
+  }
+
+  export type SchoolPeriodTemplateUpdateOneWithoutLessonsNestedInput = {
+    create?: XOR<SchoolPeriodTemplateCreateWithoutLessonsInput, SchoolPeriodTemplateUncheckedCreateWithoutLessonsInput>
+    connectOrCreate?: SchoolPeriodTemplateCreateOrConnectWithoutLessonsInput
+    upsert?: SchoolPeriodTemplateUpsertWithoutLessonsInput
+    disconnect?: SchoolPeriodTemplateWhereInput | boolean
+    delete?: SchoolPeriodTemplateWhereInput | boolean
+    connect?: SchoolPeriodTemplateWhereUniqueInput
+    update?: XOR<XOR<SchoolPeriodTemplateUpdateToOneWithWhereWithoutLessonsInput, SchoolPeriodTemplateUpdateWithoutLessonsInput>, SchoolPeriodTemplateUncheckedUpdateWithoutLessonsInput>
   }
 
   export type ExamUpdateManyWithoutLessonNestedInput = {
@@ -110775,6 +112625,23 @@ export namespace Prisma {
     _max?: NestedEnumParentTeacherContactRouteTargetFilter<$PrismaModel>
   }
 
+  export type NestedEnumSchoolPeriodTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.SchoolPeriodType | EnumSchoolPeriodTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.SchoolPeriodType[] | ListEnumSchoolPeriodTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SchoolPeriodType[] | ListEnumSchoolPeriodTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumSchoolPeriodTypeFilter<$PrismaModel> | $Enums.SchoolPeriodType
+  }
+
+  export type NestedEnumSchoolPeriodTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SchoolPeriodType | EnumSchoolPeriodTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.SchoolPeriodType[] | ListEnumSchoolPeriodTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SchoolPeriodType[] | ListEnumSchoolPeriodTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumSchoolPeriodTypeWithAggregatesFilter<$PrismaModel> | $Enums.SchoolPeriodType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSchoolPeriodTypeFilter<$PrismaModel>
+    _max?: NestedEnumSchoolPeriodTypeFilter<$PrismaModel>
+  }
+
   export type NestedEnumTeacherObligationTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.TeacherObligationType | EnumTeacherObligationTypeFieldRefInput<$PrismaModel>
     in?: $Enums.TeacherObligationType[] | ListEnumTeacherObligationTypeFieldRefInput<$PrismaModel>
@@ -112027,6 +113894,7 @@ export namespace Prisma {
     subject: SubjectCreateNestedOneWithoutLessonsInput
     class: ClassCreateNestedOneWithoutLessonsInput
     teacher: TeacherCreateNestedOneWithoutLessonsInput
+    periodTemplate?: SchoolPeriodTemplateCreateNestedOneWithoutLessonsInput
     exams?: ExamCreateNestedManyWithoutLessonInput
     assignments?: AssignmentCreateNestedManyWithoutLessonInput
     attendances?: AttendanceCreateNestedManyWithoutLessonInput
@@ -112042,6 +113910,7 @@ export namespace Prisma {
     subjectId: number
     classId: number
     teacherId: string
+    periodTemplateId?: string | null
     exams?: ExamUncheckedCreateNestedManyWithoutLessonInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutLessonInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutLessonInput
@@ -112055,6 +113924,42 @@ export namespace Prisma {
 
   export type LessonCreateManySchoolInputEnvelope = {
     data: LessonCreateManySchoolInput | LessonCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SchoolPeriodTemplateCreateWithoutSchoolInput = {
+    id?: string
+    name: string
+    type?: $Enums.SchoolPeriodType
+    startTime: string
+    endTime: string
+    order: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lessons?: LessonCreateNestedManyWithoutPeriodTemplateInput
+  }
+
+  export type SchoolPeriodTemplateUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    name: string
+    type?: $Enums.SchoolPeriodType
+    startTime: string
+    endTime: string
+    order: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lessons?: LessonUncheckedCreateNestedManyWithoutPeriodTemplateInput
+  }
+
+  export type SchoolPeriodTemplateCreateOrConnectWithoutSchoolInput = {
+    where: SchoolPeriodTemplateWhereUniqueInput
+    create: XOR<SchoolPeriodTemplateCreateWithoutSchoolInput, SchoolPeriodTemplateUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type SchoolPeriodTemplateCreateManySchoolInputEnvelope = {
+    data: SchoolPeriodTemplateCreateManySchoolInput | SchoolPeriodTemplateCreateManySchoolInput[]
     skipDuplicates?: boolean
   }
 
@@ -114100,6 +116005,39 @@ export namespace Prisma {
     subjectId?: IntFilter<"Lesson"> | number
     classId?: IntFilter<"Lesson"> | number
     teacherId?: StringFilter<"Lesson"> | string
+    periodTemplateId?: StringNullableFilter<"Lesson"> | string | null
+  }
+
+  export type SchoolPeriodTemplateUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: SchoolPeriodTemplateWhereUniqueInput
+    update: XOR<SchoolPeriodTemplateUpdateWithoutSchoolInput, SchoolPeriodTemplateUncheckedUpdateWithoutSchoolInput>
+    create: XOR<SchoolPeriodTemplateCreateWithoutSchoolInput, SchoolPeriodTemplateUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type SchoolPeriodTemplateUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: SchoolPeriodTemplateWhereUniqueInput
+    data: XOR<SchoolPeriodTemplateUpdateWithoutSchoolInput, SchoolPeriodTemplateUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type SchoolPeriodTemplateUpdateManyWithWhereWithoutSchoolInput = {
+    where: SchoolPeriodTemplateScalarWhereInput
+    data: XOR<SchoolPeriodTemplateUpdateManyMutationInput, SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type SchoolPeriodTemplateScalarWhereInput = {
+    AND?: SchoolPeriodTemplateScalarWhereInput | SchoolPeriodTemplateScalarWhereInput[]
+    OR?: SchoolPeriodTemplateScalarWhereInput[]
+    NOT?: SchoolPeriodTemplateScalarWhereInput | SchoolPeriodTemplateScalarWhereInput[]
+    id?: StringFilter<"SchoolPeriodTemplate"> | string
+    name?: StringFilter<"SchoolPeriodTemplate"> | string
+    type?: EnumSchoolPeriodTypeFilter<"SchoolPeriodTemplate"> | $Enums.SchoolPeriodType
+    startTime?: StringFilter<"SchoolPeriodTemplate"> | string
+    endTime?: StringFilter<"SchoolPeriodTemplate"> | string
+    order?: IntFilter<"SchoolPeriodTemplate"> | number
+    isActive?: BoolFilter<"SchoolPeriodTemplate"> | boolean
+    createdAt?: DateTimeFilter<"SchoolPeriodTemplate"> | Date | string
+    updatedAt?: DateTimeFilter<"SchoolPeriodTemplate"> | Date | string
+    schoolId?: StringFilter<"SchoolPeriodTemplate"> | string
   }
 
   export type ExamUpsertWithWhereUniqueWithoutSchoolInput = {
@@ -115761,6 +117699,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -115834,6 +117773,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -115923,6 +117863,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -115996,6 +117937,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -116069,6 +118011,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -116142,6 +118085,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -116855,6 +118799,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -116928,6 +118873,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -117320,6 +119266,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -117393,6 +119340,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -117480,6 +119428,7 @@ export namespace Prisma {
     school?: SchoolCreateNestedOneWithoutLessonsInput
     subject: SubjectCreateNestedOneWithoutLessonsInput
     class: ClassCreateNestedOneWithoutLessonsInput
+    periodTemplate?: SchoolPeriodTemplateCreateNestedOneWithoutLessonsInput
     exams?: ExamCreateNestedManyWithoutLessonInput
     assignments?: AssignmentCreateNestedManyWithoutLessonInput
     attendances?: AttendanceCreateNestedManyWithoutLessonInput
@@ -117495,6 +119444,7 @@ export namespace Prisma {
     schoolId?: string
     subjectId: number
     classId: number
+    periodTemplateId?: string | null
     exams?: ExamUncheckedCreateNestedManyWithoutLessonInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutLessonInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutLessonInput
@@ -118210,6 +120160,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -118283,6 +120234,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -118644,6 +120596,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -118717,6 +120670,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -119178,6 +121132,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -119251,6 +121206,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -119478,6 +121434,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -119551,6 +121508,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -119640,6 +121598,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -119713,6 +121672,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -119786,6 +121746,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -119859,6 +121820,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -119948,6 +121910,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -120021,6 +121984,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -120094,6 +122058,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -120167,6 +122132,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -120327,6 +122293,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -120400,6 +122367,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -120524,6 +122492,375 @@ export namespace Prisma {
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
+  export type SchoolCreateWithoutPeriodTemplatesInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutPeriodTemplatesInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutPeriodTemplatesInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutPeriodTemplatesInput, SchoolUncheckedCreateWithoutPeriodTemplatesInput>
+  }
+
+  export type LessonCreateWithoutPeriodTemplateInput = {
+    name: string
+    day: $Enums.Day
+    startTime: Date | string
+    endTime: Date | string
+    school?: SchoolCreateNestedOneWithoutLessonsInput
+    subject: SubjectCreateNestedOneWithoutLessonsInput
+    class: ClassCreateNestedOneWithoutLessonsInput
+    teacher: TeacherCreateNestedOneWithoutLessonsInput
+    exams?: ExamCreateNestedManyWithoutLessonInput
+    assignments?: AssignmentCreateNestedManyWithoutLessonInput
+    attendances?: AttendanceCreateNestedManyWithoutLessonInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutLessonInput
+  }
+
+  export type LessonUncheckedCreateWithoutPeriodTemplateInput = {
+    id?: number
+    name: string
+    day: $Enums.Day
+    startTime: Date | string
+    endTime: Date | string
+    schoolId?: string
+    subjectId: number
+    classId: number
+    teacherId: string
+    exams?: ExamUncheckedCreateNestedManyWithoutLessonInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutLessonInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutLessonInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutLessonInput
+  }
+
+  export type LessonCreateOrConnectWithoutPeriodTemplateInput = {
+    where: LessonWhereUniqueInput
+    create: XOR<LessonCreateWithoutPeriodTemplateInput, LessonUncheckedCreateWithoutPeriodTemplateInput>
+  }
+
+  export type LessonCreateManyPeriodTemplateInputEnvelope = {
+    data: LessonCreateManyPeriodTemplateInput | LessonCreateManyPeriodTemplateInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SchoolUpsertWithoutPeriodTemplatesInput = {
+    update: XOR<SchoolUpdateWithoutPeriodTemplatesInput, SchoolUncheckedUpdateWithoutPeriodTemplatesInput>
+    create: XOR<SchoolCreateWithoutPeriodTemplatesInput, SchoolUncheckedCreateWithoutPeriodTemplatesInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutPeriodTemplatesInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutPeriodTemplatesInput, SchoolUncheckedUpdateWithoutPeriodTemplatesInput>
+  }
+
+  export type SchoolUpdateWithoutPeriodTemplatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutPeriodTemplatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type LessonUpsertWithWhereUniqueWithoutPeriodTemplateInput = {
+    where: LessonWhereUniqueInput
+    update: XOR<LessonUpdateWithoutPeriodTemplateInput, LessonUncheckedUpdateWithoutPeriodTemplateInput>
+    create: XOR<LessonCreateWithoutPeriodTemplateInput, LessonUncheckedCreateWithoutPeriodTemplateInput>
+  }
+
+  export type LessonUpdateWithWhereUniqueWithoutPeriodTemplateInput = {
+    where: LessonWhereUniqueInput
+    data: XOR<LessonUpdateWithoutPeriodTemplateInput, LessonUncheckedUpdateWithoutPeriodTemplateInput>
+  }
+
+  export type LessonUpdateManyWithWhereWithoutPeriodTemplateInput = {
+    where: LessonScalarWhereInput
+    data: XOR<LessonUpdateManyMutationInput, LessonUncheckedUpdateManyWithoutPeriodTemplateInput>
+  }
+
   export type SchoolCreateWithoutAccountabilitySettingsInput = {
     id: string
     name: string
@@ -120550,6 +122887,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -120623,6 +122961,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -120712,6 +123051,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -120785,6 +123125,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -120858,6 +123199,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -120931,6 +123273,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -121169,6 +123512,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -121242,6 +123586,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -121424,6 +123769,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -121497,6 +123843,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -121702,6 +124049,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -121775,6 +124123,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -121976,6 +124325,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -122049,6 +124399,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -122254,6 +124605,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -122327,6 +124679,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -122528,6 +124881,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -122601,6 +124955,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -122761,6 +125116,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -122834,6 +125190,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -122984,6 +125341,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -123057,6 +125415,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -123217,6 +125576,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -123290,6 +125650,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -123440,6 +125801,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -123513,6 +125875,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -123645,6 +126008,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -123718,6 +126082,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -123840,6 +126205,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -123913,6 +126279,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -124148,6 +126515,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -124221,6 +126589,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -124428,6 +126797,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -124501,6 +126871,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -124678,6 +127049,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -124751,6 +127123,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -124924,6 +127297,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -124997,6 +127371,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -125299,6 +127674,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -125372,6 +127748,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -125656,6 +128033,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -125729,6 +128107,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -126048,6 +128427,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -126121,6 +128501,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -126448,6 +128829,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -126521,6 +128903,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -126787,6 +129170,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -126860,6 +129244,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -127127,6 +129512,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -127200,6 +129586,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -127482,6 +129869,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -127555,6 +129943,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -127692,6 +130081,7 @@ export namespace Prisma {
     grades?: GradeCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -127765,6 +130155,7 @@ export namespace Prisma {
     grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -127897,6 +130288,7 @@ export namespace Prisma {
     school?: SchoolCreateNestedOneWithoutLessonsInput
     subject: SubjectCreateNestedOneWithoutLessonsInput
     teacher: TeacherCreateNestedOneWithoutLessonsInput
+    periodTemplate?: SchoolPeriodTemplateCreateNestedOneWithoutLessonsInput
     exams?: ExamCreateNestedManyWithoutLessonInput
     assignments?: AssignmentCreateNestedManyWithoutLessonInput
     attendances?: AttendanceCreateNestedManyWithoutLessonInput
@@ -127912,6 +130304,7 @@ export namespace Prisma {
     schoolId?: string
     subjectId: number
     teacherId: string
+    periodTemplateId?: string | null
     exams?: ExamUncheckedCreateNestedManyWithoutLessonInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutLessonInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutLessonInput
@@ -128366,6 +130759,7 @@ export namespace Prisma {
     grades?: GradeUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -128439,6 +130833,7 @@ export namespace Prisma {
     grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -128779,6 +131174,7 @@ export namespace Prisma {
     grades?: GradeCreateNestedManyWithoutSchoolInput
     classes?: ClassCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -128852,6 +131248,7 @@ export namespace Prisma {
     grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -128984,6 +131381,7 @@ export namespace Prisma {
     school?: SchoolCreateNestedOneWithoutLessonsInput
     class: ClassCreateNestedOneWithoutLessonsInput
     teacher: TeacherCreateNestedOneWithoutLessonsInput
+    periodTemplate?: SchoolPeriodTemplateCreateNestedOneWithoutLessonsInput
     exams?: ExamCreateNestedManyWithoutLessonInput
     assignments?: AssignmentCreateNestedManyWithoutLessonInput
     attendances?: AttendanceCreateNestedManyWithoutLessonInput
@@ -128999,6 +131397,7 @@ export namespace Prisma {
     schoolId?: string
     classId: number
     teacherId: string
+    periodTemplateId?: string | null
     exams?: ExamUncheckedCreateNestedManyWithoutLessonInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutLessonInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutLessonInput
@@ -129223,6 +131622,7 @@ export namespace Prisma {
     grades?: GradeUpdateManyWithoutSchoolNestedInput
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -129296,6 +131696,7 @@ export namespace Prisma {
     grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -129465,6 +131866,7 @@ export namespace Prisma {
     grades?: GradeCreateNestedManyWithoutSchoolInput
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -129538,6 +131940,7 @@ export namespace Prisma {
     grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -129730,6 +132133,37 @@ export namespace Prisma {
     create: XOR<TeacherCreateWithoutLessonsInput, TeacherUncheckedCreateWithoutLessonsInput>
   }
 
+  export type SchoolPeriodTemplateCreateWithoutLessonsInput = {
+    id?: string
+    name: string
+    type?: $Enums.SchoolPeriodType
+    startTime: string
+    endTime: string
+    order: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutPeriodTemplatesInput
+  }
+
+  export type SchoolPeriodTemplateUncheckedCreateWithoutLessonsInput = {
+    id?: string
+    name: string
+    type?: $Enums.SchoolPeriodType
+    startTime: string
+    endTime: string
+    order: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+  }
+
+  export type SchoolPeriodTemplateCreateOrConnectWithoutLessonsInput = {
+    where: SchoolPeriodTemplateWhereUniqueInput
+    create: XOR<SchoolPeriodTemplateCreateWithoutLessonsInput, SchoolPeriodTemplateUncheckedCreateWithoutLessonsInput>
+  }
+
   export type ExamCreateWithoutLessonInput = {
     title: string
     startTime: Date | string
@@ -129917,6 +132351,7 @@ export namespace Prisma {
     grades?: GradeUpdateManyWithoutSchoolNestedInput
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -129990,6 +132425,7 @@ export namespace Prisma {
     grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -130195,6 +132631,43 @@ export namespace Prisma {
     accountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
+  export type SchoolPeriodTemplateUpsertWithoutLessonsInput = {
+    update: XOR<SchoolPeriodTemplateUpdateWithoutLessonsInput, SchoolPeriodTemplateUncheckedUpdateWithoutLessonsInput>
+    create: XOR<SchoolPeriodTemplateCreateWithoutLessonsInput, SchoolPeriodTemplateUncheckedCreateWithoutLessonsInput>
+    where?: SchoolPeriodTemplateWhereInput
+  }
+
+  export type SchoolPeriodTemplateUpdateToOneWithWhereWithoutLessonsInput = {
+    where?: SchoolPeriodTemplateWhereInput
+    data: XOR<SchoolPeriodTemplateUpdateWithoutLessonsInput, SchoolPeriodTemplateUncheckedUpdateWithoutLessonsInput>
+  }
+
+  export type SchoolPeriodTemplateUpdateWithoutLessonsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    type?: EnumSchoolPeriodTypeFieldUpdateOperationsInput | $Enums.SchoolPeriodType
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutPeriodTemplatesNestedInput
+  }
+
+  export type SchoolPeriodTemplateUncheckedUpdateWithoutLessonsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    type?: EnumSchoolPeriodTypeFieldUpdateOperationsInput | $Enums.SchoolPeriodType
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
   export type ExamUpsertWithWhereUniqueWithoutLessonInput = {
     where: ExamWhereUniqueInput
     update: XOR<ExamUpdateWithoutLessonInput, ExamUncheckedUpdateWithoutLessonInput>
@@ -130285,6 +132758,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
@@ -130358,6 +132832,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
@@ -130419,6 +132894,7 @@ export namespace Prisma {
     subject: SubjectCreateNestedOneWithoutLessonsInput
     class: ClassCreateNestedOneWithoutLessonsInput
     teacher: TeacherCreateNestedOneWithoutLessonsInput
+    periodTemplate?: SchoolPeriodTemplateCreateNestedOneWithoutLessonsInput
     assignments?: AssignmentCreateNestedManyWithoutLessonInput
     attendances?: AttendanceCreateNestedManyWithoutLessonInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutLessonInput
@@ -130434,6 +132910,7 @@ export namespace Prisma {
     subjectId: number
     classId: number
     teacherId: string
+    periodTemplateId?: string | null
     assignments?: AssignmentUncheckedCreateNestedManyWithoutLessonInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutLessonInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutLessonInput
@@ -130510,6 +132987,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
@@ -130583,6 +133061,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
@@ -130650,6 +133129,7 @@ export namespace Prisma {
     subject?: SubjectUpdateOneRequiredWithoutLessonsNestedInput
     class?: ClassUpdateOneRequiredWithoutLessonsNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutLessonsNestedInput
+    periodTemplate?: SchoolPeriodTemplateUpdateOneWithoutLessonsNestedInput
     assignments?: AssignmentUpdateManyWithoutLessonNestedInput
     attendances?: AttendanceUpdateManyWithoutLessonNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutLessonNestedInput
@@ -130665,6 +133145,7 @@ export namespace Prisma {
     subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
+    periodTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     assignments?: AssignmentUncheckedUpdateManyWithoutLessonNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutLessonNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutLessonNestedInput
@@ -130712,6 +133193,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
@@ -130785,6 +133267,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
@@ -130846,6 +133329,7 @@ export namespace Prisma {
     subject: SubjectCreateNestedOneWithoutLessonsInput
     class: ClassCreateNestedOneWithoutLessonsInput
     teacher: TeacherCreateNestedOneWithoutLessonsInput
+    periodTemplate?: SchoolPeriodTemplateCreateNestedOneWithoutLessonsInput
     exams?: ExamCreateNestedManyWithoutLessonInput
     attendances?: AttendanceCreateNestedManyWithoutLessonInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutLessonInput
@@ -130861,6 +133345,7 @@ export namespace Prisma {
     subjectId: number
     classId: number
     teacherId: string
+    periodTemplateId?: string | null
     exams?: ExamUncheckedCreateNestedManyWithoutLessonInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutLessonInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutLessonInput
@@ -130972,6 +133457,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
@@ -131045,6 +133531,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
@@ -131112,6 +133599,7 @@ export namespace Prisma {
     subject?: SubjectUpdateOneRequiredWithoutLessonsNestedInput
     class?: ClassUpdateOneRequiredWithoutLessonsNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutLessonsNestedInput
+    periodTemplate?: SchoolPeriodTemplateUpdateOneWithoutLessonsNestedInput
     exams?: ExamUpdateManyWithoutLessonNestedInput
     attendances?: AttendanceUpdateManyWithoutLessonNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutLessonNestedInput
@@ -131127,6 +133615,7 @@ export namespace Prisma {
     subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
+    periodTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     exams?: ExamUncheckedUpdateManyWithoutLessonNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutLessonNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutLessonNestedInput
@@ -131190,6 +133679,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     results?: ResultCreateNestedManyWithoutSchoolInput
@@ -131263,6 +133753,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
@@ -131512,6 +134003,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     results?: ResultUpdateManyWithoutSchoolNestedInput
@@ -131585,6 +134077,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
@@ -131836,6 +134329,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -131909,6 +134403,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -132109,6 +134604,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -132182,6 +134678,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -132384,6 +134881,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -132457,6 +134955,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -132581,6 +135080,7 @@ export namespace Prisma {
     subject: SubjectCreateNestedOneWithoutLessonsInput
     class: ClassCreateNestedOneWithoutLessonsInput
     teacher: TeacherCreateNestedOneWithoutLessonsInput
+    periodTemplate?: SchoolPeriodTemplateCreateNestedOneWithoutLessonsInput
     exams?: ExamCreateNestedManyWithoutLessonInput
     assignments?: AssignmentCreateNestedManyWithoutLessonInput
     attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutLessonInput
@@ -132596,6 +135096,7 @@ export namespace Prisma {
     subjectId: number
     classId: number
     teacherId: string
+    periodTemplateId?: string | null
     exams?: ExamUncheckedCreateNestedManyWithoutLessonInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutLessonInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutLessonInput
@@ -132691,6 +135192,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -132764,6 +135266,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -132900,6 +135403,7 @@ export namespace Prisma {
     subject?: SubjectUpdateOneRequiredWithoutLessonsNestedInput
     class?: ClassUpdateOneRequiredWithoutLessonsNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutLessonsNestedInput
+    periodTemplate?: SchoolPeriodTemplateUpdateOneWithoutLessonsNestedInput
     exams?: ExamUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUpdateManyWithoutLessonNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutLessonNestedInput
@@ -132915,6 +135419,7 @@ export namespace Prisma {
     subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
+    periodTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     exams?: ExamUncheckedUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutLessonNestedInput
     attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutLessonNestedInput
@@ -132962,6 +135467,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -133035,6 +135541,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -133199,6 +135706,7 @@ export namespace Prisma {
     subject: SubjectCreateNestedOneWithoutLessonsInput
     class: ClassCreateNestedOneWithoutLessonsInput
     teacher: TeacherCreateNestedOneWithoutLessonsInput
+    periodTemplate?: SchoolPeriodTemplateCreateNestedOneWithoutLessonsInput
     exams?: ExamCreateNestedManyWithoutLessonInput
     assignments?: AssignmentCreateNestedManyWithoutLessonInput
     attendances?: AttendanceCreateNestedManyWithoutLessonInput
@@ -133214,6 +135722,7 @@ export namespace Prisma {
     subjectId: number
     classId: number
     teacherId: string
+    periodTemplateId?: string | null
     exams?: ExamUncheckedCreateNestedManyWithoutLessonInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutLessonInput
     attendances?: AttendanceUncheckedCreateNestedManyWithoutLessonInput
@@ -133261,6 +135770,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -133334,6 +135844,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -133516,6 +136027,7 @@ export namespace Prisma {
     subject?: SubjectUpdateOneRequiredWithoutLessonsNestedInput
     class?: ClassUpdateOneRequiredWithoutLessonsNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutLessonsNestedInput
+    periodTemplate?: SchoolPeriodTemplateUpdateOneWithoutLessonsNestedInput
     exams?: ExamUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUpdateManyWithoutLessonNestedInput
     attendances?: AttendanceUpdateManyWithoutLessonNestedInput
@@ -133531,6 +136043,7 @@ export namespace Prisma {
     subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
+    periodTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     exams?: ExamUncheckedUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutLessonNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutLessonNestedInput
@@ -133562,6 +136075,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -133635,6 +136149,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -133766,6 +136281,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -133839,6 +136355,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -133960,6 +136477,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -134033,6 +136551,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -134164,6 +136683,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -134237,6 +136757,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -134358,6 +136879,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -134431,6 +136953,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -134520,6 +137043,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -134593,6 +137117,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -134666,6 +137191,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -134739,6 +137265,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -135012,6 +137539,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -135085,6 +137613,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -135331,6 +137860,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -135404,6 +137934,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -135705,6 +138236,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -135778,6 +138310,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -136070,6 +138603,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -136143,6 +138677,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -136406,6 +138941,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -136479,6 +139015,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -136744,6 +139281,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -136817,6 +139355,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -136906,6 +139445,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -136979,6 +139519,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -137052,6 +139593,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -137125,6 +139667,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -137416,6 +139959,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -137489,6 +140033,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -137788,6 +140333,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -137861,6 +140407,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -137992,6 +140539,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -138065,6 +140613,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -138186,6 +140735,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -138259,6 +140809,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -138390,6 +140941,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -138463,6 +141015,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -138584,6 +141137,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -138657,6 +141211,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -138835,6 +141390,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -138908,6 +141464,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -139188,6 +141745,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -139261,6 +141819,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -139497,6 +142056,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -139570,6 +142130,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -139808,6 +142369,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -139881,6 +142443,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -140074,6 +142637,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -140147,6 +142711,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -140440,6 +143005,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -140513,6 +143079,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -140865,6 +143432,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -140938,6 +143506,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -141340,6 +143909,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -141413,6 +143983,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -141645,6 +144216,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -141718,6 +144290,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -141899,6 +144472,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -141972,6 +144546,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -142107,6 +144682,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -142180,6 +144756,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -142305,6 +144882,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -142378,6 +144956,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -142511,6 +145090,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -142584,6 +145164,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -142707,6 +145288,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -142780,6 +145362,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -142869,6 +145452,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -142942,6 +145526,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -143015,6 +145600,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -143088,6 +145674,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -143177,6 +145764,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -143250,6 +145838,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -143323,6 +145912,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -143396,6 +145986,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -143681,6 +146272,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -143754,6 +146346,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -144047,6 +146640,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -144120,6 +146714,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -144209,6 +146804,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -144282,6 +146878,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -144355,6 +146952,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -144428,6 +147026,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -144563,6 +147162,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -144636,6 +147236,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -144761,6 +147362,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -144834,6 +147436,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -144923,6 +147526,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -144996,6 +147600,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -145069,6 +147674,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -145142,6 +147748,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -145231,6 +147838,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -145304,6 +147912,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -145377,6 +147986,7 @@ export namespace Prisma {
     classes?: ClassCreateNestedManyWithoutSchoolInput
     subjects?: SubjectCreateNestedManyWithoutSchoolInput
     lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
     exams?: ExamCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
@@ -145450,6 +148060,7 @@ export namespace Prisma {
     classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
     subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
     lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
     exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
     assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
@@ -145539,6 +148150,7 @@ export namespace Prisma {
     classes?: ClassUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
     exams?: ExamUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
@@ -145612,6 +148224,7 @@ export namespace Prisma {
     classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
     subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
     exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
@@ -145736,6 +148349,19 @@ export namespace Prisma {
     subjectId: number
     classId: number
     teacherId: string
+    periodTemplateId?: string | null
+  }
+
+  export type SchoolPeriodTemplateCreateManySchoolInput = {
+    id?: string
+    name: string
+    type?: $Enums.SchoolPeriodType
+    startTime: string
+    endTime: string
+    order: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ExamCreateManySchoolInput = {
@@ -146668,6 +149294,7 @@ export namespace Prisma {
     subject?: SubjectUpdateOneRequiredWithoutLessonsNestedInput
     class?: ClassUpdateOneRequiredWithoutLessonsNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutLessonsNestedInput
+    periodTemplate?: SchoolPeriodTemplateUpdateOneWithoutLessonsNestedInput
     exams?: ExamUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUpdateManyWithoutLessonNestedInput
     attendances?: AttendanceUpdateManyWithoutLessonNestedInput
@@ -146683,6 +149310,7 @@ export namespace Prisma {
     subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
+    periodTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     exams?: ExamUncheckedUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutLessonNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutLessonNestedInput
@@ -146698,6 +149326,45 @@ export namespace Prisma {
     subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
+    periodTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SchoolPeriodTemplateUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    type?: EnumSchoolPeriodTypeFieldUpdateOperationsInput | $Enums.SchoolPeriodType
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lessons?: LessonUpdateManyWithoutPeriodTemplateNestedInput
+  }
+
+  export type SchoolPeriodTemplateUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    type?: EnumSchoolPeriodTypeFieldUpdateOperationsInput | $Enums.SchoolPeriodType
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lessons?: LessonUncheckedUpdateManyWithoutPeriodTemplateNestedInput
+  }
+
+  export type SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    type?: EnumSchoolPeriodTypeFieldUpdateOperationsInput | $Enums.SchoolPeriodType
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ExamUpdateWithoutSchoolInput = {
@@ -149321,6 +151988,7 @@ export namespace Prisma {
     schoolId?: string
     subjectId: number
     classId: number
+    periodTemplateId?: string | null
   }
 
   export type ClassCreateManySupervisorInput = {
@@ -149598,6 +152266,7 @@ export namespace Prisma {
     school?: SchoolUpdateOneRequiredWithoutLessonsNestedInput
     subject?: SubjectUpdateOneRequiredWithoutLessonsNestedInput
     class?: ClassUpdateOneRequiredWithoutLessonsNestedInput
+    periodTemplate?: SchoolPeriodTemplateUpdateOneWithoutLessonsNestedInput
     exams?: ExamUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUpdateManyWithoutLessonNestedInput
     attendances?: AttendanceUpdateManyWithoutLessonNestedInput
@@ -149613,6 +152282,7 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
     subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
+    periodTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     exams?: ExamUncheckedUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutLessonNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutLessonNestedInput
@@ -149628,6 +152298,7 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
     subjectId?: IntFieldUpdateOperationsInput | number
     classId?: IntFieldUpdateOperationsInput | number
+    periodTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ClassUpdateWithoutSupervisorInput = {
@@ -150880,6 +153551,61 @@ export namespace Prisma {
     studentId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type LessonCreateManyPeriodTemplateInput = {
+    id?: number
+    name: string
+    day: $Enums.Day
+    startTime: Date | string
+    endTime: Date | string
+    schoolId?: string
+    subjectId: number
+    classId: number
+    teacherId: string
+  }
+
+  export type LessonUpdateWithoutPeriodTemplateInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutLessonsNestedInput
+    subject?: SubjectUpdateOneRequiredWithoutLessonsNestedInput
+    class?: ClassUpdateOneRequiredWithoutLessonsNestedInput
+    teacher?: TeacherUpdateOneRequiredWithoutLessonsNestedInput
+    exams?: ExamUpdateManyWithoutLessonNestedInput
+    assignments?: AssignmentUpdateManyWithoutLessonNestedInput
+    attendances?: AttendanceUpdateManyWithoutLessonNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutLessonNestedInput
+  }
+
+  export type LessonUncheckedUpdateWithoutPeriodTemplateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    subjectId?: IntFieldUpdateOperationsInput | number
+    classId?: IntFieldUpdateOperationsInput | number
+    teacherId?: StringFieldUpdateOperationsInput | string
+    exams?: ExamUncheckedUpdateManyWithoutLessonNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutLessonNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutLessonNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutLessonNestedInput
+  }
+
+  export type LessonUncheckedUpdateManyWithoutPeriodTemplateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    day?: EnumDayFieldUpdateOperationsInput | $Enums.Day
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    subjectId?: IntFieldUpdateOperationsInput | number
+    classId?: IntFieldUpdateOperationsInput | number
+    teacherId?: StringFieldUpdateOperationsInput | string
+  }
+
   export type TeacherReminderCreateManyObligationInput = {
     id?: string
     channel?: string
@@ -151376,6 +154102,7 @@ export namespace Prisma {
     schoolId?: string
     subjectId: number
     teacherId: string
+    periodTemplateId?: string | null
   }
 
   export type StudentCreateManyClassInput = {
@@ -151520,6 +154247,7 @@ export namespace Prisma {
     school?: SchoolUpdateOneRequiredWithoutLessonsNestedInput
     subject?: SubjectUpdateOneRequiredWithoutLessonsNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutLessonsNestedInput
+    periodTemplate?: SchoolPeriodTemplateUpdateOneWithoutLessonsNestedInput
     exams?: ExamUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUpdateManyWithoutLessonNestedInput
     attendances?: AttendanceUpdateManyWithoutLessonNestedInput
@@ -151535,6 +154263,7 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
     subjectId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
+    periodTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     exams?: ExamUncheckedUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutLessonNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutLessonNestedInput
@@ -151550,6 +154279,7 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
     subjectId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
+    periodTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StudentUpdateWithoutClassInput = {
@@ -151983,6 +154713,7 @@ export namespace Prisma {
     schoolId?: string
     classId: number
     teacherId: string
+    periodTemplateId?: string | null
   }
 
   export type ContinuousAssessmentCreateManySubjectInput = {
@@ -152140,6 +154871,7 @@ export namespace Prisma {
     school?: SchoolUpdateOneRequiredWithoutLessonsNestedInput
     class?: ClassUpdateOneRequiredWithoutLessonsNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutLessonsNestedInput
+    periodTemplate?: SchoolPeriodTemplateUpdateOneWithoutLessonsNestedInput
     exams?: ExamUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUpdateManyWithoutLessonNestedInput
     attendances?: AttendanceUpdateManyWithoutLessonNestedInput
@@ -152155,6 +154887,7 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
     classId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
+    periodTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     exams?: ExamUncheckedUpdateManyWithoutLessonNestedInput
     assignments?: AssignmentUncheckedUpdateManyWithoutLessonNestedInput
     attendances?: AttendanceUncheckedUpdateManyWithoutLessonNestedInput
@@ -152170,6 +154903,7 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
     classId?: IntFieldUpdateOperationsInput | number
     teacherId?: StringFieldUpdateOperationsInput | string
+    periodTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ContinuousAssessmentUpdateWithoutSubjectInput = {

@@ -22,6 +22,15 @@ enum Day {
   FRIDAY
 }
 
+enum SchoolPeriodType {
+  TEACHING
+  BREAK
+  ASSEMBLY
+  LUNCH
+  CLOSING
+  OTHER
+}
+
 enum AttendanceStatus {
   PRESENT
   ABSENT
@@ -430,6 +439,7 @@ model School {
   classes                        Class[]
   subjects                       Subject[]
   lessons                        Lesson[]
+  periodTemplates                SchoolPeriodTemplate[]
   exams                          Exam[]
   assignments                    Assignment[]
   homeworkSubmissions            HomeworkSubmission[]
@@ -667,6 +677,27 @@ model SchoolCommunicationRoute {
   @@unique([schoolId, category])
   @@index([schoolId, target])
   @@index([schoolId, selectedTeacherId])
+}
+
+model SchoolPeriodTemplate {
+  id        String           @id @default(cuid())
+  name      String
+  type      SchoolPeriodType @default(TEACHING)
+  startTime String
+  endTime   String
+  order     Int
+  isActive  Boolean          @default(true)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  lessons Lesson[]
+
+  @@unique([schoolId, name])
+  @@unique([schoolId, order])
+  @@index([schoolId, type, isActive])
 }
 
 model TeacherAccountabilitySetting {
@@ -1095,6 +1126,9 @@ model Lesson {
   teacherId String
   teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 
+  periodTemplateId String?
+  periodTemplate   SchoolPeriodTemplate? @relation(fields: [periodTemplateId], references: [id], onDelete: SetNull)
+
   exams               Exam[]
   assignments         Assignment[]
   attendances         Attendance[]
@@ -1102,6 +1136,7 @@ model Lesson {
 
   @@index([schoolId, teacherId])
   @@index([schoolId, classId])
+  @@index([schoolId, periodTemplateId])
   @@index([teacherId, classId, day])
   @@index([schoolId, teacherId, classId, day])
   @@index([schoolId, day])

@@ -19,6 +19,7 @@ type LessonForHealth = {
   subject: { name: string };
   class: { name: string; _count: { students: number } };
   teacher: { name: string; surname: string; subjects: { id: number }[] };
+  periodTemplate: null | { name: string; type: string; startTime: string; endTime: string; isActive: boolean };
 };
 
 export type TimetableHealthIssue = {
@@ -118,6 +119,7 @@ export async function getTimetableHealthSummary(schoolId: string): Promise<Timet
         subject: { select: { name: true } },
         class: { select: { name: true, _count: { select: { students: true } } } },
         teacher: { select: { name: true, surname: true, subjects: { select: { id: true } } } },
+        periodTemplate: { select: { name: true, type: true, startTime: true, endTime: true, isActive: true } },
       },
       orderBy: [{ day: "asc" }, { startTime: "asc" }],
     }),
@@ -176,6 +178,31 @@ export async function getTimetableHealthSummary(schoolId: string): Promise<Timet
         severity: "critical",
         title: "Teacher is not assigned to subject",
         detail: `${personName(lesson.teacher)} is scheduled for ${lesson.subject.name}, but that subject is not assigned to the teacher.`,
+        lessonId: lesson.id,
+        classId: lesson.classId,
+      });
+    }
+
+    if (!lesson.periodTemplate) {
+      issues.push({
+        id: `lesson-without-period-${lesson.id}`,
+        severity: "warning",
+        title: "Lesson is not linked to a period",
+        detail: `${lessonLabel(lesson)} uses manual time ${lessonStart}-${lessonEnd}. Link it to a teaching period so the timetable stays consistent.`,
+        lessonId: lesson.id,
+        classId: lesson.classId,
+      });
+    } else if (
+      !lesson.periodTemplate.isActive ||
+      lesson.periodTemplate.type !== "TEACHING" ||
+      lesson.periodTemplate.startTime !== lessonStart ||
+      lesson.periodTemplate.endTime !== lessonEnd
+    ) {
+      issues.push({
+        id: `lesson-period-mismatch-${lesson.id}`,
+        severity: "warning",
+        title: "Lesson period needs review",
+        detail: `${lessonLabel(lesson)} is linked to ${lesson.periodTemplate.name}, but the lesson time or period type no longer matches the template.`,
         lessonId: lesson.id,
         classId: lesson.classId,
       });

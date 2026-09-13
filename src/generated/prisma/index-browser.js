@@ -251,6 +251,19 @@ exports.Prisma.SchoolCommunicationRouteScalarFieldEnum = {
   schoolId: 'schoolId'
 };
 
+exports.Prisma.SchoolPeriodTemplateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  order: 'order',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId'
+};
+
 exports.Prisma.TeacherAccountabilitySettingScalarFieldEnum = {
   id: 'id',
   attendanceOpenMinutesBeforeLesson: 'attendanceOpenMinutesBeforeLesson',
@@ -499,7 +512,8 @@ exports.Prisma.LessonScalarFieldEnum = {
   schoolId: 'schoolId',
   subjectId: 'subjectId',
   classId: 'classId',
-  teacherId: 'teacherId'
+  teacherId: 'teacherId',
+  periodTemplateId: 'periodTemplateId'
 };
 
 exports.Prisma.ExamScalarFieldEnum = {
@@ -1056,6 +1070,15 @@ exports.ParentTeacherContactRouteTarget = exports.$Enums.ParentTeacherContactRou
   SCHOOL_OFFICE: 'SCHOOL_OFFICE'
 };
 
+exports.SchoolPeriodType = exports.$Enums.SchoolPeriodType = {
+  TEACHING: 'TEACHING',
+  BREAK: 'BREAK',
+  ASSEMBLY: 'ASSEMBLY',
+  LUNCH: 'LUNCH',
+  CLOSING: 'CLOSING',
+  OTHER: 'OTHER'
+};
+
 exports.TeacherObligationType = exports.$Enums.TeacherObligationType = {
   ATTENDANCE: 'ATTENDANCE',
   CA_SCORE_PUBLISHING: 'CA_SCORE_PUBLISHING',
@@ -1421,6 +1444,7 @@ exports.Prisma.ModelName = {
   SchoolNotificationSetting: 'SchoolNotificationSetting',
   SchoolCommunicationPolicy: 'SchoolCommunicationPolicy',
   SchoolCommunicationRoute: 'SchoolCommunicationRoute',
+  SchoolPeriodTemplate: 'SchoolPeriodTemplate',
   TeacherAccountabilitySetting: 'TeacherAccountabilitySetting',
   TeacherObligation: 'TeacherObligation',
   TeacherReminder: 'TeacherReminder',

@@ -25,12 +25,14 @@ export type TimetableLessonInput = {
   subjectId: number;
   classId: number;
   teacherId: string;
+  periodTemplateId?: string | null;
 };
 
 const lessonInclude = {
   subject: { select: { id: true, name: true } },
   class: { select: { id: true, name: true } },
   teacher: { select: { id: true, name: true, surname: true } },
+  periodTemplate: { select: { id: true, name: true, type: true, startTime: true, endTime: true, order: true } },
 } as const;
 
 export function listTimetableLessons(schoolId: string, classId?: number) {
@@ -112,7 +114,7 @@ async function validateLessonInput(
     NOT: excludeId ? { id: excludeId } : undefined,
     AND: [{ startTime: { lt: end } }, { endTime: { gt: start } }],
   };
-  const [classConflict, teacherConflict, subject, cls, teacher, teacherClasses] =
+  const [classConflict, teacherConflict, subject, cls, teacher, teacherClasses, periodTemplate] =
     await Promise.all([
       prisma.lesson.findFirst({
         where: { ...baseWhere, classId: input.classId },
@@ -150,6 +152,12 @@ async function validateLessonInput(
         select: { classId: true },
         distinct: ["classId"],
       }),
+      input.periodTemplateId
+        ? prisma.schoolPeriodTemplate.findFirst({
+            where: { id: input.periodTemplateId, schoolId },
+            select: { id: true, name: true, type: true, isActive: true, startTime: true, endTime: true },
+          })
+        : Promise.resolve(null),
     ]);
 
   if (classConflict) {
@@ -172,6 +180,20 @@ async function validateLessonInput(
       "Teacher not found or the selected subject is not assigned to this teacher.",
       404,
     );
+  }
+  if (input.periodTemplateId) {
+    if (!periodTemplate) {
+      throw new TimetableServiceError("Selected period template was not found.", 404);
+    }
+    if (!periodTemplate.isActive || periodTemplate.type !== "TEACHING") {
+      throw new TimetableServiceError("Only active teaching periods can be used for lessons.", 400);
+    }
+    if (periodTemplate.startTime !== lessonStartTime || periodTemplate.endTime !== lessonEndTime) {
+      throw new TimetableServiceError(
+        `Lesson time must match the selected period (${periodTemplate.startTime}-${periodTemplate.endTime}).`,
+        400,
+      );
+    }
   }
 
   const assignedClassIds = new Set(teacherClasses.map((lesson) => lesson.classId));
@@ -205,6 +227,7 @@ export async function createTimetableLesson(
       subjectId: input.subjectId,
       classId: input.classId,
       teacherId: input.teacherId,
+      periodTemplateId: input.periodTemplateId || null,
     },
     include: lessonInclude,
   });
@@ -234,6 +257,7 @@ export async function updateTimetableLesson(
       subjectId: input.subjectId,
       classId: input.classId,
       teacherId: input.teacherId,
+      periodTemplateId: input.periodTemplateId || null,
     },
     include: lessonInclude,
   });

@@ -17,6 +17,15 @@ export type TBTeacher = {
   id: string; name: string; surname: string; maxClasses: number;
   subjects: TBSubject[]; // ✅ each teacher now carries their own subject list
 };
+export type TBPeriodTemplate = {
+  id: string;
+  name: string;
+  type: "TEACHING" | "BREAK" | "ASSEMBLY" | "LUNCH" | "CLOSING" | "OTHER";
+  startTime: string;
+  endTime: string;
+  order: number;
+  isActive: boolean;
+};
 export type TBLesson  = {
   id:        number;
   name:      string;
@@ -26,6 +35,7 @@ export type TBLesson  = {
   subject:   { id: number; name: string };
   class:     { id: number; name: string };
   teacher:   { id: string; name: string; surname: string };
+  periodTemplate: null | Pick<TBPeriodTemplate, "id" | "name" | "type" | "startTime" | "endTime" | "order">;
 };
 
 type Props = {
@@ -33,6 +43,7 @@ type Props = {
   subjects:       TBSubject[]; // kept for API compat but unused — teachers carry their own
   teachers:       TBTeacher[];
   initialLessons: TBLesson[];
+  initialPeriodTemplates: TBPeriodTemplate[];
   operatingRules: {
     activeDays: string[];
     openingTime: string;
@@ -51,17 +62,6 @@ const DAY_FULL: Record<string, string> = {
   MONDAY: "Monday", TUESDAY: "Tuesday", WEDNESDAY: "Wednesday",
   THURSDAY: "Thursday", FRIDAY: "Friday",
 };
-
-const PERIOD_PRESETS = [
-  { label: "Period 1", start: "07:30", end: "08:10" },
-  { label: "Period 2", start: "08:10", end: "08:50" },
-  { label: "Period 3", start: "08:50", end: "09:30" },
-  { label: "Period 4", start: "09:50", end: "10:30" },
-  { label: "Period 5", start: "10:30", end: "11:10" },
-  { label: "Period 6", start: "11:10", end: "11:50" },
-  { label: "Period 7", start: "12:30", end: "13:10" },
-  { label: "Period 8", start: "13:10", end: "13:50" },
-];
 
 const COLORS = [
   { bg: "bg-blue-50",    text: "text-blue-700",    border: "border-blue-200",    dot: "bg-blue-400",    ring: "ring-blue-300"    },
@@ -125,6 +125,7 @@ type SlotFormData = {
   subjectId: number | "";
   classId:   number | "";
   teacherId: string;
+  periodTemplateId: string;
 };
 
 // ─── SlotModal ────────────────────────────────────────────────────────────────
@@ -133,6 +134,7 @@ type SlotModalProps = {
   setForm:  (f: SlotFormData) => void;
   classes:  TBClass[];
   teachers: TBTeacher[];
+  periodTemplates: TBPeriodTemplate[];
   days:     readonly string[];
   operatingRules: Props["operatingRules"];
   onSave:   () => void;
@@ -144,13 +146,14 @@ type SlotModalProps = {
 
 const SlotModal = ({
   form, setForm, classes, teachers,
-  days, operatingRules,
+  periodTemplates, days, operatingRules,
   onSave, onClose, saving, error, isEdit,
 }: SlotModalProps) => {
 
   // ✅ Derive the subject list from the selected teacher — not a global list
   const selectedTeacher   = teachers.find((t) => t.id === form.teacherId);
   const availableSubjects = selectedTeacher?.subjects ?? [];
+  const teachingPeriods = periodTemplates.filter((period) => period.isActive && period.type === "TEACHING");
 
   const durationMins =
     form.startTime && form.endTime
@@ -158,8 +161,23 @@ const SlotModal = ({
          new Date(`1970-01-01T${form.startTime}`).getTime()) / 60000
       : 0;
 
-  const applyPreset = (preset: { start: string; end: string }) => {
-    setForm({ ...form, startTime: preset.start, endTime: preset.end });
+  const applyPeriod = (periodId: string) => {
+    const period = teachingPeriods.find((item) => item.id === periodId);
+    if (!period) {
+      setForm({
+        ...form,
+        periodTemplateId: "",
+        startTime: operatingRules.openingTime,
+        endTime: getDefaultEndTime(operatingRules.openingTime, operatingRules.closingTime),
+      });
+      return;
+    }
+    setForm({
+      ...form,
+      periodTemplateId: period.id,
+      startTime: period.startTime,
+      endTime: period.endTime,
+    });
   };
 
   const applyDuration = (mins: number) => {
@@ -260,27 +278,29 @@ const SlotModal = ({
             </p>
           </div>
 
-          {/* Period presets */}
+          {/* Period */}
           <div>
             <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">
-              Period Presets
+              Period
             </label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-              {PERIOD_PRESETS.map((p) => (
-                <button
-                  key={p.label}
-                  type="button"
-                  onClick={() => applyPreset(p)}
-                  className={`py-1.5 px-1 rounded-lg text-[10px] font-bold text-center transition-all border
-                    ${form.startTime === p.start && form.endTime === p.end
-                      ? "bg-indigo-50 border-indigo-300 text-indigo-700"
-                      : "bg-white border-gray-200 text-gray-500 hover:border-indigo-200 hover:text-indigo-600"}`}
-                >
-                  <div className="font-black text-[9px] uppercase">{p.label}</div>
-                  <div className="opacity-70">{p.start}</div>
-                </button>
-              ))}
+            <div className="relative">
+              <select
+                value={form.periodTemplateId}
+                onChange={(e) => applyPeriod(e.target.value)}
+                className="w-full appearance-none rounded-xl border border-gray-200 bg-white px-3 py-2.5 pr-8 text-sm font-semibold text-gray-700 outline-none transition-all focus:ring-2 focus:ring-indigo-300"
+              >
+                <option value="">Select teaching period...</option>
+                {teachingPeriods.map((period) => (
+                  <option key={period.id} value={period.id}>
+                    {period.name} ({period.startTime}-{period.endTime})
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
             </div>
+            <p className="mt-2 text-xs font-semibold leading-5 text-gray-400">
+              Period templates keep lessons consistent across classes. Break and lunch periods cannot be used for lesson slots.
+            </p>
           </div>
 
           {/* Time */}
@@ -493,11 +513,266 @@ const DeleteModal = ({
   </div>
 );
 
+const periodTypeLabels: Record<TBPeriodTemplate["type"], string> = {
+  TEACHING: "Teaching",
+  BREAK: "Break",
+  ASSEMBLY: "Assembly",
+  LUNCH: "Lunch",
+  CLOSING: "Closing",
+  OTHER: "Other",
+};
+
+type PeriodTemplatePanelProps = {
+  periods: TBPeriodTemplate[];
+  setPeriods: (periods: TBPeriodTemplate[]) => void;
+  operatingRules: Props["operatingRules"];
+};
+
+const emptyPeriodForm = {
+  id: "",
+  name: "",
+  type: "TEACHING" as TBPeriodTemplate["type"],
+  startTime: "07:30",
+  endTime: "08:10",
+  order: 1,
+  isActive: true,
+};
+
+function PeriodTemplatePanel({ periods, setPeriods, operatingRules }: PeriodTemplatePanelProps) {
+  const [form, setForm] = useState(emptyPeriodForm);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const sortedPeriods = [...periods].sort((a, b) => a.order - b.order || a.startTime.localeCompare(b.startTime));
+
+  const resetForm = () => {
+    setEditingId(null);
+    setError(null);
+    const nextOrder = sortedPeriods.length > 0 ? Math.max(...sortedPeriods.map((period) => period.order)) + 1 : 1;
+    setForm({
+      ...emptyPeriodForm,
+      startTime: operatingRules.openingTime,
+      endTime: getDefaultEndTime(operatingRules.openingTime, operatingRules.closingTime),
+      order: nextOrder,
+    });
+  };
+
+  const editPeriod = (period: TBPeriodTemplate) => {
+    setEditingId(period.id);
+    setError(null);
+    setForm({
+      id: period.id,
+      name: period.name,
+      type: period.type,
+      startTime: period.startTime,
+      endTime: period.endTime,
+      order: period.order,
+      isActive: period.isActive,
+    });
+  };
+
+  const savePeriod = async () => {
+    setSaving(true);
+    setError(null);
+    try {
+      const payload = {
+        ...(editingId ? { id: editingId } : {}),
+        name: form.name,
+        type: form.type,
+        startTime: form.startTime,
+        endTime: form.endTime,
+        order: form.order,
+        isActive: form.isActive,
+      };
+      const res = await fetch("/api/timetable/periods", {
+        method: editingId ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Could not save period.");
+        return;
+      }
+      setPeriods(
+        editingId
+          ? periods.map((period) => (period.id === editingId ? data : period))
+          : [...periods, data],
+      );
+      resetForm();
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const deletePeriod = async (period: TBPeriodTemplate) => {
+    setSaving(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/timetable/periods?id=${period.id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Could not remove period.");
+        return;
+      }
+      setPeriods(periods.filter((item) => item.id !== period.id));
+      if (editingId === period.id) resetForm();
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <p className="text-xs font-black uppercase tracking-wide text-gray-400">Period setup</p>
+          <h2 className="mt-1 text-lg font-black text-gray-900">Build the school day once</h2>
+          <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-gray-500">
+            Periods keep lesson times consistent. Admins pick teaching periods when creating lesson slots;
+            break, assembly, and lunch periods structure the day but do not create lesson duties.
+          </p>
+        </div>
+        <div className="rounded-xl bg-gray-50 px-3 py-2 text-sm font-black text-gray-700">
+          {operatingRules.openingTime}-{operatingRules.closingTime}
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_340px]">
+        <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+          {sortedPeriods.map((period) => (
+            <div
+              key={period.id}
+              className={`rounded-xl border p-3 ${
+                period.isActive ? "border-gray-100 bg-gray-50" : "border-gray-100 bg-gray-50/50 opacity-60"
+              }`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-black text-gray-900">{period.name}</p>
+                  <p className="mt-1 text-xs font-bold text-gray-500">
+                    {period.startTime}-{period.endTime} · {periodTypeLabels[period.type]}
+                  </p>
+                </div>
+                <span className="rounded-full bg-white px-2 py-1 text-[10px] font-black text-gray-400">
+                  #{period.order}
+                </span>
+              </div>
+              <div className="mt-3 flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => editPeriod(period)}
+                  className="rounded-lg bg-white px-3 py-1.5 text-xs font-black text-gray-600 ring-1 ring-gray-100 hover:text-indigo-600"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => deletePeriod(period)}
+                  className="rounded-lg bg-white px-3 py-1.5 text-xs font-black text-rose-600 ring-1 ring-gray-100"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm font-black text-gray-900">{editingId ? "Edit period" : "Add period"}</p>
+            {editingId ? (
+              <button type="button" onClick={resetForm} className="text-xs font-black text-gray-400 hover:text-gray-700">
+                Cancel
+              </button>
+            ) : null}
+          </div>
+          {error ? (
+            <p className="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-xs font-bold leading-5 text-rose-700">{error}</p>
+          ) : null}
+          <div className="mt-3 space-y-3">
+            <input
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              placeholder="Period name"
+              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-300"
+            />
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                type="time"
+                min={operatingRules.openingTime}
+                max={operatingRules.closingTime}
+                value={form.startTime}
+                onChange={(e) => setForm({ ...form, startTime: e.target.value })}
+                className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-300"
+              />
+              <input
+                type="time"
+                min={operatingRules.openingTime}
+                max={operatingRules.closingTime}
+                value={form.endTime}
+                onChange={(e) => setForm({ ...form, endTime: e.target.value })}
+                className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-300"
+              />
+            </div>
+            <div className="grid grid-cols-[1fr_90px] gap-2">
+              <select
+                value={form.type}
+                onChange={(e) => setForm({ ...form, type: e.target.value as TBPeriodTemplate["type"] })}
+                className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-300"
+              >
+                {Object.entries(periodTypeLabels).map(([value, label]) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
+              </select>
+              <input
+                type="number"
+                min={1}
+                value={form.order}
+                onChange={(e) => setForm({ ...form, order: Number(e.target.value) })}
+                className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-300"
+              />
+            </div>
+            <label className="flex items-center gap-2 text-xs font-bold text-gray-500">
+              <input
+                type="checkbox"
+                checked={form.isActive}
+                onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
+              />
+              Active period
+            </label>
+            <button
+              type="button"
+              disabled={saving || !form.name.trim()}
+              onClick={savePeriod}
+              className="w-full rounded-xl bg-gray-950 px-4 py-2.5 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {saving ? "Saving..." : editingId ? "Save period" : "Add period"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
-const TimetableBuilder = ({ classes, teachers, initialLessons, operatingRules }: Props) => {
+const TimetableBuilder = ({
+  classes,
+  teachers,
+  initialLessons,
+  initialPeriodTemplates,
+  operatingRules,
+}: Props) => {
   const timetableDays = SCHOOL_WEEK_DAYS.filter((day) => operatingRules.activeDays.includes(day));
   const defaultDay = timetableDays[0] ?? "MONDAY";
   const [lessons, setLessons]             = useState<TBLesson[]>(initialLessons);
+  const [periodTemplates, setPeriodTemplates] = useState<TBPeriodTemplate[]>(initialPeriodTemplates);
   const [selectedClass, setSelectedClass] = useState<number | "all">("all");
   const [selectedDay, setSelectedDay]     = useState<string>("all");
   const [viewMode, setViewMode]           = useState<"grid" | "list">("grid");
@@ -519,7 +794,7 @@ const TimetableBuilder = ({ classes, teachers, initialLessons, operatingRules }:
 
   const defaultForm: SlotFormData = {
     day: defaultDay, startTime: operatingRules.openingTime, endTime: defaultEndTime,
-    subjectId: "", classId: "", teacherId: "",
+    subjectId: "", classId: "", teacherId: "", periodTemplateId: "",
   };
   const [form, setForm] = useState<SlotFormData>(defaultForm);
 
@@ -547,6 +822,7 @@ const TimetableBuilder = ({ classes, teachers, initialLessons, operatingRules }:
       subjectId: lesson.subject.id,
       classId:   lesson.class.id,
       teacherId: lesson.teacher.id,
+      periodTemplateId: lesson.periodTemplate?.id ?? "",
     });
     setModalOpen(true);
   };
@@ -567,6 +843,7 @@ const TimetableBuilder = ({ classes, teachers, initialLessons, operatingRules }:
         subjectId: form.subjectId,
         classId:   form.classId,
         teacherId: form.teacherId,
+        periodTemplateId: form.periodTemplateId || null,
       };
       const res  = await fetch("/api/timetable", {
         method:  form.id ? "PUT" : "POST",
@@ -628,6 +905,11 @@ const TimetableBuilder = ({ classes, teachers, initialLessons, operatingRules }:
 
   return (
     <div className="flex flex-col gap-5">
+      <PeriodTemplatePanel
+        periods={periodTemplates}
+        setPeriods={setPeriodTemplates}
+        operatingRules={operatingRules}
+      />
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -982,6 +1264,7 @@ const TimetableBuilder = ({ classes, teachers, initialLessons, operatingRules }:
             setForm={setForm}
             classes={classes}
             teachers={teachers}
+            periodTemplates={periodTemplates}
             days={timetableDays}
             operatingRules={operatingRules}
             onSave={handleSave}
