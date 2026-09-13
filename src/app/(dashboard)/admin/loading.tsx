@@ -1,5 +1,5 @@
 import { DashboardPageSkeleton } from "@/src/components/loading-skeletons";
 
 export default function Loading() {
-  return <DashboardPageSkeleton title="Loading admin dashboard" />;
+  return <DashboardPageSkeleton title="Preparing admin workspace" />;
 }
