@@ -3,6 +3,7 @@
 import { requirePageSession } from "@/src/lib/authz";
 import TimetableBuilder from "@/src/components/TimetableBuilder";
 import type { TBClass, TBTeacher, TBLesson } from "@/src/components/TimetableBuilder";
+import TimetableHealthPanel from "@/src/components/TimetableHealthPanel";
 import { Calendar } from "lucide-react";
 import {
   getCachedClasses,
@@ -10,15 +11,17 @@ import {
   getCachedTimetableTeachers,
 } from "@/src/lib/referenceData";
 import { getSchoolOperatingWindowStatus } from "@/src/lib/services/school-operating-hours";
+import { getTimetableHealthSummary } from "@/src/lib/services/timetable-health";
 
 const TimetablePage = async () => {
   const { schoolId } = await requirePageSession(["admin"]);
 
-  const [classes, teachers, lessons, operatingRules] = await Promise.all([
+  const [classes, teachers, lessons, operatingRules, timetableHealth] = await Promise.all([
     getCachedClasses(schoolId),
     getCachedTimetableTeachers(schoolId),
     getCachedTimetableLessons(schoolId),
     getSchoolOperatingWindowStatus(schoolId),
+    getTimetableHealthSummary(schoolId),
   ]);
 
   const serializedLessons: TBLesson[] = lessons.map((l) => ({
@@ -73,6 +76,8 @@ const TimetablePage = async () => {
           </div>
         </div>
       </div>
+
+      <TimetableHealthPanel health={timetableHealth} />
 
       <TimetableBuilder
         classes={serializedClasses}
