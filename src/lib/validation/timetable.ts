@@ -9,7 +9,7 @@ export const timetableLessonSchema = z.object({
   subjectId: positiveIntSchema,
   classId: positiveIntSchema,
   teacherId: z.string().trim().min(1),
-  periodTemplateId: z.string().trim().min(1).optional().nullable(),
+  periodTemplateId: z.string().trim().min(1, "Select a teaching period for this lesson."),
 });
 
 export const timetableUpdateSchema = timetableLessonSchema.extend({

@@ -142,18 +142,21 @@ type SlotModalProps = {
   saving:   boolean;
   error:    string | null;
   isEdit:   boolean;
+  lockDay:  boolean;
 };
 
 const SlotModal = ({
   form, setForm, classes, teachers,
   periodTemplates, days, operatingRules,
-  onSave, onClose, saving, error, isEdit,
+  onSave, onClose, saving, error, isEdit, lockDay,
 }: SlotModalProps) => {
 
   // ✅ Derive the subject list from the selected teacher — not a global list
   const selectedTeacher   = teachers.find((t) => t.id === form.teacherId);
   const availableSubjects = selectedTeacher?.subjects ?? [];
   const teachingPeriods = periodTemplates.filter((period) => period.isActive && period.type === "TEACHING");
+  const selectedPeriod = teachingPeriods.find((period) => period.id === form.periodTemplateId);
+  const selectedClass = classes.find((item) => item.id === form.classId);
 
   const durationMins =
     form.startTime && form.endTime
@@ -258,24 +261,35 @@ const SlotModal = ({
           {/* Day */}
           <div>
             <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">Day</label>
-            <div className="grid grid-cols-5 gap-1.5">
-              {days.map((d) => (
-                <button
-                  key={d}
-                  type="button"
-                  onClick={() => setForm({ ...form, day: d })}
-                  className={`py-2 rounded-xl text-xs font-bold transition-all
-                    ${form.day === d
-                      ? "bg-indigo-600 text-white shadow-sm"
-                      : "bg-gray-100 text-gray-500 hover:bg-indigo-50 hover:text-indigo-600"}`}
-                >
-                  {DAY_LABELS[d]}
-                </button>
-              ))}
-            </div>
-            <p className="mt-2 rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold leading-5 text-blue-700">
-              Timetable days follow this school&apos;s active days: {operatingRules.label}.
-            </p>
+            {lockDay ? (
+              <div className="rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-2.5">
+                <p className="text-sm font-black text-indigo-700">{DAY_FULL[form.day]}</p>
+                <p className="mt-1 text-xs font-semibold leading-5 text-indigo-600">
+                  This lesson is being added from Build by Class, so it follows the selected timetable day.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-5 gap-1.5">
+                  {days.map((d) => (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => setForm({ ...form, day: d })}
+                      className={`py-2 rounded-xl text-xs font-bold transition-all
+                        ${form.day === d
+                          ? "bg-indigo-600 text-white shadow-sm"
+                          : "bg-gray-100 text-gray-500 hover:bg-indigo-50 hover:text-indigo-600"}`}
+                    >
+                      {DAY_LABELS[d]}
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-2 rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold leading-5 text-blue-700">
+                  Timetable days follow this school&apos;s active days: {operatingRules.label}.
+                </p>
+              </>
+            )}
           </div>
 
           {/* Period */}
@@ -283,76 +297,113 @@ const SlotModal = ({
             <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">
               Period
             </label>
-            <div className="relative">
-              <select
-                value={form.periodTemplateId}
-                onChange={(e) => applyPeriod(e.target.value)}
-                className="w-full appearance-none rounded-xl border border-gray-200 bg-white px-3 py-2.5 pr-8 text-sm font-semibold text-gray-700 outline-none transition-all focus:ring-2 focus:ring-indigo-300"
-              >
-                <option value="">Select teaching period...</option>
-                {teachingPeriods.map((period) => (
-                  <option key={period.id} value={period.id}>
-                    {period.name} ({period.startTime}-{period.endTime})
-                  </option>
-                ))}
-              </select>
-              <ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            </div>
-            <p className="mt-2 text-xs font-semibold leading-5 text-gray-400">
-              Period templates keep lessons consistent across classes. Break and lunch periods cannot be used for lesson slots.
-            </p>
+            {lockDay ? (
+              <div className="rounded-xl border border-gray-100 bg-gray-50 px-3 py-2.5">
+                <p className="text-sm font-black text-gray-800">
+                  {selectedPeriod ? selectedPeriod.name : "Selected teaching period"}
+                </p>
+                <p className="mt-1 text-xs font-semibold leading-5 text-gray-500">
+                  {form.startTime}-{form.endTime} · fixed from the period row.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="relative">
+                  <select
+                    value={form.periodTemplateId}
+                    onChange={(e) => applyPeriod(e.target.value)}
+                    className="w-full appearance-none rounded-xl border border-gray-200 bg-white px-3 py-2.5 pr-8 text-sm font-semibold text-gray-700 outline-none transition-all focus:ring-2 focus:ring-indigo-300"
+                  >
+                    <option value="">Select teaching period...</option>
+                    {teachingPeriods.map((period) => (
+                      <option key={period.id} value={period.id}>
+                        {period.name} ({period.startTime}-{period.endTime})
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                </div>
+                <p className="mt-2 text-xs font-semibold leading-5 text-gray-400">
+                  Period templates keep lessons consistent across classes. Break and lunch periods cannot be used for lesson slots.
+                </p>
+              </>
+            )}
           </div>
 
           {/* Time */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">Start Time</label>
-              <input
-                type="time"
-                min={operatingRules.openingTime}
-                max={operatingRules.closingTime}
-                value={form.startTime}
-                onChange={(e) => setForm({ ...form, startTime: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">End Time</label>
-              <input
-                type="time"
-                min={operatingRules.openingTime}
-                max={operatingRules.closingTime}
-                value={form.endTime}
-                onChange={(e) => setForm({ ...form, endTime: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all"
-              />
-            </div>
+          <div>
+            <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">Time</label>
+            {lockDay ? (
+              <div className="grid gap-2 sm:grid-cols-3">
+                <div className="rounded-xl border border-gray-100 bg-gray-50 px-3 py-2.5">
+                  <p className="text-[10px] font-black uppercase tracking-wide text-gray-400">Start</p>
+                  <p className="mt-1 text-sm font-black text-gray-800">{form.startTime}</p>
+                </div>
+                <div className="rounded-xl border border-gray-100 bg-gray-50 px-3 py-2.5">
+                  <p className="text-[10px] font-black uppercase tracking-wide text-gray-400">End</p>
+                  <p className="mt-1 text-sm font-black text-gray-800">{form.endTime}</p>
+                </div>
+                <div className="rounded-xl border border-gray-100 bg-gray-50 px-3 py-2.5">
+                  <p className="text-[10px] font-black uppercase tracking-wide text-gray-400">Duration</p>
+                  <p className="mt-1 text-sm font-black text-gray-800">
+                    {durationMins > 0 ? getDuration(`1970-01-01T${form.startTime}`, `1970-01-01T${form.endTime}`) : "Fixed"}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">Start Time</label>
+                  <input
+                    type="time"
+                    min={operatingRules.openingTime}
+                    max={operatingRules.closingTime}
+                    value={form.startTime}
+                    onChange={(e) => setForm({ ...form, startTime: e.target.value })}
+                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">End Time</label>
+                  <input
+                    type="time"
+                    min={operatingRules.openingTime}
+                    max={operatingRules.closingTime}
+                    value={form.endTime}
+                    onChange={(e) => setForm({ ...form, endTime: e.target.value })}
+                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Quick duration */}
-          <div>
-            <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">Quick Duration</label>
-            <div className="flex gap-2 flex-wrap">
-              {[30, 40, 45, 60, 80, 90].map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  onClick={() => applyDuration(m)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border
-                    ${durationMins === m
-                      ? "bg-indigo-600 text-white border-indigo-600"
-                      : "bg-white border-gray-200 text-gray-500 hover:border-indigo-200 hover:text-indigo-600"}`}
-                >
-                  {m}m
-                </button>
-              ))}
-              {durationMins > 0 && (
-                <span className="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-50 text-gray-400 border border-gray-100">
-                  = {getDuration(`1970-01-01T${form.startTime}`, `1970-01-01T${form.endTime}`)}
-                </span>
-              )}
+          {!lockDay && (
+            <div>
+              <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">Quick Duration</label>
+              <div className="flex gap-2 flex-wrap">
+                {[30, 40, 45, 60, 80, 90].map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => applyDuration(m)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border
+                      ${durationMins === m
+                        ? "bg-indigo-600 text-white border-indigo-600"
+                        : "bg-white border-gray-200 text-gray-500 hover:border-indigo-200 hover:text-indigo-600"}`}
+                  >
+                    {m}m
+                  </button>
+                ))}
+                {durationMins > 0 && (
+                  <span className="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-50 text-gray-400 border border-gray-100">
+                    = {getDuration(`1970-01-01T${form.startTime}`, `1970-01-01T${form.endTime}`)}
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* ── Teacher (FIRST — drives subject list) ── */}
           <div>
@@ -426,20 +477,30 @@ const SlotModal = ({
           {/* Class */}
           <div>
             <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">Class</label>
-            <div className="relative">
-              <GraduationCap size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-              <select
-                value={form.classId}
-                onChange={(e) => setForm({ ...form, classId: e.target.value ? parseInt(e.target.value) : "" })}
-                className="w-full pl-9 pr-8 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 appearance-none bg-white transition-all"
-              >
-                <option value="">Select class…</option>
-                {classes.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
-              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-            </div>
+            {lockDay ? (
+              <div className="flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2.5">
+                <GraduationCap size={14} className="text-gray-400" />
+                <div>
+                  <p className="text-sm font-black text-gray-800">{selectedClass?.name ?? "Selected class"}</p>
+                  <p className="mt-0.5 text-xs font-semibold text-gray-400">Fixed from Build by Class.</p>
+                </div>
+              </div>
+            ) : (
+              <div className="relative">
+                <GraduationCap size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                <select
+                  value={form.classId}
+                  onChange={(e) => setForm({ ...form, classId: e.target.value ? parseInt(e.target.value) : "" })}
+                  className="w-full pl-9 pr-8 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 appearance-none bg-white transition-all"
+                >
+                  <option value="">Select class…</option>
+                  {classes.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+                <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              </div>
+            )}
           </div>
         </div>
 
@@ -780,6 +841,7 @@ const TimetableBuilder = ({
   const [selectedDay, setSelectedDay]     = useState<string>("all");
   const [viewMode, setViewMode]           = useState<"grid" | "list">("grid");
   const [modalOpen, setModalOpen]         = useState(false);
+  const [modalDayLocked, setModalDayLocked] = useState(false);
   const [deleteTarget, setDeleteTarget]   = useState<TBLesson | null>(null);
   const [editTarget, setEditTarget]       = useState<TBLesson | null>(null);
   const [saving, setSaving]               = useState(false);
@@ -813,6 +875,7 @@ const TimetableBuilder = ({
   const openCreate = (prefillDay?: string, prefillClassId?: number) => {
     setEditTarget(null);
     setModalError(null);
+    setModalDayLocked(false);
     const day = prefillDay && (timetableDays as readonly string[]).includes(prefillDay) ? prefillDay : defaultDay;
     setForm({ ...defaultForm, day, classId: prefillClassId ?? "" });
     setModalOpen(true);
@@ -822,6 +885,7 @@ const TimetableBuilder = ({
     if (!buildClassId || period.type !== "TEACHING") return;
     setEditTarget(null);
     setModalError(null);
+    setModalDayLocked(true);
     setForm({
       ...defaultForm,
       day: buildDay,
@@ -836,6 +900,7 @@ const TimetableBuilder = ({
   const openEdit = (lesson: TBLesson) => {
     setEditTarget(lesson);
     setModalError(null);
+    setModalDayLocked(false);
     setForm({
       id:        lesson.id,
       day:       lesson.day,
@@ -851,6 +916,10 @@ const TimetableBuilder = ({
 
   const handleSave = async () => {
     setModalError(null);
+    if (!form.periodTemplateId) {
+      setModalError("Select a teaching period before saving this lesson.");
+      return;
+    }
     if (!form.subjectId || !form.classId || !form.teacherId || !form.startTime || !form.endTime) {
       setModalError("Please fill in all fields.");
       return;
@@ -865,7 +934,7 @@ const TimetableBuilder = ({
         subjectId: form.subjectId,
         classId:   form.classId,
         teacherId: form.teacherId,
-        periodTemplateId: form.periodTemplateId || null,
+        periodTemplateId: form.periodTemplateId,
       };
       const res  = await fetch("/api/timetable", {
         method:  form.id ? "PUT" : "POST",
@@ -914,10 +983,6 @@ const TimetableBuilder = ({
     return classMatch && dayMatch;
   });
 
-  const totalLessons  = lessons.length;
-  const totalClasses  = new Set(lessons.map((l) => l.class.id)).size;
-  const totalTeachers = new Set(lessons.map((l) => l.teacher.id)).size;
-
   const gridClasses = selectedClass === "all"
     ? classes
     : classes.filter((c) => c.id === selectedClass);
@@ -945,24 +1010,6 @@ const TimetableBuilder = ({
         setPeriods={setPeriodTemplates}
         operatingRules={operatingRules}
       />
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {[
-          { label: "Total Lessons",   value: totalLessons,  icon: "📋", color: "bg-indigo-50 text-indigo-600"   },
-          { label: "Classes Covered", value: totalClasses,  icon: "🏫", color: "bg-emerald-50 text-emerald-600" },
-          { label: "Teachers Active", value: totalTeachers, icon: "👩‍🏫", color: "bg-violet-50 text-violet-600"   },
-          { label: "Days Scheduled",  value: new Set(lessons.map((l) => l.day)).size, icon: "📅", color: "bg-amber-50 text-amber-600" },
-        ].map((s) => (
-          <div key={s.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-lg ${s.color}`}>{s.icon}</div>
-            <div>
-              <p className="text-xl font-black text-gray-800 leading-none">{s.value}</p>
-              <p className="text-xs text-gray-400 font-medium mt-0.5">{s.label}</p>
-            </div>
-          </div>
-        ))}
-      </div>
 
       <div className="rounded-2xl border border-gray-100 bg-white p-3 shadow-sm">
         <div className="grid gap-2 sm:grid-cols-2">
@@ -1098,6 +1145,15 @@ const TimetableBuilder = ({
                           </div>
                         ) : (
                           <div className="space-y-2">
+                            {periodLessons.length > 1 ? (
+                              <div className="rounded-xl border border-rose-100 bg-rose-50 px-3 py-2 text-xs font-bold leading-5 text-rose-700">
+                                This period has more than one lesson. Edit or remove the duplicate so this class has one clear lesson for the period.
+                              </div>
+                            ) : (
+                              <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-bold leading-5 text-emerald-700">
+                                This period is occupied. Use Edit to correct it, or delete it before adding a replacement.
+                              </div>
+                            )}
                             {periodLessons.map((lesson) => {
                               const c = subjectColorMap[lesson.subject.id] ?? COLORS[0];
                               return (
@@ -1138,13 +1194,6 @@ const TimetableBuilder = ({
                                 </div>
                               );
                             })}
-                            <button
-                              type="button"
-                              onClick={() => openCreateForPeriod(period)}
-                              className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-gray-200 bg-white px-4 py-2.5 text-xs font-black text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50"
-                            >
-                              <Plus size={13} /> Add another lesson in this period
-                            </button>
                           </div>
                         )}
                       </div>
@@ -1511,6 +1560,7 @@ const TimetableBuilder = ({
             saving={saving}
             error={modalError}
             isEdit={!!editTarget}
+            lockDay={modalDayLocked}
           />
         )}
         {deleteTarget && (
