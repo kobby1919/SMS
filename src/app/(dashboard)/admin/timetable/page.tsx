@@ -9,14 +9,16 @@ import {
   getCachedTimetableLessons,
   getCachedTimetableTeachers,
 } from "@/src/lib/referenceData";
+import { getSchoolOperatingWindowStatus } from "@/src/lib/services/school-operating-hours";
 
 const TimetablePage = async () => {
   const { schoolId } = await requirePageSession(["admin"]);
 
-  const [classes, teachers, lessons] = await Promise.all([
+  const [classes, teachers, lessons, operatingRules] = await Promise.all([
     getCachedClasses(schoolId),
     getCachedTimetableTeachers(schoolId),
     getCachedTimetableLessons(schoolId),
+    getSchoolOperatingWindowStatus(schoolId),
   ]);
 
   const serializedLessons: TBLesson[] = lessons.map((l) => ({
@@ -63,7 +65,7 @@ const TimetablePage = async () => {
           </div>
           <div className="flex items-center gap-2">
             <div className="bg-indigo-50 text-indigo-600 text-xs font-bold px-4 py-2 rounded-xl border border-indigo-100">
-              Term 2 · 2025/26
+              {operatingRules.openingTime}-{operatingRules.closingTime}
             </div>
             <div className="bg-emerald-50 text-emerald-600 text-xs font-bold px-4 py-2 rounded-xl border border-emerald-100">
               {totalSubjects} Subjects
@@ -77,6 +79,13 @@ const TimetablePage = async () => {
         subjects={[]} // ✅ no longer needed globally — each teacher carries their own
         teachers={serializedTeachers}
         initialLessons={serializedLessons}
+        operatingRules={{
+          activeDays: operatingRules.activeDays,
+          openingTime: operatingRules.openingTime,
+          closingTime: operatingRules.closingTime,
+          timezone: operatingRules.timezone,
+          label: operatingRules.label,
+        }}
       />
     </div>
   );

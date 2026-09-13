@@ -1,6 +1,12 @@
 import prisma from "@/src/lib/prisma";
 import { Day } from "@/src/generated/prisma";
 import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
+import {
+  dateTimeToTimeString,
+  formatSchoolDayRange,
+  getSchoolOperatingWindowStatus,
+  isTimeRangeWithinWindow,
+} from "@/src/lib/services/school-operating-hours";
 
 export class TimetableServiceError extends Error {
   constructor(
@@ -74,6 +80,30 @@ async function validateLessonInput(
   const end = new Date(input.endTime);
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) {
     throw new TimetableServiceError("End time must be after start time.", 400);
+  }
+
+  const operatingRules = await getSchoolOperatingWindowStatus(schoolId);
+  if (!operatingRules.activeDays.includes(input.day)) {
+    throw new TimetableServiceError(
+      `This school operates ${formatSchoolDayRange(operatingRules.activeDays)}. ${input.day.toLowerCase()} is not an active timetable day.`,
+      400,
+    );
+  }
+
+  const lessonStartTime = dateTimeToTimeString(start);
+  const lessonEndTime = dateTimeToTimeString(end);
+  if (
+    !isTimeRangeWithinWindow(
+      lessonStartTime,
+      lessonEndTime,
+      operatingRules.openingTime,
+      operatingRules.closingTime,
+    )
+  ) {
+    throw new TimetableServiceError(
+      `Lesson time must stay within school hours (${operatingRules.openingTime}-${operatingRules.closingTime}, ${operatingRules.timezone}).`,
+      400,
+    );
   }
 
   const baseWhere = {

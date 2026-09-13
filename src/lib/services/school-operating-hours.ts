@@ -7,7 +7,7 @@ const DEFAULT_SCHOOL_HOURS = {
   activeDays: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"],
 };
 
-function timeToMinutes(value: string) {
+export function timeToMinutes(value: string) {
   const [hour = 0, minute = 0] = value.split(":").map(Number);
   return hour * 60 + minute;
 }
@@ -46,6 +46,34 @@ function dayRangeLabel(days: string[]) {
   }
 
   return normalized.map(readableDay).join(", ");
+}
+
+export function formatSchoolDayRange(days: string[]) {
+  return dayRangeLabel(days);
+}
+
+export function dateTimeToTimeString(value: Date) {
+  return `${String(value.getUTCHours()).padStart(2, "0")}:${String(value.getUTCMinutes()).padStart(2, "0")}`;
+}
+
+export function isTimeRangeWithinWindow(
+  startTime: string,
+  endTime: string,
+  openingTime: string,
+  closingTime: string,
+) {
+  const start = timeToMinutes(startTime);
+  const end = timeToMinutes(endTime);
+  const opening = timeToMinutes(openingTime);
+  const closing = timeToMinutes(closingTime);
+
+  if (end <= start) return false;
+
+  if (opening <= closing) {
+    return start >= opening && end <= closing;
+  }
+
+  return start >= opening || end <= closing;
 }
 
 async function getOrCreateSchoolOperatingSettings(schoolId: string) {

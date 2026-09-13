@@ -33,10 +33,17 @@ type Props = {
   subjects:       TBSubject[]; // kept for API compat but unused — teachers carry their own
   teachers:       TBTeacher[];
   initialLessons: TBLesson[];
+  operatingRules: {
+    activeDays: string[];
+    openingTime: string;
+    closingTime: string;
+    timezone: string;
+    label: string;
+  };
 };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"] as const;
+const SCHOOL_WEEK_DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"] as const;
 const DAY_LABELS: Record<string, string> = {
   MONDAY: "Mon", TUESDAY: "Tue", WEDNESDAY: "Wed", THURSDAY: "Thu", FRIDAY: "Fri",
 };
@@ -91,6 +98,24 @@ const timeToDateTime = (timeStr: string): string => {
   return d.toISOString();
 };
 
+const timeStringToMinutes = (timeStr: string) => {
+  const [h = 0, m = 0] = timeStr.split(":").map(Number);
+  return h * 60 + m;
+};
+
+const minutesToTimeString = (minutes: number) => {
+  const normalized = Math.max(0, Math.min(minutes, 23 * 60 + 59));
+  const h = Math.floor(normalized / 60);
+  const m = normalized % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+};
+
+const getDefaultEndTime = (openingTime: string, closingTime: string) => {
+  const opening = timeStringToMinutes(openingTime);
+  const closing = timeStringToMinutes(closingTime);
+  return minutesToTimeString(Math.min(opening + 40, closing));
+};
+
 // ─── Slot Form Types ──────────────────────────────────────────────────────────
 type SlotFormData = {
   id?:       number;
@@ -108,6 +133,8 @@ type SlotModalProps = {
   setForm:  (f: SlotFormData) => void;
   classes:  TBClass[];
   teachers: TBTeacher[];
+  days:     readonly string[];
+  operatingRules: Props["operatingRules"];
   onSave:   () => void;
   onClose:  () => void;
   saving:   boolean;
@@ -117,6 +144,7 @@ type SlotModalProps = {
 
 const SlotModal = ({
   form, setForm, classes, teachers,
+  days, operatingRules,
   onSave, onClose, saving, error, isEdit,
 }: SlotModalProps) => {
 
@@ -213,7 +241,7 @@ const SlotModal = ({
           <div>
             <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">Day</label>
             <div className="grid grid-cols-5 gap-1.5">
-              {DAYS.map((d) => (
+              {days.map((d) => (
                 <button
                   key={d}
                   type="button"
@@ -227,6 +255,9 @@ const SlotModal = ({
                 </button>
               ))}
             </div>
+            <p className="mt-2 rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold leading-5 text-blue-700">
+              Timetable days follow this school&apos;s active days: {operatingRules.label}.
+            </p>
           </div>
 
           {/* Period presets */}
@@ -258,6 +289,8 @@ const SlotModal = ({
               <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">Start Time</label>
               <input
                 type="time"
+                min={operatingRules.openingTime}
+                max={operatingRules.closingTime}
                 value={form.startTime}
                 onChange={(e) => setForm({ ...form, startTime: e.target.value })}
                 className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all"
@@ -267,6 +300,8 @@ const SlotModal = ({
               <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">End Time</label>
               <input
                 type="time"
+                min={operatingRules.openingTime}
+                max={operatingRules.closingTime}
                 value={form.endTime}
                 onChange={(e) => setForm({ ...form, endTime: e.target.value })}
                 className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all"
@@ -459,7 +494,9 @@ const DeleteModal = ({
 );
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-const TimetableBuilder = ({ classes, teachers, initialLessons }: Props) => {
+const TimetableBuilder = ({ classes, teachers, initialLessons, operatingRules }: Props) => {
+  const timetableDays = SCHOOL_WEEK_DAYS.filter((day) => operatingRules.activeDays.includes(day));
+  const defaultDay = timetableDays[0] ?? "MONDAY";
   const [lessons, setLessons]             = useState<TBLesson[]>(initialLessons);
   const [selectedClass, setSelectedClass] = useState<number | "all">("all");
   const [selectedDay, setSelectedDay]     = useState<string>("all");
@@ -478,9 +515,10 @@ const TimetableBuilder = ({ classes, teachers, initialLessons }: Props) => {
     new Map(teachers.flatMap((t) => t.subjects).map((s) => [s.id, s])).values()
   );
   const subjectColorMap = Object.fromEntries(allSubjects.map((s, i) => [s.id, getColor(i)]));
+  const defaultEndTime = getDefaultEndTime(operatingRules.openingTime, operatingRules.closingTime);
 
   const defaultForm: SlotFormData = {
-    day: "MONDAY", startTime: "07:30", endTime: "08:10",
+    day: defaultDay, startTime: operatingRules.openingTime, endTime: defaultEndTime,
     subjectId: "", classId: "", teacherId: "",
   };
   const [form, setForm] = useState<SlotFormData>(defaultForm);
@@ -493,7 +531,8 @@ const TimetableBuilder = ({ classes, teachers, initialLessons }: Props) => {
   const openCreate = (prefillDay?: string, prefillClassId?: number) => {
     setEditTarget(null);
     setModalError(null);
-    setForm({ ...defaultForm, day: prefillDay ?? "MONDAY", classId: prefillClassId ?? "" });
+    const day = prefillDay && (timetableDays as readonly string[]).includes(prefillDay) ? prefillDay : defaultDay;
+    setForm({ ...defaultForm, day, classId: prefillClassId ?? "" });
     setModalOpen(true);
   };
 
@@ -634,7 +673,7 @@ const TimetableBuilder = ({ classes, teachers, initialLessons }: Props) => {
                 className="w-full sm:w-auto pl-3 pr-7 py-2 sm:py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-300 appearance-none bg-white"
               >
                 <option value="all">All Days</option>
-                {DAYS.map((d) => <option key={d} value={d}>{DAY_FULL[d]}</option>)}
+                {timetableDays.map((d) => <option key={d} value={d}>{DAY_FULL[d]}</option>)}
               </select>
               <ChevronDown size={11} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
             </div>
@@ -684,7 +723,7 @@ const TimetableBuilder = ({ classes, teachers, initialLessons }: Props) => {
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50/60">
                     <th className="text-left px-4 py-3 text-xs font-black uppercase tracking-wider text-gray-400 w-32 sticky left-0 bg-gray-50/60">Class</th>
-                    {DAYS.map((day) => (
+                    {timetableDays.map((day) => (
                       <th key={day} className="text-center px-2 py-3 text-xs font-black uppercase tracking-wider text-gray-400">
                         <div>{DAY_FULL[day]}</div>
                         <div className="text-[10px] font-medium text-gray-300 normal-case mt-0.5">
@@ -703,7 +742,7 @@ const TimetableBuilder = ({ classes, teachers, initialLessons }: Props) => {
                           <span className="text-[10px] text-gray-400 font-medium">{cls.grade.level}</span>
                         </div>
                       </td>
-                      {DAYS.map((day) => {
+                      {timetableDays.map((day) => {
                         const cellLessons = getLessonsForCell(cls.id, day);
                         return (
                           <td key={day} className="px-1.5 py-1.5 align-top">
@@ -943,6 +982,8 @@ const TimetableBuilder = ({ classes, teachers, initialLessons }: Props) => {
             setForm={setForm}
             classes={classes}
             teachers={teachers}
+            days={timetableDays}
+            operatingRules={operatingRules}
             onSave={handleSave}
             onClose={() => setModalOpen(false)}
             saving={saving}
