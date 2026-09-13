@@ -38,6 +38,7 @@ const requiredDelegates = [
   "teacherEscalation",
   "teacherCorrectionRequest",
   "teacherAccountabilityAuditLog",
+  "schoolPeriodTemplate",
 ] as const;
 
 function hasRequiredDelegates(client: ReturnType<typeof prismaClientSingleton>) {
@@ -56,8 +57,13 @@ function hasRequiredDelegates(client: ReturnType<typeof prismaClientSingleton>) 
     "reviewedBy",
     "reviewNote",
   ].every((field) => reportFieldNames.has(field));
+  const lessonFields = runtimeModels?.Lesson?.fields ?? [];
+  const lessonFieldNames = new Set(lessonFields.map((field) => field.name));
+  const hasPeriodTemplateFields = ["periodTemplateId", "periodTemplate"].every((field) =>
+    lessonFieldNames.has(field),
+  );
 
-  return hasDelegates && hasReportWorkflowFields;
+  return hasDelegates && hasReportWorkflowFields && hasPeriodTemplateFields;
 }
 
 let prismaClient = customGlobal.prismaGlobal;
