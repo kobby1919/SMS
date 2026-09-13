@@ -1024,18 +1024,71 @@ const TimetableBuilder = ({
     }
   };
 
-  const filtered = lessons.filter((l) => {
-    const classMatch = selectedClass === "all" || l.class.id === selectedClass;
-    const dayMatch   = selectedDay   === "all" || l.day === selectedDay;
-    return classMatch && dayMatch;
-  });
-
   const gridClasses = selectedClass === "all"
     ? classes
     : classes.filter((c) => c.id === selectedClass);
 
-  const getLessonsForCell = (classId: number, day: string) =>
-    lessons.filter((l) => l.class.id === classId && l.day === day);
+  const reviewDays = selectedDay === "all" ? timetableDays : timetableDays.filter((day) => day === selectedDay);
+  const reviewClasses = gridClasses;
+  const reviewLessonCount = lessons.filter((lesson) => {
+    const classMatch = selectedClass === "all" || lesson.class.id === selectedClass;
+    const dayMatch = selectedDay === "all" || lesson.day === selectedDay;
+    return classMatch && dayMatch;
+  }).length;
+  const reviewNonTeachingPeriods = sortedActivePeriods.filter((period) => period.type !== "TEACHING").length;
+  const reviewDayClassCount = reviewDays.length * reviewClasses.length;
+
+  const getLessonForReviewPeriod = (classId: number, day: string, period: TBPeriodTemplate) =>
+    lessons.find((lesson) => {
+      const sameClassAndDay = lesson.class.id === classId && lesson.day === day;
+      if (!sameClassAndDay) return false;
+      const sameTemplate = lesson.periodTemplate?.id === period.id;
+      const sameTime =
+        formatTime(lesson.startTime) === period.startTime &&
+        formatTime(lesson.endTime) === period.endTime;
+      return sameTemplate || sameTime;
+    });
+
+  const getPeriodStyle = (type: TBPeriodTemplate["type"]) => {
+    switch (type) {
+      case "BREAK":
+        return {
+          wrap: "border-sky-100 bg-sky-50 text-sky-700",
+          dot: "bg-sky-400",
+          label: "Break",
+        };
+      case "LUNCH":
+        return {
+          wrap: "border-amber-100 bg-amber-50 text-amber-700",
+          dot: "bg-amber-400",
+          label: "Lunch",
+        };
+      case "ASSEMBLY":
+        return {
+          wrap: "border-violet-100 bg-violet-50 text-violet-700",
+          dot: "bg-violet-400",
+          label: "Assembly",
+        };
+      case "CLOSING":
+        return {
+          wrap: "border-slate-200 bg-slate-50 text-slate-600",
+          dot: "bg-slate-400",
+          label: "Closing",
+        };
+      case "OTHER":
+        return {
+          wrap: "border-gray-200 bg-gray-50 text-gray-600",
+          dot: "bg-gray-400",
+          label: "School activity",
+        };
+      default:
+        return {
+          wrap: "border-gray-100 bg-white text-gray-700",
+          dot: "bg-gray-300",
+          label: "Lesson",
+        };
+    }
+  };
 
   const getLessonsForPeriod = (period: TBPeriodTemplate) => {
     if (!buildClassId) return [];
@@ -1264,60 +1317,82 @@ const TimetableBuilder = ({
       {builderMode === "review" && (
         <>
       {/* Toolbar */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-        <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
-          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:items-center">
-            <div className="flex items-center gap-1.5 text-gray-400">
-              <Filter size={13} />
-              <span className="text-xs font-bold uppercase tracking-wide">Filter</span>
+      <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-xl bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700">
+                Final timetable view only
+              </span>
+              <span className="rounded-xl bg-gray-50 px-3 py-2 text-xs font-bold text-gray-500">
+                Includes lessons, breaks, lunch, assembly and closing periods
+              </span>
             </div>
-            <div className="relative">
-              <select
-                value={selectedClass}
-                onChange={(e) => setSelectedClass(e.target.value === "all" ? "all" : parseInt(e.target.value))}
-                className="w-full sm:w-auto pl-3 pr-7 py-2 sm:py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-300 appearance-none bg-white"
-              >
-                <option value="all">All Classes</option>
-                {classes.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-              <ChevronDown size={11} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-            </div>
-            <div className="relative">
-              <select
-                value={selectedDay}
-                onChange={(e) => setSelectedDay(e.target.value)}
-                className="w-full sm:w-auto pl-3 pr-7 py-2 sm:py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-300 appearance-none bg-white"
-              >
-                <option value="all">All Days</option>
-                {timetableDays.map((d) => <option key={d} value={d}>{DAY_FULL[d]}</option>)}
-              </select>
-              <ChevronDown size={11} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-            </div>
-            {(selectedClass !== "all" || selectedDay !== "all") && (
-              <button
-                onClick={() => { setSelectedClass("all"); setSelectedDay("all"); }}
-                className="px-2.5 py-1.5 rounded-lg text-xs font-bold text-rose-500 bg-rose-50 hover:bg-rose-100 transition-colors"
-              >Clear</button>
-            )}
+            <p className="mt-2 text-xs font-semibold leading-5 text-gray-400">
+              Review the complete school day here. Use Build by Class when a lesson needs to be changed.
+            </p>
           </div>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-            <p className="rounded-xl bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">
-              Final timetable view only
-            </p>
-            <p className="lg:hidden rounded-xl bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-600">
-              List view is used automatically on smaller screens.
-            </p>
-            <div className="hidden lg:flex bg-gray-100 p-1 rounded-xl gap-1">
+
+          <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+              <div className="flex items-center gap-1.5 text-gray-400">
+                <Filter size={13} />
+                <span className="text-xs font-bold uppercase tracking-wide">Filter</span>
+              </div>
+              <div className="relative">
+                <select
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value === "all" ? "all" : parseInt(e.target.value))}
+                  className="w-full min-w-40 appearance-none rounded-xl border border-gray-200 bg-white py-2 pl-3 pr-8 text-xs font-bold text-gray-600 outline-none focus:ring-2 focus:ring-indigo-300"
+                >
+                  <option value="all">All Classes</option>
+                  {classes.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
+                <ChevronDown size={11} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              </div>
+              <div className="relative">
+                <select
+                  value={selectedDay}
+                  onChange={(e) => setSelectedDay(e.target.value)}
+                  className="w-full min-w-36 appearance-none rounded-xl border border-gray-200 bg-white py-2 pl-3 pr-8 text-xs font-bold text-gray-600 outline-none focus:ring-2 focus:ring-indigo-300"
+                >
+                  <option value="all">All Days</option>
+                  {timetableDays.map((d) => <option key={d} value={d}>{DAY_FULL[d]}</option>)}
+                </select>
+                <ChevronDown size={11} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              </div>
+              {(selectedClass !== "all" || selectedDay !== "all") && (
+                <button
+                  onClick={() => { setSelectedClass("all"); setSelectedDay("all"); }}
+                  className="rounded-xl bg-rose-50 px-3 py-2 text-xs font-bold text-rose-500 transition-colors hover:bg-rose-100"
+                >Clear</button>
+              )}
+            </div>
+            <div className="hidden bg-gray-100 p-1 rounded-xl gap-1 lg:flex">
               {(["grid", "list"] as const).map((v) => (
                 <button
                   key={v}
                   onClick={() => setViewMode(v)}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all capitalize
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all capitalize
                     ${viewMode === v ? "bg-white text-indigo-600 shadow-sm" : "text-gray-400 hover:text-gray-600"}`}
                 >{v}</button>
               ))}
             </div>
           </div>
+        </div>
+
+        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { label: "Classes shown", value: reviewClasses.length },
+            { label: "Days shown", value: reviewDays.length },
+            { label: "Teaching lessons", value: reviewLessonCount },
+            { label: "Non-teaching periods", value: reviewNonTeachingPeriods },
+          ].map((item) => (
+            <div key={item.label} className="rounded-xl border border-gray-100 bg-gray-50 px-3 py-2">
+              <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">{item.label}</p>
+              <p className="mt-1 text-lg font-black text-gray-900">{item.value}</p>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -1332,11 +1407,11 @@ const TimetableBuilder = ({
             className="hidden lg:block bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
           >
             <div className="w-full overflow-x-auto">
-              <table className="w-full min-w-[700px]">
+              <table className="w-full min-w-[900px]">
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50/60">
-                    <th className="text-left px-4 py-3 text-xs font-black uppercase tracking-wider text-gray-400 w-32 sticky left-0 bg-gray-50/60">Class</th>
-                    {timetableDays.map((day) => (
+                    <th className="sticky left-0 w-36 bg-gray-50/95 px-4 py-3 text-left text-xs font-black uppercase tracking-wider text-gray-400">Class</th>
+                    {reviewDays.map((day) => (
                       <th key={day} className="text-center px-2 py-3 text-xs font-black uppercase tracking-wider text-gray-400">
                         <div>{DAY_FULL[day]}</div>
                         <div className="text-[10px] font-medium text-gray-300 normal-case mt-0.5">
@@ -1347,32 +1422,59 @@ const TimetableBuilder = ({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {gridClasses.map((cls) => (
+                  {reviewClasses.map((cls) => (
                     <tr key={cls.id} className="hover:bg-gray-50/40 transition-colors group">
-                      <td className="px-4 py-2 sticky left-0 bg-white group-hover:bg-gray-50/40">
+                      <td className="sticky left-0 bg-white px-4 py-3 group-hover:bg-gray-50/95">
                         <div className="flex flex-col">
-                          <span className="font-black text-sm text-gray-800">{cls.name}</span>
+                          <span className="text-sm font-black text-gray-900">{cls.name}</span>
                           <span className="text-[10px] text-gray-400 font-medium">{cls.grade.level}</span>
                         </div>
                       </td>
-                      {timetableDays.map((day) => {
-                        const cellLessons = getLessonsForCell(cls.id, day);
+                      {reviewDays.map((day) => {
                         return (
-                          <td key={day} className="px-1.5 py-1.5 align-top">
-                            <div className="flex flex-col gap-1 min-h-[56px]">
-                              {cellLessons.map((lesson) => {
+                          <td key={day} className="align-top px-2 py-2">
+                            <div className="flex min-h-[90px] flex-col gap-1.5">
+                              {sortedActivePeriods.map((period) => {
+                                const lesson = period.type === "TEACHING"
+                                  ? getLessonForReviewPeriod(cls.id, day, period)
+                                  : null;
+
+                                if (!lesson) {
+                                  const style = getPeriodStyle(period.type);
+                                  return (
+                                    <div
+                                      key={period.id}
+                                      className={`rounded-xl border px-2.5 py-2 ${style.wrap}`}
+                                    >
+                                      <div className="flex items-center justify-between gap-2">
+                                        <span className="text-[10px] font-black uppercase tracking-wide">
+                                          {period.type === "TEACHING" ? "Open teaching slot" : style.label}
+                                        </span>
+                                        <span className="whitespace-nowrap font-mono text-[10px] font-bold opacity-70">
+                                          {period.startTime}-{period.endTime}
+                                        </span>
+                                      </div>
+                                      <p className="mt-1 truncate text-[11px] font-black">
+                                        {period.type === "TEACHING" ? "No lesson assigned" : period.name}
+                                      </p>
+                                    </div>
+                                  );
+                                }
+
                                 const c = subjectColorMap[lesson.subject.id] ?? COLORS[0];
                                 return (
                                   <motion.div
-                                    key={lesson.id}
+                                    key={`${period.id}-${lesson.id}`}
                                     layout
-                                    className={`rounded-lg px-2 py-1.5 border-l-[3px] ${c.bg} ${c.border.replace("border-", "border-l-")} group/slot relative`}
+                                    className={`rounded-xl border-l-[3px] px-2.5 py-2 ${c.bg} ${c.border.replace("border-", "border-l-")}`}
                                   >
-                                    <p className={`text-[11px] font-bold leading-tight ${c.text}`}>{lesson.subject.name}</p>
-                                    <p className={`text-[9px] font-semibold opacity-60 ${c.text}`}>
-                                      {formatTime(lesson.startTime)}–{formatTime(lesson.endTime)}
-                                    </p>
-                                    <p className={`text-[9px] font-medium opacity-50 ${c.text} truncate`}>
+                                    <div className="flex items-center justify-between gap-2">
+                                      <p className={`truncate text-xs font-black ${c.text}`}>{lesson.subject.name}</p>
+                                      <span className={`whitespace-nowrap font-mono text-[10px] font-bold opacity-70 ${c.text}`}>
+                                        {period.startTime}-{period.endTime}
+                                      </span>
+                                    </div>
+                                    <p className={`mt-1 truncate text-[10px] font-semibold opacity-70 ${c.text}`}>
                                       {lesson.teacher.name} {lesson.teacher.surname}
                                     </p>
                                   </motion.div>
@@ -1404,122 +1506,113 @@ const TimetableBuilder = ({
             transition={{ duration: 0.2 }}
             className={`${viewMode === "grid" ? "lg:hidden" : ""} bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden`}
           >
-            <div className="md:hidden">
-              {filtered.length === 0 ? (
+            <div className="divide-y divide-gray-100">
+              {reviewDayClassCount === 0 ? (
                 <div className="flex flex-col items-center justify-center px-4 py-14 text-center">
-                  <Calendar size={32} className="text-gray-200 mb-3" />
-                  <p className="text-gray-400 font-semibold text-sm">No lessons match your filters</p>
+                  <Calendar size={32} className="mb-3 text-gray-200" />
+                  <p className="text-sm font-semibold text-gray-400">No timetable records match your filters</p>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-50">
-                  {filtered.map((lesson) => {
-                    const c = subjectColorMap[lesson.subject.id] ?? COLORS[0];
-                    return (
-                      <motion.div key={lesson.id} layout className="p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${c.dot}`} />
-                              <h3 className="font-black text-sm text-gray-800 truncate">
-                                {lesson.subject.name}
-                              </h3>
+                reviewDays.map((day) => (
+                  <section key={day} className="p-4">
+                    <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                      <div>
+                        <p className="text-[11px] font-black uppercase tracking-wider text-gray-400">School day</p>
+                        <h3 className="text-base font-black text-gray-900">{DAY_FULL[day]}</h3>
+                      </div>
+                      <p className="text-xs font-bold text-gray-400">
+                        {reviewClasses.length} classes · {sortedActivePeriods.length} periods
+                      </p>
+                    </div>
+
+                    <div className="grid gap-3 xl:grid-cols-2">
+                      {reviewClasses.map((cls) => (
+                        <motion.div
+                          key={`${day}-${cls.id}`}
+                          layout
+                          className="rounded-2xl border border-gray-100 bg-white p-3 shadow-sm"
+                        >
+                          <div className="mb-3 flex items-center justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-black text-gray-900">{cls.name}</p>
+                              <p className="text-xs font-semibold text-gray-400">{cls.grade.level}</p>
                             </div>
-                            <div className="mt-2 flex flex-wrap gap-1.5">
-                              <span className={`text-[11px] font-bold px-2 py-1 rounded-lg ${c.bg} ${c.text}`}>
-                                {lesson.class.name}
-                              </span>
-                              <span className="text-[11px] font-bold px-2 py-1 rounded-lg bg-gray-100 text-gray-500">
-                                {DAY_FULL[lesson.day]}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="mt-3 grid grid-cols-1 gap-2 text-xs text-gray-500">
-                          <div className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-2">
-                            <span className="font-bold text-gray-400">Time</span>
-                            <span className="font-mono font-bold text-gray-600">
-                              {formatTime(lesson.startTime)} - {formatTime(lesson.endTime)}
+                            <span className="rounded-full bg-gray-50 px-2.5 py-1 text-[11px] font-black text-gray-500">
+                              {lessons.filter((lesson) => lesson.class.id === cls.id && lesson.day === day).length} lessons
                             </span>
                           </div>
-                          <div className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-2">
-                            <span className="font-bold text-gray-400">Duration</span>
-                            <span className="font-bold text-gray-600">
-                              {getDuration(lesson.startTime, lesson.endTime)}
-                            </span>
+
+                          <div className="space-y-2">
+                            {sortedActivePeriods.map((period) => {
+                              const lesson = period.type === "TEACHING"
+                                ? getLessonForReviewPeriod(cls.id, day, period)
+                                : null;
+                              const periodStyle = getPeriodStyle(period.type);
+
+                              if (!lesson) {
+                                return (
+                                  <div
+                                    key={period.id}
+                                    className={`rounded-xl border px-3 py-2 ${periodStyle.wrap}`}
+                                  >
+                                    <div className="flex items-start justify-between gap-3">
+                                      <div className="min-w-0">
+                                        <div className="flex items-center gap-2">
+                                          <span className={`h-2 w-2 rounded-full ${periodStyle.dot}`} />
+                                          <p className="truncate text-sm font-black">
+                                            {period.type === "TEACHING" ? "No lesson assigned" : period.name}
+                                          </p>
+                                        </div>
+                                        <p className="mt-1 text-[11px] font-bold opacity-70">
+                                          {period.type === "TEACHING" ? "Open teaching slot" : periodStyle.label}
+                                        </p>
+                                      </div>
+                                      <span className="whitespace-nowrap font-mono text-[11px] font-black opacity-70">
+                                        {period.startTime}-{period.endTime}
+                                      </span>
+                                    </div>
+                                  </div>
+                                );
+                              }
+
+                              const c = subjectColorMap[lesson.subject.id] ?? COLORS[0];
+                              return (
+                                <div
+                                  key={`${period.id}-${lesson.id}`}
+                                  className={`rounded-xl border px-3 py-2 ${c.bg} ${c.border}`}
+                                >
+                                  <div className="flex items-start justify-between gap-3">
+                                    <div className="min-w-0">
+                                      <div className="flex items-center gap-2">
+                                        <span className={`h-2 w-2 rounded-full ${c.dot}`} />
+                                        <p className={`truncate text-sm font-black ${c.text}`}>
+                                          {lesson.subject.name}
+                                        </p>
+                                      </div>
+                                      <p className={`mt-1 truncate text-[11px] font-bold opacity-70 ${c.text}`}>
+                                        {lesson.teacher.name} {lesson.teacher.surname}
+                                      </p>
+                                    </div>
+                                    <span className={`whitespace-nowrap font-mono text-[11px] font-black opacity-70 ${c.text}`}>
+                                      {period.startTime}-{period.endTime}
+                                    </span>
+                                  </div>
+                                </div>
+                              );
+                            })}
                           </div>
-                          <div className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-2">
-                            <span className="font-bold text-gray-400">Teacher</span>
-                            <span className="min-w-0 truncate text-right font-bold text-gray-600">
-                              {lesson.teacher.name} {lesson.teacher.surname}
-                            </span>
-                          </div>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </section>
+                ))
               )}
             </div>
-
-            <div className="hidden md:block w-full overflow-x-auto">
-              <table className="w-full min-w-[780px]">
-                <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50/60">
-                    {["Subject", "Class", "Day", "Time", "Duration", "Teacher"].map((h) => (
-                      <th key={h} className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {filtered.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="text-center py-16">
-                        <Calendar size={32} className="text-gray-200 mx-auto mb-3" />
-                        <p className="text-gray-400 font-semibold text-sm">No lessons match your filters</p>
-                      </td>
-                    </tr>
-                  ) : (
-                    filtered.map((lesson) => {
-                      const c = subjectColorMap[lesson.subject.id] ?? COLORS[0];
-                      return (
-                        <motion.tr key={lesson.id} layout className="hover:bg-indigo-50/20 transition-colors group">
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-2">
-                              <span className={`w-2 h-2 rounded-full shrink-0 ${c.dot}`} />
-                              <span className="font-bold text-sm text-gray-800">{lesson.subject.name}</span>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3">
-                            <span className={`text-xs font-bold px-2 py-1 rounded-lg ${c.bg} ${c.text}`}>{lesson.class.name}</span>
-                          </td>
-                          <td className="px-4 py-3">
-                            <span className="text-sm text-gray-500 font-semibold">{DAY_FULL[lesson.day]}</span>
-                          </td>
-                          <td className="px-4 py-3">
-                            <span className="text-sm text-gray-500 font-mono font-semibold">
-                              {formatTime(lesson.startTime)} – {formatTime(lesson.endTime)}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3">
-                            <span className="text-xs font-bold px-2 py-1 rounded-lg bg-gray-100 text-gray-500">
-                              {getDuration(lesson.startTime, lesson.endTime)}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3">
-                            <span className="text-sm text-gray-500 font-medium">
-                              {lesson.teacher.name} {lesson.teacher.surname}
-                            </span>
-                          </td>
-                        </motion.tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
-            {filtered.length > 0 && (
+            {reviewDayClassCount > 0 && (
               <div className="px-4 py-3 border-t border-gray-100 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-xs text-gray-400 font-medium">Showing {filtered.length} of {lessons.length} lessons</p>
+                <p className="text-xs text-gray-400 font-medium">
+                  Showing {reviewLessonCount} teaching lessons across {reviewDayClassCount} class-day views
+                </p>
                 <p className="text-xs font-bold text-gray-400">Use Build by Class to make changes.</p>
               </div>
             )}
