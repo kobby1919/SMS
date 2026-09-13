@@ -265,7 +265,7 @@ const SlotModal = ({
               <div className="rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-2.5">
                 <p className="text-sm font-black text-indigo-700">{DAY_FULL[form.day]}</p>
                 <p className="mt-1 text-xs font-semibold leading-5 text-indigo-600">
-                  This lesson is being added from Build by Class, so it follows the selected timetable day.
+                  This lesson is managed from Build by Class, so it follows the selected timetable day.
                 </p>
               </div>
             ) : (
@@ -953,10 +953,10 @@ const TimetableBuilder = ({
     setModalOpen(true);
   };
 
-  const openEdit = (lesson: TBLesson) => {
+  const openEdit = (lesson: TBLesson, lockContext = false) => {
     setEditTarget(lesson);
     setModalError(null);
-    setModalDayLocked(false);
+    setModalDayLocked(lockContext);
     setForm({
       id:        lesson.id,
       day:       lesson.day,
@@ -1234,7 +1234,7 @@ const TimetableBuilder = ({
                                   <div className="flex items-center gap-2">
                                     <button
                                       type="button"
-                                      onClick={() => openEdit(lesson)}
+                                      onClick={() => openEdit(lesson, true)}
                                       className="flex h-9 items-center justify-center gap-2 rounded-lg bg-amber-50 px-3 text-xs font-black text-amber-700 hover:bg-amber-100"
                                     >
                                       <Pencil size={13} /> Edit
