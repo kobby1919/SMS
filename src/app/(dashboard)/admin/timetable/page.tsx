@@ -8,11 +8,11 @@ import { Calendar } from "lucide-react";
 import {
   getCachedClasses,
   getCachedPeriodTemplates,
-  getCachedTimetableLessons,
   getCachedTimetableTeachers,
 } from "@/src/lib/referenceData";
 import { getSchoolOperatingWindowStatus } from "@/src/lib/services/school-operating-hours";
 import { getTimetableHealthSummary } from "@/src/lib/services/timetable-health";
+import { listTimetableLessons } from "@/src/lib/services/timetable";
 
 const TimetablePage = async () => {
   const { schoolId } = await requirePageSession(["admin"]);
@@ -20,7 +20,7 @@ const TimetablePage = async () => {
   const [classes, teachers, lessons, periodTemplates, operatingRules, timetableHealth] = await Promise.all([
     getCachedClasses(schoolId),
     getCachedTimetableTeachers(schoolId),
-    getCachedTimetableLessons(schoolId),
+    listTimetableLessons(schoolId),
     getCachedPeriodTemplates(schoolId),
     getSchoolOperatingWindowStatus(schoolId),
     getTimetableHealthSummary(schoolId),
@@ -30,8 +30,8 @@ const TimetablePage = async () => {
     id:        l.id,
     name:      l.name,
     day:       l.day,
-    startTime: l.startTime,
-    endTime:   l.endTime,
+    startTime: l.startTime.toISOString(),
+    endTime:   l.endTime.toISOString(),
     subject:   l.subject,
     class:     l.class,
     teacher:   l.teacher,

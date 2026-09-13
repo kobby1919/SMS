@@ -928,15 +928,6 @@ const TimetableBuilder = ({
     setTimeout(() => setToast(null), 3500);
   };
 
-  const openCreate = (prefillDay?: string, prefillClassId?: number) => {
-    setEditTarget(null);
-    setModalError(null);
-    setModalDayLocked(false);
-    const day = prefillDay && (timetableDays as readonly string[]).includes(prefillDay) ? prefillDay : defaultDay;
-    setForm({ ...defaultForm, day, classId: prefillClassId ?? "" });
-    setModalOpen(true);
-  };
-
   const openCreateForPeriod = (period: TBPeriodTemplate) => {
     if (!buildClassId || period.type !== "TEACHING") return;
     setEditTarget(null);
@@ -1310,6 +1301,9 @@ const TimetableBuilder = ({
             )}
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <p className="rounded-xl bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">
+              Final timetable view only
+            </p>
             <p className="lg:hidden rounded-xl bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-600">
               List view is used automatically on smaller screens.
             </p>
@@ -1323,12 +1317,6 @@ const TimetableBuilder = ({
                 >{v}</button>
               ))}
             </div>
-            <button
-              onClick={() => openCreate()}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition-all shadow-sm"
-            >
-              <Plus size={13} />Add Slot
-            </button>
           </div>
         </div>
       </div>
@@ -1387,29 +1375,9 @@ const TimetableBuilder = ({
                                     <p className={`text-[9px] font-medium opacity-50 ${c.text} truncate`}>
                                       {lesson.teacher.name} {lesson.teacher.surname}
                                     </p>
-                                    <div className="absolute top-0.5 right-0.5 hidden group-hover/slot:flex gap-0.5">
-                                      <button
-                                        onClick={() => openEdit(lesson)}
-                                        className="w-5 h-5 rounded bg-white/80 backdrop-blur flex items-center justify-center hover:bg-white shadow-sm transition-all"
-                                      >
-                                        <Pencil size={9} className="text-gray-600" />
-                                      </button>
-                                      <button
-                                        onClick={() => setDeleteTarget(lesson)}
-                                        className="w-5 h-5 rounded bg-white/80 backdrop-blur flex items-center justify-center hover:bg-rose-50 shadow-sm transition-all"
-                                      >
-                                        <Trash2 size={9} className="text-rose-500" />
-                                      </button>
-                                    </div>
                                   </motion.div>
                                 );
                               })}
-                              <button
-                                onClick={() => openCreate(day, cls.id)}
-                                className="w-full min-h-[28px] rounded-lg border border-dashed border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/50 flex items-center justify-center transition-all opacity-0 hover:opacity-100 focus:opacity-100 group-hover:opacity-100"
-                              >
-                                <Plus size={11} className="text-indigo-400" />
-                              </button>
                             </div>
                           </td>
                         );
@@ -1441,9 +1409,6 @@ const TimetableBuilder = ({
                 <div className="flex flex-col items-center justify-center px-4 py-14 text-center">
                   <Calendar size={32} className="text-gray-200 mb-3" />
                   <p className="text-gray-400 font-semibold text-sm">No lessons match your filters</p>
-                  <button onClick={() => openCreate()} className="mt-3 text-xs text-indigo-500 font-bold hover:underline">
-                    + Add a lesson slot
-                  </button>
                 </div>
               ) : (
                 <div className="divide-y divide-gray-50">
@@ -1467,22 +1432,6 @@ const TimetableBuilder = ({
                                 {DAY_FULL[lesson.day]}
                               </span>
                             </div>
-                          </div>
-                          <div className="flex shrink-0 items-center gap-1.5">
-                            <button
-                              onClick={() => openEdit(lesson)}
-                              className="w-9 h-9 rounded-lg bg-amber-50 hover:bg-amber-100 flex items-center justify-center transition-colors"
-                              title="Edit lesson"
-                            >
-                              <Pencil size={14} className="text-amber-600" />
-                            </button>
-                            <button
-                              onClick={() => setDeleteTarget(lesson)}
-                              className="w-9 h-9 rounded-lg bg-rose-50 hover:bg-rose-100 flex items-center justify-center transition-colors"
-                              title="Delete lesson"
-                            >
-                              <Trash2 size={14} className="text-rose-500" />
-                            </button>
                           </div>
                         </div>
                         <div className="mt-3 grid grid-cols-1 gap-2 text-xs text-gray-500">
@@ -1516,7 +1465,7 @@ const TimetableBuilder = ({
               <table className="w-full min-w-[780px]">
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50/60">
-                    {["Subject", "Class", "Day", "Time", "Duration", "Teacher", "Actions"].map((h) => (
+                    {["Subject", "Class", "Day", "Time", "Duration", "Teacher"].map((h) => (
                       <th key={h} className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">{h}</th>
                     ))}
                   </tr>
@@ -1524,12 +1473,9 @@ const TimetableBuilder = ({
                 <tbody className="divide-y divide-gray-50">
                   {filtered.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="text-center py-16">
+                      <td colSpan={6} className="text-center py-16">
                         <Calendar size={32} className="text-gray-200 mx-auto mb-3" />
                         <p className="text-gray-400 font-semibold text-sm">No lessons match your filters</p>
-                        <button onClick={() => openCreate()} className="mt-3 text-xs text-indigo-500 font-bold hover:underline">
-                          + Add a lesson slot
-                        </button>
                       </td>
                     </tr>
                   ) : (
@@ -1564,22 +1510,6 @@ const TimetableBuilder = ({
                               {lesson.teacher.name} {lesson.teacher.surname}
                             </span>
                           </td>
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-1.5 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                              <button
-                                onClick={() => openEdit(lesson)}
-                                className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-amber-50 flex items-center justify-center transition-colors"
-                              >
-                                <Pencil size={13} className="text-amber-600" />
-                              </button>
-                              <button
-                                onClick={() => setDeleteTarget(lesson)}
-                                className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-rose-50 flex items-center justify-center transition-colors"
-                              >
-                                <Trash2 size={13} className="text-rose-500" />
-                              </button>
-                            </div>
-                          </td>
                         </motion.tr>
                       );
                     })
@@ -1590,9 +1520,7 @@ const TimetableBuilder = ({
             {filtered.length > 0 && (
               <div className="px-4 py-3 border-t border-gray-100 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-xs text-gray-400 font-medium">Showing {filtered.length} of {lessons.length} lessons</p>
-                <button onClick={() => openCreate()} className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-700">
-                  <Plus size={12} />Add slot
-                </button>
+                <p className="text-xs font-bold text-gray-400">Use Build by Class to make changes.</p>
               </div>
             )}
           </motion.div>
