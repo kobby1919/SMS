@@ -773,6 +773,9 @@ const TimetableBuilder = ({
   const defaultDay = timetableDays[0] ?? "MONDAY";
   const [lessons, setLessons]             = useState<TBLesson[]>(initialLessons);
   const [periodTemplates, setPeriodTemplates] = useState<TBPeriodTemplate[]>(initialPeriodTemplates);
+  const [builderMode, setBuilderMode]   = useState<"build" | "review">("build");
+  const [buildClassId, setBuildClassId] = useState<number | "">(classes[0]?.id ?? "");
+  const [buildDay, setBuildDay]         = useState<string>(defaultDay);
   const [selectedClass, setSelectedClass] = useState<number | "all">("all");
   const [selectedDay, setSelectedDay]     = useState<string>("all");
   const [viewMode, setViewMode]           = useState<"grid" | "list">("grid");
@@ -797,6 +800,10 @@ const TimetableBuilder = ({
     subjectId: "", classId: "", teacherId: "", periodTemplateId: "",
   };
   const [form, setForm] = useState<SlotFormData>(defaultForm);
+  const sortedActivePeriods = [...periodTemplates]
+    .filter((period) => period.isActive)
+    .sort((a, b) => a.order - b.order || a.startTime.localeCompare(b.startTime));
+  const selectedBuildClass = classes.find((item) => item.id === buildClassId);
 
   const showToast = (msg: string, type: "success" | "error") => {
     setToast({ msg, type });
@@ -808,6 +815,21 @@ const TimetableBuilder = ({
     setModalError(null);
     const day = prefillDay && (timetableDays as readonly string[]).includes(prefillDay) ? prefillDay : defaultDay;
     setForm({ ...defaultForm, day, classId: prefillClassId ?? "" });
+    setModalOpen(true);
+  };
+
+  const openCreateForPeriod = (period: TBPeriodTemplate) => {
+    if (!buildClassId || period.type !== "TEACHING") return;
+    setEditTarget(null);
+    setModalError(null);
+    setForm({
+      ...defaultForm,
+      day: buildDay,
+      classId: buildClassId,
+      periodTemplateId: period.id,
+      startTime: period.startTime,
+      endTime: period.endTime,
+    });
     setModalOpen(true);
   };
 
@@ -903,6 +925,19 @@ const TimetableBuilder = ({
   const getLessonsForCell = (classId: number, day: string) =>
     lessons.filter((l) => l.class.id === classId && l.day === day);
 
+  const getLessonsForPeriod = (period: TBPeriodTemplate) => {
+    if (!buildClassId) return [];
+    return lessons.filter((lesson) => {
+      const sameClassAndDay = lesson.class.id === buildClassId && lesson.day === buildDay;
+      if (!sameClassAndDay) return false;
+      const sameTemplate = lesson.periodTemplate?.id === period.id;
+      const sameTime =
+        formatTime(lesson.startTime) === period.startTime &&
+        formatTime(lesson.endTime) === period.endTime;
+      return sameTemplate || sameTime;
+    });
+  };
+
   return (
     <div className="flex flex-col gap-5">
       <PeriodTemplatePanel
@@ -929,6 +964,208 @@ const TimetableBuilder = ({
         ))}
       </div>
 
+      <div className="rounded-2xl border border-gray-100 bg-white p-3 shadow-sm">
+        <div className="grid gap-2 sm:grid-cols-2">
+          {[
+            {
+              value: "build" as const,
+              title: "Build by Class",
+              text: "Choose a class and fill the day period by period.",
+            },
+            {
+              value: "review" as const,
+              title: "Review All",
+              text: "Inspect the full timetable across classes and days.",
+            },
+          ].map((mode) => (
+            <button
+              key={mode.value}
+              type="button"
+              onClick={() => setBuilderMode(mode.value)}
+              className={`rounded-xl border px-4 py-3 text-left transition-all ${
+                builderMode === mode.value
+                  ? "border-gray-900 bg-gray-950 text-white shadow-sm"
+                  : "border-gray-100 bg-gray-50 text-gray-600 hover:border-gray-200"
+              }`}
+            >
+              <span className="block text-sm font-black">{mode.title}</span>
+              <span className={`mt-1 block text-xs font-semibold leading-5 ${
+                builderMode === mode.value ? "text-gray-300" : "text-gray-400"
+              }`}>
+                {mode.text}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {builderMode === "build" && (
+        <section className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+          <div className="border-b border-gray-100 p-4">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <p className="text-xs font-black uppercase tracking-wide text-gray-400">Build by class</p>
+                <h2 className="mt-1 text-lg font-black text-gray-900">
+                  {selectedBuildClass ? `${selectedBuildClass.name} - ${DAY_FULL[buildDay]}` : "Select a class"}
+                </h2>
+                <p className="mt-1 text-sm font-semibold leading-6 text-gray-500">
+                  Fill teaching periods only. Break, assembly, lunch, and closing periods structure the day.
+                </p>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2 lg:min-w-[420px]">
+                <div className="relative">
+                  <select
+                    value={buildClassId}
+                    onChange={(e) => setBuildClassId(e.target.value ? parseInt(e.target.value) : "")}
+                    className="w-full appearance-none rounded-xl border border-gray-200 bg-white px-3 py-2.5 pr-8 text-sm font-black text-gray-700 outline-none focus:ring-2 focus:ring-indigo-300"
+                  >
+                    <option value="">Choose class</option>
+                    {classes.map((cls) => (
+                      <option key={cls.id} value={cls.id}>{cls.name}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                </div>
+                <div className="relative">
+                  <select
+                    value={buildDay}
+                    onChange={(e) => setBuildDay(e.target.value)}
+                    className="w-full appearance-none rounded-xl border border-gray-200 bg-white px-3 py-2.5 pr-8 text-sm font-black text-gray-700 outline-none focus:ring-2 focus:ring-indigo-300"
+                  >
+                    {timetableDays.map((day) => (
+                      <option key={day} value={day}>{DAY_FULL[day]}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {!buildClassId ? (
+            <div className="flex flex-col items-center justify-center px-4 py-14 text-center">
+              <Calendar size={32} className="mb-3 text-gray-200" />
+              <p className="text-sm font-bold text-gray-400">Choose a class to start building the timetable.</p>
+            </div>
+          ) : sortedActivePeriods.length === 0 ? (
+            <div className="flex flex-col items-center justify-center px-4 py-14 text-center">
+              <Calendar size={32} className="mb-3 text-gray-200" />
+              <p className="text-sm font-bold text-gray-400">Set up active periods before adding lessons.</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-100">
+              {sortedActivePeriods.map((period) => {
+                const periodLessons = getLessonsForPeriod(period);
+                const isTeachingPeriod = period.type === "TEACHING";
+                return (
+                  <div key={period.id} className="grid gap-3 p-4 lg:grid-cols-[220px_1fr] lg:items-start">
+                    <div className="flex items-start justify-between gap-3 lg:block">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="rounded-full bg-gray-100 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-gray-500">
+                            #{period.order}
+                          </span>
+                          <span className={`rounded-full px-2 py-1 text-[10px] font-black uppercase tracking-wide ${
+                            isTeachingPeriod ? "bg-emerald-50 text-emerald-700" : "bg-blue-50 text-blue-700"
+                          }`}>
+                            {periodTypeLabels[period.type]}
+                          </span>
+                        </div>
+                        <p className="mt-2 text-sm font-black text-gray-900">{period.name}</p>
+                        <p className="mt-1 text-xs font-bold text-gray-400">
+                          {period.startTime}-{period.endTime}
+                        </p>
+                      </div>
+                    </div>
+
+                    {isTeachingPeriod ? (
+                      <div className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+                        {periodLessons.length === 0 ? (
+                          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                              <p className="text-sm font-black text-gray-700">No lesson added</p>
+                              <p className="mt-1 text-xs font-semibold text-gray-400">
+                                Add the subject and teacher for this period.
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => openCreateForPeriod(period)}
+                              className="flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-black text-white hover:bg-indigo-700"
+                            >
+                              <Plus size={13} /> Add lesson
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            {periodLessons.map((lesson) => {
+                              const c = subjectColorMap[lesson.subject.id] ?? COLORS[0];
+                              return (
+                                <div
+                                  key={lesson.id}
+                                  className="flex flex-col gap-3 rounded-xl border border-gray-100 bg-white p-3 sm:flex-row sm:items-center sm:justify-between"
+                                >
+                                  <div className="min-w-0">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                      <span className={`h-2.5 w-2.5 rounded-full ${c.dot}`} />
+                                      <p className="font-black text-gray-900">{lesson.subject.name}</p>
+                                      <span className={`rounded-lg px-2 py-1 text-[11px] font-black ${c.bg} ${c.text}`}>
+                                        {lesson.teacher.name} {lesson.teacher.surname}
+                                      </span>
+                                    </div>
+                                    <p className="mt-1 text-xs font-semibold text-gray-400">
+                                      {formatTime(lesson.startTime)}-{formatTime(lesson.endTime)}
+                                      {lesson.periodTemplate?.id ? " - linked to period" : " - matched by time"}
+                                    </p>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <button
+                                      type="button"
+                                      onClick={() => openEdit(lesson)}
+                                      className="flex h-9 items-center justify-center gap-2 rounded-lg bg-amber-50 px-3 text-xs font-black text-amber-700 hover:bg-amber-100"
+                                    >
+                                      <Pencil size={13} /> Edit
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => setDeleteTarget(lesson)}
+                                      className="flex h-9 w-9 items-center justify-center rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100"
+                                      title="Delete lesson"
+                                    >
+                                      <Trash2 size={13} />
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                            <button
+                              type="button"
+                              onClick={() => openCreateForPeriod(period)}
+                              className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-gray-200 bg-white px-4 py-2.5 text-xs font-black text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50"
+                            >
+                              <Plus size={13} /> Add another lesson in this period
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3">
+                        <p className="text-sm font-black text-blue-800">{periodTypeLabels[period.type]} period</p>
+                        <p className="mt-1 text-xs font-semibold leading-5 text-blue-700">
+                          This period is part of the school day structure and does not need a subject or teacher.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      )}
+
+      {builderMode === "review" && (
+        <>
       {/* Toolbar */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
         <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
@@ -1255,6 +1492,8 @@ const TimetableBuilder = ({
           </motion.div>
         )}
       </AnimatePresence>
+        </>
+      )}
 
       {/* Modals */}
       <AnimatePresence>
