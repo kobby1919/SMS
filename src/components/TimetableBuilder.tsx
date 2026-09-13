@@ -587,6 +587,7 @@ type PeriodTemplatePanelProps = {
   periods: TBPeriodTemplate[];
   setPeriods: (periods: TBPeriodTemplate[]) => void;
   operatingRules: Props["operatingRules"];
+  lessonCountsByPeriod: Map<string, number>;
 };
 
 const emptyPeriodForm = {
@@ -599,13 +600,20 @@ const emptyPeriodForm = {
   isActive: true,
 };
 
-function PeriodTemplatePanel({ periods, setPeriods, operatingRules }: PeriodTemplatePanelProps) {
+function PeriodTemplatePanel({
+  periods,
+  setPeriods,
+  operatingRules,
+  lessonCountsByPeriod,
+}: PeriodTemplatePanelProps) {
   const [form, setForm] = useState(emptyPeriodForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const sortedPeriods = [...periods].sort((a, b) => a.order - b.order || a.startTime.localeCompare(b.startTime));
+  const linkedLessonCount = editingId ? lessonCountsByPeriod.get(editingId) ?? 0 : 0;
+  const isEditingLinkedPeriod = linkedLessonCount > 0;
 
   const resetForm = () => {
     setEditingId(null);
@@ -636,6 +644,22 @@ function PeriodTemplatePanel({ periods, setPeriods, operatingRules }: PeriodTemp
   const savePeriod = async () => {
     setSaving(true);
     setError(null);
+    if (editingId && isEditingLinkedPeriod) {
+      const existing = periods.find((period) => period.id === editingId);
+      const changedProtectedFields =
+        existing &&
+        (existing.type !== form.type ||
+          existing.startTime !== form.startTime ||
+          existing.endTime !== form.endTime ||
+          existing.isActive !== form.isActive);
+      if (changedProtectedFields) {
+        setSaving(false);
+        setError(
+          "This period already has lessons. You can rename or reorder it, but time, type, and active status are locked until those lessons are moved or removed.",
+        );
+        return;
+      }
+    }
     try {
       const payload = {
         ...(editingId ? { id: editingId } : {}),
@@ -670,6 +694,13 @@ function PeriodTemplatePanel({ periods, setPeriods, operatingRules }: PeriodTemp
   };
 
   const deletePeriod = async (period: TBPeriodTemplate) => {
+    const linkedLessons = lessonCountsByPeriod.get(period.id) ?? 0;
+    if (linkedLessons > 0) {
+      setError(
+        `${period.name} has ${linkedLessons} lesson${linkedLessons === 1 ? "" : "s"}. Move or delete those lessons before removing the period.`,
+      );
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
@@ -706,42 +737,52 @@ function PeriodTemplatePanel({ periods, setPeriods, operatingRules }: PeriodTemp
 
       <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_340px]">
         <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-          {sortedPeriods.map((period) => (
-            <div
-              key={period.id}
-              className={`rounded-xl border p-3 ${
-                period.isActive ? "border-gray-100 bg-gray-50" : "border-gray-100 bg-gray-50/50 opacity-60"
-              }`}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-sm font-black text-gray-900">{period.name}</p>
-                  <p className="mt-1 text-xs font-bold text-gray-500">
-                    {period.startTime}-{period.endTime} · {periodTypeLabels[period.type]}
-                  </p>
+          {sortedPeriods.map((period) => {
+            const linkedLessons = lessonCountsByPeriod.get(period.id) ?? 0;
+            return (
+              <div
+                key={period.id}
+                className={`rounded-xl border p-3 ${
+                  period.isActive ? "border-gray-100 bg-gray-50" : "border-gray-100 bg-gray-50/50 opacity-60"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-black text-gray-900">{period.name}</p>
+                    <p className="mt-1 text-xs font-bold text-gray-500">
+                      {period.startTime}-{period.endTime} · {periodTypeLabels[period.type]}
+                    </p>
+                    {linkedLessons > 0 ? (
+                      <p className="mt-2 inline-flex rounded-full bg-amber-50 px-2 py-1 text-[10px] font-black text-amber-700">
+                        {linkedLessons} linked lesson{linkedLessons === 1 ? "" : "s"}
+                      </p>
+                    ) : null}
+                  </div>
+                  <span className="rounded-full bg-white px-2 py-1 text-[10px] font-black text-gray-400">
+                    #{period.order}
+                  </span>
                 </div>
-                <span className="rounded-full bg-white px-2 py-1 text-[10px] font-black text-gray-400">
-                  #{period.order}
-                </span>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => editPeriod(period)}
+                    className="rounded-lg bg-white px-3 py-1.5 text-xs font-black text-gray-600 ring-1 ring-gray-100 hover:text-indigo-600"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => deletePeriod(period)}
+                    className={`rounded-lg bg-white px-3 py-1.5 text-xs font-black ring-1 ring-gray-100 ${
+                      linkedLessons > 0 ? "text-gray-400" : "text-rose-600"
+                    }`}
+                  >
+                    {linkedLessons > 0 ? "Protected" : "Remove"}
+                  </button>
+                </div>
               </div>
-              <div className="mt-3 flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => editPeriod(period)}
-                  className="rounded-lg bg-white px-3 py-1.5 text-xs font-black text-gray-600 ring-1 ring-gray-100 hover:text-indigo-600"
-                >
-                  Edit
-                </button>
-                <button
-                  type="button"
-                  onClick={() => deletePeriod(period)}
-                  className="rounded-lg bg-white px-3 py-1.5 text-xs font-black text-rose-600 ring-1 ring-gray-100"
-                >
-                  Remove
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="rounded-xl border border-gray-100 bg-gray-50 p-3">
@@ -756,6 +797,11 @@ function PeriodTemplatePanel({ periods, setPeriods, operatingRules }: PeriodTemp
           {error ? (
             <p className="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-xs font-bold leading-5 text-rose-700">{error}</p>
           ) : null}
+          {isEditingLinkedPeriod ? (
+            <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs font-bold leading-5 text-amber-700">
+              This period has {linkedLessonCount} linked lesson{linkedLessonCount === 1 ? "" : "s"}. Time, type, and active status are locked to protect the timetable.
+            </p>
+          ) : null}
           <div className="mt-3 space-y-3">
             <input
               value={form.name}
@@ -769,23 +815,26 @@ function PeriodTemplatePanel({ periods, setPeriods, operatingRules }: PeriodTemp
                 min={operatingRules.openingTime}
                 max={operatingRules.closingTime}
                 value={form.startTime}
+                disabled={isEditingLinkedPeriod}
                 onChange={(e) => setForm({ ...form, startTime: e.target.value })}
-                className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-300"
+                className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-300 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
               />
               <input
                 type="time"
                 min={operatingRules.openingTime}
                 max={operatingRules.closingTime}
                 value={form.endTime}
+                disabled={isEditingLinkedPeriod}
                 onChange={(e) => setForm({ ...form, endTime: e.target.value })}
-                className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-300"
+                className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-300 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
               />
             </div>
             <div className="grid grid-cols-[1fr_90px] gap-2">
               <select
                 value={form.type}
+                disabled={isEditingLinkedPeriod}
                 onChange={(e) => setForm({ ...form, type: e.target.value as TBPeriodTemplate["type"] })}
-                className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-300"
+                className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-300 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
               >
                 {Object.entries(periodTypeLabels).map(([value, label]) => (
                   <option key={value} value={value}>{label}</option>
@@ -803,6 +852,7 @@ function PeriodTemplatePanel({ periods, setPeriods, operatingRules }: PeriodTemp
               <input
                 type="checkbox"
                 checked={form.isActive}
+                disabled={isEditingLinkedPeriod}
                 onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
               />
               Active period
@@ -866,6 +916,12 @@ const TimetableBuilder = ({
     .filter((period) => period.isActive)
     .sort((a, b) => a.order - b.order || a.startTime.localeCompare(b.startTime));
   const selectedBuildClass = classes.find((item) => item.id === buildClassId);
+  const lessonCountsByPeriod = new Map<string, number>();
+  for (const lesson of lessons) {
+    const periodId = lesson.periodTemplate?.id;
+    if (!periodId) continue;
+    lessonCountsByPeriod.set(periodId, (lessonCountsByPeriod.get(periodId) ?? 0) + 1);
+  }
 
   const showToast = (msg: string, type: "success" | "error") => {
     setToast({ msg, type });
@@ -1009,6 +1065,7 @@ const TimetableBuilder = ({
         periods={periodTemplates}
         setPeriods={setPeriodTemplates}
         operatingRules={operatingRules}
+        lessonCountsByPeriod={lessonCountsByPeriod}
       />
 
       <div className="rounded-2xl border border-gray-100 bg-white p-3 shadow-sm">

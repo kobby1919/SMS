@@ -67,21 +67,7 @@ async function validatePeriodConflicts(
   input: PeriodTemplateInput,
   excludeId?: string,
 ) {
-  const overlapping = await prisma.schoolPeriodTemplate.findFirst({
-    where: {
-      schoolId,
-      isActive: true,
-      ...(excludeId ? { NOT: { id: excludeId } } : {}),
-    },
-    select: {
-      id: true,
-      name: true,
-      startTime: true,
-      endTime: true,
-    },
-  });
-
-  if (!overlapping) return;
+  if (!input.isActive) return;
 
   const periods = await prisma.schoolPeriodTemplate.findMany({
     where: {
@@ -89,11 +75,19 @@ async function validatePeriodConflicts(
       isActive: true,
       ...(excludeId ? { NOT: { id: excludeId } } : {}),
     },
-    select: { name: true, startTime: true, endTime: true },
+    select: { name: true, startTime: true, endTime: true, order: true },
   });
 
   const start = timeToMinutes(input.startTime);
   const end = timeToMinutes(input.endTime);
+  const sameOrder = periods.find((period) => period.order === input.order);
+  if (sameOrder) {
+    throw new PeriodTemplateServiceError(
+      `${input.name} uses order #${input.order}, but ${sameOrder.name} already uses that order.`,
+      409,
+    );
+  }
+
   const conflict = periods.find((period) => {
     const periodStart = timeToMinutes(period.startTime);
     const periodEnd = timeToMinutes(period.endTime);
@@ -160,9 +154,29 @@ export async function updatePeriodTemplate(
 ) {
   const existing = await prisma.schoolPeriodTemplate.findFirst({
     where: { id, schoolId },
-    select: { id: true },
+    select: {
+      id: true,
+      type: true,
+      startTime: true,
+      endTime: true,
+      isActive: true,
+      _count: { select: { lessons: true } },
+    },
   });
   if (!existing) throw new PeriodTemplateServiceError("Period template not found.", 404);
+
+  if (existing._count.lessons > 0) {
+    const changedTiming =
+      existing.startTime !== input.startTime || existing.endTime !== input.endTime;
+    const changedType = existing.type !== input.type;
+    const deactivated = existing.isActive && !input.isActive;
+    if (changedTiming || changedType || deactivated) {
+      throw new PeriodTemplateServiceError(
+        "This period already has lessons. You can rename or reorder it, but you cannot change its time, type, or active status until those lessons are moved or removed.",
+        409,
+      );
+    }
+  }
 
   validatePeriodTimeRange(input);
   await validateAgainstSchoolHours(schoolId, input);
@@ -184,12 +198,10 @@ export async function deletePeriodTemplate(schoolId: string, id: string) {
   if (!existing) throw new PeriodTemplateServiceError("Period template not found.", 404);
 
   if (existing._count.lessons > 0) {
-    const period = await prisma.schoolPeriodTemplate.update({
-      where: { id },
-      data: { isActive: false },
-    });
-    invalidatePeriodTemplates(schoolId);
-    return period;
+    throw new PeriodTemplateServiceError(
+      "This period has lessons. Move or delete those lessons before removing the period.",
+      409,
+    );
   }
 
   await prisma.schoolPeriodTemplate.delete({ where: { id } });
