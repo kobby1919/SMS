@@ -79,24 +79,37 @@ function pushConflictIssues(
         timeToMinutes(dateTimeToTimeString(a.startTime)) -
         timeToMinutes(dateTimeToTimeString(b.startTime)),
     );
+    let conflictCount = 0;
+    const examples: string[] = [];
     for (let i = 0; i < sorted.length; i++) {
       for (let j = i + 1; j < sorted.length; j++) {
         const current = sorted[i];
         const next = sorted[j];
         if (!overlaps(current, next)) break;
 
-        const isClassConflict = groupKey === "classId";
-        issues.push({
-          id: `${groupKey}-conflict-${current.id}-${next.id}`,
-          severity: "critical",
-          title: isClassConflict ? "Class has overlapping lessons" : "Teacher has overlapping lessons",
-          detail: isClassConflict
-            ? `${current.class.name} has ${current.subject.name} and ${next.subject.name} overlapping on ${current.day.toLowerCase()} around ${lessonTimeLabel(current)}.`
-            : `${personName(current.teacher)} is assigned to ${current.class.name} and ${next.class.name} at overlapping times on ${current.day.toLowerCase()}.`,
-          lessonId: current.id,
-          classId: current.classId,
-        });
+        conflictCount++;
+        if (examples.length < 3) {
+          examples.push(
+            groupKey === "classId"
+              ? `${current.subject.name} overlaps ${next.subject.name} around ${lessonTimeLabel(current)}`
+              : `${current.class.name} overlaps ${next.class.name} around ${lessonTimeLabel(current)}`,
+          );
+        }
       }
+    }
+    if (conflictCount > 0) {
+      const first = sorted[0];
+      const isClassConflict = groupKey === "classId";
+      issues.push({
+        id: `${groupKey}-conflict-${first.day}-${first[groupKey]}`,
+        severity: "critical",
+        title: isClassConflict ? "Class has overlapping lessons" : "Teacher has overlapping lessons",
+        detail: isClassConflict
+          ? `${first.class.name} has ${conflictCount} timetable overlap${conflictCount === 1 ? "" : "s"} on ${first.day.toLowerCase()}. Examples: ${examples.join("; ")}.`
+          : `${personName(first.teacher)} has ${conflictCount} timetable overlap${conflictCount === 1 ? "" : "s"} on ${first.day.toLowerCase()}. Examples: ${examples.join("; ")}.`,
+        lessonId: first.id,
+        classId: first.classId,
+      });
     }
   }
 }
@@ -127,6 +140,9 @@ export async function getTimetableHealthSummary(schoolId: string): Promise<Timet
 
   const issues: TimetableHealthIssue[] = [];
   const activeDays = operatingRules.activeDays;
+  const lessonsWithoutPeriod: LessonForHealth[] = [];
+  const periodMismatches: LessonForHealth[] = [];
+  const emptyClassLessonCounts = new Map<string, { classId: number; className: string; count: number }>();
 
   for (const lesson of lessons) {
     const lessonStart = dateTimeToTimeString(lesson.startTime);
@@ -162,14 +178,13 @@ export async function getTimetableHealthSummary(schoolId: string): Promise<Timet
     }
 
     if (lesson.class._count.students === 0) {
-      issues.push({
-        id: `empty-class-${lesson.id}`,
-        severity: "warning",
-        title: "Lesson class has no students",
-        detail: `${lessonLabel(lesson)} is scheduled, but ${lesson.class.name} has no students. This can make attendance counts misleading.`,
-        lessonId: lesson.id,
+      const current = emptyClassLessonCounts.get(String(lesson.classId)) ?? {
         classId: lesson.classId,
-      });
+        className: lesson.class.name,
+        count: 0,
+      };
+      current.count++;
+      emptyClassLessonCounts.set(String(lesson.classId), current);
     }
 
     if (!lesson.teacher.subjects.some((subject) => subject.id === lesson.subjectId)) {
@@ -184,29 +199,49 @@ export async function getTimetableHealthSummary(schoolId: string): Promise<Timet
     }
 
     if (!lesson.periodTemplate) {
-      issues.push({
-        id: `lesson-without-period-${lesson.id}`,
-        severity: "warning",
-        title: "Lesson is not linked to a period",
-        detail: `${lessonLabel(lesson)} uses manual time ${lessonStart}-${lessonEnd}. Link it to a teaching period so the timetable stays consistent.`,
-        lessonId: lesson.id,
-        classId: lesson.classId,
-      });
+      lessonsWithoutPeriod.push(lesson);
     } else if (
       !lesson.periodTemplate.isActive ||
       lesson.periodTemplate.type !== "TEACHING" ||
       lesson.periodTemplate.startTime !== lessonStart ||
       lesson.periodTemplate.endTime !== lessonEnd
     ) {
-      issues.push({
-        id: `lesson-period-mismatch-${lesson.id}`,
-        severity: "warning",
-        title: "Lesson period needs review",
-        detail: `${lessonLabel(lesson)} is linked to ${lesson.periodTemplate.name}, but the lesson time or period type no longer matches the template.`,
-        lessonId: lesson.id,
-        classId: lesson.classId,
-      });
+      periodMismatches.push(lesson);
     }
+  }
+
+  if (lessonsWithoutPeriod.length > 0) {
+    const examples = lessonsWithoutPeriod.slice(0, 3).map((lesson) => lessonLabel(lesson)).join("; ");
+    issues.push({
+      id: "lessons-without-period-template",
+      severity: "warning",
+      title: "Lessons need period links",
+      detail: `${lessonsWithoutPeriod.length} lesson${lessonsWithoutPeriod.length === 1 ? "" : "s"} still use manual times instead of period templates. Examples: ${examples}.`,
+      lessonId: lessonsWithoutPeriod[0].id,
+      classId: lessonsWithoutPeriod[0].classId,
+    });
+  }
+
+  if (periodMismatches.length > 0) {
+    const examples = periodMismatches.slice(0, 3).map((lesson) => lessonLabel(lesson)).join("; ");
+    issues.push({
+      id: "lessons-period-template-mismatch",
+      severity: "warning",
+      title: "Lessons no longer match their period",
+      detail: `${periodMismatches.length} lesson${periodMismatches.length === 1 ? "" : "s"} are linked to periods but their time/type no longer matches. Examples: ${examples}.`,
+      lessonId: periodMismatches[0].id,
+      classId: periodMismatches[0].classId,
+    });
+  }
+
+  for (const item of emptyClassLessonCounts.values()) {
+    issues.push({
+      id: `empty-class-${item.classId}`,
+      severity: "warning",
+      title: "Class has lessons but no students",
+      detail: `${item.className} has ${item.count} scheduled lesson${item.count === 1 ? "" : "s"} but no students. This can make attendance counts misleading.`,
+      classId: item.classId,
+    });
   }
 
   pushConflictIssues(issues, lessons, "classId");
@@ -251,6 +286,6 @@ export async function getTimetableHealthSummary(schoolId: string): Promise<Timet
     warningCount,
     activeDayLabel: formatSchoolDayRange(activeDays),
     schoolHoursLabel: `${operatingRules.openingTime}-${operatingRules.closingTime}`,
-    issues: issues.slice(0, 12),
+    issues,
   };
 }

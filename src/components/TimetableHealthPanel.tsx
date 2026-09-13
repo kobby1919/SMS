@@ -29,6 +29,27 @@ const statusCopy = {
 export default function TimetableHealthPanel({ health }: Props) {
   const status = statusCopy[health.status];
   const StatusIcon = status.icon;
+  const criticalIssues = health.issues.filter((issue) => issue.severity === "critical");
+  const warningIssues = health.issues.filter((issue) => issue.severity === "warning");
+  const previewIssues = health.issues.slice(0, 5);
+
+  const renderIssue = (issue: TimetableHealthSummary["issues"][number]) => (
+    <div key={issue.id} className="flex flex-col gap-2 bg-white px-3 py-3 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <p className="text-sm font-black text-gray-950">{issue.title}</p>
+        <p className="mt-1 text-sm font-semibold leading-6 text-gray-500">{issue.detail}</p>
+      </div>
+      <span
+        className={`w-fit shrink-0 rounded-full px-2.5 py-1 text-[11px] font-black uppercase ${
+          issue.severity === "critical"
+            ? "bg-rose-50 text-rose-700"
+            : "bg-amber-50 text-amber-700"
+        }`}
+      >
+        {issue.severity}
+      </span>
+    </div>
+  );
 
   return (
     <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
@@ -76,24 +97,36 @@ export default function TimetableHealthPanel({ health }: Props) {
       </div>
 
       {health.issues.length > 0 ? (
-        <div className="mt-4 divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-100">
-          {health.issues.map((issue) => (
-            <div key={issue.id} className="flex flex-col gap-2 bg-white px-3 py-3 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <p className="text-sm font-black text-gray-950">{issue.title}</p>
-                <p className="mt-1 text-sm font-semibold leading-6 text-gray-500">{issue.detail}</p>
-              </div>
-              <span
-                className={`w-fit shrink-0 rounded-full px-2.5 py-1 text-[11px] font-black uppercase ${
-                  issue.severity === "critical"
-                    ? "bg-rose-50 text-rose-700"
-                    : "bg-amber-50 text-amber-700"
-                }`}
-              >
-                {issue.severity}
-              </span>
+        <div className="mt-4 space-y-3">
+          <div className="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-100">
+            {previewIssues.map(renderIssue)}
+          </div>
+
+          {health.issues.length > previewIssues.length ? (
+            <div className="grid gap-3 lg:grid-cols-2">
+              {criticalIssues.length > 0 ? (
+                <details className="rounded-xl border border-rose-100 bg-rose-50/60">
+                  <summary className="cursor-pointer px-3 py-3 text-sm font-black text-rose-800">
+                    View all critical issues ({criticalIssues.length})
+                  </summary>
+                  <div className="divide-y divide-rose-100 border-t border-rose-100 bg-white">
+                    {criticalIssues.map(renderIssue)}
+                  </div>
+                </details>
+              ) : null}
+
+              {warningIssues.length > 0 ? (
+                <details className="rounded-xl border border-amber-100 bg-amber-50/60">
+                  <summary className="cursor-pointer px-3 py-3 text-sm font-black text-amber-800">
+                    View all warnings ({warningIssues.length})
+                  </summary>
+                  <div className="divide-y divide-amber-100 border-t border-amber-100 bg-white">
+                    {warningIssues.map(renderIssue)}
+                  </div>
+                </details>
+              ) : null}
             </div>
-          ))}
+          ) : null}
         </div>
       ) : (
         <div className="mt-4 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-3">
