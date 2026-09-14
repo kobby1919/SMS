@@ -5,7 +5,14 @@ import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
 import Image from "next/image";
 import Link from "next/link";
-import { Eye, Plus, BookOpen, Users } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle2,
+  Clock3,
+  Eye,
+  ShieldCheck,
+  Users,
+} from "lucide-react";
 import FormModal from "@/src/components/FormModal";
 import prisma from "@/src/lib/prisma";
 import { Subject, Prisma } from "@/src/generated/prisma";
@@ -22,6 +29,18 @@ const SUBJECT_COLORS = [
 const getSubjectColor = (_: string, idx: number) =>
   SUBJECT_COLORS[idx % SUBJECT_COLORS.length];
 
+type TeacherSetupStatus = "ready" | "needs-setup";
+
+const statusTabs: Array<{
+  key: "all" | "ready" | "needs-setup" | "pending-invites";
+  label: string;
+}> = [
+  { key: "all", label: "All teachers" },
+  { key: "ready", label: "Ready" },
+  { key: "needs-setup", label: "Needs setup" },
+  { key: "pending-invites", label: "Pending invites" },
+];
+
 const TeacherListPage = async ({
   searchParams,
 }: {
@@ -31,6 +50,12 @@ const TeacherListPage = async ({
 
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
+  const selectedStatus =
+    queryParams.status === "ready" ||
+    queryParams.status === "needs-setup" ||
+    queryParams.status === "pending-invites"
+      ? queryParams.status
+      : "all";
 
   const query: Prisma.TeacherWhereInput = { schoolId };
   let classFilterTeacherIds: string[] | null = null;
@@ -48,7 +73,12 @@ const TeacherListPage = async ({
             );
             break;
           case "search":
-            query.name = { contains: value, mode: "insensitive" };
+            query.OR = [
+              { name: { contains: value, mode: "insensitive" } },
+              { surname: { contains: value, mode: "insensitive" } },
+              { email: { contains: value, mode: "insensitive" } },
+              { phone: { contains: value, mode: "insensitive" } },
+            ];
             break;
         }
       }
@@ -58,19 +88,14 @@ const TeacherListPage = async ({
     query.id = { in: classFilterTeacherIds };
   }
 
-  const [teachers, count, totalSubjects, totalClasses] = await Promise.all([
+  const [allTeachers] = await Promise.all([
     prisma.teacher.findMany({
       where: query,
       include: {
         subjects: true,
       },
       orderBy: { name: "asc" },
-      take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1),
     }),
-    prisma.teacher.count({ where: query }),
-    prisma.subject.count({ where: { schoolId } }),
-    prisma.class.count({ where: { schoolId } }),
   ]);
   const liveLessons = await listLiveTimetableLessons(schoolId);
   const liveLessonsByTeacherId = new Map<string, typeof liveLessons>();
@@ -80,6 +105,49 @@ const TeacherListPage = async ({
     liveLessonsByTeacherId.set(lesson.teacherId, rows);
   }
 
+  const enrichedTeachers = allTeachers.map((teacher) => {
+    const teacherLessons = liveLessonsByTeacherId.get(teacher.id) ?? [];
+    const taughtClasses = Array.from(
+      new Map(teacherLessons.map((l) => [l.class.id, l.class])).values(),
+    );
+    const hasSubjects = teacher.subjects.length > 0;
+    const hasLiveClasses = taughtClasses.length > 0;
+    const hasContact = Boolean(teacher.email || teacher.phone);
+    const setupStatus: TeacherSetupStatus =
+      hasSubjects && hasLiveClasses && hasContact ? "ready" : "needs-setup";
+    const missingSetup = [
+      !hasContact ? "contact" : null,
+      !hasSubjects ? "subjects" : null,
+      !hasLiveClasses ? "published timetable classes" : null,
+    ].filter(Boolean) as string[];
+
+    return { teacher, taughtClasses, setupStatus, missingSetup };
+  });
+
+  const readyTeachers = enrichedTeachers.filter((item) => item.setupStatus === "ready");
+  const teachersNeedingSetup = enrichedTeachers.filter((item) => item.setupStatus === "needs-setup");
+  const pendingInvites = 0;
+  const filteredTeachers =
+    selectedStatus === "ready"
+      ? readyTeachers
+      : selectedStatus === "needs-setup"
+        ? teachersNeedingSetup
+        : selectedStatus === "pending-invites"
+          ? []
+          : enrichedTeachers;
+  const count = filteredTeachers.length;
+  const teachers = filteredTeachers.slice(
+    ITEM_PER_PAGE * (p - 1),
+    ITEM_PER_PAGE * p,
+  );
+  const activeTabHref = (status: string) => {
+    const params = new URLSearchParams();
+    if (status !== "all") params.set("status", status);
+    if (queryParams.search) params.set("search", queryParams.search);
+    if (queryParams.classId) params.set("classId", queryParams.classId);
+    return `/list/teachers${params.toString() ? `?${params.toString()}` : ""}`;
+  };
+
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
 
@@ -88,19 +156,13 @@ const TeacherListPage = async ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-xl font-black text-gray-800 tracking-tight">Teachers</h1>
-            <p className="text-sm text-gray-400 mt-0.5 font-medium">{count} members registered</p>
+            <p className="text-sm text-gray-500 mt-0.5 font-medium">
+              Manage teacher access, setup readiness, and published timetable coverage.
+            </p>
           </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
             <TableSearch />
             <div className="flex items-center gap-2">
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                <Image src="/filter.png" alt="" width={16} height={16} />
-                <span className="hidden sm:inline">Filter</span>
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                <Image src="/sort.png" alt="" width={16} height={16} />
-                <span className="hidden sm:inline">Sort</span>
-              </button>
               {role === "admin" && <FormModal table="teacher" type="create" />}
             </div>
           </div>
@@ -110,12 +172,10 @@ const TeacherListPage = async ({
       {/* ── Stats — all from DB, no hardcoded values ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "Total Teachers",   value: count,         icon: <Users size={16} />,    color: "bg-indigo-50 text-indigo-600"   },
-          { label: "Total Subjects",   value: totalSubjects, icon: <BookOpen size={16} />, color: "bg-amber-50 text-amber-600"    },
-          { label: "Total Classes",    value: totalClasses,  icon: <Users size={16} />,    color: "bg-emerald-50 text-emerald-600" },
-          { label: "Avg Classes/Teacher",
-            value: count > 0 ? (totalClasses / count).toFixed(1) : 0,
-            icon: <Plus size={16} />, color: "bg-violet-50 text-violet-600" },
+          { label: "Registered", value: allTeachers.length, icon: <Users size={16} />, color: "bg-indigo-50 text-indigo-600" },
+          { label: "Ready", value: readyTeachers.length, icon: <CheckCircle2 size={16} />, color: "bg-emerald-50 text-emerald-600" },
+          { label: "Needs setup", value: teachersNeedingSetup.length, icon: <AlertCircle size={16} />, color: "bg-amber-50 text-amber-600" },
+          { label: "Pending invites", value: pendingInvites, icon: <Clock3 size={16} />, color: "bg-violet-50 text-violet-600" },
         ].map((stat) => (
           <div key={stat.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
@@ -129,6 +189,27 @@ const TeacherListPage = async ({
         ))}
       </div>
 
+      <div className="bg-white rounded-2xl border border-gray-100 p-2 shadow-sm">
+        <div className="flex gap-2 overflow-x-auto">
+          {statusTabs.map((tab) => {
+            const active = selectedStatus === tab.key;
+            return (
+              <Link
+                key={tab.key}
+                href={activeTabHref(tab.key)}
+                className={`whitespace-nowrap rounded-xl px-4 py-2 text-sm font-black transition ${
+                  active
+                    ? "bg-edujay-primary text-white shadow-sm"
+                    : "text-gray-500 hover:bg-gray-50"
+                }`}
+              >
+                {tab.label}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
       {/* ── Table ── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-1">
         <div className="w-full overflow-x-auto">
@@ -138,19 +219,15 @@ const TeacherListPage = async ({
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Teacher</th>
                 <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">Subjects</th>
                 <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">Classes</th>
+                <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden xl:table-cell">Setup</th>
                 <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden xl:table-cell">Phone</th>
-                <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden xl:table-cell">Address</th>
                 {role === "admin" && (
                   <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[120px]">Actions</th>
                 )}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {teachers.map((item) => {
-                const teacherLessons = liveLessonsByTeacherId.get(item.id) ?? [];
-                const taughtClasses = Array.from(
-                  new Map(teacherLessons.map((l) => [l.class.id, l.class])).values()
-                );
+              {teachers.map(({ teacher: item, taughtClasses, setupStatus, missingSetup }) => {
 
                 return (
                   <tr key={item.id} className="hover:bg-indigo-50/30 transition-colors duration-150 group">
@@ -170,6 +247,20 @@ const TeacherListPage = async ({
                         <div className="min-w-0">
                           <p className="font-bold text-sm text-gray-800 truncate">{item.name} {item.surname}</p>
                           <p className="text-xs text-gray-400 truncate">{item.email}</p>
+                          <div className="mt-2 flex flex-wrap gap-1 md:hidden">
+                            <span
+                              className={`rounded-full px-2 py-0.5 text-[11px] font-black ${
+                                setupStatus === "ready"
+                                  ? "bg-emerald-50 text-emerald-700"
+                                  : "bg-amber-50 text-amber-700"
+                              }`}
+                            >
+                              {setupStatus === "ready" ? "Ready" : "Needs setup"}
+                            </span>
+                            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-bold text-gray-500">
+                              {taughtClasses.length} classes
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -212,14 +303,29 @@ const TeacherListPage = async ({
                       </div>
                     </td>
 
+                    <td className="px-3 py-3.5 hidden xl:table-cell">
+                      <div className="flex flex-col gap-1">
+                        <span
+                          className={`inline-flex w-fit items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black ${
+                            setupStatus === "ready"
+                              ? "bg-emerald-50 text-emerald-700"
+                              : "bg-amber-50 text-amber-700"
+                          }`}
+                        >
+                          <ShieldCheck size={12} />
+                          {setupStatus === "ready" ? "Ready" : "Needs setup"}
+                        </span>
+                        {missingSetup.length > 0 && (
+                          <span className="max-w-[220px] text-xs font-semibold text-gray-400">
+                            Missing {missingSetup.join(", ")}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+
                     {/* Phone */}
                     <td className="px-3 py-3.5 hidden xl:table-cell">
                       <span className="text-sm text-gray-600 font-medium">{item.phone ?? "—"}</span>
-                    </td>
-
-                    {/* Address */}
-                    <td className="px-3 py-3.5 hidden xl:table-cell">
-                      <span className="text-sm text-gray-500 truncate max-w-[160px] block">{item.address}</span>
                     </td>
 
                     {/* Actions */}
@@ -237,6 +343,25 @@ const TeacherListPage = async ({
                   </tr>
                 );
               })}
+              {teachers.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={role === "admin" ? 6 : 5}
+                    className="px-5 py-12 text-center"
+                  >
+                    <p className="text-sm font-black text-gray-500">
+                      {selectedStatus === "pending-invites"
+                        ? "Teacher invites will appear here after the invite flow is enabled."
+                        : "No teachers match this view."}
+                    </p>
+                    <p className="mt-1 text-xs font-semibold text-gray-400">
+                      {selectedStatus === "pending-invites"
+                        ? "Next section: create secure teacher invites and track accepted, expired, and revoked invites."
+                        : "Try another tab or search term."}
+                    </p>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
