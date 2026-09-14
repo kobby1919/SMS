@@ -9,6 +9,7 @@ import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 // Dynamic color by index — no hardcoded subject names
 const SUBJECT_COLORS = [
@@ -49,20 +50,27 @@ const SubjectListPage = async ({
     }
   }
 
-  const [subjects, count, totalLessons] = await Promise.all([
+  const [subjects, count, liveLessons] = await Promise.all([
     prisma.subject.findMany({
       where: query,
       include: {
         teachers: { select: { id: true, name: true, surname: true } },
-        _count:   { select: { lessons: true } },
       },
       orderBy: { name: "asc" },
       take: ITEM_PER_PAGE,
       skip: ITEM_PER_PAGE * (p - 1),
     }),
     prisma.subject.count({ where: query }),
-    prisma.lesson.count({ where: { schoolId } }),
+    listLiveTimetableLessons(schoolId),
   ]);
+  const liveLessonCountBySubjectId = new Map<number, number>();
+  for (const lesson of liveLessons) {
+    liveLessonCountBySubjectId.set(
+      lesson.subjectId,
+      (liveLessonCountBySubjectId.get(lesson.subjectId) ?? 0) + 1,
+    );
+  }
+  const totalLessons = liveLessons.length;
 
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
@@ -161,7 +169,7 @@ const SubjectListPage = async ({
                     {/* Lesson count */}
                     <td className="px-4 py-4 hidden lg:table-cell">
                       <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-600">
-                        {item._count.lessons} lessons
+                        {liveLessonCountBySubjectId.get(item.id) ?? 0} lessons
                       </span>
                     </td>
 

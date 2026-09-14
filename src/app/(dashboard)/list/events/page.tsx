@@ -6,6 +6,7 @@ import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 
 const EventListPage = async ({
   searchParams,
@@ -33,8 +34,11 @@ const EventListPage = async ({
   }
   // ROLE CONDITIONS
 
+  const teacherScope = role === "teacher"
+    ? await getTeacherScope({ schoolId, teacherId: currentUserId! })
+    : null;
   const roleConditions = {
-    teacher: { lessons: { some: { teacherId: currentUserId! } } },
+    teacher: teacherScope ? { id: { in: teacherScope.accessibleClassIds } } : {},
     student: { students: { some: { id: currentUserId! } } },
     parent: { students: { some: { parentId: currentUserId! } } },
   };

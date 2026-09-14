@@ -4,6 +4,7 @@ import {
   normalizeAttendanceStatusCounts,
 } from "@/src/lib/services/attendance";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 const DAY_ENUM_MAP: Record<number, string> = {
   1: "MONDAY",
@@ -168,6 +169,7 @@ export async function getAdminDashboardData(
   const absenceWindowStart = startOfDay(new Date(now));
   absenceWindowStart.setDate(absenceWindowStart.getDate() - 30);
   const activePeriod = await getActiveAcademicPeriod(schoolId);
+  const liveLessons = await listLiveTimetableLessons(schoolId);
 
   const [
     adminCount,
@@ -176,9 +178,7 @@ export async function getAdminDashboardData(
     parentCount,
     boyCount,
     girlCount,
-    totalLessons,
     totalClasses,
-    todayLessons,
     todayAttendanceGrouped,
     totalStudents,
     totalCARecords,
@@ -196,11 +196,7 @@ export async function getAdminDashboardData(
     prisma.parent.count({ where: tenantWhere }),
     prisma.student.count({ where: { ...tenantWhere, sex: "MALE" } }),
     prisma.student.count({ where: { ...tenantWhere, sex: "FEMALE" } }),
-    prisma.lesson.count({ where: tenantWhere }),
     prisma.class.count({ where: tenantWhere }),
-    prisma.lesson.count({
-      where: { ...tenantWhere, day: todayEnum as "MONDAY" },
-    }),
     prisma.attendance.groupBy({
       by: ["status"],
       where: {
@@ -269,6 +265,8 @@ export async function getAdminDashboardData(
   ]);
 
   const statusCounts = normalizeAttendanceStatusCounts(todayAttendanceGrouped);
+  const totalLessons = liveLessons.length;
+  const todayLessons = liveLessons.filter((lesson) => lesson.day === todayEnum).length;
   const todayPresent = statusCounts.PRESENT ?? 0;
   const todayAbsent = statusCounts.ABSENT ?? 0;
   const todayLate = statusCounts.LATE ?? 0;

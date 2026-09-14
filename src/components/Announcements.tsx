@@ -3,6 +3,7 @@ import { requirePageSession } from "@/src/lib/authz";
 import type { Prisma } from "@/src/generated/prisma";
 import Link from "next/link";
 import { AlertTriangle, Megaphone } from "lucide-react";
+import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 
 const colorMap = [
   "bg-edujay-soft border-l-4 border-edujay-primary",
@@ -27,19 +28,8 @@ const Announcements = async () => {
   let where: Prisma.AnnouncementWhereInput = { schoolId };
 
   if (role === "teacher") {
-    const teacher = await prisma.teacher.findFirst({
-      where: { id: userId, schoolId },
-      select: {
-        classes: { select: { id: true } },
-        lessons: { select: { classId: true } },
-      },
-    });
-    const classIds = Array.from(
-      new Set([
-        ...(teacher?.classes.map((c) => c.id) ?? []),
-        ...(teacher?.lessons.map((lesson) => lesson.classId) ?? []),
-      ]),
-    );
+    const scope = await getTeacherScope({ schoolId, teacherId: userId });
+    const classIds = scope.accessibleClassIds;
     where = { schoolId, OR: [{ classId: null }, { classId: { in: classIds } }] };
 
   } else if (role === "student") {

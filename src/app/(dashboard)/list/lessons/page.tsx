@@ -2,10 +2,11 @@ import Pagination from "@/src/components/pagination";
 import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
 import { Filter, ArrowUpDown, BookOpen } from "lucide-react";
-import FormModal from "@/src/components/FormModal";
-import { Prisma } from "@/src/generated/prisma";
-import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import {
+  getActiveTimetablePublication,
+  listLiveTimetableLessons,
+} from "@/src/lib/services/timetable";
 
 const LessonListPage = async ({
   searchParams,
@@ -13,51 +14,45 @@ const LessonListPage = async ({
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
   // 1. Fetch Auth and Role
-  const { role, schoolId } = await requirePageSession();
+  const { role, schoolId, userId } = await requirePageSession();
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
-  const query: Prisma.LessonWhereInput = { schoolId };
-
-  if (queryParams) {
-    for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined) {
-        switch (key) {
-          case "classId":
-            query.classId = parseInt(value);
-            break;
-          case "teacherId":
-            query.teacherId = value;
-            break;
-          case "search":
-            query.OR = [
-              { subject: { name: { contains: value, mode: "insensitive" } } },
-              { teacher: { name: { contains: value, mode: "insensitive" } } },
-            ];
-            break;
-        }
-      }
-    }
-  }
-
-  const [lessons, count] = await Promise.all([
-    prisma.lesson.findMany({
-      where: query,
-      include: {
-        subject: { select: { name: true } },
-        class: { select: { name: true } },
-        teacher: { select: { name: true, surname: true } },
-      },
-      orderBy: {
-        name: "asc",
-      },
-      take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1),
-    }),
-    prisma.lesson.count({
-      where: query,
-    }),
+  const [publication, liveLessons] = await Promise.all([
+    getActiveTimetablePublication(schoolId),
+    listLiveTimetableLessons(
+      schoolId,
+      role === "teacher" ? { teacherId: userId } : {},
+    ),
   ]);
+
+  const search = queryParams.search?.trim().toLowerCase();
+  const classIdFilter = queryParams.classId ? Number(queryParams.classId) : null;
+  const teacherIdFilter = queryParams.teacherId;
+
+  const filteredLessons = liveLessons.filter((lesson) => {
+    if (classIdFilter && lesson.classId !== classIdFilter) return false;
+    if (teacherIdFilter && lesson.teacherId !== teacherIdFilter) return false;
+    if (!search) return true;
+
+    return [
+      lesson.name,
+      lesson.subject.name,
+      lesson.class.name,
+      `${lesson.teacher.name} ${lesson.teacher.surname}`,
+      lesson.day,
+    ]
+      .join(" ")
+      .toLowerCase()
+      .includes(search);
+  });
+
+  const count = filteredLessons.length;
+  const lessons = filteredLessons.slice(
+    ITEM_PER_PAGE * (p - 1),
+    ITEM_PER_PAGE * p,
+  );
+
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
       {/* ── Page header ── */}
@@ -68,7 +63,9 @@ const LessonListPage = async ({
               Lessons
             </h1>
             <p className="text-sm text-gray-400 mt-0.5 font-medium">
-              {count} lessons available
+              {publication
+                ? `${count} published lessons available`
+                : "No published timetable is active yet"}
             </p>
           </div>
 
@@ -83,7 +80,6 @@ const LessonListPage = async ({
                 <ArrowUpDown size={14} />
                 <span className="hidden sm:inline">Sort</span>
               </button>
-              {role === "admin" && <FormModal table="lesson" type="create" />}
             </div>
           </div>
         </div>
@@ -135,12 +131,9 @@ const LessonListPage = async ({
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">
                   Teacher
                 </th>
-                {/* ACTIONS HEADER STILL VISIBLE FOR BOTH */}
-                {(role === "admin" || role === "teacher") && (
-                  <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">
-                    Actions
-                  </th>
-                )}
+                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">
+                  Time
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -153,8 +146,10 @@ const LessonListPage = async ({
                     <p className="font-bold text-sm text-gray-800 truncate">
                       {item.name}
                     </p>
+                    <p className="text-xs text-gray-400 font-semibold md:hidden">
+                      {item.class.name} · {item.day}
+                    </p>
                   </td>
-                  {/* Fixed: Added missing Subject cell to match header */}
                   <td className="px-4 py-4 hidden md:table-cell">
                     <span className="text-sm text-gray-500">
                       {item.class.name}
@@ -165,21 +160,34 @@ const LessonListPage = async ({
                       {item.teacher.name + " " + item.teacher.surname}
                     </span>
                   </td>
-                  <td className="px-5 py-4 w-[100px]">
-                    <div className="flex items-center justify-end gap-2">
-                      {/* 1. UPDATE MODAL (Replaces the Link/Eye icon) */}
-                      {role === "admin" && (
-                        <FormModal table="lesson" type="update" data={item} />
-                      )}
-
-                      {/* 2. DELETE MODAL */}
-                      {role === "admin" && (
-                        <FormModal table="lesson" type="delete" id={item.id} />
-                      )}
-                    </div>
+                  <td className="px-4 py-4 hidden lg:table-cell">
+                    <span className="text-sm text-gray-500">
+                      {item.day} ·{" "}
+                      {item.startTime.toLocaleTimeString("en-GB", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                      -
+                      {item.endTime.toLocaleTimeString("en-GB", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
                   </td>
                 </tr>
               ))}
+              {lessons.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="px-5 py-10 text-center text-sm font-semibold text-gray-400"
+                  >
+                    {publication
+                      ? "No published lessons match this view."
+                      : "The master timetable must be published before lessons appear here."}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

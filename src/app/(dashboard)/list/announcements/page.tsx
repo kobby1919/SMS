@@ -8,6 +8,7 @@ import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import { requirePageSession } from "@/src/lib/authz";
 import { AlertTriangle, Megaphone } from "lucide-react";
+import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 
 const priorityMeta = {
   NORMAL: { label: "Normal", className: "bg-slate-50 text-slate-600" },
@@ -50,9 +51,12 @@ const AnnouncementListPage = async ({
 
   // ROLE CONDITIONS
   if (role !== "admin") {
+    const teacherScope = role === "teacher"
+      ? await getTeacherScope({ schoolId, teacherId: currentUserId })
+      : null;
     const roleCondition: Prisma.ClassWhereInput | null =
       role === "teacher"
-        ? { lessons: { some: { teacherId: currentUserId } } }
+        ? { id: { in: teacherScope?.accessibleClassIds ?? [] } }
         : role === "student"
           ? { students: { some: { id: currentUserId } } }
           : role === "parent"

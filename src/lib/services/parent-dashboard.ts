@@ -298,8 +298,14 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  const [lessons, attendance, assessments, caActivityScores, classCounts, assignments, homeworkSubmissions, announcements, bills, payments, caConfigs, activePeriod, communicationPolicy, contactRequests] = await Promise.all([
-    Promise.all(classIds.map((classId) => listLiveTimetableLessons(schoolId, { classId }))).then((rows) => rows.flat()),
+  const lessons = (
+    await Promise.all(
+      classIds.map((classId) => listLiveTimetableLessons(schoolId, { classId })),
+    )
+  ).flat();
+  const liveLessonIds = lessons.map((lesson) => lesson.id);
+
+  const [attendance, assessments, caActivityScores, classCounts, assignments, homeworkSubmissions, announcements, bills, payments, caConfigs, activePeriod, communicationPolicy, contactRequests] = await Promise.all([
     prisma.attendance.findMany({
       where: { schoolId, studentId: { in: childIds }, date: { gte: thirtyDaysAgo } },
       include: {
@@ -340,7 +346,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       where: {
         schoolId,
         dueDate: { gte: twoWeeksAgo, lte: twoWeeksFromNow },
-        lesson: { classId: { in: classIds } },
+        lessonId: { in: liveLessonIds },
       },
       include: {
         lesson: {
@@ -357,7 +363,10 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       where: {
         schoolId,
         studentId: { in: childIds },
-        assignment: { dueDate: { gte: twoWeeksAgo, lte: twoWeeksFromNow } },
+        assignment: {
+          dueDate: { gte: twoWeeksAgo, lte: twoWeeksFromNow },
+          lessonId: { in: liveLessonIds },
+        },
       },
       include: {
         assignment: {

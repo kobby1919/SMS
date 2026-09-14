@@ -11,6 +11,7 @@ import prisma from "@/src/lib/prisma";
 import { Prisma } from "@/src/generated/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 const StudentListPage = async ({
   searchParams,
@@ -23,13 +24,16 @@ const StudentListPage = async ({
   const p = page ? parseInt(page) : 1;
 
   const query: Prisma.StudentWhereInput = { schoolId };
+  let teacherFilterClassIds: number[] | null = null;
 
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {
         switch (key) {
           case "teacherId":
-            query.class = { lessons: { some: { teacherId: value } } };
+            teacherFilterClassIds = Array.from(
+              new Set((await listLiveTimetableLessons(schoolId, { teacherId: value })).map((lesson) => lesson.classId)),
+            );
             break;
           case "classId":
             query.classId = parseInt(value);
@@ -49,6 +53,9 @@ const StudentListPage = async ({
       }
     }
   }
+  if (teacherFilterClassIds) {
+    query.classId = { in: teacherFilterClassIds };
+  }
 
   if (role === "teacher") {
     const teacherScope = await getTeacherScope({ schoolId, teacherId: userId });
@@ -67,6 +74,10 @@ const StudentListPage = async ({
 
     const search = queryParams.search?.trim();
     if (search) {
+      const lowerSearch = search.toLowerCase();
+      const matchingSubjectClassIds = teacherScope.taughtClasses
+        .filter((cls) => cls.subjects.some((subject) => subject.name.toLowerCase().includes(lowerSearch)))
+        .map((cls) => cls.id);
       teacherQuery.AND = [
         {
           OR: [
@@ -76,7 +87,7 @@ const StudentListPage = async ({
             { email: { contains: search, mode: "insensitive" } },
             { phone: { contains: search, mode: "insensitive" } },
             { class: { name: { contains: search, mode: "insensitive" } } },
-            { class: { lessons: { some: { teacherId: userId, subject: { name: { contains: search, mode: "insensitive" } } } } } },
+            ...(matchingSubjectClassIds.length > 0 ? [{ classId: { in: matchingSubjectClassIds } }] : []),
           ],
         },
       ];
@@ -99,13 +110,6 @@ const StudentListPage = async ({
             id: true,
             name: true,
             grade: { select: { level: true } },
-            lessons: {
-              where: { teacherId: userId },
-              select: {
-                subject: { select: { id: true, name: true } },
-              },
-              orderBy: [{ subject: { name: "asc" } }],
-            },
           },
         },
       },
@@ -136,19 +140,10 @@ const StudentListPage = async ({
           isSupervised: teacherScope.supervisedClassIds.includes(student.classId),
         };
 
-        if (current.isSupervised) {
-          const supervised = teacherScope.supervisedClasses.find((cls) => cls.id === student.classId);
-          if (supervised) {
-            teacherScope.taughtClasses
-              .filter((cls) => cls.id === supervised.id)
-              .flatMap((cls) => cls.subjects)
-              .forEach((subject) => current.subjects.set(subject.id, subject.name));
-          }
-        } else {
-          student.class.lessons.forEach((lesson) => {
-            current.subjects.set(lesson.subject.id, lesson.subject.name);
-          });
-        }
+        teacherScope.taughtClasses
+          .filter((cls) => cls.id === student.classId)
+          .flatMap((cls) => cls.subjects)
+          .forEach((subject) => current.subjects.set(subject.id, subject.name));
         current.students.push(student);
         map.set(student.classId, current);
         return map;

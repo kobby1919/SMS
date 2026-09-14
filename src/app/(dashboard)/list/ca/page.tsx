@@ -13,6 +13,7 @@ import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { getSubjectCAProgress } from "@/src/lib/services/ca-activity";
 import { getSchoolOperatingWindowStatus } from "@/src/lib/services/school-operating-hours";
 import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
+import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 import { ClipboardList, AlertTriangle, BookOpen, Users, Layers3 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -43,10 +44,11 @@ const CAPage = async ({
       include: { grade: { select: { level: true } } },
     });
   } else {
+    const teacherScope = await getTeacherScope({ schoolId, teacherId: userId });
     supervisedClasses = await prisma.class.findMany({
       where: {
         schoolId,
-        lessons: { some: { teacherId: userId } },
+        id: { in: teacherScope.accessibleClassIds },
       },
       orderBy: { name: "asc" },
       include: { grade: { select: { level: true } } },

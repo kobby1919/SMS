@@ -10,6 +10,7 @@ import FormModal from "@/src/components/FormModal";
 import prisma from "@/src/lib/prisma";
 import { Subject, Prisma } from "@/src/generated/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 // Dynamic subject color by name initial
 const SUBJECT_COLORS = [
@@ -32,13 +33,19 @@ const TeacherListPage = async ({
   const p = page ? parseInt(page) : 1;
 
   const query: Prisma.TeacherWhereInput = { schoolId };
+  let classFilterTeacherIds: string[] | null = null;
 
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {
         switch (key) {
           case "classId":
-            query.lessons = { some: { classId: parseInt(value) } };
+            classFilterTeacherIds = Array.from(
+              new Set(
+                (await listLiveTimetableLessons(schoolId, { classId: parseInt(value) }))
+                  .map((lesson) => lesson.teacherId),
+              ),
+            );
             break;
           case "search":
             query.name = { contains: value, mode: "insensitive" };
@@ -47,17 +54,15 @@ const TeacherListPage = async ({
       }
     }
   }
+  if (classFilterTeacherIds) {
+    query.id = { in: classFilterTeacherIds };
+  }
 
   const [teachers, count, totalSubjects, totalClasses] = await Promise.all([
     prisma.teacher.findMany({
       where: query,
       include: {
         subjects: true,
-        // Get unique classes from lessons (not just supervised classes)
-        lessons: {
-          select: { class: { select: { id: true, name: true } } },
-          distinct: ["classId"],
-        },
       },
       orderBy: { name: "asc" },
       take: ITEM_PER_PAGE,
@@ -67,6 +72,13 @@ const TeacherListPage = async ({
     prisma.subject.count({ where: { schoolId } }),
     prisma.class.count({ where: { schoolId } }),
   ]);
+  const liveLessons = await listLiveTimetableLessons(schoolId);
+  const liveLessonsByTeacherId = new Map<string, typeof liveLessons>();
+  for (const lesson of liveLessons) {
+    const rows = liveLessonsByTeacherId.get(lesson.teacherId) ?? [];
+    rows.push(lesson);
+    liveLessonsByTeacherId.set(lesson.teacherId, rows);
+  }
 
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
@@ -135,9 +147,9 @@ const TeacherListPage = async ({
             </thead>
             <tbody className="divide-y divide-gray-50">
               {teachers.map((item) => {
-                // Unique classes from lessons — fixes the empty classes issue
+                const teacherLessons = liveLessonsByTeacherId.get(item.id) ?? [];
                 const taughtClasses = Array.from(
-                  new Map(item.lessons.map((l) => [l.class.id, l.class])).values()
+                  new Map(teacherLessons.map((l) => [l.class.id, l.class])).values()
                 );
 
                 return (

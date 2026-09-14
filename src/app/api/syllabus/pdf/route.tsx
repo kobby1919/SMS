@@ -13,6 +13,7 @@ import { syllabusPdfQuerySchema } from "@/src/lib/validation/academic";
 import { parseSearchParams } from "@/src/lib/validation/parse";
 import { documentTag } from "@/src/lib/cacheTags";
 import { getCachedDocument } from "@/src/lib/services/document-cache";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 import {
   renderToBuffer,
   Document,
@@ -389,16 +390,14 @@ export async function GET(req: NextRequest) {
 
     // For teachers: verify they teach this syllabus subject/grade through the timetable.
     if (role === "teacher") {
+      const liveLessons = (await listLiveTimetableLessons(schoolId, { teacherId: userId }))
+        .filter((lesson) => lesson.subjectId === syllabus.subjectId);
+      const liveClassIds = Array.from(new Set(liveLessons.map((lesson) => lesson.classId)));
       const teacherClasses = await prisma.class.findMany({
         where: {
           schoolId,
           gradeId: syllabus.gradeId,
-          lessons: {
-            some: {
-              teacherId: userId,
-              subjectId: syllabus.subjectId,
-            },
-          },
+          id: { in: liveClassIds },
         },
         select: { id: true },
       });

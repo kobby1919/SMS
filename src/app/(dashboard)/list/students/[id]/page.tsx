@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { getGradeBandByGrade, computeAggregate, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
 import type { Term } from "@/src/generated/prisma";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 const SingleStudentPage = async ({
   params,
@@ -36,13 +37,6 @@ const SingleStudentPage = async ({
         include: {
           grade:   { select: { level: true } },
           supervisor: { select: { name: true, surname: true } },
-          lessons: {
-            include: {
-              subject: { select: { name: true } },
-              teacher: { select: { name: true, surname: true } },
-            },
-            orderBy: [{ day: "asc" }, { startTime: "asc" }],
-          },
         },
       },
       parent:  { select: { name: true, surname: true, phone: true, email: true } },
@@ -52,18 +46,19 @@ const SingleStudentPage = async ({
   });
 
   if (!student) notFound();
+  const liveLessons = await listLiveTimetableLessons(schoolId, { classId: student.classId });
 
   const isClassTeacherForStudent =
     role === "teacher" && student.class.supervisorId === userId;
   const teachesStudentClass =
-    role === "teacher" && student.class.lessons.some((lesson) => lesson.teacherId === userId);
+    role === "teacher" && liveLessons.some((lesson) => lesson.teacherId === userId);
 
   if (role === "teacher" && !isClassTeacherForStudent && !teachesStudentClass) {
     notFound();
   }
 
   // ── Calendar lessons ───────────────────────────────────────────────────────
-  const calendarLessons: CalendarLesson[] = student.class.lessons.map((l) => ({
+  const calendarLessons: CalendarLesson[] = liveLessons.map((l) => ({
     title:     l.subject.name,
     day:       l.day,
     startTime: l.startTime,
@@ -81,7 +76,7 @@ const SingleStudentPage = async ({
     ? Math.round((presentCount / totalAttendance) * 100)
     : 0;
 
-  const uniqueSubjectsCount = new Set(student.class.lessons.map((l) => l.subject.name)).size;
+  const uniqueSubjectsCount = new Set(liveLessons.map((l) => l.subject.name)).size;
   const enrolYear           = new Date(student.createdAt).getFullYear();
 
   // ── CA records — all terms ─────────────────────────────────────────────────

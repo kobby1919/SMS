@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
 import { getCachedClasses } from "@/src/lib/referenceData";
 import { enforceRateLimit } from "@/src/lib/rate-limit";
-import prisma from "@/src/lib/prisma";
+import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 
 export async function GET(req: NextRequest) {
   try {
@@ -15,14 +15,11 @@ export async function GET(req: NextRequest) {
     if (limited) return limited;
 
     if (role === "teacher") {
-      const classes = await prisma.class.findMany({
-        where: {
-          schoolId,
-          lessons: { some: { teacherId: userId } },
-        },
-        select: { id: true, name: true },
-        orderBy: { name: "asc" },
-      });
+      const scope = await getTeacherScope({ schoolId, teacherId: userId });
+      const classes = [...scope.taughtClasses, ...scope.supervisedClasses]
+        .filter((cls, index, all) => all.findIndex((item) => item.id === cls.id) === index)
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((cls) => ({ id: cls.id, name: cls.name }));
       return NextResponse.json(classes);
     }
 

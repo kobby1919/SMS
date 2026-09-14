@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { TERM_LABELS } from "@/src/lib/caGrades";
 import SyllabusProgressCard from "@/src/components/SyllabusProgressCard";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 export const dynamic = "force-dynamic";
 
@@ -75,16 +76,14 @@ const SyllabusViewPage = async ({
   // For teachers: find timetable classes where they teach this syllabus subject.
   let teacherClasses: { id: number; name: string }[] = [];
   if (role === "teacher") {
+    const liveLessons = (await listLiveTimetableLessons(schoolId, { teacherId: userId }))
+      .filter((lesson) => lesson.subjectId === syllabus.subjectId);
+    const liveClassIds = Array.from(new Set(liveLessons.map((lesson) => lesson.classId)));
     teacherClasses = await prisma.class.findMany({
       where:  {
         schoolId,
         gradeId: syllabus.gradeId,
-        lessons: {
-          some: {
-            teacherId: userId,
-            subjectId: syllabus.subjectId,
-          },
-        },
+        id: { in: liveClassIds },
       },
       select: { id: true, name: true },
       orderBy: { name: "asc" },
