@@ -41,6 +41,8 @@ const requiredDelegates = [
   "schoolPeriodTemplate",
   "timetablePublication",
   "publishedTimetableLesson",
+  "teacherInvite",
+  "teacherInviteAuditLog",
 ] as const;
 
 function hasRequiredDelegates(client: ReturnType<typeof prismaClientSingleton>) {
