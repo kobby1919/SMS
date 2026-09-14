@@ -8,6 +8,7 @@ import {
 } from "@/src/lib/services/parent-notifications";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { schoolCommunicationPolicyDefaults } from "@/src/lib/services/school-communication-policy";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 export type ParentActivityFeedItem = ParentNotificationFeedItem;
 
@@ -298,14 +299,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
   const [lessons, attendance, assessments, caActivityScores, classCounts, assignments, homeworkSubmissions, announcements, bills, payments, caConfigs, activePeriod, communicationPolicy, contactRequests] = await Promise.all([
-    prisma.lesson.findMany({
-      where: { schoolId, classId: { in: classIds } },
-      include: {
-        subject: { select: { id: true, name: true } },
-        teacher: { select: { id: true, name: true, surname: true, phone: true, email: true } },
-      },
-      orderBy: [{ day: "asc" }, { startTime: "asc" }],
-    }),
+    Promise.all(classIds.map((classId) => listLiveTimetableLessons(schoolId, { classId }))).then((rows) => rows.flat()),
     prisma.attendance.findMany({
       where: { schoolId, studentId: { in: childIds }, date: { gte: thirtyDaysAgo } },
       include: {
@@ -587,7 +581,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
   >();
   for (const lesson of lessons) {
     const rows = teacherNamesByClass.get(lesson.classId) ?? new Set<string>();
-    const teacherName = `${lesson.teacher.name} ${lesson.teacher.surname}`;
+    const teacherName = `${lesson.teacher.name} ${lesson.teacher.surname}`.trim();
     rows.add(teacherName);
     teacherNamesByClass.set(lesson.classId, rows);
 
@@ -596,8 +590,8 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       id: lesson.teacher.id,
       name: teacherName,
       subjectNames: new Set<string>(),
-      phone: lesson.teacher.phone,
-      email: lesson.teacher.email,
+      phone: null,
+      email: null,
     };
     teacher.subjectNames.add(lesson.subject.name);
     classContacts.set(lesson.teacher.id, teacher);

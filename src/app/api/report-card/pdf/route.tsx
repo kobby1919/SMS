@@ -413,12 +413,13 @@ export async function GET(req: NextRequest) {
       role === "teacher" && student.class.supervisorId === userId;
 
     if (role === "teacher") {
-      const teacherLessons = await prisma.lesson.findMany({
-        where: { schoolId, classId: student.classId, teacherId: userId },
-        select: { subjectId: true },
-      });
-      for (const lesson of teacherLessons) {
-        teacherSubjectIds.add(lesson.subjectId);
+      const teacherSubjectsByClass = await listClassSubjectsFromTimetable(
+        schoolId,
+        [student.classId],
+        { teacherId: userId },
+      );
+      for (const subjectId of teacherSubjectsByClass.get(student.classId)?.keys() ?? []) {
+        teacherSubjectIds.add(subjectId);
       }
     }
 

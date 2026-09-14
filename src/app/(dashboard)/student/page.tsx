@@ -17,6 +17,7 @@ import {
 import { getGradeBandByGrade, computeAggregate, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
 import { notFound } from "next/navigation";
 import type { Term } from "@/src/generated/prisma";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 const StudentPage = async ({
   searchParams,
@@ -31,21 +32,14 @@ const StudentPage = async ({
   });
   if (!student) notFound();
 
-  const lessons = await prisma.lesson.findMany({
-    where:   { schoolId, classId: student.classId },
-    include: {
-      subject: { select: { name: true } },
-      teacher: { select: { name: true, surname: true } },
-    },
-    orderBy: [{ day: "asc" }, { startTime: "asc" }],
-  });
+  const lessons = await listLiveTimetableLessons(schoolId, { classId: student.classId });
 
   const calendarLessons: CalendarLesson[] = lessons.map((l) => ({
     title:     l.subject.name,
     day:       l.day,
     startTime: l.startTime,
     endTime:   l.endTime,
-    teacher:   `${l.teacher.name} ${l.teacher.surname}`,
+    teacher:   `${l.teacher.name} ${l.teacher.surname}`.trim(),
   }));
 
   // ── Attendance stats ──────────────────────────────────────────────────────

@@ -39,6 +39,28 @@ export type TimetableLessonInput = {
   periodTemplateId: string;
 };
 
+export type LiveTimetableLesson = {
+  id: number;
+  name: string;
+  day: Day;
+  startTime: Date;
+  endTime: Date;
+  subjectId: number;
+  classId: number;
+  teacherId: string;
+  subject: { id: number; name: string };
+  class: { id: number; name: string };
+  teacher: { id: string; name: string; surname: string };
+  periodTemplate: null | {
+    id: string;
+    name: string;
+    type: string;
+    startTime: string;
+    endTime: string;
+    order: number;
+  };
+};
+
 const lessonInclude = {
   subject: { select: { id: true, name: true } },
   class: { select: { id: true, name: true } },
@@ -62,6 +84,88 @@ export function listTimetableLessons(schoolId: string, classId?: number) {
     include: lessonInclude,
     orderBy: [{ day: "asc" }, { startTime: "asc" }],
   });
+}
+
+function mapPublishedLessonToLiveLesson(lesson: {
+  sourceId: number;
+  name: string;
+  day: Day;
+  startTime: Date;
+  endTime: Date;
+  subjectId: number;
+  subjectName: string;
+  classId: number;
+  className: string;
+  teacherId: string;
+  teacherName: string;
+  periodTemplateId: string | null;
+  periodTemplateName: string | null;
+  periodTemplateType: string | null;
+  periodStartTime: string | null;
+  periodEndTime: string | null;
+  periodOrder: number | null;
+}): LiveTimetableLesson {
+  return {
+    id: lesson.sourceId,
+    name: lesson.name,
+    day: lesson.day,
+    startTime: lesson.startTime,
+    endTime: lesson.endTime,
+    subjectId: lesson.subjectId,
+    classId: lesson.classId,
+    teacherId: lesson.teacherId,
+    subject: { id: lesson.subjectId, name: lesson.subjectName },
+    class: { id: lesson.classId, name: lesson.className },
+    teacher: { id: lesson.teacherId, name: lesson.teacherName, surname: "" },
+    periodTemplate: lesson.periodTemplateId
+      ? {
+          id: lesson.periodTemplateId,
+          name: lesson.periodTemplateName ?? "Published period",
+          type: lesson.periodTemplateType ?? "TEACHING",
+          startTime: lesson.periodStartTime ?? "",
+          endTime: lesson.periodEndTime ?? "",
+          order: lesson.periodOrder ?? 0,
+        }
+      : null,
+  };
+}
+
+export async function listLiveTimetableLessons(
+  schoolId: string,
+  filters: { classId?: number; teacherId?: string; day?: Day } = {},
+) {
+  const rows = await prisma.publishedTimetableLesson.findMany({
+    where: {
+      schoolId,
+      publication: { status: "ACTIVE" },
+      ...(filters.classId ? { classId: filters.classId } : {}),
+      ...(filters.teacherId ? { teacherId: filters.teacherId } : {}),
+      ...(filters.day ? { day: filters.day } : {}),
+    },
+    orderBy: [
+      { day: "asc" },
+      { startTime: "asc" },
+      { periodOrder: "asc" },
+      { sourceId: "asc" },
+    ],
+  });
+
+  return rows.map(mapPublishedLessonToLiveLesson);
+}
+
+export async function getLiveTimetableLessonBySourceId(
+  schoolId: string,
+  lessonId: number,
+) {
+  const lesson = await prisma.publishedTimetableLesson.findFirst({
+    where: {
+      schoolId,
+      sourceId: lessonId,
+      publication: { status: "ACTIVE" },
+    },
+  });
+
+  return lesson ? mapPublishedLessonToLiveLesson(lesson) : null;
 }
 
 export async function getActiveTimetablePublication(
@@ -93,21 +197,10 @@ export async function listClassSubjectsFromTimetable(
 ) {
   if (classIds.length === 0) return new Map<number, Map<number, string>>();
 
-  const lessons = await prisma.lesson.findMany({
-    where: {
-      schoolId,
-      classId: { in: classIds },
-      ...(options.teacherId ? { teacherId: options.teacherId } : {}),
-    },
-    select: {
-      classId: true,
-      subject: { select: { id: true, name: true } },
-    },
-    orderBy: { subject: { name: "asc" } },
-  });
+  const lessons = await listLiveTimetableLessons(schoolId, options.teacherId ? { teacherId: options.teacherId } : {});
 
   const subjectsByClass = new Map<number, Map<number, string>>();
-  for (const lesson of lessons) {
+  for (const lesson of lessons.filter((item) => classIds.includes(item.classId))) {
     const subjects = subjectsByClass.get(lesson.classId) ?? new Map<number, string>();
     subjects.set(lesson.subject.id, lesson.subject.name);
     subjectsByClass.set(lesson.classId, subjects);

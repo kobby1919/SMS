@@ -6,6 +6,7 @@ import type {
   TeacherObligationStatus,
 } from "@/src/generated/prisma";
 import { getTeacherAccountabilitySettings } from "@/src/lib/services/teacher-accountability-settings";
+import { getLiveTimetableLessonBySourceId, listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 const DAY_BY_INDEX: Record<number, Day | null> = {
   0: null,
@@ -85,11 +86,8 @@ export async function evaluateAttendanceWindow({
   now?: Date;
 }): Promise<AttendanceWindowEvaluation> {
   const settings = await getTeacherAccountabilitySettings(schoolId);
-  const lesson = await prisma.lesson.findFirst({
-    where: { id: lessonId, schoolId },
-    select: { startTime: true, endTime: true },
-  });
-  if (!lesson) throw new Error("Lesson not found.");
+  const lesson = await getLiveTimetableLessonBySourceId(schoolId, lessonId);
+  if (!lesson) throw new Error("This lesson is not part of the published timetable.");
 
   const startAt = combineDateWithLessonTime(date, lesson.startTime);
   const endAt = combineDateWithLessonTime(date, lesson.endTime);
@@ -188,18 +186,9 @@ export async function syncAttendanceObligationsForDate({
   if (!day) return [];
 
   const settings = await getTeacherAccountabilitySettings(schoolId);
-  const lessons = await prisma.lesson.findMany({
-    where: {
-      schoolId,
-      day,
-      ...(teacherId ? { teacherId } : {}),
-    },
-    include: {
-      subject: { select: { id: true, name: true } },
-      class: { select: { id: true, name: true } },
-      teacher: { select: { id: true, name: true, surname: true } },
-    },
-    orderBy: [{ startTime: "asc" }, { id: "asc" }],
+  const lessons = await listLiveTimetableLessons(schoolId, {
+    day,
+    ...(teacherId ? { teacherId } : {}),
   });
 
   if (lessons.length === 0) return [];
@@ -335,7 +324,7 @@ export async function syncAttendanceObligationsForDate({
         className: item.lesson.class.name,
         subjectId: item.lesson.subjectId,
         subjectName: item.lesson.subject.name,
-        teacherName: `${item.lesson.teacher.name} ${item.lesson.teacher.surname}`,
+        teacherName: `${item.lesson.teacher.name} ${item.lesson.teacher.surname}`.trim(),
         date: targetDateKey,
         openAt: item.openAt.toISOString(),
         deadlineAt: item.deadlineAt.toISOString(),

@@ -1,8 +1,9 @@
 import prisma from "@/src/lib/prisma";
 import { requirePageSession } from "@/src/lib/authz";
 import AttendanceTaker from "@/src/components/AttendanceTaker";
-import { AttendanceStatus, Day, Prisma } from "@/src/generated/prisma";
+import { AttendanceStatus, Day } from "@/src/generated/prisma";
 import { syncAttendanceObligationsForDate } from "@/src/lib/services/teacher-attendance-obligations";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 
 const TakeAttendancePage = async ({
@@ -25,12 +26,7 @@ const TakeAttendancePage = async ({
   // 2. CHECK FOR WEEKENDS: Prevent the Prisma error if today is Saturday or Sunday
   const isWeekend = dayOfWeekStr === "SATURDAY" || dayOfWeekStr === "SUNDAY";
 
-  type LessonWithSummary = Prisma.LessonGetPayload<{
-    include: {
-      subject: { select: { name: true } };
-      class: { select: { id: true; name: true } };
-    };
-  }>;
+  type LessonWithSummary = Awaited<ReturnType<typeof listLiveTimetableLessons>>[number];
   type StudentSummary = {
     id: string;
     name: string;
@@ -50,17 +46,9 @@ const TakeAttendancePage = async ({
 
   if (!isWeekend) {
     [teacherLessons, attendanceObligations] = await Promise.all([
-      prisma.lesson.findMany({
-        where: {
-          schoolId,
-          ...(role === "teacher" ? { teacherId: userId } : {}),
-          day: dayOfWeekStr as Day, // Cast to the Enum type safely
-        },
-        include: {
-          subject: { select: { name: true } },
-          class: { select: { id: true, name: true } },
-        },
-        orderBy: { startTime: "asc" },
+      listLiveTimetableLessons(schoolId, {
+        ...(role === "teacher" ? { teacherId: userId } : {}),
+        day: dayOfWeekStr as Day,
       }),
       syncAttendanceObligationsForDate({
         schoolId,
@@ -82,17 +70,10 @@ const TakeAttendancePage = async ({
 
   // Only proceed with lesson details if it's a weekday and we have an ID
   if (lessonId && !isWeekend) {
-    selectedLesson = await prisma.lesson.findFirst({
-      where: {
-        id: lessonId,
-        schoolId,
-        ...(role === "teacher" ? { teacherId: userId } : {}),
-      },
-      include: {
-        subject: { select: { name: true } },
-        class: { select: { id: true, name: true } },
-      },
-    });
+    selectedLesson = (await listLiveTimetableLessons(schoolId, {
+      ...(role === "teacher" ? { teacherId: userId } : {}),
+      day: dayOfWeekStr as Day,
+    })).find((lesson) => lesson.id === lessonId) ?? null;
 
     if (selectedLesson) {
       students = await prisma.student.findMany({

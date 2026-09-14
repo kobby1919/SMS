@@ -1,4 +1,5 @@
 import prisma from "@/src/lib/prisma";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 import type { CABucketAggregationMode, CAActivityType, Prisma, Term } from "@/src/generated/prisma";
 import { getGradeBand } from "@/src/lib/caGrades";
 
@@ -219,18 +220,13 @@ export async function assertTeacherCanManageCAContext(input: {
 }) {
   if (input.role === "admin") return;
 
-  const allowed = await prisma.lesson.findFirst({
-    where: {
-      schoolId: input.schoolId,
-      classId: input.classId,
-      subjectId: input.subjectId,
-      teacherId: input.userId,
-    },
-    select: { id: true },
-  });
+  const allowed = (await listLiveTimetableLessons(input.schoolId, {
+    teacherId: input.userId,
+    classId: input.classId,
+  })).some((lesson) => lesson.subjectId === input.subjectId);
 
   if (!allowed) {
-    throw new Error("Only the assigned subject teacher can manage this CA structure.");
+    throw new Error("Only the assigned subject teacher on the published timetable can manage this CA structure.");
   }
 }
 

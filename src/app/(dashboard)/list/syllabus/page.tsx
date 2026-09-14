@@ -11,6 +11,7 @@ import {
 import { TERM_LABELS } from "@/src/lib/caGrades";
 import SyllabusDeleteButton from "@/src/components/SyllabusDeleteButton";
 import type { Prisma, SyllabusStatus, Term } from "@/src/generated/prisma";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 export const dynamic = "force-dynamic";
 
@@ -33,19 +34,22 @@ const SyllabusListPage = async ({
   let teacherGradeIds: number[] | undefined;
   let teacherSyllabusPairs: { subjectId: number; gradeId: number }[] | undefined;
   if (role === "teacher") {
-    const lessons = await prisma.lesson.findMany({
-      where: { teacherId: userId, schoolId },
-      select: {
-        subjectId: true,
-        class: { select: { gradeId: true } },
-      },
-    });
+    const lessons = await listLiveTimetableLessons(schoolId, { teacherId: userId });
+    const classIds = [...new Set(lessons.map((lesson) => lesson.classId))];
+    const classes = classIds.length > 0
+      ? await prisma.class.findMany({
+          where: { schoolId, id: { in: classIds } },
+          select: { id: true, gradeId: true },
+        })
+      : [];
+    const gradeByClassId = new Map(classes.map((cls) => [cls.id, cls.gradeId]));
     const pairKeys = new Set<string>();
     teacherSyllabusPairs = lessons
       .map((lesson) => ({
         subjectId: lesson.subjectId,
-        gradeId: lesson.class.gradeId,
+        gradeId: gradeByClassId.get(lesson.classId) ?? 0,
       }))
+      .filter((pair) => pair.gradeId > 0)
       .filter((pair) => {
         const key = `${pair.subjectId}:${pair.gradeId}`;
         if (pairKeys.has(key)) return false;

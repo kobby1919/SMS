@@ -9,6 +9,7 @@ import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { prepareTeacherAccountabilityForView } from "@/src/lib/services/teacher-accountability-view";
 import { getTeacherSelfAccountabilityOverview } from "@/src/lib/queries/teacher-self-accountability";
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 import Link from "next/link";
 import {
   AlertTriangle,
@@ -125,30 +126,36 @@ const TeacherPage = async () => {
     now: today,
   });
 
-  const [teacher, lessons, activePeriod, accountability, teacherScope] = await Promise.all([
+  const [teacher, liveLessons, activePeriod, accountability, teacherScope] = await Promise.all([
     prisma.teacher.findFirst({
       where: { id: userId, schoolId },
       include: { classes: { select: { id: true, name: true } } },
     }),
-    prisma.lesson.findMany({
-      where:   { schoolId, teacherId: userId },
-      include: {
-        subject: { select: { name: true } },
-        class:   {
-          select: {
-            id: true,
-            name: true,
-            gradeId: true,
-            _count: { select: { students: true } },
-          },
-        },
-      },
-      orderBy: [{ day: "asc" }, { startTime: "asc" }],
-    }),
+    listLiveTimetableLessons(schoolId, { teacherId: userId }),
     getActiveAcademicPeriod(schoolId),
     getTeacherSelfAccountabilityOverview({ schoolId, teacherId: userId }),
     getTeacherScope({ schoolId, teacherId: userId }),
   ]);
+  const liveClassIds = [...new Set(liveLessons.map((lesson) => lesson.classId))];
+  const liveClassMeta = liveClassIds.length > 0
+    ? await prisma.class.findMany({
+        where: { schoolId, id: { in: liveClassIds } },
+        select: {
+          id: true,
+          gradeId: true,
+          _count: { select: { students: true } },
+        },
+      })
+    : [];
+  const classMetaById = new Map(liveClassMeta.map((cls) => [cls.id, cls]));
+  const lessons = liveLessons.map((lesson) => ({
+    ...lesson,
+    class: {
+      ...lesson.class,
+      gradeId: classMetaById.get(lesson.classId)?.gradeId ?? 0,
+      _count: { students: classMetaById.get(lesson.classId)?._count.students ?? 0 },
+    },
+  }));
 
   const todayLessons = lessons.filter((lesson) => lesson.day === todayDay);
   const todayLessonIds = todayLessons.map((lesson) => lesson.id);

@@ -6,6 +6,7 @@ import {
   evaluateAttendanceWindow,
   syncAttendanceObligationsForDate,
 } from "@/src/lib/services/teacher-attendance-obligations";
+import { getLiveTimetableLessonBySourceId } from "@/src/lib/services/timetable";
 
 const ATTENDANCE_STATUS_LABELS: Record<AttendanceStatus, string> = {
   PRESENT: "Present",
@@ -212,11 +213,8 @@ export async function saveAttendance({
     followUpStatus: attendanceFollowUpStatus(record.status, record.note),
   }));
 
-  const lesson = await prisma.lesson.findFirst({
-    where: { id: lessonId, schoolId },
-    select: { id: true, classId: true, teacherId: true },
-  });
-  if (!lesson) throw new Error("Lesson not found.");
+  const lesson = await getLiveTimetableLessonBySourceId(schoolId, lessonId);
+  if (!lesson) throw new Error("This lesson is not part of the published timetable.");
   if (actorRole === "teacher" && lesson.teacherId !== actorId) {
     throw new Error("You can only submit attendance for lessons assigned to you.");
   }
@@ -362,17 +360,10 @@ export async function saveAttendance({
     });
   }
 
-  const lessonForEvent = await prisma.lesson.findFirst({
-    where: { id: lessonId, schoolId },
-    select: {
-      teacherId: true,
-      teacher: { select: { name: true, surname: true } },
-      subject: { select: { name: true } },
-    },
-  });
+  const lessonForEvent = lesson;
 
   if (lessonForEvent) {
-    const teacherName = `${lessonForEvent.teacher.name} ${lessonForEvent.teacher.surname}`;
+    const teacherName = `${lessonForEvent.teacher.name} ${lessonForEvent.teacher.surname}`.trim();
     const attendanceSourceKeys = studentIds.map((studentId) => `${attendanceEventBaseKey}:${studentId}`);
     await prisma.parentActivityEvent.deleteMany({
       where: {

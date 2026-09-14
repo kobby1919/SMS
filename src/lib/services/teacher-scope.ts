@@ -1,4 +1,5 @@
 import prisma from "@/src/lib/prisma";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 export type TeacherScopeClass = {
   id: number;
@@ -35,7 +36,7 @@ export async function getTeacherScope({
   schoolId: string;
   teacherId: string;
 }): Promise<TeacherScope> {
-  const [supervisedClasses, lessons] = await Promise.all([
+  const [supervisedClasses, liveLessons] = await Promise.all([
     prisma.class.findMany({
       where: { schoolId, supervisorId: teacherId },
       select: {
@@ -46,42 +47,39 @@ export async function getTeacherScope({
       },
       orderBy: { name: "asc" },
     }),
-    prisma.lesson.findMany({
-      where: { schoolId, teacherId },
-      select: {
-        class: {
-          select: {
-            id: true,
-            name: true,
-            grade: { select: { level: true } },
-            _count: { select: { students: true } },
-          },
-        },
-        subject: { select: { id: true, name: true } },
-      },
-      orderBy: [
-        { class: { name: "asc" } },
-        { subject: { name: "asc" } },
-      ],
-    }),
+    listLiveTimetableLessons(schoolId, { teacherId }),
   ]);
+  const lessonClassIds = [...new Set(liveLessons.map((lesson) => lesson.classId))];
+  const lessonClasses = lessonClassIds.length > 0
+    ? await prisma.class.findMany({
+      where: { schoolId, id: { in: lessonClassIds } },
+      select: {
+        id: true,
+        name: true,
+        grade: { select: { level: true } },
+        _count: { select: { students: true } },
+      },
+    })
+    : [];
+  const classMetaById = new Map(lessonClasses.map((cls) => [cls.id, cls]));
 
   const taughtClassMap = new Map<number, TeacherScopeTaughtClass>();
-  for (const lesson of lessons) {
-    const current = taughtClassMap.get(lesson.class.id) ?? {
-      id: lesson.class.id,
-      name: lesson.class.name,
-      gradeLevel: lesson.class.grade.level,
-      studentCount: lesson.class._count.students,
+  for (const lesson of liveLessons) {
+    const classMeta = classMetaById.get(lesson.classId);
+    const current = taughtClassMap.get(lesson.classId) ?? {
+      id: lesson.classId,
+      name: classMeta?.name ?? lesson.class.name,
+      gradeLevel: classMeta?.grade.level ?? "",
+      studentCount: classMeta?._count.students ?? 0,
       subjects: [],
     };
-    if (!current.subjects.some((subject) => subject.id === lesson.subject.id)) {
+    if (!current.subjects.some((subject) => subject.id === lesson.subjectId)) {
       current.subjects.push({
-        id: lesson.subject.id,
+        id: lesson.subjectId,
         name: lesson.subject.name,
       });
     }
-    taughtClassMap.set(lesson.class.id, current);
+    taughtClassMap.set(lesson.classId, current);
   }
 
   const taughtClasses = Array.from(taughtClassMap.values()).map((cls) => ({
@@ -109,4 +107,3 @@ export async function getTeacherScope({
     canSubmitClassReportsForReview: supervisedClasses.length > 0,
   };
 }
-

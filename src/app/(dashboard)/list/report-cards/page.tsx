@@ -333,18 +333,14 @@ const ReportCardListPage = async ({
 
   // ── CA records for this class / term / year ───────────────────────────────
   // ── Subjects for this class (from timetable) ──────────────────────────────
-  const lessons = await prisma.lesson.findMany({
-    where: {
-      schoolId,
-      classId: activeClass.id,
-      ...(role === "teacher" && !isClassTeacher ? { teacherId: userId } : {}),
-    },
-    select: { subject: { select: { id: true, name: true } } },
-  });
   const subjectMap = new Map<number, string>();
-  for (const l of lessons) {
-    if (!subjectMap.has(l.subject.id))
-      subjectMap.set(l.subject.id, l.subject.name);
+  const subjectsByClass = await listClassSubjectsFromTimetable(
+    schoolId,
+    [activeClass.id],
+    role === "teacher" && !isClassTeacher ? { teacherId: userId } : {},
+  );
+  for (const [subjectId, subjectName] of subjectsByClass.get(activeClass.id) ?? new Map<number, string>()) {
+    if (!subjectMap.has(subjectId)) subjectMap.set(subjectId, subjectName);
   }
   const totalSubjects = subjectMap.size;
   const subjectIds = Array.from(subjectMap.keys());

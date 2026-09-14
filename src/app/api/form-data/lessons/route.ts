@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
 import { requireRole, unauthorizedResponse } from "@/src/lib/authz";
 import { enforceRateLimit } from "@/src/lib/rate-limit";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,26 +12,10 @@ export async function GET(req: NextRequest) {
     const limited = await enforceRateLimit(req, { scope: "form-data:lessons", actorId: userId, limit: 120, windowMs: 60_000 });
     if (limited) return limited;
 
-    const where =
-      role === "teacher"
-        ? { schoolId, teacherId: userId }
-        : { schoolId };
-
-    const lessons = await prisma.lesson.findMany({
-      where,
-      select: {
-        id: true,
-        day: true,
-        subject: { select: { id: true, name: true } },
-        class: { select: { id: true, name: true } },
-        teacher: { select: { name: true, surname: true } },
-      },
-      orderBy: [
-        { class: { name: "asc" } },
-        { subject: { name: "asc" } },
-        { day: "asc" },
-      ],
-    });
+    const lessons = await listLiveTimetableLessons(
+      schoolId,
+      role === "teacher" ? { teacherId: userId } : {},
+    );
 
     const seen = new Set<string>();
     const unique = lessons.filter((l) => {
@@ -73,7 +58,7 @@ export async function GET(req: NextRequest) {
         day: l.day,
         subjectName: l.subject.name,
         className: l.class.name,
-        teacherName: `${l.teacher.name} ${l.teacher.surname}`,
+        teacherName: `${l.teacher.name} ${l.teacher.surname}`.trim(),
         nextHomeworkTitle: `Homework ${nextHomeworkByLessonId.get(l.id) ?? 1}`,
       })),
     );
