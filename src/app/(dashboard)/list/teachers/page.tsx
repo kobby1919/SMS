@@ -31,6 +31,9 @@ const getSubjectColor = (_: string, idx: number) =>
   SUBJECT_COLORS[idx % SUBJECT_COLORS.length];
 
 type TeacherSetupStatus = "ready" | "needs-setup";
+type TeacherInviteRow = Awaited<
+  ReturnType<typeof prisma.teacherInvite.findMany>
+>[number];
 
 const statusTabs: Array<{
   key: "all" | "ready" | "needs-setup" | "pending-invites";
@@ -57,8 +60,15 @@ const TeacherListPage = async ({
     queryParams.status === "pending-invites"
       ? queryParams.status
       : "all";
+  const searchTerm = queryParams.search?.trim();
 
   const query: Prisma.TeacherWhereInput = { schoolId };
+  const inviteQuery: Prisma.TeacherInviteWhereInput = {
+    schoolId,
+    status: "PENDING",
+    acceptedAt: null,
+    revokedAt: null,
+  };
   let classFilterTeacherIds: string[] | null = null;
 
   if (queryParams) {
@@ -74,11 +84,19 @@ const TeacherListPage = async ({
             );
             break;
           case "search":
+            if (!value.trim()) break;
             query.OR = [
               { name: { contains: value, mode: "insensitive" } },
               { surname: { contains: value, mode: "insensitive" } },
               { email: { contains: value, mode: "insensitive" } },
               { phone: { contains: value, mode: "insensitive" } },
+            ];
+            inviteQuery.OR = [
+              { name: { contains: value, mode: "insensitive" } },
+              { surname: { contains: value, mode: "insensitive" } },
+              { email: { contains: value, mode: "insensitive" } },
+              { phone: { contains: value, mode: "insensitive" } },
+              { staffId: { contains: value, mode: "insensitive" } },
             ];
             break;
         }
@@ -89,13 +107,26 @@ const TeacherListPage = async ({
     query.id = { in: classFilterTeacherIds };
   }
 
-  const [allTeachers] = await Promise.all([
+  const now = new Date();
+  const [allTeachers, pendingInviteRows, pendingInviteCount] = await Promise.all([
     prisma.teacher.findMany({
       where: query,
       include: {
         subjects: true,
       },
       orderBy: { name: "asc" },
+    }),
+    prisma.teacherInvite.findMany({
+      where: inviteQuery,
+      orderBy: [{ expiresAt: "asc" }, { createdAt: "desc" }],
+    }),
+    prisma.teacherInvite.count({
+      where: {
+        schoolId,
+        status: "PENDING",
+        acceptedAt: null,
+        revokedAt: null,
+      },
     }),
   ]);
   const liveLessons = await listLiveTimetableLessons(schoolId);
@@ -127,7 +158,6 @@ const TeacherListPage = async ({
 
   const readyTeachers = enrichedTeachers.filter((item) => item.setupStatus === "ready");
   const teachersNeedingSetup = enrichedTeachers.filter((item) => item.setupStatus === "needs-setup");
-  const pendingInvites = 0;
   const filteredTeachers =
     selectedStatus === "ready"
       ? readyTeachers
@@ -136,8 +166,15 @@ const TeacherListPage = async ({
         : selectedStatus === "pending-invites"
           ? []
           : enrichedTeachers;
-  const count = filteredTeachers.length;
+  const count =
+    selectedStatus === "pending-invites"
+      ? pendingInviteRows.length
+      : filteredTeachers.length;
   const teachers = filteredTeachers.slice(
+    ITEM_PER_PAGE * (p - 1),
+    ITEM_PER_PAGE * p,
+  );
+  const pendingInvites = pendingInviteRows.slice(
     ITEM_PER_PAGE * (p - 1),
     ITEM_PER_PAGE * p,
   );
@@ -176,7 +213,7 @@ const TeacherListPage = async ({
           { label: "Registered", value: allTeachers.length, icon: <Users size={16} />, color: "bg-indigo-50 text-indigo-600" },
           { label: "Ready", value: readyTeachers.length, icon: <CheckCircle2 size={16} />, color: "bg-emerald-50 text-emerald-600" },
           { label: "Needs setup", value: teachersNeedingSetup.length, icon: <AlertCircle size={16} />, color: "bg-amber-50 text-amber-600" },
-          { label: "Pending invites", value: pendingInvites, icon: <Clock3 size={16} />, color: "bg-violet-50 text-violet-600" },
+          { label: "Pending invites", value: pendingInviteCount, icon: <Clock3 size={16} />, color: "bg-violet-50 text-violet-600" },
         ].map((stat) => (
           <div key={stat.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
@@ -211,7 +248,17 @@ const TeacherListPage = async ({
         </div>
       </div>
 
+      {selectedStatus === "pending-invites" && (
+        <PendingInvitesTable
+          invites={pendingInvites}
+          now={now}
+          role={role}
+          searchTerm={searchTerm}
+        />
+      )}
+
       {/* ── Table ── */}
+      {selectedStatus !== "pending-invites" && (
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-1">
         <div className="w-full overflow-x-auto">
           <table className="w-full min-w-[360px]">
@@ -351,14 +398,10 @@ const TeacherListPage = async ({
                     className="px-5 py-12 text-center"
                   >
                     <p className="text-sm font-black text-gray-500">
-                      {selectedStatus === "pending-invites"
-                        ? "Teacher invites will appear here after the invite flow is enabled."
-                        : "No teachers match this view."}
+                      No teachers match this view.
                     </p>
                     <p className="mt-1 text-xs font-semibold text-gray-400">
-                      {selectedStatus === "pending-invites"
-                        ? "Next section: create secure teacher invites and track accepted, expired, and revoked invites."
-                        : "Try another tab or search term."}
+                      Try another tab or search term.
                     </p>
                   </td>
                 </tr>
@@ -370,8 +413,126 @@ const TeacherListPage = async ({
           <Pagination page={p} count={count} />
         </div>
       </div>
+      )}
+      {selectedStatus === "pending-invites" && (
+        <div className="border-t border-gray-100">
+          <Pagination page={p} count={count} />
+        </div>
+      )}
     </div>
   );
 };
+
+function PendingInvitesTable({
+  invites,
+  now,
+  role,
+  searchTerm,
+}: {
+  invites: TeacherInviteRow[];
+  now: Date;
+  role: string;
+  searchTerm?: string;
+}) {
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-1">
+      <div className="w-full overflow-x-auto">
+        <table className="w-full min-w-[560px]">
+          <thead>
+            <tr className="border-b border-gray-100 bg-gray-50/60">
+              <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Invitee</th>
+              <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">Teacher type</th>
+              <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">Expires</th>
+              <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden xl:table-cell">Created</th>
+              {role === "admin" && (
+                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Status</th>
+              )}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {invites.map((invite) => {
+              const expired = invite.expiresAt.getTime() <= now.getTime();
+              return (
+                <tr key={invite.id} className="hover:bg-indigo-50/30 transition-colors duration-150">
+                  <td className="px-4 py-4">
+                    <p className="font-bold text-sm text-gray-800 truncate">
+                      {invite.name} {invite.surname}
+                    </p>
+                    <p className="text-xs text-gray-400 truncate">{invite.email}</p>
+                    <div className="mt-2 flex flex-wrap gap-1 md:hidden">
+                      <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[11px] font-black text-indigo-700">
+                        {teacherTypeLabel(invite.teacherType)}
+                      </span>
+                      <span className={`rounded-full px-2 py-0.5 text-[11px] font-black ${expired ? "bg-rose-50 text-rose-700" : "bg-violet-50 text-violet-700"}`}>
+                        {expired ? "Expired" : "Pending"}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-3 py-4 hidden md:table-cell">
+                    <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-black text-indigo-700">
+                      {teacherTypeLabel(invite.teacherType)}
+                    </span>
+                  </td>
+                  <td className="px-3 py-4 hidden lg:table-cell">
+                    <span className="text-sm font-semibold text-gray-600">
+                      {invite.expiresAt.toLocaleDateString("en-GH", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </td>
+                  <td className="px-3 py-4 hidden xl:table-cell">
+                    <span className="text-sm font-semibold text-gray-500">
+                      {invite.createdAt.toLocaleDateString("en-GH", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </td>
+                  {role === "admin" && (
+                    <td className="px-5 py-4 text-right">
+                      <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-black ${expired ? "bg-rose-50 text-rose-700" : "bg-violet-50 text-violet-700"}`}>
+                        {expired ? "Expired" : "Pending"}
+                      </span>
+                    </td>
+                  )}
+                </tr>
+              );
+            })}
+            {invites.length === 0 && (
+              <tr>
+                <td
+                  colSpan={role === "admin" ? 5 : 4}
+                  className="px-5 py-12 text-center"
+                >
+                  <p className="text-sm font-black text-gray-500">
+                    {searchTerm ? "No pending invites match this search." : "No pending teacher invites yet."}
+                  </p>
+                  <p className="mt-1 text-xs font-semibold text-gray-400">
+                    Use Invite teacher to create secure teacher onboarding links.
+                  </p>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function teacherTypeLabel(type: TeacherInviteRow["teacherType"]) {
+  switch (type) {
+    case "CLASS_TEACHER":
+      return "Class teacher";
+    case "BOTH":
+      return "Subject and class teacher";
+    case "SUBJECT_TEACHER":
+    default:
+      return "Subject teacher";
+  }
+}
 
 export default TeacherListPage;
