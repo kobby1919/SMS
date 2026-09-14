@@ -9,6 +9,7 @@ import Performance from "@/src/components/Performance";
 import Image from "next/image";
 import Link from "next/link";
 import type { CalendarLesson } from "@/src/components/BigCalendar";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 import {
   Mail, Phone, Droplets, Calendar,
   BookOpen, Users, Clock, Award,
@@ -27,26 +28,21 @@ const SingleTeacherPage = async ({
     where: { id, schoolId },
     include: {
       subjects: { select: { id: true, name: true } },
-      lessons: {
-        include: {
-          subject: { select: { name: true } },
-          class:   { select: { id: true, name: true } },
-        },
-        orderBy: [{ day: "asc" }, { startTime: "asc" }],
-      },
       classes: { select: { id: true, name: true } }, // supervised classes
     },
   });
 
   if (!teacher) notFound();
+  const liveLessons = await listLiveTimetableLessons(schoolId, { teacherId: teacher.id });
+  const liveLessonIds = liveLessons.map((lesson) => lesson.id);
 
   // ── Unique classes taught (from lessons) ─────────────────────────────────
   const taughtClasses = Array.from(
-    new Map(teacher.lessons.map((l) => [l.class.id, l.class])).values()
+    new Map(liveLessons.map((l) => [l.class.id, l.class])).values()
   );
 
   // ── Calendar lessons ─────────────────────────────────────────────────────
-  const calendarLessons: CalendarLesson[] = teacher.lessons.map((l) => ({
+  const calendarLessons: CalendarLesson[] = liveLessons.map((l) => ({
     title:     l.subject.name,
     day:       l.day,
     startTime: l.startTime,
@@ -59,8 +55,12 @@ const SingleTeacherPage = async ({
 
   // Attendance across all their lessons' attendance records
   const [totalAttendance, presentAttendance] = await Promise.all([
-    prisma.attendance.count({ where: { schoolId, lesson: { teacherId: teacher.id } } }),
-    prisma.attendance.count({ where: { schoolId, lesson: { teacherId: teacher.id }, present: true } }),
+    liveLessonIds.length
+      ? prisma.attendance.count({ where: { schoolId, lessonId: { in: liveLessonIds } } })
+      : 0,
+    liveLessonIds.length
+      ? prisma.attendance.count({ where: { schoolId, lessonId: { in: liveLessonIds }, present: true } })
+      : 0,
   ]);
   const attendancePct = totalAttendance > 0
     ? Math.round((presentAttendance / totalAttendance) * 100)
@@ -135,7 +135,7 @@ const SingleTeacherPage = async ({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { icon: <Clock size={16} />,    value: `${attendancePct}%`,    label: "Class Attendance", color: "bg-indigo-50 text-indigo-600"   },
-            { icon: <BookOpen size={16} />, value: teacher.lessons.length, label: "Total Lessons",    color: "bg-amber-50 text-amber-600"    },
+            { icon: <BookOpen size={16} />, value: liveLessons.length,     label: "Total Lessons",    color: "bg-amber-50 text-amber-600"    },
             { icon: <Users size={16} />,    value: taughtClasses.length,   label: "Classes",          color: "bg-emerald-50 text-emerald-600" },
             { icon: <Award size={16} />,    value: teacher.subjects.length, label: "Subjects",        color: "bg-violet-50 text-violet-600"  },
           ].map((stat) => (
@@ -213,7 +213,7 @@ const SingleTeacherPage = async ({
           currentSemesterValue={attendancePct}
           previousSemesterValue={0}
           trendLabel="Attendance Rate"
-          rankingLabel={`${taughtClasses.length} classes · ${teacher.lessons.length} lessons`}
+          rankingLabel={`${taughtClasses.length} classes · ${liveLessons.length} lessons`}
           chartColor="#6366f1"
         />
         <Announcements />

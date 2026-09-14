@@ -14,6 +14,7 @@ import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { getClassReportReadiness } from "@/src/lib/services/report-card-readiness";
 import { attendanceObligationSourceKey } from "@/src/lib/services/teacher-attendance-obligations";
 import { getSchoolOperatingWindowStatus } from "@/src/lib/services/school-operating-hours";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 const DAY_ENUM_MAP: Record<number, Day> = {
   1: "MONDAY",
@@ -378,25 +379,7 @@ export async function getAdminOwnerDashboardData(
     prisma.student.count({ where: { schoolId } }),
     prisma.parent.count({ where: { schoolId } }),
     prisma.class.count({ where: { schoolId } }),
-    prisma.lesson.findMany({
-      where: { schoolId, day: todayDay },
-      select: {
-        id: true,
-        name: true,
-        startTime: true,
-        endTime: true,
-        class: {
-          select: {
-            id: true,
-            name: true,
-            _count: { select: { students: true } },
-          },
-        },
-        subject: { select: { name: true } },
-        teacher: { select: { name: true, surname: true } },
-      },
-      orderBy: [{ startTime: "asc" }, { id: "asc" }],
-    }),
+    listLiveTimetableLessons(schoolId, { day: todayDay }),
     prisma.attendance.groupBy({
       by: ["status"],
       where: { schoolId, date: { gte: todayStart, lte: todayEnd } },
@@ -550,6 +533,16 @@ export async function getAdminOwnerDashboardData(
   ]);
 
   const todaysLessonIds = todaysLessons.map((lesson) => lesson.id);
+  const todayClassIds = Array.from(new Set(todaysLessons.map((lesson) => lesson.classId)));
+  const classStudentCounts = todayClassIds.length
+    ? await prisma.class.findMany({
+        where: { schoolId, id: { in: todayClassIds } },
+        select: { id: true, _count: { select: { students: true } } },
+      })
+    : [];
+  const studentCountByClassId = new Map(
+    classStudentCounts.map((item) => [item.id, item._count.students]),
+  );
   const attendanceByLesson = todaysLessonIds.length
     ? await prisma.attendance.groupBy({
         by: ["lessonId"],
@@ -582,7 +575,7 @@ export async function getAdminOwnerDashboardData(
   const attendanceRecordsToday =
     attendanceCounts.PRESENT + attendanceCounts.ABSENT + attendanceCounts.LATE + attendanceCounts.EXCUSED;
   const lessonDutyRows = todaysLessons.map((lesson) => {
-    const expected = lesson.class._count.students;
+    const expected = studentCountByClassId.get(lesson.class.id) ?? 0;
     const marked = lessonAttendanceCount.get(lesson.id) ?? 0;
     const isRelevant = expected > 0;
     const isComplete = isRelevant && marked >= expected;

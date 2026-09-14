@@ -4,6 +4,7 @@
 import prisma from "@/src/lib/prisma";
 import { Calendar, Clock } from "lucide-react";
 import Link from "next/link";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 const getCountdownColor = (date: Date) => {
   const days = Math.ceil((date.getTime() - Date.now()) / 86400000);
@@ -24,10 +25,18 @@ type Props = {
 };
 
 const UpcomingExams = async ({ teacherId }: Props) => {
+  const teacher = await prisma.teacher.findUnique({
+    where: { id: teacherId },
+    select: { schoolId: true },
+  });
+  const liveLessons = teacher
+    ? await listLiveTimetableLessons(teacher.schoolId, { teacherId })
+    : [];
+  const liveLessonIds = liveLessons.map((lesson) => lesson.id);
   const exams = await prisma.exam.findMany({
     where: {
       startTime:    { gte: new Date() },
-      lesson: { teacherId },
+      lessonId: { in: liveLessonIds },
     },
     include: {
       lesson: {

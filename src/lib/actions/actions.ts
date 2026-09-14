@@ -18,6 +18,7 @@ import {
 } from "@/src/lib/services/homework";
 import { syncHomeworkCheckingObligation } from "@/src/lib/services/teacher-homework-obligations";
 import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
+import { getLiveTimetableLessonBySourceId } from "@/src/lib/services/timetable";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   announcementFormSchema,
@@ -48,12 +49,11 @@ const requireAdmin = () => requireRole(["admin"]);
 const requireAdminOrTeacher = () => requireRole(["admin", "teacher"]);
 
 async function getLessonInSchool(lessonId: number, schoolId: string) {
-  const lesson = await prisma.lesson.findFirst({
-    where: { id: lessonId, schoolId },
-    select: { id: true, schoolId: true, teacherId: true },
-  });
-  assertSameSchool(lesson, schoolId);
-  return lesson;
+  const liveLesson = await getLiveTimetableLessonBySourceId(schoolId, lessonId);
+  if (!liveLesson) {
+    throw new Error("This lesson is not part of the active published timetable. Ask the admin to publish the timetable before using it.");
+  }
+  return { id: liveLesson.id, schoolId, teacherId: liveLesson.teacherId };
 }
 
 function requireTeacherOwnsLesson(

@@ -15,6 +15,7 @@ import {
   schoolCommunicationPolicyDefaults,
 } from "@/src/lib/services/school-communication-policy";
 import { deliverParentContactNotification } from "@/src/lib/services/parent-notification-delivery";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 function formValue(data: FormData, key: string, fallback = "") {
   return String(data.get(key) ?? fallback);
@@ -57,7 +58,7 @@ export async function createParentTeacherContactRequest(data: unknown) {
       : data;
   const parsed = parseActionInput(parentTeacherContactRequestSchema, input);
 
-  const [policy, route, student, teacherLesson] = await Promise.all([
+  const [policy, route, student, teacherLessons] = await Promise.all([
     prisma.schoolCommunicationPolicy.findUnique({ where: { schoolId } }),
     prisma.schoolCommunicationRoute.findUnique({
       where: {
@@ -83,26 +84,7 @@ export async function createParentTeacherContactRequest(data: unknown) {
         },
       },
     }),
-    prisma.lesson.findFirst({
-      where: {
-        schoolId,
-        teacherId: parsed.teacherId,
-        class: {
-          students: {
-            some: {
-              id: parsed.studentId,
-              parentId: userId,
-              schoolId,
-            },
-          },
-        },
-      },
-      select: {
-        id: true,
-        classId: true,
-        subject: { select: { name: true } },
-      },
-    }),
+    listLiveTimetableLessons(schoolId, { teacherId: parsed.teacherId }),
   ]);
 
   if (!student) {
@@ -120,11 +102,12 @@ export async function createParentTeacherContactRequest(data: unknown) {
 
   const routeTarget = route?.target ?? communicationRouteDefaults[parsed.category];
   let routedTeacherId = parsed.teacherId;
+  const teacherLesson = teacherLessons.find((lesson) => lesson.classId === student.classId) ?? null;
   const routedSubjectName = teacherLesson?.subject.name ?? null;
 
   if (routeTarget === "SUBJECT_TEACHER") {
     if (!teacherLesson || teacherLesson.classId !== student.classId) {
-      throw new Error("This teacher is not assigned to this ward's class.");
+      throw new Error("This teacher is not assigned to this ward's class in the active published timetable.");
     }
   } else if (routeTarget === "CLASS_TEACHER") {
     if (!student.class.supervisorId) {

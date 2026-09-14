@@ -9,7 +9,7 @@ import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { prepareTeacherAccountabilityForView } from "@/src/lib/services/teacher-accountability-view";
 import { getTeacherSelfAccountabilityOverview } from "@/src/lib/queries/teacher-self-accountability";
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
-import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
+import { getActiveTimetablePublication, listLiveTimetableLessons } from "@/src/lib/services/timetable";
 import Link from "next/link";
 import {
   AlertTriangle,
@@ -126,16 +126,18 @@ const TeacherPage = async () => {
     now: today,
   });
 
-  const [teacher, liveLessons, activePeriod, accountability, teacherScope] = await Promise.all([
+  const [teacher, liveLessons, activeTimetablePublication, activePeriod, accountability, teacherScope] = await Promise.all([
     prisma.teacher.findFirst({
       where: { id: userId, schoolId },
       include: { classes: { select: { id: true, name: true } } },
     }),
     listLiveTimetableLessons(schoolId, { teacherId: userId }),
+    getActiveTimetablePublication(schoolId),
     getActiveAcademicPeriod(schoolId),
     getTeacherSelfAccountabilityOverview({ schoolId, teacherId: userId }),
     getTeacherScope({ schoolId, teacherId: userId }),
   ]);
+  const timetablePublished = Boolean(activeTimetablePublication);
   const liveClassIds = [...new Set(liveLessons.map((lesson) => lesson.classId))];
   const liveClassMeta = liveClassIds.length > 0
     ? await prisma.class.findMany({
@@ -159,6 +161,7 @@ const TeacherPage = async () => {
 
   const todayLessons = lessons.filter((lesson) => lesson.day === todayDay);
   const todayLessonIds = todayLessons.map((lesson) => lesson.id);
+  const liveLessonIds = liveLessons.map((lesson) => lesson.id);
 
   const syllabusPairs = lessons
     .map((lesson) => ({
@@ -183,7 +186,7 @@ const TeacherPage = async () => {
     prisma.assignment.findMany({
       where: {
         schoolId,
-        lesson: { teacherId: userId },
+        lessonId: { in: liveLessonIds },
         dueDate: { lte: todayEnd },
       },
       include: {
@@ -408,6 +411,16 @@ const TeacherPage = async () => {
           subtitle={`${todayLabel} · ${taskCount} item${taskCount === 1 ? "" : "s"} needing attention today`}
           tag={`${formatTerm(activePeriod.currentTerm)} · ${activePeriod.academicYear}`}
         />
+
+        {!timetablePublished && (
+          <section className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900 shadow-sm">
+            <p className="text-sm font-black">Timetable not published yet</p>
+            <p className="mt-1 text-xs font-semibold leading-relaxed">
+              The admin is still preparing the official timetable for this term. Attendance, homework lesson choices,
+              CA lesson scope, and timetable-based duties will appear here after it is published.
+            </p>
+          </section>
+        )}
 
         <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">

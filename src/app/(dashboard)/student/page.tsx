@@ -17,7 +17,7 @@ import {
 import { getGradeBandByGrade, computeAggregate, ordinal, TERM_LABELS } from "@/src/lib/caGrades";
 import { notFound } from "next/navigation";
 import type { Term } from "@/src/generated/prisma";
-import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
+import { getActiveTimetablePublication, listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 const StudentPage = async ({
   searchParams,
@@ -32,7 +32,10 @@ const StudentPage = async ({
   });
   if (!student) notFound();
 
-  const lessons = await listLiveTimetableLessons(schoolId, { classId: student.classId });
+  const [activeTimetablePublication, lessons] = await Promise.all([
+    getActiveTimetablePublication(schoolId),
+    listLiveTimetableLessons(schoolId, { classId: student.classId }),
+  ]);
 
   const calendarLessons: CalendarLesson[] = lessons.map((l) => ({
     title:     l.subject.name,
@@ -132,6 +135,15 @@ const StudentPage = async ({
           subtitle={`Class ${student.class?.name ?? ""} · ${attendanceRate}% attendance rate`}
           tag="Term 2 · 2025/26"
         />
+
+        {!activeTimetablePublication && (
+          <section className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900 shadow-sm">
+            <p className="text-sm font-black">Timetable not published yet</p>
+            <p className="mt-1 text-xs font-semibold leading-relaxed">
+              Your class schedule and lesson-linked attendance updates will appear after the school publishes the official timetable.
+            </p>
+          </section>
+        )}
 
         {/* ── CA RESULTS CARD ── */}
         {latestCA ? (

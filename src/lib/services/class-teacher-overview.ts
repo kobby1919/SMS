@@ -2,6 +2,7 @@ import type { AttendanceStatus } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { getClassReportReadiness, type ReportReadinessBlocker } from "@/src/lib/services/report-card-readiness";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 const dayNames = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"] as const;
 
@@ -52,7 +53,7 @@ export async function getClassTeacherOverview({
   const thirtyDaysAgo = daysAgo(30);
   const todayDay = dayNames[today.getDay()];
 
-  const [activePeriod, klass] = await Promise.all([
+  const [activePeriod, klass, lessons] = await Promise.all([
     getActiveAcademicPeriod(schoolId),
     prisma.class.findFirst({
       where: { id: classId, schoolId, supervisorId: teacherId },
@@ -67,25 +68,16 @@ export async function getClassTeacherOverview({
           select: { id: true, name: true, surname: true, sex: true },
           orderBy: [{ surname: "asc" }, { name: "asc" }],
         },
-        lessons: {
-          select: {
-            id: true,
-            day: true,
-            subjectId: true,
-            subject: { select: { id: true, name: true } },
-            teacher: { select: { id: true, name: true, surname: true, phone: true } },
-          },
-          orderBy: [{ subject: { name: "asc" } }],
-        },
       },
     }),
+    listLiveTimetableLessons(schoolId, { classId }),
   ]);
 
   if (!klass) return null;
 
   const studentIds = klass.students.map((student) => student.id);
-  const lessonIds = klass.lessons.map((lesson) => lesson.id);
-  const subjectIds = Array.from(new Set(klass.lessons.map((lesson) => lesson.subjectId)));
+  const lessonIds = lessons.map((lesson) => lesson.id);
+  const subjectIds = Array.from(new Set(lessons.map((lesson) => lesson.subjectId)));
 
   const [
     todayAttendance,
@@ -186,7 +178,7 @@ export async function getClassTeacherOverview({
   const studentCount = klass.students.length;
   const boys = klass.students.filter((student) => student.sex === "MALE").length;
   const girls = klass.students.filter((student) => student.sex === "FEMALE").length;
-  const todayLessons = klass.lessons.filter((lesson) => lesson.day === todayDay);
+  const todayLessons = lessons.filter((lesson) => lesson.day === todayDay);
   const attendanceByLesson = new Map<number, typeof todayAttendance>();
   for (const record of todayAttendance) {
     const rows = attendanceByLesson.get(record.lessonId) ?? [];
@@ -226,13 +218,13 @@ export async function getClassTeacherOverview({
 
   const subjectTeacherBySubject = new Map<number, { id: string; name: string; phone: string | null }>();
   const subjectNames = new Map<number, string>();
-  for (const lesson of klass.lessons) {
+  for (const lesson of lessons) {
     subjectNames.set(lesson.subjectId, lesson.subject.name);
     if (!subjectTeacherBySubject.has(lesson.subjectId)) {
       subjectTeacherBySubject.set(lesson.subjectId, {
         id: lesson.teacher.id,
-        name: `${lesson.teacher.name} ${lesson.teacher.surname}`,
-        phone: lesson.teacher.phone,
+        name: `${lesson.teacher.name} ${lesson.teacher.surname}`.trim(),
+        phone: null,
       });
     }
   }

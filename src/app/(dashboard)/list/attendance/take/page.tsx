@@ -3,7 +3,7 @@ import { requirePageSession } from "@/src/lib/authz";
 import AttendanceTaker from "@/src/components/AttendanceTaker";
 import { AttendanceStatus, Day } from "@/src/generated/prisma";
 import { syncAttendanceObligationsForDate } from "@/src/lib/services/teacher-attendance-obligations";
-import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
+import { getActiveTimetablePublication, listLiveTimetableLessons } from "@/src/lib/services/timetable";
 
 
 const TakeAttendancePage = async ({
@@ -25,6 +25,9 @@ const TakeAttendancePage = async ({
 
   // 2. CHECK FOR WEEKENDS: Prevent the Prisma error if today is Saturday or Sunday
   const isWeekend = dayOfWeekStr === "SATURDAY" || dayOfWeekStr === "SUNDAY";
+  const activeTimetablePublication = isWeekend
+    ? null
+    : await getActiveTimetablePublication(schoolId);
 
   type LessonWithSummary = Awaited<ReturnType<typeof listLiveTimetableLessons>>[number];
   type StudentSummary = {
@@ -44,7 +47,7 @@ const TakeAttendancePage = async ({
   let teacherLessons: LessonWithSummary[] = [];
   let attendanceObligations: Awaited<ReturnType<typeof syncAttendanceObligationsForDate>> = [];
 
-  if (!isWeekend) {
+  if (!isWeekend && activeTimetablePublication) {
     [teacherLessons, attendanceObligations] = await Promise.all([
       listLiveTimetableLessons(schoolId, {
         ...(role === "teacher" ? { teacherId: userId } : {}),
@@ -69,7 +72,7 @@ const TakeAttendancePage = async ({
   let hasAttendanceCorrectionRequest = false;
 
   // Only proceed with lesson details if it's a weekday and we have an ID
-  if (lessonId && !isWeekend) {
+  if (lessonId && !isWeekend && activeTimetablePublication) {
     selectedLesson = (await listLiveTimetableLessons(schoolId, {
       ...(role === "teacher" ? { teacherId: userId } : {}),
       day: dayOfWeekStr as Day,
@@ -123,6 +126,16 @@ const TakeAttendancePage = async ({
           <h2 className="text-xl font-bold text-gray-800">It&apos;s the Weekend!</h2>
           <p className="text-gray-500 max-w-xs mt-2">
             No lessons are scheduled for {dayOfWeekStr.toLowerCase()}. You can only take attendance on school days (Mon-Fri).
+          </p>
+        </div>
+      ) : !activeTimetablePublication ? (
+        <div className="flex min-h-[50vh] flex-col items-center justify-center rounded-2xl border border-amber-200 bg-amber-50 p-8 text-center shadow-sm">
+          <div className="mb-4 rounded-2xl bg-white p-3 text-amber-700 shadow-sm" aria-hidden="true">
+            --
+          </div>
+          <h2 className="text-xl font-black text-amber-950">Timetable not published yet</h2>
+          <p className="mt-2 max-w-md text-sm font-semibold leading-relaxed text-amber-800">
+            Attendance can only be taken from the official published timetable. Ask the admin to publish the timetable for this term first.
           </p>
         </div>
       ) : (

@@ -9,6 +9,7 @@ import type { Term, SyllabusStatus } from "@/src/generated/prisma";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import { revalidateDashboard, revalidateDocument } from "@/src/lib/cacheTags";
 import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
+import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 import {
   syllabusCreateSchema,
   syllabusProgressSchema,
@@ -75,18 +76,13 @@ async function requireSyllabusProgressAccess({
       throw new Error("This syllabus is not published yet.");
     }
 
-    const lesson = await prisma.lesson.findFirst({
-      where: {
-        schoolId,
-        teacherId: userId,
-        classId,
-        subjectId: topic.syllabus.subjectId,
-      },
-      select: { id: true },
-    });
+    const lesson = (await listLiveTimetableLessons(schoolId, {
+      teacherId: userId,
+      classId,
+    })).find((item) => item.subjectId === topic.syllabus.subjectId);
 
     if (!lesson) {
-      throw new Error("You can only update syllabus progress for classes and subjects assigned to you in the timetable.");
+      throw new Error("You can only update syllabus progress for classes and subjects assigned to you in the active published timetable.");
     }
 
     await assertWithinSchoolOperatingHours(schoolId, "Updating syllabus progress");

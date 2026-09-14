@@ -16,6 +16,7 @@ import {
   type ParentRiskAlert,
 } from "@/src/lib/services/parent-dashboard";
 import { getSchoolBranding } from "@/src/lib/services/school-branding";
+import { getActiveTimetablePublication } from "@/src/lib/services/timetable";
 
 export const dynamic = "force-dynamic";
 
@@ -332,9 +333,10 @@ function ParentActionCues({ cues }: { cues: (ParentActionCue & { childName?: str
 
 export default async function Page() {
   const { userId, schoolId } = await requirePageSession(["parent"]);
-  const [{ parent, childrenData, activityFeed, riskAlerts }, branding] = await Promise.all([
+  const [{ parent, childrenData, activityFeed, riskAlerts }, branding, activeTimetablePublication] = await Promise.all([
     getParentDashboardData(userId, schoolId),
     getSchoolBranding(schoolId),
+    getActiveTimetablePublication(schoolId),
   ]);
   const childCount = parent?.students.length ?? 0;
   const parentName = parent ? `${parent.name} ${parent.surname}` : "Parent";
@@ -354,6 +356,16 @@ export default async function Page() {
           {childCount} child{childCount !== 1 ? "ren" : ""} linked at {branding.displayName}. Start with today&apos;s update, then open a ward only when you need more detail.
         </p>
       </section>
+
+      {!activeTimetablePublication && (
+        <section className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900 shadow-sm">
+          <p className="text-sm font-black">Timetable not published yet</p>
+          <p className="mt-1 text-xs font-semibold leading-relaxed">
+            The school is still preparing the official timetable. Class schedules, attendance-based updates,
+            and lesson-linked activity will appear here after it is published.
+          </p>
+        </section>
+      )}
 
       <TodayUpdateCard items={activityFeed} schoolName={branding.displayName} />
       <UrgentAlerts alerts={riskAlerts} />
