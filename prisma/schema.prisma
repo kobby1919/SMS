@@ -171,6 +171,19 @@ enum SchoolInviteRole {
   ADMIN
 }
 
+enum TeacherInviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+enum TeacherInviteType {
+  SUBJECT_TEACHER
+  CLASS_TEACHER
+  BOTH
+}
+
 enum OnboardingAuditAction {
   WAITLIST_APPROVED
   WAITLIST_REJECTED
@@ -478,6 +491,7 @@ model School {
   onboardingAuditLogs            OnboardingAuditLog[]
   financeJobs                    FinanceJob[]
   paymentWebhookEvents           PaymentWebhookEvent[]
+  teacherInvites                 TeacherInvite[]
   parentNotifications            ParentNotification[]
   parentActivityEvents           ParentActivityEvent[]
   notificationSettings           SchoolNotificationSetting?
@@ -584,6 +598,7 @@ model Teacher {
   parentContactMessages     ParentTeacherContactMessage[]
   communicationRouteTargets SchoolCommunicationRoute[]      @relation("SelectedCommunicationRouteTeacher")
   accountabilityAuditLogs   TeacherAccountabilityAuditLog[]
+  acceptedInvites           TeacherInvite[]                 @relation("AcceptedTeacherInvite")
 
   @@index([schoolId])
   @@index([schoolId, createdAt])
@@ -742,12 +757,12 @@ model PublishedTimetableLesson {
   publicationId String
   publication   TimetablePublication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
 
-  subjectId   Int
-  subjectName String
-  classId     Int
-  className   String
-  teacherId   String
-  teacherName String
+  subjectId          Int
+  subjectName        String
+  classId            Int
+  className          String
+  teacherId          String
+  teacherName        String
   periodTemplateId   String?
   periodTemplateName String?
   periodTemplateType SchoolPeriodType?
@@ -2068,6 +2083,39 @@ model SchoolInvite {
 
   @@index([schoolId, email])
   @@index([schoolId, revokedAt])
+  @@index([expiresAt])
+}
+
+model TeacherInvite {
+  id                String              @id @default(cuid())
+  schoolId          String
+  name              String
+  surname           String
+  email             String
+  phone             String?
+  teacherType       TeacherInviteType
+  staffId           String?
+  employmentType    String?
+  tokenHash         String              @unique
+  status            TeacherInviteStatus @default(PENDING)
+  expiresAt         DateTime
+  acceptedAt        DateTime?
+  acceptedBy        String?
+  acceptedTeacherId String?
+  revokedAt         DateTime?
+  revokedBy         String?
+  lastSentAt        DateTime?
+  createdBy         String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  school          School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  acceptedTeacher Teacher? @relation("AcceptedTeacherInvite", fields: [acceptedTeacherId], references: [id], onDelete: SetNull)
+
+  @@index([schoolId, email])
+  @@index([schoolId, status, expiresAt])
+  @@index([schoolId, teacherType])
+  @@index([schoolId, createdAt])
   @@index([expiresAt])
 }
 

@@ -1031,6 +1031,30 @@ exports.Prisma.SchoolInviteScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.TeacherInviteScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  name: 'name',
+  surname: 'surname',
+  email: 'email',
+  phone: 'phone',
+  teacherType: 'teacherType',
+  staffId: 'staffId',
+  employmentType: 'employmentType',
+  tokenHash: 'tokenHash',
+  status: 'status',
+  expiresAt: 'expiresAt',
+  acceptedAt: 'acceptedAt',
+  acceptedBy: 'acceptedBy',
+  acceptedTeacherId: 'acceptedTeacherId',
+  revokedAt: 'revokedAt',
+  revokedBy: 'revokedBy',
+  lastSentAt: 'lastSentAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.OnboardingAuditLogScalarFieldEnum = {
   id: 'id',
   schoolId: 'schoolId',
@@ -1462,6 +1486,19 @@ exports.SchoolInviteRole = exports.$Enums.SchoolInviteRole = {
   ADMIN: 'ADMIN'
 };
 
+exports.TeacherInviteType = exports.$Enums.TeacherInviteType = {
+  SUBJECT_TEACHER: 'SUBJECT_TEACHER',
+  CLASS_TEACHER: 'CLASS_TEACHER',
+  BOTH: 'BOTH'
+};
+
+exports.TeacherInviteStatus = exports.$Enums.TeacherInviteStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  EXPIRED: 'EXPIRED',
+  REVOKED: 'REVOKED'
+};
+
 exports.OnboardingAuditAction = exports.$Enums.OnboardingAuditAction = {
   WAITLIST_APPROVED: 'WAITLIST_APPROVED',
   WAITLIST_REJECTED: 'WAITLIST_REJECTED',
@@ -1539,6 +1576,7 @@ exports.Prisma.ModelName = {
   RateLimitBucket: 'RateLimitBucket',
   WaitlistEntry: 'WaitlistEntry',
   SchoolInvite: 'SchoolInvite',
+  TeacherInvite: 'TeacherInvite',
   OnboardingAuditLog: 'OnboardingAuditLog'
 };
 
