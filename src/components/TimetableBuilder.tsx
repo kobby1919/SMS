@@ -2,7 +2,7 @@
 
 // src/components/TimetableBuilder.tsx
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus, Pencil, Trash2, X, BookOpen,
@@ -890,6 +890,7 @@ const TimetableBuilder = ({
   const [selectedClass, setSelectedClass] = useState<number | "all">("all");
   const [selectedDay, setSelectedDay]     = useState<string>("all");
   const [viewMode, setViewMode]           = useState<"grid" | "list">("grid");
+  const [isCompactReview, setIsCompactReview] = useState(true);
   const [modalOpen, setModalOpen]         = useState(false);
   const [modalDayLocked, setModalDayLocked] = useState(false);
   const [deleteTarget, setDeleteTarget]   = useState<TBLesson | null>(null);
@@ -927,6 +928,15 @@ const TimetableBuilder = ({
     setToast({ msg, type });
     setTimeout(() => setToast(null), 3500);
   };
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 1023px)");
+    const updateCompactView = () => setIsCompactReview(query.matches);
+
+    updateCompactView();
+    query.addEventListener("change", updateCompactView);
+    return () => query.removeEventListener("change", updateCompactView);
+  }, []);
 
   const openCreateForPeriod = (period: TBPeriodTemplate) => {
     if (!buildClassId || period.type !== "TEACHING") return;
@@ -1037,6 +1047,7 @@ const TimetableBuilder = ({
   }).length;
   const reviewNonTeachingPeriods = sortedActivePeriods.filter((period) => period.type !== "TEACHING").length;
   const reviewDayClassCount = reviewDays.length * reviewClasses.length;
+  const reviewDisplayMode = isCompactReview ? "list" : viewMode;
 
   const getLessonForReviewPeriod = (classId: number, day: string, period: TBPeriodTemplate) =>
     lessons.find((lesson) => {
@@ -1399,12 +1410,12 @@ const TimetableBuilder = ({
       <AnimatePresence mode="wait">
 
         {/* GRID VIEW */}
-        {viewMode === "grid" && (
+        {reviewDisplayMode === "grid" && (
           <motion.div
             key="grid"
             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="hidden lg:block bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+            className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
           >
             <div className="w-full overflow-x-auto">
               <table className="w-full min-w-[900px]">
@@ -1499,12 +1510,12 @@ const TimetableBuilder = ({
         )}
 
         {/* LIST VIEW */}
-        {(viewMode === "list" || viewMode === "grid") && (
+        {reviewDisplayMode === "list" && (
           <motion.div
             key="list"
             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className={`${viewMode === "grid" ? "lg:hidden" : ""} bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden`}
+            className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
           >
             <div className="divide-y divide-gray-100">
               {reviewDayClassCount === 0 ? (
