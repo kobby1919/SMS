@@ -18,6 +18,7 @@ import prisma from "@/src/lib/prisma";
 import { Subject, Prisma } from "@/src/generated/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
+import TeacherInviteModal from "@/src/components/TeacherInviteModal";
 
 // Dynamic subject color by name initial
 const SUBJECT_COLORS = [
@@ -163,7 +164,7 @@ const TeacherListPage = async ({
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
             <TableSearch />
             <div className="flex items-center gap-2">
-              {role === "admin" && <FormModal table="teacher" type="create" />}
+              {role === "admin" && <TeacherInviteModal />}
             </div>
           </div>
         </div>
