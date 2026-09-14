@@ -264,6 +264,43 @@ exports.Prisma.SchoolPeriodTemplateScalarFieldEnum = {
   schoolId: 'schoolId'
 };
 
+exports.Prisma.TimetablePublicationScalarFieldEnum = {
+  id: 'id',
+  version: 'version',
+  status: 'status',
+  reason: 'reason',
+  publishedBy: 'publishedBy',
+  publishedAt: 'publishedAt',
+  archivedAt: 'archivedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId'
+};
+
+exports.Prisma.PublishedTimetableLessonScalarFieldEnum = {
+  id: 'id',
+  sourceId: 'sourceId',
+  name: 'name',
+  day: 'day',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  createdAt: 'createdAt',
+  schoolId: 'schoolId',
+  publicationId: 'publicationId',
+  subjectId: 'subjectId',
+  subjectName: 'subjectName',
+  classId: 'classId',
+  className: 'className',
+  teacherId: 'teacherId',
+  teacherName: 'teacherName',
+  periodTemplateId: 'periodTemplateId',
+  periodTemplateName: 'periodTemplateName',
+  periodTemplateType: 'periodTemplateType',
+  periodStartTime: 'periodStartTime',
+  periodEndTime: 'periodEndTime',
+  periodOrder: 'periodOrder'
+};
+
 exports.Prisma.TeacherAccountabilitySettingScalarFieldEnum = {
   id: 'id',
   attendanceOpenMinutesBeforeLesson: 'attendanceOpenMinutesBeforeLesson',
@@ -1079,6 +1116,19 @@ exports.SchoolPeriodType = exports.$Enums.SchoolPeriodType = {
   OTHER: 'OTHER'
 };
 
+exports.TimetablePublicationStatus = exports.$Enums.TimetablePublicationStatus = {
+  ACTIVE: 'ACTIVE',
+  ARCHIVED: 'ARCHIVED'
+};
+
+exports.Day = exports.$Enums.Day = {
+  MONDAY: 'MONDAY',
+  TUESDAY: 'TUESDAY',
+  WEDNESDAY: 'WEDNESDAY',
+  THURSDAY: 'THURSDAY',
+  FRIDAY: 'FRIDAY'
+};
+
 exports.TeacherObligationType = exports.$Enums.TeacherObligationType = {
   ATTENDANCE: 'ATTENDANCE',
   CA_SCORE_PUBLISHING: 'CA_SCORE_PUBLISHING',
@@ -1199,14 +1249,6 @@ exports.ParentTeacherContactMessageSender = exports.$Enums.ParentTeacherContactM
   TEACHER: 'TEACHER',
   ADMIN: 'ADMIN',
   SYSTEM: 'SYSTEM'
-};
-
-exports.Day = exports.$Enums.Day = {
-  MONDAY: 'MONDAY',
-  TUESDAY: 'TUESDAY',
-  WEDNESDAY: 'WEDNESDAY',
-  THURSDAY: 'THURSDAY',
-  FRIDAY: 'FRIDAY'
 };
 
 exports.HomeworkSubmissionStatus = exports.$Enums.HomeworkSubmissionStatus = {
@@ -1445,6 +1487,8 @@ exports.Prisma.ModelName = {
   SchoolCommunicationPolicy: 'SchoolCommunicationPolicy',
   SchoolCommunicationRoute: 'SchoolCommunicationRoute',
   SchoolPeriodTemplate: 'SchoolPeriodTemplate',
+  TimetablePublication: 'TimetablePublication',
+  PublishedTimetableLesson: 'PublishedTimetableLesson',
   TeacherAccountabilitySetting: 'TeacherAccountabilitySetting',
   TeacherObligation: 'TeacherObligation',
   TeacherReminder: 'TeacherReminder',

@@ -7,6 +7,7 @@ import {
   getSchoolOperatingWindowStatus,
   isTimeRangeWithinWindow,
 } from "@/src/lib/services/school-operating-hours";
+import { getTimetableHealthSummary } from "@/src/lib/services/timetable-health";
 
 export class TimetableServiceError extends Error {
   constructor(
@@ -17,6 +18,16 @@ export class TimetableServiceError extends Error {
     this.name = "TimetableServiceError";
   }
 }
+
+export type TimetablePublicationSummary = {
+  id: string;
+  version: number;
+  status: "ACTIVE" | "ARCHIVED";
+  reason: string | null;
+  publishedBy: string;
+  publishedAt: Date;
+  lessonCount: number;
+} | null;
 export type TimetableLessonInput = {
   name?: string;
   day: Day;
@@ -35,12 +46,44 @@ const lessonInclude = {
   periodTemplate: { select: { id: true, name: true, type: true, startTime: true, endTime: true, order: true } },
 } as const;
 
+const publicationSelect = {
+  id: true,
+  version: true,
+  status: true,
+  reason: true,
+  publishedBy: true,
+  publishedAt: true,
+  _count: { select: { lessons: true } },
+} as const;
+
 export function listTimetableLessons(schoolId: string, classId?: number) {
   return prisma.lesson.findMany({
     where: { schoolId, ...(classId ? { classId } : {}) },
     include: lessonInclude,
     orderBy: [{ day: "asc" }, { startTime: "asc" }],
   });
+}
+
+export async function getActiveTimetablePublication(
+  schoolId: string,
+): Promise<TimetablePublicationSummary> {
+  const publication = await prisma.timetablePublication.findFirst({
+    where: { schoolId, status: "ACTIVE" },
+    select: publicationSelect,
+    orderBy: { publishedAt: "desc" },
+  });
+
+  if (!publication) return null;
+
+  return {
+    id: publication.id,
+    version: publication.version,
+    status: publication.status,
+    reason: publication.reason,
+    publishedBy: publication.publishedBy,
+    publishedAt: publication.publishedAt,
+    lessonCount: publication._count.lessons,
+  };
 }
 
 export async function listClassSubjectsFromTimetable(
@@ -272,4 +315,93 @@ export async function deleteTimetableLesson(schoolId: string, id: number) {
   const result = await prisma.lesson.deleteMany({ where: { id, schoolId } });
   if (result.count === 0) throw new TimetableServiceError("Lesson not found.", 404);
   invalidateTimetable(schoolId);
+}
+
+export async function publishTimetableDraft(
+  schoolId: string,
+  publishedBy: string,
+  reason?: string,
+) {
+  const [health, lessons, lastPublication] = await Promise.all([
+    getTimetableHealthSummary(schoolId),
+    prisma.lesson.findMany({
+      where: { schoolId },
+      include: lessonInclude,
+      orderBy: [{ day: "asc" }, { startTime: "asc" }],
+    }),
+    prisma.timetablePublication.findFirst({
+      where: { schoolId },
+      select: { version: true },
+      orderBy: { version: "desc" },
+    }),
+  ]);
+
+  if (lessons.length === 0) {
+    throw new TimetableServiceError("Add lessons before publishing the timetable.", 400);
+  }
+
+  if (health.criticalCount > 0) {
+    throw new TimetableServiceError(
+      `Resolve ${health.criticalCount} critical timetable issue${health.criticalCount === 1 ? "" : "s"} before publishing.`,
+      409,
+    );
+  }
+
+  const version = (lastPublication?.version ?? 0) + 1;
+  const trimmedReason = reason?.trim() || null;
+
+  const publication = await prisma.$transaction(async (tx) => {
+    await tx.timetablePublication.updateMany({
+      where: { schoolId, status: "ACTIVE" },
+      data: { status: "ARCHIVED", archivedAt: new Date() },
+    });
+
+    const created = await tx.timetablePublication.create({
+      data: {
+        schoolId,
+        version,
+        publishedBy,
+        reason: trimmedReason,
+        lessons: {
+          createMany: {
+            data: lessons.map((lesson) => ({
+              schoolId,
+              sourceId: lesson.id,
+              name: lesson.name,
+              day: lesson.day,
+              startTime: lesson.startTime,
+              endTime: lesson.endTime,
+              subjectId: lesson.subject.id,
+              subjectName: lesson.subject.name,
+              classId: lesson.class.id,
+              className: lesson.class.name,
+              teacherId: lesson.teacher.id,
+              teacherName: `${lesson.teacher.name} ${lesson.teacher.surname}`.trim(),
+              periodTemplateId: lesson.periodTemplate?.id ?? null,
+              periodTemplateName: lesson.periodTemplate?.name ?? null,
+              periodTemplateType: lesson.periodTemplate?.type ?? null,
+              periodStartTime: lesson.periodTemplate?.startTime ?? null,
+              periodEndTime: lesson.periodTemplate?.endTime ?? null,
+              periodOrder: lesson.periodTemplate?.order ?? null,
+            })),
+          },
+        },
+      },
+      select: publicationSelect,
+    });
+
+    return created;
+  });
+
+  invalidateTimetable(schoolId);
+
+  return {
+    id: publication.id,
+    version: publication.version,
+    status: publication.status,
+    reason: publication.reason,
+    publishedBy: publication.publishedBy,
+    publishedAt: publication.publishedAt,
+    lessonCount: publication._count.lessons,
+  };
 }

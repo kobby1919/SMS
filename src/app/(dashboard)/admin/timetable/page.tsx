@@ -12,18 +12,19 @@ import {
 } from "@/src/lib/referenceData";
 import { getSchoolOperatingWindowStatus } from "@/src/lib/services/school-operating-hours";
 import { getTimetableHealthSummary } from "@/src/lib/services/timetable-health";
-import { listTimetableLessons } from "@/src/lib/services/timetable";
+import { getActiveTimetablePublication, listTimetableLessons } from "@/src/lib/services/timetable";
 
 const TimetablePage = async () => {
   const { schoolId } = await requirePageSession(["admin"]);
 
-  const [classes, teachers, lessons, periodTemplates, operatingRules, timetableHealth] = await Promise.all([
+  const [classes, teachers, lessons, periodTemplates, operatingRules, timetableHealth, activePublication] = await Promise.all([
     getCachedClasses(schoolId),
     getCachedTimetableTeachers(schoolId),
     listTimetableLessons(schoolId),
     getCachedPeriodTemplates(schoolId),
     getSchoolOperatingWindowStatus(schoolId),
     getTimetableHealthSummary(schoolId),
+    getActiveTimetablePublication(schoolId),
   ]);
 
   const serializedLessons: TBLesson[] = lessons.map((l) => ({
@@ -98,6 +99,15 @@ const TimetablePage = async () => {
         teachers={serializedTeachers}
         initialLessons={serializedLessons}
         initialPeriodTemplates={serializedPeriodTemplates}
+        initialPublication={activePublication ? {
+          ...activePublication,
+          publishedAt: activePublication.publishedAt.toISOString(),
+        } : null}
+        timetableHealth={{
+          status: timetableHealth.status,
+          criticalCount: timetableHealth.criticalCount,
+          warningCount: timetableHealth.warningCount,
+        }}
         operatingRules={{
           activeDays: operatingRules.activeDays,
           openingTime: operatingRules.openingTime,

@@ -31,6 +31,11 @@ enum SchoolPeriodType {
   OTHER
 }
 
+enum TimetablePublicationStatus {
+  ACTIVE
+  ARCHIVED
+}
+
 enum AttendanceStatus {
   PRESENT
   ABSENT
@@ -440,6 +445,8 @@ model School {
   subjects                       Subject[]
   lessons                        Lesson[]
   periodTemplates                SchoolPeriodTemplate[]
+  timetablePublications          TimetablePublication[]
+  publishedTimetableLessons      PublishedTimetableLesson[]
   exams                          Exam[]
   assignments                    Assignment[]
   homeworkSubmissions            HomeworkSubmission[]
@@ -698,6 +705,61 @@ model SchoolPeriodTemplate {
   @@unique([schoolId, name])
   @@unique([schoolId, order])
   @@index([schoolId, type, isActive])
+}
+
+model TimetablePublication {
+  id          String                     @id @default(cuid())
+  version     Int
+  status      TimetablePublicationStatus @default(ACTIVE)
+  reason      String?
+  publishedBy String
+  publishedAt DateTime                   @default(now())
+  archivedAt  DateTime?
+  createdAt   DateTime                   @default(now())
+  updatedAt   DateTime                   @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  lessons PublishedTimetableLesson[]
+
+  @@unique([schoolId, version])
+  @@index([schoolId, status, publishedAt])
+}
+
+model PublishedTimetableLesson {
+  id        String   @id @default(cuid())
+  sourceId  Int
+  name      String
+  day       Day
+  startTime DateTime
+  endTime   DateTime
+  createdAt DateTime @default(now())
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  publicationId String
+  publication   TimetablePublication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+
+  subjectId   Int
+  subjectName String
+  classId     Int
+  className   String
+  teacherId   String
+  teacherName String
+  periodTemplateId   String?
+  periodTemplateName String?
+  periodTemplateType SchoolPeriodType?
+  periodStartTime    String?
+  periodEndTime      String?
+  periodOrder        Int?
+
+  @@unique([publicationId, sourceId])
+  @@index([schoolId, publicationId])
+  @@index([schoolId, classId, day])
+  @@index([schoolId, teacherId, day])
+  @@index([schoolId, subjectId])
 }
 
 model TeacherAccountabilitySetting {

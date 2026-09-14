@@ -44,6 +44,20 @@ type Props = {
   teachers:       TBTeacher[];
   initialLessons: TBLesson[];
   initialPeriodTemplates: TBPeriodTemplate[];
+  initialPublication: {
+    id: string;
+    version: number;
+    status: "ACTIVE" | "ARCHIVED";
+    reason: string | null;
+    publishedBy: string;
+    publishedAt: string;
+    lessonCount: number;
+  } | null;
+  timetableHealth: {
+    status: "HEALTHY" | "NEEDS_REVIEW" | "CRITICAL";
+    criticalCount: number;
+    warningCount: number;
+  };
   operatingRules: {
     activeDays: string[];
     openingTime: string;
@@ -878,6 +892,8 @@ const TimetableBuilder = ({
   teachers,
   initialLessons,
   initialPeriodTemplates,
+  initialPublication,
+  timetableHealth,
   operatingRules,
 }: Props) => {
   const timetableDays = SCHOOL_WEEK_DAYS.filter((day) => operatingRules.activeDays.includes(day));
@@ -899,6 +915,10 @@ const TimetableBuilder = ({
   const [deleting, setDeleting]           = useState(false);
   const [modalError, setModalError]       = useState<string | null>(null);
   const [toast, setToast]                 = useState<{ msg: string; type: "success" | "error" } | null>(null);
+  const [publication, setPublication] = useState(initialPublication);
+  const [publishReason, setPublishReason] = useState("");
+  const [publishing, setPublishing] = useState(false);
+  const [publishError, setPublishError] = useState<string | null>(null);
   const [, startTransition]               = useTransition();
 
   // Build subject color map from all subjects across all teachers (deduplicated)
@@ -1098,6 +1118,38 @@ const TimetableBuilder = ({
           dot: "bg-gray-300",
           label: "Lesson",
         };
+    }
+  };
+
+  const handlePublish = async () => {
+    setPublishError(null);
+    if (timetableHealth.criticalCount > 0) {
+      setPublishError("Resolve all critical timetable issues before publishing.");
+      return;
+    }
+
+    setPublishing(true);
+    try {
+      const res = await fetch("/api/timetable/publish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason: publishReason }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setPublishError(data.error ?? "Failed to publish timetable.");
+        return;
+      }
+      setPublication({
+        ...data,
+        publishedAt: data.publishedAt,
+      });
+      setPublishReason("");
+      showToast(`Timetable v${data.version} published.`, "success");
+    } catch {
+      setPublishError("Network error. Please try again.");
+    } finally {
+      setPublishing(false);
     }
   };
 
@@ -1404,6 +1456,64 @@ const TimetableBuilder = ({
               <p className="mt-1 text-lg font-black text-gray-900">{item.value}</p>
             </div>
           ))}
+        </div>
+
+        <div className="mt-4 rounded-2xl border border-gray-100 bg-gray-50 p-3">
+          <div className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
+            <div className="min-w-0">
+              <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">
+                Live timetable source of truth
+              </p>
+              {publication ? (
+                <div className="mt-2">
+                  <p className="text-sm font-black text-gray-900">
+                    Version {publication.version} is currently live
+                  </p>
+                  <p className="mt-1 text-xs font-semibold leading-5 text-gray-500">
+                    Published {new Date(publication.publishedAt).toLocaleString()} with {publication.lessonCount} lesson snapshots.
+                    Draft edits made after this publish will not affect teachers or attendance until you publish again.
+                  </p>
+                  {publication.reason && (
+                    <p className="mt-2 rounded-xl bg-white px-3 py-2 text-xs font-semibold text-gray-500">
+                      Reason: {publication.reason}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <p className="mt-2 text-sm font-bold leading-6 text-amber-700">
+                  No live timetable has been published yet. The draft exists, but the school should not depend on it until it is published.
+                </p>
+              )}
+              {publishError && (
+                <p className="mt-2 rounded-xl bg-rose-50 px-3 py-2 text-xs font-bold text-rose-600">
+                  {publishError}
+                </p>
+              )}
+            </div>
+
+            <div className="w-full shrink-0 space-y-2 xl:w-[360px]">
+              <textarea
+                value={publishReason}
+                onChange={(event) => setPublishReason(event.target.value)}
+                rows={3}
+                maxLength={500}
+                placeholder="Optional reason for publishing or republishing..."
+                className="w-full resize-none rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-700 outline-none focus:ring-2 focus:ring-indigo-300"
+              />
+              <button
+                type="button"
+                disabled={publishing || timetableHealth.criticalCount > 0 || reviewLessonCount === 0}
+                onClick={handlePublish}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-950 px-4 py-2.5 text-sm font-black text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
+              >
+                {publishing ? <Loader2 size={15} className="animate-spin" /> : <CheckCircle2 size={15} />}
+                {publication ? "Publish new version" : "Publish timetable"}
+              </button>
+              <p className="text-[11px] font-semibold leading-5 text-gray-400">
+                Publishing archives the previous live version and creates a locked snapshot from this draft.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
