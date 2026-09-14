@@ -201,14 +201,26 @@ export async function resendTeacherInvite(
     invite.school.name;
 
   await prisma.$transaction(async (tx) => {
-    await tx.teacherInvite.update({
-      where: { id: invite.id },
+    const updated = await tx.teacherInvite.updateMany({
+      where: {
+        id: invite.id,
+        schoolId: context.schoolId,
+        status: "PENDING",
+        acceptedAt: null,
+        revokedAt: null,
+      },
       data: {
         tokenHash: tokenBundle.tokenHash,
         expiresAt: tokenBundle.expiresAt,
-        status: "PENDING",
       },
     });
+
+    if (updated.count !== 1) {
+      throw new TeacherInviteServiceError(
+        "This invite is no longer available to resend.",
+        409,
+      );
+    }
 
     await writeTeacherInviteAudit(tx, {
       schoolId: context.schoolId,
@@ -302,14 +314,27 @@ export async function revokeTeacherInvite(
   }
 
   await prisma.$transaction(async (tx) => {
-    await tx.teacherInvite.update({
-      where: { id: invite.id },
+    const updated = await tx.teacherInvite.updateMany({
+      where: {
+        id: invite.id,
+        schoolId: context.schoolId,
+        status: "PENDING",
+        acceptedAt: null,
+        revokedAt: null,
+      },
       data: {
         status: "REVOKED",
         revokedAt: new Date(),
         revokedBy: context.userId,
       },
     });
+
+    if (updated.count !== 1) {
+      throw new TeacherInviteServiceError(
+        "This invite is no longer available to revoke.",
+        409,
+      );
+    }
 
     await writeTeacherInviteAudit(tx, {
       schoolId: context.schoolId,

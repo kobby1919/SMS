@@ -109,7 +109,7 @@ const TeacherListPage = async ({
   }
 
   const now = new Date();
-  const [allTeachers, pendingInviteRows, pendingInviteCount] = await Promise.all([
+  const [allTeachers, pendingInviteRows, pendingInviteListCount, pendingInviteCount] = await Promise.all([
     prisma.teacher.findMany({
       where: query,
       include: {
@@ -120,6 +120,11 @@ const TeacherListPage = async ({
     prisma.teacherInvite.findMany({
       where: inviteQuery,
       orderBy: [{ expiresAt: "asc" }, { createdAt: "desc" }],
+      skip: ITEM_PER_PAGE * (p - 1),
+      take: ITEM_PER_PAGE,
+    }),
+    prisma.teacherInvite.count({
+      where: inviteQuery,
     }),
     prisma.teacherInvite.count({
       where: {
@@ -169,16 +174,13 @@ const TeacherListPage = async ({
           : enrichedTeachers;
   const count =
     selectedStatus === "pending-invites"
-      ? pendingInviteRows.length
+      ? pendingInviteListCount
       : filteredTeachers.length;
   const teachers = filteredTeachers.slice(
     ITEM_PER_PAGE * (p - 1),
     ITEM_PER_PAGE * p,
   );
-  const pendingInvites = pendingInviteRows.slice(
-    ITEM_PER_PAGE * (p - 1),
-    ITEM_PER_PAGE * p,
-  );
+  const pendingInvites = pendingInviteRows;
   const activeTabHref = (status: string) => {
     const params = new URLSearchParams();
     if (status !== "all") params.set("status", status);
