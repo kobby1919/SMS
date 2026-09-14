@@ -3,6 +3,8 @@ import type { AuthzContext } from "@/src/lib/authz";
 import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
 import type { TeacherInviteCreateInput } from "@/src/lib/validation/teacher-invites";
 import { createTeacherInviteTokenBundle } from "@/src/lib/services/teacher-invite-tokens";
+import { sendTeacherInviteEmail } from "@/src/lib/services/notifications";
+import type { Prisma, TeacherInviteAuditAction } from "@/src/generated/prisma";
 
 export type CreatedTeacherInvite = {
   inviteId: string;
@@ -22,6 +24,27 @@ export class TeacherInviteServiceError extends Error {
     super(message);
     this.name = "TeacherInviteServiceError";
   }
+}
+
+async function writeTeacherInviteAudit(
+  tx: Prisma.TransactionClient,
+  input: {
+    schoolId: string;
+    inviteId: string;
+    action: TeacherInviteAuditAction;
+    performedBy: string;
+    metadata?: Record<string, unknown>;
+  },
+) {
+  await tx.teacherInviteAuditLog.create({
+    data: {
+      schoolId: input.schoolId,
+      inviteId: input.inviteId,
+      action: input.action,
+      performedBy: input.performedBy,
+      metadata: (input.metadata ?? {}) as Prisma.InputJsonValue,
+    },
+  });
 }
 
 export async function createTeacherInvite(
@@ -100,21 +123,19 @@ export async function createTeacherInvite(
       },
     });
 
-    await tx.teacherInviteAuditLog.create({
-      data: {
-        schoolId: context.schoolId,
-        inviteId: createdInvite.id,
-        action: "INVITE_CREATED",
-        performedBy: context.userId,
-        metadata: {
-          email: createdInvite.email,
-          name: createdInvite.name,
-          surname: createdInvite.surname,
-          teacherType: createdInvite.teacherType,
-          staffId: input.staffId ?? null,
-          employmentType: input.employmentType ?? null,
-          expiresAt: createdInvite.expiresAt.toISOString(),
-        },
+    await writeTeacherInviteAudit(tx, {
+      schoolId: context.schoolId,
+      inviteId: createdInvite.id,
+      action: "INVITE_CREATED",
+      performedBy: context.userId,
+      metadata: {
+        email: createdInvite.email,
+        name: createdInvite.name,
+        surname: createdInvite.surname,
+        teacherType: createdInvite.teacherType,
+        staffId: input.staffId ?? null,
+        employmentType: input.employmentType ?? null,
+        expiresAt: createdInvite.expiresAt.toISOString(),
       },
     });
 
@@ -136,4 +157,171 @@ export async function createTeacherInvite(
     inviteUrl: tokenBundle.inviteUrl,
     expiresAt: invite.expiresAt,
   };
+}
+
+export async function resendTeacherInvite(
+  input: { inviteId: string },
+  context: AuthzContext,
+) {
+  const now = new Date();
+  const invite = await prisma.teacherInvite.findFirst({
+    where: {
+      id: input.inviteId,
+      schoolId: context.schoolId,
+    },
+    include: {
+      school: {
+        select: {
+          id: true,
+          name: true,
+          displayName: true,
+          emailFromName: true,
+        },
+      },
+    },
+  });
+
+  if (!invite) {
+    throw new TeacherInviteServiceError("Invite not found.", 404);
+  }
+
+  if (invite.acceptedAt || invite.status === "ACCEPTED") {
+    throw new TeacherInviteServiceError("Accepted invites cannot be resent.", 409);
+  }
+
+  if (invite.revokedAt || invite.status === "REVOKED") {
+    throw new TeacherInviteServiceError("Revoked invites cannot be resent.", 409);
+  }
+
+  const tokenBundle = createTeacherInviteTokenBundle(now);
+  const teacherName = `${invite.name} ${invite.surname}`.trim();
+  const schoolName =
+    invite.school.emailFromName ||
+    invite.school.displayName ||
+    invite.school.name;
+
+  await prisma.$transaction(async (tx) => {
+    await tx.teacherInvite.update({
+      where: { id: invite.id },
+      data: {
+        tokenHash: tokenBundle.tokenHash,
+        expiresAt: tokenBundle.expiresAt,
+        status: "PENDING",
+      },
+    });
+
+    await writeTeacherInviteAudit(tx, {
+      schoolId: context.schoolId,
+      inviteId: invite.id,
+      action: "INVITE_RESENT",
+      performedBy: context.userId,
+      metadata: {
+        email: invite.email,
+        rotatedToken: true,
+        expiresAt: tokenBundle.expiresAt.toISOString(),
+      },
+    });
+  });
+
+  const email = await sendTeacherInviteEmail({
+    to: invite.email,
+    schoolName,
+    teacherName,
+    inviteUrl: tokenBundle.inviteUrl,
+    expiresAt: tokenBundle.expiresAt,
+  });
+
+  await prisma.$transaction(async (tx) => {
+    if (email.ok) {
+      await tx.teacherInvite.update({
+        where: { id: invite.id },
+        data: { lastSentAt: new Date() },
+      });
+    }
+
+    await writeTeacherInviteAudit(tx, {
+      schoolId: context.schoolId,
+      inviteId: invite.id,
+      action: "INVITE_SENT",
+      performedBy: context.userId,
+      metadata: {
+        email: invite.email,
+        provider: email.provider,
+        warning: email.ok ? undefined : email.message,
+      },
+    });
+  });
+
+  revalidateReferenceData(context.schoolId, "teachers");
+  revalidateDashboard(context.schoolId);
+
+  return {
+    inviteId: invite.id,
+    schoolId: invite.schoolId,
+    email: invite.email,
+    name: invite.name,
+    surname: invite.surname,
+    inviteToken: tokenBundle.token,
+    invitePath: tokenBundle.invitePath,
+    inviteUrl: tokenBundle.inviteUrl,
+    expiresAt: tokenBundle.expiresAt,
+    emailProvider: email.provider,
+    emailWarning: email.ok ? undefined : email.message,
+  };
+}
+
+export async function revokeTeacherInvite(
+  input: { inviteId: string },
+  context: AuthzContext,
+) {
+  const invite = await prisma.teacherInvite.findFirst({
+    where: {
+      id: input.inviteId,
+      schoolId: context.schoolId,
+    },
+    select: {
+      id: true,
+      schoolId: true,
+      email: true,
+      acceptedAt: true,
+      revokedAt: true,
+      status: true,
+    },
+  });
+
+  if (!invite) {
+    throw new TeacherInviteServiceError("Invite not found.", 404);
+  }
+
+  if (invite.acceptedAt || invite.status === "ACCEPTED") {
+    throw new TeacherInviteServiceError("Accepted invites cannot be revoked.", 409);
+  }
+
+  if (invite.revokedAt || invite.status === "REVOKED") {
+    throw new TeacherInviteServiceError("Invite is already revoked.", 409);
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.teacherInvite.update({
+      where: { id: invite.id },
+      data: {
+        status: "REVOKED",
+        revokedAt: new Date(),
+        revokedBy: context.userId,
+      },
+    });
+
+    await writeTeacherInviteAudit(tx, {
+      schoolId: context.schoolId,
+      inviteId: invite.id,
+      action: "INVITE_REVOKED",
+      performedBy: context.userId,
+      metadata: {
+        email: invite.email,
+      },
+    });
+  });
+
+  revalidateReferenceData(context.schoolId, "teachers");
+  revalidateDashboard(context.schoolId);
 }

@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 import { CheckCircle2, Copy, Loader2, MailPlus, X } from "lucide-react";
 import {
   createTeacherInviteAction,
-  type TeacherInviteActionResult,
+  type TeacherInviteCreateActionResult,
 } from "@/src/lib/actions/teacherInviteActions";
 import type { TeacherInviteTypeInput } from "@/src/lib/validation/teacher-invites";
 
@@ -29,7 +29,7 @@ export default function TeacherInviteModal() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(initialForm);
-  const [result, setResult] = useState<TeacherInviteActionResult | null>(null);
+  const [result, setResult] = useState<TeacherInviteCreateActionResult | null>(null);
   const [copied, setCopied] = useState(false);
   const [isPending, startTransition] = useTransition();
 

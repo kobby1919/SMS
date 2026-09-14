@@ -54,5 +54,10 @@ export const teacherInviteCreateSchema = z.object({
   employmentType: optionalTrimmedString,
 });
 
+export const teacherInviteIdSchema = z.object({
+  inviteId: z.string().trim().min(1, "Invite id is required."),
+});
+
 export type TeacherInviteCreateInput = z.infer<typeof teacherInviteCreateSchema>;
+export type TeacherInviteIdInput = z.infer<typeof teacherInviteIdSchema>;
 export type TeacherInviteTypeInput = z.infer<typeof teacherInviteTypeSchema>;

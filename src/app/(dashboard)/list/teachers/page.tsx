@@ -18,6 +18,7 @@ import prisma from "@/src/lib/prisma";
 import { Subject, Prisma } from "@/src/generated/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
+import TeacherInviteActions from "@/src/components/TeacherInviteActions";
 import TeacherInviteModal from "@/src/components/TeacherInviteModal";
 
 // Dynamic subject color by name initial
@@ -437,15 +438,16 @@ function PendingInvitesTable({
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-1">
       <div className="w-full overflow-x-auto">
-        <table className="w-full min-w-[560px]">
+        <table className="w-full min-w-[680px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/60">
               <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Invitee</th>
               <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">Teacher type</th>
               <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">Expires</th>
               <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden xl:table-cell">Created</th>
+              <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden xl:table-cell">Last sent</th>
               {role === "admin" && (
-                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Status</th>
+                <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Actions</th>
               )}
             </tr>
           </thead>
@@ -491,11 +493,20 @@ function PendingInvitesTable({
                       })}
                     </span>
                   </td>
+                  <td className="px-3 py-4 hidden xl:table-cell">
+                    <span className="text-sm font-semibold text-gray-500">
+                      {invite.lastSentAt
+                        ? invite.lastSentAt.toLocaleDateString("en-GH", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })
+                        : "Not sent yet"}
+                    </span>
+                  </td>
                   {role === "admin" && (
                     <td className="px-5 py-4 text-right">
-                      <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-black ${expired ? "bg-rose-50 text-rose-700" : "bg-violet-50 text-violet-700"}`}>
-                        {expired ? "Expired" : "Pending"}
-                      </span>
+                      <TeacherInviteActions inviteId={invite.id} />
                     </td>
                   )}
                 </tr>
@@ -504,7 +515,7 @@ function PendingInvitesTable({
             {invites.length === 0 && (
               <tr>
                 <td
-                  colSpan={role === "admin" ? 5 : 4}
+                  colSpan={role === "admin" ? 6 : 5}
                   className="px-5 py-12 text-center"
                 >
                   <p className="text-sm font-black text-gray-500">
