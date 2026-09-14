@@ -74,29 +74,51 @@ export async function createTeacherInvite(
 
   const tokenBundle = createTeacherInviteTokenBundle(now);
 
-  const invite = await prisma.teacherInvite.create({
-    data: {
-      schoolId: context.schoolId,
-      name: input.name,
-      surname: input.surname,
-      email,
-      phone: input.phone ?? null,
-      teacherType: input.teacherType,
-      staffId: input.staffId ?? null,
-      employmentType: input.employmentType ?? null,
-      tokenHash: tokenBundle.tokenHash,
-      expiresAt: tokenBundle.expiresAt,
-      createdBy: context.userId,
-    },
-    select: {
-      id: true,
-      schoolId: true,
-      name: true,
-      surname: true,
-      email: true,
-      teacherType: true,
-      expiresAt: true,
-    },
+  const invite = await prisma.$transaction(async (tx) => {
+    const createdInvite = await tx.teacherInvite.create({
+      data: {
+        schoolId: context.schoolId,
+        name: input.name,
+        surname: input.surname,
+        email,
+        phone: input.phone ?? null,
+        teacherType: input.teacherType,
+        staffId: input.staffId ?? null,
+        employmentType: input.employmentType ?? null,
+        tokenHash: tokenBundle.tokenHash,
+        expiresAt: tokenBundle.expiresAt,
+        createdBy: context.userId,
+      },
+      select: {
+        id: true,
+        schoolId: true,
+        name: true,
+        surname: true,
+        email: true,
+        teacherType: true,
+        expiresAt: true,
+      },
+    });
+
+    await tx.teacherInviteAuditLog.create({
+      data: {
+        schoolId: context.schoolId,
+        inviteId: createdInvite.id,
+        action: "INVITE_CREATED",
+        performedBy: context.userId,
+        metadata: {
+          email: createdInvite.email,
+          name: createdInvite.name,
+          surname: createdInvite.surname,
+          teacherType: createdInvite.teacherType,
+          staffId: input.staffId ?? null,
+          employmentType: input.employmentType ?? null,
+          expiresAt: createdInvite.expiresAt.toISOString(),
+        },
+      },
+    });
+
+    return createdInvite;
   });
 
   revalidateReferenceData(context.schoolId, "teachers");

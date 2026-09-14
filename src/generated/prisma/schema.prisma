@@ -184,6 +184,15 @@ enum TeacherInviteType {
   BOTH
 }
 
+enum TeacherInviteAuditAction {
+  INVITE_CREATED
+  INVITE_SENT
+  INVITE_RESENT
+  INVITE_REVOKED
+  INVITE_EXPIRED
+  INVITE_ACCEPTED
+}
+
 enum OnboardingAuditAction {
   WAITLIST_APPROVED
   WAITLIST_REJECTED
@@ -492,6 +501,7 @@ model School {
   financeJobs                    FinanceJob[]
   paymentWebhookEvents           PaymentWebhookEvent[]
   teacherInvites                 TeacherInvite[]
+  teacherInviteAuditLogs         TeacherInviteAuditLog[]
   parentNotifications            ParentNotification[]
   parentActivityEvents           ParentActivityEvent[]
   notificationSettings           SchoolNotificationSetting?
@@ -2109,14 +2119,32 @@ model TeacherInvite {
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
 
-  school          School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
-  acceptedTeacher Teacher? @relation("AcceptedTeacherInvite", fields: [acceptedTeacherId], references: [id], onDelete: SetNull)
+  school          School                  @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  acceptedTeacher Teacher?                @relation("AcceptedTeacherInvite", fields: [acceptedTeacherId], references: [id], onDelete: SetNull)
+  auditLogs       TeacherInviteAuditLog[]
 
   @@index([schoolId, email])
   @@index([schoolId, status, expiresAt])
   @@index([schoolId, teacherType])
   @@index([schoolId, createdAt])
   @@index([expiresAt])
+}
+
+model TeacherInviteAuditLog {
+  id          String                   @id @default(cuid())
+  schoolId    String
+  inviteId    String
+  action      TeacherInviteAuditAction
+  performedBy String
+  metadata    Json
+  createdAt   DateTime                 @default(now())
+
+  school School        @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  invite TeacherInvite @relation(fields: [inviteId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId, createdAt])
+  @@index([inviteId, createdAt])
+  @@index([schoolId, action, createdAt])
 }
 
 model OnboardingAuditLog {

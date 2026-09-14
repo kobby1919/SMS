@@ -1055,6 +1055,16 @@ exports.Prisma.TeacherInviteScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.TeacherInviteAuditLogScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  inviteId: 'inviteId',
+  action: 'action',
+  performedBy: 'performedBy',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.OnboardingAuditLogScalarFieldEnum = {
   id: 'id',
   schoolId: 'schoolId',
@@ -1499,6 +1509,15 @@ exports.TeacherInviteStatus = exports.$Enums.TeacherInviteStatus = {
   REVOKED: 'REVOKED'
 };
 
+exports.TeacherInviteAuditAction = exports.$Enums.TeacherInviteAuditAction = {
+  INVITE_CREATED: 'INVITE_CREATED',
+  INVITE_SENT: 'INVITE_SENT',
+  INVITE_RESENT: 'INVITE_RESENT',
+  INVITE_REVOKED: 'INVITE_REVOKED',
+  INVITE_EXPIRED: 'INVITE_EXPIRED',
+  INVITE_ACCEPTED: 'INVITE_ACCEPTED'
+};
+
 exports.OnboardingAuditAction = exports.$Enums.OnboardingAuditAction = {
   WAITLIST_APPROVED: 'WAITLIST_APPROVED',
   WAITLIST_REJECTED: 'WAITLIST_REJECTED',
@@ -1577,6 +1596,7 @@ exports.Prisma.ModelName = {
   WaitlistEntry: 'WaitlistEntry',
   SchoolInvite: 'SchoolInvite',
   TeacherInvite: 'TeacherInvite',
+  TeacherInviteAuditLog: 'TeacherInviteAuditLog',
   OnboardingAuditLog: 'OnboardingAuditLog'
 };
 
