@@ -67,23 +67,25 @@ export default function SignInView({
     : AUTH_CALLBACK_PATH;
 
   return (
-    <main className="min-h-screen bg-[#f5f7fb] text-slate-950">
-      <section className="grid min-h-screen w-full grid-cols-1 lg:grid-cols-[46%_54%]">
-        <aside className="relative hidden min-h-screen bg-[#07111f] px-12 py-12 text-white lg:block">
+    <main className="min-h-dvh overflow-x-hidden bg-[#f5f7fb] text-slate-950">
+      <section className="grid min-h-dvh w-full grid-cols-1 lg:grid-cols-[minmax(360px,42%)_1fr]">
+        <aside className="relative hidden min-h-dvh bg-[#07111f] px-10 py-12 text-white lg:block xl:px-14">
           <div className="pointer-events-none absolute inset-0">
-            <div className="absolute inset-x-12 top-32 h-px bg-white/10" />
-            <div className="absolute inset-x-12 bottom-32 h-px bg-white/10" />
-            <div className="absolute left-1/2 top-0 h-full w-px bg-white/10" />
+            <div className="absolute inset-x-10 top-28 h-px bg-white/[0.08] xl:inset-x-14" />
+            <div className="absolute inset-x-10 bottom-28 h-px bg-white/[0.08] xl:inset-x-14" />
+            <div className="absolute left-10 top-0 h-full w-px bg-white/[0.06] xl:left-14" />
           </div>
 
           <div className="relative z-10 flex h-full flex-col">
-            <div className="inline-flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-200 text-blue-950">
+            <div className="inline-flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-200 text-blue-950">
                 <Building2 size={21} />
               </div>
               <div>
                 <p className="text-xl font-black tracking-tight">Edujay</p>
-                <p className="text-xs font-bold text-white/45">School operations, secured</p>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/40">
+                  School operations
+                </p>
               </div>
             </div>
 
@@ -101,13 +103,13 @@ export default function SignInView({
               </p>
             </div>
 
-            <div className="text-sm font-semibold leading-6 text-white/45">
-              Protected access · Role-aware dashboards · Invite-based onboarding
+            <div className="max-w-sm text-sm font-semibold leading-7 text-white/45">
+              Protected access. Role-aware dashboards. Invite-based onboarding.
             </div>
           </div>
         </aside>
 
-        <div className="flex min-h-screen items-center justify-center px-4 py-8 sm:px-6 lg:px-12">
+        <div className="flex min-h-dvh items-start justify-center px-4 py-8 sm:px-6 lg:items-center lg:px-12">
           <section className="w-full max-w-[440px]">
             <div className="mb-6">
               <div className="inline-flex items-center gap-3">
