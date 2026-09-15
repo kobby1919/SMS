@@ -1,8 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { auth } from "@clerk/nextjs/server";
 import { requireRole } from "@/src/lib/authz";
 import {
+  acceptTeacherInviteForUser,
   createTeacherInvite,
   resendTeacherInvite,
   revokeTeacherInvite,
@@ -11,6 +13,7 @@ import {
 import {
   teacherInviteCreateSchema,
   teacherInviteIdSchema,
+  teacherInviteTokenSchema,
 } from "@/src/lib/validation/teacher-invites";
 import { parseActionInput } from "@/src/lib/validation/parse";
 
@@ -69,6 +72,28 @@ export async function revokeTeacherInviteAction(
     return {
       ok: false,
       message: error instanceof Error ? error.message : "Could not revoke teacher invite.",
+    };
+  }
+}
+
+export async function acceptTeacherInviteAction(
+  input: unknown,
+): Promise<TeacherInviteActionResult> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { ok: false, message: "Please sign in before accepting this teacher invite." };
+    }
+
+    const data = parseActionInput(teacherInviteTokenSchema, input);
+    await acceptTeacherInviteForUser({ token: data.token, userId });
+    revalidatePath("/list/teachers");
+    revalidatePath("/teacher");
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Could not accept teacher invite.",
     };
   }
 }

@@ -58,6 +58,11 @@ export const teacherInviteIdSchema = z.object({
   inviteId: z.string().trim().min(1, "Invite id is required."),
 });
 
+export const teacherInviteTokenSchema = z.object({
+  token: z.string().trim().min(1, "Invite token is required."),
+});
+
 export type TeacherInviteCreateInput = z.infer<typeof teacherInviteCreateSchema>;
 export type TeacherInviteIdInput = z.infer<typeof teacherInviteIdSchema>;
+export type TeacherInviteTokenInput = z.infer<typeof teacherInviteTokenSchema>;
 export type TeacherInviteTypeInput = z.infer<typeof teacherInviteTypeSchema>;

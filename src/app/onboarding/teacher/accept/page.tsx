@@ -6,6 +6,7 @@ import {
   getTeacherInvitePreview,
   type TeacherInvitePreview,
 } from "@/src/lib/services/teacher-invites";
+import TeacherInviteAcceptButton from "@/src/components/TeacherInviteAcceptButton";
 
 type TeacherAcceptInvitePageProps = {
   searchParams: Promise<{ token?: string }>;
@@ -135,13 +136,7 @@ export default async function TeacherAcceptInvitePage({
               </Link>
             </div>
           ) : invite.usable && emailMatches ? (
-            <button
-              type="button"
-              disabled
-              className="mt-8 inline-flex w-full cursor-not-allowed items-center justify-center rounded-xl bg-white/20 px-5 py-3 text-sm font-black text-white/60 sm:w-auto"
-            >
-              Ready for secure account connection
-            </button>
+            <TeacherInviteAcceptButton token={token ?? ""} />
           ) : (
             <Link
               href="/"

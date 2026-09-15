@@ -1,3 +1,4 @@
+import { clerkClient } from "@clerk/nextjs/server";
 import prisma from "@/src/lib/prisma";
 import type { AuthzContext } from "@/src/lib/authz";
 import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
@@ -28,6 +29,16 @@ export class TeacherInviteServiceError extends Error {
     super(message);
     this.name = "TeacherInviteServiceError";
   }
+}
+
+function clerkPrimaryEmail(
+  user: Awaited<ReturnType<Awaited<ReturnType<typeof clerkClient>>["users"]["getUser"]>>,
+) {
+  const primaryEmail = user.emailAddresses.find(
+    (email) => email.id === user.primaryEmailAddressId,
+  );
+
+  return primaryEmail?.emailAddress.toLowerCase();
 }
 
 export type TeacherInvitePreviewState =
@@ -477,4 +488,166 @@ export async function revokeTeacherInvite(
 
   revalidateReferenceData(context.schoolId, "teachers");
   revalidateDashboard(context.schoolId);
+}
+
+export async function acceptTeacherInviteForUser(input: {
+  token: string;
+  userId: string;
+}) {
+  const now = new Date();
+  const tokenHash = hashTeacherInviteToken(input.token);
+
+  const invite = await prisma.teacherInvite.findUnique({
+    where: { tokenHash },
+    include: {
+      school: {
+        select: {
+          id: true,
+          name: true,
+          displayName: true,
+          emailFromName: true,
+        },
+      },
+    },
+  });
+
+  if (!invite) {
+    throw new TeacherInviteServiceError("Teacher invite not found.", 404);
+  }
+
+  if (invite.acceptedAt || invite.status === "ACCEPTED") {
+    throw new TeacherInviteServiceError("This teacher invite has already been accepted.", 409);
+  }
+
+  if (invite.revokedAt || invite.status === "REVOKED") {
+    throw new TeacherInviteServiceError("This teacher invite has been revoked.", 409);
+  }
+
+  if (isTeacherInviteExpired(invite.expiresAt, now) || invite.status === "EXPIRED") {
+    throw new TeacherInviteServiceError("This teacher invite has expired.", 409);
+  }
+
+  const client = await clerkClient();
+  const user = await client.users.getUser(input.userId);
+  const signedInEmail = clerkPrimaryEmail(user);
+  const inviteEmail = invite.email.toLowerCase();
+
+  if (!signedInEmail || signedInEmail !== inviteEmail) {
+    throw new TeacherInviteServiceError(
+      "Please sign in with the email address that received this teacher invite.",
+      409,
+    );
+  }
+
+  const [teacherForUser, teacherForEmail] = await Promise.all([
+    prisma.teacher.findUnique({
+      where: { id: input.userId },
+      select: { id: true, schoolId: true, email: true },
+    }),
+    prisma.teacher.findFirst({
+      where: {
+        schoolId: invite.schoolId,
+        OR: [{ email: inviteEmail }, { username: inviteEmail }],
+      },
+      select: { id: true, schoolId: true, email: true },
+    }),
+  ]);
+
+  if (teacherForUser && teacherForUser.schoolId !== invite.schoolId) {
+    throw new TeacherInviteServiceError(
+      "This account already belongs to another school on Edujay.",
+      409,
+    );
+  }
+
+  if (teacherForEmail && teacherForEmail.id !== input.userId) {
+    throw new TeacherInviteServiceError(
+      "This teacher email is already connected to another account in this school.",
+      409,
+    );
+  }
+
+  const acceptedTeacher = await prisma.$transaction(async (tx) => {
+    const teacher = teacherForUser
+      ? await tx.teacher.update({
+          where: { id: input.userId },
+          data: {
+            schoolId: invite.schoolId,
+            username: inviteEmail,
+            name: invite.name,
+            surname: invite.surname,
+            email: inviteEmail,
+            phone: invite.phone ?? null,
+          },
+          select: { id: true },
+        })
+      : await tx.teacher.create({
+          data: {
+            id: input.userId,
+            schoolId: invite.schoolId,
+            username: inviteEmail,
+            name: invite.name,
+            surname: invite.surname,
+            email: inviteEmail,
+            phone: invite.phone ?? null,
+            address: null,
+            bloodType: null,
+            sex: null,
+          },
+          select: { id: true },
+        });
+
+    const updated = await tx.teacherInvite.updateMany({
+      where: {
+        id: invite.id,
+        status: "PENDING",
+        acceptedAt: null,
+        revokedAt: null,
+      },
+      data: {
+        status: "ACCEPTED",
+        acceptedAt: now,
+        acceptedBy: input.userId,
+        acceptedTeacherId: teacher.id,
+      },
+    });
+
+    if (updated.count !== 1) {
+      throw new TeacherInviteServiceError(
+        "This invite is no longer available to accept.",
+        409,
+      );
+    }
+
+    await writeTeacherInviteAudit(tx, {
+      schoolId: invite.schoolId,
+      inviteId: invite.id,
+      action: "INVITE_ACCEPTED",
+      performedBy: input.userId,
+      metadata: {
+        email: inviteEmail,
+        teacherId: teacher.id,
+      },
+    });
+
+    return teacher;
+  });
+
+  await client.users.updateUserMetadata(input.userId, {
+    publicMetadata: {
+      ...user.publicMetadata,
+      role: "teacher",
+      schoolId: invite.schoolId,
+    },
+  });
+
+  revalidateReferenceData(invite.schoolId, "teachers");
+  revalidateReferenceData(invite.schoolId, "timetable");
+  revalidateDashboard(invite.schoolId);
+
+  return {
+    role: "teacher" as const,
+    schoolId: invite.schoolId,
+    teacherId: acceptedTeacher.id,
+  };
 }

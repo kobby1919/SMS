@@ -579,10 +579,10 @@ model Teacher {
   surname    String
   email      String?
   phone      String?
-  address    String
+  address    String?
   img        String?
-  bloodType  String
-  sex        UserSex
+  bloodType  String?
+  sex        UserSex?
   createdAt  DateTime @default(now())
   maxClasses Int      @default(5)
 
