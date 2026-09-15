@@ -22,11 +22,15 @@ const ClerkSignIn = dynamic(
 );
 
 type SignInViewProps = {
+  schoolAdminInviteEmail?: string;
+  schoolAdminInviteSchoolName?: string;
   teacherInviteEmail?: string;
   teacherInviteSchoolName?: string;
 };
 
 export default function SignInView({
+  schoolAdminInviteEmail,
+  schoolAdminInviteSchoolName,
   teacherInviteEmail,
   teacherInviteSchoolName,
 }: SignInViewProps) {
@@ -35,7 +39,9 @@ export default function SignInView({
   const invalidInvite = searchParams.get("error") === "invalid_invite";
   const inviteToken = searchParams.get("invite");
   const teacherInviteToken = searchParams.get("teacherInvite");
+  const isSchoolAdminInviteSignIn = Boolean(inviteToken);
   const isTeacherInviteSignIn = Boolean(teacherInviteToken);
+  const inviteEmail = teacherInviteEmail ?? schoolAdminInviteEmail;
   const callbackUrl = inviteToken
     ? `${AUTH_CALLBACK_PATH}?invite=${encodeURIComponent(inviteToken)}`
     : teacherInviteToken
@@ -52,27 +58,35 @@ export default function SignInView({
           <p className="mt-2 text-sm font-medium text-slate-500">
             {isTeacherInviteSignIn
               ? "Secure teacher invite access"
+              : isSchoolAdminInviteSignIn
+                ? "Secure school admin invite access"
               : "Secure school access"}
           </p>
         </div>
 
-        {isTeacherInviteSignIn && (
+        {(isTeacherInviteSignIn || isSchoolAdminInviteSignIn) && (
           <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-950">
             <div className="flex items-start gap-3">
               <MailCheck size={18} className="mt-0.5 shrink-0 text-blue-700" />
               <div>
-                <p className="font-black">Teacher invite sign-in</p>
+                <p className="font-black">
+                  {isTeacherInviteSignIn
+                    ? "Teacher invite sign-in"
+                    : "School admin invite sign-in"}
+                </p>
                 <p className="mt-1 font-medium leading-6 text-blue-900/80">
-                  Use the teacher email invited by{" "}
+                  Use the {isTeacherInviteSignIn ? "teacher" : "school admin"} email invited by{" "}
                   <span className="font-bold">
-                    {teacherInviteSchoolName ?? "the school"}
+                    {teacherInviteSchoolName ??
+                      schoolAdminInviteSchoolName ??
+                      "the school"}
                   </span>
                   . Do not use seeded admin, parent, student, or bursar test
                   credentials here.
                 </p>
-                {teacherInviteEmail && (
+                {inviteEmail && (
                   <p className="mt-2 rounded-md bg-white/80 px-3 py-2 text-xs font-black text-blue-900">
-                    Invited email: {teacherInviteEmail}
+                    Invited email: {inviteEmail}
                   </p>
                 )}
               </div>
@@ -109,9 +123,9 @@ export default function SignInView({
           fallbackRedirectUrl={callbackUrl}
           signUpFallbackRedirectUrl={callbackUrl}
           initialValues={
-            teacherInviteEmail
+            inviteEmail
               ? {
-                  emailAddress: teacherInviteEmail,
+                  emailAddress: inviteEmail,
                 }
               : undefined
           }

@@ -2,7 +2,7 @@ import { createHash, randomBytes } from "crypto";
 import { clerkClient } from "@clerk/nextjs/server";
 import prisma from "@/src/lib/prisma";
 import type { AuthzContext } from "@/src/lib/authz";
-import type { AppRole } from "@/src/lib/roles";
+import { normalizeAppRole, type AppRole } from "@/src/lib/roles";
 import { appBaseUrl, sendFirstAdminInviteEmail } from "@/src/lib/services/notifications";
 import type { OnboardingAuditAction, Prisma } from "@/src/generated/prisma";
 
@@ -685,12 +685,33 @@ export async function acceptSchoolInviteForUser(
   const client = await clerkClient();
   const user = await client.users.getUser(input.userId);
   const signedInEmail = clerkPrimaryEmail(user);
+  const existingRole = normalizeAppRole(user.publicMetadata?.role);
+
+  if (existingRole) {
+    throw new Error(
+      "This signed-in account already belongs to another Edujay role. Sign out and accept the school admin invite with the admin's own account.",
+    );
+  }
 
   if (!signedInEmail || signedInEmail !== invite.email.toLowerCase()) {
     throw new Error("Please sign in with the email address that received this invitation.");
   }
 
   const role = inviteRoleToAppRole(invite.role);
+
+  const [existingAdmin, existingTeacher, existingParent, existingStudent] =
+    await Promise.all([
+      prisma.admin.findUnique({ where: { id: input.userId }, select: { id: true } }),
+      prisma.teacher.findUnique({ where: { id: input.userId }, select: { id: true } }),
+      prisma.parent.findUnique({ where: { id: input.userId }, select: { id: true } }),
+      prisma.student.findUnique({ where: { id: input.userId }, select: { id: true } }),
+    ]);
+
+  if (existingAdmin || existingTeacher || existingParent || existingStudent) {
+    throw new Error(
+      "This Edujay account is already linked to an existing role. Use a fresh account for this school admin invite.",
+    );
+  }
 
   await prisma.$transaction(async (tx) => {
     await tx.admin.upsert({

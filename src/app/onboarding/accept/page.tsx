@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { currentUser } from "@clerk/nextjs/server";
 import { getInvitePreview } from "@/src/lib/services/onboarding";
 import { getInviteAvailability } from "@/src/lib/services/onboarding-policy";
+import { normalizeAppRole } from "@/src/lib/roles";
 
 type AcceptInvitePageProps = {
   searchParams: Promise<{ token?: string }>;
@@ -10,9 +12,34 @@ export default async function AcceptInvitePage({
   searchParams,
 }: AcceptInvitePageProps) {
   const { token } = await searchParams;
-  const invite = token ? await getInvitePreview(token) : null;
+  const [invite, user] = await Promise.all([
+    token ? getInvitePreview(token) : null,
+    currentUser(),
+  ]);
   const availability = getInviteAvailability(invite);
   const isUsable = Boolean(invite && availability.usable);
+  const signedInEmail = user
+    ? user.emailAddresses
+        .find((email) => email.id === user.primaryEmailAddressId)
+        ?.emailAddress.toLowerCase()
+    : null;
+  const signedInRole = normalizeAppRole(user?.publicMetadata?.role);
+  const invitedEmail = invite?.email.toLowerCase() ?? null;
+  const roleConflict = Boolean(isUsable && signedInRole);
+  const emailMismatch = Boolean(
+    isUsable &&
+      !roleConflict &&
+      signedInEmail &&
+      invitedEmail &&
+      signedInEmail !== invitedEmail,
+  );
+  const emailMatches = Boolean(
+    isUsable &&
+      !roleConflict &&
+      signedInEmail &&
+      invitedEmail &&
+      signedInEmail === invitedEmail,
+  );
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#080B18] px-4 py-16">
@@ -31,12 +58,44 @@ export default async function AcceptInvitePage({
               This invite is for <span className="font-semibold text-white">{invite.email}</span>.
               Sign up or sign in with that same email so Edujay can securely link your account.
             </p>
-            <Link
-              href={`/sign-in?invite=${encodeURIComponent(token ?? "")}`}
-              className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-blue-200 px-4 py-3 text-sm font-bold text-blue-950 transition hover:bg-white"
-            >
-              Continue to secure sign in
-            </Link>
+            {roleConflict && (
+              <div className="mt-5 rounded-xl border border-amber-300/25 bg-amber-300/10 p-4 text-sm leading-6 text-amber-50/80">
+                <p className="font-black text-amber-100">
+                  You are signed in with an existing {signedInRole?.replace("_", " ")} account
+                </p>
+                <p className="mt-1">
+                  This first-admin invite must be accepted by the invited admin&apos;s
+                  own account. Sign out, then open this invite again with the invited email.
+                </p>
+              </div>
+            )}
+            {emailMismatch && (
+              <div className="mt-5 rounded-xl border border-amber-300/25 bg-amber-300/10 p-4 text-sm leading-6 text-amber-50/80">
+                <p className="font-black text-amber-100">
+                  Signed in with the wrong email
+                </p>
+                <p className="mt-1">
+                  This invite is for <span className="font-bold text-white">{invite.email}</span>,
+                  but the current session is <span className="font-bold text-white">{signedInEmail}</span>.
+                </p>
+              </div>
+            )}
+            {emailMatches && (
+              <div className="mt-5 rounded-xl border border-emerald-300/25 bg-emerald-300/10 p-4 text-sm leading-6 text-emerald-50/80">
+                <p className="font-black text-emerald-100">Email verified</p>
+                <p className="mt-1">
+                  Continue below and Edujay will connect this account as the first school admin.
+                </p>
+              </div>
+            )}
+            {!roleConflict && !emailMismatch && (
+              <Link
+                href={`/sign-in?invite=${encodeURIComponent(token ?? "")}`}
+                className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-blue-200 px-4 py-3 text-sm font-bold text-blue-950 transition hover:bg-white"
+              >
+                {signedInEmail ? "Connect admin account" : "Continue to secure sign in"}
+              </Link>
+            )}
             <p className="mt-4 text-center text-xs text-white/35">
               Expires {invite.expiresAt.toLocaleDateString()}
             </p>

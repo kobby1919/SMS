@@ -1,7 +1,7 @@
 export function getInviteAvailability(invite, now = new Date()) {
   if (!invite) return { usable: false, reason: "missing" };
-  if (invite.acceptedAt) return { usable: false, reason: "accepted" };
-  if (invite.revokedAt) return { usable: false, reason: "revoked" };
+  if (invite.acceptedAt || invite.accepted) return { usable: false, reason: "accepted" };
+  if (invite.revokedAt || invite.revoked) return { usable: false, reason: "revoked" };
   if (new Date(invite.expiresAt).getTime() < now.getTime()) {
     return { usable: false, reason: "expired" };
   }

@@ -1,10 +1,9 @@
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { dashboardPathForRole, type AppRole } from "@/src/lib/roles";
-import { resolveSessionRole, resolveSessionSchoolId } from "@/src/lib/roles.server";
+import { resolveSessionRole } from "@/src/lib/roles.server";
 import {
   acceptSchoolInviteForUser,
-  getSchoolOnboardingState,
 } from "@/src/lib/services/onboarding";
 import {
   AUTH_CALLBACK_PATH,
@@ -32,9 +31,6 @@ export async function completePostSignIn(
         token: inviteToken,
         userId,
       });
-      if (inviteSession.role === "admin") {
-        redirect("/onboarding/setup");
-      }
       redirect(dashboardPathForRole(inviteSession.role));
     } catch {
       redirect(`${SIGN_IN_PATH}?error=invalid_invite`);
@@ -47,13 +43,6 @@ export async function completePostSignIn(
 
   const role = await resolveSessionRole(userId, sessionClaims);
   if (role) {
-    if (role === "admin") {
-      const schoolId = await resolveSessionSchoolId(userId, sessionClaims);
-      const school = await getSchoolOnboardingState(schoolId);
-      if (school && school.onboardingStatus !== "COMPLETED") {
-        redirect("/onboarding/setup");
-      }
-    }
     redirect(dashboardPathForRole(role));
   }
 
