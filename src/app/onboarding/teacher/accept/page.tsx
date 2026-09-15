@@ -85,6 +85,7 @@ export default async function TeacherAcceptInvitePage({
       invitedEmail &&
       signedInEmail !== invitedEmail,
   );
+  const mustSwitchAccount = roleConflict || emailMismatch;
   const signInHref = `/sign-in?teacherInvite=${encodeURIComponent(token ?? "")}`;
 
   return (
@@ -150,7 +151,7 @@ export default async function TeacherAcceptInvitePage({
             </div>
           )}
 
-          {invite.usable && !emailMatches ? (
+          {invite.usable && !emailMatches && !mustSwitchAccount ? (
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href={signInHref}
@@ -165,6 +166,13 @@ export default async function TeacherAcceptInvitePage({
                 Back to homepage
               </Link>
             </div>
+          ) : invite.usable && mustSwitchAccount ? (
+            <Link
+              href="/"
+              className="mt-8 inline-flex w-full items-center justify-center rounded-xl border border-white/10 px-5 py-3 text-sm font-black text-white/80 transition hover:bg-white/10 sm:w-auto"
+            >
+              Back to homepage
+            </Link>
           ) : invite.usable && emailMatches ? (
             <TeacherInviteAcceptButton token={token ?? ""} />
           ) : (

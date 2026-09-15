@@ -26,6 +26,7 @@ type SignInViewProps = {
     role: "school_admin" | "teacher";
     email?: string;
     schoolName?: string;
+    callbackUrl: string;
   };
 };
 
@@ -52,17 +53,11 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
   const searchParams = useSearchParams();
   const missingRole = searchParams.get("error") === MISSING_ROLE_QUERY;
   const invalidInvite = searchParams.get("error") === "invalid_invite";
-  const inviteToken = searchParams.get("invite");
-  const teacherInviteToken = searchParams.get("teacherInvite");
   const activeInvite = inviteContext ? inviteCopy[inviteContext.role] : null;
   const inviteEmail = inviteContext?.email;
   const inviteSchoolName = inviteContext?.schoolName ?? "the school";
   const pageSubtitle = activeInvite?.subtitle ?? "Secure school access";
-  const callbackUrl = inviteToken
-    ? `${AUTH_CALLBACK_PATH}?invite=${encodeURIComponent(inviteToken)}`
-    : teacherInviteToken
-      ? `${AUTH_CALLBACK_PATH}?teacherInvite=${encodeURIComponent(teacherInviteToken)}`
-    : AUTH_CALLBACK_PATH;
+  const callbackUrl = inviteContext?.callbackUrl ?? AUTH_CALLBACK_PATH;
 
   return (
     <main className="min-h-dvh overflow-x-hidden bg-[#f5f7fb] text-slate-950">

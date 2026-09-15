@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import SignInView from "./SignInView";
 import { getTeacherInvitePreview } from "@/src/lib/services/teacher-invites";
 import { getInvitePreview } from "@/src/lib/services/onboarding";
+import { AUTH_CALLBACK_PATH } from "@/src/lib/auth/constants";
 
 type SignInPageProps = {
   searchParams: Promise<{
@@ -32,12 +33,14 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
                 role: "teacher",
                 email: teacherInvitePreview.email,
                 schoolName: teacherInvitePreview.schoolName,
+                callbackUrl: `${AUTH_CALLBACK_PATH}?teacherInvite=${encodeURIComponent(teacherInvite ?? "")}`,
               }
             : schoolAdminInviteUsable
               ? {
                   role: "school_admin",
                   email: schoolAdminInvitePreview?.email,
                   schoolName: schoolAdminInvitePreview?.schoolName,
+                  callbackUrl: `${AUTH_CALLBACK_PATH}?invite=${encodeURIComponent(invite ?? "")}`,
                 }
               : undefined
         }
