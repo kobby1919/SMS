@@ -1,13 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import {
-  BadgeCheck,
-  Building2,
-  LockKeyhole,
-  MailCheck,
-  ShieldCheck,
-} from "lucide-react";
+import { Building2, MailCheck } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { AUTH_CALLBACK_PATH, MISSING_ROLE_QUERY } from "@/src/lib/auth/constants";
 
@@ -68,50 +62,26 @@ export default function SignInView({
 
   return (
     <main className="min-h-dvh overflow-x-hidden bg-[#f5f7fb] text-slate-950">
-      <section className="grid min-h-dvh w-full grid-cols-1 lg:grid-cols-[minmax(360px,42%)_1fr]">
-        <aside className="relative hidden min-h-dvh bg-[#07111f] px-10 py-12 text-white lg:block xl:px-14">
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute inset-x-10 top-28 h-px bg-white/[0.08] xl:inset-x-14" />
-            <div className="absolute inset-x-10 bottom-28 h-px bg-white/[0.08] xl:inset-x-14" />
-            <div className="absolute left-10 top-0 h-full w-px bg-white/[0.06] xl:left-14" />
-          </div>
-
-          <div className="relative z-10 flex h-full flex-col">
-            <div className="inline-flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-200 text-blue-950">
-                <Building2 size={21} />
-              </div>
-              <div>
-                <p className="text-xl font-black tracking-tight">Edujay</p>
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/40">
-                  School operations
-                </p>
-              </div>
-            </div>
-
-            <div className="my-auto max-w-xl">
-              <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-200">
-                One school truth
-              </p>
-              <h1 className="mt-5 text-5xl font-black leading-[1.04] tracking-tight">
-                Simple, secure access for every school role.
-              </h1>
-              <p className="mt-5 max-w-lg text-base font-medium leading-8 text-white/60">
-                Every admin, teacher, parent, and finance user signs in with
-                their own account. Edujay keeps access clear and activity
-                traceable across the school.
-              </p>
-            </div>
-
-            <div className="max-w-sm text-sm font-semibold leading-7 text-white/45">
-              Protected access. Role-aware dashboards. Invite-based onboarding.
-            </div>
+      <section className="grid min-h-dvh w-full grid-cols-1 lg:grid-cols-[minmax(340px,40%)_1fr]">
+        <aside className="hidden min-h-dvh bg-[#07111f] px-10 py-12 text-white lg:flex xl:px-14">
+          <div className="my-auto max-w-xl">
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-200">
+              One school truth
+            </p>
+            <h1 className="mt-5 text-4xl font-black leading-[1.08] tracking-tight xl:text-5xl">
+              Simple, secure access for every school role.
+            </h1>
+            <p className="mt-5 max-w-lg text-base font-medium leading-8 text-white/60">
+              Every admin, teacher, parent, and finance user signs in with
+              their own account. Edujay keeps access clear and activity
+              traceable across the school.
+            </p>
           </div>
         </aside>
 
-        <div className="flex min-h-dvh items-start justify-center px-4 py-8 sm:px-6 lg:items-center lg:px-12">
+        <div className="flex min-h-dvh items-start justify-center px-4 py-6 sm:px-6 lg:items-center lg:px-12">
           <section className="w-full max-w-[440px]">
-            <div className="mb-6">
+            <div className="mb-5">
               <div className="inline-flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-700 text-white">
                   <Building2 size={22} />
@@ -126,18 +96,6 @@ export default function SignInView({
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-              <div className="mb-4 flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-                  <LockKeyhole size={18} />
-                </div>
-                <div>
-                  <p className="text-sm font-black text-slate-900">Protected sign-in</p>
-                  <p className="text-xs font-semibold leading-5 text-slate-500">
-                    Passwords and sessions are handled securely by Clerk.
-                  </p>
-                </div>
-              </div>
-
               {(isTeacherInviteSignIn || isSchoolAdminInviteSignIn) && (
                 <div className="mb-4 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-950">
                   <div className="flex items-start gap-3">
@@ -251,23 +209,7 @@ export default function SignInView({
                   },
                 }}
               />
-
-              <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-slate-100 pt-4 text-xs font-bold text-slate-500">
-                <span className="inline-flex items-center gap-1.5">
-                  <ShieldCheck size={14} className="text-emerald-600" />
-                  Protected by Clerk
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <BadgeCheck size={14} className="text-blue-700" />
-                  Edujay role verified
-                </span>
-              </div>
             </div>
-
-            <p className="mt-5 text-center text-xs font-semibold leading-5 text-slate-400">
-              Access is controlled by your school. If your invite email is wrong,
-              ask the school admin or Edujay platform team to resend it.
-            </p>
           </section>
         </div>
       </section>
