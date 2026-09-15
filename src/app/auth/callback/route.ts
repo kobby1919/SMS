@@ -10,5 +10,8 @@ export async function GET(req: NextRequest) {
     windowMs: 60_000,
   });
   if (limited) return limited;
-  return completePostSignIn(req.nextUrl.searchParams.get("invite"));
+  return completePostSignIn(
+    req.nextUrl.searchParams.get("invite"),
+    req.nextUrl.searchParams.get("teacherInvite"),
+  );
 }

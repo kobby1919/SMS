@@ -16,7 +16,10 @@ import {
  * Completes sign-in on the server: resolve role (JWT + Clerk fallback) and redirect.
  * Used by /auth/callback only — middleware must not call Clerk on the edge.
  */
-export async function completePostSignIn(inviteToken?: string | null): Promise<never> {
+export async function completePostSignIn(
+  inviteToken?: string | null,
+  teacherInviteToken?: string | null,
+): Promise<never> {
   const { userId, sessionClaims } = await auth();
 
   if (!userId) {
@@ -36,6 +39,10 @@ export async function completePostSignIn(inviteToken?: string | null): Promise<n
     } catch {
       redirect(`${SIGN_IN_PATH}?error=invalid_invite`);
     }
+  }
+
+  if (teacherInviteToken) {
+    redirect(`/onboarding/teacher/accept?token=${encodeURIComponent(teacherInviteToken)}`);
   }
 
   const role = await resolveSessionRole(userId, sessionClaims);

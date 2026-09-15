@@ -26,8 +26,11 @@ export default function SignInView() {
   const missingRole = searchParams.get("error") === MISSING_ROLE_QUERY;
   const invalidInvite = searchParams.get("error") === "invalid_invite";
   const inviteToken = searchParams.get("invite");
+  const teacherInviteToken = searchParams.get("teacherInvite");
   const callbackUrl = inviteToken
     ? `${AUTH_CALLBACK_PATH}?invite=${encodeURIComponent(inviteToken)}`
+    : teacherInviteToken
+      ? `${AUTH_CALLBACK_PATH}?teacherInvite=${encodeURIComponent(teacherInviteToken)}`
     : AUTH_CALLBACK_PATH;
 
   return (
