@@ -329,6 +329,16 @@ export type SchoolInvite = $Result.DefaultSelection<Prisma.$SchoolInvitePayload>
  */
 export type TeacherInvite = $Result.DefaultSelection<Prisma.$TeacherInvitePayload>
 /**
+ * Model ParentInvite
+ * 
+ */
+export type ParentInvite = $Result.DefaultSelection<Prisma.$ParentInvitePayload>
+/**
+ * Model ParentInviteAuditLog
+ * 
+ */
+export type ParentInviteAuditLog = $Result.DefaultSelection<Prisma.$ParentInviteAuditLogPayload>
+/**
  * Model TeacherInviteAuditLog
  * 
  */
@@ -581,6 +591,16 @@ export const TeacherInviteStatus: {
 export type TeacherInviteStatus = (typeof TeacherInviteStatus)[keyof typeof TeacherInviteStatus]
 
 
+export const ParentInviteStatus: {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  EXPIRED: 'EXPIRED',
+  REVOKED: 'REVOKED'
+};
+
+export type ParentInviteStatus = (typeof ParentInviteStatus)[keyof typeof ParentInviteStatus]
+
+
 export const TeacherInviteType: {
   SUBJECT_TEACHER: 'SUBJECT_TEACHER',
   CLASS_TEACHER: 'CLASS_TEACHER',
@@ -600,6 +620,18 @@ export const TeacherInviteAuditAction: {
 };
 
 export type TeacherInviteAuditAction = (typeof TeacherInviteAuditAction)[keyof typeof TeacherInviteAuditAction]
+
+
+export const ParentInviteAuditAction: {
+  INVITE_CREATED: 'INVITE_CREATED',
+  INVITE_SENT: 'INVITE_SENT',
+  INVITE_RESENT: 'INVITE_RESENT',
+  INVITE_REVOKED: 'INVITE_REVOKED',
+  INVITE_EXPIRED: 'INVITE_EXPIRED',
+  INVITE_ACCEPTED: 'INVITE_ACCEPTED'
+};
+
+export type ParentInviteAuditAction = (typeof ParentInviteAuditAction)[keyof typeof ParentInviteAuditAction]
 
 
 export const OnboardingAuditAction: {
@@ -1045,6 +1077,10 @@ export type TeacherInviteStatus = $Enums.TeacherInviteStatus
 
 export const TeacherInviteStatus: typeof $Enums.TeacherInviteStatus
 
+export type ParentInviteStatus = $Enums.ParentInviteStatus
+
+export const ParentInviteStatus: typeof $Enums.ParentInviteStatus
+
 export type TeacherInviteType = $Enums.TeacherInviteType
 
 export const TeacherInviteType: typeof $Enums.TeacherInviteType
@@ -1052,6 +1088,10 @@ export const TeacherInviteType: typeof $Enums.TeacherInviteType
 export type TeacherInviteAuditAction = $Enums.TeacherInviteAuditAction
 
 export const TeacherInviteAuditAction: typeof $Enums.TeacherInviteAuditAction
+
+export type ParentInviteAuditAction = $Enums.ParentInviteAuditAction
+
+export const ParentInviteAuditAction: typeof $Enums.ParentInviteAuditAction
 
 export type OnboardingAuditAction = $Enums.OnboardingAuditAction
 
@@ -1925,6 +1965,26 @@ export class PrismaClient<
   get teacherInvite(): Prisma.TeacherInviteDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.parentInvite`: Exposes CRUD operations for the **ParentInvite** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ParentInvites
+    * const parentInvites = await prisma.parentInvite.findMany()
+    * ```
+    */
+  get parentInvite(): Prisma.ParentInviteDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.parentInviteAuditLog`: Exposes CRUD operations for the **ParentInviteAuditLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ParentInviteAuditLogs
+    * const parentInviteAuditLogs = await prisma.parentInviteAuditLog.findMany()
+    * ```
+    */
+  get parentInviteAuditLog(): Prisma.ParentInviteAuditLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.teacherInviteAuditLog`: Exposes CRUD operations for the **TeacherInviteAuditLog** model.
     * Example usage:
     * ```ts
@@ -2440,6 +2500,8 @@ export namespace Prisma {
     WaitlistEntry: 'WaitlistEntry',
     SchoolInvite: 'SchoolInvite',
     TeacherInvite: 'TeacherInvite',
+    ParentInvite: 'ParentInvite',
+    ParentInviteAuditLog: 'ParentInviteAuditLog',
     TeacherInviteAuditLog: 'TeacherInviteAuditLog',
     OnboardingAuditLog: 'OnboardingAuditLog'
   };
@@ -2457,7 +2519,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "parentStudentRelationship" | "schoolNotificationSetting" | "schoolCommunicationPolicy" | "schoolCommunicationRoute" | "schoolPeriodTemplate" | "timetablePublication" | "publishedTimetableLesson" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentTeacherContactRequest" | "parentTeacherContactMessage" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "teacherInvite" | "teacherInviteAuditLog" | "onboardingAuditLog"
+      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "parentStudentRelationship" | "schoolNotificationSetting" | "schoolCommunicationPolicy" | "schoolCommunicationRoute" | "schoolPeriodTemplate" | "timetablePublication" | "publishedTimetableLesson" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentTeacherContactRequest" | "parentTeacherContactMessage" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "teacherInvite" | "parentInvite" | "parentInviteAuditLog" | "teacherInviteAuditLog" | "onboardingAuditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -7123,6 +7185,154 @@ export namespace Prisma {
           }
         }
       }
+      ParentInvite: {
+        payload: Prisma.$ParentInvitePayload<ExtArgs>
+        fields: Prisma.ParentInviteFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ParentInviteFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInvitePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ParentInviteFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInvitePayload>
+          }
+          findFirst: {
+            args: Prisma.ParentInviteFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInvitePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ParentInviteFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInvitePayload>
+          }
+          findMany: {
+            args: Prisma.ParentInviteFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInvitePayload>[]
+          }
+          create: {
+            args: Prisma.ParentInviteCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInvitePayload>
+          }
+          createMany: {
+            args: Prisma.ParentInviteCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ParentInviteCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInvitePayload>[]
+          }
+          delete: {
+            args: Prisma.ParentInviteDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInvitePayload>
+          }
+          update: {
+            args: Prisma.ParentInviteUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInvitePayload>
+          }
+          deleteMany: {
+            args: Prisma.ParentInviteDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ParentInviteUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ParentInviteUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInvitePayload>[]
+          }
+          upsert: {
+            args: Prisma.ParentInviteUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInvitePayload>
+          }
+          aggregate: {
+            args: Prisma.ParentInviteAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateParentInvite>
+          }
+          groupBy: {
+            args: Prisma.ParentInviteGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ParentInviteGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ParentInviteCountArgs<ExtArgs>
+            result: $Utils.Optional<ParentInviteCountAggregateOutputType> | number
+          }
+        }
+      }
+      ParentInviteAuditLog: {
+        payload: Prisma.$ParentInviteAuditLogPayload<ExtArgs>
+        fields: Prisma.ParentInviteAuditLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ParentInviteAuditLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteAuditLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ParentInviteAuditLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteAuditLogPayload>
+          }
+          findFirst: {
+            args: Prisma.ParentInviteAuditLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteAuditLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ParentInviteAuditLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteAuditLogPayload>
+          }
+          findMany: {
+            args: Prisma.ParentInviteAuditLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteAuditLogPayload>[]
+          }
+          create: {
+            args: Prisma.ParentInviteAuditLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteAuditLogPayload>
+          }
+          createMany: {
+            args: Prisma.ParentInviteAuditLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ParentInviteAuditLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteAuditLogPayload>[]
+          }
+          delete: {
+            args: Prisma.ParentInviteAuditLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteAuditLogPayload>
+          }
+          update: {
+            args: Prisma.ParentInviteAuditLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteAuditLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.ParentInviteAuditLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ParentInviteAuditLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ParentInviteAuditLogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteAuditLogPayload>[]
+          }
+          upsert: {
+            args: Prisma.ParentInviteAuditLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteAuditLogPayload>
+          }
+          aggregate: {
+            args: Prisma.ParentInviteAuditLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateParentInviteAuditLog>
+          }
+          groupBy: {
+            args: Prisma.ParentInviteAuditLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ParentInviteAuditLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ParentInviteAuditLogCountArgs<ExtArgs>
+            result: $Utils.Optional<ParentInviteAuditLogCountAggregateOutputType> | number
+          }
+        }
+      }
       TeacherInviteAuditLog: {
         payload: Prisma.$TeacherInviteAuditLogPayload<ExtArgs>
         fields: Prisma.TeacherInviteAuditLogFieldRefs
@@ -7442,6 +7652,8 @@ export namespace Prisma {
     waitlistEntry?: WaitlistEntryOmit
     schoolInvite?: SchoolInviteOmit
     teacherInvite?: TeacherInviteOmit
+    parentInvite?: ParentInviteOmit
+    parentInviteAuditLog?: ParentInviteAuditLogOmit
     teacherInviteAuditLog?: TeacherInviteAuditLogOmit
     onboardingAuditLog?: OnboardingAuditLogOmit
   }
@@ -7568,6 +7780,8 @@ export namespace Prisma {
     paymentWebhookEvents: number
     teacherInvites: number
     teacherInviteAuditLogs: number
+    parentInvites: number
+    parentInviteAuditLogs: number
     parentNotifications: number
     parentActivityEvents: number
     communicationRoutes: number
@@ -7628,6 +7842,8 @@ export namespace Prisma {
     paymentWebhookEvents?: boolean | SchoolCountOutputTypeCountPaymentWebhookEventsArgs
     teacherInvites?: boolean | SchoolCountOutputTypeCountTeacherInvitesArgs
     teacherInviteAuditLogs?: boolean | SchoolCountOutputTypeCountTeacherInviteAuditLogsArgs
+    parentInvites?: boolean | SchoolCountOutputTypeCountParentInvitesArgs
+    parentInviteAuditLogs?: boolean | SchoolCountOutputTypeCountParentInviteAuditLogsArgs
     parentNotifications?: boolean | SchoolCountOutputTypeCountParentNotificationsArgs
     parentActivityEvents?: boolean | SchoolCountOutputTypeCountParentActivityEventsArgs
     communicationRoutes?: boolean | SchoolCountOutputTypeCountCommunicationRoutesArgs
@@ -7960,6 +8176,20 @@ export namespace Prisma {
    */
   export type SchoolCountOutputTypeCountTeacherInviteAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TeacherInviteAuditLogWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountParentInvitesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ParentInviteWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountParentInviteAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ParentInviteAuditLogWhereInput
   }
 
   /**
@@ -8399,6 +8629,7 @@ export namespace Prisma {
     teacherContactRequests: number
     teacherContactMessages: number
     studentRelationships: number
+    acceptedInvites: number
   }
 
   export type ParentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8410,6 +8641,7 @@ export namespace Prisma {
     teacherContactRequests?: boolean | ParentCountOutputTypeCountTeacherContactRequestsArgs
     teacherContactMessages?: boolean | ParentCountOutputTypeCountTeacherContactMessagesArgs
     studentRelationships?: boolean | ParentCountOutputTypeCountStudentRelationshipsArgs
+    acceptedInvites?: boolean | ParentCountOutputTypeCountAcceptedInvitesArgs
   }
 
   // Custom InputTypes
@@ -8477,6 +8709,13 @@ export namespace Prisma {
    */
   export type ParentCountOutputTypeCountStudentRelationshipsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ParentStudentRelationshipWhereInput
+  }
+
+  /**
+   * ParentCountOutputType without action
+   */
+  export type ParentCountOutputTypeCountAcceptedInvitesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ParentInviteWhereInput
   }
 
 
@@ -9375,6 +9614,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type ParentInviteCountOutputType
+   */
+
+  export type ParentInviteCountOutputType = {
+    auditLogs: number
+  }
+
+  export type ParentInviteCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    auditLogs?: boolean | ParentInviteCountOutputTypeCountAuditLogsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ParentInviteCountOutputType without action
+   */
+  export type ParentInviteCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteCountOutputType
+     */
+    select?: ParentInviteCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ParentInviteCountOutputType without action
+   */
+  export type ParentInviteCountOutputTypeCountAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ParentInviteAuditLogWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -9682,6 +9952,8 @@ export namespace Prisma {
     paymentWebhookEvents?: boolean | School$paymentWebhookEventsArgs<ExtArgs>
     teacherInvites?: boolean | School$teacherInvitesArgs<ExtArgs>
     teacherInviteAuditLogs?: boolean | School$teacherInviteAuditLogsArgs<ExtArgs>
+    parentInvites?: boolean | School$parentInvitesArgs<ExtArgs>
+    parentInviteAuditLogs?: boolean | School$parentInviteAuditLogsArgs<ExtArgs>
     parentNotifications?: boolean | School$parentNotificationsArgs<ExtArgs>
     parentActivityEvents?: boolean | School$parentActivityEventsArgs<ExtArgs>
     notificationSettings?: boolean | School$notificationSettingsArgs<ExtArgs>
@@ -9807,6 +10079,8 @@ export namespace Prisma {
     paymentWebhookEvents?: boolean | School$paymentWebhookEventsArgs<ExtArgs>
     teacherInvites?: boolean | School$teacherInvitesArgs<ExtArgs>
     teacherInviteAuditLogs?: boolean | School$teacherInviteAuditLogsArgs<ExtArgs>
+    parentInvites?: boolean | School$parentInvitesArgs<ExtArgs>
+    parentInviteAuditLogs?: boolean | School$parentInviteAuditLogsArgs<ExtArgs>
     parentNotifications?: boolean | School$parentNotificationsArgs<ExtArgs>
     parentActivityEvents?: boolean | School$parentActivityEventsArgs<ExtArgs>
     notificationSettings?: boolean | School$notificationSettingsArgs<ExtArgs>
@@ -9875,6 +10149,8 @@ export namespace Prisma {
       paymentWebhookEvents: Prisma.$PaymentWebhookEventPayload<ExtArgs>[]
       teacherInvites: Prisma.$TeacherInvitePayload<ExtArgs>[]
       teacherInviteAuditLogs: Prisma.$TeacherInviteAuditLogPayload<ExtArgs>[]
+      parentInvites: Prisma.$ParentInvitePayload<ExtArgs>[]
+      parentInviteAuditLogs: Prisma.$ParentInviteAuditLogPayload<ExtArgs>[]
       parentNotifications: Prisma.$ParentNotificationPayload<ExtArgs>[]
       parentActivityEvents: Prisma.$ParentActivityEventPayload<ExtArgs>[]
       notificationSettings: Prisma.$SchoolNotificationSettingPayload<ExtArgs> | null
@@ -10348,6 +10624,8 @@ export namespace Prisma {
     paymentWebhookEvents<T extends School$paymentWebhookEventsArgs<ExtArgs> = {}>(args?: Subset<T, School$paymentWebhookEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teacherInvites<T extends School$teacherInvitesArgs<ExtArgs> = {}>(args?: Subset<T, School$teacherInvitesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherInvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teacherInviteAuditLogs<T extends School$teacherInviteAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$teacherInviteAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherInviteAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    parentInvites<T extends School$parentInvitesArgs<ExtArgs> = {}>(args?: Subset<T, School$parentInvitesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    parentInviteAuditLogs<T extends School$parentInviteAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$parentInviteAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInviteAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentNotifications<T extends School$parentNotificationsArgs<ExtArgs> = {}>(args?: Subset<T, School$parentNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentActivityEvents<T extends School$parentActivityEventsArgs<ExtArgs> = {}>(args?: Subset<T, School$parentActivityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentActivityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notificationSettings<T extends School$notificationSettingsArgs<ExtArgs> = {}>(args?: Subset<T, School$notificationSettingsArgs<ExtArgs>>): Prisma__SchoolNotificationSettingClient<$Result.GetResult<Prisma.$SchoolNotificationSettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -11856,6 +12134,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TeacherInviteAuditLogScalarFieldEnum | TeacherInviteAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * School.parentInvites
+   */
+  export type School$parentInvitesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInvite
+     */
+    select?: ParentInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInvite
+     */
+    omit?: ParentInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteInclude<ExtArgs> | null
+    where?: ParentInviteWhereInput
+    orderBy?: ParentInviteOrderByWithRelationInput | ParentInviteOrderByWithRelationInput[]
+    cursor?: ParentInviteWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ParentInviteScalarFieldEnum | ParentInviteScalarFieldEnum[]
+  }
+
+  /**
+   * School.parentInviteAuditLogs
+   */
+  export type School$parentInviteAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteAuditLog
+     */
+    select?: ParentInviteAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteAuditLog
+     */
+    omit?: ParentInviteAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteAuditLogInclude<ExtArgs> | null
+    where?: ParentInviteAuditLogWhereInput
+    orderBy?: ParentInviteAuditLogOrderByWithRelationInput | ParentInviteAuditLogOrderByWithRelationInput[]
+    cursor?: ParentInviteAuditLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ParentInviteAuditLogScalarFieldEnum | ParentInviteAuditLogScalarFieldEnum[]
   }
 
   /**
@@ -16845,6 +17171,7 @@ export namespace Prisma {
     teacherContactRequests?: boolean | Parent$teacherContactRequestsArgs<ExtArgs>
     teacherContactMessages?: boolean | Parent$teacherContactMessagesArgs<ExtArgs>
     studentRelationships?: boolean | Parent$studentRelationshipsArgs<ExtArgs>
+    acceptedInvites?: boolean | Parent$acceptedInvitesArgs<ExtArgs>
     _count?: boolean | ParentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["parent"]>
 
@@ -16898,6 +17225,7 @@ export namespace Prisma {
     teacherContactRequests?: boolean | Parent$teacherContactRequestsArgs<ExtArgs>
     teacherContactMessages?: boolean | Parent$teacherContactMessagesArgs<ExtArgs>
     studentRelationships?: boolean | Parent$studentRelationshipsArgs<ExtArgs>
+    acceptedInvites?: boolean | Parent$acceptedInvitesArgs<ExtArgs>
     _count?: boolean | ParentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ParentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -16920,6 +17248,7 @@ export namespace Prisma {
       teacherContactRequests: Prisma.$ParentTeacherContactRequestPayload<ExtArgs>[]
       teacherContactMessages: Prisma.$ParentTeacherContactMessagePayload<ExtArgs>[]
       studentRelationships: Prisma.$ParentStudentRelationshipPayload<ExtArgs>[]
+      acceptedInvites: Prisma.$ParentInvitePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -17335,6 +17664,7 @@ export namespace Prisma {
     teacherContactRequests<T extends Parent$teacherContactRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Parent$teacherContactRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentTeacherContactRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teacherContactMessages<T extends Parent$teacherContactMessagesArgs<ExtArgs> = {}>(args?: Subset<T, Parent$teacherContactMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentTeacherContactMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     studentRelationships<T extends Parent$studentRelationshipsArgs<ExtArgs> = {}>(args?: Subset<T, Parent$studentRelationshipsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentStudentRelationshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    acceptedInvites<T extends Parent$acceptedInvitesArgs<ExtArgs> = {}>(args?: Subset<T, Parent$acceptedInvitesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -17982,6 +18312,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ParentStudentRelationshipScalarFieldEnum | ParentStudentRelationshipScalarFieldEnum[]
+  }
+
+  /**
+   * Parent.acceptedInvites
+   */
+  export type Parent$acceptedInvitesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInvite
+     */
+    select?: ParentInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInvite
+     */
+    omit?: ParentInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteInclude<ExtArgs> | null
+    where?: ParentInviteWhereInput
+    orderBy?: ParentInviteOrderByWithRelationInput | ParentInviteOrderByWithRelationInput[]
+    cursor?: ParentInviteWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ParentInviteScalarFieldEnum | ParentInviteScalarFieldEnum[]
   }
 
   /**
@@ -89246,6 +89600,2388 @@ export namespace Prisma {
 
 
   /**
+   * Model ParentInvite
+   */
+
+  export type AggregateParentInvite = {
+    _count: ParentInviteCountAggregateOutputType | null
+    _min: ParentInviteMinAggregateOutputType | null
+    _max: ParentInviteMaxAggregateOutputType | null
+  }
+
+  export type ParentInviteMinAggregateOutputType = {
+    id: string | null
+    schoolId: string | null
+    name: string | null
+    surname: string | null
+    email: string | null
+    phone: string | null
+    tokenHash: string | null
+    status: $Enums.ParentInviteStatus | null
+    expiresAt: Date | null
+    acceptedAt: Date | null
+    acceptedBy: string | null
+    acceptedParentId: string | null
+    revokedAt: Date | null
+    revokedBy: string | null
+    lastSentAt: Date | null
+    createdBy: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ParentInviteMaxAggregateOutputType = {
+    id: string | null
+    schoolId: string | null
+    name: string | null
+    surname: string | null
+    email: string | null
+    phone: string | null
+    tokenHash: string | null
+    status: $Enums.ParentInviteStatus | null
+    expiresAt: Date | null
+    acceptedAt: Date | null
+    acceptedBy: string | null
+    acceptedParentId: string | null
+    revokedAt: Date | null
+    revokedBy: string | null
+    lastSentAt: Date | null
+    createdBy: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ParentInviteCountAggregateOutputType = {
+    id: number
+    schoolId: number
+    name: number
+    surname: number
+    email: number
+    phone: number
+    tokenHash: number
+    status: number
+    expiresAt: number
+    acceptedAt: number
+    acceptedBy: number
+    acceptedParentId: number
+    revokedAt: number
+    revokedBy: number
+    lastSentAt: number
+    createdBy: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ParentInviteMinAggregateInputType = {
+    id?: true
+    schoolId?: true
+    name?: true
+    surname?: true
+    email?: true
+    phone?: true
+    tokenHash?: true
+    status?: true
+    expiresAt?: true
+    acceptedAt?: true
+    acceptedBy?: true
+    acceptedParentId?: true
+    revokedAt?: true
+    revokedBy?: true
+    lastSentAt?: true
+    createdBy?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ParentInviteMaxAggregateInputType = {
+    id?: true
+    schoolId?: true
+    name?: true
+    surname?: true
+    email?: true
+    phone?: true
+    tokenHash?: true
+    status?: true
+    expiresAt?: true
+    acceptedAt?: true
+    acceptedBy?: true
+    acceptedParentId?: true
+    revokedAt?: true
+    revokedBy?: true
+    lastSentAt?: true
+    createdBy?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ParentInviteCountAggregateInputType = {
+    id?: true
+    schoolId?: true
+    name?: true
+    surname?: true
+    email?: true
+    phone?: true
+    tokenHash?: true
+    status?: true
+    expiresAt?: true
+    acceptedAt?: true
+    acceptedBy?: true
+    acceptedParentId?: true
+    revokedAt?: true
+    revokedBy?: true
+    lastSentAt?: true
+    createdBy?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ParentInviteAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ParentInvite to aggregate.
+     */
+    where?: ParentInviteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParentInvites to fetch.
+     */
+    orderBy?: ParentInviteOrderByWithRelationInput | ParentInviteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ParentInviteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParentInvites from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParentInvites.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ParentInvites
+    **/
+    _count?: true | ParentInviteCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ParentInviteMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ParentInviteMaxAggregateInputType
+  }
+
+  export type GetParentInviteAggregateType<T extends ParentInviteAggregateArgs> = {
+        [P in keyof T & keyof AggregateParentInvite]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateParentInvite[P]>
+      : GetScalarType<T[P], AggregateParentInvite[P]>
+  }
+
+
+
+
+  export type ParentInviteGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ParentInviteWhereInput
+    orderBy?: ParentInviteOrderByWithAggregationInput | ParentInviteOrderByWithAggregationInput[]
+    by: ParentInviteScalarFieldEnum[] | ParentInviteScalarFieldEnum
+    having?: ParentInviteScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ParentInviteCountAggregateInputType | true
+    _min?: ParentInviteMinAggregateInputType
+    _max?: ParentInviteMaxAggregateInputType
+  }
+
+  export type ParentInviteGroupByOutputType = {
+    id: string
+    schoolId: string
+    name: string
+    surname: string
+    email: string
+    phone: string | null
+    tokenHash: string
+    status: $Enums.ParentInviteStatus
+    expiresAt: Date
+    acceptedAt: Date | null
+    acceptedBy: string | null
+    acceptedParentId: string | null
+    revokedAt: Date | null
+    revokedBy: string | null
+    lastSentAt: Date | null
+    createdBy: string
+    createdAt: Date
+    updatedAt: Date
+    _count: ParentInviteCountAggregateOutputType | null
+    _min: ParentInviteMinAggregateOutputType | null
+    _max: ParentInviteMaxAggregateOutputType | null
+  }
+
+  type GetParentInviteGroupByPayload<T extends ParentInviteGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ParentInviteGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ParentInviteGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ParentInviteGroupByOutputType[P]>
+            : GetScalarType<T[P], ParentInviteGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ParentInviteSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    name?: boolean
+    surname?: boolean
+    email?: boolean
+    phone?: boolean
+    tokenHash?: boolean
+    status?: boolean
+    expiresAt?: boolean
+    acceptedAt?: boolean
+    acceptedBy?: boolean
+    acceptedParentId?: boolean
+    revokedAt?: boolean
+    revokedBy?: boolean
+    lastSentAt?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    acceptedParent?: boolean | ParentInvite$acceptedParentArgs<ExtArgs>
+    auditLogs?: boolean | ParentInvite$auditLogsArgs<ExtArgs>
+    _count?: boolean | ParentInviteCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["parentInvite"]>
+
+  export type ParentInviteSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    name?: boolean
+    surname?: boolean
+    email?: boolean
+    phone?: boolean
+    tokenHash?: boolean
+    status?: boolean
+    expiresAt?: boolean
+    acceptedAt?: boolean
+    acceptedBy?: boolean
+    acceptedParentId?: boolean
+    revokedAt?: boolean
+    revokedBy?: boolean
+    lastSentAt?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    acceptedParent?: boolean | ParentInvite$acceptedParentArgs<ExtArgs>
+  }, ExtArgs["result"]["parentInvite"]>
+
+  export type ParentInviteSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    name?: boolean
+    surname?: boolean
+    email?: boolean
+    phone?: boolean
+    tokenHash?: boolean
+    status?: boolean
+    expiresAt?: boolean
+    acceptedAt?: boolean
+    acceptedBy?: boolean
+    acceptedParentId?: boolean
+    revokedAt?: boolean
+    revokedBy?: boolean
+    lastSentAt?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    acceptedParent?: boolean | ParentInvite$acceptedParentArgs<ExtArgs>
+  }, ExtArgs["result"]["parentInvite"]>
+
+  export type ParentInviteSelectScalar = {
+    id?: boolean
+    schoolId?: boolean
+    name?: boolean
+    surname?: boolean
+    email?: boolean
+    phone?: boolean
+    tokenHash?: boolean
+    status?: boolean
+    expiresAt?: boolean
+    acceptedAt?: boolean
+    acceptedBy?: boolean
+    acceptedParentId?: boolean
+    revokedAt?: boolean
+    revokedBy?: boolean
+    lastSentAt?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ParentInviteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "schoolId" | "name" | "surname" | "email" | "phone" | "tokenHash" | "status" | "expiresAt" | "acceptedAt" | "acceptedBy" | "acceptedParentId" | "revokedAt" | "revokedBy" | "lastSentAt" | "createdBy" | "createdAt" | "updatedAt", ExtArgs["result"]["parentInvite"]>
+  export type ParentInviteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    acceptedParent?: boolean | ParentInvite$acceptedParentArgs<ExtArgs>
+    auditLogs?: boolean | ParentInvite$auditLogsArgs<ExtArgs>
+    _count?: boolean | ParentInviteCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ParentInviteIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    acceptedParent?: boolean | ParentInvite$acceptedParentArgs<ExtArgs>
+  }
+  export type ParentInviteIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    acceptedParent?: boolean | ParentInvite$acceptedParentArgs<ExtArgs>
+  }
+
+  export type $ParentInvitePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ParentInvite"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      acceptedParent: Prisma.$ParentPayload<ExtArgs> | null
+      auditLogs: Prisma.$ParentInviteAuditLogPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      schoolId: string
+      name: string
+      surname: string
+      email: string
+      phone: string | null
+      tokenHash: string
+      status: $Enums.ParentInviteStatus
+      expiresAt: Date
+      acceptedAt: Date | null
+      acceptedBy: string | null
+      acceptedParentId: string | null
+      revokedAt: Date | null
+      revokedBy: string | null
+      lastSentAt: Date | null
+      createdBy: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["parentInvite"]>
+    composites: {}
+  }
+
+  type ParentInviteGetPayload<S extends boolean | null | undefined | ParentInviteDefaultArgs> = $Result.GetResult<Prisma.$ParentInvitePayload, S>
+
+  type ParentInviteCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ParentInviteFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ParentInviteCountAggregateInputType | true
+    }
+
+  export interface ParentInviteDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ParentInvite'], meta: { name: 'ParentInvite' } }
+    /**
+     * Find zero or one ParentInvite that matches the filter.
+     * @param {ParentInviteFindUniqueArgs} args - Arguments to find a ParentInvite
+     * @example
+     * // Get one ParentInvite
+     * const parentInvite = await prisma.parentInvite.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ParentInviteFindUniqueArgs>(args: SelectSubset<T, ParentInviteFindUniqueArgs<ExtArgs>>): Prisma__ParentInviteClient<$Result.GetResult<Prisma.$ParentInvitePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ParentInvite that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ParentInviteFindUniqueOrThrowArgs} args - Arguments to find a ParentInvite
+     * @example
+     * // Get one ParentInvite
+     * const parentInvite = await prisma.parentInvite.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ParentInviteFindUniqueOrThrowArgs>(args: SelectSubset<T, ParentInviteFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ParentInviteClient<$Result.GetResult<Prisma.$ParentInvitePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ParentInvite that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteFindFirstArgs} args - Arguments to find a ParentInvite
+     * @example
+     * // Get one ParentInvite
+     * const parentInvite = await prisma.parentInvite.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ParentInviteFindFirstArgs>(args?: SelectSubset<T, ParentInviteFindFirstArgs<ExtArgs>>): Prisma__ParentInviteClient<$Result.GetResult<Prisma.$ParentInvitePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ParentInvite that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteFindFirstOrThrowArgs} args - Arguments to find a ParentInvite
+     * @example
+     * // Get one ParentInvite
+     * const parentInvite = await prisma.parentInvite.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ParentInviteFindFirstOrThrowArgs>(args?: SelectSubset<T, ParentInviteFindFirstOrThrowArgs<ExtArgs>>): Prisma__ParentInviteClient<$Result.GetResult<Prisma.$ParentInvitePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ParentInvites that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ParentInvites
+     * const parentInvites = await prisma.parentInvite.findMany()
+     * 
+     * // Get first 10 ParentInvites
+     * const parentInvites = await prisma.parentInvite.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const parentInviteWithIdOnly = await prisma.parentInvite.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ParentInviteFindManyArgs>(args?: SelectSubset<T, ParentInviteFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ParentInvite.
+     * @param {ParentInviteCreateArgs} args - Arguments to create a ParentInvite.
+     * @example
+     * // Create one ParentInvite
+     * const ParentInvite = await prisma.parentInvite.create({
+     *   data: {
+     *     // ... data to create a ParentInvite
+     *   }
+     * })
+     * 
+     */
+    create<T extends ParentInviteCreateArgs>(args: SelectSubset<T, ParentInviteCreateArgs<ExtArgs>>): Prisma__ParentInviteClient<$Result.GetResult<Prisma.$ParentInvitePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ParentInvites.
+     * @param {ParentInviteCreateManyArgs} args - Arguments to create many ParentInvites.
+     * @example
+     * // Create many ParentInvites
+     * const parentInvite = await prisma.parentInvite.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ParentInviteCreateManyArgs>(args?: SelectSubset<T, ParentInviteCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ParentInvites and returns the data saved in the database.
+     * @param {ParentInviteCreateManyAndReturnArgs} args - Arguments to create many ParentInvites.
+     * @example
+     * // Create many ParentInvites
+     * const parentInvite = await prisma.parentInvite.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ParentInvites and only return the `id`
+     * const parentInviteWithIdOnly = await prisma.parentInvite.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ParentInviteCreateManyAndReturnArgs>(args?: SelectSubset<T, ParentInviteCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInvitePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ParentInvite.
+     * @param {ParentInviteDeleteArgs} args - Arguments to delete one ParentInvite.
+     * @example
+     * // Delete one ParentInvite
+     * const ParentInvite = await prisma.parentInvite.delete({
+     *   where: {
+     *     // ... filter to delete one ParentInvite
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ParentInviteDeleteArgs>(args: SelectSubset<T, ParentInviteDeleteArgs<ExtArgs>>): Prisma__ParentInviteClient<$Result.GetResult<Prisma.$ParentInvitePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ParentInvite.
+     * @param {ParentInviteUpdateArgs} args - Arguments to update one ParentInvite.
+     * @example
+     * // Update one ParentInvite
+     * const parentInvite = await prisma.parentInvite.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ParentInviteUpdateArgs>(args: SelectSubset<T, ParentInviteUpdateArgs<ExtArgs>>): Prisma__ParentInviteClient<$Result.GetResult<Prisma.$ParentInvitePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ParentInvites.
+     * @param {ParentInviteDeleteManyArgs} args - Arguments to filter ParentInvites to delete.
+     * @example
+     * // Delete a few ParentInvites
+     * const { count } = await prisma.parentInvite.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ParentInviteDeleteManyArgs>(args?: SelectSubset<T, ParentInviteDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ParentInvites.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ParentInvites
+     * const parentInvite = await prisma.parentInvite.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ParentInviteUpdateManyArgs>(args: SelectSubset<T, ParentInviteUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ParentInvites and returns the data updated in the database.
+     * @param {ParentInviteUpdateManyAndReturnArgs} args - Arguments to update many ParentInvites.
+     * @example
+     * // Update many ParentInvites
+     * const parentInvite = await prisma.parentInvite.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ParentInvites and only return the `id`
+     * const parentInviteWithIdOnly = await prisma.parentInvite.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ParentInviteUpdateManyAndReturnArgs>(args: SelectSubset<T, ParentInviteUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInvitePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ParentInvite.
+     * @param {ParentInviteUpsertArgs} args - Arguments to update or create a ParentInvite.
+     * @example
+     * // Update or create a ParentInvite
+     * const parentInvite = await prisma.parentInvite.upsert({
+     *   create: {
+     *     // ... data to create a ParentInvite
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ParentInvite we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ParentInviteUpsertArgs>(args: SelectSubset<T, ParentInviteUpsertArgs<ExtArgs>>): Prisma__ParentInviteClient<$Result.GetResult<Prisma.$ParentInvitePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ParentInvites.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteCountArgs} args - Arguments to filter ParentInvites to count.
+     * @example
+     * // Count the number of ParentInvites
+     * const count = await prisma.parentInvite.count({
+     *   where: {
+     *     // ... the filter for the ParentInvites we want to count
+     *   }
+     * })
+    **/
+    count<T extends ParentInviteCountArgs>(
+      args?: Subset<T, ParentInviteCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ParentInviteCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ParentInvite.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ParentInviteAggregateArgs>(args: Subset<T, ParentInviteAggregateArgs>): Prisma.PrismaPromise<GetParentInviteAggregateType<T>>
+
+    /**
+     * Group by ParentInvite.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ParentInviteGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ParentInviteGroupByArgs['orderBy'] }
+        : { orderBy?: ParentInviteGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ParentInviteGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetParentInviteGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ParentInvite model
+   */
+  readonly fields: ParentInviteFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ParentInvite.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ParentInviteClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    acceptedParent<T extends ParentInvite$acceptedParentArgs<ExtArgs> = {}>(args?: Subset<T, ParentInvite$acceptedParentArgs<ExtArgs>>): Prisma__ParentClient<$Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    auditLogs<T extends ParentInvite$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, ParentInvite$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInviteAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ParentInvite model
+   */
+  interface ParentInviteFieldRefs {
+    readonly id: FieldRef<"ParentInvite", 'String'>
+    readonly schoolId: FieldRef<"ParentInvite", 'String'>
+    readonly name: FieldRef<"ParentInvite", 'String'>
+    readonly surname: FieldRef<"ParentInvite", 'String'>
+    readonly email: FieldRef<"ParentInvite", 'String'>
+    readonly phone: FieldRef<"ParentInvite", 'String'>
+    readonly tokenHash: FieldRef<"ParentInvite", 'String'>
+    readonly status: FieldRef<"ParentInvite", 'ParentInviteStatus'>
+    readonly expiresAt: FieldRef<"ParentInvite", 'DateTime'>
+    readonly acceptedAt: FieldRef<"ParentInvite", 'DateTime'>
+    readonly acceptedBy: FieldRef<"ParentInvite", 'String'>
+    readonly acceptedParentId: FieldRef<"ParentInvite", 'String'>
+    readonly revokedAt: FieldRef<"ParentInvite", 'DateTime'>
+    readonly revokedBy: FieldRef<"ParentInvite", 'String'>
+    readonly lastSentAt: FieldRef<"ParentInvite", 'DateTime'>
+    readonly createdBy: FieldRef<"ParentInvite", 'String'>
+    readonly createdAt: FieldRef<"ParentInvite", 'DateTime'>
+    readonly updatedAt: FieldRef<"ParentInvite", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ParentInvite findUnique
+   */
+  export type ParentInviteFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInvite
+     */
+    select?: ParentInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInvite
+     */
+    omit?: ParentInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentInvite to fetch.
+     */
+    where: ParentInviteWhereUniqueInput
+  }
+
+  /**
+   * ParentInvite findUniqueOrThrow
+   */
+  export type ParentInviteFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInvite
+     */
+    select?: ParentInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInvite
+     */
+    omit?: ParentInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentInvite to fetch.
+     */
+    where: ParentInviteWhereUniqueInput
+  }
+
+  /**
+   * ParentInvite findFirst
+   */
+  export type ParentInviteFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInvite
+     */
+    select?: ParentInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInvite
+     */
+    omit?: ParentInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentInvite to fetch.
+     */
+    where?: ParentInviteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParentInvites to fetch.
+     */
+    orderBy?: ParentInviteOrderByWithRelationInput | ParentInviteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ParentInvites.
+     */
+    cursor?: ParentInviteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParentInvites from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParentInvites.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParentInvites.
+     */
+    distinct?: ParentInviteScalarFieldEnum | ParentInviteScalarFieldEnum[]
+  }
+
+  /**
+   * ParentInvite findFirstOrThrow
+   */
+  export type ParentInviteFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInvite
+     */
+    select?: ParentInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInvite
+     */
+    omit?: ParentInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentInvite to fetch.
+     */
+    where?: ParentInviteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParentInvites to fetch.
+     */
+    orderBy?: ParentInviteOrderByWithRelationInput | ParentInviteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ParentInvites.
+     */
+    cursor?: ParentInviteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParentInvites from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParentInvites.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParentInvites.
+     */
+    distinct?: ParentInviteScalarFieldEnum | ParentInviteScalarFieldEnum[]
+  }
+
+  /**
+   * ParentInvite findMany
+   */
+  export type ParentInviteFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInvite
+     */
+    select?: ParentInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInvite
+     */
+    omit?: ParentInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentInvites to fetch.
+     */
+    where?: ParentInviteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParentInvites to fetch.
+     */
+    orderBy?: ParentInviteOrderByWithRelationInput | ParentInviteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ParentInvites.
+     */
+    cursor?: ParentInviteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParentInvites from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParentInvites.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParentInvites.
+     */
+    distinct?: ParentInviteScalarFieldEnum | ParentInviteScalarFieldEnum[]
+  }
+
+  /**
+   * ParentInvite create
+   */
+  export type ParentInviteCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInvite
+     */
+    select?: ParentInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInvite
+     */
+    omit?: ParentInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ParentInvite.
+     */
+    data: XOR<ParentInviteCreateInput, ParentInviteUncheckedCreateInput>
+  }
+
+  /**
+   * ParentInvite createMany
+   */
+  export type ParentInviteCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ParentInvites.
+     */
+    data: ParentInviteCreateManyInput | ParentInviteCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ParentInvite createManyAndReturn
+   */
+  export type ParentInviteCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInvite
+     */
+    select?: ParentInviteSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInvite
+     */
+    omit?: ParentInviteOmit<ExtArgs> | null
+    /**
+     * The data used to create many ParentInvites.
+     */
+    data: ParentInviteCreateManyInput | ParentInviteCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ParentInvite update
+   */
+  export type ParentInviteUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInvite
+     */
+    select?: ParentInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInvite
+     */
+    omit?: ParentInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ParentInvite.
+     */
+    data: XOR<ParentInviteUpdateInput, ParentInviteUncheckedUpdateInput>
+    /**
+     * Choose, which ParentInvite to update.
+     */
+    where: ParentInviteWhereUniqueInput
+  }
+
+  /**
+   * ParentInvite updateMany
+   */
+  export type ParentInviteUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ParentInvites.
+     */
+    data: XOR<ParentInviteUpdateManyMutationInput, ParentInviteUncheckedUpdateManyInput>
+    /**
+     * Filter which ParentInvites to update
+     */
+    where?: ParentInviteWhereInput
+    /**
+     * Limit how many ParentInvites to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ParentInvite updateManyAndReturn
+   */
+  export type ParentInviteUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInvite
+     */
+    select?: ParentInviteSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInvite
+     */
+    omit?: ParentInviteOmit<ExtArgs> | null
+    /**
+     * The data used to update ParentInvites.
+     */
+    data: XOR<ParentInviteUpdateManyMutationInput, ParentInviteUncheckedUpdateManyInput>
+    /**
+     * Filter which ParentInvites to update
+     */
+    where?: ParentInviteWhereInput
+    /**
+     * Limit how many ParentInvites to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ParentInvite upsert
+   */
+  export type ParentInviteUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInvite
+     */
+    select?: ParentInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInvite
+     */
+    omit?: ParentInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ParentInvite to update in case it exists.
+     */
+    where: ParentInviteWhereUniqueInput
+    /**
+     * In case the ParentInvite found by the `where` argument doesn't exist, create a new ParentInvite with this data.
+     */
+    create: XOR<ParentInviteCreateInput, ParentInviteUncheckedCreateInput>
+    /**
+     * In case the ParentInvite was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ParentInviteUpdateInput, ParentInviteUncheckedUpdateInput>
+  }
+
+  /**
+   * ParentInvite delete
+   */
+  export type ParentInviteDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInvite
+     */
+    select?: ParentInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInvite
+     */
+    omit?: ParentInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteInclude<ExtArgs> | null
+    /**
+     * Filter which ParentInvite to delete.
+     */
+    where: ParentInviteWhereUniqueInput
+  }
+
+  /**
+   * ParentInvite deleteMany
+   */
+  export type ParentInviteDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ParentInvites to delete
+     */
+    where?: ParentInviteWhereInput
+    /**
+     * Limit how many ParentInvites to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ParentInvite.acceptedParent
+   */
+  export type ParentInvite$acceptedParentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Parent
+     */
+    select?: ParentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Parent
+     */
+    omit?: ParentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInclude<ExtArgs> | null
+    where?: ParentWhereInput
+  }
+
+  /**
+   * ParentInvite.auditLogs
+   */
+  export type ParentInvite$auditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteAuditLog
+     */
+    select?: ParentInviteAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteAuditLog
+     */
+    omit?: ParentInviteAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteAuditLogInclude<ExtArgs> | null
+    where?: ParentInviteAuditLogWhereInput
+    orderBy?: ParentInviteAuditLogOrderByWithRelationInput | ParentInviteAuditLogOrderByWithRelationInput[]
+    cursor?: ParentInviteAuditLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ParentInviteAuditLogScalarFieldEnum | ParentInviteAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * ParentInvite without action
+   */
+  export type ParentInviteDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInvite
+     */
+    select?: ParentInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInvite
+     */
+    omit?: ParentInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ParentInviteAuditLog
+   */
+
+  export type AggregateParentInviteAuditLog = {
+    _count: ParentInviteAuditLogCountAggregateOutputType | null
+    _min: ParentInviteAuditLogMinAggregateOutputType | null
+    _max: ParentInviteAuditLogMaxAggregateOutputType | null
+  }
+
+  export type ParentInviteAuditLogMinAggregateOutputType = {
+    id: string | null
+    schoolId: string | null
+    inviteId: string | null
+    action: $Enums.ParentInviteAuditAction | null
+    performedBy: string | null
+    createdAt: Date | null
+  }
+
+  export type ParentInviteAuditLogMaxAggregateOutputType = {
+    id: string | null
+    schoolId: string | null
+    inviteId: string | null
+    action: $Enums.ParentInviteAuditAction | null
+    performedBy: string | null
+    createdAt: Date | null
+  }
+
+  export type ParentInviteAuditLogCountAggregateOutputType = {
+    id: number
+    schoolId: number
+    inviteId: number
+    action: number
+    performedBy: number
+    metadata: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type ParentInviteAuditLogMinAggregateInputType = {
+    id?: true
+    schoolId?: true
+    inviteId?: true
+    action?: true
+    performedBy?: true
+    createdAt?: true
+  }
+
+  export type ParentInviteAuditLogMaxAggregateInputType = {
+    id?: true
+    schoolId?: true
+    inviteId?: true
+    action?: true
+    performedBy?: true
+    createdAt?: true
+  }
+
+  export type ParentInviteAuditLogCountAggregateInputType = {
+    id?: true
+    schoolId?: true
+    inviteId?: true
+    action?: true
+    performedBy?: true
+    metadata?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type ParentInviteAuditLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ParentInviteAuditLog to aggregate.
+     */
+    where?: ParentInviteAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParentInviteAuditLogs to fetch.
+     */
+    orderBy?: ParentInviteAuditLogOrderByWithRelationInput | ParentInviteAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ParentInviteAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParentInviteAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParentInviteAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ParentInviteAuditLogs
+    **/
+    _count?: true | ParentInviteAuditLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ParentInviteAuditLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ParentInviteAuditLogMaxAggregateInputType
+  }
+
+  export type GetParentInviteAuditLogAggregateType<T extends ParentInviteAuditLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateParentInviteAuditLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateParentInviteAuditLog[P]>
+      : GetScalarType<T[P], AggregateParentInviteAuditLog[P]>
+  }
+
+
+
+
+  export type ParentInviteAuditLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ParentInviteAuditLogWhereInput
+    orderBy?: ParentInviteAuditLogOrderByWithAggregationInput | ParentInviteAuditLogOrderByWithAggregationInput[]
+    by: ParentInviteAuditLogScalarFieldEnum[] | ParentInviteAuditLogScalarFieldEnum
+    having?: ParentInviteAuditLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ParentInviteAuditLogCountAggregateInputType | true
+    _min?: ParentInviteAuditLogMinAggregateInputType
+    _max?: ParentInviteAuditLogMaxAggregateInputType
+  }
+
+  export type ParentInviteAuditLogGroupByOutputType = {
+    id: string
+    schoolId: string
+    inviteId: string
+    action: $Enums.ParentInviteAuditAction
+    performedBy: string
+    metadata: JsonValue
+    createdAt: Date
+    _count: ParentInviteAuditLogCountAggregateOutputType | null
+    _min: ParentInviteAuditLogMinAggregateOutputType | null
+    _max: ParentInviteAuditLogMaxAggregateOutputType | null
+  }
+
+  type GetParentInviteAuditLogGroupByPayload<T extends ParentInviteAuditLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ParentInviteAuditLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ParentInviteAuditLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ParentInviteAuditLogGroupByOutputType[P]>
+            : GetScalarType<T[P], ParentInviteAuditLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ParentInviteAuditLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    inviteId?: boolean
+    action?: boolean
+    performedBy?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    invite?: boolean | ParentInviteDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["parentInviteAuditLog"]>
+
+  export type ParentInviteAuditLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    inviteId?: boolean
+    action?: boolean
+    performedBy?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    invite?: boolean | ParentInviteDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["parentInviteAuditLog"]>
+
+  export type ParentInviteAuditLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    inviteId?: boolean
+    action?: boolean
+    performedBy?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    invite?: boolean | ParentInviteDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["parentInviteAuditLog"]>
+
+  export type ParentInviteAuditLogSelectScalar = {
+    id?: boolean
+    schoolId?: boolean
+    inviteId?: boolean
+    action?: boolean
+    performedBy?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+  }
+
+  export type ParentInviteAuditLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "schoolId" | "inviteId" | "action" | "performedBy" | "metadata" | "createdAt", ExtArgs["result"]["parentInviteAuditLog"]>
+  export type ParentInviteAuditLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    invite?: boolean | ParentInviteDefaultArgs<ExtArgs>
+  }
+  export type ParentInviteAuditLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    invite?: boolean | ParentInviteDefaultArgs<ExtArgs>
+  }
+  export type ParentInviteAuditLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    invite?: boolean | ParentInviteDefaultArgs<ExtArgs>
+  }
+
+  export type $ParentInviteAuditLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ParentInviteAuditLog"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      invite: Prisma.$ParentInvitePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      schoolId: string
+      inviteId: string
+      action: $Enums.ParentInviteAuditAction
+      performedBy: string
+      metadata: Prisma.JsonValue
+      createdAt: Date
+    }, ExtArgs["result"]["parentInviteAuditLog"]>
+    composites: {}
+  }
+
+  type ParentInviteAuditLogGetPayload<S extends boolean | null | undefined | ParentInviteAuditLogDefaultArgs> = $Result.GetResult<Prisma.$ParentInviteAuditLogPayload, S>
+
+  type ParentInviteAuditLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ParentInviteAuditLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ParentInviteAuditLogCountAggregateInputType | true
+    }
+
+  export interface ParentInviteAuditLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ParentInviteAuditLog'], meta: { name: 'ParentInviteAuditLog' } }
+    /**
+     * Find zero or one ParentInviteAuditLog that matches the filter.
+     * @param {ParentInviteAuditLogFindUniqueArgs} args - Arguments to find a ParentInviteAuditLog
+     * @example
+     * // Get one ParentInviteAuditLog
+     * const parentInviteAuditLog = await prisma.parentInviteAuditLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ParentInviteAuditLogFindUniqueArgs>(args: SelectSubset<T, ParentInviteAuditLogFindUniqueArgs<ExtArgs>>): Prisma__ParentInviteAuditLogClient<$Result.GetResult<Prisma.$ParentInviteAuditLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ParentInviteAuditLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ParentInviteAuditLogFindUniqueOrThrowArgs} args - Arguments to find a ParentInviteAuditLog
+     * @example
+     * // Get one ParentInviteAuditLog
+     * const parentInviteAuditLog = await prisma.parentInviteAuditLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ParentInviteAuditLogFindUniqueOrThrowArgs>(args: SelectSubset<T, ParentInviteAuditLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ParentInviteAuditLogClient<$Result.GetResult<Prisma.$ParentInviteAuditLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ParentInviteAuditLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteAuditLogFindFirstArgs} args - Arguments to find a ParentInviteAuditLog
+     * @example
+     * // Get one ParentInviteAuditLog
+     * const parentInviteAuditLog = await prisma.parentInviteAuditLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ParentInviteAuditLogFindFirstArgs>(args?: SelectSubset<T, ParentInviteAuditLogFindFirstArgs<ExtArgs>>): Prisma__ParentInviteAuditLogClient<$Result.GetResult<Prisma.$ParentInviteAuditLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ParentInviteAuditLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteAuditLogFindFirstOrThrowArgs} args - Arguments to find a ParentInviteAuditLog
+     * @example
+     * // Get one ParentInviteAuditLog
+     * const parentInviteAuditLog = await prisma.parentInviteAuditLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ParentInviteAuditLogFindFirstOrThrowArgs>(args?: SelectSubset<T, ParentInviteAuditLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__ParentInviteAuditLogClient<$Result.GetResult<Prisma.$ParentInviteAuditLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ParentInviteAuditLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteAuditLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ParentInviteAuditLogs
+     * const parentInviteAuditLogs = await prisma.parentInviteAuditLog.findMany()
+     * 
+     * // Get first 10 ParentInviteAuditLogs
+     * const parentInviteAuditLogs = await prisma.parentInviteAuditLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const parentInviteAuditLogWithIdOnly = await prisma.parentInviteAuditLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ParentInviteAuditLogFindManyArgs>(args?: SelectSubset<T, ParentInviteAuditLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInviteAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ParentInviteAuditLog.
+     * @param {ParentInviteAuditLogCreateArgs} args - Arguments to create a ParentInviteAuditLog.
+     * @example
+     * // Create one ParentInviteAuditLog
+     * const ParentInviteAuditLog = await prisma.parentInviteAuditLog.create({
+     *   data: {
+     *     // ... data to create a ParentInviteAuditLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends ParentInviteAuditLogCreateArgs>(args: SelectSubset<T, ParentInviteAuditLogCreateArgs<ExtArgs>>): Prisma__ParentInviteAuditLogClient<$Result.GetResult<Prisma.$ParentInviteAuditLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ParentInviteAuditLogs.
+     * @param {ParentInviteAuditLogCreateManyArgs} args - Arguments to create many ParentInviteAuditLogs.
+     * @example
+     * // Create many ParentInviteAuditLogs
+     * const parentInviteAuditLog = await prisma.parentInviteAuditLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ParentInviteAuditLogCreateManyArgs>(args?: SelectSubset<T, ParentInviteAuditLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ParentInviteAuditLogs and returns the data saved in the database.
+     * @param {ParentInviteAuditLogCreateManyAndReturnArgs} args - Arguments to create many ParentInviteAuditLogs.
+     * @example
+     * // Create many ParentInviteAuditLogs
+     * const parentInviteAuditLog = await prisma.parentInviteAuditLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ParentInviteAuditLogs and only return the `id`
+     * const parentInviteAuditLogWithIdOnly = await prisma.parentInviteAuditLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ParentInviteAuditLogCreateManyAndReturnArgs>(args?: SelectSubset<T, ParentInviteAuditLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInviteAuditLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ParentInviteAuditLog.
+     * @param {ParentInviteAuditLogDeleteArgs} args - Arguments to delete one ParentInviteAuditLog.
+     * @example
+     * // Delete one ParentInviteAuditLog
+     * const ParentInviteAuditLog = await prisma.parentInviteAuditLog.delete({
+     *   where: {
+     *     // ... filter to delete one ParentInviteAuditLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ParentInviteAuditLogDeleteArgs>(args: SelectSubset<T, ParentInviteAuditLogDeleteArgs<ExtArgs>>): Prisma__ParentInviteAuditLogClient<$Result.GetResult<Prisma.$ParentInviteAuditLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ParentInviteAuditLog.
+     * @param {ParentInviteAuditLogUpdateArgs} args - Arguments to update one ParentInviteAuditLog.
+     * @example
+     * // Update one ParentInviteAuditLog
+     * const parentInviteAuditLog = await prisma.parentInviteAuditLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ParentInviteAuditLogUpdateArgs>(args: SelectSubset<T, ParentInviteAuditLogUpdateArgs<ExtArgs>>): Prisma__ParentInviteAuditLogClient<$Result.GetResult<Prisma.$ParentInviteAuditLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ParentInviteAuditLogs.
+     * @param {ParentInviteAuditLogDeleteManyArgs} args - Arguments to filter ParentInviteAuditLogs to delete.
+     * @example
+     * // Delete a few ParentInviteAuditLogs
+     * const { count } = await prisma.parentInviteAuditLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ParentInviteAuditLogDeleteManyArgs>(args?: SelectSubset<T, ParentInviteAuditLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ParentInviteAuditLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteAuditLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ParentInviteAuditLogs
+     * const parentInviteAuditLog = await prisma.parentInviteAuditLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ParentInviteAuditLogUpdateManyArgs>(args: SelectSubset<T, ParentInviteAuditLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ParentInviteAuditLogs and returns the data updated in the database.
+     * @param {ParentInviteAuditLogUpdateManyAndReturnArgs} args - Arguments to update many ParentInviteAuditLogs.
+     * @example
+     * // Update many ParentInviteAuditLogs
+     * const parentInviteAuditLog = await prisma.parentInviteAuditLog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ParentInviteAuditLogs and only return the `id`
+     * const parentInviteAuditLogWithIdOnly = await prisma.parentInviteAuditLog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ParentInviteAuditLogUpdateManyAndReturnArgs>(args: SelectSubset<T, ParentInviteAuditLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInviteAuditLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ParentInviteAuditLog.
+     * @param {ParentInviteAuditLogUpsertArgs} args - Arguments to update or create a ParentInviteAuditLog.
+     * @example
+     * // Update or create a ParentInviteAuditLog
+     * const parentInviteAuditLog = await prisma.parentInviteAuditLog.upsert({
+     *   create: {
+     *     // ... data to create a ParentInviteAuditLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ParentInviteAuditLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ParentInviteAuditLogUpsertArgs>(args: SelectSubset<T, ParentInviteAuditLogUpsertArgs<ExtArgs>>): Prisma__ParentInviteAuditLogClient<$Result.GetResult<Prisma.$ParentInviteAuditLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ParentInviteAuditLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteAuditLogCountArgs} args - Arguments to filter ParentInviteAuditLogs to count.
+     * @example
+     * // Count the number of ParentInviteAuditLogs
+     * const count = await prisma.parentInviteAuditLog.count({
+     *   where: {
+     *     // ... the filter for the ParentInviteAuditLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends ParentInviteAuditLogCountArgs>(
+      args?: Subset<T, ParentInviteAuditLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ParentInviteAuditLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ParentInviteAuditLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteAuditLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ParentInviteAuditLogAggregateArgs>(args: Subset<T, ParentInviteAuditLogAggregateArgs>): Prisma.PrismaPromise<GetParentInviteAuditLogAggregateType<T>>
+
+    /**
+     * Group by ParentInviteAuditLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteAuditLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ParentInviteAuditLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ParentInviteAuditLogGroupByArgs['orderBy'] }
+        : { orderBy?: ParentInviteAuditLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ParentInviteAuditLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetParentInviteAuditLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ParentInviteAuditLog model
+   */
+  readonly fields: ParentInviteAuditLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ParentInviteAuditLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ParentInviteAuditLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    invite<T extends ParentInviteDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ParentInviteDefaultArgs<ExtArgs>>): Prisma__ParentInviteClient<$Result.GetResult<Prisma.$ParentInvitePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ParentInviteAuditLog model
+   */
+  interface ParentInviteAuditLogFieldRefs {
+    readonly id: FieldRef<"ParentInviteAuditLog", 'String'>
+    readonly schoolId: FieldRef<"ParentInviteAuditLog", 'String'>
+    readonly inviteId: FieldRef<"ParentInviteAuditLog", 'String'>
+    readonly action: FieldRef<"ParentInviteAuditLog", 'ParentInviteAuditAction'>
+    readonly performedBy: FieldRef<"ParentInviteAuditLog", 'String'>
+    readonly metadata: FieldRef<"ParentInviteAuditLog", 'Json'>
+    readonly createdAt: FieldRef<"ParentInviteAuditLog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ParentInviteAuditLog findUnique
+   */
+  export type ParentInviteAuditLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteAuditLog
+     */
+    select?: ParentInviteAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteAuditLog
+     */
+    omit?: ParentInviteAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentInviteAuditLog to fetch.
+     */
+    where: ParentInviteAuditLogWhereUniqueInput
+  }
+
+  /**
+   * ParentInviteAuditLog findUniqueOrThrow
+   */
+  export type ParentInviteAuditLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteAuditLog
+     */
+    select?: ParentInviteAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteAuditLog
+     */
+    omit?: ParentInviteAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentInviteAuditLog to fetch.
+     */
+    where: ParentInviteAuditLogWhereUniqueInput
+  }
+
+  /**
+   * ParentInviteAuditLog findFirst
+   */
+  export type ParentInviteAuditLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteAuditLog
+     */
+    select?: ParentInviteAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteAuditLog
+     */
+    omit?: ParentInviteAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentInviteAuditLog to fetch.
+     */
+    where?: ParentInviteAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParentInviteAuditLogs to fetch.
+     */
+    orderBy?: ParentInviteAuditLogOrderByWithRelationInput | ParentInviteAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ParentInviteAuditLogs.
+     */
+    cursor?: ParentInviteAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParentInviteAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParentInviteAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParentInviteAuditLogs.
+     */
+    distinct?: ParentInviteAuditLogScalarFieldEnum | ParentInviteAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * ParentInviteAuditLog findFirstOrThrow
+   */
+  export type ParentInviteAuditLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteAuditLog
+     */
+    select?: ParentInviteAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteAuditLog
+     */
+    omit?: ParentInviteAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentInviteAuditLog to fetch.
+     */
+    where?: ParentInviteAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParentInviteAuditLogs to fetch.
+     */
+    orderBy?: ParentInviteAuditLogOrderByWithRelationInput | ParentInviteAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ParentInviteAuditLogs.
+     */
+    cursor?: ParentInviteAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParentInviteAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParentInviteAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParentInviteAuditLogs.
+     */
+    distinct?: ParentInviteAuditLogScalarFieldEnum | ParentInviteAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * ParentInviteAuditLog findMany
+   */
+  export type ParentInviteAuditLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteAuditLog
+     */
+    select?: ParentInviteAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteAuditLog
+     */
+    omit?: ParentInviteAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentInviteAuditLogs to fetch.
+     */
+    where?: ParentInviteAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParentInviteAuditLogs to fetch.
+     */
+    orderBy?: ParentInviteAuditLogOrderByWithRelationInput | ParentInviteAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ParentInviteAuditLogs.
+     */
+    cursor?: ParentInviteAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParentInviteAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParentInviteAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParentInviteAuditLogs.
+     */
+    distinct?: ParentInviteAuditLogScalarFieldEnum | ParentInviteAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * ParentInviteAuditLog create
+   */
+  export type ParentInviteAuditLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteAuditLog
+     */
+    select?: ParentInviteAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteAuditLog
+     */
+    omit?: ParentInviteAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteAuditLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ParentInviteAuditLog.
+     */
+    data: XOR<ParentInviteAuditLogCreateInput, ParentInviteAuditLogUncheckedCreateInput>
+  }
+
+  /**
+   * ParentInviteAuditLog createMany
+   */
+  export type ParentInviteAuditLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ParentInviteAuditLogs.
+     */
+    data: ParentInviteAuditLogCreateManyInput | ParentInviteAuditLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ParentInviteAuditLog createManyAndReturn
+   */
+  export type ParentInviteAuditLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteAuditLog
+     */
+    select?: ParentInviteAuditLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteAuditLog
+     */
+    omit?: ParentInviteAuditLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many ParentInviteAuditLogs.
+     */
+    data: ParentInviteAuditLogCreateManyInput | ParentInviteAuditLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteAuditLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ParentInviteAuditLog update
+   */
+  export type ParentInviteAuditLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteAuditLog
+     */
+    select?: ParentInviteAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteAuditLog
+     */
+    omit?: ParentInviteAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteAuditLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ParentInviteAuditLog.
+     */
+    data: XOR<ParentInviteAuditLogUpdateInput, ParentInviteAuditLogUncheckedUpdateInput>
+    /**
+     * Choose, which ParentInviteAuditLog to update.
+     */
+    where: ParentInviteAuditLogWhereUniqueInput
+  }
+
+  /**
+   * ParentInviteAuditLog updateMany
+   */
+  export type ParentInviteAuditLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ParentInviteAuditLogs.
+     */
+    data: XOR<ParentInviteAuditLogUpdateManyMutationInput, ParentInviteAuditLogUncheckedUpdateManyInput>
+    /**
+     * Filter which ParentInviteAuditLogs to update
+     */
+    where?: ParentInviteAuditLogWhereInput
+    /**
+     * Limit how many ParentInviteAuditLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ParentInviteAuditLog updateManyAndReturn
+   */
+  export type ParentInviteAuditLogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteAuditLog
+     */
+    select?: ParentInviteAuditLogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteAuditLog
+     */
+    omit?: ParentInviteAuditLogOmit<ExtArgs> | null
+    /**
+     * The data used to update ParentInviteAuditLogs.
+     */
+    data: XOR<ParentInviteAuditLogUpdateManyMutationInput, ParentInviteAuditLogUncheckedUpdateManyInput>
+    /**
+     * Filter which ParentInviteAuditLogs to update
+     */
+    where?: ParentInviteAuditLogWhereInput
+    /**
+     * Limit how many ParentInviteAuditLogs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteAuditLogIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ParentInviteAuditLog upsert
+   */
+  export type ParentInviteAuditLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteAuditLog
+     */
+    select?: ParentInviteAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteAuditLog
+     */
+    omit?: ParentInviteAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteAuditLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ParentInviteAuditLog to update in case it exists.
+     */
+    where: ParentInviteAuditLogWhereUniqueInput
+    /**
+     * In case the ParentInviteAuditLog found by the `where` argument doesn't exist, create a new ParentInviteAuditLog with this data.
+     */
+    create: XOR<ParentInviteAuditLogCreateInput, ParentInviteAuditLogUncheckedCreateInput>
+    /**
+     * In case the ParentInviteAuditLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ParentInviteAuditLogUpdateInput, ParentInviteAuditLogUncheckedUpdateInput>
+  }
+
+  /**
+   * ParentInviteAuditLog delete
+   */
+  export type ParentInviteAuditLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteAuditLog
+     */
+    select?: ParentInviteAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteAuditLog
+     */
+    omit?: ParentInviteAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter which ParentInviteAuditLog to delete.
+     */
+    where: ParentInviteAuditLogWhereUniqueInput
+  }
+
+  /**
+   * ParentInviteAuditLog deleteMany
+   */
+  export type ParentInviteAuditLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ParentInviteAuditLogs to delete
+     */
+    where?: ParentInviteAuditLogWhereInput
+    /**
+     * Limit how many ParentInviteAuditLogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ParentInviteAuditLog without action
+   */
+  export type ParentInviteAuditLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteAuditLog
+     */
+    select?: ParentInviteAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteAuditLog
+     */
+    omit?: ParentInviteAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteAuditLogInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model TeacherInviteAuditLog
    */
 
@@ -92646,6 +95382,43 @@ export namespace Prisma {
   export type TeacherInviteScalarFieldEnum = (typeof TeacherInviteScalarFieldEnum)[keyof typeof TeacherInviteScalarFieldEnum]
 
 
+  export const ParentInviteScalarFieldEnum: {
+    id: 'id',
+    schoolId: 'schoolId',
+    name: 'name',
+    surname: 'surname',
+    email: 'email',
+    phone: 'phone',
+    tokenHash: 'tokenHash',
+    status: 'status',
+    expiresAt: 'expiresAt',
+    acceptedAt: 'acceptedAt',
+    acceptedBy: 'acceptedBy',
+    acceptedParentId: 'acceptedParentId',
+    revokedAt: 'revokedAt',
+    revokedBy: 'revokedBy',
+    lastSentAt: 'lastSentAt',
+    createdBy: 'createdBy',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ParentInviteScalarFieldEnum = (typeof ParentInviteScalarFieldEnum)[keyof typeof ParentInviteScalarFieldEnum]
+
+
+  export const ParentInviteAuditLogScalarFieldEnum: {
+    id: 'id',
+    schoolId: 'schoolId',
+    inviteId: 'inviteId',
+    action: 'action',
+    performedBy: 'performedBy',
+    metadata: 'metadata',
+    createdAt: 'createdAt'
+  };
+
+  export type ParentInviteAuditLogScalarFieldEnum = (typeof ParentInviteAuditLogScalarFieldEnum)[keyof typeof ParentInviteAuditLogScalarFieldEnum]
+
+
   export const TeacherInviteAuditLogScalarFieldEnum: {
     id: 'id',
     schoolId: 'schoolId',
@@ -93560,6 +96333,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ParentInviteStatus'
+   */
+  export type EnumParentInviteStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentInviteStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ParentInviteStatus[]'
+   */
+  export type ListEnumParentInviteStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentInviteStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ParentInviteAuditAction'
+   */
+  export type EnumParentInviteAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentInviteAuditAction'>
+    
+
+
+  /**
+   * Reference to a field of type 'ParentInviteAuditAction[]'
+   */
+  export type ListEnumParentInviteAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentInviteAuditAction[]'>
+    
+
+
+  /**
    * Reference to a field of type 'TeacherInviteAuditAction'
    */
   export type EnumTeacherInviteAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherInviteAuditAction'>
@@ -93655,6 +96456,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventListRelationFilter
     teacherInvites?: TeacherInviteListRelationFilter
     teacherInviteAuditLogs?: TeacherInviteAuditLogListRelationFilter
+    parentInvites?: ParentInviteListRelationFilter
+    parentInviteAuditLogs?: ParentInviteAuditLogListRelationFilter
     parentNotifications?: ParentNotificationListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
     notificationSettings?: XOR<SchoolNotificationSettingNullableScalarRelationFilter, SchoolNotificationSettingWhereInput> | null
@@ -93735,6 +96538,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventOrderByRelationAggregateInput
     teacherInvites?: TeacherInviteOrderByRelationAggregateInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogOrderByRelationAggregateInput
+    parentInvites?: ParentInviteOrderByRelationAggregateInput
+    parentInviteAuditLogs?: ParentInviteAuditLogOrderByRelationAggregateInput
     parentNotifications?: ParentNotificationOrderByRelationAggregateInput
     parentActivityEvents?: ParentActivityEventOrderByRelationAggregateInput
     notificationSettings?: SchoolNotificationSettingOrderByWithRelationInput
@@ -93818,6 +96623,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventListRelationFilter
     teacherInvites?: TeacherInviteListRelationFilter
     teacherInviteAuditLogs?: TeacherInviteAuditLogListRelationFilter
+    parentInvites?: ParentInviteListRelationFilter
+    parentInviteAuditLogs?: ParentInviteAuditLogListRelationFilter
     parentNotifications?: ParentNotificationListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
     notificationSettings?: XOR<SchoolNotificationSettingNullableScalarRelationFilter, SchoolNotificationSettingWhereInput> | null
@@ -94259,6 +97066,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestListRelationFilter
     teacherContactMessages?: ParentTeacherContactMessageListRelationFilter
     studentRelationships?: ParentStudentRelationshipListRelationFilter
+    acceptedInvites?: ParentInviteListRelationFilter
   }
 
   export type ParentOrderByWithRelationInput = {
@@ -94281,6 +97089,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestOrderByRelationAggregateInput
     teacherContactMessages?: ParentTeacherContactMessageOrderByRelationAggregateInput
     studentRelationships?: ParentStudentRelationshipOrderByRelationAggregateInput
+    acceptedInvites?: ParentInviteOrderByRelationAggregateInput
   }
 
   export type ParentWhereUniqueInput = Prisma.AtLeast<{
@@ -94306,6 +97115,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestListRelationFilter
     teacherContactMessages?: ParentTeacherContactMessageListRelationFilter
     studentRelationships?: ParentStudentRelationshipListRelationFilter
+    acceptedInvites?: ParentInviteListRelationFilter
   }, "id" | "username">
 
   export type ParentOrderByWithAggregationInput = {
@@ -100122,6 +102932,200 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"TeacherInvite"> | Date | string
   }
 
+  export type ParentInviteWhereInput = {
+    AND?: ParentInviteWhereInput | ParentInviteWhereInput[]
+    OR?: ParentInviteWhereInput[]
+    NOT?: ParentInviteWhereInput | ParentInviteWhereInput[]
+    id?: StringFilter<"ParentInvite"> | string
+    schoolId?: StringFilter<"ParentInvite"> | string
+    name?: StringFilter<"ParentInvite"> | string
+    surname?: StringFilter<"ParentInvite"> | string
+    email?: StringFilter<"ParentInvite"> | string
+    phone?: StringNullableFilter<"ParentInvite"> | string | null
+    tokenHash?: StringFilter<"ParentInvite"> | string
+    status?: EnumParentInviteStatusFilter<"ParentInvite"> | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFilter<"ParentInvite"> | Date | string
+    acceptedAt?: DateTimeNullableFilter<"ParentInvite"> | Date | string | null
+    acceptedBy?: StringNullableFilter<"ParentInvite"> | string | null
+    acceptedParentId?: StringNullableFilter<"ParentInvite"> | string | null
+    revokedAt?: DateTimeNullableFilter<"ParentInvite"> | Date | string | null
+    revokedBy?: StringNullableFilter<"ParentInvite"> | string | null
+    lastSentAt?: DateTimeNullableFilter<"ParentInvite"> | Date | string | null
+    createdBy?: StringFilter<"ParentInvite"> | string
+    createdAt?: DateTimeFilter<"ParentInvite"> | Date | string
+    updatedAt?: DateTimeFilter<"ParentInvite"> | Date | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    acceptedParent?: XOR<ParentNullableScalarRelationFilter, ParentWhereInput> | null
+    auditLogs?: ParentInviteAuditLogListRelationFilter
+  }
+
+  export type ParentInviteOrderByWithRelationInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    name?: SortOrder
+    surname?: SortOrder
+    email?: SortOrder
+    phone?: SortOrderInput | SortOrder
+    tokenHash?: SortOrder
+    status?: SortOrder
+    expiresAt?: SortOrder
+    acceptedAt?: SortOrderInput | SortOrder
+    acceptedBy?: SortOrderInput | SortOrder
+    acceptedParentId?: SortOrderInput | SortOrder
+    revokedAt?: SortOrderInput | SortOrder
+    revokedBy?: SortOrderInput | SortOrder
+    lastSentAt?: SortOrderInput | SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+    acceptedParent?: ParentOrderByWithRelationInput
+    auditLogs?: ParentInviteAuditLogOrderByRelationAggregateInput
+  }
+
+  export type ParentInviteWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    tokenHash?: string
+    AND?: ParentInviteWhereInput | ParentInviteWhereInput[]
+    OR?: ParentInviteWhereInput[]
+    NOT?: ParentInviteWhereInput | ParentInviteWhereInput[]
+    schoolId?: StringFilter<"ParentInvite"> | string
+    name?: StringFilter<"ParentInvite"> | string
+    surname?: StringFilter<"ParentInvite"> | string
+    email?: StringFilter<"ParentInvite"> | string
+    phone?: StringNullableFilter<"ParentInvite"> | string | null
+    status?: EnumParentInviteStatusFilter<"ParentInvite"> | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFilter<"ParentInvite"> | Date | string
+    acceptedAt?: DateTimeNullableFilter<"ParentInvite"> | Date | string | null
+    acceptedBy?: StringNullableFilter<"ParentInvite"> | string | null
+    acceptedParentId?: StringNullableFilter<"ParentInvite"> | string | null
+    revokedAt?: DateTimeNullableFilter<"ParentInvite"> | Date | string | null
+    revokedBy?: StringNullableFilter<"ParentInvite"> | string | null
+    lastSentAt?: DateTimeNullableFilter<"ParentInvite"> | Date | string | null
+    createdBy?: StringFilter<"ParentInvite"> | string
+    createdAt?: DateTimeFilter<"ParentInvite"> | Date | string
+    updatedAt?: DateTimeFilter<"ParentInvite"> | Date | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    acceptedParent?: XOR<ParentNullableScalarRelationFilter, ParentWhereInput> | null
+    auditLogs?: ParentInviteAuditLogListRelationFilter
+  }, "id" | "tokenHash">
+
+  export type ParentInviteOrderByWithAggregationInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    name?: SortOrder
+    surname?: SortOrder
+    email?: SortOrder
+    phone?: SortOrderInput | SortOrder
+    tokenHash?: SortOrder
+    status?: SortOrder
+    expiresAt?: SortOrder
+    acceptedAt?: SortOrderInput | SortOrder
+    acceptedBy?: SortOrderInput | SortOrder
+    acceptedParentId?: SortOrderInput | SortOrder
+    revokedAt?: SortOrderInput | SortOrder
+    revokedBy?: SortOrderInput | SortOrder
+    lastSentAt?: SortOrderInput | SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ParentInviteCountOrderByAggregateInput
+    _max?: ParentInviteMaxOrderByAggregateInput
+    _min?: ParentInviteMinOrderByAggregateInput
+  }
+
+  export type ParentInviteScalarWhereWithAggregatesInput = {
+    AND?: ParentInviteScalarWhereWithAggregatesInput | ParentInviteScalarWhereWithAggregatesInput[]
+    OR?: ParentInviteScalarWhereWithAggregatesInput[]
+    NOT?: ParentInviteScalarWhereWithAggregatesInput | ParentInviteScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ParentInvite"> | string
+    schoolId?: StringWithAggregatesFilter<"ParentInvite"> | string
+    name?: StringWithAggregatesFilter<"ParentInvite"> | string
+    surname?: StringWithAggregatesFilter<"ParentInvite"> | string
+    email?: StringWithAggregatesFilter<"ParentInvite"> | string
+    phone?: StringNullableWithAggregatesFilter<"ParentInvite"> | string | null
+    tokenHash?: StringWithAggregatesFilter<"ParentInvite"> | string
+    status?: EnumParentInviteStatusWithAggregatesFilter<"ParentInvite"> | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeWithAggregatesFilter<"ParentInvite"> | Date | string
+    acceptedAt?: DateTimeNullableWithAggregatesFilter<"ParentInvite"> | Date | string | null
+    acceptedBy?: StringNullableWithAggregatesFilter<"ParentInvite"> | string | null
+    acceptedParentId?: StringNullableWithAggregatesFilter<"ParentInvite"> | string | null
+    revokedAt?: DateTimeNullableWithAggregatesFilter<"ParentInvite"> | Date | string | null
+    revokedBy?: StringNullableWithAggregatesFilter<"ParentInvite"> | string | null
+    lastSentAt?: DateTimeNullableWithAggregatesFilter<"ParentInvite"> | Date | string | null
+    createdBy?: StringWithAggregatesFilter<"ParentInvite"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"ParentInvite"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ParentInvite"> | Date | string
+  }
+
+  export type ParentInviteAuditLogWhereInput = {
+    AND?: ParentInviteAuditLogWhereInput | ParentInviteAuditLogWhereInput[]
+    OR?: ParentInviteAuditLogWhereInput[]
+    NOT?: ParentInviteAuditLogWhereInput | ParentInviteAuditLogWhereInput[]
+    id?: StringFilter<"ParentInviteAuditLog"> | string
+    schoolId?: StringFilter<"ParentInviteAuditLog"> | string
+    inviteId?: StringFilter<"ParentInviteAuditLog"> | string
+    action?: EnumParentInviteAuditActionFilter<"ParentInviteAuditLog"> | $Enums.ParentInviteAuditAction
+    performedBy?: StringFilter<"ParentInviteAuditLog"> | string
+    metadata?: JsonFilter<"ParentInviteAuditLog">
+    createdAt?: DateTimeFilter<"ParentInviteAuditLog"> | Date | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    invite?: XOR<ParentInviteScalarRelationFilter, ParentInviteWhereInput>
+  }
+
+  export type ParentInviteAuditLogOrderByWithRelationInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    inviteId?: SortOrder
+    action?: SortOrder
+    performedBy?: SortOrder
+    metadata?: SortOrder
+    createdAt?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+    invite?: ParentInviteOrderByWithRelationInput
+  }
+
+  export type ParentInviteAuditLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ParentInviteAuditLogWhereInput | ParentInviteAuditLogWhereInput[]
+    OR?: ParentInviteAuditLogWhereInput[]
+    NOT?: ParentInviteAuditLogWhereInput | ParentInviteAuditLogWhereInput[]
+    schoolId?: StringFilter<"ParentInviteAuditLog"> | string
+    inviteId?: StringFilter<"ParentInviteAuditLog"> | string
+    action?: EnumParentInviteAuditActionFilter<"ParentInviteAuditLog"> | $Enums.ParentInviteAuditAction
+    performedBy?: StringFilter<"ParentInviteAuditLog"> | string
+    metadata?: JsonFilter<"ParentInviteAuditLog">
+    createdAt?: DateTimeFilter<"ParentInviteAuditLog"> | Date | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    invite?: XOR<ParentInviteScalarRelationFilter, ParentInviteWhereInput>
+  }, "id">
+
+  export type ParentInviteAuditLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    inviteId?: SortOrder
+    action?: SortOrder
+    performedBy?: SortOrder
+    metadata?: SortOrder
+    createdAt?: SortOrder
+    _count?: ParentInviteAuditLogCountOrderByAggregateInput
+    _max?: ParentInviteAuditLogMaxOrderByAggregateInput
+    _min?: ParentInviteAuditLogMinOrderByAggregateInput
+  }
+
+  export type ParentInviteAuditLogScalarWhereWithAggregatesInput = {
+    AND?: ParentInviteAuditLogScalarWhereWithAggregatesInput | ParentInviteAuditLogScalarWhereWithAggregatesInput[]
+    OR?: ParentInviteAuditLogScalarWhereWithAggregatesInput[]
+    NOT?: ParentInviteAuditLogScalarWhereWithAggregatesInput | ParentInviteAuditLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ParentInviteAuditLog"> | string
+    schoolId?: StringWithAggregatesFilter<"ParentInviteAuditLog"> | string
+    inviteId?: StringWithAggregatesFilter<"ParentInviteAuditLog"> | string
+    action?: EnumParentInviteAuditActionWithAggregatesFilter<"ParentInviteAuditLog"> | $Enums.ParentInviteAuditAction
+    performedBy?: StringWithAggregatesFilter<"ParentInviteAuditLog"> | string
+    metadata?: JsonWithAggregatesFilter<"ParentInviteAuditLog">
+    createdAt?: DateTimeWithAggregatesFilter<"ParentInviteAuditLog"> | Date | string
+  }
+
   export type TeacherInviteAuditLogWhereInput = {
     AND?: TeacherInviteAuditLogWhereInput | TeacherInviteAuditLogWhereInput[]
     OR?: TeacherInviteAuditLogWhereInput[]
@@ -100324,6 +103328,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -100404,6 +103410,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -100484,6 +103492,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -100564,6 +103574,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -101063,6 +104075,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentUncheckedCreateInput = {
@@ -101084,6 +104097,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteUncheckedCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentUpdateInput = {
@@ -101105,6 +104119,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type ParentUncheckedUpdateInput = {
@@ -101126,6 +104141,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUncheckedUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type ParentCreateManyInput = {
@@ -107299,6 +110315,223 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ParentInviteCreateInput = {
+    id?: string
+    name: string
+    surname: string
+    email: string
+    phone?: string | null
+    tokenHash: string
+    status?: $Enums.ParentInviteStatus
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    acceptedBy?: string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutParentInvitesInput
+    acceptedParent?: ParentCreateNestedOneWithoutAcceptedInvitesInput
+    auditLogs?: ParentInviteAuditLogCreateNestedManyWithoutInviteInput
+  }
+
+  export type ParentInviteUncheckedCreateInput = {
+    id?: string
+    schoolId: string
+    name: string
+    surname: string
+    email: string
+    phone?: string | null
+    tokenHash: string
+    status?: $Enums.ParentInviteStatus
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    acceptedBy?: string | null
+    acceptedParentId?: string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    auditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutInviteInput
+  }
+
+  export type ParentInviteUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentInviteStatusFieldUpdateOperationsInput | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutParentInvitesNestedInput
+    acceptedParent?: ParentUpdateOneWithoutAcceptedInvitesNestedInput
+    auditLogs?: ParentInviteAuditLogUpdateManyWithoutInviteNestedInput
+  }
+
+  export type ParentInviteUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentInviteStatusFieldUpdateOperationsInput | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    acceptedParentId?: NullableStringFieldUpdateOperationsInput | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    auditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutInviteNestedInput
+  }
+
+  export type ParentInviteCreateManyInput = {
+    id?: string
+    schoolId: string
+    name: string
+    surname: string
+    email: string
+    phone?: string | null
+    tokenHash: string
+    status?: $Enums.ParentInviteStatus
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    acceptedBy?: string | null
+    acceptedParentId?: string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ParentInviteUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentInviteStatusFieldUpdateOperationsInput | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParentInviteUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentInviteStatusFieldUpdateOperationsInput | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    acceptedParentId?: NullableStringFieldUpdateOperationsInput | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParentInviteAuditLogCreateInput = {
+    id?: string
+    action: $Enums.ParentInviteAuditAction
+    performedBy: string
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    school: SchoolCreateNestedOneWithoutParentInviteAuditLogsInput
+    invite: ParentInviteCreateNestedOneWithoutAuditLogsInput
+  }
+
+  export type ParentInviteAuditLogUncheckedCreateInput = {
+    id?: string
+    schoolId: string
+    inviteId: string
+    action: $Enums.ParentInviteAuditAction
+    performedBy: string
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type ParentInviteAuditLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumParentInviteAuditActionFieldUpdateOperationsInput | $Enums.ParentInviteAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutParentInviteAuditLogsNestedInput
+    invite?: ParentInviteUpdateOneRequiredWithoutAuditLogsNestedInput
+  }
+
+  export type ParentInviteAuditLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    inviteId?: StringFieldUpdateOperationsInput | string
+    action?: EnumParentInviteAuditActionFieldUpdateOperationsInput | $Enums.ParentInviteAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParentInviteAuditLogCreateManyInput = {
+    id?: string
+    schoolId: string
+    inviteId: string
+    action: $Enums.ParentInviteAuditAction
+    performedBy: string
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type ParentInviteAuditLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumParentInviteAuditActionFieldUpdateOperationsInput | $Enums.ParentInviteAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParentInviteAuditLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    inviteId?: StringFieldUpdateOperationsInput | string
+    action?: EnumParentInviteAuditActionFieldUpdateOperationsInput | $Enums.ParentInviteAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type TeacherInviteAuditLogCreateInput = {
     id?: string
     action: $Enums.TeacherInviteAuditAction
@@ -107763,6 +110996,18 @@ export namespace Prisma {
     none?: TeacherInviteAuditLogWhereInput
   }
 
+  export type ParentInviteListRelationFilter = {
+    every?: ParentInviteWhereInput
+    some?: ParentInviteWhereInput
+    none?: ParentInviteWhereInput
+  }
+
+  export type ParentInviteAuditLogListRelationFilter = {
+    every?: ParentInviteAuditLogWhereInput
+    some?: ParentInviteAuditLogWhereInput
+    none?: ParentInviteAuditLogWhereInput
+  }
+
   export type ParentNotificationListRelationFilter = {
     every?: ParentNotificationWhereInput
     some?: ParentNotificationWhereInput
@@ -108034,6 +111279,14 @@ export namespace Prisma {
   }
 
   export type TeacherInviteAuditLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ParentInviteOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ParentInviteAuditLogOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -113136,6 +116389,136 @@ export namespace Prisma {
     _max?: NestedEnumTeacherInviteStatusFilter<$PrismaModel>
   }
 
+  export type EnumParentInviteStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentInviteStatus | EnumParentInviteStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentInviteStatus[] | ListEnumParentInviteStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentInviteStatus[] | ListEnumParentInviteStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentInviteStatusFilter<$PrismaModel> | $Enums.ParentInviteStatus
+  }
+
+  export type ParentInviteCountOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    name?: SortOrder
+    surname?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    tokenHash?: SortOrder
+    status?: SortOrder
+    expiresAt?: SortOrder
+    acceptedAt?: SortOrder
+    acceptedBy?: SortOrder
+    acceptedParentId?: SortOrder
+    revokedAt?: SortOrder
+    revokedBy?: SortOrder
+    lastSentAt?: SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ParentInviteMaxOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    name?: SortOrder
+    surname?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    tokenHash?: SortOrder
+    status?: SortOrder
+    expiresAt?: SortOrder
+    acceptedAt?: SortOrder
+    acceptedBy?: SortOrder
+    acceptedParentId?: SortOrder
+    revokedAt?: SortOrder
+    revokedBy?: SortOrder
+    lastSentAt?: SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ParentInviteMinOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    name?: SortOrder
+    surname?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    tokenHash?: SortOrder
+    status?: SortOrder
+    expiresAt?: SortOrder
+    acceptedAt?: SortOrder
+    acceptedBy?: SortOrder
+    acceptedParentId?: SortOrder
+    revokedAt?: SortOrder
+    revokedBy?: SortOrder
+    lastSentAt?: SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumParentInviteStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentInviteStatus | EnumParentInviteStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentInviteStatus[] | ListEnumParentInviteStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentInviteStatus[] | ListEnumParentInviteStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentInviteStatusWithAggregatesFilter<$PrismaModel> | $Enums.ParentInviteStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumParentInviteStatusFilter<$PrismaModel>
+    _max?: NestedEnumParentInviteStatusFilter<$PrismaModel>
+  }
+
+  export type EnumParentInviteAuditActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentInviteAuditAction | EnumParentInviteAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentInviteAuditAction[] | ListEnumParentInviteAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentInviteAuditAction[] | ListEnumParentInviteAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentInviteAuditActionFilter<$PrismaModel> | $Enums.ParentInviteAuditAction
+  }
+
+  export type ParentInviteScalarRelationFilter = {
+    is?: ParentInviteWhereInput
+    isNot?: ParentInviteWhereInput
+  }
+
+  export type ParentInviteAuditLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    inviteId?: SortOrder
+    action?: SortOrder
+    performedBy?: SortOrder
+    metadata?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ParentInviteAuditLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    inviteId?: SortOrder
+    action?: SortOrder
+    performedBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ParentInviteAuditLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    inviteId?: SortOrder
+    action?: SortOrder
+    performedBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EnumParentInviteAuditActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentInviteAuditAction | EnumParentInviteAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentInviteAuditAction[] | ListEnumParentInviteAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentInviteAuditAction[] | ListEnumParentInviteAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentInviteAuditActionWithAggregatesFilter<$PrismaModel> | $Enums.ParentInviteAuditAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumParentInviteAuditActionFilter<$PrismaModel>
+    _max?: NestedEnumParentInviteAuditActionFilter<$PrismaModel>
+  }
+
   export type EnumTeacherInviteAuditActionFilter<$PrismaModel = never> = {
     equals?: $Enums.TeacherInviteAuditAction | EnumTeacherInviteAuditActionFieldRefInput<$PrismaModel>
     in?: $Enums.TeacherInviteAuditAction[] | ListEnumTeacherInviteAuditActionFieldRefInput<$PrismaModel>
@@ -113548,6 +116931,20 @@ export namespace Prisma {
     connectOrCreate?: TeacherInviteAuditLogCreateOrConnectWithoutSchoolInput | TeacherInviteAuditLogCreateOrConnectWithoutSchoolInput[]
     createMany?: TeacherInviteAuditLogCreateManySchoolInputEnvelope
     connect?: TeacherInviteAuditLogWhereUniqueInput | TeacherInviteAuditLogWhereUniqueInput[]
+  }
+
+  export type ParentInviteCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<ParentInviteCreateWithoutSchoolInput, ParentInviteUncheckedCreateWithoutSchoolInput> | ParentInviteCreateWithoutSchoolInput[] | ParentInviteUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ParentInviteCreateOrConnectWithoutSchoolInput | ParentInviteCreateOrConnectWithoutSchoolInput[]
+    createMany?: ParentInviteCreateManySchoolInputEnvelope
+    connect?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+  }
+
+  export type ParentInviteAuditLogCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<ParentInviteAuditLogCreateWithoutSchoolInput, ParentInviteAuditLogUncheckedCreateWithoutSchoolInput> | ParentInviteAuditLogCreateWithoutSchoolInput[] | ParentInviteAuditLogUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ParentInviteAuditLogCreateOrConnectWithoutSchoolInput | ParentInviteAuditLogCreateOrConnectWithoutSchoolInput[]
+    createMany?: ParentInviteAuditLogCreateManySchoolInputEnvelope
+    connect?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
   }
 
   export type ParentNotificationCreateNestedManyWithoutSchoolInput = {
@@ -113965,6 +117362,20 @@ export namespace Prisma {
     connectOrCreate?: TeacherInviteAuditLogCreateOrConnectWithoutSchoolInput | TeacherInviteAuditLogCreateOrConnectWithoutSchoolInput[]
     createMany?: TeacherInviteAuditLogCreateManySchoolInputEnvelope
     connect?: TeacherInviteAuditLogWhereUniqueInput | TeacherInviteAuditLogWhereUniqueInput[]
+  }
+
+  export type ParentInviteUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<ParentInviteCreateWithoutSchoolInput, ParentInviteUncheckedCreateWithoutSchoolInput> | ParentInviteCreateWithoutSchoolInput[] | ParentInviteUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ParentInviteCreateOrConnectWithoutSchoolInput | ParentInviteCreateOrConnectWithoutSchoolInput[]
+    createMany?: ParentInviteCreateManySchoolInputEnvelope
+    connect?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+  }
+
+  export type ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<ParentInviteAuditLogCreateWithoutSchoolInput, ParentInviteAuditLogUncheckedCreateWithoutSchoolInput> | ParentInviteAuditLogCreateWithoutSchoolInput[] | ParentInviteAuditLogUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ParentInviteAuditLogCreateOrConnectWithoutSchoolInput | ParentInviteAuditLogCreateOrConnectWithoutSchoolInput[]
+    createMany?: ParentInviteAuditLogCreateManySchoolInputEnvelope
+    connect?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
   }
 
   export type ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput = {
@@ -114710,6 +118121,34 @@ export namespace Prisma {
     update?: TeacherInviteAuditLogUpdateWithWhereUniqueWithoutSchoolInput | TeacherInviteAuditLogUpdateWithWhereUniqueWithoutSchoolInput[]
     updateMany?: TeacherInviteAuditLogUpdateManyWithWhereWithoutSchoolInput | TeacherInviteAuditLogUpdateManyWithWhereWithoutSchoolInput[]
     deleteMany?: TeacherInviteAuditLogScalarWhereInput | TeacherInviteAuditLogScalarWhereInput[]
+  }
+
+  export type ParentInviteUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<ParentInviteCreateWithoutSchoolInput, ParentInviteUncheckedCreateWithoutSchoolInput> | ParentInviteCreateWithoutSchoolInput[] | ParentInviteUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ParentInviteCreateOrConnectWithoutSchoolInput | ParentInviteCreateOrConnectWithoutSchoolInput[]
+    upsert?: ParentInviteUpsertWithWhereUniqueWithoutSchoolInput | ParentInviteUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: ParentInviteCreateManySchoolInputEnvelope
+    set?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+    disconnect?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+    delete?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+    connect?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+    update?: ParentInviteUpdateWithWhereUniqueWithoutSchoolInput | ParentInviteUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: ParentInviteUpdateManyWithWhereWithoutSchoolInput | ParentInviteUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: ParentInviteScalarWhereInput | ParentInviteScalarWhereInput[]
+  }
+
+  export type ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<ParentInviteAuditLogCreateWithoutSchoolInput, ParentInviteAuditLogUncheckedCreateWithoutSchoolInput> | ParentInviteAuditLogCreateWithoutSchoolInput[] | ParentInviteAuditLogUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ParentInviteAuditLogCreateOrConnectWithoutSchoolInput | ParentInviteAuditLogCreateOrConnectWithoutSchoolInput[]
+    upsert?: ParentInviteAuditLogUpsertWithWhereUniqueWithoutSchoolInput | ParentInviteAuditLogUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: ParentInviteAuditLogCreateManySchoolInputEnvelope
+    set?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+    disconnect?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+    delete?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+    connect?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+    update?: ParentInviteAuditLogUpdateWithWhereUniqueWithoutSchoolInput | ParentInviteAuditLogUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: ParentInviteAuditLogUpdateManyWithWhereWithoutSchoolInput | ParentInviteAuditLogUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: ParentInviteAuditLogScalarWhereInput | ParentInviteAuditLogScalarWhereInput[]
   }
 
   export type ParentNotificationUpdateManyWithoutSchoolNestedInput = {
@@ -115538,6 +118977,34 @@ export namespace Prisma {
     update?: TeacherInviteAuditLogUpdateWithWhereUniqueWithoutSchoolInput | TeacherInviteAuditLogUpdateWithWhereUniqueWithoutSchoolInput[]
     updateMany?: TeacherInviteAuditLogUpdateManyWithWhereWithoutSchoolInput | TeacherInviteAuditLogUpdateManyWithWhereWithoutSchoolInput[]
     deleteMany?: TeacherInviteAuditLogScalarWhereInput | TeacherInviteAuditLogScalarWhereInput[]
+  }
+
+  export type ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<ParentInviteCreateWithoutSchoolInput, ParentInviteUncheckedCreateWithoutSchoolInput> | ParentInviteCreateWithoutSchoolInput[] | ParentInviteUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ParentInviteCreateOrConnectWithoutSchoolInput | ParentInviteCreateOrConnectWithoutSchoolInput[]
+    upsert?: ParentInviteUpsertWithWhereUniqueWithoutSchoolInput | ParentInviteUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: ParentInviteCreateManySchoolInputEnvelope
+    set?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+    disconnect?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+    delete?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+    connect?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+    update?: ParentInviteUpdateWithWhereUniqueWithoutSchoolInput | ParentInviteUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: ParentInviteUpdateManyWithWhereWithoutSchoolInput | ParentInviteUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: ParentInviteScalarWhereInput | ParentInviteScalarWhereInput[]
+  }
+
+  export type ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<ParentInviteAuditLogCreateWithoutSchoolInput, ParentInviteAuditLogUncheckedCreateWithoutSchoolInput> | ParentInviteAuditLogCreateWithoutSchoolInput[] | ParentInviteAuditLogUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ParentInviteAuditLogCreateOrConnectWithoutSchoolInput | ParentInviteAuditLogCreateOrConnectWithoutSchoolInput[]
+    upsert?: ParentInviteAuditLogUpsertWithWhereUniqueWithoutSchoolInput | ParentInviteAuditLogUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: ParentInviteAuditLogCreateManySchoolInputEnvelope
+    set?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+    disconnect?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+    delete?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+    connect?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+    update?: ParentInviteAuditLogUpdateWithWhereUniqueWithoutSchoolInput | ParentInviteAuditLogUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: ParentInviteAuditLogUpdateManyWithWhereWithoutSchoolInput | ParentInviteAuditLogUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: ParentInviteAuditLogScalarWhereInput | ParentInviteAuditLogScalarWhereInput[]
   }
 
   export type ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput = {
@@ -117260,6 +120727,13 @@ export namespace Prisma {
     connect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
   }
 
+  export type ParentInviteCreateNestedManyWithoutAcceptedParentInput = {
+    create?: XOR<ParentInviteCreateWithoutAcceptedParentInput, ParentInviteUncheckedCreateWithoutAcceptedParentInput> | ParentInviteCreateWithoutAcceptedParentInput[] | ParentInviteUncheckedCreateWithoutAcceptedParentInput[]
+    connectOrCreate?: ParentInviteCreateOrConnectWithoutAcceptedParentInput | ParentInviteCreateOrConnectWithoutAcceptedParentInput[]
+    createMany?: ParentInviteCreateManyAcceptedParentInputEnvelope
+    connect?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+  }
+
   export type StudentUncheckedCreateNestedManyWithoutParentInput = {
     create?: XOR<StudentCreateWithoutParentInput, StudentUncheckedCreateWithoutParentInput> | StudentCreateWithoutParentInput[] | StudentUncheckedCreateWithoutParentInput[]
     connectOrCreate?: StudentCreateOrConnectWithoutParentInput | StudentCreateOrConnectWithoutParentInput[]
@@ -117320,6 +120794,13 @@ export namespace Prisma {
     connectOrCreate?: ParentStudentRelationshipCreateOrConnectWithoutParentInput | ParentStudentRelationshipCreateOrConnectWithoutParentInput[]
     createMany?: ParentStudentRelationshipCreateManyParentInputEnvelope
     connect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+  }
+
+  export type ParentInviteUncheckedCreateNestedManyWithoutAcceptedParentInput = {
+    create?: XOR<ParentInviteCreateWithoutAcceptedParentInput, ParentInviteUncheckedCreateWithoutAcceptedParentInput> | ParentInviteCreateWithoutAcceptedParentInput[] | ParentInviteUncheckedCreateWithoutAcceptedParentInput[]
+    connectOrCreate?: ParentInviteCreateOrConnectWithoutAcceptedParentInput | ParentInviteCreateOrConnectWithoutAcceptedParentInput[]
+    createMany?: ParentInviteCreateManyAcceptedParentInputEnvelope
+    connect?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
   }
 
   export type SchoolUpdateOneRequiredWithoutParentsNestedInput = {
@@ -117452,6 +120933,20 @@ export namespace Prisma {
     deleteMany?: ParentStudentRelationshipScalarWhereInput | ParentStudentRelationshipScalarWhereInput[]
   }
 
+  export type ParentInviteUpdateManyWithoutAcceptedParentNestedInput = {
+    create?: XOR<ParentInviteCreateWithoutAcceptedParentInput, ParentInviteUncheckedCreateWithoutAcceptedParentInput> | ParentInviteCreateWithoutAcceptedParentInput[] | ParentInviteUncheckedCreateWithoutAcceptedParentInput[]
+    connectOrCreate?: ParentInviteCreateOrConnectWithoutAcceptedParentInput | ParentInviteCreateOrConnectWithoutAcceptedParentInput[]
+    upsert?: ParentInviteUpsertWithWhereUniqueWithoutAcceptedParentInput | ParentInviteUpsertWithWhereUniqueWithoutAcceptedParentInput[]
+    createMany?: ParentInviteCreateManyAcceptedParentInputEnvelope
+    set?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+    disconnect?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+    delete?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+    connect?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+    update?: ParentInviteUpdateWithWhereUniqueWithoutAcceptedParentInput | ParentInviteUpdateWithWhereUniqueWithoutAcceptedParentInput[]
+    updateMany?: ParentInviteUpdateManyWithWhereWithoutAcceptedParentInput | ParentInviteUpdateManyWithWhereWithoutAcceptedParentInput[]
+    deleteMany?: ParentInviteScalarWhereInput | ParentInviteScalarWhereInput[]
+  }
+
   export type StudentUncheckedUpdateManyWithoutParentNestedInput = {
     create?: XOR<StudentCreateWithoutParentInput, StudentUncheckedCreateWithoutParentInput> | StudentCreateWithoutParentInput[] | StudentUncheckedCreateWithoutParentInput[]
     connectOrCreate?: StudentCreateOrConnectWithoutParentInput | StudentCreateOrConnectWithoutParentInput[]
@@ -117572,6 +121067,20 @@ export namespace Prisma {
     update?: ParentStudentRelationshipUpdateWithWhereUniqueWithoutParentInput | ParentStudentRelationshipUpdateWithWhereUniqueWithoutParentInput[]
     updateMany?: ParentStudentRelationshipUpdateManyWithWhereWithoutParentInput | ParentStudentRelationshipUpdateManyWithWhereWithoutParentInput[]
     deleteMany?: ParentStudentRelationshipScalarWhereInput | ParentStudentRelationshipScalarWhereInput[]
+  }
+
+  export type ParentInviteUncheckedUpdateManyWithoutAcceptedParentNestedInput = {
+    create?: XOR<ParentInviteCreateWithoutAcceptedParentInput, ParentInviteUncheckedCreateWithoutAcceptedParentInput> | ParentInviteCreateWithoutAcceptedParentInput[] | ParentInviteUncheckedCreateWithoutAcceptedParentInput[]
+    connectOrCreate?: ParentInviteCreateOrConnectWithoutAcceptedParentInput | ParentInviteCreateOrConnectWithoutAcceptedParentInput[]
+    upsert?: ParentInviteUpsertWithWhereUniqueWithoutAcceptedParentInput | ParentInviteUpsertWithWhereUniqueWithoutAcceptedParentInput[]
+    createMany?: ParentInviteCreateManyAcceptedParentInputEnvelope
+    set?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+    disconnect?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+    delete?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+    connect?: ParentInviteWhereUniqueInput | ParentInviteWhereUniqueInput[]
+    update?: ParentInviteUpdateWithWhereUniqueWithoutAcceptedParentInput | ParentInviteUpdateWithWhereUniqueWithoutAcceptedParentInput[]
+    updateMany?: ParentInviteUpdateManyWithWhereWithoutAcceptedParentInput | ParentInviteUpdateManyWithWhereWithoutAcceptedParentInput[]
+    deleteMany?: ParentInviteScalarWhereInput | ParentInviteScalarWhereInput[]
   }
 
   export type SchoolCreateNestedOneWithoutParentStudentRelationshipsInput = {
@@ -121894,6 +125403,114 @@ export namespace Prisma {
     deleteMany?: TeacherInviteAuditLogScalarWhereInput | TeacherInviteAuditLogScalarWhereInput[]
   }
 
+  export type SchoolCreateNestedOneWithoutParentInvitesInput = {
+    create?: XOR<SchoolCreateWithoutParentInvitesInput, SchoolUncheckedCreateWithoutParentInvitesInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutParentInvitesInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type ParentCreateNestedOneWithoutAcceptedInvitesInput = {
+    create?: XOR<ParentCreateWithoutAcceptedInvitesInput, ParentUncheckedCreateWithoutAcceptedInvitesInput>
+    connectOrCreate?: ParentCreateOrConnectWithoutAcceptedInvitesInput
+    connect?: ParentWhereUniqueInput
+  }
+
+  export type ParentInviteAuditLogCreateNestedManyWithoutInviteInput = {
+    create?: XOR<ParentInviteAuditLogCreateWithoutInviteInput, ParentInviteAuditLogUncheckedCreateWithoutInviteInput> | ParentInviteAuditLogCreateWithoutInviteInput[] | ParentInviteAuditLogUncheckedCreateWithoutInviteInput[]
+    connectOrCreate?: ParentInviteAuditLogCreateOrConnectWithoutInviteInput | ParentInviteAuditLogCreateOrConnectWithoutInviteInput[]
+    createMany?: ParentInviteAuditLogCreateManyInviteInputEnvelope
+    connect?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+  }
+
+  export type ParentInviteAuditLogUncheckedCreateNestedManyWithoutInviteInput = {
+    create?: XOR<ParentInviteAuditLogCreateWithoutInviteInput, ParentInviteAuditLogUncheckedCreateWithoutInviteInput> | ParentInviteAuditLogCreateWithoutInviteInput[] | ParentInviteAuditLogUncheckedCreateWithoutInviteInput[]
+    connectOrCreate?: ParentInviteAuditLogCreateOrConnectWithoutInviteInput | ParentInviteAuditLogCreateOrConnectWithoutInviteInput[]
+    createMany?: ParentInviteAuditLogCreateManyInviteInputEnvelope
+    connect?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+  }
+
+  export type EnumParentInviteStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ParentInviteStatus
+  }
+
+  export type SchoolUpdateOneRequiredWithoutParentInvitesNestedInput = {
+    create?: XOR<SchoolCreateWithoutParentInvitesInput, SchoolUncheckedCreateWithoutParentInvitesInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutParentInvitesInput
+    upsert?: SchoolUpsertWithoutParentInvitesInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutParentInvitesInput, SchoolUpdateWithoutParentInvitesInput>, SchoolUncheckedUpdateWithoutParentInvitesInput>
+  }
+
+  export type ParentUpdateOneWithoutAcceptedInvitesNestedInput = {
+    create?: XOR<ParentCreateWithoutAcceptedInvitesInput, ParentUncheckedCreateWithoutAcceptedInvitesInput>
+    connectOrCreate?: ParentCreateOrConnectWithoutAcceptedInvitesInput
+    upsert?: ParentUpsertWithoutAcceptedInvitesInput
+    disconnect?: ParentWhereInput | boolean
+    delete?: ParentWhereInput | boolean
+    connect?: ParentWhereUniqueInput
+    update?: XOR<XOR<ParentUpdateToOneWithWhereWithoutAcceptedInvitesInput, ParentUpdateWithoutAcceptedInvitesInput>, ParentUncheckedUpdateWithoutAcceptedInvitesInput>
+  }
+
+  export type ParentInviteAuditLogUpdateManyWithoutInviteNestedInput = {
+    create?: XOR<ParentInviteAuditLogCreateWithoutInviteInput, ParentInviteAuditLogUncheckedCreateWithoutInviteInput> | ParentInviteAuditLogCreateWithoutInviteInput[] | ParentInviteAuditLogUncheckedCreateWithoutInviteInput[]
+    connectOrCreate?: ParentInviteAuditLogCreateOrConnectWithoutInviteInput | ParentInviteAuditLogCreateOrConnectWithoutInviteInput[]
+    upsert?: ParentInviteAuditLogUpsertWithWhereUniqueWithoutInviteInput | ParentInviteAuditLogUpsertWithWhereUniqueWithoutInviteInput[]
+    createMany?: ParentInviteAuditLogCreateManyInviteInputEnvelope
+    set?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+    disconnect?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+    delete?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+    connect?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+    update?: ParentInviteAuditLogUpdateWithWhereUniqueWithoutInviteInput | ParentInviteAuditLogUpdateWithWhereUniqueWithoutInviteInput[]
+    updateMany?: ParentInviteAuditLogUpdateManyWithWhereWithoutInviteInput | ParentInviteAuditLogUpdateManyWithWhereWithoutInviteInput[]
+    deleteMany?: ParentInviteAuditLogScalarWhereInput | ParentInviteAuditLogScalarWhereInput[]
+  }
+
+  export type ParentInviteAuditLogUncheckedUpdateManyWithoutInviteNestedInput = {
+    create?: XOR<ParentInviteAuditLogCreateWithoutInviteInput, ParentInviteAuditLogUncheckedCreateWithoutInviteInput> | ParentInviteAuditLogCreateWithoutInviteInput[] | ParentInviteAuditLogUncheckedCreateWithoutInviteInput[]
+    connectOrCreate?: ParentInviteAuditLogCreateOrConnectWithoutInviteInput | ParentInviteAuditLogCreateOrConnectWithoutInviteInput[]
+    upsert?: ParentInviteAuditLogUpsertWithWhereUniqueWithoutInviteInput | ParentInviteAuditLogUpsertWithWhereUniqueWithoutInviteInput[]
+    createMany?: ParentInviteAuditLogCreateManyInviteInputEnvelope
+    set?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+    disconnect?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+    delete?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+    connect?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+    update?: ParentInviteAuditLogUpdateWithWhereUniqueWithoutInviteInput | ParentInviteAuditLogUpdateWithWhereUniqueWithoutInviteInput[]
+    updateMany?: ParentInviteAuditLogUpdateManyWithWhereWithoutInviteInput | ParentInviteAuditLogUpdateManyWithWhereWithoutInviteInput[]
+    deleteMany?: ParentInviteAuditLogScalarWhereInput | ParentInviteAuditLogScalarWhereInput[]
+  }
+
+  export type SchoolCreateNestedOneWithoutParentInviteAuditLogsInput = {
+    create?: XOR<SchoolCreateWithoutParentInviteAuditLogsInput, SchoolUncheckedCreateWithoutParentInviteAuditLogsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutParentInviteAuditLogsInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type ParentInviteCreateNestedOneWithoutAuditLogsInput = {
+    create?: XOR<ParentInviteCreateWithoutAuditLogsInput, ParentInviteUncheckedCreateWithoutAuditLogsInput>
+    connectOrCreate?: ParentInviteCreateOrConnectWithoutAuditLogsInput
+    connect?: ParentInviteWhereUniqueInput
+  }
+
+  export type EnumParentInviteAuditActionFieldUpdateOperationsInput = {
+    set?: $Enums.ParentInviteAuditAction
+  }
+
+  export type SchoolUpdateOneRequiredWithoutParentInviteAuditLogsNestedInput = {
+    create?: XOR<SchoolCreateWithoutParentInviteAuditLogsInput, SchoolUncheckedCreateWithoutParentInviteAuditLogsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutParentInviteAuditLogsInput
+    upsert?: SchoolUpsertWithoutParentInviteAuditLogsInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutParentInviteAuditLogsInput, SchoolUpdateWithoutParentInviteAuditLogsInput>, SchoolUncheckedUpdateWithoutParentInviteAuditLogsInput>
+  }
+
+  export type ParentInviteUpdateOneRequiredWithoutAuditLogsNestedInput = {
+    create?: XOR<ParentInviteCreateWithoutAuditLogsInput, ParentInviteUncheckedCreateWithoutAuditLogsInput>
+    connectOrCreate?: ParentInviteCreateOrConnectWithoutAuditLogsInput
+    upsert?: ParentInviteUpsertWithoutAuditLogsInput
+    connect?: ParentInviteWhereUniqueInput
+    update?: XOR<XOR<ParentInviteUpdateToOneWithWhereWithoutAuditLogsInput, ParentInviteUpdateWithoutAuditLogsInput>, ParentInviteUncheckedUpdateWithoutAuditLogsInput>
+  }
+
   export type SchoolCreateNestedOneWithoutTeacherInviteAuditLogsInput = {
     create?: XOR<SchoolCreateWithoutTeacherInviteAuditLogsInput, SchoolUncheckedCreateWithoutTeacherInviteAuditLogsInput>
     connectOrCreate?: SchoolCreateOrConnectWithoutTeacherInviteAuditLogsInput
@@ -123249,6 +126866,40 @@ export namespace Prisma {
     _max?: NestedEnumTeacherInviteStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumParentInviteStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentInviteStatus | EnumParentInviteStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentInviteStatus[] | ListEnumParentInviteStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentInviteStatus[] | ListEnumParentInviteStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentInviteStatusFilter<$PrismaModel> | $Enums.ParentInviteStatus
+  }
+
+  export type NestedEnumParentInviteStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentInviteStatus | EnumParentInviteStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentInviteStatus[] | ListEnumParentInviteStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentInviteStatus[] | ListEnumParentInviteStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentInviteStatusWithAggregatesFilter<$PrismaModel> | $Enums.ParentInviteStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumParentInviteStatusFilter<$PrismaModel>
+    _max?: NestedEnumParentInviteStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumParentInviteAuditActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentInviteAuditAction | EnumParentInviteAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentInviteAuditAction[] | ListEnumParentInviteAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentInviteAuditAction[] | ListEnumParentInviteAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentInviteAuditActionFilter<$PrismaModel> | $Enums.ParentInviteAuditAction
+  }
+
+  export type NestedEnumParentInviteAuditActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentInviteAuditAction | EnumParentInviteAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentInviteAuditAction[] | ListEnumParentInviteAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentInviteAuditAction[] | ListEnumParentInviteAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentInviteAuditActionWithAggregatesFilter<$PrismaModel> | $Enums.ParentInviteAuditAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumParentInviteAuditActionFilter<$PrismaModel>
+    _max?: NestedEnumParentInviteAuditActionFilter<$PrismaModel>
+  }
+
   export type NestedEnumTeacherInviteAuditActionFilter<$PrismaModel = never> = {
     equals?: $Enums.TeacherInviteAuditAction | EnumTeacherInviteAuditActionFieldRefInput<$PrismaModel>
     in?: $Enums.TeacherInviteAuditAction[] | ListEnumTeacherInviteAuditActionFieldRefInput<$PrismaModel>
@@ -123469,6 +127120,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentUncheckedCreateWithoutSchoolInput = {
@@ -123489,6 +127141,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteUncheckedCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentCreateOrConnectWithoutSchoolInput = {
@@ -125002,6 +128655,86 @@ export namespace Prisma {
 
   export type TeacherInviteAuditLogCreateManySchoolInputEnvelope = {
     data: TeacherInviteAuditLogCreateManySchoolInput | TeacherInviteAuditLogCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ParentInviteCreateWithoutSchoolInput = {
+    id?: string
+    name: string
+    surname: string
+    email: string
+    phone?: string | null
+    tokenHash: string
+    status?: $Enums.ParentInviteStatus
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    acceptedBy?: string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    acceptedParent?: ParentCreateNestedOneWithoutAcceptedInvitesInput
+    auditLogs?: ParentInviteAuditLogCreateNestedManyWithoutInviteInput
+  }
+
+  export type ParentInviteUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    name: string
+    surname: string
+    email: string
+    phone?: string | null
+    tokenHash: string
+    status?: $Enums.ParentInviteStatus
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    acceptedBy?: string | null
+    acceptedParentId?: string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    auditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutInviteInput
+  }
+
+  export type ParentInviteCreateOrConnectWithoutSchoolInput = {
+    where: ParentInviteWhereUniqueInput
+    create: XOR<ParentInviteCreateWithoutSchoolInput, ParentInviteUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type ParentInviteCreateManySchoolInputEnvelope = {
+    data: ParentInviteCreateManySchoolInput | ParentInviteCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ParentInviteAuditLogCreateWithoutSchoolInput = {
+    id?: string
+    action: $Enums.ParentInviteAuditAction
+    performedBy: string
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    invite: ParentInviteCreateNestedOneWithoutAuditLogsInput
+  }
+
+  export type ParentInviteAuditLogUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    inviteId: string
+    action: $Enums.ParentInviteAuditAction
+    performedBy: string
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type ParentInviteAuditLogCreateOrConnectWithoutSchoolInput = {
+    where: ParentInviteAuditLogWhereUniqueInput
+    create: XOR<ParentInviteAuditLogCreateWithoutSchoolInput, ParentInviteAuditLogUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type ParentInviteAuditLogCreateManySchoolInputEnvelope = {
+    data: ParentInviteAuditLogCreateManySchoolInput | ParentInviteAuditLogCreateManySchoolInput[]
     skipDuplicates?: boolean
   }
 
@@ -127166,6 +130899,75 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"TeacherInviteAuditLog"> | Date | string
   }
 
+  export type ParentInviteUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: ParentInviteWhereUniqueInput
+    update: XOR<ParentInviteUpdateWithoutSchoolInput, ParentInviteUncheckedUpdateWithoutSchoolInput>
+    create: XOR<ParentInviteCreateWithoutSchoolInput, ParentInviteUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type ParentInviteUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: ParentInviteWhereUniqueInput
+    data: XOR<ParentInviteUpdateWithoutSchoolInput, ParentInviteUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type ParentInviteUpdateManyWithWhereWithoutSchoolInput = {
+    where: ParentInviteScalarWhereInput
+    data: XOR<ParentInviteUpdateManyMutationInput, ParentInviteUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type ParentInviteScalarWhereInput = {
+    AND?: ParentInviteScalarWhereInput | ParentInviteScalarWhereInput[]
+    OR?: ParentInviteScalarWhereInput[]
+    NOT?: ParentInviteScalarWhereInput | ParentInviteScalarWhereInput[]
+    id?: StringFilter<"ParentInvite"> | string
+    schoolId?: StringFilter<"ParentInvite"> | string
+    name?: StringFilter<"ParentInvite"> | string
+    surname?: StringFilter<"ParentInvite"> | string
+    email?: StringFilter<"ParentInvite"> | string
+    phone?: StringNullableFilter<"ParentInvite"> | string | null
+    tokenHash?: StringFilter<"ParentInvite"> | string
+    status?: EnumParentInviteStatusFilter<"ParentInvite"> | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFilter<"ParentInvite"> | Date | string
+    acceptedAt?: DateTimeNullableFilter<"ParentInvite"> | Date | string | null
+    acceptedBy?: StringNullableFilter<"ParentInvite"> | string | null
+    acceptedParentId?: StringNullableFilter<"ParentInvite"> | string | null
+    revokedAt?: DateTimeNullableFilter<"ParentInvite"> | Date | string | null
+    revokedBy?: StringNullableFilter<"ParentInvite"> | string | null
+    lastSentAt?: DateTimeNullableFilter<"ParentInvite"> | Date | string | null
+    createdBy?: StringFilter<"ParentInvite"> | string
+    createdAt?: DateTimeFilter<"ParentInvite"> | Date | string
+    updatedAt?: DateTimeFilter<"ParentInvite"> | Date | string
+  }
+
+  export type ParentInviteAuditLogUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: ParentInviteAuditLogWhereUniqueInput
+    update: XOR<ParentInviteAuditLogUpdateWithoutSchoolInput, ParentInviteAuditLogUncheckedUpdateWithoutSchoolInput>
+    create: XOR<ParentInviteAuditLogCreateWithoutSchoolInput, ParentInviteAuditLogUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type ParentInviteAuditLogUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: ParentInviteAuditLogWhereUniqueInput
+    data: XOR<ParentInviteAuditLogUpdateWithoutSchoolInput, ParentInviteAuditLogUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type ParentInviteAuditLogUpdateManyWithWhereWithoutSchoolInput = {
+    where: ParentInviteAuditLogScalarWhereInput
+    data: XOR<ParentInviteAuditLogUpdateManyMutationInput, ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type ParentInviteAuditLogScalarWhereInput = {
+    AND?: ParentInviteAuditLogScalarWhereInput | ParentInviteAuditLogScalarWhereInput[]
+    OR?: ParentInviteAuditLogScalarWhereInput[]
+    NOT?: ParentInviteAuditLogScalarWhereInput | ParentInviteAuditLogScalarWhereInput[]
+    id?: StringFilter<"ParentInviteAuditLog"> | string
+    schoolId?: StringFilter<"ParentInviteAuditLog"> | string
+    inviteId?: StringFilter<"ParentInviteAuditLog"> | string
+    action?: EnumParentInviteAuditActionFilter<"ParentInviteAuditLog"> | $Enums.ParentInviteAuditAction
+    performedBy?: StringFilter<"ParentInviteAuditLog"> | string
+    metadata?: JsonFilter<"ParentInviteAuditLog">
+    createdAt?: DateTimeFilter<"ParentInviteAuditLog"> | Date | string
+  }
+
   export type ParentNotificationUpsertWithWhereUniqueWithoutSchoolInput = {
     where: ParentNotificationWhereUniqueInput
     update: XOR<ParentNotificationUpdateWithoutSchoolInput, ParentNotificationUncheckedUpdateWithoutSchoolInput>
@@ -127866,6 +131668,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -127945,6 +131749,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -128040,6 +131846,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -128119,6 +131927,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -128198,6 +132008,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -128277,6 +132089,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -128318,6 +132132,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentUncheckedCreateWithoutStudentsInput = {
@@ -128338,6 +132153,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteUncheckedCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentCreateOrConnectWithoutStudentsInput = {
@@ -129044,6 +132860,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -129123,6 +132941,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -129170,6 +132990,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutStudentsInput = {
@@ -129190,6 +133011,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUncheckedUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type ClassUpsertWithoutStudentsInput = {
@@ -129539,6 +133361,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -129618,6 +133442,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -130501,6 +134327,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -130580,6 +134408,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -130963,6 +134793,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -131042,6 +134874,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -131485,6 +135319,58 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ParentInviteCreateWithoutAcceptedParentInput = {
+    id?: string
+    name: string
+    surname: string
+    email: string
+    phone?: string | null
+    tokenHash: string
+    status?: $Enums.ParentInviteStatus
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    acceptedBy?: string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutParentInvitesInput
+    auditLogs?: ParentInviteAuditLogCreateNestedManyWithoutInviteInput
+  }
+
+  export type ParentInviteUncheckedCreateWithoutAcceptedParentInput = {
+    id?: string
+    schoolId: string
+    name: string
+    surname: string
+    email: string
+    phone?: string | null
+    tokenHash: string
+    status?: $Enums.ParentInviteStatus
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    acceptedBy?: string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    auditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutInviteInput
+  }
+
+  export type ParentInviteCreateOrConnectWithoutAcceptedParentInput = {
+    where: ParentInviteWhereUniqueInput
+    create: XOR<ParentInviteCreateWithoutAcceptedParentInput, ParentInviteUncheckedCreateWithoutAcceptedParentInput>
+  }
+
+  export type ParentInviteCreateManyAcceptedParentInputEnvelope = {
+    data: ParentInviteCreateManyAcceptedParentInput | ParentInviteCreateManyAcceptedParentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SchoolUpsertWithoutParentsInput = {
     update: XOR<SchoolUpdateWithoutParentsInput, SchoolUncheckedUpdateWithoutParentsInput>
     create: XOR<SchoolCreateWithoutParentsInput, SchoolUncheckedCreateWithoutParentsInput>
@@ -131557,6 +135443,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -131636,6 +135524,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -131823,6 +135713,22 @@ export namespace Prisma {
     data: XOR<ParentStudentRelationshipUpdateManyMutationInput, ParentStudentRelationshipUncheckedUpdateManyWithoutParentInput>
   }
 
+  export type ParentInviteUpsertWithWhereUniqueWithoutAcceptedParentInput = {
+    where: ParentInviteWhereUniqueInput
+    update: XOR<ParentInviteUpdateWithoutAcceptedParentInput, ParentInviteUncheckedUpdateWithoutAcceptedParentInput>
+    create: XOR<ParentInviteCreateWithoutAcceptedParentInput, ParentInviteUncheckedCreateWithoutAcceptedParentInput>
+  }
+
+  export type ParentInviteUpdateWithWhereUniqueWithoutAcceptedParentInput = {
+    where: ParentInviteWhereUniqueInput
+    data: XOR<ParentInviteUpdateWithoutAcceptedParentInput, ParentInviteUncheckedUpdateWithoutAcceptedParentInput>
+  }
+
+  export type ParentInviteUpdateManyWithWhereWithoutAcceptedParentInput = {
+    where: ParentInviteScalarWhereInput
+    data: XOR<ParentInviteUpdateManyMutationInput, ParentInviteUncheckedUpdateManyWithoutAcceptedParentInput>
+  }
+
   export type SchoolCreateWithoutParentStudentRelationshipsInput = {
     id: string
     name: string
@@ -131885,6 +135791,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -131964,6 +135872,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -132004,6 +135914,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentUncheckedCreateWithoutStudentRelationshipsInput = {
@@ -132024,6 +135935,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteUncheckedCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentCreateOrConnectWithoutStudentRelationshipsInput = {
@@ -132169,6 +136081,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -132248,6 +136162,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -132294,6 +136210,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutStudentRelationshipsInput = {
@@ -132314,6 +136231,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUncheckedUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type StudentUpsertWithoutParentRelationshipsInput = {
@@ -132449,6 +136367,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
@@ -132528,6 +136448,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
@@ -132623,6 +136545,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
@@ -132702,6 +136626,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
@@ -132781,6 +136707,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -132860,6 +136788,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -132955,6 +136885,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -133034,6 +136966,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -133113,6 +137047,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -133192,6 +137128,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -133360,6 +137298,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -133439,6 +137379,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -133596,6 +137538,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -133675,6 +137619,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -133811,6 +137757,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -133890,6 +137838,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -133985,6 +137935,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -134064,6 +138016,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -134215,6 +138169,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -134294,6 +138250,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -134389,6 +138347,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -134468,6 +138428,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -134594,6 +138556,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -134673,6 +138637,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -134790,6 +138756,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -134869,6 +138837,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -134964,6 +138934,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -135043,6 +139015,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -135122,6 +139096,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -135201,6 +139177,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -135447,6 +139425,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -135526,6 +139506,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -135716,6 +139698,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -135795,6 +139779,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -136008,6 +139994,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -136087,6 +140075,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -136296,6 +140286,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -136375,6 +140367,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -136588,6 +140582,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -136667,6 +140663,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -136876,6 +140874,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -136955,6 +140955,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -137123,6 +141125,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -137202,6 +141206,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -137360,6 +141366,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -137439,6 +141447,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -137607,6 +141617,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -137686,6 +141698,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -137844,6 +141858,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -137923,6 +141939,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -137963,6 +141981,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentUncheckedCreateWithoutNotificationPreferenceInput = {
@@ -137983,6 +142002,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteUncheckedCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentCreateOrConnectWithoutNotificationPreferenceInput = {
@@ -138063,6 +142083,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -138142,6 +142164,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -138188,6 +142212,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutNotificationPreferenceInput = {
@@ -138208,6 +142233,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUncheckedUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type SchoolCreateWithoutParentNotificationsInput = {
@@ -138272,6 +142298,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
@@ -138351,6 +142379,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
@@ -138391,6 +142421,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentUncheckedCreateWithoutNotificationsInput = {
@@ -138411,6 +142442,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteUncheckedCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentCreateOrConnectWithoutNotificationsInput = {
@@ -138596,6 +142628,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
@@ -138675,6 +142709,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
@@ -138721,6 +142757,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutNotificationsInput = {
@@ -138741,6 +142778,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUncheckedUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type StudentUpsertWithoutParentNotificationsInput = {
@@ -138892,6 +142930,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -138971,6 +143011,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -139011,6 +143053,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentUncheckedCreateWithoutNotificationDeliveriesInput = {
@@ -139031,6 +143074,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteUncheckedCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentCreateOrConnectWithoutNotificationDeliveriesInput = {
@@ -139156,6 +143200,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -139235,6 +143281,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -139281,6 +143329,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutNotificationDeliveriesInput = {
@@ -139301,6 +143350,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUncheckedUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type ParentNotificationUpsertWithoutDeliveriesInput = {
@@ -139416,6 +143466,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -139495,6 +143547,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -139535,6 +143589,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentUncheckedCreateWithoutTeacherContactRequestsInput = {
@@ -139555,6 +143610,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteUncheckedCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentCreateOrConnectWithoutTeacherContactRequestsInput = {
@@ -139809,6 +143865,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -139888,6 +143946,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -139934,6 +143994,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutTeacherContactRequestsInput = {
@@ -139954,6 +144015,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUncheckedUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type StudentUpsertWithoutTeacherContactRequestsInput = {
@@ -140184,6 +144246,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -140263,6 +144327,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -140356,6 +144422,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentUncheckedCreateWithoutTeacherContactMessagesInput = {
@@ -140376,6 +144443,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteUncheckedCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentCreateOrConnectWithoutTeacherContactMessagesInput = {
@@ -140594,6 +144662,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -140673,6 +144743,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -140778,6 +144850,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutTeacherContactMessagesInput = {
@@ -140798,6 +144871,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUncheckedUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type TeacherUpsertWithoutParentContactMessagesInput = {
@@ -141012,6 +145086,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
@@ -141091,6 +145167,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
@@ -141131,6 +145209,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentUncheckedCreateWithoutActivityEventsInput = {
@@ -141151,6 +145230,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteUncheckedCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentCreateOrConnectWithoutActivityEventsInput = {
@@ -141369,6 +145449,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
@@ -141448,6 +145530,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
@@ -141494,6 +145578,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutActivityEventsInput = {
@@ -141514,6 +145599,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUncheckedUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type StudentUpsertWithoutParentActivityEventsInput = {
@@ -141727,6 +145813,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -141806,6 +145894,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -142096,6 +146186,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -142175,6 +146267,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -142318,6 +146412,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -142397,6 +146493,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -143010,6 +147108,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -143089,6 +147189,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -143437,6 +147539,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -143516,6 +147620,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -143897,6 +148003,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -143976,6 +148084,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -144151,6 +148261,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -144230,6 +148342,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -144648,6 +148762,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -144727,6 +148843,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -145066,6 +149184,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -145145,6 +149265,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -145305,6 +149427,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -145384,6 +149508,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -145521,6 +149647,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -145600,6 +149728,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -145795,6 +149925,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -145874,6 +150006,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -146027,6 +150161,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -146106,6 +150242,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -146365,6 +150503,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -146444,6 +150584,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -146705,6 +150847,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -146784,6 +150928,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -146992,6 +151138,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -147071,6 +151219,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -147281,6 +151431,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -147360,6 +151512,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -147604,6 +151758,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -147683,6 +151839,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -147891,6 +152049,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -147970,6 +152130,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -148206,6 +152368,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -148285,6 +152449,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -148523,6 +152689,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -148602,6 +152770,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -148739,6 +152909,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -148818,6 +152990,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -148945,6 +153119,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -149024,6 +153200,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -149161,6 +153339,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -149240,6 +153420,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -149367,6 +153549,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -149446,6 +153630,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -149541,6 +153727,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -149620,6 +153808,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -149699,6 +153889,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -149778,6 +153970,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -150059,6 +154253,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -150138,6 +154334,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -150392,6 +154590,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -150471,6 +154671,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -150780,6 +154982,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -150859,6 +155063,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -151159,6 +155365,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -151238,6 +155446,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -151511,6 +155721,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -151590,6 +155802,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -151865,6 +156079,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -151944,6 +156160,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -152039,6 +156257,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -152118,6 +156338,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -152197,6 +156419,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -152276,6 +156500,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -152577,6 +156803,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -152656,6 +156884,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -152965,6 +157195,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -153044,6 +157276,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -153181,6 +157415,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -153260,6 +157496,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -153387,6 +157625,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -153466,6 +157706,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -153603,6 +157845,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -153682,6 +157926,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -153809,6 +158055,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -153888,6 +158136,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -154072,6 +158322,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -154151,6 +158403,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -154437,6 +158691,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -154516,6 +158772,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -154760,6 +159018,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -154839,6 +159099,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -155085,6 +159347,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -155164,6 +159428,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -155363,6 +159629,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -155442,6 +159710,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -155741,6 +160011,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -155820,6 +160092,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -156180,6 +160454,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -156259,6 +160535,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -156669,6 +160947,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -156748,6 +161028,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -156986,6 +161268,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -157065,6 +161349,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -157252,6 +161538,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -157331,6 +161619,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -157472,6 +161762,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -157551,6 +161843,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -157682,6 +161976,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -157761,6 +162057,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -157900,6 +162198,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -157979,6 +162279,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -158108,6 +162410,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -158187,6 +162491,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -158282,6 +162588,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -158361,6 +162669,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -158440,6 +162750,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -158519,6 +162831,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -158614,6 +162928,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -158693,6 +163009,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -158772,6 +163090,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -158851,6 +163171,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -158892,6 +163214,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentUncheckedCreateWithoutFinanceQueriesInput = {
@@ -158912,6 +163235,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
     studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
+    acceptedInvites?: ParentInviteUncheckedCreateNestedManyWithoutAcceptedParentInput
   }
 
   export type ParentCreateOrConnectWithoutFinanceQueriesInput = {
@@ -159146,6 +163470,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -159225,6 +163551,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -159272,6 +163600,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutFinanceQueriesInput = {
@@ -159292,6 +163621,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUncheckedUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type StudentUpsertWithoutFinanceQueriesInput = {
@@ -159528,6 +163858,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -159607,6 +163939,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -159702,6 +164036,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -159781,6 +164117,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -159860,6 +164198,8 @@ export namespace Prisma {
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -159939,6 +164279,8 @@ export namespace Prisma {
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -160080,6 +164422,8 @@ export namespace Prisma {
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -160159,6 +164503,8 @@ export namespace Prisma {
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -160290,6 +164636,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -160369,6 +164717,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -160464,6 +164814,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -160543,6 +164895,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -160622,6 +164976,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -160701,6 +165057,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -160796,6 +165154,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -160875,6 +165235,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -160954,6 +165316,8 @@ export namespace Prisma {
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -161033,6 +165397,8 @@ export namespace Prisma {
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -161229,6 +165595,8 @@ export namespace Prisma {
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -161308,6 +165676,8 @@ export namespace Prisma {
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -161421,6 +165791,930 @@ export namespace Prisma {
     data: XOR<TeacherInviteAuditLogUpdateManyMutationInput, TeacherInviteAuditLogUncheckedUpdateManyWithoutInviteInput>
   }
 
+  export type SchoolCreateWithoutParentInvitesInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
+    timetablePublications?: TimetablePublicationCreateNestedManyWithoutSchoolInput
+    publishedTimetableLessons?: PublishedTimetableLessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutParentInvitesInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
+    timetablePublications?: TimetablePublicationUncheckedCreateNestedManyWithoutSchoolInput
+    publishedTimetableLessons?: PublishedTimetableLessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutParentInvitesInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutParentInvitesInput, SchoolUncheckedCreateWithoutParentInvitesInput>
+  }
+
+  export type ParentCreateWithoutAcceptedInvitesInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    createdAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutParentsInput
+    students?: StudentCreateNestedManyWithoutParentInput
+    notifications?: ParentNotificationCreateNestedManyWithoutParentInput
+    activityEvents?: ParentActivityEventCreateNestedManyWithoutParentInput
+    notificationPreference?: ParentNotificationPreferenceCreateNestedOneWithoutParentInput
+    notificationDeliveries?: ParentNotificationDeliveryLogCreateNestedManyWithoutParentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
+    teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
+    teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
+  }
+
+  export type ParentUncheckedCreateWithoutAcceptedInvitesInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    createdAt?: Date | string
+    schoolId?: string
+    students?: StudentUncheckedCreateNestedManyWithoutParentInput
+    notifications?: ParentNotificationUncheckedCreateNestedManyWithoutParentInput
+    activityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutParentInput
+    notificationPreference?: ParentNotificationPreferenceUncheckedCreateNestedOneWithoutParentInput
+    notificationDeliveries?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutParentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
+    teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
+    teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type ParentCreateOrConnectWithoutAcceptedInvitesInput = {
+    where: ParentWhereUniqueInput
+    create: XOR<ParentCreateWithoutAcceptedInvitesInput, ParentUncheckedCreateWithoutAcceptedInvitesInput>
+  }
+
+  export type ParentInviteAuditLogCreateWithoutInviteInput = {
+    id?: string
+    action: $Enums.ParentInviteAuditAction
+    performedBy: string
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    school: SchoolCreateNestedOneWithoutParentInviteAuditLogsInput
+  }
+
+  export type ParentInviteAuditLogUncheckedCreateWithoutInviteInput = {
+    id?: string
+    schoolId: string
+    action: $Enums.ParentInviteAuditAction
+    performedBy: string
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type ParentInviteAuditLogCreateOrConnectWithoutInviteInput = {
+    where: ParentInviteAuditLogWhereUniqueInput
+    create: XOR<ParentInviteAuditLogCreateWithoutInviteInput, ParentInviteAuditLogUncheckedCreateWithoutInviteInput>
+  }
+
+  export type ParentInviteAuditLogCreateManyInviteInputEnvelope = {
+    data: ParentInviteAuditLogCreateManyInviteInput | ParentInviteAuditLogCreateManyInviteInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SchoolUpsertWithoutParentInvitesInput = {
+    update: XOR<SchoolUpdateWithoutParentInvitesInput, SchoolUncheckedUpdateWithoutParentInvitesInput>
+    create: XOR<SchoolCreateWithoutParentInvitesInput, SchoolUncheckedCreateWithoutParentInvitesInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutParentInvitesInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutParentInvitesInput, SchoolUncheckedUpdateWithoutParentInvitesInput>
+  }
+
+  export type SchoolUpdateWithoutParentInvitesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
+    timetablePublications?: TimetablePublicationUpdateManyWithoutSchoolNestedInput
+    publishedTimetableLessons?: PublishedTimetableLessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutParentInvitesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
+    timetablePublications?: TimetablePublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    publishedTimetableLessons?: PublishedTimetableLessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type ParentUpsertWithoutAcceptedInvitesInput = {
+    update: XOR<ParentUpdateWithoutAcceptedInvitesInput, ParentUncheckedUpdateWithoutAcceptedInvitesInput>
+    create: XOR<ParentCreateWithoutAcceptedInvitesInput, ParentUncheckedCreateWithoutAcceptedInvitesInput>
+    where?: ParentWhereInput
+  }
+
+  export type ParentUpdateToOneWithWhereWithoutAcceptedInvitesInput = {
+    where?: ParentWhereInput
+    data: XOR<ParentUpdateWithoutAcceptedInvitesInput, ParentUncheckedUpdateWithoutAcceptedInvitesInput>
+  }
+
+  export type ParentUpdateWithoutAcceptedInvitesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutParentsNestedInput
+    students?: StudentUpdateManyWithoutParentNestedInput
+    notifications?: ParentNotificationUpdateManyWithoutParentNestedInput
+    activityEvents?: ParentActivityEventUpdateManyWithoutParentNestedInput
+    notificationPreference?: ParentNotificationPreferenceUpdateOneWithoutParentNestedInput
+    notificationDeliveries?: ParentNotificationDeliveryLogUpdateManyWithoutParentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
+    teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
+    teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
+  }
+
+  export type ParentUncheckedUpdateWithoutAcceptedInvitesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    students?: StudentUncheckedUpdateManyWithoutParentNestedInput
+    notifications?: ParentNotificationUncheckedUpdateManyWithoutParentNestedInput
+    activityEvents?: ParentActivityEventUncheckedUpdateManyWithoutParentNestedInput
+    notificationPreference?: ParentNotificationPreferenceUncheckedUpdateOneWithoutParentNestedInput
+    notificationDeliveries?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutParentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
+    teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
+    teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type ParentInviteAuditLogUpsertWithWhereUniqueWithoutInviteInput = {
+    where: ParentInviteAuditLogWhereUniqueInput
+    update: XOR<ParentInviteAuditLogUpdateWithoutInviteInput, ParentInviteAuditLogUncheckedUpdateWithoutInviteInput>
+    create: XOR<ParentInviteAuditLogCreateWithoutInviteInput, ParentInviteAuditLogUncheckedCreateWithoutInviteInput>
+  }
+
+  export type ParentInviteAuditLogUpdateWithWhereUniqueWithoutInviteInput = {
+    where: ParentInviteAuditLogWhereUniqueInput
+    data: XOR<ParentInviteAuditLogUpdateWithoutInviteInput, ParentInviteAuditLogUncheckedUpdateWithoutInviteInput>
+  }
+
+  export type ParentInviteAuditLogUpdateManyWithWhereWithoutInviteInput = {
+    where: ParentInviteAuditLogScalarWhereInput
+    data: XOR<ParentInviteAuditLogUpdateManyMutationInput, ParentInviteAuditLogUncheckedUpdateManyWithoutInviteInput>
+  }
+
+  export type SchoolCreateWithoutParentInviteAuditLogsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
+    timetablePublications?: TimetablePublicationCreateNestedManyWithoutSchoolInput
+    publishedTimetableLessons?: PublishedTimetableLessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutParentInviteAuditLogsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
+    timetablePublications?: TimetablePublicationUncheckedCreateNestedManyWithoutSchoolInput
+    publishedTimetableLessons?: PublishedTimetableLessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutParentInviteAuditLogsInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutParentInviteAuditLogsInput, SchoolUncheckedCreateWithoutParentInviteAuditLogsInput>
+  }
+
+  export type ParentInviteCreateWithoutAuditLogsInput = {
+    id?: string
+    name: string
+    surname: string
+    email: string
+    phone?: string | null
+    tokenHash: string
+    status?: $Enums.ParentInviteStatus
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    acceptedBy?: string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutParentInvitesInput
+    acceptedParent?: ParentCreateNestedOneWithoutAcceptedInvitesInput
+  }
+
+  export type ParentInviteUncheckedCreateWithoutAuditLogsInput = {
+    id?: string
+    schoolId: string
+    name: string
+    surname: string
+    email: string
+    phone?: string | null
+    tokenHash: string
+    status?: $Enums.ParentInviteStatus
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    acceptedBy?: string | null
+    acceptedParentId?: string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ParentInviteCreateOrConnectWithoutAuditLogsInput = {
+    where: ParentInviteWhereUniqueInput
+    create: XOR<ParentInviteCreateWithoutAuditLogsInput, ParentInviteUncheckedCreateWithoutAuditLogsInput>
+  }
+
+  export type SchoolUpsertWithoutParentInviteAuditLogsInput = {
+    update: XOR<SchoolUpdateWithoutParentInviteAuditLogsInput, SchoolUncheckedUpdateWithoutParentInviteAuditLogsInput>
+    create: XOR<SchoolCreateWithoutParentInviteAuditLogsInput, SchoolUncheckedCreateWithoutParentInviteAuditLogsInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutParentInviteAuditLogsInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutParentInviteAuditLogsInput, SchoolUncheckedUpdateWithoutParentInviteAuditLogsInput>
+  }
+
+  export type SchoolUpdateWithoutParentInviteAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
+    timetablePublications?: TimetablePublicationUpdateManyWithoutSchoolNestedInput
+    publishedTimetableLessons?: PublishedTimetableLessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutParentInviteAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
+    timetablePublications?: TimetablePublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    publishedTimetableLessons?: PublishedTimetableLessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type ParentInviteUpsertWithoutAuditLogsInput = {
+    update: XOR<ParentInviteUpdateWithoutAuditLogsInput, ParentInviteUncheckedUpdateWithoutAuditLogsInput>
+    create: XOR<ParentInviteCreateWithoutAuditLogsInput, ParentInviteUncheckedCreateWithoutAuditLogsInput>
+    where?: ParentInviteWhereInput
+  }
+
+  export type ParentInviteUpdateToOneWithWhereWithoutAuditLogsInput = {
+    where?: ParentInviteWhereInput
+    data: XOR<ParentInviteUpdateWithoutAuditLogsInput, ParentInviteUncheckedUpdateWithoutAuditLogsInput>
+  }
+
+  export type ParentInviteUpdateWithoutAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentInviteStatusFieldUpdateOperationsInput | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutParentInvitesNestedInput
+    acceptedParent?: ParentUpdateOneWithoutAcceptedInvitesNestedInput
+  }
+
+  export type ParentInviteUncheckedUpdateWithoutAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentInviteStatusFieldUpdateOperationsInput | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    acceptedParentId?: NullableStringFieldUpdateOperationsInput | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type SchoolCreateWithoutTeacherInviteAuditLogsInput = {
     id: string
     name: string
@@ -161482,6 +166776,8 @@ export namespace Prisma {
     financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -161561,6 +166857,8 @@ export namespace Prisma {
     financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -161709,6 +167007,8 @@ export namespace Prisma {
     financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -161788,6 +167088,8 @@ export namespace Prisma {
     financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -161926,6 +167228,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -162005,6 +167309,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
     teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -162100,6 +167406,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -162179,6 +167487,8 @@ export namespace Prisma {
     paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
     teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -162769,6 +168079,35 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type ParentInviteCreateManySchoolInput = {
+    id?: string
+    name: string
+    surname: string
+    email: string
+    phone?: string | null
+    tokenHash: string
+    status?: $Enums.ParentInviteStatus
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    acceptedBy?: string | null
+    acceptedParentId?: string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ParentInviteAuditLogCreateManySchoolInput = {
+    id?: string
+    inviteId: string
+    action: $Enums.ParentInviteAuditAction
+    performedBy: string
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
   export type ParentNotificationCreateManySchoolInput = {
     id?: string
     type: $Enums.ParentNotificationType
@@ -163172,6 +168511,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutSchoolInput = {
@@ -163192,6 +168532,7 @@ export namespace Prisma {
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
     studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
+    acceptedInvites?: ParentInviteUncheckedUpdateManyWithoutAcceptedParentNestedInput
   }
 
   export type ParentUncheckedUpdateManyWithoutSchoolInput = {
@@ -164828,6 +170169,95 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     inviteId?: StringFieldUpdateOperationsInput | string
     action?: EnumTeacherInviteAuditActionFieldUpdateOperationsInput | $Enums.TeacherInviteAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParentInviteUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentInviteStatusFieldUpdateOperationsInput | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedParent?: ParentUpdateOneWithoutAcceptedInvitesNestedInput
+    auditLogs?: ParentInviteAuditLogUpdateManyWithoutInviteNestedInput
+  }
+
+  export type ParentInviteUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentInviteStatusFieldUpdateOperationsInput | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    acceptedParentId?: NullableStringFieldUpdateOperationsInput | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    auditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutInviteNestedInput
+  }
+
+  export type ParentInviteUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentInviteStatusFieldUpdateOperationsInput | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    acceptedParentId?: NullableStringFieldUpdateOperationsInput | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParentInviteAuditLogUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumParentInviteAuditActionFieldUpdateOperationsInput | $Enums.ParentInviteAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    invite?: ParentInviteUpdateOneRequiredWithoutAuditLogsNestedInput
+  }
+
+  export type ParentInviteAuditLogUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    inviteId?: StringFieldUpdateOperationsInput | string
+    action?: EnumParentInviteAuditActionFieldUpdateOperationsInput | $Enums.ParentInviteAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    inviteId?: StringFieldUpdateOperationsInput | string
+    action?: EnumParentInviteAuditActionFieldUpdateOperationsInput | $Enums.ParentInviteAuditAction
     performedBy?: StringFieldUpdateOperationsInput | string
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -167623,6 +173053,26 @@ export namespace Prisma {
     updatedById?: string | null
   }
 
+  export type ParentInviteCreateManyAcceptedParentInput = {
+    id?: string
+    schoolId: string
+    name: string
+    surname: string
+    email: string
+    phone?: string | null
+    tokenHash: string
+    status?: $Enums.ParentInviteStatus
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    acceptedBy?: string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type StudentUpdateWithoutParentInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
@@ -168064,6 +173514,68 @@ export namespace Prisma {
     studentId?: StringFieldUpdateOperationsInput | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ParentInviteUpdateWithoutAcceptedParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentInviteStatusFieldUpdateOperationsInput | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutParentInvitesNestedInput
+    auditLogs?: ParentInviteAuditLogUpdateManyWithoutInviteNestedInput
+  }
+
+  export type ParentInviteUncheckedUpdateWithoutAcceptedParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentInviteStatusFieldUpdateOperationsInput | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    auditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutInviteNestedInput
+  }
+
+  export type ParentInviteUncheckedUpdateManyWithoutAcceptedParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentInviteStatusFieldUpdateOperationsInput | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type LessonCreateManyPeriodTemplateInput = {
@@ -170897,6 +176409,42 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     schoolId?: StringFieldUpdateOperationsInput | string
     action?: EnumTeacherInviteAuditActionFieldUpdateOperationsInput | $Enums.TeacherInviteAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParentInviteAuditLogCreateManyInviteInput = {
+    id?: string
+    schoolId: string
+    action: $Enums.ParentInviteAuditAction
+    performedBy: string
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type ParentInviteAuditLogUpdateWithoutInviteInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumParentInviteAuditActionFieldUpdateOperationsInput | $Enums.ParentInviteAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutParentInviteAuditLogsNestedInput
+  }
+
+  export type ParentInviteAuditLogUncheckedUpdateWithoutInviteInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    action?: EnumParentInviteAuditActionFieldUpdateOperationsInput | $Enums.ParentInviteAuditAction
+    performedBy?: StringFieldUpdateOperationsInput | string
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParentInviteAuditLogUncheckedUpdateManyWithoutInviteInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    action?: EnumParentInviteAuditActionFieldUpdateOperationsInput | $Enums.ParentInviteAuditAction
     performedBy?: StringFieldUpdateOperationsInput | string
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

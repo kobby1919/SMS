@@ -178,6 +178,13 @@ enum TeacherInviteStatus {
   REVOKED
 }
 
+enum ParentInviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
 enum TeacherInviteType {
   SUBJECT_TEACHER
   CLASS_TEACHER
@@ -185,6 +192,15 @@ enum TeacherInviteType {
 }
 
 enum TeacherInviteAuditAction {
+  INVITE_CREATED
+  INVITE_SENT
+  INVITE_RESENT
+  INVITE_REVOKED
+  INVITE_EXPIRED
+  INVITE_ACCEPTED
+}
+
+enum ParentInviteAuditAction {
   INVITE_CREATED
   INVITE_SENT
   INVITE_RESENT
@@ -518,6 +534,8 @@ model School {
   paymentWebhookEvents           PaymentWebhookEvent[]
   teacherInvites                 TeacherInvite[]
   teacherInviteAuditLogs         TeacherInviteAuditLog[]
+  parentInvites                  ParentInvite[]
+  parentInviteAuditLogs          ParentInviteAuditLog[]
   parentNotifications            ParentNotification[]
   parentActivityEvents           ParentActivityEvent[]
   notificationSettings           SchoolNotificationSetting?
@@ -654,6 +672,7 @@ model Parent {
   teacherContactRequests ParentTeacherContactRequest[]
   teacherContactMessages ParentTeacherContactMessage[]
   studentRelationships   ParentStudentRelationship[]
+  acceptedInvites        ParentInvite[]                  @relation("AcceptedParentInvite")
 
   @@index([schoolId])
   @@index([schoolId, createdAt])
@@ -2178,6 +2197,53 @@ model TeacherInvite {
   @@index([schoolId, teacherType])
   @@index([schoolId, createdAt])
   @@index([expiresAt])
+}
+
+model ParentInvite {
+  id               String             @id @default(cuid())
+  schoolId         String
+  name             String
+  surname          String
+  email            String
+  phone            String?
+  tokenHash        String             @unique
+  status           ParentInviteStatus @default(PENDING)
+  expiresAt        DateTime
+  acceptedAt       DateTime?
+  acceptedBy       String?
+  acceptedParentId String?
+  revokedAt        DateTime?
+  revokedBy        String?
+  lastSentAt       DateTime?
+  createdBy        String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  school         School                 @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  acceptedParent Parent?                @relation("AcceptedParentInvite", fields: [acceptedParentId], references: [id], onDelete: SetNull)
+  auditLogs      ParentInviteAuditLog[]
+
+  @@index([schoolId, email])
+  @@index([schoolId, status, expiresAt])
+  @@index([schoolId, createdAt])
+  @@index([expiresAt])
+}
+
+model ParentInviteAuditLog {
+  id          String                  @id @default(cuid())
+  schoolId    String
+  inviteId    String
+  action      ParentInviteAuditAction
+  performedBy String
+  metadata    Json
+  createdAt   DateTime                @default(now())
+
+  school School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  invite ParentInvite @relation(fields: [inviteId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId, createdAt])
+  @@index([inviteId, createdAt])
+  @@index([schoolId, action, createdAt])
 }
 
 model TeacherInviteAuditLog {

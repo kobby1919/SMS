@@ -6,6 +6,7 @@ export type DocumentResource = "daily-finance" | "receipt" | "report-card" | "sy
 export type ReferenceDataResource =
   | "classes"
   | "grades"
+  | "parents"
   | "students"
   | "subjects"
   | "timetable"
