@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { dashboardPathForRole, type AppRole } from "@/src/lib/roles";
-import { resolveSessionRole } from "@/src/lib/roles.server";
+import { resolveSessionIdentity } from "@/src/lib/roles.server";
 import {
   acceptSchoolInviteForUser,
 } from "@/src/lib/services/onboarding";
@@ -10,6 +10,33 @@ import {
   MISSING_ROLE_QUERY,
   SIGN_IN_PATH,
 } from "@/src/lib/auth/constants";
+import prisma from "@/src/lib/prisma";
+
+const INVALID_INVITE_URL = `${SIGN_IN_PATH}?error=invalid_invite`;
+
+async function schoolAwareDashboardPath(role: AppRole, schoolId: string): Promise<string> {
+  if (role === "platform_admin") {
+    return dashboardPathForRole(role);
+  }
+
+  const school = await prisma.school.findUnique({
+    where: { id: schoolId },
+    select: {
+      id: true,
+      onboardingStatus: true,
+    },
+  });
+
+  if (!school) {
+    return `${SIGN_IN_PATH}?error=missing_school`;
+  }
+
+  if (role === "admin" && school.onboardingStatus !== "COMPLETED") {
+    return "/onboarding/setup";
+  }
+
+  return dashboardPathForRole(role);
+}
 
 /**
  * Completes sign-in on the server: resolve role (JWT + Clerk fallback) and redirect.
@@ -25,25 +52,32 @@ export async function completePostSignIn(
     redirect(SIGN_IN_PATH);
   }
 
+  if (inviteToken && teacherInviteToken) {
+    redirect(INVALID_INVITE_URL);
+  }
+
   if (inviteToken) {
+    let redirectPath: string;
     try {
       const inviteSession = await acceptSchoolInviteForUser({
         token: inviteToken,
         userId,
       });
-      redirect(dashboardPathForRole(inviteSession.role));
+      redirectPath = await schoolAwareDashboardPath(inviteSession.role, inviteSession.schoolId);
     } catch {
-      redirect(`${SIGN_IN_PATH}?error=invalid_invite`);
+      redirect(INVALID_INVITE_URL);
     }
+
+    redirect(redirectPath);
   }
 
   if (teacherInviteToken) {
     redirect(`/onboarding/teacher/accept?token=${encodeURIComponent(teacherInviteToken)}`);
   }
 
-  const role = await resolveSessionRole(userId, sessionClaims);
+  const { role, schoolId } = await resolveSessionIdentity(userId, sessionClaims);
   if (role) {
-    redirect(dashboardPathForRole(role));
+    redirect(await schoolAwareDashboardPath(role, schoolId));
   }
 
   redirect(`${SIGN_IN_PATH}?error=${MISSING_ROLE_QUERY}`);
