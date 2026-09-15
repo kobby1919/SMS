@@ -3,6 +3,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { getInvitePreview } from "@/src/lib/services/onboarding";
 import { getInviteAvailability } from "@/src/lib/services/onboarding-policy";
 import { normalizeAppRole } from "@/src/lib/roles";
+import InviteSignOutButton from "@/src/components/InviteSignOutButton";
 
 type AcceptInvitePageProps = {
   searchParams: Promise<{ token?: string }>;
@@ -40,6 +41,7 @@ export default async function AcceptInvitePage({
       invitedEmail &&
       signedInEmail === invitedEmail,
   );
+  const signInHref = `/sign-in?invite=${encodeURIComponent(token ?? "")}`;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#080B18] px-4 py-16">
@@ -67,6 +69,10 @@ export default async function AcceptInvitePage({
                   This first-admin invite must be accepted by the invited admin&apos;s
                   own account. Sign out, then open this invite again with the invited email.
                 </p>
+                <InviteSignOutButton
+                  redirectUrl={signInHref}
+                  label="Sign out and use invited admin email"
+                />
               </div>
             )}
             {emailMismatch && (
@@ -78,6 +84,10 @@ export default async function AcceptInvitePage({
                   This invite is for <span className="font-bold text-white">{invite.email}</span>,
                   but the current session is <span className="font-bold text-white">{signedInEmail}</span>.
                 </p>
+                <InviteSignOutButton
+                  redirectUrl={signInHref}
+                  label="Sign out and use invited email"
+                />
               </div>
             )}
             {emailMatches && (
@@ -90,7 +100,7 @@ export default async function AcceptInvitePage({
             )}
             {!roleConflict && !emailMismatch && (
               <Link
-                href={`/sign-in?invite=${encodeURIComponent(token ?? "")}`}
+                href={signInHref}
                 className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-blue-200 px-4 py-3 text-sm font-bold text-blue-950 transition hover:bg-white"
               >
                 {signedInEmail ? "Connect admin account" : "Continue to secure sign in"}

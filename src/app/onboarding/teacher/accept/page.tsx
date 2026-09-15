@@ -8,6 +8,7 @@ import {
 } from "@/src/lib/services/teacher-invites";
 import TeacherInviteAcceptButton from "@/src/components/TeacherInviteAcceptButton";
 import { normalizeAppRole } from "@/src/lib/roles";
+import InviteSignOutButton from "@/src/components/InviteSignOutButton";
 
 type TeacherAcceptInvitePageProps = {
   searchParams: Promise<{ token?: string }>;
@@ -114,6 +115,10 @@ export default async function TeacherAcceptInvitePage({
                 but you are signed in as <span className="font-bold text-white">{signedInEmail}</span>.
                 Sign out and continue with the invited email.
               </p>
+              <InviteSignOutButton
+                redirectUrl={signInHref}
+                label="Sign out and use invited email"
+              />
             </div>
           )}
 
@@ -126,6 +131,10 @@ export default async function TeacherAcceptInvitePage({
                 This teacher invite must be accepted by the teacher&apos;s own account.
                 Sign out first, then open the invite link as the teacher.
               </p>
+              <InviteSignOutButton
+                redirectUrl={signInHref}
+                label="Sign out and use teacher email"
+              />
             </div>
           )}
 
