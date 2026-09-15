@@ -2,7 +2,11 @@ import prisma from "@/src/lib/prisma";
 import type { AuthzContext } from "@/src/lib/authz";
 import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
 import type { TeacherInviteCreateInput } from "@/src/lib/validation/teacher-invites";
-import { createTeacherInviteTokenBundle } from "@/src/lib/services/teacher-invite-tokens";
+import {
+  createTeacherInviteTokenBundle,
+  hashTeacherInviteToken,
+  isTeacherInviteExpired,
+} from "@/src/lib/services/teacher-invite-tokens";
 import { sendTeacherInviteEmail } from "@/src/lib/services/notifications";
 import type { Prisma, TeacherInviteAuditAction } from "@/src/generated/prisma";
 
@@ -26,6 +30,27 @@ export class TeacherInviteServiceError extends Error {
   }
 }
 
+export type TeacherInvitePreviewState =
+  | "missing"
+  | "invalid"
+  | "active"
+  | "expired"
+  | "revoked"
+  | "accepted";
+
+export type TeacherInvitePreview = {
+  state: TeacherInvitePreviewState;
+  usable: boolean;
+  inviteId?: string;
+  schoolId?: string;
+  schoolName?: string;
+  schoolSlug?: string;
+  teacherName?: string;
+  email?: string;
+  teacherType?: TeacherInviteCreateInput["teacherType"];
+  expiresAt?: Date;
+};
+
 async function writeTeacherInviteAudit(
   tx: Prisma.TransactionClient,
   input: {
@@ -45,6 +70,109 @@ async function writeTeacherInviteAudit(
       metadata: (input.metadata ?? {}) as Prisma.InputJsonValue,
     },
   });
+}
+
+function schoolDisplayName(school: {
+  name: string;
+  displayName?: string | null;
+  emailFromName?: string | null;
+}) {
+  return school.emailFromName || school.displayName || school.name;
+}
+
+function teacherDisplayName(invite: { name: string; surname: string }) {
+  return `${invite.name} ${invite.surname}`.trim();
+}
+
+export async function getTeacherInvitePreview(
+  token?: string | null,
+  now = new Date(),
+): Promise<TeacherInvitePreview> {
+  const normalizedToken = token?.trim();
+
+  if (!normalizedToken) {
+    return { state: "missing", usable: false };
+  }
+
+  const invite = await prisma.teacherInvite.findUnique({
+    where: { tokenHash: hashTeacherInviteToken(normalizedToken) },
+    select: {
+      id: true,
+      schoolId: true,
+      name: true,
+      surname: true,
+      email: true,
+      teacherType: true,
+      status: true,
+      acceptedAt: true,
+      revokedAt: true,
+      expiresAt: true,
+      school: {
+        select: {
+          name: true,
+          slug: true,
+          displayName: true,
+          emailFromName: true,
+        },
+      },
+    },
+  });
+
+  if (!invite) {
+    return { state: "invalid", usable: false };
+  }
+
+  const basePreview = {
+    inviteId: invite.id,
+    schoolId: invite.schoolId,
+    schoolName: schoolDisplayName(invite.school),
+    schoolSlug: invite.school.slug,
+    teacherName: teacherDisplayName(invite),
+    email: invite.email,
+    teacherType: invite.teacherType,
+    expiresAt: invite.expiresAt,
+  };
+
+  if (invite.acceptedAt || invite.status === "ACCEPTED") {
+    return { ...basePreview, state: "accepted", usable: false };
+  }
+
+  if (invite.revokedAt || invite.status === "REVOKED") {
+    return { ...basePreview, state: "revoked", usable: false };
+  }
+
+  if (isTeacherInviteExpired(invite.expiresAt, now) || invite.status === "EXPIRED") {
+    if (invite.status === "PENDING") {
+      await prisma.$transaction(async (tx) => {
+        const updated = await tx.teacherInvite.updateMany({
+          where: {
+            id: invite.id,
+            status: "PENDING",
+            acceptedAt: null,
+            revokedAt: null,
+          },
+          data: { status: "EXPIRED" },
+        });
+
+        if (updated.count === 1) {
+          await writeTeacherInviteAudit(tx, {
+            schoolId: invite.schoolId,
+            inviteId: invite.id,
+            action: "INVITE_EXPIRED",
+            performedBy: "system",
+            metadata: {
+              email: invite.email,
+              expiresAt: invite.expiresAt.toISOString(),
+            },
+          });
+        }
+      });
+    }
+
+    return { ...basePreview, state: "expired", usable: false };
+  }
+
+  return { ...basePreview, state: "active", usable: true };
 }
 
 export async function createTeacherInvite(
