@@ -7,8 +7,11 @@ const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma  = new PrismaClient({ adapter });
 
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const REAL_ADMIN_CLERK_ID       = "user_3CSIHKzHwmvmvh88RvOuRJeN6lC";
-const REAL_TEACHER_CLERK_ID     = "user_3CUBcewPnLl0KYUAVDewhXWEAxd";
+const REAL_ADMIN_CLERK_ID       = process.env.SEED_DEFAULT_ADMIN_CLERK_ID ?? "user_3CSIHKzHwmvmvh88RvOuRJeN6lC";
+const REAL_TEACHER_CLERK_ID     = process.env.SEED_DEFAULT_TEACHER_CLERK_ID ?? "user_3CUBcewPnLl0KYUAVDewhXWEAxd";
+const REAL_ADMIN_EMAIL          = process.env.SEED_DEFAULT_ADMIN_EMAIL ?? "school-admin@edujay.test";
+const REAL_TEACHER_EMAIL        = process.env.SEED_DEFAULT_TEACHER_EMAIL ?? "teacher-one@edujay.test";
+const REAL_PARENT_EMAIL         = process.env.SEED_DEFAULT_PARENT_EMAIL ?? "parent-one@edujay.test";
 const MAX_CLASSES_PER_TEACHER   = 5;
 const LESSONS_PER_CLASS_PER_DAY = 4;
 const DEFAULT_SCHOOL_ID         = "default-school";
@@ -97,23 +100,14 @@ async function main() {
   // ── 1. Admins ─────────────────────────────────────────────────────────────
   await prisma.admin.upsert({
     where:  { id: REAL_ADMIN_CLERK_ID },
-    update: { username: "admin1", schoolId: DEFAULT_SCHOOL_ID },
+    update: { username: REAL_ADMIN_EMAIL, schoolId: DEFAULT_SCHOOL_ID },
     create: {
       id:       REAL_ADMIN_CLERK_ID,
-      username: "admin1",
+      username: REAL_ADMIN_EMAIL,
       schoolId: DEFAULT_SCHOOL_ID,
     },
   });
-  await prisma.admin.upsert({
-    where:  { id: "admin2" },
-    update: { username: "admin2", schoolId: DEFAULT_SCHOOL_ID },
-    create: {
-      id:       "admin2",
-      username: "admin2",
-      schoolId: DEFAULT_SCHOOL_ID,
-    },
-  });
-  console.log("✅ Admins created (admin1 = your Clerk ID)");
+  console.log(`✅ Admin test identity linked (${REAL_ADMIN_EMAIL})`);
 
   // ── 2. Grades ─────────────────────────────────────────────────────────────
   for (const g of GHANA_GRADES) {
@@ -169,7 +163,7 @@ async function main() {
         username:   `teacher${i}`,
         name:       `Teacher`,
         surname:    `${i}`,
-        email:      `teacher${i}@school.edu.gh`,
+        email:      i === 1 ? REAL_TEACHER_EMAIL : `teacher${i}@school.edu.gh`,
         phone:      `024000000${i}`,
         address:    `Accra, Ghana`,
         bloodType:  "O+",
@@ -180,7 +174,7 @@ async function main() {
       },
     });
   }
-  console.log("✅ Teachers created (teacher1 = your Clerk ID)");
+  console.log(`✅ Teachers created (teacher1 identity = ${REAL_TEACHER_EMAIL})`);
 
   // ── 6. Lessons ────────────────────────────────────────────────────────────
   const classRecords   = await prisma.class.findMany({
@@ -276,7 +270,7 @@ async function main() {
         username: `parent${i}`,
         name:     `Parent`,
         surname:  `${i}`,
-        email:    `parent${i}@gmail.com`,
+        email:    i === 1 ? REAL_PARENT_EMAIL : `parent${i}@gmail.com`,
         phone:    `020000000${i}`,
         address:  `Accra, Ghana`,
         schoolId: DEFAULT_SCHOOL_ID,
