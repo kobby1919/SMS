@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { currentUser } from "@clerk/nextjs/server";
 import { CheckCircle2, Clock3, Mail, ShieldCheck, XCircle } from "lucide-react";
 import {
   getTeacherInvitePreview,
@@ -50,8 +51,29 @@ export default async function TeacherAcceptInvitePage({
   searchParams,
 }: TeacherAcceptInvitePageProps) {
   const { token } = await searchParams;
-  const invite = await getTeacherInvitePreview(token);
+  const [invite, user] = await Promise.all([
+    getTeacherInvitePreview(token),
+    currentUser(),
+  ]);
   const copy = stateCopy[invite.state];
+  const signedInEmail = user
+    ? user.emailAddresses
+        .find((email) => email.id === user.primaryEmailAddressId)
+        ?.emailAddress.toLowerCase()
+    : null;
+  const invitedEmail = invite.email?.toLowerCase() ?? null;
+  const emailMatches = Boolean(
+    invite.usable &&
+      signedInEmail &&
+      invitedEmail &&
+      signedInEmail === invitedEmail,
+  );
+  const emailMismatch = Boolean(
+    invite.usable &&
+      signedInEmail &&
+      invitedEmail &&
+      signedInEmail !== invitedEmail,
+  );
   const signInHref = `/sign-in?teacherInvite=${encodeURIComponent(token ?? "")}`;
 
   return (
@@ -72,13 +94,38 @@ export default async function TeacherAcceptInvitePage({
             {copy.body}
           </p>
 
-          {invite.usable ? (
+          {emailMismatch && (
+            <div className="mt-6 rounded-xl border border-amber-300/25 bg-amber-300/10 p-4">
+              <p className="text-sm font-black text-amber-100">
+                Signed in with the wrong email
+              </p>
+              <p className="mt-2 text-sm font-medium leading-6 text-amber-50/70">
+                This invite is for <span className="font-bold text-white">{invite.email}</span>,
+                but you are signed in as <span className="font-bold text-white">{signedInEmail}</span>.
+                Sign out and continue with the invited email.
+              </p>
+            </div>
+          )}
+
+          {emailMatches && (
+            <div className="mt-6 rounded-xl border border-emerald-300/25 bg-emerald-300/10 p-4">
+              <p className="text-sm font-black text-emerald-100">
+                Email verified
+              </p>
+              <p className="mt-2 text-sm font-medium leading-6 text-emerald-50/70">
+                You are signed in with the invited email. The next step will securely
+                connect this account to the teacher profile.
+              </p>
+            </div>
+          )}
+
+          {invite.usable && !emailMatches ? (
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href={signInHref}
                 className="inline-flex items-center justify-center rounded-xl bg-blue-200 px-5 py-3 text-sm font-black text-blue-950 transition hover:bg-white"
               >
-                Continue to secure sign in
+                {signedInEmail ? "Use the invited email" : "Continue to secure sign in"}
               </Link>
               <Link
                 href="/"
@@ -87,6 +134,14 @@ export default async function TeacherAcceptInvitePage({
                 Back to homepage
               </Link>
             </div>
+          ) : invite.usable && emailMatches ? (
+            <button
+              type="button"
+              disabled
+              className="mt-8 inline-flex w-full cursor-not-allowed items-center justify-center rounded-xl bg-white/20 px-5 py-3 text-sm font-black text-white/60 sm:w-auto"
+            >
+              Ready for secure account connection
+            </button>
           ) : (
             <Link
               href="/"
