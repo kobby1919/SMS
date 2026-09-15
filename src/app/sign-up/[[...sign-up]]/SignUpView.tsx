@@ -2,14 +2,12 @@
 
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
-import Link from "next/link";
 import { BadgeCheck, Building2, MailCheck, ShieldCheck } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { AUTH_CALLBACK_PATH, MISSING_ROLE_QUERY } from "@/src/lib/auth/constants";
-import InviteSignOutButton from "@/src/components/InviteSignOutButton";
+import { AUTH_CALLBACK_PATH } from "@/src/lib/auth/constants";
 
-const ClerkSignIn = dynamic(
-  () => import("@clerk/nextjs").then((mod) => mod.SignIn),
+const ClerkSignUp = dynamic(
+  () => import("@clerk/nextjs").then((mod) => mod.SignUp),
   {
     ssr: false,
     loading: () => (
@@ -24,7 +22,7 @@ const ClerkSignIn = dynamic(
   },
 );
 
-type SignInViewProps = {
+type SignUpViewProps = {
   inviteContext?: {
     role: "school_admin" | "teacher";
     email?: string;
@@ -36,38 +34,35 @@ type SignInViewProps = {
 const inviteCopy = {
   school_admin: {
     label: "school admin",
-    title: "School admin invite sign-in",
-    subtitle: "Secure school admin invite access",
-    warning:
-      "Use the school admin email invited by the school owner or Edujay platform team.",
+    title: "Create school admin account",
+    subtitle: "Secure school admin setup",
+    warning: "Create this account with the invited school admin email.",
   },
   teacher: {
     label: "teacher",
-    title: "Teacher invite sign-in",
-    subtitle: "Secure teacher invite access",
-    warning: "Use the teacher email invited by the school admin.",
+    title: "Create teacher account",
+    subtitle: "Secure teacher invite setup",
+    warning: "Create this account with the invited teacher email.",
   },
 } satisfies Record<
-  NonNullable<SignInViewProps["inviteContext"]>["role"],
+  NonNullable<SignUpViewProps["inviteContext"]>["role"],
   { label: string; title: string; subtitle: string; warning: string }
 >;
 
-export default function SignInView({ inviteContext }: SignInViewProps) {
+export default function SignUpView({ inviteContext }: SignUpViewProps) {
   const searchParams = useSearchParams();
-  const missingRole = searchParams.get("error") === MISSING_ROLE_QUERY;
-  const invalidInvite = searchParams.get("error") === "invalid_invite";
   const activeInvite = inviteContext ? inviteCopy[inviteContext.role] : null;
   const inviteEmail = inviteContext?.email;
   const inviteSchoolName = inviteContext?.schoolName ?? "the school";
-  const pageSubtitle = activeInvite?.subtitle ?? "Secure school access";
+  const pageSubtitle = activeInvite?.subtitle ?? "Create secure school access";
   const callbackUrl = inviteContext?.callbackUrl ?? AUTH_CALLBACK_PATH;
   const teacherInviteToken = searchParams.get("teacherInvite");
   const schoolInviteToken = searchParams.get("invite");
-  const signUpUrl = teacherInviteToken
-    ? `/sign-up?teacherInvite=${encodeURIComponent(teacherInviteToken)}`
+  const signInUrl = teacherInviteToken
+    ? `/sign-in?teacherInvite=${encodeURIComponent(teacherInviteToken)}`
     : schoolInviteToken
-      ? `/sign-up?invite=${encodeURIComponent(schoolInviteToken)}`
-      : "/sign-up";
+      ? `/sign-in?invite=${encodeURIComponent(schoolInviteToken)}`
+      : "/sign-in";
 
   useEffect(() => {
     const maxAge = 20 * 60;
@@ -85,15 +80,14 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
         <aside className="hidden min-h-dvh bg-[#07111f] px-10 py-12 text-white lg:flex xl:px-14">
           <div className="my-auto max-w-xl">
             <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-200">
-              One school truth
+              Invite-only access
             </p>
             <h1 className="mt-5 text-4xl font-black leading-[1.08] tracking-tight xl:text-5xl">
-              Simple, secure access for every school role.
+              Every school user gets a clean, traceable login.
             </h1>
             <p className="mt-5 max-w-lg text-base font-medium leading-8 text-white/60">
-              Every admin, teacher, parent, and finance user signs in with
-              their own account. Edujay keeps access clear and activity
-              traceable across the school.
+              Edujay links this account to the exact invite, role, and school so
+              access stays controlled from the first login.
             </p>
           </div>
         </aside>
@@ -122,10 +116,8 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
                     <div>
                       <p className="font-black">{activeInvite.title}</p>
                       <p className="mt-1 font-medium leading-6 text-blue-900/80">
-                        {activeInvite.warning}{" "}
-                        <span className="font-bold">{inviteSchoolName}</span>{" "}
-                        will only connect this invite to the exact invited{" "}
-                        {activeInvite.label} account.
+                        {activeInvite.warning} <span className="font-bold">{inviteSchoolName}</span>{" "}
+                        will only connect this invite to the exact invited {activeInvite.label} account.
                       </p>
                       {inviteEmail && (
                         <p className="mt-2 rounded-xl bg-white/80 px-3 py-2 text-xs font-black text-blue-900">
@@ -137,35 +129,11 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
                 </div>
               )}
 
-              {missingRole && (
-                <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-                  <p className="font-semibold">Account setup is not complete</p>
-                  <p className="mt-1 text-amber-800/90">
-                    Edujay could not find a school role for this account yet. If you are accepting an invite,
-                    sign out and open the invite link again with the invited email. If this is your school account,
-                    ask the school admin to confirm your invite or access setup.
-                  </p>
-                  <InviteSignOutButton
-                    redirectUrl="/sign-in"
-                    label="Sign out and restart access setup"
-                  />
-                </div>
-              )}
-
-              {invalidInvite && (
-                <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
-                  <p className="font-semibold">Invitation could not be accepted</p>
-                  <p className="mt-1 text-rose-800/90">
-                    The invite may be expired, already used, or linked to a different email address.
-                  </p>
-                </div>
-              )}
-
-              <ClerkSignIn
+              <ClerkSignUp
                 forceRedirectUrl={callbackUrl}
                 fallbackRedirectUrl={callbackUrl}
-                signUpUrl={signUpUrl}
-                signUpFallbackRedirectUrl={callbackUrl}
+                signInUrl={signInUrl}
+                signInFallbackRedirectUrl={callbackUrl}
                 initialValues={
                   inviteEmail
                     ? {
@@ -174,7 +142,7 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
                     : undefined
                 }
                 routing="path"
-                path="/sign-in"
+                path="/sign-up"
                 appearance={{
                   layout: {
                     logoPlacement: "none",
@@ -210,9 +178,6 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
                       "h-12 rounded-xl border border-slate-200 text-sm font-bold transition-colors hover:bg-slate-50",
                     formContainer: "w-full",
                     identityPreview: "rounded-xl border border-slate-100 bg-slate-50",
-                    footer: "hidden",
-                    footerAction: "hidden",
-                    footerPages: "hidden",
                   },
                   variables: {
                     colorPrimary: "#1d4ed8",
@@ -226,24 +191,6 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
                   },
                 }}
               />
-
-              <div className="mt-4 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-center text-sm font-bold text-slate-600">
-                {activeInvite ? (
-                  <>
-                    New invited user?{" "}
-                    <Link href={signUpUrl} className="font-black text-blue-700 hover:text-blue-900">
-                      Create your {activeInvite.label} account
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    New to Edujay?{" "}
-                    <Link href={signUpUrl} className="font-black text-blue-700 hover:text-blue-900">
-                      Create an account
-                    </Link>
-                  </>
-                )}
-              </div>
 
               <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-slate-100 pt-4 text-xs font-bold text-slate-500">
                 <span className="inline-flex items-center gap-1.5">

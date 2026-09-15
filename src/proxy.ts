@@ -24,6 +24,7 @@ const isInternalSecretRoute = createRouteMatcher([
 const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-in(.*)",
+  "/sign-up(.*)",
   "/features(.*)",
   "/pricing(.*)",
   "/waitlist(.*)",
@@ -67,25 +68,25 @@ export default clerkMiddleware(async (auth, req) => {
 
     if (
       userId &&
-      pathname.startsWith("/sign-in") &&
+      (pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up")) &&
       (req.nextUrl.searchParams.has("invite") ||
         req.nextUrl.searchParams.has("teacherInvite"))
     ) {
       return NextResponse.redirect(authCallbackUrlWithInvite());
     }
 
-    if (userId && role === "admin" && pathname.startsWith("/sign-in")) {
+    if (userId && role === "admin" && (pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up"))) {
       return NextResponse.redirect(new URL(AUTH_CALLBACK_PATH, req.url));
     }
 
-    if (userId && role && pathname.startsWith("/sign-in")) {
+    if (userId && role && (pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up"))) {
       return NextResponse.redirect(new URL(dashboardPathForRole(role), req.url));
     }
 
     if (
       userId &&
       !role &&
-      pathname.startsWith("/sign-in") &&
+      (pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up")) &&
       !req.nextUrl.searchParams.has("error")
     ) {
       return NextResponse.redirect(new URL(AUTH_CALLBACK_PATH, req.url));
