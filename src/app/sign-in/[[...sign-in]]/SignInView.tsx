@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { ShieldCheck } from "lucide-react";
+import { MailCheck, ShieldCheck } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { AUTH_CALLBACK_PATH, MISSING_ROLE_QUERY } from "@/src/lib/auth/constants";
 
@@ -21,12 +21,21 @@ const ClerkSignIn = dynamic(
   },
 );
 
-export default function SignInView() {
+type SignInViewProps = {
+  teacherInviteEmail?: string;
+  teacherInviteSchoolName?: string;
+};
+
+export default function SignInView({
+  teacherInviteEmail,
+  teacherInviteSchoolName,
+}: SignInViewProps) {
   const searchParams = useSearchParams();
   const missingRole = searchParams.get("error") === MISSING_ROLE_QUERY;
   const invalidInvite = searchParams.get("error") === "invalid_invite";
   const inviteToken = searchParams.get("invite");
   const teacherInviteToken = searchParams.get("teacherInvite");
+  const isTeacherInviteSignIn = Boolean(teacherInviteToken);
   const callbackUrl = inviteToken
     ? `${AUTH_CALLBACK_PATH}?invite=${encodeURIComponent(inviteToken)}`
     : teacherInviteToken
@@ -41,9 +50,35 @@ export default function SignInView() {
             Edujay
           </h1>
           <p className="mt-2 text-sm font-medium text-slate-500">
-            Secure school access
+            {isTeacherInviteSignIn
+              ? "Secure teacher invite access"
+              : "Secure school access"}
           </p>
         </div>
+
+        {isTeacherInviteSignIn && (
+          <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-950">
+            <div className="flex items-start gap-3">
+              <MailCheck size={18} className="mt-0.5 shrink-0 text-blue-700" />
+              <div>
+                <p className="font-black">Teacher invite sign-in</p>
+                <p className="mt-1 font-medium leading-6 text-blue-900/80">
+                  Use the teacher email invited by{" "}
+                  <span className="font-bold">
+                    {teacherInviteSchoolName ?? "the school"}
+                  </span>
+                  . Do not use seeded admin, parent, student, or bursar test
+                  credentials here.
+                </p>
+                {teacherInviteEmail && (
+                  <p className="mt-2 rounded-md bg-white/80 px-3 py-2 text-xs font-black text-blue-900">
+                    Invited email: {teacherInviteEmail}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {missingRole && (
           <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
@@ -73,6 +108,13 @@ export default function SignInView() {
           forceRedirectUrl={callbackUrl}
           fallbackRedirectUrl={callbackUrl}
           signUpFallbackRedirectUrl={callbackUrl}
+          initialValues={
+            teacherInviteEmail
+              ? {
+                  emailAddress: teacherInviteEmail,
+                }
+              : undefined
+          }
           routing="path"
           path="/sign-in"
           appearance={{
