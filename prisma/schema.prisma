@@ -368,6 +368,22 @@ enum ParentSummaryCadence {
   OFF
 }
 
+enum ParentStudentRelationshipStatus {
+  ACTIVE
+  REMOVED
+  TRANSFERRED
+  REVOKED
+  GRADUATED
+}
+
+enum ParentStudentRelationshipRole {
+  PRIMARY_GUARDIAN
+  GUARDIAN
+  EMERGENCY_CONTACT
+  FINANCE_CONTACT
+  PICKUP_AUTHORIZED
+}
+
 enum TeacherObligationType {
   ATTENDANCE
   CA_SCORE_PUBLISHING
@@ -517,6 +533,7 @@ model School {
   parentDeliveryLogs             ParentNotificationDeliveryLog[]
   parentTeacherContactRequests   ParentTeacherContactRequest[]
   parentTeacherContactMessages   ParentTeacherContactMessage[]
+  parentStudentRelationships     ParentStudentRelationship[]
 }
 
 model Admin {
@@ -561,6 +578,7 @@ model Student {
   homeworkSubmissions    HomeworkSubmission[]
   parentNotifications    ParentNotification[]
   parentActivityEvents   ParentActivityEvent[]
+  parentRelationships    ParentStudentRelationship[]
   financeQueries         FinanceQuery[]
   teacherContactRequests ParentTeacherContactRequest[]
   teacherContactMessages ParentTeacherContactMessage[]
@@ -635,11 +653,43 @@ model Parent {
   financeQueries         FinanceQuery[]
   teacherContactRequests ParentTeacherContactRequest[]
   teacherContactMessages ParentTeacherContactMessage[]
+  studentRelationships   ParentStudentRelationship[]
 
   @@index([schoolId])
   @@index([schoolId, createdAt])
 }
 
+
+model ParentStudentRelationship {
+  id           String                          @id @default(cuid())
+  status       ParentStudentRelationshipStatus @default(ACTIVE)
+  role         ParentStudentRelationshipRole   @default(PRIMARY_GUARDIAN)
+  canViewFees  Boolean                         @default(true)
+  canViewReports Boolean                        @default(true)
+  canMessageSchool Boolean                      @default(true)
+  note         String?
+  startedAt    DateTime                        @default(now())
+  endedAt      DateTime?
+  createdAt    DateTime                        @default(now())
+  updatedAt    DateTime                        @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  parentId String
+  parent   Parent @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  createdById String?
+  updatedById String?
+
+  @@unique([schoolId, parentId, studentId])
+  @@index([schoolId, parentId, status])
+  @@index([schoolId, studentId, status])
+  @@index([schoolId, status, updatedAt])
+}
 model SchoolNotificationSetting {
   id                     String               @id @default(cuid())
   timezone               String               @default("Africa/Accra")

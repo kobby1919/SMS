@@ -9,6 +9,7 @@ import {
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { schoolCommunicationPolicyDefaults } from "@/src/lib/services/school-communication-policy";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
+import { listActiveParentChildren } from "@/src/lib/services/parent-student-relationships";
 
 export type ParentActivityFeedItem = ParentNotificationFeedItem;
 
@@ -272,10 +273,11 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       },
     },
   });
-  const children = parent?.students ?? [];
+  const children = parent ? await listActiveParentChildren(parent.id, schoolId) : [];
+  const parentWithActiveChildren = parent ? { ...parent, students: children } : parent;
   if (children.length === 0) {
     return {
-      parent,
+      parent: parentWithActiveChildren,
       childrenData: [],
       activityFeed: [],
       riskAlerts: [],

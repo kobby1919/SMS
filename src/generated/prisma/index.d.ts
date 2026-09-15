@@ -39,6 +39,11 @@ export type Teacher = $Result.DefaultSelection<Prisma.$TeacherPayload>
  */
 export type Parent = $Result.DefaultSelection<Prisma.$ParentPayload>
 /**
+ * Model ParentStudentRelationship
+ * 
+ */
+export type ParentStudentRelationship = $Result.DefaultSelection<Prisma.$ParentStudentRelationshipPayload>
+/**
  * Model SchoolNotificationSetting
  * 
  */
@@ -835,6 +840,28 @@ export const ParentSummaryCadence: {
 export type ParentSummaryCadence = (typeof ParentSummaryCadence)[keyof typeof ParentSummaryCadence]
 
 
+export const ParentStudentRelationshipStatus: {
+  ACTIVE: 'ACTIVE',
+  REMOVED: 'REMOVED',
+  TRANSFERRED: 'TRANSFERRED',
+  REVOKED: 'REVOKED',
+  GRADUATED: 'GRADUATED'
+};
+
+export type ParentStudentRelationshipStatus = (typeof ParentStudentRelationshipStatus)[keyof typeof ParentStudentRelationshipStatus]
+
+
+export const ParentStudentRelationshipRole: {
+  PRIMARY_GUARDIAN: 'PRIMARY_GUARDIAN',
+  GUARDIAN: 'GUARDIAN',
+  EMERGENCY_CONTACT: 'EMERGENCY_CONTACT',
+  FINANCE_CONTACT: 'FINANCE_CONTACT',
+  PICKUP_AUTHORIZED: 'PICKUP_AUTHORIZED'
+};
+
+export type ParentStudentRelationshipRole = (typeof ParentStudentRelationshipRole)[keyof typeof ParentStudentRelationshipRole]
+
+
 export const TeacherObligationType: {
   ATTENDANCE: 'ATTENDANCE',
   CA_SCORE_PUBLISHING: 'CA_SCORE_PUBLISHING',
@@ -1110,6 +1137,14 @@ export type ParentSummaryCadence = $Enums.ParentSummaryCadence
 
 export const ParentSummaryCadence: typeof $Enums.ParentSummaryCadence
 
+export type ParentStudentRelationshipStatus = $Enums.ParentStudentRelationshipStatus
+
+export const ParentStudentRelationshipStatus: typeof $Enums.ParentStudentRelationshipStatus
+
+export type ParentStudentRelationshipRole = $Enums.ParentStudentRelationshipRole
+
+export const ParentStudentRelationshipRole: typeof $Enums.ParentStudentRelationshipRole
+
 export type TeacherObligationType = $Enums.TeacherObligationType
 
 export const TeacherObligationType: typeof $Enums.TeacherObligationType
@@ -1308,6 +1343,16 @@ export class PrismaClient<
     * ```
     */
   get parent(): Prisma.ParentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.parentStudentRelationship`: Exposes CRUD operations for the **ParentStudentRelationship** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ParentStudentRelationships
+    * const parentStudentRelationships = await prisma.parentStudentRelationship.findMany()
+    * ```
+    */
+  get parentStudentRelationship(): Prisma.ParentStudentRelationshipDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.schoolNotificationSetting`: Exposes CRUD operations for the **SchoolNotificationSetting** model.
@@ -2337,6 +2382,7 @@ export namespace Prisma {
     Student: 'Student',
     Teacher: 'Teacher',
     Parent: 'Parent',
+    ParentStudentRelationship: 'ParentStudentRelationship',
     SchoolNotificationSetting: 'SchoolNotificationSetting',
     SchoolCommunicationPolicy: 'SchoolCommunicationPolicy',
     SchoolCommunicationRoute: 'SchoolCommunicationRoute',
@@ -2411,7 +2457,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "schoolNotificationSetting" | "schoolCommunicationPolicy" | "schoolCommunicationRoute" | "schoolPeriodTemplate" | "timetablePublication" | "publishedTimetableLesson" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentTeacherContactRequest" | "parentTeacherContactMessage" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "teacherInvite" | "teacherInviteAuditLog" | "onboardingAuditLog"
+      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "parentStudentRelationship" | "schoolNotificationSetting" | "schoolCommunicationPolicy" | "schoolCommunicationRoute" | "schoolPeriodTemplate" | "timetablePublication" | "publishedTimetableLesson" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentTeacherContactRequest" | "parentTeacherContactMessage" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "teacherInvite" | "teacherInviteAuditLog" | "onboardingAuditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2782,6 +2828,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ParentCountArgs<ExtArgs>
             result: $Utils.Optional<ParentCountAggregateOutputType> | number
+          }
+        }
+      }
+      ParentStudentRelationship: {
+        payload: Prisma.$ParentStudentRelationshipPayload<ExtArgs>
+        fields: Prisma.ParentStudentRelationshipFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ParentStudentRelationshipFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentStudentRelationshipPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ParentStudentRelationshipFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentStudentRelationshipPayload>
+          }
+          findFirst: {
+            args: Prisma.ParentStudentRelationshipFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentStudentRelationshipPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ParentStudentRelationshipFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentStudentRelationshipPayload>
+          }
+          findMany: {
+            args: Prisma.ParentStudentRelationshipFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentStudentRelationshipPayload>[]
+          }
+          create: {
+            args: Prisma.ParentStudentRelationshipCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentStudentRelationshipPayload>
+          }
+          createMany: {
+            args: Prisma.ParentStudentRelationshipCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ParentStudentRelationshipCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentStudentRelationshipPayload>[]
+          }
+          delete: {
+            args: Prisma.ParentStudentRelationshipDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentStudentRelationshipPayload>
+          }
+          update: {
+            args: Prisma.ParentStudentRelationshipUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentStudentRelationshipPayload>
+          }
+          deleteMany: {
+            args: Prisma.ParentStudentRelationshipDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ParentStudentRelationshipUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ParentStudentRelationshipUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentStudentRelationshipPayload>[]
+          }
+          upsert: {
+            args: Prisma.ParentStudentRelationshipUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentStudentRelationshipPayload>
+          }
+          aggregate: {
+            args: Prisma.ParentStudentRelationshipAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateParentStudentRelationship>
+          }
+          groupBy: {
+            args: Prisma.ParentStudentRelationshipGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ParentStudentRelationshipGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ParentStudentRelationshipCountArgs<ExtArgs>
+            result: $Utils.Optional<ParentStudentRelationshipCountAggregateOutputType> | number
           }
         }
       }
@@ -7264,6 +7384,7 @@ export namespace Prisma {
     student?: StudentOmit
     teacher?: TeacherOmit
     parent?: ParentOmit
+    parentStudentRelationship?: ParentStudentRelationshipOmit
     schoolNotificationSetting?: SchoolNotificationSettingOmit
     schoolCommunicationPolicy?: SchoolCommunicationPolicyOmit
     schoolCommunicationRoute?: SchoolCommunicationRouteOmit
@@ -7459,6 +7580,7 @@ export namespace Prisma {
     parentDeliveryLogs: number
     parentTeacherContactRequests: number
     parentTeacherContactMessages: number
+    parentStudentRelationships: number
   }
 
   export type SchoolCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7518,6 +7640,7 @@ export namespace Prisma {
     parentDeliveryLogs?: boolean | SchoolCountOutputTypeCountParentDeliveryLogsArgs
     parentTeacherContactRequests?: boolean | SchoolCountOutputTypeCountParentTeacherContactRequestsArgs
     parentTeacherContactMessages?: boolean | SchoolCountOutputTypeCountParentTeacherContactMessagesArgs
+    parentStudentRelationships?: boolean | SchoolCountOutputTypeCountParentStudentRelationshipsArgs
   }
 
   // Custom InputTypes
@@ -7923,6 +8046,13 @@ export namespace Prisma {
     where?: ParentTeacherContactMessageWhereInput
   }
 
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountParentStudentRelationshipsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ParentStudentRelationshipWhereInput
+  }
+
 
   /**
    * Count Type StudentCountOutputType
@@ -7938,6 +8068,7 @@ export namespace Prisma {
     homeworkSubmissions: number
     parentNotifications: number
     parentActivityEvents: number
+    parentRelationships: number
     financeQueries: number
     teacherContactRequests: number
     teacherContactMessages: number
@@ -7953,6 +8084,7 @@ export namespace Prisma {
     homeworkSubmissions?: boolean | StudentCountOutputTypeCountHomeworkSubmissionsArgs
     parentNotifications?: boolean | StudentCountOutputTypeCountParentNotificationsArgs
     parentActivityEvents?: boolean | StudentCountOutputTypeCountParentActivityEventsArgs
+    parentRelationships?: boolean | StudentCountOutputTypeCountParentRelationshipsArgs
     financeQueries?: boolean | StudentCountOutputTypeCountFinanceQueriesArgs
     teacherContactRequests?: boolean | StudentCountOutputTypeCountTeacherContactRequestsArgs
     teacherContactMessages?: boolean | StudentCountOutputTypeCountTeacherContactMessagesArgs
@@ -8030,6 +8162,13 @@ export namespace Prisma {
    */
   export type StudentCountOutputTypeCountParentActivityEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ParentActivityEventWhereInput
+  }
+
+  /**
+   * StudentCountOutputType without action
+   */
+  export type StudentCountOutputTypeCountParentRelationshipsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ParentStudentRelationshipWhereInput
   }
 
   /**
@@ -8259,6 +8398,7 @@ export namespace Prisma {
     financeQueries: number
     teacherContactRequests: number
     teacherContactMessages: number
+    studentRelationships: number
   }
 
   export type ParentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8269,6 +8409,7 @@ export namespace Prisma {
     financeQueries?: boolean | ParentCountOutputTypeCountFinanceQueriesArgs
     teacherContactRequests?: boolean | ParentCountOutputTypeCountTeacherContactRequestsArgs
     teacherContactMessages?: boolean | ParentCountOutputTypeCountTeacherContactMessagesArgs
+    studentRelationships?: boolean | ParentCountOutputTypeCountStudentRelationshipsArgs
   }
 
   // Custom InputTypes
@@ -8329,6 +8470,13 @@ export namespace Prisma {
    */
   export type ParentCountOutputTypeCountTeacherContactMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ParentTeacherContactMessageWhereInput
+  }
+
+  /**
+   * ParentCountOutputType without action
+   */
+  export type ParentCountOutputTypeCountStudentRelationshipsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ParentStudentRelationshipWhereInput
   }
 
 
@@ -9549,6 +9697,7 @@ export namespace Prisma {
     parentDeliveryLogs?: boolean | School$parentDeliveryLogsArgs<ExtArgs>
     parentTeacherContactRequests?: boolean | School$parentTeacherContactRequestsArgs<ExtArgs>
     parentTeacherContactMessages?: boolean | School$parentTeacherContactMessagesArgs<ExtArgs>
+    parentStudentRelationships?: boolean | School$parentStudentRelationshipsArgs<ExtArgs>
     _count?: boolean | SchoolCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["school"]>
 
@@ -9673,6 +9822,7 @@ export namespace Prisma {
     parentDeliveryLogs?: boolean | School$parentDeliveryLogsArgs<ExtArgs>
     parentTeacherContactRequests?: boolean | School$parentTeacherContactRequestsArgs<ExtArgs>
     parentTeacherContactMessages?: boolean | School$parentTeacherContactMessagesArgs<ExtArgs>
+    parentStudentRelationships?: boolean | School$parentStudentRelationshipsArgs<ExtArgs>
     _count?: boolean | SchoolCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type SchoolIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -9740,6 +9890,7 @@ export namespace Prisma {
       parentDeliveryLogs: Prisma.$ParentNotificationDeliveryLogPayload<ExtArgs>[]
       parentTeacherContactRequests: Prisma.$ParentTeacherContactRequestPayload<ExtArgs>[]
       parentTeacherContactMessages: Prisma.$ParentTeacherContactMessagePayload<ExtArgs>[]
+      parentStudentRelationships: Prisma.$ParentStudentRelationshipPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10212,6 +10363,7 @@ export namespace Prisma {
     parentDeliveryLogs<T extends School$parentDeliveryLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$parentDeliveryLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentNotificationDeliveryLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentTeacherContactRequests<T extends School$parentTeacherContactRequestsArgs<ExtArgs> = {}>(args?: Subset<T, School$parentTeacherContactRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentTeacherContactRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentTeacherContactMessages<T extends School$parentTeacherContactMessagesArgs<ExtArgs> = {}>(args?: Subset<T, School$parentTeacherContactMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentTeacherContactMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    parentStudentRelationships<T extends School$parentStudentRelationshipsArgs<ExtArgs> = {}>(args?: Subset<T, School$parentStudentRelationshipsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentStudentRelationshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12052,6 +12204,30 @@ export namespace Prisma {
   }
 
   /**
+   * School.parentStudentRelationships
+   */
+  export type School$parentStudentRelationshipsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentStudentRelationship
+     */
+    select?: ParentStudentRelationshipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentStudentRelationship
+     */
+    omit?: ParentStudentRelationshipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentStudentRelationshipInclude<ExtArgs> | null
+    where?: ParentStudentRelationshipWhereInput
+    orderBy?: ParentStudentRelationshipOrderByWithRelationInput | ParentStudentRelationshipOrderByWithRelationInput[]
+    cursor?: ParentStudentRelationshipWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ParentStudentRelationshipScalarFieldEnum | ParentStudentRelationshipScalarFieldEnum[]
+  }
+
+  /**
    * School without action
    */
   export type SchoolDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -13402,6 +13578,7 @@ export namespace Prisma {
     homeworkSubmissions?: boolean | Student$homeworkSubmissionsArgs<ExtArgs>
     parentNotifications?: boolean | Student$parentNotificationsArgs<ExtArgs>
     parentActivityEvents?: boolean | Student$parentActivityEventsArgs<ExtArgs>
+    parentRelationships?: boolean | Student$parentRelationshipsArgs<ExtArgs>
     financeQueries?: boolean | Student$financeQueriesArgs<ExtArgs>
     teacherContactRequests?: boolean | Student$teacherContactRequestsArgs<ExtArgs>
     teacherContactMessages?: boolean | Student$teacherContactMessagesArgs<ExtArgs>
@@ -13485,6 +13662,7 @@ export namespace Prisma {
     homeworkSubmissions?: boolean | Student$homeworkSubmissionsArgs<ExtArgs>
     parentNotifications?: boolean | Student$parentNotificationsArgs<ExtArgs>
     parentActivityEvents?: boolean | Student$parentActivityEventsArgs<ExtArgs>
+    parentRelationships?: boolean | Student$parentRelationshipsArgs<ExtArgs>
     financeQueries?: boolean | Student$financeQueriesArgs<ExtArgs>
     teacherContactRequests?: boolean | Student$teacherContactRequestsArgs<ExtArgs>
     teacherContactMessages?: boolean | Student$teacherContactMessagesArgs<ExtArgs>
@@ -13519,6 +13697,7 @@ export namespace Prisma {
       homeworkSubmissions: Prisma.$HomeworkSubmissionPayload<ExtArgs>[]
       parentNotifications: Prisma.$ParentNotificationPayload<ExtArgs>[]
       parentActivityEvents: Prisma.$ParentActivityEventPayload<ExtArgs>[]
+      parentRelationships: Prisma.$ParentStudentRelationshipPayload<ExtArgs>[]
       financeQueries: Prisma.$FinanceQueryPayload<ExtArgs>[]
       teacherContactRequests: Prisma.$ParentTeacherContactRequestPayload<ExtArgs>[]
       teacherContactMessages: Prisma.$ParentTeacherContactMessagePayload<ExtArgs>[]
@@ -13946,6 +14125,7 @@ export namespace Prisma {
     homeworkSubmissions<T extends Student$homeworkSubmissionsArgs<ExtArgs> = {}>(args?: Subset<T, Student$homeworkSubmissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HomeworkSubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentNotifications<T extends Student$parentNotificationsArgs<ExtArgs> = {}>(args?: Subset<T, Student$parentNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentActivityEvents<T extends Student$parentActivityEventsArgs<ExtArgs> = {}>(args?: Subset<T, Student$parentActivityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentActivityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    parentRelationships<T extends Student$parentRelationshipsArgs<ExtArgs> = {}>(args?: Subset<T, Student$parentRelationshipsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentStudentRelationshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     financeQueries<T extends Student$financeQueriesArgs<ExtArgs> = {}>(args?: Subset<T, Student$financeQueriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teacherContactRequests<T extends Student$teacherContactRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Student$teacherContactRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentTeacherContactRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teacherContactMessages<T extends Student$teacherContactMessagesArgs<ExtArgs> = {}>(args?: Subset<T, Student$teacherContactMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentTeacherContactMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -14607,6 +14787,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ParentActivityEventScalarFieldEnum | ParentActivityEventScalarFieldEnum[]
+  }
+
+  /**
+   * Student.parentRelationships
+   */
+  export type Student$parentRelationshipsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentStudentRelationship
+     */
+    select?: ParentStudentRelationshipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentStudentRelationship
+     */
+    omit?: ParentStudentRelationshipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentStudentRelationshipInclude<ExtArgs> | null
+    where?: ParentStudentRelationshipWhereInput
+    orderBy?: ParentStudentRelationshipOrderByWithRelationInput | ParentStudentRelationshipOrderByWithRelationInput[]
+    cursor?: ParentStudentRelationshipWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ParentStudentRelationshipScalarFieldEnum | ParentStudentRelationshipScalarFieldEnum[]
   }
 
   /**
@@ -16640,6 +16844,7 @@ export namespace Prisma {
     financeQueries?: boolean | Parent$financeQueriesArgs<ExtArgs>
     teacherContactRequests?: boolean | Parent$teacherContactRequestsArgs<ExtArgs>
     teacherContactMessages?: boolean | Parent$teacherContactMessagesArgs<ExtArgs>
+    studentRelationships?: boolean | Parent$studentRelationshipsArgs<ExtArgs>
     _count?: boolean | ParentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["parent"]>
 
@@ -16692,6 +16897,7 @@ export namespace Prisma {
     financeQueries?: boolean | Parent$financeQueriesArgs<ExtArgs>
     teacherContactRequests?: boolean | Parent$teacherContactRequestsArgs<ExtArgs>
     teacherContactMessages?: boolean | Parent$teacherContactMessagesArgs<ExtArgs>
+    studentRelationships?: boolean | Parent$studentRelationshipsArgs<ExtArgs>
     _count?: boolean | ParentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ParentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -16713,6 +16919,7 @@ export namespace Prisma {
       financeQueries: Prisma.$FinanceQueryPayload<ExtArgs>[]
       teacherContactRequests: Prisma.$ParentTeacherContactRequestPayload<ExtArgs>[]
       teacherContactMessages: Prisma.$ParentTeacherContactMessagePayload<ExtArgs>[]
+      studentRelationships: Prisma.$ParentStudentRelationshipPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -17127,6 +17334,7 @@ export namespace Prisma {
     financeQueries<T extends Parent$financeQueriesArgs<ExtArgs> = {}>(args?: Subset<T, Parent$financeQueriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teacherContactRequests<T extends Parent$teacherContactRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Parent$teacherContactRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentTeacherContactRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teacherContactMessages<T extends Parent$teacherContactMessagesArgs<ExtArgs> = {}>(args?: Subset<T, Parent$teacherContactMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentTeacherContactMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    studentRelationships<T extends Parent$studentRelationshipsArgs<ExtArgs> = {}>(args?: Subset<T, Parent$studentRelationshipsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentStudentRelationshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -17753,6 +17961,30 @@ export namespace Prisma {
   }
 
   /**
+   * Parent.studentRelationships
+   */
+  export type Parent$studentRelationshipsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentStudentRelationship
+     */
+    select?: ParentStudentRelationshipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentStudentRelationship
+     */
+    omit?: ParentStudentRelationshipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentStudentRelationshipInclude<ExtArgs> | null
+    where?: ParentStudentRelationshipWhereInput
+    orderBy?: ParentStudentRelationshipOrderByWithRelationInput | ParentStudentRelationshipOrderByWithRelationInput[]
+    cursor?: ParentStudentRelationshipWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ParentStudentRelationshipScalarFieldEnum | ParentStudentRelationshipScalarFieldEnum[]
+  }
+
+  /**
    * Parent without action
    */
   export type ParentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -17768,6 +18000,1228 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ParentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ParentStudentRelationship
+   */
+
+  export type AggregateParentStudentRelationship = {
+    _count: ParentStudentRelationshipCountAggregateOutputType | null
+    _min: ParentStudentRelationshipMinAggregateOutputType | null
+    _max: ParentStudentRelationshipMaxAggregateOutputType | null
+  }
+
+  export type ParentStudentRelationshipMinAggregateOutputType = {
+    id: string | null
+    status: $Enums.ParentStudentRelationshipStatus | null
+    role: $Enums.ParentStudentRelationshipRole | null
+    canViewFees: boolean | null
+    canViewReports: boolean | null
+    canMessageSchool: boolean | null
+    note: string | null
+    startedAt: Date | null
+    endedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+    parentId: string | null
+    studentId: string | null
+    createdById: string | null
+    updatedById: string | null
+  }
+
+  export type ParentStudentRelationshipMaxAggregateOutputType = {
+    id: string | null
+    status: $Enums.ParentStudentRelationshipStatus | null
+    role: $Enums.ParentStudentRelationshipRole | null
+    canViewFees: boolean | null
+    canViewReports: boolean | null
+    canMessageSchool: boolean | null
+    note: string | null
+    startedAt: Date | null
+    endedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+    parentId: string | null
+    studentId: string | null
+    createdById: string | null
+    updatedById: string | null
+  }
+
+  export type ParentStudentRelationshipCountAggregateOutputType = {
+    id: number
+    status: number
+    role: number
+    canViewFees: number
+    canViewReports: number
+    canMessageSchool: number
+    note: number
+    startedAt: number
+    endedAt: number
+    createdAt: number
+    updatedAt: number
+    schoolId: number
+    parentId: number
+    studentId: number
+    createdById: number
+    updatedById: number
+    _all: number
+  }
+
+
+  export type ParentStudentRelationshipMinAggregateInputType = {
+    id?: true
+    status?: true
+    role?: true
+    canViewFees?: true
+    canViewReports?: true
+    canMessageSchool?: true
+    note?: true
+    startedAt?: true
+    endedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    parentId?: true
+    studentId?: true
+    createdById?: true
+    updatedById?: true
+  }
+
+  export type ParentStudentRelationshipMaxAggregateInputType = {
+    id?: true
+    status?: true
+    role?: true
+    canViewFees?: true
+    canViewReports?: true
+    canMessageSchool?: true
+    note?: true
+    startedAt?: true
+    endedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    parentId?: true
+    studentId?: true
+    createdById?: true
+    updatedById?: true
+  }
+
+  export type ParentStudentRelationshipCountAggregateInputType = {
+    id?: true
+    status?: true
+    role?: true
+    canViewFees?: true
+    canViewReports?: true
+    canMessageSchool?: true
+    note?: true
+    startedAt?: true
+    endedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    parentId?: true
+    studentId?: true
+    createdById?: true
+    updatedById?: true
+    _all?: true
+  }
+
+  export type ParentStudentRelationshipAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ParentStudentRelationship to aggregate.
+     */
+    where?: ParentStudentRelationshipWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParentStudentRelationships to fetch.
+     */
+    orderBy?: ParentStudentRelationshipOrderByWithRelationInput | ParentStudentRelationshipOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ParentStudentRelationshipWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParentStudentRelationships from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParentStudentRelationships.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ParentStudentRelationships
+    **/
+    _count?: true | ParentStudentRelationshipCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ParentStudentRelationshipMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ParentStudentRelationshipMaxAggregateInputType
+  }
+
+  export type GetParentStudentRelationshipAggregateType<T extends ParentStudentRelationshipAggregateArgs> = {
+        [P in keyof T & keyof AggregateParentStudentRelationship]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateParentStudentRelationship[P]>
+      : GetScalarType<T[P], AggregateParentStudentRelationship[P]>
+  }
+
+
+
+
+  export type ParentStudentRelationshipGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ParentStudentRelationshipWhereInput
+    orderBy?: ParentStudentRelationshipOrderByWithAggregationInput | ParentStudentRelationshipOrderByWithAggregationInput[]
+    by: ParentStudentRelationshipScalarFieldEnum[] | ParentStudentRelationshipScalarFieldEnum
+    having?: ParentStudentRelationshipScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ParentStudentRelationshipCountAggregateInputType | true
+    _min?: ParentStudentRelationshipMinAggregateInputType
+    _max?: ParentStudentRelationshipMaxAggregateInputType
+  }
+
+  export type ParentStudentRelationshipGroupByOutputType = {
+    id: string
+    status: $Enums.ParentStudentRelationshipStatus
+    role: $Enums.ParentStudentRelationshipRole
+    canViewFees: boolean
+    canViewReports: boolean
+    canMessageSchool: boolean
+    note: string | null
+    startedAt: Date
+    endedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    schoolId: string
+    parentId: string
+    studentId: string
+    createdById: string | null
+    updatedById: string | null
+    _count: ParentStudentRelationshipCountAggregateOutputType | null
+    _min: ParentStudentRelationshipMinAggregateOutputType | null
+    _max: ParentStudentRelationshipMaxAggregateOutputType | null
+  }
+
+  type GetParentStudentRelationshipGroupByPayload<T extends ParentStudentRelationshipGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ParentStudentRelationshipGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ParentStudentRelationshipGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ParentStudentRelationshipGroupByOutputType[P]>
+            : GetScalarType<T[P], ParentStudentRelationshipGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ParentStudentRelationshipSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    status?: boolean
+    role?: boolean
+    canViewFees?: boolean
+    canViewReports?: boolean
+    canMessageSchool?: boolean
+    note?: boolean
+    startedAt?: boolean
+    endedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    parentId?: boolean
+    studentId?: boolean
+    createdById?: boolean
+    updatedById?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["parentStudentRelationship"]>
+
+  export type ParentStudentRelationshipSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    status?: boolean
+    role?: boolean
+    canViewFees?: boolean
+    canViewReports?: boolean
+    canMessageSchool?: boolean
+    note?: boolean
+    startedAt?: boolean
+    endedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    parentId?: boolean
+    studentId?: boolean
+    createdById?: boolean
+    updatedById?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["parentStudentRelationship"]>
+
+  export type ParentStudentRelationshipSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    status?: boolean
+    role?: boolean
+    canViewFees?: boolean
+    canViewReports?: boolean
+    canMessageSchool?: boolean
+    note?: boolean
+    startedAt?: boolean
+    endedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    parentId?: boolean
+    studentId?: boolean
+    createdById?: boolean
+    updatedById?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["parentStudentRelationship"]>
+
+  export type ParentStudentRelationshipSelectScalar = {
+    id?: boolean
+    status?: boolean
+    role?: boolean
+    canViewFees?: boolean
+    canViewReports?: boolean
+    canMessageSchool?: boolean
+    note?: boolean
+    startedAt?: boolean
+    endedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    parentId?: boolean
+    studentId?: boolean
+    createdById?: boolean
+    updatedById?: boolean
+  }
+
+  export type ParentStudentRelationshipOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "role" | "canViewFees" | "canViewReports" | "canMessageSchool" | "note" | "startedAt" | "endedAt" | "createdAt" | "updatedAt" | "schoolId" | "parentId" | "studentId" | "createdById" | "updatedById", ExtArgs["result"]["parentStudentRelationship"]>
+  export type ParentStudentRelationshipInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+  }
+  export type ParentStudentRelationshipIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+  }
+  export type ParentStudentRelationshipIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    parent?: boolean | ParentDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+  }
+
+  export type $ParentStudentRelationshipPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ParentStudentRelationship"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      parent: Prisma.$ParentPayload<ExtArgs>
+      student: Prisma.$StudentPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      status: $Enums.ParentStudentRelationshipStatus
+      role: $Enums.ParentStudentRelationshipRole
+      canViewFees: boolean
+      canViewReports: boolean
+      canMessageSchool: boolean
+      note: string | null
+      startedAt: Date
+      endedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+      schoolId: string
+      parentId: string
+      studentId: string
+      createdById: string | null
+      updatedById: string | null
+    }, ExtArgs["result"]["parentStudentRelationship"]>
+    composites: {}
+  }
+
+  type ParentStudentRelationshipGetPayload<S extends boolean | null | undefined | ParentStudentRelationshipDefaultArgs> = $Result.GetResult<Prisma.$ParentStudentRelationshipPayload, S>
+
+  type ParentStudentRelationshipCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ParentStudentRelationshipFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ParentStudentRelationshipCountAggregateInputType | true
+    }
+
+  export interface ParentStudentRelationshipDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ParentStudentRelationship'], meta: { name: 'ParentStudentRelationship' } }
+    /**
+     * Find zero or one ParentStudentRelationship that matches the filter.
+     * @param {ParentStudentRelationshipFindUniqueArgs} args - Arguments to find a ParentStudentRelationship
+     * @example
+     * // Get one ParentStudentRelationship
+     * const parentStudentRelationship = await prisma.parentStudentRelationship.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ParentStudentRelationshipFindUniqueArgs>(args: SelectSubset<T, ParentStudentRelationshipFindUniqueArgs<ExtArgs>>): Prisma__ParentStudentRelationshipClient<$Result.GetResult<Prisma.$ParentStudentRelationshipPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ParentStudentRelationship that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ParentStudentRelationshipFindUniqueOrThrowArgs} args - Arguments to find a ParentStudentRelationship
+     * @example
+     * // Get one ParentStudentRelationship
+     * const parentStudentRelationship = await prisma.parentStudentRelationship.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ParentStudentRelationshipFindUniqueOrThrowArgs>(args: SelectSubset<T, ParentStudentRelationshipFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ParentStudentRelationshipClient<$Result.GetResult<Prisma.$ParentStudentRelationshipPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ParentStudentRelationship that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentStudentRelationshipFindFirstArgs} args - Arguments to find a ParentStudentRelationship
+     * @example
+     * // Get one ParentStudentRelationship
+     * const parentStudentRelationship = await prisma.parentStudentRelationship.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ParentStudentRelationshipFindFirstArgs>(args?: SelectSubset<T, ParentStudentRelationshipFindFirstArgs<ExtArgs>>): Prisma__ParentStudentRelationshipClient<$Result.GetResult<Prisma.$ParentStudentRelationshipPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ParentStudentRelationship that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentStudentRelationshipFindFirstOrThrowArgs} args - Arguments to find a ParentStudentRelationship
+     * @example
+     * // Get one ParentStudentRelationship
+     * const parentStudentRelationship = await prisma.parentStudentRelationship.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ParentStudentRelationshipFindFirstOrThrowArgs>(args?: SelectSubset<T, ParentStudentRelationshipFindFirstOrThrowArgs<ExtArgs>>): Prisma__ParentStudentRelationshipClient<$Result.GetResult<Prisma.$ParentStudentRelationshipPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ParentStudentRelationships that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentStudentRelationshipFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ParentStudentRelationships
+     * const parentStudentRelationships = await prisma.parentStudentRelationship.findMany()
+     * 
+     * // Get first 10 ParentStudentRelationships
+     * const parentStudentRelationships = await prisma.parentStudentRelationship.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const parentStudentRelationshipWithIdOnly = await prisma.parentStudentRelationship.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ParentStudentRelationshipFindManyArgs>(args?: SelectSubset<T, ParentStudentRelationshipFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentStudentRelationshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ParentStudentRelationship.
+     * @param {ParentStudentRelationshipCreateArgs} args - Arguments to create a ParentStudentRelationship.
+     * @example
+     * // Create one ParentStudentRelationship
+     * const ParentStudentRelationship = await prisma.parentStudentRelationship.create({
+     *   data: {
+     *     // ... data to create a ParentStudentRelationship
+     *   }
+     * })
+     * 
+     */
+    create<T extends ParentStudentRelationshipCreateArgs>(args: SelectSubset<T, ParentStudentRelationshipCreateArgs<ExtArgs>>): Prisma__ParentStudentRelationshipClient<$Result.GetResult<Prisma.$ParentStudentRelationshipPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ParentStudentRelationships.
+     * @param {ParentStudentRelationshipCreateManyArgs} args - Arguments to create many ParentStudentRelationships.
+     * @example
+     * // Create many ParentStudentRelationships
+     * const parentStudentRelationship = await prisma.parentStudentRelationship.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ParentStudentRelationshipCreateManyArgs>(args?: SelectSubset<T, ParentStudentRelationshipCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ParentStudentRelationships and returns the data saved in the database.
+     * @param {ParentStudentRelationshipCreateManyAndReturnArgs} args - Arguments to create many ParentStudentRelationships.
+     * @example
+     * // Create many ParentStudentRelationships
+     * const parentStudentRelationship = await prisma.parentStudentRelationship.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ParentStudentRelationships and only return the `id`
+     * const parentStudentRelationshipWithIdOnly = await prisma.parentStudentRelationship.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ParentStudentRelationshipCreateManyAndReturnArgs>(args?: SelectSubset<T, ParentStudentRelationshipCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentStudentRelationshipPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ParentStudentRelationship.
+     * @param {ParentStudentRelationshipDeleteArgs} args - Arguments to delete one ParentStudentRelationship.
+     * @example
+     * // Delete one ParentStudentRelationship
+     * const ParentStudentRelationship = await prisma.parentStudentRelationship.delete({
+     *   where: {
+     *     // ... filter to delete one ParentStudentRelationship
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ParentStudentRelationshipDeleteArgs>(args: SelectSubset<T, ParentStudentRelationshipDeleteArgs<ExtArgs>>): Prisma__ParentStudentRelationshipClient<$Result.GetResult<Prisma.$ParentStudentRelationshipPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ParentStudentRelationship.
+     * @param {ParentStudentRelationshipUpdateArgs} args - Arguments to update one ParentStudentRelationship.
+     * @example
+     * // Update one ParentStudentRelationship
+     * const parentStudentRelationship = await prisma.parentStudentRelationship.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ParentStudentRelationshipUpdateArgs>(args: SelectSubset<T, ParentStudentRelationshipUpdateArgs<ExtArgs>>): Prisma__ParentStudentRelationshipClient<$Result.GetResult<Prisma.$ParentStudentRelationshipPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ParentStudentRelationships.
+     * @param {ParentStudentRelationshipDeleteManyArgs} args - Arguments to filter ParentStudentRelationships to delete.
+     * @example
+     * // Delete a few ParentStudentRelationships
+     * const { count } = await prisma.parentStudentRelationship.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ParentStudentRelationshipDeleteManyArgs>(args?: SelectSubset<T, ParentStudentRelationshipDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ParentStudentRelationships.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentStudentRelationshipUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ParentStudentRelationships
+     * const parentStudentRelationship = await prisma.parentStudentRelationship.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ParentStudentRelationshipUpdateManyArgs>(args: SelectSubset<T, ParentStudentRelationshipUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ParentStudentRelationships and returns the data updated in the database.
+     * @param {ParentStudentRelationshipUpdateManyAndReturnArgs} args - Arguments to update many ParentStudentRelationships.
+     * @example
+     * // Update many ParentStudentRelationships
+     * const parentStudentRelationship = await prisma.parentStudentRelationship.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ParentStudentRelationships and only return the `id`
+     * const parentStudentRelationshipWithIdOnly = await prisma.parentStudentRelationship.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ParentStudentRelationshipUpdateManyAndReturnArgs>(args: SelectSubset<T, ParentStudentRelationshipUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentStudentRelationshipPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ParentStudentRelationship.
+     * @param {ParentStudentRelationshipUpsertArgs} args - Arguments to update or create a ParentStudentRelationship.
+     * @example
+     * // Update or create a ParentStudentRelationship
+     * const parentStudentRelationship = await prisma.parentStudentRelationship.upsert({
+     *   create: {
+     *     // ... data to create a ParentStudentRelationship
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ParentStudentRelationship we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ParentStudentRelationshipUpsertArgs>(args: SelectSubset<T, ParentStudentRelationshipUpsertArgs<ExtArgs>>): Prisma__ParentStudentRelationshipClient<$Result.GetResult<Prisma.$ParentStudentRelationshipPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ParentStudentRelationships.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentStudentRelationshipCountArgs} args - Arguments to filter ParentStudentRelationships to count.
+     * @example
+     * // Count the number of ParentStudentRelationships
+     * const count = await prisma.parentStudentRelationship.count({
+     *   where: {
+     *     // ... the filter for the ParentStudentRelationships we want to count
+     *   }
+     * })
+    **/
+    count<T extends ParentStudentRelationshipCountArgs>(
+      args?: Subset<T, ParentStudentRelationshipCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ParentStudentRelationshipCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ParentStudentRelationship.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentStudentRelationshipAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ParentStudentRelationshipAggregateArgs>(args: Subset<T, ParentStudentRelationshipAggregateArgs>): Prisma.PrismaPromise<GetParentStudentRelationshipAggregateType<T>>
+
+    /**
+     * Group by ParentStudentRelationship.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentStudentRelationshipGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ParentStudentRelationshipGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ParentStudentRelationshipGroupByArgs['orderBy'] }
+        : { orderBy?: ParentStudentRelationshipGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ParentStudentRelationshipGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetParentStudentRelationshipGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ParentStudentRelationship model
+   */
+  readonly fields: ParentStudentRelationshipFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ParentStudentRelationship.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ParentStudentRelationshipClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    parent<T extends ParentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ParentDefaultArgs<ExtArgs>>): Prisma__ParentClient<$Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    student<T extends StudentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StudentDefaultArgs<ExtArgs>>): Prisma__StudentClient<$Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ParentStudentRelationship model
+   */
+  interface ParentStudentRelationshipFieldRefs {
+    readonly id: FieldRef<"ParentStudentRelationship", 'String'>
+    readonly status: FieldRef<"ParentStudentRelationship", 'ParentStudentRelationshipStatus'>
+    readonly role: FieldRef<"ParentStudentRelationship", 'ParentStudentRelationshipRole'>
+    readonly canViewFees: FieldRef<"ParentStudentRelationship", 'Boolean'>
+    readonly canViewReports: FieldRef<"ParentStudentRelationship", 'Boolean'>
+    readonly canMessageSchool: FieldRef<"ParentStudentRelationship", 'Boolean'>
+    readonly note: FieldRef<"ParentStudentRelationship", 'String'>
+    readonly startedAt: FieldRef<"ParentStudentRelationship", 'DateTime'>
+    readonly endedAt: FieldRef<"ParentStudentRelationship", 'DateTime'>
+    readonly createdAt: FieldRef<"ParentStudentRelationship", 'DateTime'>
+    readonly updatedAt: FieldRef<"ParentStudentRelationship", 'DateTime'>
+    readonly schoolId: FieldRef<"ParentStudentRelationship", 'String'>
+    readonly parentId: FieldRef<"ParentStudentRelationship", 'String'>
+    readonly studentId: FieldRef<"ParentStudentRelationship", 'String'>
+    readonly createdById: FieldRef<"ParentStudentRelationship", 'String'>
+    readonly updatedById: FieldRef<"ParentStudentRelationship", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ParentStudentRelationship findUnique
+   */
+  export type ParentStudentRelationshipFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentStudentRelationship
+     */
+    select?: ParentStudentRelationshipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentStudentRelationship
+     */
+    omit?: ParentStudentRelationshipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentStudentRelationshipInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentStudentRelationship to fetch.
+     */
+    where: ParentStudentRelationshipWhereUniqueInput
+  }
+
+  /**
+   * ParentStudentRelationship findUniqueOrThrow
+   */
+  export type ParentStudentRelationshipFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentStudentRelationship
+     */
+    select?: ParentStudentRelationshipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentStudentRelationship
+     */
+    omit?: ParentStudentRelationshipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentStudentRelationshipInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentStudentRelationship to fetch.
+     */
+    where: ParentStudentRelationshipWhereUniqueInput
+  }
+
+  /**
+   * ParentStudentRelationship findFirst
+   */
+  export type ParentStudentRelationshipFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentStudentRelationship
+     */
+    select?: ParentStudentRelationshipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentStudentRelationship
+     */
+    omit?: ParentStudentRelationshipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentStudentRelationshipInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentStudentRelationship to fetch.
+     */
+    where?: ParentStudentRelationshipWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParentStudentRelationships to fetch.
+     */
+    orderBy?: ParentStudentRelationshipOrderByWithRelationInput | ParentStudentRelationshipOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ParentStudentRelationships.
+     */
+    cursor?: ParentStudentRelationshipWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParentStudentRelationships from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParentStudentRelationships.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParentStudentRelationships.
+     */
+    distinct?: ParentStudentRelationshipScalarFieldEnum | ParentStudentRelationshipScalarFieldEnum[]
+  }
+
+  /**
+   * ParentStudentRelationship findFirstOrThrow
+   */
+  export type ParentStudentRelationshipFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentStudentRelationship
+     */
+    select?: ParentStudentRelationshipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentStudentRelationship
+     */
+    omit?: ParentStudentRelationshipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentStudentRelationshipInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentStudentRelationship to fetch.
+     */
+    where?: ParentStudentRelationshipWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParentStudentRelationships to fetch.
+     */
+    orderBy?: ParentStudentRelationshipOrderByWithRelationInput | ParentStudentRelationshipOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ParentStudentRelationships.
+     */
+    cursor?: ParentStudentRelationshipWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParentStudentRelationships from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParentStudentRelationships.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParentStudentRelationships.
+     */
+    distinct?: ParentStudentRelationshipScalarFieldEnum | ParentStudentRelationshipScalarFieldEnum[]
+  }
+
+  /**
+   * ParentStudentRelationship findMany
+   */
+  export type ParentStudentRelationshipFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentStudentRelationship
+     */
+    select?: ParentStudentRelationshipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentStudentRelationship
+     */
+    omit?: ParentStudentRelationshipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentStudentRelationshipInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentStudentRelationships to fetch.
+     */
+    where?: ParentStudentRelationshipWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParentStudentRelationships to fetch.
+     */
+    orderBy?: ParentStudentRelationshipOrderByWithRelationInput | ParentStudentRelationshipOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ParentStudentRelationships.
+     */
+    cursor?: ParentStudentRelationshipWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParentStudentRelationships from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParentStudentRelationships.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParentStudentRelationships.
+     */
+    distinct?: ParentStudentRelationshipScalarFieldEnum | ParentStudentRelationshipScalarFieldEnum[]
+  }
+
+  /**
+   * ParentStudentRelationship create
+   */
+  export type ParentStudentRelationshipCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentStudentRelationship
+     */
+    select?: ParentStudentRelationshipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentStudentRelationship
+     */
+    omit?: ParentStudentRelationshipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentStudentRelationshipInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ParentStudentRelationship.
+     */
+    data: XOR<ParentStudentRelationshipCreateInput, ParentStudentRelationshipUncheckedCreateInput>
+  }
+
+  /**
+   * ParentStudentRelationship createMany
+   */
+  export type ParentStudentRelationshipCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ParentStudentRelationships.
+     */
+    data: ParentStudentRelationshipCreateManyInput | ParentStudentRelationshipCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ParentStudentRelationship createManyAndReturn
+   */
+  export type ParentStudentRelationshipCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentStudentRelationship
+     */
+    select?: ParentStudentRelationshipSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentStudentRelationship
+     */
+    omit?: ParentStudentRelationshipOmit<ExtArgs> | null
+    /**
+     * The data used to create many ParentStudentRelationships.
+     */
+    data: ParentStudentRelationshipCreateManyInput | ParentStudentRelationshipCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentStudentRelationshipIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ParentStudentRelationship update
+   */
+  export type ParentStudentRelationshipUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentStudentRelationship
+     */
+    select?: ParentStudentRelationshipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentStudentRelationship
+     */
+    omit?: ParentStudentRelationshipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentStudentRelationshipInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ParentStudentRelationship.
+     */
+    data: XOR<ParentStudentRelationshipUpdateInput, ParentStudentRelationshipUncheckedUpdateInput>
+    /**
+     * Choose, which ParentStudentRelationship to update.
+     */
+    where: ParentStudentRelationshipWhereUniqueInput
+  }
+
+  /**
+   * ParentStudentRelationship updateMany
+   */
+  export type ParentStudentRelationshipUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ParentStudentRelationships.
+     */
+    data: XOR<ParentStudentRelationshipUpdateManyMutationInput, ParentStudentRelationshipUncheckedUpdateManyInput>
+    /**
+     * Filter which ParentStudentRelationships to update
+     */
+    where?: ParentStudentRelationshipWhereInput
+    /**
+     * Limit how many ParentStudentRelationships to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ParentStudentRelationship updateManyAndReturn
+   */
+  export type ParentStudentRelationshipUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentStudentRelationship
+     */
+    select?: ParentStudentRelationshipSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentStudentRelationship
+     */
+    omit?: ParentStudentRelationshipOmit<ExtArgs> | null
+    /**
+     * The data used to update ParentStudentRelationships.
+     */
+    data: XOR<ParentStudentRelationshipUpdateManyMutationInput, ParentStudentRelationshipUncheckedUpdateManyInput>
+    /**
+     * Filter which ParentStudentRelationships to update
+     */
+    where?: ParentStudentRelationshipWhereInput
+    /**
+     * Limit how many ParentStudentRelationships to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentStudentRelationshipIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ParentStudentRelationship upsert
+   */
+  export type ParentStudentRelationshipUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentStudentRelationship
+     */
+    select?: ParentStudentRelationshipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentStudentRelationship
+     */
+    omit?: ParentStudentRelationshipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentStudentRelationshipInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ParentStudentRelationship to update in case it exists.
+     */
+    where: ParentStudentRelationshipWhereUniqueInput
+    /**
+     * In case the ParentStudentRelationship found by the `where` argument doesn't exist, create a new ParentStudentRelationship with this data.
+     */
+    create: XOR<ParentStudentRelationshipCreateInput, ParentStudentRelationshipUncheckedCreateInput>
+    /**
+     * In case the ParentStudentRelationship was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ParentStudentRelationshipUpdateInput, ParentStudentRelationshipUncheckedUpdateInput>
+  }
+
+  /**
+   * ParentStudentRelationship delete
+   */
+  export type ParentStudentRelationshipDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentStudentRelationship
+     */
+    select?: ParentStudentRelationshipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentStudentRelationship
+     */
+    omit?: ParentStudentRelationshipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentStudentRelationshipInclude<ExtArgs> | null
+    /**
+     * Filter which ParentStudentRelationship to delete.
+     */
+    where: ParentStudentRelationshipWhereUniqueInput
+  }
+
+  /**
+   * ParentStudentRelationship deleteMany
+   */
+  export type ParentStudentRelationshipDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ParentStudentRelationships to delete
+     */
+    where?: ParentStudentRelationshipWhereInput
+    /**
+     * Limit how many ParentStudentRelationships to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ParentStudentRelationship without action
+   */
+  export type ParentStudentRelationshipDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentStudentRelationship
+     */
+    select?: ParentStudentRelationshipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentStudentRelationship
+     */
+    omit?: ParentStudentRelationshipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentStudentRelationshipInclude<ExtArgs> | null
   }
 
 
@@ -90136,6 +91590,28 @@ export namespace Prisma {
   export type ParentScalarFieldEnum = (typeof ParentScalarFieldEnum)[keyof typeof ParentScalarFieldEnum]
 
 
+  export const ParentStudentRelationshipScalarFieldEnum: {
+    id: 'id',
+    status: 'status',
+    role: 'role',
+    canViewFees: 'canViewFees',
+    canViewReports: 'canViewReports',
+    canMessageSchool: 'canMessageSchool',
+    note: 'note',
+    startedAt: 'startedAt',
+    endedAt: 'endedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    schoolId: 'schoolId',
+    parentId: 'parentId',
+    studentId: 'studentId',
+    createdById: 'createdById',
+    updatedById: 'updatedById'
+  };
+
+  export type ParentStudentRelationshipScalarFieldEnum = (typeof ParentStudentRelationshipScalarFieldEnum)[keyof typeof ParentStudentRelationshipScalarFieldEnum]
+
+
   export const SchoolNotificationSettingScalarFieldEnum: {
     id: 'id',
     timezone: 'timezone',
@@ -91321,6 +92797,41 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ParentStudentRelationshipStatus'
+   */
+  export type EnumParentStudentRelationshipStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentStudentRelationshipStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ParentStudentRelationshipStatus[]'
+   */
+  export type ListEnumParentStudentRelationshipStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentStudentRelationshipStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ParentStudentRelationshipRole'
+   */
+  export type EnumParentStudentRelationshipRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentStudentRelationshipRole'>
+    
+
+
+  /**
+   * Reference to a field of type 'ParentStudentRelationshipRole[]'
+   */
+  export type ListEnumParentStudentRelationshipRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentStudentRelationshipRole[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'ParentSummaryCadence'
    */
   export type EnumParentSummaryCadenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentSummaryCadence'>
@@ -91331,13 +92842,6 @@ export namespace Prisma {
    * Reference to a field of type 'ParentSummaryCadence[]'
    */
   export type ListEnumParentSummaryCadenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentSummaryCadence[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Boolean'
-   */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -92166,6 +93670,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogListRelationFilter
     parentTeacherContactRequests?: ParentTeacherContactRequestListRelationFilter
     parentTeacherContactMessages?: ParentTeacherContactMessageListRelationFilter
+    parentStudentRelationships?: ParentStudentRelationshipListRelationFilter
   }
 
   export type SchoolOrderByWithRelationInput = {
@@ -92245,6 +93750,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogOrderByRelationAggregateInput
     parentTeacherContactRequests?: ParentTeacherContactRequestOrderByRelationAggregateInput
     parentTeacherContactMessages?: ParentTeacherContactMessageOrderByRelationAggregateInput
+    parentStudentRelationships?: ParentStudentRelationshipOrderByRelationAggregateInput
   }
 
   export type SchoolWhereUniqueInput = Prisma.AtLeast<{
@@ -92327,6 +93833,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogListRelationFilter
     parentTeacherContactRequests?: ParentTeacherContactRequestListRelationFilter
     parentTeacherContactMessages?: ParentTeacherContactMessageListRelationFilter
+    parentStudentRelationships?: ParentStudentRelationshipListRelationFilter
   }, "id" | "slug">
 
   export type SchoolOrderByWithAggregationInput = {
@@ -92452,6 +93959,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionListRelationFilter
     parentNotifications?: ParentNotificationListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
+    parentRelationships?: ParentStudentRelationshipListRelationFilter
     financeQueries?: FinanceQueryListRelationFilter
     teacherContactRequests?: ParentTeacherContactRequestListRelationFilter
     teacherContactMessages?: ParentTeacherContactMessageListRelationFilter
@@ -92486,6 +93994,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionOrderByRelationAggregateInput
     parentNotifications?: ParentNotificationOrderByRelationAggregateInput
     parentActivityEvents?: ParentActivityEventOrderByRelationAggregateInput
+    parentRelationships?: ParentStudentRelationshipOrderByRelationAggregateInput
     financeQueries?: FinanceQueryOrderByRelationAggregateInput
     teacherContactRequests?: ParentTeacherContactRequestOrderByRelationAggregateInput
     teacherContactMessages?: ParentTeacherContactMessageOrderByRelationAggregateInput
@@ -92523,6 +94032,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionListRelationFilter
     parentNotifications?: ParentNotificationListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
+    parentRelationships?: ParentStudentRelationshipListRelationFilter
     financeQueries?: FinanceQueryListRelationFilter
     teacherContactRequests?: ParentTeacherContactRequestListRelationFilter
     teacherContactMessages?: ParentTeacherContactMessageListRelationFilter
@@ -92748,6 +94258,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryListRelationFilter
     teacherContactRequests?: ParentTeacherContactRequestListRelationFilter
     teacherContactMessages?: ParentTeacherContactMessageListRelationFilter
+    studentRelationships?: ParentStudentRelationshipListRelationFilter
   }
 
   export type ParentOrderByWithRelationInput = {
@@ -92769,6 +94280,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryOrderByRelationAggregateInput
     teacherContactRequests?: ParentTeacherContactRequestOrderByRelationAggregateInput
     teacherContactMessages?: ParentTeacherContactMessageOrderByRelationAggregateInput
+    studentRelationships?: ParentStudentRelationshipOrderByRelationAggregateInput
   }
 
   export type ParentWhereUniqueInput = Prisma.AtLeast<{
@@ -92793,6 +94305,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryListRelationFilter
     teacherContactRequests?: ParentTeacherContactRequestListRelationFilter
     teacherContactMessages?: ParentTeacherContactMessageListRelationFilter
+    studentRelationships?: ParentStudentRelationshipListRelationFilter
   }, "id" | "username">
 
   export type ParentOrderByWithAggregationInput = {
@@ -92823,6 +94336,123 @@ export namespace Prisma {
     address?: StringWithAggregatesFilter<"Parent"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Parent"> | Date | string
     schoolId?: StringWithAggregatesFilter<"Parent"> | string
+  }
+
+  export type ParentStudentRelationshipWhereInput = {
+    AND?: ParentStudentRelationshipWhereInput | ParentStudentRelationshipWhereInput[]
+    OR?: ParentStudentRelationshipWhereInput[]
+    NOT?: ParentStudentRelationshipWhereInput | ParentStudentRelationshipWhereInput[]
+    id?: StringFilter<"ParentStudentRelationship"> | string
+    status?: EnumParentStudentRelationshipStatusFilter<"ParentStudentRelationship"> | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleFilter<"ParentStudentRelationship"> | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolFilter<"ParentStudentRelationship"> | boolean
+    canViewReports?: BoolFilter<"ParentStudentRelationship"> | boolean
+    canMessageSchool?: BoolFilter<"ParentStudentRelationship"> | boolean
+    note?: StringNullableFilter<"ParentStudentRelationship"> | string | null
+    startedAt?: DateTimeFilter<"ParentStudentRelationship"> | Date | string
+    endedAt?: DateTimeNullableFilter<"ParentStudentRelationship"> | Date | string | null
+    createdAt?: DateTimeFilter<"ParentStudentRelationship"> | Date | string
+    updatedAt?: DateTimeFilter<"ParentStudentRelationship"> | Date | string
+    schoolId?: StringFilter<"ParentStudentRelationship"> | string
+    parentId?: StringFilter<"ParentStudentRelationship"> | string
+    studentId?: StringFilter<"ParentStudentRelationship"> | string
+    createdById?: StringNullableFilter<"ParentStudentRelationship"> | string | null
+    updatedById?: StringNullableFilter<"ParentStudentRelationship"> | string | null
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    parent?: XOR<ParentScalarRelationFilter, ParentWhereInput>
+    student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
+  }
+
+  export type ParentStudentRelationshipOrderByWithRelationInput = {
+    id?: SortOrder
+    status?: SortOrder
+    role?: SortOrder
+    canViewFees?: SortOrder
+    canViewReports?: SortOrder
+    canMessageSchool?: SortOrder
+    note?: SortOrderInput | SortOrder
+    startedAt?: SortOrder
+    endedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    createdById?: SortOrderInput | SortOrder
+    updatedById?: SortOrderInput | SortOrder
+    school?: SchoolOrderByWithRelationInput
+    parent?: ParentOrderByWithRelationInput
+    student?: StudentOrderByWithRelationInput
+  }
+
+  export type ParentStudentRelationshipWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    schoolId_parentId_studentId?: ParentStudentRelationshipSchoolIdParentIdStudentIdCompoundUniqueInput
+    AND?: ParentStudentRelationshipWhereInput | ParentStudentRelationshipWhereInput[]
+    OR?: ParentStudentRelationshipWhereInput[]
+    NOT?: ParentStudentRelationshipWhereInput | ParentStudentRelationshipWhereInput[]
+    status?: EnumParentStudentRelationshipStatusFilter<"ParentStudentRelationship"> | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleFilter<"ParentStudentRelationship"> | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolFilter<"ParentStudentRelationship"> | boolean
+    canViewReports?: BoolFilter<"ParentStudentRelationship"> | boolean
+    canMessageSchool?: BoolFilter<"ParentStudentRelationship"> | boolean
+    note?: StringNullableFilter<"ParentStudentRelationship"> | string | null
+    startedAt?: DateTimeFilter<"ParentStudentRelationship"> | Date | string
+    endedAt?: DateTimeNullableFilter<"ParentStudentRelationship"> | Date | string | null
+    createdAt?: DateTimeFilter<"ParentStudentRelationship"> | Date | string
+    updatedAt?: DateTimeFilter<"ParentStudentRelationship"> | Date | string
+    schoolId?: StringFilter<"ParentStudentRelationship"> | string
+    parentId?: StringFilter<"ParentStudentRelationship"> | string
+    studentId?: StringFilter<"ParentStudentRelationship"> | string
+    createdById?: StringNullableFilter<"ParentStudentRelationship"> | string | null
+    updatedById?: StringNullableFilter<"ParentStudentRelationship"> | string | null
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    parent?: XOR<ParentScalarRelationFilter, ParentWhereInput>
+    student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
+  }, "id" | "schoolId_parentId_studentId">
+
+  export type ParentStudentRelationshipOrderByWithAggregationInput = {
+    id?: SortOrder
+    status?: SortOrder
+    role?: SortOrder
+    canViewFees?: SortOrder
+    canViewReports?: SortOrder
+    canMessageSchool?: SortOrder
+    note?: SortOrderInput | SortOrder
+    startedAt?: SortOrder
+    endedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    createdById?: SortOrderInput | SortOrder
+    updatedById?: SortOrderInput | SortOrder
+    _count?: ParentStudentRelationshipCountOrderByAggregateInput
+    _max?: ParentStudentRelationshipMaxOrderByAggregateInput
+    _min?: ParentStudentRelationshipMinOrderByAggregateInput
+  }
+
+  export type ParentStudentRelationshipScalarWhereWithAggregatesInput = {
+    AND?: ParentStudentRelationshipScalarWhereWithAggregatesInput | ParentStudentRelationshipScalarWhereWithAggregatesInput[]
+    OR?: ParentStudentRelationshipScalarWhereWithAggregatesInput[]
+    NOT?: ParentStudentRelationshipScalarWhereWithAggregatesInput | ParentStudentRelationshipScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ParentStudentRelationship"> | string
+    status?: EnumParentStudentRelationshipStatusWithAggregatesFilter<"ParentStudentRelationship"> | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleWithAggregatesFilter<"ParentStudentRelationship"> | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolWithAggregatesFilter<"ParentStudentRelationship"> | boolean
+    canViewReports?: BoolWithAggregatesFilter<"ParentStudentRelationship"> | boolean
+    canMessageSchool?: BoolWithAggregatesFilter<"ParentStudentRelationship"> | boolean
+    note?: StringNullableWithAggregatesFilter<"ParentStudentRelationship"> | string | null
+    startedAt?: DateTimeWithAggregatesFilter<"ParentStudentRelationship"> | Date | string
+    endedAt?: DateTimeNullableWithAggregatesFilter<"ParentStudentRelationship"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ParentStudentRelationship"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ParentStudentRelationship"> | Date | string
+    schoolId?: StringWithAggregatesFilter<"ParentStudentRelationship"> | string
+    parentId?: StringWithAggregatesFilter<"ParentStudentRelationship"> | string
+    studentId?: StringWithAggregatesFilter<"ParentStudentRelationship"> | string
+    createdById?: StringNullableWithAggregatesFilter<"ParentStudentRelationship"> | string | null
+    updatedById?: StringNullableWithAggregatesFilter<"ParentStudentRelationship"> | string | null
   }
 
   export type SchoolNotificationSettingWhereInput = {
@@ -98709,6 +100339,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateInput = {
@@ -98788,6 +100419,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUpdateInput = {
@@ -98867,6 +100499,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateInput = {
@@ -98946,6 +100579,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateManyInput = {
@@ -99074,6 +100708,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -99104,6 +100739,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -99134,6 +100770,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -99164,6 +100801,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -99424,6 +101062,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateInput = {
@@ -99444,6 +101083,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentUpdateInput = {
@@ -99464,6 +101104,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateInput = {
@@ -99484,6 +101125,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type ParentCreateManyInput = {
@@ -99519,6 +101161,136 @@ export namespace Prisma {
     address?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ParentStudentRelationshipCreateInput = {
+    id?: string
+    status?: $Enums.ParentStudentRelationshipStatus
+    role?: $Enums.ParentStudentRelationshipRole
+    canViewFees?: boolean
+    canViewReports?: boolean
+    canMessageSchool?: boolean
+    note?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdById?: string | null
+    updatedById?: string | null
+    school: SchoolCreateNestedOneWithoutParentStudentRelationshipsInput
+    parent: ParentCreateNestedOneWithoutStudentRelationshipsInput
+    student: StudentCreateNestedOneWithoutParentRelationshipsInput
+  }
+
+  export type ParentStudentRelationshipUncheckedCreateInput = {
+    id?: string
+    status?: $Enums.ParentStudentRelationshipStatus
+    role?: $Enums.ParentStudentRelationshipRole
+    canViewFees?: boolean
+    canViewReports?: boolean
+    canMessageSchool?: boolean
+    note?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    parentId: string
+    studentId: string
+    createdById?: string | null
+    updatedById?: string | null
+  }
+
+  export type ParentStudentRelationshipUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentStudentRelationshipStatusFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canMessageSchool?: BoolFieldUpdateOperationsInput | boolean
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    school?: SchoolUpdateOneRequiredWithoutParentStudentRelationshipsNestedInput
+    parent?: ParentUpdateOneRequiredWithoutStudentRelationshipsNestedInput
+    student?: StudentUpdateOneRequiredWithoutParentRelationshipsNestedInput
+  }
+
+  export type ParentStudentRelationshipUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentStudentRelationshipStatusFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canMessageSchool?: BoolFieldUpdateOperationsInput | boolean
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ParentStudentRelationshipCreateManyInput = {
+    id?: string
+    status?: $Enums.ParentStudentRelationshipStatus
+    role?: $Enums.ParentStudentRelationshipRole
+    canViewFees?: boolean
+    canViewReports?: boolean
+    canMessageSchool?: boolean
+    note?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    parentId: string
+    studentId: string
+    createdById?: string | null
+    updatedById?: string | null
+  }
+
+  export type ParentStudentRelationshipUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentStudentRelationshipStatusFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canMessageSchool?: BoolFieldUpdateOperationsInput | boolean
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ParentStudentRelationshipUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentStudentRelationshipStatusFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canMessageSchool?: BoolFieldUpdateOperationsInput | boolean
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SchoolNotificationSettingCreateInput = {
@@ -106078,6 +107850,12 @@ export namespace Prisma {
     none?: ParentTeacherContactMessageWhereInput
   }
 
+  export type ParentStudentRelationshipListRelationFilter = {
+    every?: ParentStudentRelationshipWhereInput
+    some?: ParentStudentRelationshipWhereInput
+    none?: ParentStudentRelationshipWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -106304,6 +108082,10 @@ export namespace Prisma {
   }
 
   export type ParentTeacherContactMessageOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ParentStudentRelationshipOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -106701,6 +108483,121 @@ export namespace Prisma {
     schoolId?: SortOrder
   }
 
+  export type EnumParentStudentRelationshipStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentStudentRelationshipStatus | EnumParentStudentRelationshipStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentStudentRelationshipStatus[] | ListEnumParentStudentRelationshipStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentStudentRelationshipStatus[] | ListEnumParentStudentRelationshipStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentStudentRelationshipStatusFilter<$PrismaModel> | $Enums.ParentStudentRelationshipStatus
+  }
+
+  export type EnumParentStudentRelationshipRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentStudentRelationshipRole | EnumParentStudentRelationshipRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentStudentRelationshipRole[] | ListEnumParentStudentRelationshipRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentStudentRelationshipRole[] | ListEnumParentStudentRelationshipRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentStudentRelationshipRoleFilter<$PrismaModel> | $Enums.ParentStudentRelationshipRole
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type StudentScalarRelationFilter = {
+    is?: StudentWhereInput
+    isNot?: StudentWhereInput
+  }
+
+  export type ParentStudentRelationshipSchoolIdParentIdStudentIdCompoundUniqueInput = {
+    schoolId: string
+    parentId: string
+    studentId: string
+  }
+
+  export type ParentStudentRelationshipCountOrderByAggregateInput = {
+    id?: SortOrder
+    status?: SortOrder
+    role?: SortOrder
+    canViewFees?: SortOrder
+    canViewReports?: SortOrder
+    canMessageSchool?: SortOrder
+    note?: SortOrder
+    startedAt?: SortOrder
+    endedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    createdById?: SortOrder
+    updatedById?: SortOrder
+  }
+
+  export type ParentStudentRelationshipMaxOrderByAggregateInput = {
+    id?: SortOrder
+    status?: SortOrder
+    role?: SortOrder
+    canViewFees?: SortOrder
+    canViewReports?: SortOrder
+    canMessageSchool?: SortOrder
+    note?: SortOrder
+    startedAt?: SortOrder
+    endedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    createdById?: SortOrder
+    updatedById?: SortOrder
+  }
+
+  export type ParentStudentRelationshipMinOrderByAggregateInput = {
+    id?: SortOrder
+    status?: SortOrder
+    role?: SortOrder
+    canViewFees?: SortOrder
+    canViewReports?: SortOrder
+    canMessageSchool?: SortOrder
+    note?: SortOrder
+    startedAt?: SortOrder
+    endedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    createdById?: SortOrder
+    updatedById?: SortOrder
+  }
+
+  export type EnumParentStudentRelationshipStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentStudentRelationshipStatus | EnumParentStudentRelationshipStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentStudentRelationshipStatus[] | ListEnumParentStudentRelationshipStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentStudentRelationshipStatus[] | ListEnumParentStudentRelationshipStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentStudentRelationshipStatusWithAggregatesFilter<$PrismaModel> | $Enums.ParentStudentRelationshipStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumParentStudentRelationshipStatusFilter<$PrismaModel>
+    _max?: NestedEnumParentStudentRelationshipStatusFilter<$PrismaModel>
+  }
+
+  export type EnumParentStudentRelationshipRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentStudentRelationshipRole | EnumParentStudentRelationshipRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentStudentRelationshipRole[] | ListEnumParentStudentRelationshipRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentStudentRelationshipRole[] | ListEnumParentStudentRelationshipRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentStudentRelationshipRoleWithAggregatesFilter<$PrismaModel> | $Enums.ParentStudentRelationshipRole
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumParentStudentRelationshipRoleFilter<$PrismaModel>
+    _max?: NestedEnumParentStudentRelationshipRoleFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type EnumParentSummaryCadenceFilter<$PrismaModel = never> = {
     equals?: $Enums.ParentSummaryCadence | EnumParentSummaryCadenceFieldRefInput<$PrismaModel>
     in?: $Enums.ParentSummaryCadence[] | ListEnumParentSummaryCadenceFieldRefInput<$PrismaModel>
@@ -106714,11 +108611,6 @@ export namespace Prisma {
     hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
     hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
     isEmpty?: boolean
-  }
-
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type SchoolNotificationSettingCountOrderByAggregateInput = {
@@ -106796,14 +108688,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumParentSummaryCadenceFilter<$PrismaModel>
     _max?: NestedEnumParentSummaryCadenceFilter<$PrismaModel>
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type SchoolCommunicationPolicyCountOrderByAggregateInput = {
@@ -108055,11 +109939,6 @@ export namespace Prisma {
     in?: $Enums.ParentTeacherContactStatus[] | ListEnumParentTeacherContactStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.ParentTeacherContactStatus[] | ListEnumParentTeacherContactStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumParentTeacherContactStatusFilter<$PrismaModel> | $Enums.ParentTeacherContactStatus
-  }
-
-  export type StudentScalarRelationFilter = {
-    is?: StudentWhereInput
-    isNot?: StudentWhereInput
   }
 
   export type ParentTeacherContactRequestCountOrderByAggregateInput = {
@@ -111773,6 +113652,13 @@ export namespace Prisma {
     connect?: ParentTeacherContactMessageWhereUniqueInput | ParentTeacherContactMessageWhereUniqueInput[]
   }
 
+  export type ParentStudentRelationshipCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<ParentStudentRelationshipCreateWithoutSchoolInput, ParentStudentRelationshipUncheckedCreateWithoutSchoolInput> | ParentStudentRelationshipCreateWithoutSchoolInput[] | ParentStudentRelationshipUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ParentStudentRelationshipCreateOrConnectWithoutSchoolInput | ParentStudentRelationshipCreateOrConnectWithoutSchoolInput[]
+    createMany?: ParentStudentRelationshipCreateManySchoolInputEnvelope
+    connect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+  }
+
   export type AdminUncheckedCreateNestedManyWithoutSchoolInput = {
     create?: XOR<AdminCreateWithoutSchoolInput, AdminUncheckedCreateWithoutSchoolInput> | AdminCreateWithoutSchoolInput[] | AdminUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: AdminCreateOrConnectWithoutSchoolInput | AdminCreateOrConnectWithoutSchoolInput[]
@@ -112181,6 +114067,13 @@ export namespace Prisma {
     connectOrCreate?: ParentTeacherContactMessageCreateOrConnectWithoutSchoolInput | ParentTeacherContactMessageCreateOrConnectWithoutSchoolInput[]
     createMany?: ParentTeacherContactMessageCreateManySchoolInputEnvelope
     connect?: ParentTeacherContactMessageWhereUniqueInput | ParentTeacherContactMessageWhereUniqueInput[]
+  }
+
+  export type ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<ParentStudentRelationshipCreateWithoutSchoolInput, ParentStudentRelationshipUncheckedCreateWithoutSchoolInput> | ParentStudentRelationshipCreateWithoutSchoolInput[] | ParentStudentRelationshipUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ParentStudentRelationshipCreateOrConnectWithoutSchoolInput | ParentStudentRelationshipCreateOrConnectWithoutSchoolInput[]
+    createMany?: ParentStudentRelationshipCreateManySchoolInputEnvelope
+    connect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -113017,6 +114910,20 @@ export namespace Prisma {
     deleteMany?: ParentTeacherContactMessageScalarWhereInput | ParentTeacherContactMessageScalarWhereInput[]
   }
 
+  export type ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<ParentStudentRelationshipCreateWithoutSchoolInput, ParentStudentRelationshipUncheckedCreateWithoutSchoolInput> | ParentStudentRelationshipCreateWithoutSchoolInput[] | ParentStudentRelationshipUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ParentStudentRelationshipCreateOrConnectWithoutSchoolInput | ParentStudentRelationshipCreateOrConnectWithoutSchoolInput[]
+    upsert?: ParentStudentRelationshipUpsertWithWhereUniqueWithoutSchoolInput | ParentStudentRelationshipUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: ParentStudentRelationshipCreateManySchoolInputEnvelope
+    set?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    disconnect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    delete?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    connect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    update?: ParentStudentRelationshipUpdateWithWhereUniqueWithoutSchoolInput | ParentStudentRelationshipUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: ParentStudentRelationshipUpdateManyWithWhereWithoutSchoolInput | ParentStudentRelationshipUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: ParentStudentRelationshipScalarWhereInput | ParentStudentRelationshipScalarWhereInput[]
+  }
+
   export type AdminUncheckedUpdateManyWithoutSchoolNestedInput = {
     create?: XOR<AdminCreateWithoutSchoolInput, AdminUncheckedCreateWithoutSchoolInput> | AdminCreateWithoutSchoolInput[] | AdminUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: AdminCreateOrConnectWithoutSchoolInput | AdminCreateOrConnectWithoutSchoolInput[]
@@ -113831,6 +115738,20 @@ export namespace Prisma {
     deleteMany?: ParentTeacherContactMessageScalarWhereInput | ParentTeacherContactMessageScalarWhereInput[]
   }
 
+  export type ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<ParentStudentRelationshipCreateWithoutSchoolInput, ParentStudentRelationshipUncheckedCreateWithoutSchoolInput> | ParentStudentRelationshipCreateWithoutSchoolInput[] | ParentStudentRelationshipUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: ParentStudentRelationshipCreateOrConnectWithoutSchoolInput | ParentStudentRelationshipCreateOrConnectWithoutSchoolInput[]
+    upsert?: ParentStudentRelationshipUpsertWithWhereUniqueWithoutSchoolInput | ParentStudentRelationshipUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: ParentStudentRelationshipCreateManySchoolInputEnvelope
+    set?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    disconnect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    delete?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    connect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    update?: ParentStudentRelationshipUpdateWithWhereUniqueWithoutSchoolInput | ParentStudentRelationshipUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: ParentStudentRelationshipUpdateManyWithWhereWithoutSchoolInput | ParentStudentRelationshipUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: ParentStudentRelationshipScalarWhereInput | ParentStudentRelationshipScalarWhereInput[]
+  }
+
   export type SchoolCreateNestedOneWithoutAdminsInput = {
     create?: XOR<SchoolCreateWithoutAdminsInput, SchoolUncheckedCreateWithoutAdminsInput>
     connectOrCreate?: SchoolCreateOrConnectWithoutAdminsInput
@@ -113932,6 +115853,13 @@ export namespace Prisma {
     connect?: ParentActivityEventWhereUniqueInput | ParentActivityEventWhereUniqueInput[]
   }
 
+  export type ParentStudentRelationshipCreateNestedManyWithoutStudentInput = {
+    create?: XOR<ParentStudentRelationshipCreateWithoutStudentInput, ParentStudentRelationshipUncheckedCreateWithoutStudentInput> | ParentStudentRelationshipCreateWithoutStudentInput[] | ParentStudentRelationshipUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: ParentStudentRelationshipCreateOrConnectWithoutStudentInput | ParentStudentRelationshipCreateOrConnectWithoutStudentInput[]
+    createMany?: ParentStudentRelationshipCreateManyStudentInputEnvelope
+    connect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+  }
+
   export type FinanceQueryCreateNestedManyWithoutStudentInput = {
     create?: XOR<FinanceQueryCreateWithoutStudentInput, FinanceQueryUncheckedCreateWithoutStudentInput> | FinanceQueryCreateWithoutStudentInput[] | FinanceQueryUncheckedCreateWithoutStudentInput[]
     connectOrCreate?: FinanceQueryCreateOrConnectWithoutStudentInput | FinanceQueryCreateOrConnectWithoutStudentInput[]
@@ -114014,6 +115942,13 @@ export namespace Prisma {
     connectOrCreate?: ParentActivityEventCreateOrConnectWithoutStudentInput | ParentActivityEventCreateOrConnectWithoutStudentInput[]
     createMany?: ParentActivityEventCreateManyStudentInputEnvelope
     connect?: ParentActivityEventWhereUniqueInput | ParentActivityEventWhereUniqueInput[]
+  }
+
+  export type ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput = {
+    create?: XOR<ParentStudentRelationshipCreateWithoutStudentInput, ParentStudentRelationshipUncheckedCreateWithoutStudentInput> | ParentStudentRelationshipCreateWithoutStudentInput[] | ParentStudentRelationshipUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: ParentStudentRelationshipCreateOrConnectWithoutStudentInput | ParentStudentRelationshipCreateOrConnectWithoutStudentInput[]
+    createMany?: ParentStudentRelationshipCreateManyStudentInputEnvelope
+    connect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
   }
 
   export type FinanceQueryUncheckedCreateNestedManyWithoutStudentInput = {
@@ -114199,6 +116134,20 @@ export namespace Prisma {
     deleteMany?: ParentActivityEventScalarWhereInput | ParentActivityEventScalarWhereInput[]
   }
 
+  export type ParentStudentRelationshipUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<ParentStudentRelationshipCreateWithoutStudentInput, ParentStudentRelationshipUncheckedCreateWithoutStudentInput> | ParentStudentRelationshipCreateWithoutStudentInput[] | ParentStudentRelationshipUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: ParentStudentRelationshipCreateOrConnectWithoutStudentInput | ParentStudentRelationshipCreateOrConnectWithoutStudentInput[]
+    upsert?: ParentStudentRelationshipUpsertWithWhereUniqueWithoutStudentInput | ParentStudentRelationshipUpsertWithWhereUniqueWithoutStudentInput[]
+    createMany?: ParentStudentRelationshipCreateManyStudentInputEnvelope
+    set?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    disconnect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    delete?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    connect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    update?: ParentStudentRelationshipUpdateWithWhereUniqueWithoutStudentInput | ParentStudentRelationshipUpdateWithWhereUniqueWithoutStudentInput[]
+    updateMany?: ParentStudentRelationshipUpdateManyWithWhereWithoutStudentInput | ParentStudentRelationshipUpdateManyWithWhereWithoutStudentInput[]
+    deleteMany?: ParentStudentRelationshipScalarWhereInput | ParentStudentRelationshipScalarWhereInput[]
+  }
+
   export type FinanceQueryUpdateManyWithoutStudentNestedInput = {
     create?: XOR<FinanceQueryCreateWithoutStudentInput, FinanceQueryUncheckedCreateWithoutStudentInput> | FinanceQueryCreateWithoutStudentInput[] | FinanceQueryUncheckedCreateWithoutStudentInput[]
     connectOrCreate?: FinanceQueryCreateOrConnectWithoutStudentInput | FinanceQueryCreateOrConnectWithoutStudentInput[]
@@ -114373,6 +116322,20 @@ export namespace Prisma {
     update?: ParentActivityEventUpdateWithWhereUniqueWithoutStudentInput | ParentActivityEventUpdateWithWhereUniqueWithoutStudentInput[]
     updateMany?: ParentActivityEventUpdateManyWithWhereWithoutStudentInput | ParentActivityEventUpdateManyWithWhereWithoutStudentInput[]
     deleteMany?: ParentActivityEventScalarWhereInput | ParentActivityEventScalarWhereInput[]
+  }
+
+  export type ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<ParentStudentRelationshipCreateWithoutStudentInput, ParentStudentRelationshipUncheckedCreateWithoutStudentInput> | ParentStudentRelationshipCreateWithoutStudentInput[] | ParentStudentRelationshipUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: ParentStudentRelationshipCreateOrConnectWithoutStudentInput | ParentStudentRelationshipCreateOrConnectWithoutStudentInput[]
+    upsert?: ParentStudentRelationshipUpsertWithWhereUniqueWithoutStudentInput | ParentStudentRelationshipUpsertWithWhereUniqueWithoutStudentInput[]
+    createMany?: ParentStudentRelationshipCreateManyStudentInputEnvelope
+    set?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    disconnect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    delete?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    connect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    update?: ParentStudentRelationshipUpdateWithWhereUniqueWithoutStudentInput | ParentStudentRelationshipUpdateWithWhereUniqueWithoutStudentInput[]
+    updateMany?: ParentStudentRelationshipUpdateManyWithWhereWithoutStudentInput | ParentStudentRelationshipUpdateManyWithWhereWithoutStudentInput[]
+    deleteMany?: ParentStudentRelationshipScalarWhereInput | ParentStudentRelationshipScalarWhereInput[]
   }
 
   export type FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput = {
@@ -115290,6 +117253,13 @@ export namespace Prisma {
     connect?: ParentTeacherContactMessageWhereUniqueInput | ParentTeacherContactMessageWhereUniqueInput[]
   }
 
+  export type ParentStudentRelationshipCreateNestedManyWithoutParentInput = {
+    create?: XOR<ParentStudentRelationshipCreateWithoutParentInput, ParentStudentRelationshipUncheckedCreateWithoutParentInput> | ParentStudentRelationshipCreateWithoutParentInput[] | ParentStudentRelationshipUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: ParentStudentRelationshipCreateOrConnectWithoutParentInput | ParentStudentRelationshipCreateOrConnectWithoutParentInput[]
+    createMany?: ParentStudentRelationshipCreateManyParentInputEnvelope
+    connect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+  }
+
   export type StudentUncheckedCreateNestedManyWithoutParentInput = {
     create?: XOR<StudentCreateWithoutParentInput, StudentUncheckedCreateWithoutParentInput> | StudentCreateWithoutParentInput[] | StudentUncheckedCreateWithoutParentInput[]
     connectOrCreate?: StudentCreateOrConnectWithoutParentInput | StudentCreateOrConnectWithoutParentInput[]
@@ -115343,6 +117313,13 @@ export namespace Prisma {
     connectOrCreate?: ParentTeacherContactMessageCreateOrConnectWithoutParentInput | ParentTeacherContactMessageCreateOrConnectWithoutParentInput[]
     createMany?: ParentTeacherContactMessageCreateManyParentInputEnvelope
     connect?: ParentTeacherContactMessageWhereUniqueInput | ParentTeacherContactMessageWhereUniqueInput[]
+  }
+
+  export type ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput = {
+    create?: XOR<ParentStudentRelationshipCreateWithoutParentInput, ParentStudentRelationshipUncheckedCreateWithoutParentInput> | ParentStudentRelationshipCreateWithoutParentInput[] | ParentStudentRelationshipUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: ParentStudentRelationshipCreateOrConnectWithoutParentInput | ParentStudentRelationshipCreateOrConnectWithoutParentInput[]
+    createMany?: ParentStudentRelationshipCreateManyParentInputEnvelope
+    connect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
   }
 
   export type SchoolUpdateOneRequiredWithoutParentsNestedInput = {
@@ -115461,6 +117438,20 @@ export namespace Prisma {
     deleteMany?: ParentTeacherContactMessageScalarWhereInput | ParentTeacherContactMessageScalarWhereInput[]
   }
 
+  export type ParentStudentRelationshipUpdateManyWithoutParentNestedInput = {
+    create?: XOR<ParentStudentRelationshipCreateWithoutParentInput, ParentStudentRelationshipUncheckedCreateWithoutParentInput> | ParentStudentRelationshipCreateWithoutParentInput[] | ParentStudentRelationshipUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: ParentStudentRelationshipCreateOrConnectWithoutParentInput | ParentStudentRelationshipCreateOrConnectWithoutParentInput[]
+    upsert?: ParentStudentRelationshipUpsertWithWhereUniqueWithoutParentInput | ParentStudentRelationshipUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: ParentStudentRelationshipCreateManyParentInputEnvelope
+    set?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    disconnect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    delete?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    connect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    update?: ParentStudentRelationshipUpdateWithWhereUniqueWithoutParentInput | ParentStudentRelationshipUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: ParentStudentRelationshipUpdateManyWithWhereWithoutParentInput | ParentStudentRelationshipUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: ParentStudentRelationshipScalarWhereInput | ParentStudentRelationshipScalarWhereInput[]
+  }
+
   export type StudentUncheckedUpdateManyWithoutParentNestedInput = {
     create?: XOR<StudentCreateWithoutParentInput, StudentUncheckedCreateWithoutParentInput> | StudentCreateWithoutParentInput[] | StudentUncheckedCreateWithoutParentInput[]
     connectOrCreate?: StudentCreateOrConnectWithoutParentInput | StudentCreateOrConnectWithoutParentInput[]
@@ -115569,6 +117560,74 @@ export namespace Prisma {
     deleteMany?: ParentTeacherContactMessageScalarWhereInput | ParentTeacherContactMessageScalarWhereInput[]
   }
 
+  export type ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput = {
+    create?: XOR<ParentStudentRelationshipCreateWithoutParentInput, ParentStudentRelationshipUncheckedCreateWithoutParentInput> | ParentStudentRelationshipCreateWithoutParentInput[] | ParentStudentRelationshipUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: ParentStudentRelationshipCreateOrConnectWithoutParentInput | ParentStudentRelationshipCreateOrConnectWithoutParentInput[]
+    upsert?: ParentStudentRelationshipUpsertWithWhereUniqueWithoutParentInput | ParentStudentRelationshipUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: ParentStudentRelationshipCreateManyParentInputEnvelope
+    set?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    disconnect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    delete?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    connect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+    update?: ParentStudentRelationshipUpdateWithWhereUniqueWithoutParentInput | ParentStudentRelationshipUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: ParentStudentRelationshipUpdateManyWithWhereWithoutParentInput | ParentStudentRelationshipUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: ParentStudentRelationshipScalarWhereInput | ParentStudentRelationshipScalarWhereInput[]
+  }
+
+  export type SchoolCreateNestedOneWithoutParentStudentRelationshipsInput = {
+    create?: XOR<SchoolCreateWithoutParentStudentRelationshipsInput, SchoolUncheckedCreateWithoutParentStudentRelationshipsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutParentStudentRelationshipsInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type ParentCreateNestedOneWithoutStudentRelationshipsInput = {
+    create?: XOR<ParentCreateWithoutStudentRelationshipsInput, ParentUncheckedCreateWithoutStudentRelationshipsInput>
+    connectOrCreate?: ParentCreateOrConnectWithoutStudentRelationshipsInput
+    connect?: ParentWhereUniqueInput
+  }
+
+  export type StudentCreateNestedOneWithoutParentRelationshipsInput = {
+    create?: XOR<StudentCreateWithoutParentRelationshipsInput, StudentUncheckedCreateWithoutParentRelationshipsInput>
+    connectOrCreate?: StudentCreateOrConnectWithoutParentRelationshipsInput
+    connect?: StudentWhereUniqueInput
+  }
+
+  export type EnumParentStudentRelationshipStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ParentStudentRelationshipStatus
+  }
+
+  export type EnumParentStudentRelationshipRoleFieldUpdateOperationsInput = {
+    set?: $Enums.ParentStudentRelationshipRole
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type SchoolUpdateOneRequiredWithoutParentStudentRelationshipsNestedInput = {
+    create?: XOR<SchoolCreateWithoutParentStudentRelationshipsInput, SchoolUncheckedCreateWithoutParentStudentRelationshipsInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutParentStudentRelationshipsInput
+    upsert?: SchoolUpsertWithoutParentStudentRelationshipsInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutParentStudentRelationshipsInput, SchoolUpdateWithoutParentStudentRelationshipsInput>, SchoolUncheckedUpdateWithoutParentStudentRelationshipsInput>
+  }
+
+  export type ParentUpdateOneRequiredWithoutStudentRelationshipsNestedInput = {
+    create?: XOR<ParentCreateWithoutStudentRelationshipsInput, ParentUncheckedCreateWithoutStudentRelationshipsInput>
+    connectOrCreate?: ParentCreateOrConnectWithoutStudentRelationshipsInput
+    upsert?: ParentUpsertWithoutStudentRelationshipsInput
+    connect?: ParentWhereUniqueInput
+    update?: XOR<XOR<ParentUpdateToOneWithWhereWithoutStudentRelationshipsInput, ParentUpdateWithoutStudentRelationshipsInput>, ParentUncheckedUpdateWithoutStudentRelationshipsInput>
+  }
+
+  export type StudentUpdateOneRequiredWithoutParentRelationshipsNestedInput = {
+    create?: XOR<StudentCreateWithoutParentRelationshipsInput, StudentUncheckedCreateWithoutParentRelationshipsInput>
+    connectOrCreate?: StudentCreateOrConnectWithoutParentRelationshipsInput
+    upsert?: StudentUpsertWithoutParentRelationshipsInput
+    connect?: StudentWhereUniqueInput
+    update?: XOR<XOR<StudentUpdateToOneWithWhereWithoutParentRelationshipsInput, StudentUpdateWithoutParentRelationshipsInput>, StudentUncheckedUpdateWithoutParentRelationshipsInput>
+  }
+
   export type SchoolNotificationSettingCreateactiveDaysInput = {
     set: string[]
   }
@@ -115586,10 +117645,6 @@ export namespace Prisma {
   export type SchoolNotificationSettingUpdateactiveDaysInput = {
     set?: string[]
     push?: string | string[]
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type SchoolUpdateOneRequiredWithoutNotificationSettingsNestedInput = {
@@ -120103,16 +122158,58 @@ export namespace Prisma {
     _max?: NestedEnumUserSexNullableFilter<$PrismaModel>
   }
 
-  export type NestedEnumParentSummaryCadenceFilter<$PrismaModel = never> = {
-    equals?: $Enums.ParentSummaryCadence | EnumParentSummaryCadenceFieldRefInput<$PrismaModel>
-    in?: $Enums.ParentSummaryCadence[] | ListEnumParentSummaryCadenceFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ParentSummaryCadence[] | ListEnumParentSummaryCadenceFieldRefInput<$PrismaModel>
-    not?: NestedEnumParentSummaryCadenceFilter<$PrismaModel> | $Enums.ParentSummaryCadence
+  export type NestedEnumParentStudentRelationshipStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentStudentRelationshipStatus | EnumParentStudentRelationshipStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentStudentRelationshipStatus[] | ListEnumParentStudentRelationshipStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentStudentRelationshipStatus[] | ListEnumParentStudentRelationshipStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentStudentRelationshipStatusFilter<$PrismaModel> | $Enums.ParentStudentRelationshipStatus
+  }
+
+  export type NestedEnumParentStudentRelationshipRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentStudentRelationshipRole | EnumParentStudentRelationshipRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentStudentRelationshipRole[] | ListEnumParentStudentRelationshipRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentStudentRelationshipRole[] | ListEnumParentStudentRelationshipRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentStudentRelationshipRoleFilter<$PrismaModel> | $Enums.ParentStudentRelationshipRole
   }
 
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedEnumParentStudentRelationshipStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentStudentRelationshipStatus | EnumParentStudentRelationshipStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentStudentRelationshipStatus[] | ListEnumParentStudentRelationshipStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentStudentRelationshipStatus[] | ListEnumParentStudentRelationshipStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentStudentRelationshipStatusWithAggregatesFilter<$PrismaModel> | $Enums.ParentStudentRelationshipStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumParentStudentRelationshipStatusFilter<$PrismaModel>
+    _max?: NestedEnumParentStudentRelationshipStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumParentStudentRelationshipRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentStudentRelationshipRole | EnumParentStudentRelationshipRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentStudentRelationshipRole[] | ListEnumParentStudentRelationshipRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentStudentRelationshipRole[] | ListEnumParentStudentRelationshipRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentStudentRelationshipRoleWithAggregatesFilter<$PrismaModel> | $Enums.ParentStudentRelationshipRole
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumParentStudentRelationshipRoleFilter<$PrismaModel>
+    _max?: NestedEnumParentStudentRelationshipRoleFilter<$PrismaModel>
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedEnumParentSummaryCadenceFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParentSummaryCadence | EnumParentSummaryCadenceFieldRefInput<$PrismaModel>
+    in?: $Enums.ParentSummaryCadence[] | ListEnumParentSummaryCadenceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParentSummaryCadence[] | ListEnumParentSummaryCadenceFieldRefInput<$PrismaModel>
+    not?: NestedEnumParentSummaryCadenceFilter<$PrismaModel> | $Enums.ParentSummaryCadence
   }
 
   export type NestedEnumParentSummaryCadenceWithAggregatesFilter<$PrismaModel = never> = {
@@ -120123,14 +122220,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumParentSummaryCadenceFilter<$PrismaModel>
     _max?: NestedEnumParentSummaryCadenceFilter<$PrismaModel>
-  }
-
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type NestedEnumParentTeacherContactCategoryFilter<$PrismaModel = never> = {
@@ -121238,6 +123327,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -121267,6 +123357,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -121377,6 +123468,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutSchoolInput = {
@@ -121396,6 +123488,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutSchoolInput = {
@@ -123575,6 +125668,52 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ParentStudentRelationshipCreateWithoutSchoolInput = {
+    id?: string
+    status?: $Enums.ParentStudentRelationshipStatus
+    role?: $Enums.ParentStudentRelationshipRole
+    canViewFees?: boolean
+    canViewReports?: boolean
+    canMessageSchool?: boolean
+    note?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdById?: string | null
+    updatedById?: string | null
+    parent: ParentCreateNestedOneWithoutStudentRelationshipsInput
+    student: StudentCreateNestedOneWithoutParentRelationshipsInput
+  }
+
+  export type ParentStudentRelationshipUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    status?: $Enums.ParentStudentRelationshipStatus
+    role?: $Enums.ParentStudentRelationshipRole
+    canViewFees?: boolean
+    canViewReports?: boolean
+    canMessageSchool?: boolean
+    note?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parentId: string
+    studentId: string
+    createdById?: string | null
+    updatedById?: string | null
+  }
+
+  export type ParentStudentRelationshipCreateOrConnectWithoutSchoolInput = {
+    where: ParentStudentRelationshipWhereUniqueInput
+    create: XOR<ParentStudentRelationshipCreateWithoutSchoolInput, ParentStudentRelationshipUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type ParentStudentRelationshipCreateManySchoolInputEnvelope = {
+    data: ParentStudentRelationshipCreateManySchoolInput | ParentStudentRelationshipCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AdminUpsertWithWhereUniqueWithoutSchoolInput = {
     where: AdminWhereUniqueInput
     update: XOR<AdminUpdateWithoutSchoolInput, AdminUncheckedUpdateWithoutSchoolInput>
@@ -125628,6 +127767,44 @@ export namespace Prisma {
     studentId?: StringNullableFilter<"ParentTeacherContactMessage"> | string | null
   }
 
+  export type ParentStudentRelationshipUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: ParentStudentRelationshipWhereUniqueInput
+    update: XOR<ParentStudentRelationshipUpdateWithoutSchoolInput, ParentStudentRelationshipUncheckedUpdateWithoutSchoolInput>
+    create: XOR<ParentStudentRelationshipCreateWithoutSchoolInput, ParentStudentRelationshipUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type ParentStudentRelationshipUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: ParentStudentRelationshipWhereUniqueInput
+    data: XOR<ParentStudentRelationshipUpdateWithoutSchoolInput, ParentStudentRelationshipUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type ParentStudentRelationshipUpdateManyWithWhereWithoutSchoolInput = {
+    where: ParentStudentRelationshipScalarWhereInput
+    data: XOR<ParentStudentRelationshipUpdateManyMutationInput, ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type ParentStudentRelationshipScalarWhereInput = {
+    AND?: ParentStudentRelationshipScalarWhereInput | ParentStudentRelationshipScalarWhereInput[]
+    OR?: ParentStudentRelationshipScalarWhereInput[]
+    NOT?: ParentStudentRelationshipScalarWhereInput | ParentStudentRelationshipScalarWhereInput[]
+    id?: StringFilter<"ParentStudentRelationship"> | string
+    status?: EnumParentStudentRelationshipStatusFilter<"ParentStudentRelationship"> | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleFilter<"ParentStudentRelationship"> | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolFilter<"ParentStudentRelationship"> | boolean
+    canViewReports?: BoolFilter<"ParentStudentRelationship"> | boolean
+    canMessageSchool?: BoolFilter<"ParentStudentRelationship"> | boolean
+    note?: StringNullableFilter<"ParentStudentRelationship"> | string | null
+    startedAt?: DateTimeFilter<"ParentStudentRelationship"> | Date | string
+    endedAt?: DateTimeNullableFilter<"ParentStudentRelationship"> | Date | string | null
+    createdAt?: DateTimeFilter<"ParentStudentRelationship"> | Date | string
+    updatedAt?: DateTimeFilter<"ParentStudentRelationship"> | Date | string
+    schoolId?: StringFilter<"ParentStudentRelationship"> | string
+    parentId?: StringFilter<"ParentStudentRelationship"> | string
+    studentId?: StringFilter<"ParentStudentRelationship"> | string
+    createdById?: StringNullableFilter<"ParentStudentRelationship"> | string | null
+    updatedById?: StringNullableFilter<"ParentStudentRelationship"> | string | null
+  }
+
   export type SchoolCreateWithoutAdminsInput = {
     id: string
     name: string
@@ -125704,6 +127881,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAdminsInput = {
@@ -125782,6 +127960,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAdminsInput = {
@@ -125876,6 +128055,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAdminsInput = {
@@ -125954,6 +128134,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutStudentsInput = {
@@ -126032,6 +128213,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutStudentsInput = {
@@ -126110,6 +128292,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutStudentsInput = {
@@ -126134,6 +128317,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutStudentsInput = {
@@ -126153,6 +128337,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutStudentsInput = {
@@ -126606,6 +128791,52 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ParentStudentRelationshipCreateWithoutStudentInput = {
+    id?: string
+    status?: $Enums.ParentStudentRelationshipStatus
+    role?: $Enums.ParentStudentRelationshipRole
+    canViewFees?: boolean
+    canViewReports?: boolean
+    canMessageSchool?: boolean
+    note?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdById?: string | null
+    updatedById?: string | null
+    school: SchoolCreateNestedOneWithoutParentStudentRelationshipsInput
+    parent: ParentCreateNestedOneWithoutStudentRelationshipsInput
+  }
+
+  export type ParentStudentRelationshipUncheckedCreateWithoutStudentInput = {
+    id?: string
+    status?: $Enums.ParentStudentRelationshipStatus
+    role?: $Enums.ParentStudentRelationshipRole
+    canViewFees?: boolean
+    canViewReports?: boolean
+    canMessageSchool?: boolean
+    note?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    parentId: string
+    createdById?: string | null
+    updatedById?: string | null
+  }
+
+  export type ParentStudentRelationshipCreateOrConnectWithoutStudentInput = {
+    where: ParentStudentRelationshipWhereUniqueInput
+    create: XOR<ParentStudentRelationshipCreateWithoutStudentInput, ParentStudentRelationshipUncheckedCreateWithoutStudentInput>
+  }
+
+  export type ParentStudentRelationshipCreateManyStudentInputEnvelope = {
+    data: ParentStudentRelationshipCreateManyStudentInput | ParentStudentRelationshipCreateManyStudentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type FinanceQueryCreateWithoutStudentInput = {
     reason: $Enums.FinanceQueryReason
     message: string
@@ -126828,6 +129059,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutStudentsInput = {
@@ -126906,6 +129138,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ParentUpsertWithoutStudentsInput = {
@@ -126936,6 +129169,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutStudentsInput = {
@@ -126955,6 +129189,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type ClassUpsertWithoutStudentsInput = {
@@ -127179,6 +129414,22 @@ export namespace Prisma {
     data: XOR<ParentActivityEventUpdateManyMutationInput, ParentActivityEventUncheckedUpdateManyWithoutStudentInput>
   }
 
+  export type ParentStudentRelationshipUpsertWithWhereUniqueWithoutStudentInput = {
+    where: ParentStudentRelationshipWhereUniqueInput
+    update: XOR<ParentStudentRelationshipUpdateWithoutStudentInput, ParentStudentRelationshipUncheckedUpdateWithoutStudentInput>
+    create: XOR<ParentStudentRelationshipCreateWithoutStudentInput, ParentStudentRelationshipUncheckedCreateWithoutStudentInput>
+  }
+
+  export type ParentStudentRelationshipUpdateWithWhereUniqueWithoutStudentInput = {
+    where: ParentStudentRelationshipWhereUniqueInput
+    data: XOR<ParentStudentRelationshipUpdateWithoutStudentInput, ParentStudentRelationshipUncheckedUpdateWithoutStudentInput>
+  }
+
+  export type ParentStudentRelationshipUpdateManyWithWhereWithoutStudentInput = {
+    where: ParentStudentRelationshipScalarWhereInput
+    data: XOR<ParentStudentRelationshipUpdateManyMutationInput, ParentStudentRelationshipUncheckedUpdateManyWithoutStudentInput>
+  }
+
   export type FinanceQueryUpsertWithWhereUniqueWithoutStudentInput = {
     where: FinanceQueryWhereUniqueInput
     update: XOR<FinanceQueryUpdateWithoutStudentInput, FinanceQueryUncheckedUpdateWithoutStudentInput>
@@ -127303,6 +129554,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutTeachersInput = {
@@ -127381,6 +129633,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutTeachersInput = {
@@ -128263,6 +130516,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutTeachersInput = {
@@ -128341,6 +130595,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SubjectUpsertWithWhereUniqueWithoutTeachersInput = {
@@ -128723,6 +130978,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutParentsInput = {
@@ -128801,6 +131057,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutParentsInput = {
@@ -128832,6 +131089,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -128861,6 +131119,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -129180,6 +131439,52 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ParentStudentRelationshipCreateWithoutParentInput = {
+    id?: string
+    status?: $Enums.ParentStudentRelationshipStatus
+    role?: $Enums.ParentStudentRelationshipRole
+    canViewFees?: boolean
+    canViewReports?: boolean
+    canMessageSchool?: boolean
+    note?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdById?: string | null
+    updatedById?: string | null
+    school: SchoolCreateNestedOneWithoutParentStudentRelationshipsInput
+    student: StudentCreateNestedOneWithoutParentRelationshipsInput
+  }
+
+  export type ParentStudentRelationshipUncheckedCreateWithoutParentInput = {
+    id?: string
+    status?: $Enums.ParentStudentRelationshipStatus
+    role?: $Enums.ParentStudentRelationshipRole
+    canViewFees?: boolean
+    canViewReports?: boolean
+    canMessageSchool?: boolean
+    note?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    studentId: string
+    createdById?: string | null
+    updatedById?: string | null
+  }
+
+  export type ParentStudentRelationshipCreateOrConnectWithoutParentInput = {
+    where: ParentStudentRelationshipWhereUniqueInput
+    create: XOR<ParentStudentRelationshipCreateWithoutParentInput, ParentStudentRelationshipUncheckedCreateWithoutParentInput>
+  }
+
+  export type ParentStudentRelationshipCreateManyParentInputEnvelope = {
+    data: ParentStudentRelationshipCreateManyParentInput | ParentStudentRelationshipCreateManyParentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SchoolUpsertWithoutParentsInput = {
     update: XOR<SchoolUpdateWithoutParentsInput, SchoolUncheckedUpdateWithoutParentsInput>
     create: XOR<SchoolCreateWithoutParentsInput, SchoolUncheckedCreateWithoutParentsInput>
@@ -129267,6 +131572,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutParentsInput = {
@@ -129345,6 +131651,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithWhereUniqueWithoutParentInput = {
@@ -129500,6 +131807,586 @@ export namespace Prisma {
     data: XOR<ParentTeacherContactMessageUpdateManyMutationInput, ParentTeacherContactMessageUncheckedUpdateManyWithoutParentInput>
   }
 
+  export type ParentStudentRelationshipUpsertWithWhereUniqueWithoutParentInput = {
+    where: ParentStudentRelationshipWhereUniqueInput
+    update: XOR<ParentStudentRelationshipUpdateWithoutParentInput, ParentStudentRelationshipUncheckedUpdateWithoutParentInput>
+    create: XOR<ParentStudentRelationshipCreateWithoutParentInput, ParentStudentRelationshipUncheckedCreateWithoutParentInput>
+  }
+
+  export type ParentStudentRelationshipUpdateWithWhereUniqueWithoutParentInput = {
+    where: ParentStudentRelationshipWhereUniqueInput
+    data: XOR<ParentStudentRelationshipUpdateWithoutParentInput, ParentStudentRelationshipUncheckedUpdateWithoutParentInput>
+  }
+
+  export type ParentStudentRelationshipUpdateManyWithWhereWithoutParentInput = {
+    where: ParentStudentRelationshipScalarWhereInput
+    data: XOR<ParentStudentRelationshipUpdateManyMutationInput, ParentStudentRelationshipUncheckedUpdateManyWithoutParentInput>
+  }
+
+  export type SchoolCreateWithoutParentStudentRelationshipsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
+    timetablePublications?: TimetablePublicationCreateNestedManyWithoutSchoolInput
+    publishedTimetableLessons?: PublishedTimetableLessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutParentStudentRelationshipsInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
+    timetablePublications?: TimetablePublicationUncheckedCreateNestedManyWithoutSchoolInput
+    publishedTimetableLessons?: PublishedTimetableLessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutParentStudentRelationshipsInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutParentStudentRelationshipsInput, SchoolUncheckedCreateWithoutParentStudentRelationshipsInput>
+  }
+
+  export type ParentCreateWithoutStudentRelationshipsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    createdAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutParentsInput
+    students?: StudentCreateNestedManyWithoutParentInput
+    notifications?: ParentNotificationCreateNestedManyWithoutParentInput
+    activityEvents?: ParentActivityEventCreateNestedManyWithoutParentInput
+    notificationPreference?: ParentNotificationPreferenceCreateNestedOneWithoutParentInput
+    notificationDeliveries?: ParentNotificationDeliveryLogCreateNestedManyWithoutParentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
+    teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
+    teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
+  }
+
+  export type ParentUncheckedCreateWithoutStudentRelationshipsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    createdAt?: Date | string
+    schoolId?: string
+    students?: StudentUncheckedCreateNestedManyWithoutParentInput
+    notifications?: ParentNotificationUncheckedCreateNestedManyWithoutParentInput
+    activityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutParentInput
+    notificationPreference?: ParentNotificationPreferenceUncheckedCreateNestedOneWithoutParentInput
+    notificationDeliveries?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutParentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
+    teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
+    teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type ParentCreateOrConnectWithoutStudentRelationshipsInput = {
+    where: ParentWhereUniqueInput
+    create: XOR<ParentCreateWithoutStudentRelationshipsInput, ParentUncheckedCreateWithoutStudentRelationshipsInput>
+  }
+
+  export type StudentCreateWithoutParentRelationshipsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutStudentsInput
+    parent: ParentCreateNestedOneWithoutStudentsInput
+    class: ClassCreateNestedOneWithoutStudentsInput
+    grade: GradeCreateNestedOneWithoutStudentsInput
+    attendances?: AttendanceCreateNestedManyWithoutStudentInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutStudentInput
+    results?: ResultCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
+    bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
+    teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
+    teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentUncheckedCreateWithoutParentRelationshipsInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    schoolId?: string
+    parentId: string
+    classId: number
+    gradeId: number
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutStudentInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    results?: ResultUncheckedCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
+    bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
+    teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
+    teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentCreateOrConnectWithoutParentRelationshipsInput = {
+    where: StudentWhereUniqueInput
+    create: XOR<StudentCreateWithoutParentRelationshipsInput, StudentUncheckedCreateWithoutParentRelationshipsInput>
+  }
+
+  export type SchoolUpsertWithoutParentStudentRelationshipsInput = {
+    update: XOR<SchoolUpdateWithoutParentStudentRelationshipsInput, SchoolUncheckedUpdateWithoutParentStudentRelationshipsInput>
+    create: XOR<SchoolCreateWithoutParentStudentRelationshipsInput, SchoolUncheckedCreateWithoutParentStudentRelationshipsInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutParentStudentRelationshipsInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutParentStudentRelationshipsInput, SchoolUncheckedUpdateWithoutParentStudentRelationshipsInput>
+  }
+
+  export type SchoolUpdateWithoutParentStudentRelationshipsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
+    timetablePublications?: TimetablePublicationUpdateManyWithoutSchoolNestedInput
+    publishedTimetableLessons?: PublishedTimetableLessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutParentStudentRelationshipsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
+    timetablePublications?: TimetablePublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    publishedTimetableLessons?: PublishedTimetableLessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type ParentUpsertWithoutStudentRelationshipsInput = {
+    update: XOR<ParentUpdateWithoutStudentRelationshipsInput, ParentUncheckedUpdateWithoutStudentRelationshipsInput>
+    create: XOR<ParentCreateWithoutStudentRelationshipsInput, ParentUncheckedCreateWithoutStudentRelationshipsInput>
+    where?: ParentWhereInput
+  }
+
+  export type ParentUpdateToOneWithWhereWithoutStudentRelationshipsInput = {
+    where?: ParentWhereInput
+    data: XOR<ParentUpdateWithoutStudentRelationshipsInput, ParentUncheckedUpdateWithoutStudentRelationshipsInput>
+  }
+
+  export type ParentUpdateWithoutStudentRelationshipsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutParentsNestedInput
+    students?: StudentUpdateManyWithoutParentNestedInput
+    notifications?: ParentNotificationUpdateManyWithoutParentNestedInput
+    activityEvents?: ParentActivityEventUpdateManyWithoutParentNestedInput
+    notificationPreference?: ParentNotificationPreferenceUpdateOneWithoutParentNestedInput
+    notificationDeliveries?: ParentNotificationDeliveryLogUpdateManyWithoutParentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
+    teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
+    teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
+  }
+
+  export type ParentUncheckedUpdateWithoutStudentRelationshipsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    students?: StudentUncheckedUpdateManyWithoutParentNestedInput
+    notifications?: ParentNotificationUncheckedUpdateManyWithoutParentNestedInput
+    activityEvents?: ParentActivityEventUncheckedUpdateManyWithoutParentNestedInput
+    notificationPreference?: ParentNotificationPreferenceUncheckedUpdateOneWithoutParentNestedInput
+    notificationDeliveries?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutParentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
+    teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
+    teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type StudentUpsertWithoutParentRelationshipsInput = {
+    update: XOR<StudentUpdateWithoutParentRelationshipsInput, StudentUncheckedUpdateWithoutParentRelationshipsInput>
+    create: XOR<StudentCreateWithoutParentRelationshipsInput, StudentUncheckedCreateWithoutParentRelationshipsInput>
+    where?: StudentWhereInput
+  }
+
+  export type StudentUpdateToOneWithWhereWithoutParentRelationshipsInput = {
+    where?: StudentWhereInput
+    data: XOR<StudentUpdateWithoutParentRelationshipsInput, StudentUncheckedUpdateWithoutParentRelationshipsInput>
+  }
+
+  export type StudentUpdateWithoutParentRelationshipsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
+    parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
+    class?: ClassUpdateOneRequiredWithoutStudentsNestedInput
+    grade?: GradeUpdateOneRequiredWithoutStudentsNestedInput
+    attendances?: AttendanceUpdateManyWithoutStudentNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutStudentNestedInput
+    results?: ResultUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
+    bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
+    teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
+    teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
+  }
+
+  export type StudentUncheckedUpdateWithoutParentRelationshipsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    classId?: IntFieldUpdateOperationsInput | number
+    gradeId?: IntFieldUpdateOperationsInput | number
+    attendances?: AttendanceUncheckedUpdateManyWithoutStudentNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    results?: ResultUncheckedUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
+    bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
+    teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
+    teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
+  }
+
   export type SchoolCreateWithoutNotificationSettingsInput = {
     id: string
     name: string
@@ -129576,6 +132463,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutNotificationSettingsInput = {
@@ -129654,6 +132542,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutNotificationSettingsInput = {
@@ -129748,6 +132637,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutNotificationSettingsInput = {
@@ -129826,6 +132716,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutCommunicationPolicyInput = {
@@ -129904,6 +132795,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutCommunicationPolicyInput = {
@@ -129982,6 +132874,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutCommunicationPolicyInput = {
@@ -130076,6 +132969,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutCommunicationPolicyInput = {
@@ -130154,6 +133048,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutCommunicationRoutesInput = {
@@ -130232,6 +133127,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutCommunicationRoutesInput = {
@@ -130310,6 +133206,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutCommunicationRoutesInput = {
@@ -130477,6 +133374,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutCommunicationRoutesInput = {
@@ -130555,6 +133453,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TeacherUpsertWithoutCommunicationRouteTargetsInput = {
@@ -130712,6 +133611,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutPeriodTemplatesInput = {
@@ -130790,6 +133690,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutPeriodTemplatesInput = {
@@ -130925,6 +133826,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutPeriodTemplatesInput = {
@@ -131003,6 +133905,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type LessonUpsertWithWhereUniqueWithoutPeriodTemplateInput = {
@@ -131097,6 +134000,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutTimetablePublicationsInput = {
@@ -131175,6 +134079,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutTimetablePublicationsInput = {
@@ -131325,6 +134230,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutTimetablePublicationsInput = {
@@ -131403,6 +134309,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type PublishedTimetableLessonUpsertWithWhereUniqueWithoutPublicationInput = {
@@ -131497,6 +134404,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutPublishedTimetableLessonsInput = {
@@ -131575,6 +134483,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutPublishedTimetableLessonsInput = {
@@ -131700,6 +134609,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutPublishedTimetableLessonsInput = {
@@ -131778,6 +134688,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TimetablePublicationUpsertWithoutLessonsInput = {
@@ -131893,6 +134804,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAccountabilitySettingsInput = {
@@ -131971,6 +134883,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAccountabilitySettingsInput = {
@@ -132065,6 +134978,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAccountabilitySettingsInput = {
@@ -132143,6 +135057,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutTeacherObligationsInput = {
@@ -132221,6 +135136,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutTeacherObligationsInput = {
@@ -132299,6 +135215,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutTeacherObligationsInput = {
@@ -132544,6 +135461,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutTeacherObligationsInput = {
@@ -132622,6 +135540,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TeacherUpsertWithoutAccountabilityObligationsInput = {
@@ -132811,6 +135730,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutTeacherRemindersInput = {
@@ -132889,6 +135809,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutTeacherRemindersInput = {
@@ -133101,6 +136022,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutTeacherRemindersInput = {
@@ -133179,6 +136101,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TeacherUpsertWithoutAccountabilityRemindersInput = {
@@ -133387,6 +136310,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutTeacherEscalationsInput = {
@@ -133465,6 +136389,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutTeacherEscalationsInput = {
@@ -133677,6 +136602,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutTeacherEscalationsInput = {
@@ -133755,6 +136681,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TeacherUpsertWithoutAccountabilityEscalationsInput = {
@@ -133963,6 +136890,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutTeacherCorrectionsInput = {
@@ -134041,6 +136969,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutTeacherCorrectionsInput = {
@@ -134208,6 +137137,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutTeacherCorrectionsInput = {
@@ -134286,6 +137216,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TeacherUpsertWithoutCorrectionRequestsInput = {
@@ -134443,6 +137374,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutTeacherAccountabilityAuditLogsInput = {
@@ -134521,6 +137453,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutTeacherAccountabilityAuditLogsInput = {
@@ -134688,6 +137621,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutTeacherAccountabilityAuditLogsInput = {
@@ -134766,6 +137700,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TeacherUpsertWithoutAccountabilityAuditLogsInput = {
@@ -134923,6 +137858,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutParentPreferencesInput = {
@@ -135001,6 +137937,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutParentPreferencesInput = {
@@ -135025,6 +137962,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutNotificationPreferenceInput = {
@@ -135044,6 +137982,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutNotificationPreferenceInput = {
@@ -135138,6 +138077,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutParentPreferencesInput = {
@@ -135216,6 +138156,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ParentUpsertWithoutNotificationPreferenceInput = {
@@ -135246,6 +138187,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutNotificationPreferenceInput = {
@@ -135265,6 +138207,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type SchoolCreateWithoutParentNotificationsInput = {
@@ -135343,6 +138286,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutParentNotificationsInput = {
@@ -135421,6 +138365,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutParentNotificationsInput = {
@@ -135445,6 +138390,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutNotificationsInput = {
@@ -135464,6 +138410,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutNotificationsInput = {
@@ -135495,6 +138442,7 @@ export namespace Prisma {
     bills?: StudentBillCreateNestedManyWithoutStudentInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -135524,6 +138472,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -135661,6 +138610,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutParentNotificationsInput = {
@@ -135739,6 +138689,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ParentUpsertWithoutNotificationsInput = {
@@ -135769,6 +138720,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutNotificationsInput = {
@@ -135788,6 +138740,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type StudentUpsertWithoutParentNotificationsInput = {
@@ -135825,6 +138778,7 @@ export namespace Prisma {
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -135854,6 +138808,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -135951,6 +138906,7 @@ export namespace Prisma {
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutParentDeliveryLogsInput = {
@@ -136029,6 +138985,7 @@ export namespace Prisma {
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutParentDeliveryLogsInput = {
@@ -136053,6 +139010,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutNotificationDeliveriesInput = {
@@ -136072,6 +139030,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutNotificationDeliveriesInput = {
@@ -136211,6 +139170,7 @@ export namespace Prisma {
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutParentDeliveryLogsInput = {
@@ -136289,6 +139249,7 @@ export namespace Prisma {
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ParentUpsertWithoutNotificationDeliveriesInput = {
@@ -136319,6 +139280,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutNotificationDeliveriesInput = {
@@ -136338,6 +139300,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type ParentNotificationUpsertWithoutDeliveriesInput = {
@@ -136467,6 +139430,7 @@ export namespace Prisma {
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutParentTeacherContactRequestsInput = {
@@ -136545,6 +139509,7 @@ export namespace Prisma {
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutParentTeacherContactRequestsInput = {
@@ -136569,6 +139534,7 @@ export namespace Prisma {
     notificationDeliveries?: ParentNotificationDeliveryLogCreateNestedManyWithoutParentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutTeacherContactRequestsInput = {
@@ -136588,6 +139554,7 @@ export namespace Prisma {
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutParentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutTeacherContactRequestsInput = {
@@ -136620,6 +139587,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
   }
@@ -136649,6 +139617,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
   }
@@ -136854,6 +139823,7 @@ export namespace Prisma {
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutParentTeacherContactRequestsInput = {
@@ -136932,6 +139902,7 @@ export namespace Prisma {
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ParentUpsertWithoutTeacherContactRequestsInput = {
@@ -136962,6 +139933,7 @@ export namespace Prisma {
     notificationDeliveries?: ParentNotificationDeliveryLogUpdateManyWithoutParentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutTeacherContactRequestsInput = {
@@ -136981,6 +139953,7 @@ export namespace Prisma {
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutParentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type StudentUpsertWithoutTeacherContactRequestsInput = {
@@ -137019,6 +139992,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
   }
@@ -137048,6 +140022,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
   }
@@ -137223,6 +140198,7 @@ export namespace Prisma {
     parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutParentTeacherContactMessagesInput = {
@@ -137301,6 +140277,7 @@ export namespace Prisma {
     parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutParentTeacherContactMessagesInput = {
@@ -137378,6 +140355,7 @@ export namespace Prisma {
     notificationDeliveries?: ParentNotificationDeliveryLogCreateNestedManyWithoutParentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutTeacherContactMessagesInput = {
@@ -137397,6 +140375,7 @@ export namespace Prisma {
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutParentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutTeacherContactMessagesInput = {
@@ -137502,6 +140481,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
   }
@@ -137531,6 +140511,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
   }
@@ -137627,6 +140608,7 @@ export namespace Prisma {
     parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutParentTeacherContactMessagesInput = {
@@ -137705,6 +140687,7 @@ export namespace Prisma {
     parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ParentTeacherContactRequestUpsertWithoutMessagesInput = {
@@ -137794,6 +140777,7 @@ export namespace Prisma {
     notificationDeliveries?: ParentNotificationDeliveryLogUpdateManyWithoutParentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutTeacherContactMessagesInput = {
@@ -137813,6 +140797,7 @@ export namespace Prisma {
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutParentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type TeacherUpsertWithoutParentContactMessagesInput = {
@@ -137930,6 +140915,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
   }
@@ -137959,6 +140945,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
   }
@@ -138039,6 +141026,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutParentActivityEventsInput = {
@@ -138117,6 +141105,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutParentActivityEventsInput = {
@@ -138141,6 +141130,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutActivityEventsInput = {
@@ -138160,6 +141150,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutActivityEventsInput = {
@@ -138191,6 +141182,7 @@ export namespace Prisma {
     bills?: StudentBillCreateNestedManyWithoutStudentInput
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -138220,6 +141212,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -138390,6 +141383,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutParentActivityEventsInput = {
@@ -138468,6 +141462,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ParentUpsertWithoutActivityEventsInput = {
@@ -138498,6 +141493,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutActivityEventsInput = {
@@ -138517,6 +141513,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type StudentUpsertWithoutParentActivityEventsInput = {
@@ -138554,6 +141551,7 @@ export namespace Prisma {
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -138583,6 +141581,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -138743,6 +141742,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutGradesInput = {
@@ -138821,6 +141821,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutGradesInput = {
@@ -138852,6 +141853,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -138881,6 +141883,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -139108,6 +142111,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutGradesInput = {
@@ -139186,6 +142190,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithWhereUniqueWithoutGradeInput = {
@@ -139328,6 +142333,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutClassesInput = {
@@ -139406,6 +142412,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutClassesInput = {
@@ -139551,6 +142558,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -139580,6 +142588,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -140016,6 +143025,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutClassesInput = {
@@ -140094,6 +143104,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TeacherUpsertWithoutClassesInput = {
@@ -140441,6 +143452,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutSubjectsInput = {
@@ -140519,6 +143531,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutSubjectsInput = {
@@ -140899,6 +143912,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutSubjectsInput = {
@@ -140977,6 +143991,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TeacherUpsertWithWhereUniqueWithoutSubjectsInput = {
@@ -141151,6 +144166,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutLessonsInput = {
@@ -141229,6 +144245,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutLessonsInput = {
@@ -141646,6 +144663,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutLessonsInput = {
@@ -141724,6 +144742,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SubjectUpsertWithoutLessonsInput = {
@@ -142062,6 +145081,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutExamsInput = {
@@ -142140,6 +145160,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutExamsInput = {
@@ -142299,6 +145320,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutExamsInput = {
@@ -142377,6 +145399,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type LessonUpsertWithoutExamsInput = {
@@ -142513,6 +145536,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAssignmentsInput = {
@@ -142591,6 +145615,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAssignmentsInput = {
@@ -142785,6 +145810,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAssignmentsInput = {
@@ -142863,6 +145889,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type LessonUpsertWithoutAssignmentsInput = {
@@ -143015,6 +146042,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutHomeworkSubmissionsInput = {
@@ -143093,6 +146121,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutHomeworkSubmissionsInput = {
@@ -143150,6 +146179,7 @@ export namespace Prisma {
     bills?: StudentBillCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -143179,6 +146209,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -143349,6 +146380,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutHomeworkSubmissionsInput = {
@@ -143427,6 +146459,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type AssignmentUpsertWithoutHomeworkSubmissionsInput = {
@@ -143496,6 +146529,7 @@ export namespace Prisma {
     bills?: StudentBillUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -143525,6 +146559,7 @@ export namespace Prisma {
     bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -143685,6 +146720,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutResultsInput = {
@@ -143763,6 +146799,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutResultsInput = {
@@ -143842,6 +146879,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -143871,6 +146909,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -143968,6 +147007,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutResultsInput = {
@@ -144046,6 +147086,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ExamUpsertWithoutResultsInput = {
@@ -144143,6 +147184,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -144172,6 +147214,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -144253,6 +147296,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAttendancesInput = {
@@ -144331,6 +147375,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAttendancesInput = {
@@ -144362,6 +147407,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -144391,6 +147437,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -144572,6 +147619,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAttendancesInput = {
@@ -144650,6 +147698,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithoutAttendancesInput = {
@@ -144687,6 +147736,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -144716,6 +147766,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -144855,6 +147906,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAttendanceAuditLogsInput = {
@@ -144933,6 +147985,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAttendanceAuditLogsInput = {
@@ -145004,6 +148057,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -145033,6 +148087,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -145166,6 +148221,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAttendanceAuditLogsInput = {
@@ -145244,6 +148300,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type AttendanceUpsertWithoutAuditLogsInput = {
@@ -145327,6 +148384,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -145356,6 +148414,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -145479,6 +148538,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutEventsInput = {
@@ -145557,6 +148617,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutEventsInput = {
@@ -145693,6 +148754,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutEventsInput = {
@@ -145771,6 +148833,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ClassUpsertWithoutEventsInput = {
@@ -145897,6 +148960,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutAnnouncementsInput = {
@@ -145975,6 +149039,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutAnnouncementsInput = {
@@ -146111,6 +149176,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutAnnouncementsInput = {
@@ -146189,6 +149255,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ClassUpsertWithoutAnnouncementsInput = {
@@ -146315,6 +149382,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutCaConfigsInput = {
@@ -146393,6 +149461,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutCaConfigsInput = {
@@ -146487,6 +149556,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutCaConfigsInput = {
@@ -146565,6 +149635,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutCaBucketsInput = {
@@ -146643,6 +149714,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutCaBucketsInput = {
@@ -146721,6 +149793,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutCaBucketsInput = {
@@ -147001,6 +150074,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutCaBucketsInput = {
@@ -147079,6 +150153,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ClassUpsertWithoutCaBucketsInput = {
@@ -147332,6 +150407,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutCaActivitiesInput = {
@@ -147410,6 +150486,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutCaActivitiesInput = {
@@ -147718,6 +150795,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutCaActivitiesInput = {
@@ -147796,6 +150874,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type CABucketUpsertWithoutActivitiesInput = {
@@ -148095,6 +151174,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutCaActivityScoresInput = {
@@ -148173,6 +151253,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutCaActivityScoresInput = {
@@ -148244,6 +151325,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -148273,6 +151355,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -148443,6 +151526,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutCaActivityScoresInput = {
@@ -148521,6 +151605,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type CAActivityUpsertWithoutScoresInput = {
@@ -148604,6 +151689,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -148633,6 +151719,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -148793,6 +151880,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutCaAuditLogsInput = {
@@ -148871,6 +151959,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutCaAuditLogsInput = {
@@ -148965,6 +152054,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutCaAuditLogsInput = {
@@ -149043,6 +152133,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutContinuousAssessmentsInput = {
@@ -149121,6 +152212,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutContinuousAssessmentsInput = {
@@ -149199,6 +152291,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutContinuousAssessmentsInput = {
@@ -149230,6 +152323,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -149259,6 +152353,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -149497,6 +152592,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutContinuousAssessmentsInput = {
@@ -149575,6 +152671,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithoutContinuousAssessmentsInput = {
@@ -149612,6 +152709,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -149641,6 +152739,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -149881,6 +152980,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutReportPublicationsInput = {
@@ -149959,6 +153059,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutReportPublicationsInput = {
@@ -150095,6 +153196,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutReportPublicationsInput = {
@@ -150173,6 +153275,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ClassUpsertWithoutReportPublicationsInput = {
@@ -150299,6 +153402,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutExamEntryWindowsInput = {
@@ -150377,6 +153481,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutExamEntryWindowsInput = {
@@ -150513,6 +153618,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutExamEntryWindowsInput = {
@@ -150591,6 +153697,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ClassUpsertWithoutExamEntryWindowsInput = {
@@ -150717,6 +153824,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutSyllabiInput = {
@@ -150795,6 +153903,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutSyllabiInput = {
@@ -150978,6 +154087,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutSyllabiInput = {
@@ -151056,6 +154166,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SubjectUpsertWithoutSyllabiInput = {
@@ -151341,6 +154452,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutSyllabusTopicProgressInput = {
@@ -151419,6 +154531,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutSyllabusTopicProgressInput = {
@@ -151662,6 +154775,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutSyllabusTopicProgressInput = {
@@ -151740,6 +154854,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SyllabusTopicUpsertWithoutProgressInput = {
@@ -151985,6 +155100,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutFeeStructuresInput = {
@@ -152063,6 +155179,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutFeeStructuresInput = {
@@ -152261,6 +155378,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutFeeStructuresInput = {
@@ -152339,6 +155457,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type GradeUpsertWithoutFeeStructuresInput = {
@@ -152637,6 +155756,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutStudentBillsInput = {
@@ -152715,6 +155835,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutStudentBillsInput = {
@@ -152746,6 +155867,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -152775,6 +155897,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -153072,6 +156195,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutStudentBillsInput = {
@@ -153150,6 +156274,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentUpsertWithoutBillsInput = {
@@ -153187,6 +156312,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -153216,6 +156342,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -153557,6 +156684,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutPaymentsInput = {
@@ -153635,6 +156763,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutPaymentsInput = {
@@ -153872,6 +157001,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutPaymentsInput = {
@@ -153950,6 +157080,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentBillUpsertWithoutPaymentsInput = {
@@ -154136,6 +157267,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutPaymentReversalsInput = {
@@ -154214,6 +157346,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutPaymentReversalsInput = {
@@ -154354,6 +157487,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutPaymentReversalsInput = {
@@ -154432,6 +157566,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type PaymentUpsertWithoutReversalInput = {
@@ -154562,6 +157697,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutDiscountsInput = {
@@ -154640,6 +157776,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutDiscountsInput = {
@@ -154778,6 +157915,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutDiscountsInput = {
@@ -154856,6 +157994,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type StudentBillUpsertWithoutDiscountsInput = {
@@ -154984,6 +158123,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutReceiptCountersInput = {
@@ -155062,6 +158202,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutReceiptCountersInput = {
@@ -155156,6 +158297,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutReceiptCountersInput = {
@@ -155234,6 +158376,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutFinanceAuditLogsInput = {
@@ -155312,6 +158455,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutFinanceAuditLogsInput = {
@@ -155390,6 +158534,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutFinanceAuditLogsInput = {
@@ -155484,6 +158629,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutFinanceAuditLogsInput = {
@@ -155562,6 +158708,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutFinanceQueriesInput = {
@@ -155640,6 +158787,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutFinanceQueriesInput = {
@@ -155718,6 +158866,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutFinanceQueriesInput = {
@@ -155742,6 +158891,7 @@ export namespace Prisma {
     notificationDeliveries?: ParentNotificationDeliveryLogCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutFinanceQueriesInput = {
@@ -155761,6 +158911,7 @@ export namespace Prisma {
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutParentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutParentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutParentInput
+    studentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutFinanceQueriesInput = {
@@ -155793,6 +158944,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
   }
@@ -155822,6 +158974,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
   }
@@ -156008,6 +159161,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutFinanceQueriesInput = {
@@ -156086,6 +159240,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type ParentUpsertWithoutFinanceQueriesInput = {
@@ -156116,6 +159271,7 @@ export namespace Prisma {
     notificationDeliveries?: ParentNotificationDeliveryLogUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutFinanceQueriesInput = {
@@ -156135,6 +159291,7 @@ export namespace Prisma {
     notificationDeliveries?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type StudentUpsertWithoutFinanceQueriesInput = {
@@ -156173,6 +159330,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
   }
@@ -156202,6 +159360,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
   }
@@ -156384,6 +159543,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutFinanceJobsInput = {
@@ -156462,6 +159622,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutFinanceJobsInput = {
@@ -156556,6 +159717,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutFinanceJobsInput = {
@@ -156634,6 +159796,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutPaymentWebhookEventsInput = {
@@ -156712,6 +159875,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutPaymentWebhookEventsInput = {
@@ -156790,6 +159954,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutPaymentWebhookEventsInput = {
@@ -156930,6 +160095,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutPaymentWebhookEventsInput = {
@@ -157008,6 +160174,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type PaymentUpsertWithoutWebhookEventsInput = {
@@ -157138,6 +160305,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutWaitlistEntriesInput = {
@@ -157216,6 +160384,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutWaitlistEntriesInput = {
@@ -157310,6 +160479,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutWaitlistEntriesInput = {
@@ -157388,6 +160558,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutInvitesInput = {
@@ -157466,6 +160637,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutInvitesInput = {
@@ -157544,6 +160716,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutInvitesInput = {
@@ -157638,6 +160811,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutInvitesInput = {
@@ -157716,6 +160890,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolCreateWithoutTeacherInvitesInput = {
@@ -157794,6 +160969,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutTeacherInvitesInput = {
@@ -157872,6 +161048,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutTeacherInvitesInput = {
@@ -158067,6 +161244,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutTeacherInvitesInput = {
@@ -158145,6 +161323,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TeacherUpsertWithoutAcceptedInvitesInput = {
@@ -158318,6 +161497,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutTeacherInviteAuditLogsInput = {
@@ -158396,6 +161576,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutTeacherInviteAuditLogsInput = {
@@ -158543,6 +161724,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutTeacherInviteAuditLogsInput = {
@@ -158621,6 +161803,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type TeacherInviteUpsertWithoutAuditLogsInput = {
@@ -158758,6 +161941,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolUncheckedCreateWithoutOnboardingAuditLogsInput = {
@@ -158836,6 +162020,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
   }
 
   export type SchoolCreateOrConnectWithoutOnboardingAuditLogsInput = {
@@ -158930,6 +162115,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
   }
 
   export type SchoolUncheckedUpdateWithoutOnboardingAuditLogsInput = {
@@ -159008,6 +162194,7 @@ export namespace Prisma {
     parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
   }
 
   export type AdminCreateManySchoolInput = {
@@ -159774,6 +162961,24 @@ export namespace Prisma {
     studentId?: string | null
   }
 
+  export type ParentStudentRelationshipCreateManySchoolInput = {
+    id?: string
+    status?: $Enums.ParentStudentRelationshipStatus
+    role?: $Enums.ParentStudentRelationshipRole
+    canViewFees?: boolean
+    canViewReports?: boolean
+    canMessageSchool?: boolean
+    note?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parentId: string
+    studentId: string
+    createdById?: string | null
+    updatedById?: string | null
+  }
+
   export type AdminUpdateWithoutSchoolInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
@@ -159813,6 +163018,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -159842,6 +163048,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -159964,6 +163171,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutSchoolInput = {
@@ -159983,6 +163191,7 @@ export namespace Prisma {
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutParentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutParentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutParentNestedInput
+    studentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateManyWithoutSchoolInput = {
@@ -162208,6 +165417,60 @@ export namespace Prisma {
     studentId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type ParentStudentRelationshipUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentStudentRelationshipStatusFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canMessageSchool?: BoolFieldUpdateOperationsInput | boolean
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    parent?: ParentUpdateOneRequiredWithoutStudentRelationshipsNestedInput
+    student?: StudentUpdateOneRequiredWithoutParentRelationshipsNestedInput
+  }
+
+  export type ParentStudentRelationshipUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentStudentRelationshipStatusFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canMessageSchool?: BoolFieldUpdateOperationsInput | boolean
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentStudentRelationshipStatusFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canMessageSchool?: BoolFieldUpdateOperationsInput | boolean
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type AttendanceCreateManyStudentInput = {
     id?: number
     date?: Date | string
@@ -162348,6 +165611,24 @@ export namespace Prisma {
     parentId: string
     teacherId?: string | null
     createdAt?: Date | string
+  }
+
+  export type ParentStudentRelationshipCreateManyStudentInput = {
+    id?: string
+    status?: $Enums.ParentStudentRelationshipStatus
+    role?: $Enums.ParentStudentRelationshipRole
+    canViewFees?: boolean
+    canViewReports?: boolean
+    canMessageSchool?: boolean
+    note?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    parentId: string
+    createdById?: string | null
+    updatedById?: string | null
   }
 
   export type FinanceQueryCreateManyStudentInput = {
@@ -162832,6 +166113,60 @@ export namespace Prisma {
     parentId?: StringFieldUpdateOperationsInput | string
     teacherId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParentStudentRelationshipUpdateWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentStudentRelationshipStatusFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canMessageSchool?: BoolFieldUpdateOperationsInput | boolean
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    school?: SchoolUpdateOneRequiredWithoutParentStudentRelationshipsNestedInput
+    parent?: ParentUpdateOneRequiredWithoutStudentRelationshipsNestedInput
+  }
+
+  export type ParentStudentRelationshipUncheckedUpdateWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentStudentRelationshipStatusFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canMessageSchool?: BoolFieldUpdateOperationsInput | boolean
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ParentStudentRelationshipUncheckedUpdateManyWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentStudentRelationshipStatusFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canMessageSchool?: BoolFieldUpdateOperationsInput | boolean
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FinanceQueryUpdateWithoutStudentInput = {
@@ -164270,6 +167605,24 @@ export namespace Prisma {
     studentId?: string | null
   }
 
+  export type ParentStudentRelationshipCreateManyParentInput = {
+    id?: string
+    status?: $Enums.ParentStudentRelationshipStatus
+    role?: $Enums.ParentStudentRelationshipRole
+    canViewFees?: boolean
+    canViewReports?: boolean
+    canMessageSchool?: boolean
+    note?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    studentId: string
+    createdById?: string | null
+    updatedById?: string | null
+  }
+
   export type StudentUpdateWithoutParentInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
@@ -164294,6 +167647,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -164323,6 +167677,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -164655,6 +168010,60 @@ export namespace Prisma {
     requestId?: StringFieldUpdateOperationsInput | string
     teacherId?: NullableStringFieldUpdateOperationsInput | string | null
     studentId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ParentStudentRelationshipUpdateWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentStudentRelationshipStatusFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canMessageSchool?: BoolFieldUpdateOperationsInput | boolean
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    school?: SchoolUpdateOneRequiredWithoutParentStudentRelationshipsNestedInput
+    student?: StudentUpdateOneRequiredWithoutParentRelationshipsNestedInput
+  }
+
+  export type ParentStudentRelationshipUncheckedUpdateWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentStudentRelationshipStatusFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canMessageSchool?: BoolFieldUpdateOperationsInput | boolean
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ParentStudentRelationshipUncheckedUpdateManyWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentStudentRelationshipStatusFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipStatus
+    role?: EnumParentStudentRelationshipRoleFieldUpdateOperationsInput | $Enums.ParentStudentRelationshipRole
+    canViewFees?: BoolFieldUpdateOperationsInput | boolean
+    canViewReports?: BoolFieldUpdateOperationsInput | boolean
+    canMessageSchool?: BoolFieldUpdateOperationsInput | boolean
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type LessonCreateManyPeriodTemplateInput = {
@@ -165109,6 +168518,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -165138,6 +168548,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -165504,6 +168915,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -165533,6 +168945,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput

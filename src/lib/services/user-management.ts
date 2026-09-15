@@ -13,6 +13,7 @@ import {
   revalidateDashboard,
   revalidateReferenceData,
 } from "@/src/lib/cacheTags";
+import { ensurePrimaryParentStudentRelationship } from "@/src/lib/services/parent-student-relationships";
 
 type ParentCreateInput = z.infer<typeof parentCreateSchema>;
 type ParentUpdateInput = z.infer<typeof parentUpdateSchema>;
@@ -185,6 +186,12 @@ export async function createStudent(
       },
     });
 
+    await ensurePrimaryParentStudentRelationship({
+      schoolId,
+      parentId: input.parentId,
+      studentId: student.id,
+    });
+
     revalidateReferenceData(schoolId, "students");
     revalidateDashboard(schoolId);
     return student;
@@ -324,6 +331,13 @@ export async function updateStudent(
         parentId: input.parentId,
       },
     });
+
+    await ensurePrimaryParentStudentRelationship({
+      schoolId,
+      parentId: input.parentId,
+      studentId,
+    });
+
     revalidateReferenceData(schoolId, "students");
     revalidateDashboard(schoolId);
     return updated;

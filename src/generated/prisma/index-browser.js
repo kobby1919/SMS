@@ -192,6 +192,25 @@ exports.Prisma.ParentScalarFieldEnum = {
   schoolId: 'schoolId'
 };
 
+exports.Prisma.ParentStudentRelationshipScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  role: 'role',
+  canViewFees: 'canViewFees',
+  canViewReports: 'canViewReports',
+  canMessageSchool: 'canMessageSchool',
+  note: 'note',
+  startedAt: 'startedAt',
+  endedAt: 'endedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId',
+  parentId: 'parentId',
+  studentId: 'studentId',
+  createdById: 'createdById',
+  updatedById: 'updatedById'
+};
+
 exports.Prisma.SchoolNotificationSettingScalarFieldEnum = {
   id: 'id',
   timezone: 'timezone',
@@ -1118,6 +1137,22 @@ exports.UserSex = exports.$Enums.UserSex = {
   FEMALE: 'FEMALE'
 };
 
+exports.ParentStudentRelationshipStatus = exports.$Enums.ParentStudentRelationshipStatus = {
+  ACTIVE: 'ACTIVE',
+  REMOVED: 'REMOVED',
+  TRANSFERRED: 'TRANSFERRED',
+  REVOKED: 'REVOKED',
+  GRADUATED: 'GRADUATED'
+};
+
+exports.ParentStudentRelationshipRole = exports.$Enums.ParentStudentRelationshipRole = {
+  PRIMARY_GUARDIAN: 'PRIMARY_GUARDIAN',
+  GUARDIAN: 'GUARDIAN',
+  EMERGENCY_CONTACT: 'EMERGENCY_CONTACT',
+  FINANCE_CONTACT: 'FINANCE_CONTACT',
+  PICKUP_AUTHORIZED: 'PICKUP_AUTHORIZED'
+};
+
 exports.ParentSummaryCadence = exports.$Enums.ParentSummaryCadence = {
   DAILY: 'DAILY',
   WEEKLY: 'WEEKLY',
@@ -1539,6 +1574,7 @@ exports.Prisma.ModelName = {
   Student: 'Student',
   Teacher: 'Teacher',
   Parent: 'Parent',
+  ParentStudentRelationship: 'ParentStudentRelationship',
   SchoolNotificationSetting: 'SchoolNotificationSetting',
   SchoolCommunicationPolicy: 'SchoolCommunicationPolicy',
   SchoolCommunicationRoute: 'SchoolCommunicationRoute',
