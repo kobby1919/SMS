@@ -143,10 +143,10 @@ function pushSeededIdWarnings(
 
   issues.push({
     severity: "warning",
-    title: "Seeded role records still exist",
+    title: "Demo operational records still exist",
     detail:
-      "These records are useful for local data shape, but they are not production login identities. " +
-      "Real admins and teachers should enter through invite acceptance so Clerk owns the login.",
+      "These records keep the default-school timetable, students, and parent links usable during testing. " +
+      "Do not treat them as login identities; replace them gradually through invite/import flows.",
     affected: seededRecords.slice(0, 12).map(displayRecord),
   });
 }
