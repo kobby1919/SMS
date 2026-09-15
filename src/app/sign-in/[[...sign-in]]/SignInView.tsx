@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Building2, MailCheck } from "lucide-react";
+import { BadgeCheck, Building2, MailCheck, ShieldCheck } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { AUTH_CALLBACK_PATH, MISSING_ROLE_QUERY } from "@/src/lib/auth/constants";
 
@@ -209,6 +209,17 @@ export default function SignInView({
                   },
                 }}
               />
+
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-slate-100 pt-4 text-xs font-bold text-slate-500">
+                <span className="inline-flex items-center gap-1.5">
+                  <ShieldCheck size={14} className="text-emerald-600" />
+                  Protected by Clerk
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <BadgeCheck size={14} className="text-blue-700" />
+                  Edujay role verified
+                </span>
+              </div>
             </div>
           </section>
         </div>
