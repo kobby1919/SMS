@@ -28,6 +28,7 @@ const isPublicRoute = createRouteMatcher([
   "/pricing(.*)",
   "/waitlist(.*)",
   "/onboarding/accept(.*)",
+  "/onboarding/teacher/accept(.*)",
   "/api/webhooks/payments(.*)",
   "/api/internal/finance/jobs/run",
   "/api/internal/parent-summaries/run",
@@ -40,6 +41,17 @@ const isPublicRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, req) => {
   const pathname = req.nextUrl.pathname;
 
+  function authCallbackUrlWithInvite() {
+    const callbackUrl = new URL(AUTH_CALLBACK_PATH, req.url);
+    const schoolInvite = req.nextUrl.searchParams.get("invite");
+    const teacherInvite = req.nextUrl.searchParams.get("teacherInvite");
+
+    if (schoolInvite) callbackUrl.searchParams.set("invite", schoolInvite);
+    if (teacherInvite) callbackUrl.searchParams.set("teacherInvite", teacherInvite);
+
+    return callbackUrl;
+  }
+
   if (isInternalSecretRoute(req)) {
     return NextResponse.next();
   }
@@ -51,6 +63,15 @@ export default clerkMiddleware(async (auth, req) => {
   if (isPublicRoute(req)) {
     if (isAuthCallbackPath(pathname)) {
       return NextResponse.next();
+    }
+
+    if (
+      userId &&
+      pathname.startsWith("/sign-in") &&
+      (req.nextUrl.searchParams.has("invite") ||
+        req.nextUrl.searchParams.has("teacherInvite"))
+    ) {
+      return NextResponse.redirect(authCallbackUrlWithInvite());
     }
 
     if (userId && role === "admin" && pathname.startsWith("/sign-in")) {

@@ -10,6 +10,7 @@ import {
 } from "@/src/lib/services/teacher-invite-tokens";
 import { sendTeacherInviteEmail } from "@/src/lib/services/notifications";
 import type { Prisma, TeacherInviteAuditAction } from "@/src/generated/prisma";
+import { normalizeAppRole } from "@/src/lib/roles";
 
 export type CreatedTeacherInvite = {
   inviteId: string;
@@ -530,7 +531,15 @@ export async function acceptTeacherInviteForUser(input: {
   const client = await clerkClient();
   const user = await client.users.getUser(input.userId);
   const signedInEmail = clerkPrimaryEmail(user);
+  const existingRole = normalizeAppRole(user.publicMetadata?.role);
   const inviteEmail = invite.email.toLowerCase();
+
+  if (existingRole && existingRole !== "teacher") {
+    throw new TeacherInviteServiceError(
+      "This signed-in account already belongs to another Edujay role. Sign out and accept the invite with the teacher's own account.",
+      409,
+    );
+  }
 
   if (!signedInEmail || signedInEmail !== inviteEmail) {
     throw new TeacherInviteServiceError(

@@ -7,6 +7,7 @@ import {
   type TeacherInvitePreview,
 } from "@/src/lib/services/teacher-invites";
 import TeacherInviteAcceptButton from "@/src/components/TeacherInviteAcceptButton";
+import { normalizeAppRole } from "@/src/lib/roles";
 
 type TeacherAcceptInvitePageProps = {
   searchParams: Promise<{ token?: string }>;
@@ -62,15 +63,23 @@ export default async function TeacherAcceptInvitePage({
         .find((email) => email.id === user.primaryEmailAddressId)
         ?.emailAddress.toLowerCase()
     : null;
+  const signedInRole = normalizeAppRole(user?.publicMetadata?.role);
   const invitedEmail = invite.email?.toLowerCase() ?? null;
+  const roleConflict = Boolean(
+    invite.usable &&
+      signedInRole &&
+      signedInRole !== "teacher",
+  );
   const emailMatches = Boolean(
     invite.usable &&
+      !roleConflict &&
       signedInEmail &&
       invitedEmail &&
       signedInEmail === invitedEmail,
   );
   const emailMismatch = Boolean(
     invite.usable &&
+      !roleConflict &&
       signedInEmail &&
       invitedEmail &&
       signedInEmail !== invitedEmail,
@@ -104,6 +113,18 @@ export default async function TeacherAcceptInvitePage({
                 This invite is for <span className="font-bold text-white">{invite.email}</span>,
                 but you are signed in as <span className="font-bold text-white">{signedInEmail}</span>.
                 Sign out and continue with the invited email.
+              </p>
+            </div>
+          )}
+
+          {roleConflict && (
+            <div className="mt-6 rounded-xl border border-amber-300/25 bg-amber-300/10 p-4">
+              <p className="text-sm font-black text-amber-100">
+                You are signed in with an existing {signedInRole?.replace("_", " ")} account
+              </p>
+              <p className="mt-2 text-sm font-medium leading-6 text-amber-50/70">
+                This teacher invite must be accepted by the teacher&apos;s own account.
+                Sign out first, then open the invite link as the teacher.
               </p>
             </div>
           )}
