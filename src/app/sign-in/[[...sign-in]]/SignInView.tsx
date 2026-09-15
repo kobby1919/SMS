@@ -22,38 +22,42 @@ const ClerkSignIn = dynamic(
 );
 
 type SignInViewProps = {
-  schoolAdminInviteEmail?: string;
-  schoolAdminInviteSchoolName?: string;
-  teacherInviteEmail?: string;
-  teacherInviteSchoolName?: string;
+  inviteContext?: {
+    role: "school_admin" | "teacher";
+    email?: string;
+    schoolName?: string;
+  };
 };
 
-export default function SignInView({
-  schoolAdminInviteEmail,
-  schoolAdminInviteSchoolName,
-  teacherInviteEmail,
-  teacherInviteSchoolName,
-}: SignInViewProps) {
+const inviteCopy = {
+  school_admin: {
+    label: "school admin",
+    title: "School admin invite sign-in",
+    subtitle: "Secure school admin invite access",
+    warning:
+      "Use the school admin email invited by the school owner or Edujay platform team.",
+  },
+  teacher: {
+    label: "teacher",
+    title: "Teacher invite sign-in",
+    subtitle: "Secure teacher invite access",
+    warning: "Use the teacher email invited by the school admin.",
+  },
+} satisfies Record<
+  NonNullable<SignInViewProps["inviteContext"]>["role"],
+  { label: string; title: string; subtitle: string; warning: string }
+>;
+
+export default function SignInView({ inviteContext }: SignInViewProps) {
   const searchParams = useSearchParams();
   const missingRole = searchParams.get("error") === MISSING_ROLE_QUERY;
   const invalidInvite = searchParams.get("error") === "invalid_invite";
   const inviteToken = searchParams.get("invite");
   const teacherInviteToken = searchParams.get("teacherInvite");
-  const isSchoolAdminInviteSignIn = Boolean(inviteToken);
-  const isTeacherInviteSignIn = Boolean(teacherInviteToken);
-  const inviteEmail = teacherInviteEmail ?? schoolAdminInviteEmail;
-  const inviteRoleLabel = isTeacherInviteSignIn
-    ? "teacher"
-    : isSchoolAdminInviteSignIn
-      ? "school admin"
-      : null;
-  const inviteSchoolName =
-    teacherInviteSchoolName ?? schoolAdminInviteSchoolName ?? "the school";
-  const pageSubtitle = isTeacherInviteSignIn
-    ? "Secure teacher invite access"
-    : isSchoolAdminInviteSignIn
-      ? "Secure school admin invite access"
-      : "Secure school access";
+  const activeInvite = inviteContext ? inviteCopy[inviteContext.role] : null;
+  const inviteEmail = inviteContext?.email;
+  const inviteSchoolName = inviteContext?.schoolName ?? "the school";
+  const pageSubtitle = activeInvite?.subtitle ?? "Secure school access";
   const callbackUrl = inviteToken
     ? `${AUTH_CALLBACK_PATH}?invite=${encodeURIComponent(inviteToken)}`
     : teacherInviteToken
@@ -96,20 +100,17 @@ export default function SignInView({
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-              {(isTeacherInviteSignIn || isSchoolAdminInviteSignIn) && (
+              {activeInvite && (
                 <div className="mb-4 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-950">
                   <div className="flex items-start gap-3">
                     <MailCheck size={18} className="mt-0.5 shrink-0 text-blue-700" />
                     <div>
-                      <p className="font-black">
-                        {isTeacherInviteSignIn
-                          ? "Teacher invite sign-in"
-                          : "School admin invite sign-in"}
-                      </p>
+                      <p className="font-black">{activeInvite.title}</p>
                       <p className="mt-1 font-medium leading-6 text-blue-900/80">
-                        Use the {inviteRoleLabel} email invited by{" "}
-                        <span className="font-bold">{inviteSchoolName}</span>.
-                        Do not use seeded test credentials here.
+                        {activeInvite.warning}{" "}
+                        <span className="font-bold">{inviteSchoolName}</span>{" "}
+                        will only connect this invite to the exact invited{" "}
+                        {activeInvite.label} account.
                       </p>
                       {inviteEmail && (
                         <p className="mt-2 rounded-xl bg-white/80 px-3 py-2 text-xs font-black text-blue-900">

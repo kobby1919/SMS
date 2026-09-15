@@ -26,19 +26,20 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
   return (
     <Suspense fallback={<div className="min-h-screen bg-[#f0f4ff]" />}>
       <SignInView
-        schoolAdminInviteEmail={
-          schoolAdminInviteUsable ? schoolAdminInvitePreview?.email : undefined
-        }
-        schoolAdminInviteSchoolName={
-          schoolAdminInviteUsable
-            ? schoolAdminInvitePreview?.schoolName
-            : undefined
-        }
-        teacherInviteEmail={
-          teacherInvitePreview?.usable ? teacherInvitePreview.email : undefined
-        }
-        teacherInviteSchoolName={
-          teacherInvitePreview?.usable ? teacherInvitePreview.schoolName : undefined
+        inviteContext={
+          teacherInvitePreview?.usable
+            ? {
+                role: "teacher",
+                email: teacherInvitePreview.email,
+                schoolName: teacherInvitePreview.schoolName,
+              }
+            : schoolAdminInviteUsable
+              ? {
+                  role: "school_admin",
+                  email: schoolAdminInvitePreview?.email,
+                  schoolName: schoolAdminInvitePreview?.schoolName,
+                }
+              : undefined
         }
       />
     </Suspense>
