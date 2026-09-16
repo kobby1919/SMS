@@ -11,6 +11,7 @@ import type { Term } from "@/src/generated/prisma";
 import { getSchoolBranding } from "@/src/lib/services/school-branding";
 import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
+import { requireParentStudentAccess } from "@/src/lib/services/parent-student-relationships";
 
 export const dynamic = "force-dynamic";
 
@@ -81,7 +82,14 @@ const ReportCardPage = async ({
 
   // ── Authorization ─────────────────────────────────────────────────────────
   if (role === "student" && userId !== studentId) redirect("/");
-  if (role === "parent" && userId !== student.parentId) redirect("/");
+  if (role === "parent") {
+    await requireParentStudentAccess({
+      schoolId,
+      parentId: userId,
+      studentId,
+      permission: "reports",
+    });
+  }
   if (role === "teacher" && !isClassSupervisor && teacherSubjectIds.size === 0) {
     redirect("/");
   }

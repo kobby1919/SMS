@@ -197,9 +197,10 @@ export async function deleteSubject(id: number) {
 // ═══════════════════════════════════════════════════════════════════════════════
 export async function deleteParent(id: string) {
   ({ id } = parseActionInput(stringIdActionSchema, { id }));
-  const { schoolId } = await requireAdmin();
-  await prisma.parent.deleteMany({ where: { id, schoolId } });
-  revalidatePath("/list/parents");
+  await requireAdmin();
+  throw new Error(
+    "Parent records cannot be deleted because they may have ward links, receipts, notifications, and audit history. Revoke or remove ward access instead.",
+  );
 }
 
 export async function deleteTeacher(id: string) {

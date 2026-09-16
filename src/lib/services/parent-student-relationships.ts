@@ -12,6 +12,7 @@ const childSelect = {
   id: true,
   name: true,
   surname: true,
+  img: true,
   classId: true,
   class: { select: { id: true, name: true, gradeId: true } },
 } as const;

@@ -13,6 +13,7 @@ import { getGradeBandByGrade, TERM_LABELS } from "@/src/lib/caGrades";
 import { formatMark } from "@/src/lib/formatters/marks";
 import Link from "next/link";
 import type { Prisma, Term } from "@/src/generated/prisma";
+import { listActiveParentChildIds } from "@/src/lib/services/parent-student-relationships";
 
 export const dynamic = "force-dynamic";
 
@@ -51,9 +52,14 @@ const ResultListPage = async ({
     case "student":
       where.studentId = currentUserId!;
       break;
-    case "parent":
-      where.student = { parentId: currentUserId! };
+    case "parent": {
+      const childIds = await listActiveParentChildIds(currentUserId!, schoolId, { permission: "reports" });
+      const requestedStudentId = queryParams.studentId;
+      where.studentId = requestedStudentId
+        ? childIds.includes(requestedStudentId) ? requestedStudentId : { in: [] }
+        : { in: childIds };
       break;
+    }
   }
 
   // ── Paginated CA records ──────────────────────────────────────────────────

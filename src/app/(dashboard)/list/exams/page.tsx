@@ -8,6 +8,7 @@ import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { listActiveParentChildren } from "@/src/lib/services/parent-student-relationships";
 
 // ── Grade helpers ─────────────────────────────────────────────────────────────
 const getCountdown = (date: Date): string => {
@@ -66,6 +67,10 @@ const ExamListPage = async ({
     }
   }
 
+  const parentClassIds = role === "parent"
+    ? [...new Set((await listActiveParentChildren(currentUserId!, schoolId)).map((child) => child.classId))]
+    : [];
+
   // Role-based filtering
   switch (role) {
     case "teacher":
@@ -74,9 +79,13 @@ const ExamListPage = async ({
     case "student":
       query.lesson.class = { students: { some: { id: currentUserId! } } };
       break;
-    case "parent":
-      query.lesson.class = { students: { some: { parentId: currentUserId! } } };
+    case "parent": {
+      const selectedClassId = typeof query.lesson.classId === "number" ? query.lesson.classId : null;
+      query.lesson.classId = selectedClassId
+        ? parentClassIds.includes(selectedClassId) ? selectedClassId : { in: [] }
+        : { in: parentClassIds };
       break;
+    }
   }
 
   // Upcoming vs past

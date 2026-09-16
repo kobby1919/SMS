@@ -274,6 +274,13 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     },
   });
   const children = parent ? await listActiveParentChildren(parent.id, schoolId) : [];
+  const [feeChildren, reportChildren, messageChildren] = parent
+    ? await Promise.all([
+        listActiveParentChildren(parent.id, schoolId, { permission: "fees" }),
+        listActiveParentChildren(parent.id, schoolId, { permission: "reports" }),
+        listActiveParentChildren(parent.id, schoolId, { permission: "messages" }),
+      ])
+    : [[], [], []];
   const parentWithActiveChildren = parent ? { ...parent, students: children } : parent;
   if (children.length === 0) {
     return {
@@ -286,6 +293,9 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
   }
 
   const childIds = children.map((child) => child.id);
+  const feeChildIds = feeChildren.map((child) => child.id);
+  const reportChildIds = reportChildren.map((child) => child.id);
+  const messageChildIds = messageChildren.map((child) => child.id);
   const classIds = [...new Set(children.map((child) => child.classId))];
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -321,12 +331,12 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       orderBy: [{ studentId: "asc" }, { date: "desc" }],
     }),
     prisma.continuousAssessment.findMany({
-      where: { schoolId, studentId: { in: childIds } },
+      where: { schoolId, studentId: { in: reportChildIds } },
       include: { subject: { select: { name: true } } },
       orderBy: [{ academicYear: "asc" }, { term: "asc" }],
     }),
     prisma.cAActivityScore.findMany({
-      where: { schoolId, studentId: { in: childIds } },
+      where: { schoolId, studentId: { in: reportChildIds } },
       select: {
         studentId: true,
         createdAt: true,
@@ -400,7 +410,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       take: 20,
     }),
     prisma.studentBill.findMany({
-      where: { schoolId, studentId: { in: childIds } },
+      where: { schoolId, studentId: { in: feeChildIds } },
       include: {
         feeStructure: { select: { title: true, term: true, academicYear: true } },
       },
@@ -411,7 +421,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       where: {
         schoolId,
         status: "CONFIRMED",
-        studentBill: { studentId: { in: childIds } },
+        studentBill: { studentId: { in: feeChildIds } },
       },
       include: {
         studentBill: {
@@ -450,7 +460,7 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
       where: {
         schoolId,
         parentId: userId,
-        studentId: { in: childIds },
+        studentId: { in: messageChildIds },
       },
       select: {
         id: true,

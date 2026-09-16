@@ -23,6 +23,7 @@ import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { formatMark } from "@/src/lib/formatters/marks";
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 import { getClassReportReadiness } from "@/src/lib/services/report-card-readiness";
+import { listActiveParentChildren } from "@/src/lib/services/parent-student-relationships";
 import type { Term } from "@/src/generated/prisma";
 
 export const dynamic = "force-dynamic";
@@ -63,18 +64,7 @@ const ReportCardListPage = async ({
   // 3. Handle Parent with Multiple Children
   if (role === "parent") {
     const [children, configs] = await Promise.all([
-      prisma.student.findMany({
-        where: { schoolId, parentId: userId },
-        select: {
-          id: true,
-          name: true,
-          surname: true,
-          img: true,
-          classId: true,
-          class: { select: { name: true } },
-        },
-        orderBy: [{ name: "asc" }, { surname: "asc" }],
-      }),
+      listActiveParentChildren(userId, schoolId, { permission: "reports" }),
       prisma.cAConfig.findMany({ where: { schoolId }, orderBy: { academicYear: "desc" } }),
     ]);
 

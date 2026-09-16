@@ -15,6 +15,7 @@ import HomeworkSubmissionTracker from "@/src/components/HomeworkSubmissionTracke
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import type { Prisma } from "@/src/generated/prisma";
+import { listActiveParentChildren } from "@/src/lib/services/parent-student-relationships";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +60,10 @@ const AssignmentListPage = async ({
     lessonQuery.classId = parseInt(queryParams.classId);
   }
 
+  const parentClassIds = role === "parent"
+    ? [...new Set((await listActiveParentChildren(currentUserId!, schoolId)).map((child) => child.classId))]
+    : [];
+
   // Role scoping — teacher sees ONLY assignments they created
   switch (role) {
     case "teacher":
@@ -67,9 +72,13 @@ const AssignmentListPage = async ({
     case "student":
       lessonQuery.class = { students: { some: { id: currentUserId! } } };
       break;
-    case "parent":
-      lessonQuery.class = { students: { some: { parentId: currentUserId! } } };
+    case "parent": {
+      const selectedClassId = typeof lessonQuery.classId === "number" ? lessonQuery.classId : null;
+      lessonQuery.classId = selectedClassId
+        ? parentClassIds.includes(selectedClassId) ? selectedClassId : { in: [] }
+        : { in: parentClassIds };
       break;
+    }
     // admin: no filter — oversight view only, cannot create
   }
 

@@ -19,6 +19,7 @@ import type { ParentNotificationType } from "@/src/generated/prisma";
 import ParentNotificationPreferenceForm from "@/src/components/ParentNotificationPreferenceForm";
 import { getSchoolBranding } from "@/src/lib/services/school-branding";
 import { formatGHS, PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
+import { listActiveParentChildIds } from "@/src/lib/services/parent-student-relationships";
 
 export const dynamic = "force-dynamic";
 
@@ -377,6 +378,7 @@ async function buildFinanceEventBodies(
     sourceModel: string;
     sourceId: string;
   }>,
+  allowedStudentIds: string[],
 ) {
   const financeEvents = events.filter((event) => event.type === "BILL" || event.type === "PAYMENT");
   const billIds = financeEvents
@@ -391,7 +393,7 @@ async function buildFinanceEventBodies(
   const [bills, payments] = await Promise.all([
     billIds.length
       ? prisma.studentBill.findMany({
-          where: { schoolId, id: { in: billIds } },
+          where: { schoolId, id: { in: billIds }, studentId: { in: allowedStudentIds } },
           include: {
             student: { select: { name: true, surname: true } },
             feeStructure: { select: { title: true, term: true, academicYear: true } },
@@ -400,7 +402,11 @@ async function buildFinanceEventBodies(
       : [],
     paymentIds.length
       ? prisma.payment.findMany({
-          where: { schoolId, id: { in: paymentIds } },
+          where: {
+            schoolId,
+            id: { in: paymentIds },
+            studentBill: { studentId: { in: allowedStudentIds } },
+          },
           include: {
             reversal: { select: { reason: true } },
             studentBill: {
@@ -480,7 +486,7 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
   nextDay.setDate(nextDay.getDate() + 1);
   const selectedIsToday = isSameDay(start, new Date());
 
-  const [events, parent, notificationPreference, branding] = await Promise.all([
+  const [events, parent, notificationPreference, branding, feeChildIds] = await Promise.all([
     prisma.parentActivityEvent.findMany({
       where: {
         schoolId,
@@ -502,12 +508,16 @@ const ParentUpdatesPage = async ({ searchParams }: UpdatesPageProps) => {
     }),
     getParentNotificationPreference({ parentId: userId }),
     getSchoolBranding(schoolId),
+    listActiveParentChildIds(userId, schoolId, { permission: "fees" }),
   ]);
 
-  const visibleEvents = dedupeEvents(events);
+  const visibleEvents = dedupeEvents(events).filter((event) =>
+    (event.type !== "BILL" && event.type !== "PAYMENT") ||
+    (event.studentId ? feeChildIds.includes(event.studentId) : false),
+  );
   const [attendanceEventBodies, financeEventBodies] = await Promise.all([
     buildAttendanceEventBodies(schoolId, visibleEvents),
-    buildFinanceEventBodies(schoolId, visibleEvents),
+    buildFinanceEventBodies(schoolId, visibleEvents, feeChildIds),
   ]);
   const enrichedEventBodies = new Map([...attendanceEventBodies, ...financeEventBodies]);
   const attendanceUpdateGroups = buildAttendanceUpdateGroups(visibleEvents, attendanceEventBodies);

@@ -7,6 +7,7 @@ import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
+import { listActiveParentChildren } from "@/src/lib/services/parent-student-relationships";
 
 const EventListPage = async ({
   searchParams,
@@ -37,10 +38,13 @@ const EventListPage = async ({
   const teacherScope = role === "teacher"
     ? await getTeacherScope({ schoolId, teacherId: currentUserId! })
     : null;
+  const parentClassIds = role === "parent"
+    ? [...new Set((await listActiveParentChildren(currentUserId!, schoolId)).map((child) => child.classId))]
+    : [];
   const roleConditions = {
     teacher: teacherScope ? { id: { in: teacherScope.accessibleClassIds } } : {},
     student: { students: { some: { id: currentUserId! } } },
-    parent: { students: { some: { parentId: currentUserId! } } },
+    parent: { id: { in: parentClassIds } },
   };
   query.OR = [
     { classId: null },

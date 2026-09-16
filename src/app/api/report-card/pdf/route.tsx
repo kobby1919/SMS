@@ -15,6 +15,7 @@ import { getSchoolBranding } from "@/src/lib/services/school-branding";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 import { formatMark } from "@/src/lib/formatters/marks";
 import { listClassSubjectsFromTimetable } from "@/src/lib/services/timetable";
+import { requireParentStudentAccess } from "@/src/lib/services/parent-student-relationships";
 import {
   renderToBuffer,
   Document,
@@ -426,8 +427,18 @@ export async function GET(req: NextRequest) {
     // Auth guard
     if (role === "student" && userId !== studentId)
       return new NextResponse("Forbidden", { status: 403 });
-    if (role === "parent" && student.parentId !== userId)
-      return new NextResponse("Forbidden", { status: 403 });
+    if (role === "parent") {
+      try {
+        await requireParentStudentAccess({
+          schoolId,
+          parentId: userId,
+          studentId,
+          permission: "reports",
+        });
+      } catch {
+        return new NextResponse("Forbidden", { status: 403 });
+      }
+    }
     if (role === "teacher" && !isClassSupervisor && teacherSubjectIds.size === 0) {
       return new NextResponse("Forbidden", { status: 403 });
     }

@@ -9,6 +9,7 @@ import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import { requirePageSession } from "@/src/lib/authz";
 import { AlertTriangle, Megaphone } from "lucide-react";
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
+import { listActiveParentChildren } from "@/src/lib/services/parent-student-relationships";
 
 const priorityMeta = {
   NORMAL: { label: "Normal", className: "bg-slate-50 text-slate-600" },
@@ -54,13 +55,16 @@ const AnnouncementListPage = async ({
     const teacherScope = role === "teacher"
       ? await getTeacherScope({ schoolId, teacherId: currentUserId })
       : null;
+    const parentClassIds = role === "parent"
+      ? [...new Set((await listActiveParentChildren(currentUserId!, schoolId)).map((child) => child.classId))]
+      : [];
     const roleCondition: Prisma.ClassWhereInput | null =
       role === "teacher"
         ? { id: { in: teacherScope?.accessibleClassIds ?? [] } }
         : role === "student"
           ? { students: { some: { id: currentUserId } } }
           : role === "parent"
-            ? { students: { some: { parentId: currentUserId } } }
+            ? { id: { in: parentClassIds } }
             : null;
 
     andConditions.push(

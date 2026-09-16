@@ -16,6 +16,7 @@ import { parseSearchParams } from "@/src/lib/validation/parse";
 import { documentTag } from "@/src/lib/cacheTags";
 import { getCachedDocument } from "@/src/lib/services/document-cache";
 import { getSchoolBranding, poweredByPlatformLine } from "@/src/lib/services/school-branding";
+import { requireParentStudentAccess } from "@/src/lib/services/parent-student-relationships";
 import {
   renderToBuffer,
   Document,
@@ -610,9 +611,18 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Auth: parents can only view their own child's receipt
-    if (role === "parent" && bill.student.parentId !== userId) {
-      return new NextResponse("Forbidden", { status: 403 });
+    // Auth: parents can only view receipts for wards with fee access.
+    if (role === "parent") {
+      try {
+        await requireParentStudentAccess({
+          schoolId,
+          parentId: userId,
+          studentId: bill.student.id,
+          permission: "fees",
+        });
+      } catch {
+        return new NextResponse("Forbidden", { status: 403 });
+      }
     }
     if (role === "student" && bill.student.id !== userId) {
       return new NextResponse("Forbidden", { status: 403 });
