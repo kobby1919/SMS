@@ -2,6 +2,12 @@ import prisma from "@/src/lib/prisma";
 
 export const ACTIVE_PARENT_STUDENT_STATUSES = ["ACTIVE"];
 
+type ParentChildPermission = "fees" | "reports" | "messages";
+
+type ParentChildAccessOptions = {
+  permission?: ParentChildPermission;
+};
+
 const childSelect = {
   id: true,
   name: true,
@@ -9,6 +15,20 @@ const childSelect = {
   classId: true,
   class: { select: { id: true, name: true, gradeId: true } },
 } as const;
+
+function permissionWhere(permission?: ParentChildPermission) {
+  if (permission === "fees") return { canViewFees: true };
+  if (permission === "reports") return { canViewReports: true };
+  if (permission === "messages") return { canMessageSchool: true };
+  return {};
+}
+
+function permissionLabel(permission?: ParentChildPermission) {
+  if (permission === "fees") return "fee information";
+  if (permission === "reports") return "academic reports";
+  if (permission === "messages") return "school messaging";
+  return "this ward";
+}
 
 async function parentHasRelationshipRows(parentId: string, schoolId: string) {
   const count = await prisma.parentStudentRelationship.count({
@@ -23,12 +43,17 @@ async function parentHasRelationshipRows(parentId: string, schoolId: string) {
  * Relationship rows are the source of truth. Legacy Student.parentId is used
  * only when the parent has not been migrated to relationship rows yet.
  */
-export async function listActiveParentChildren(parentId: string, schoolId: string) {
+export async function listActiveParentChildren(
+  parentId: string,
+  schoolId: string,
+  options: ParentChildAccessOptions = {},
+) {
   const relationships = await prisma.parentStudentRelationship.findMany({
     where: {
       schoolId,
       parentId,
       status: "ACTIVE",
+      ...permissionWhere(options.permission),
       student: { schoolId },
     },
     include: {
@@ -56,8 +81,12 @@ export async function listActiveParentChildren(parentId: string, schoolId: strin
   });
 }
 
-export async function listActiveParentChildIds(parentId: string, schoolId: string) {
-  const children = await listActiveParentChildren(parentId, schoolId);
+export async function listActiveParentChildIds(
+  parentId: string,
+  schoolId: string,
+  options: ParentChildAccessOptions = {},
+) {
+  const children = await listActiveParentChildren(parentId, schoolId, options);
   return children.map((child) => child.id);
 }
 
@@ -65,27 +94,54 @@ export async function parentCanAccessStudent({
   schoolId,
   parentId,
   studentId,
+  permission,
 }: {
   schoolId: string;
   parentId: string;
   studentId: string;
+  permission?: ParentChildPermission;
 }) {
-  const activeChildIds = await listActiveParentChildIds(parentId, schoolId);
-  return activeChildIds.includes(studentId);
+  const hasRelationshipRows = await parentHasRelationshipRows(parentId, schoolId);
+
+  if (hasRelationshipRows) {
+    const relationship = await prisma.parentStudentRelationship.findFirst({
+      where: {
+        schoolId,
+        parentId,
+        studentId,
+        status: "ACTIVE",
+        ...permissionWhere(permission),
+        parent: { schoolId },
+        student: { schoolId },
+      },
+      select: { id: true },
+    });
+
+    return Boolean(relationship);
+  }
+
+  const legacyStudent = await prisma.student.findFirst({
+    where: { id: studentId, schoolId, parentId },
+    select: { id: true },
+  });
+
+  return Boolean(legacyStudent);
 }
 
 export async function requireParentStudentAccess({
   schoolId,
   parentId,
   studentId,
+  permission,
 }: {
   schoolId: string;
   parentId: string;
   studentId: string;
+  permission?: ParentChildPermission;
 }) {
-  const allowed = await parentCanAccessStudent({ schoolId, parentId, studentId });
+  const allowed = await parentCanAccessStudent({ schoolId, parentId, studentId, permission });
   if (!allowed) {
-    throw new Error("This ward is not active for your parent account.");
+    throw new Error(`This parent account is not allowed to access ${permissionLabel(permission)} for this ward.`);
   }
 
   const student = await prisma.student.findFirst({

@@ -63,6 +63,7 @@ export async function createParentTeacherContactRequest(data: unknown) {
     schoolId,
     parentId: userId,
     studentId: parsed.studentId,
+    permission: "messages",
   });
 
   const [policy, route, student, teacherLessons] = await Promise.all([

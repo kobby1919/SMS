@@ -170,7 +170,7 @@ export async function getParentFinanceOverview(parentId: string, schoolId: strin
     where: { id: parentId, schoolId },
     select: { id: true },
   });
-  const children = parent ? await listActiveParentChildren(parentId, schoolId) : [];
+  const children = parent ? await listActiveParentChildren(parentId, schoolId, { permission: "fees" }) : [];
   const childIds = children.map((student) => student.id);
   if (!parent || childIds.length === 0) {
     return {

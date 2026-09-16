@@ -641,11 +641,21 @@ export async function acceptParentInviteForUser(input: {
   const user = await client.users.getUser(input.userId);
   const signedInEmail = clerkPrimaryEmail(user);
   const existingRole = normalizeAppRole(user.publicMetadata?.role);
+  const metadataSchoolId = typeof user.publicMetadata?.schoolId === "string"
+    ? user.publicMetadata.schoolId
+    : null;
   const inviteEmail = invite.email.toLowerCase();
 
   if (existingRole && existingRole !== "parent") {
     throw new ParentInviteServiceError(
       "This signed-in account already belongs to another Edujay role. Sign out and accept the invite with the parent's own account.",
+      409,
+    );
+  }
+
+  if (existingRole === "parent" && metadataSchoolId && metadataSchoolId !== invite.schoolId) {
+    throw new ParentInviteServiceError(
+      "This parent account already belongs to another school on Edujay. Sign out and accept the invite with the correct account.",
       409,
     );
   }

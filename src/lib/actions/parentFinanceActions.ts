@@ -27,7 +27,7 @@ export async function openParentFinanceQuery(input: unknown) {
     windowMs: 60_000,
   });
   const data = parseActionInput(parentFinanceQuerySchema, input);
-  const activeChildIds = await listActiveParentChildIds(userId, schoolId);
+  const activeChildIds = await listActiveParentChildIds(userId, schoolId, { permission: "fees" });
 
   const bill = requireResourceAccess(
     await prisma.studentBill.findFirst({
