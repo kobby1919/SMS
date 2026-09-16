@@ -1,6 +1,7 @@
 import prisma from "@/src/lib/prisma";
 import type { ParentNotificationType } from "@/src/generated/prisma";
 import { rebuildParentDailySummary } from "@/src/lib/services/parent-daily-summary";
+import { getActiveParentIdsByStudent } from "@/src/lib/services/parent-student-relationships";
 
 type ActivityEventInput = {
   schoolId: string;
@@ -27,18 +28,18 @@ export async function recordParentActivityEvents(input: ActivityEventInput) {
     },
     select: {
       id: true,
-      parentId: true,
       name: true,
       surname: true,
     },
   });
 
   const occurredAt = input.occurredAt ?? new Date();
-  const events = students
-    .filter((student) => Boolean(student.parentId))
-    .map((student) => ({
+  const parentIdsByStudent = await getActiveParentIdsByStudent(input.schoolId, students.map((student) => student.id));
+  const events = students.flatMap((student) => {
+    const parentIds = parentIdsByStudent.get(student.id) ?? [];
+    return parentIds.map((parentId) => ({
       schoolId: input.schoolId,
-      parentId: student.parentId,
+      parentId,
       studentId: student.id,
       teacherId: input.teacherId ?? null,
       type: input.type,
@@ -54,6 +55,7 @@ export async function recordParentActivityEvents(input: ActivityEventInput) {
       sourceKey: `${input.sourceKey}:${student.id}`,
       occurredAt,
     }));
+  });
 
   if (events.length === 0) return [];
 

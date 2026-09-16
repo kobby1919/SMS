@@ -16,6 +16,7 @@ import {
 } from "@/src/lib/services/school-communication-policy";
 import { deliverParentContactNotification } from "@/src/lib/services/parent-notification-delivery";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
+import { requireParentStudentAccess } from "@/src/lib/services/parent-student-relationships";
 
 function formValue(data: FormData, key: string, fallback = "") {
   return String(data.get(key) ?? fallback);
@@ -58,6 +59,12 @@ export async function createParentTeacherContactRequest(data: unknown) {
       : data;
   const parsed = parseActionInput(parentTeacherContactRequestSchema, input);
 
+  await requireParentStudentAccess({
+    schoolId,
+    parentId: userId,
+    studentId: parsed.studentId,
+  });
+
   const [policy, route, student, teacherLessons] = await Promise.all([
     prisma.schoolCommunicationPolicy.findUnique({ where: { schoolId } }),
     prisma.schoolCommunicationRoute.findUnique({
@@ -71,7 +78,6 @@ export async function createParentTeacherContactRequest(data: unknown) {
     prisma.student.findFirst({
       where: {
         id: parsed.studentId,
-        parentId: userId,
         schoolId,
       },
       select: {

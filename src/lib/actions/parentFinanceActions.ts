@@ -8,6 +8,7 @@ import { parseActionInput } from "@/src/lib/validation/parse";
 import { parentFinanceQuerySchema, resolveFinanceQuerySchema } from "@/src/lib/validation/finance";
 import { enforceActionRateLimit } from "@/src/lib/rate-limit";
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
+import { listActiveParentChildIds } from "@/src/lib/services/parent-student-relationships";
 
 const QUERY_REASON_LABELS: Record<string, string> = {
   ALREADY_PAID: "I have already paid",
@@ -26,13 +27,14 @@ export async function openParentFinanceQuery(input: unknown) {
     windowMs: 60_000,
   });
   const data = parseActionInput(parentFinanceQuerySchema, input);
+  const activeChildIds = await listActiveParentChildIds(userId, schoolId);
 
   const bill = requireResourceAccess(
     await prisma.studentBill.findFirst({
       where: {
         id: data.studentBillId,
         schoolId,
-        student: { parentId: userId },
+        studentId: { in: activeChildIds },
       },
       include: {
         student: { select: { id: true, name: true, surname: true } },

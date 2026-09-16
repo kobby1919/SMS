@@ -3,6 +3,7 @@ import { getSubjectCAProgress } from "@/src/lib/services/ca-activity";
 import { getSchoolBranding } from "@/src/lib/services/school-branding";
 import { DISCOUNT_TYPE_LABELS, formatGHS, PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 import { formatMark } from "@/src/lib/formatters/marks";
+import { getActiveParentIdsByStudent } from "@/src/lib/services/parent-student-relationships";
 
 function dayWindow(date: Date) {
   const start = new Date(date);
@@ -381,7 +382,6 @@ export async function recordCAActivityGivenEvents(input: {
               id: true,
               name: true,
               surname: true,
-              parentId: true,
             },
           },
         },
@@ -406,31 +406,38 @@ export async function recordCAActivityGivenEvents(input: {
     "Note: This activity has been recorded for the class, but marks have not been published yet.",
   ].join("\n");
 
-  const events = activity.class.students.map((student) => ({
-    schoolId: input.schoolId,
-    parentId: student.parentId,
-    studentId: student.id,
-    teacherId: activity.teacher.id,
-    type: "ASSESSMENT" as const,
-    title: `${activity.subject.name} activity given`,
-    body,
-    href: "/parent/updates",
-    payload: {
-      studentName: `${student.name} ${student.surname}`,
-      subjectName: activity.subject.name,
-      teacherName,
-      activityTitle: activity.title,
-      activityDate: activity.activityDate.toISOString(),
-      status: "SCORE_PENDING",
-      bucketName: activity.bucket.name,
-      term: activity.bucket.term,
-      academicYear: activity.bucket.academicYear,
-    },
-    sourceModel: "CAActivity",
-    sourceId: String(activity.id),
-    sourceKey: `ca-activity-given:${activity.id}:${student.id}`,
-    occurredAt: activity.activityDate,
-  }));
+  const parentIdsByStudent = await getActiveParentIdsByStudent(
+    input.schoolId,
+    activity.class.students.map((student) => student.id),
+  );
+  const events = activity.class.students.flatMap((student) => {
+    const parentIds = parentIdsByStudent.get(student.id) ?? [];
+    return parentIds.map((parentId) => ({
+      schoolId: input.schoolId,
+      parentId,
+      studentId: student.id,
+      teacherId: activity.teacher.id,
+      type: "ASSESSMENT" as const,
+      title: `${activity.subject.name} activity given`,
+      body,
+      href: "/parent/updates",
+      payload: {
+        studentName: `${student.name} ${student.surname}`,
+        subjectName: activity.subject.name,
+        teacherName,
+        activityTitle: activity.title,
+        activityDate: activity.activityDate.toISOString(),
+        status: "SCORE_PENDING",
+        bucketName: activity.bucket.name,
+        term: activity.bucket.term,
+        academicYear: activity.bucket.academicYear,
+      },
+      sourceModel: "CAActivity",
+      sourceId: String(activity.id),
+      sourceKey: `ca-activity-given:${activity.id}:${student.id}`,
+      occurredAt: activity.activityDate,
+    }));
+  });
 
   await Promise.all(
     events.map((event) =>
@@ -639,7 +646,6 @@ export async function recordCAActivityScoreEvents(input: {
               id: true,
               name: true,
               surname: true,
-              parentId: true,
             },
           },
         },
@@ -649,8 +655,15 @@ export async function recordCAActivityScoreEvents(input: {
 
   if (!activity) throw new Error("CA activity not found.");
 
+  const parentIdsByStudent = await getActiveParentIdsByStudent(
+    input.schoolId,
+    activity.scores.map((score) => score.student.id),
+  );
   const events = [];
   for (const score of activity.scores) {
+    const parentIds = parentIdsByStudent.get(score.student.id) ?? [];
+    if (parentIds.length === 0) continue;
+
     const progress = await getSubjectCAProgress({
       schoolId: input.schoolId,
       studentId: score.student.id,
@@ -673,33 +686,35 @@ export async function recordCAActivityScoreEvents(input: {
     ].join("\n");
     const href = `/list/report-cards/${score.student.id}?term=${activity.bucket.term}&year=${activity.bucket.academicYear}&classId=${activity.class.id}&caScoreId=${score.id}`;
 
-    events.push({
-      schoolId: input.schoolId,
-      parentId: score.student.parentId,
-      studentId: score.student.id,
-      teacherId: activity.teacher.id,
-      type: "ASSESSMENT" as const,
-      title: `${activity.subject.name} CA update`,
-      body: eventBody,
-      href,
-      payload: {
-        studentName: `${score.student.name} ${score.student.surname}`,
-        subjectName: activity.subject.name,
-        teacherName,
-        activityTitle: activity.title,
-        rawScore,
-        rawMaxScore,
-        bucketName: activity.bucket.name,
-        bucketMark: Number(formatMark(normalized)),
-        bucketAllocation: Number(activity.bucket.allocationMarks),
-        currentCA: Number(formatMark(progress.earnedMarks)),
-        caWeight: progress.classworkWeight,
-      },
-      sourceModel: "CAActivityScore",
-      sourceId: String(score.id),
-      sourceKey: `ca-activity-score:${score.id}`,
-      occurredAt: new Date(),
-    });
+    for (const parentId of parentIds) {
+      events.push({
+        schoolId: input.schoolId,
+        parentId,
+        studentId: score.student.id,
+        teacherId: activity.teacher.id,
+        type: "ASSESSMENT" as const,
+        title: `${activity.subject.name} CA update`,
+        body: eventBody,
+        href,
+        payload: {
+          studentName: `${score.student.name} ${score.student.surname}`,
+          subjectName: activity.subject.name,
+          teacherName,
+          activityTitle: activity.title,
+          rawScore,
+          rawMaxScore,
+          bucketName: activity.bucket.name,
+          bucketMark: Number(formatMark(normalized)),
+          bucketAllocation: Number(activity.bucket.allocationMarks),
+          currentCA: Number(formatMark(progress.earnedMarks)),
+          caWeight: progress.classworkWeight,
+        },
+        sourceModel: "CAActivityScore",
+        sourceId: String(score.id),
+        sourceKey: `ca-activity-score:${score.id}`,
+        occurredAt: new Date(),
+      });
+    }
   }
 
   await Promise.all(

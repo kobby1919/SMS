@@ -1,4 +1,5 @@
 import prisma from "@/src/lib/prisma";
+import { listActiveParentChildren } from "@/src/lib/services/parent-student-relationships";
 import { FEE_CATEGORY_LABELS, PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 import type { BillStatus, FinanceQueryReason, FinanceQueryStatus, PaymentStatus } from "@/src/generated/prisma";
 
@@ -167,20 +168,10 @@ function sortBillsForParents(a: ParentFinanceBill, b: ParentFinanceBill) {
 export async function getParentFinanceOverview(parentId: string, schoolId: string): Promise<ParentFinanceOverview> {
   const parent = await prisma.parent.findFirst({
     where: { id: parentId, schoolId },
-    select: {
-      id: true,
-      students: {
-        where: { schoolId },
-        select: {
-          id: true,
-          name: true,
-          surname: true,
-          class: { select: { name: true } },
-        },
-      },
-    },
+    select: { id: true },
   });
-  const childIds = parent?.students.map((student) => student.id) ?? [];
+  const children = parent ? await listActiveParentChildren(parentId, schoolId) : [];
+  const childIds = children.map((student) => student.id);
   if (!parent || childIds.length === 0) {
     return {
       parentId,
@@ -358,7 +349,7 @@ export async function getParentFinanceOverview(parentId: string, schoolId: strin
 
   return {
     parentId,
-    children: parent.students.map((child) => {
+    children: children.map((child) => {
       const childBill = bills.find((bill) => bill.childId === child.id);
       const childBills = bills.filter((bill) => bill.childId === child.id);
       return {
