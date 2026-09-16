@@ -597,6 +597,7 @@ model Student {
   parentNotifications    ParentNotification[]
   parentActivityEvents   ParentActivityEvent[]
   parentRelationships    ParentStudentRelationship[]
+  parentInviteLinks      ParentInviteStudent[]
   financeQueries         FinanceQuery[]
   teacherContactRequests ParentTeacherContactRequest[]
   teacherContactMessages ParentTeacherContactMessage[]
@@ -2222,11 +2223,27 @@ model ParentInvite {
   school         School                 @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   acceptedParent Parent?                @relation("AcceptedParentInvite", fields: [acceptedParentId], references: [id], onDelete: SetNull)
   auditLogs      ParentInviteAuditLog[]
+  students       ParentInviteStudent[]
 
   @@index([schoolId, email])
   @@index([schoolId, status, expiresAt])
   @@index([schoolId, createdAt])
   @@index([expiresAt])
+}
+
+model ParentInviteStudent {
+  id        String   @id @default(cuid())
+  schoolId  String
+  inviteId  String
+  studentId String
+  createdAt DateTime @default(now())
+
+  invite  ParentInvite @relation(fields: [inviteId], references: [id], onDelete: Cascade)
+  student Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([inviteId, studentId])
+  @@index([schoolId, inviteId])
+  @@index([schoolId, studentId])
 }
 
 model ParentInviteAuditLog {

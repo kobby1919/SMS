@@ -24,7 +24,7 @@ const ClerkSignUp = dynamic(
 
 type SignUpViewProps = {
   inviteContext?: {
-    role: "school_admin" | "teacher";
+    role: "school_admin" | "teacher" | "parent";
     email?: string;
     schoolName?: string;
     callbackUrl: string;
@@ -44,6 +44,12 @@ const inviteCopy = {
     subtitle: "Secure teacher invite setup",
     warning: "Create this account with the invited teacher email.",
   },
+  parent: {
+    label: "parent",
+    title: "Create parent account",
+    subtitle: "Secure parent invite setup",
+    warning: "Create this account with the invited parent email.",
+  },
 } satisfies Record<
   NonNullable<SignUpViewProps["inviteContext"]>["role"],
   { label: string; title: string; subtitle: string; warning: string }
@@ -58,8 +64,11 @@ export default function SignUpView({ inviteContext }: SignUpViewProps) {
   const callbackUrl = inviteContext?.callbackUrl ?? AUTH_CALLBACK_PATH;
   const teacherInviteToken = searchParams.get("teacherInvite");
   const schoolInviteToken = searchParams.get("invite");
-  const signInUrl = teacherInviteToken
-    ? `/sign-in?teacherInvite=${encodeURIComponent(teacherInviteToken)}`
+  const parentInviteToken = searchParams.get("parentInvite");
+  const signInUrl = parentInviteToken
+    ? `/sign-in?parentInvite=${encodeURIComponent(parentInviteToken)}`
+    : teacherInviteToken
+      ? `/sign-in?teacherInvite=${encodeURIComponent(teacherInviteToken)}`
     : schoolInviteToken
       ? `/sign-in?invite=${encodeURIComponent(schoolInviteToken)}`
       : "/sign-in";
@@ -72,7 +81,10 @@ export default function SignUpView({ inviteContext }: SignUpViewProps) {
     if (schoolInviteToken) {
       document.cookie = `edujay_school_invite=${encodeURIComponent(schoolInviteToken)}; path=/; max-age=${maxAge}; samesite=lax`;
     }
-  }, [schoolInviteToken, teacherInviteToken]);
+    if (parentInviteToken) {
+      document.cookie = `edujay_parent_invite=${encodeURIComponent(parentInviteToken)}; path=/; max-age=${maxAge}; samesite=lax`;
+    }
+  }, [parentInviteToken, schoolInviteToken, teacherInviteToken]);
 
   return (
     <main className="min-h-dvh overflow-x-hidden bg-[#f5f7fb] text-slate-950">

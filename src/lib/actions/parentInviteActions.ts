@@ -1,8 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { auth } from "@clerk/nextjs/server";
 import { requireRole } from "@/src/lib/authz";
 import {
+  acceptParentInviteForUser,
   createParentInvite,
   resendParentInvite,
   revokeParentInvite,
@@ -11,6 +13,7 @@ import {
 import {
   parentInviteCreateSchema,
   parentInviteIdSchema,
+  parentInviteTokenSchema,
 } from "@/src/lib/validation/parent-invites";
 import { parseActionInput } from "@/src/lib/validation/parse";
 
@@ -69,6 +72,27 @@ export async function revokeParentInviteAction(
     return {
       ok: false,
       message: error instanceof Error ? error.message : "Could not revoke parent invite.",
+    };
+  }
+}
+export async function acceptParentInviteAction(
+  input: unknown,
+): Promise<ParentInviteActionResult> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { ok: false, message: "Please sign in before accepting this parent invite." };
+    }
+
+    const data = parseActionInput(parentInviteTokenSchema, input);
+    await acceptParentInviteForUser({ token: data.token, userId });
+    revalidatePath("/list/parents");
+    revalidatePath("/parent");
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Could not accept parent invite.",
     };
   }
 }

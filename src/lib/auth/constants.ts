@@ -7,3 +7,4 @@ export const MISSING_ROLE_QUERY = "missing_role";
 
 export const AUTH_SCHOOL_INVITE_COOKIE = "edujay_school_invite";
 export const AUTH_TEACHER_INVITE_COOKIE = "edujay_teacher_invite";
+export const AUTH_PARENT_INVITE_COOKIE = "edujay_parent_invite";

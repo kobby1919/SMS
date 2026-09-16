@@ -1095,6 +1095,14 @@ exports.Prisma.ParentInviteScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ParentInviteStudentScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  inviteId: 'inviteId',
+  studentId: 'studentId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.ParentInviteAuditLogScalarFieldEnum = {
   id: 'id',
   schoolId: 'schoolId',
@@ -1680,6 +1688,7 @@ exports.Prisma.ModelName = {
   SchoolInvite: 'SchoolInvite',
   TeacherInvite: 'TeacherInvite',
   ParentInvite: 'ParentInvite',
+  ParentInviteStudent: 'ParentInviteStudent',
   ParentInviteAuditLog: 'ParentInviteAuditLog',
   TeacherInviteAuditLog: 'TeacherInviteAuditLog',
   OnboardingAuditLog: 'OnboardingAuditLog'

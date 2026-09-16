@@ -334,6 +334,11 @@ export type TeacherInvite = $Result.DefaultSelection<Prisma.$TeacherInvitePayloa
  */
 export type ParentInvite = $Result.DefaultSelection<Prisma.$ParentInvitePayload>
 /**
+ * Model ParentInviteStudent
+ * 
+ */
+export type ParentInviteStudent = $Result.DefaultSelection<Prisma.$ParentInviteStudentPayload>
+/**
  * Model ParentInviteAuditLog
  * 
  */
@@ -1975,6 +1980,16 @@ export class PrismaClient<
   get parentInvite(): Prisma.ParentInviteDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.parentInviteStudent`: Exposes CRUD operations for the **ParentInviteStudent** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ParentInviteStudents
+    * const parentInviteStudents = await prisma.parentInviteStudent.findMany()
+    * ```
+    */
+  get parentInviteStudent(): Prisma.ParentInviteStudentDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.parentInviteAuditLog`: Exposes CRUD operations for the **ParentInviteAuditLog** model.
     * Example usage:
     * ```ts
@@ -2501,6 +2516,7 @@ export namespace Prisma {
     SchoolInvite: 'SchoolInvite',
     TeacherInvite: 'TeacherInvite',
     ParentInvite: 'ParentInvite',
+    ParentInviteStudent: 'ParentInviteStudent',
     ParentInviteAuditLog: 'ParentInviteAuditLog',
     TeacherInviteAuditLog: 'TeacherInviteAuditLog',
     OnboardingAuditLog: 'OnboardingAuditLog'
@@ -2519,7 +2535,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "parentStudentRelationship" | "schoolNotificationSetting" | "schoolCommunicationPolicy" | "schoolCommunicationRoute" | "schoolPeriodTemplate" | "timetablePublication" | "publishedTimetableLesson" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentTeacherContactRequest" | "parentTeacherContactMessage" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "teacherInvite" | "parentInvite" | "parentInviteAuditLog" | "teacherInviteAuditLog" | "onboardingAuditLog"
+      modelProps: "school" | "admin" | "student" | "teacher" | "parent" | "parentStudentRelationship" | "schoolNotificationSetting" | "schoolCommunicationPolicy" | "schoolCommunicationRoute" | "schoolPeriodTemplate" | "timetablePublication" | "publishedTimetableLesson" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "parentNotification" | "parentNotificationDeliveryLog" | "parentTeacherContactRequest" | "parentTeacherContactMessage" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "teacherInvite" | "parentInvite" | "parentInviteStudent" | "parentInviteAuditLog" | "teacherInviteAuditLog" | "onboardingAuditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -7259,6 +7275,80 @@ export namespace Prisma {
           }
         }
       }
+      ParentInviteStudent: {
+        payload: Prisma.$ParentInviteStudentPayload<ExtArgs>
+        fields: Prisma.ParentInviteStudentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ParentInviteStudentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteStudentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ParentInviteStudentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteStudentPayload>
+          }
+          findFirst: {
+            args: Prisma.ParentInviteStudentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteStudentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ParentInviteStudentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteStudentPayload>
+          }
+          findMany: {
+            args: Prisma.ParentInviteStudentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteStudentPayload>[]
+          }
+          create: {
+            args: Prisma.ParentInviteStudentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteStudentPayload>
+          }
+          createMany: {
+            args: Prisma.ParentInviteStudentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ParentInviteStudentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteStudentPayload>[]
+          }
+          delete: {
+            args: Prisma.ParentInviteStudentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteStudentPayload>
+          }
+          update: {
+            args: Prisma.ParentInviteStudentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteStudentPayload>
+          }
+          deleteMany: {
+            args: Prisma.ParentInviteStudentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ParentInviteStudentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ParentInviteStudentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteStudentPayload>[]
+          }
+          upsert: {
+            args: Prisma.ParentInviteStudentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentInviteStudentPayload>
+          }
+          aggregate: {
+            args: Prisma.ParentInviteStudentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateParentInviteStudent>
+          }
+          groupBy: {
+            args: Prisma.ParentInviteStudentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ParentInviteStudentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ParentInviteStudentCountArgs<ExtArgs>
+            result: $Utils.Optional<ParentInviteStudentCountAggregateOutputType> | number
+          }
+        }
+      }
       ParentInviteAuditLog: {
         payload: Prisma.$ParentInviteAuditLogPayload<ExtArgs>
         fields: Prisma.ParentInviteAuditLogFieldRefs
@@ -7653,6 +7743,7 @@ export namespace Prisma {
     schoolInvite?: SchoolInviteOmit
     teacherInvite?: TeacherInviteOmit
     parentInvite?: ParentInviteOmit
+    parentInviteStudent?: ParentInviteStudentOmit
     parentInviteAuditLog?: ParentInviteAuditLogOmit
     teacherInviteAuditLog?: TeacherInviteAuditLogOmit
     onboardingAuditLog?: OnboardingAuditLogOmit
@@ -8299,6 +8390,7 @@ export namespace Prisma {
     parentNotifications: number
     parentActivityEvents: number
     parentRelationships: number
+    parentInviteLinks: number
     financeQueries: number
     teacherContactRequests: number
     teacherContactMessages: number
@@ -8315,6 +8407,7 @@ export namespace Prisma {
     parentNotifications?: boolean | StudentCountOutputTypeCountParentNotificationsArgs
     parentActivityEvents?: boolean | StudentCountOutputTypeCountParentActivityEventsArgs
     parentRelationships?: boolean | StudentCountOutputTypeCountParentRelationshipsArgs
+    parentInviteLinks?: boolean | StudentCountOutputTypeCountParentInviteLinksArgs
     financeQueries?: boolean | StudentCountOutputTypeCountFinanceQueriesArgs
     teacherContactRequests?: boolean | StudentCountOutputTypeCountTeacherContactRequestsArgs
     teacherContactMessages?: boolean | StudentCountOutputTypeCountTeacherContactMessagesArgs
@@ -8399,6 +8492,13 @@ export namespace Prisma {
    */
   export type StudentCountOutputTypeCountParentRelationshipsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ParentStudentRelationshipWhereInput
+  }
+
+  /**
+   * StudentCountOutputType without action
+   */
+  export type StudentCountOutputTypeCountParentInviteLinksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ParentInviteStudentWhereInput
   }
 
   /**
@@ -9619,10 +9719,12 @@ export namespace Prisma {
 
   export type ParentInviteCountOutputType = {
     auditLogs: number
+    students: number
   }
 
   export type ParentInviteCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     auditLogs?: boolean | ParentInviteCountOutputTypeCountAuditLogsArgs
+    students?: boolean | ParentInviteCountOutputTypeCountStudentsArgs
   }
 
   // Custom InputTypes
@@ -9641,6 +9743,13 @@ export namespace Prisma {
    */
   export type ParentInviteCountOutputTypeCountAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ParentInviteAuditLogWhereInput
+  }
+
+  /**
+   * ParentInviteCountOutputType without action
+   */
+  export type ParentInviteCountOutputTypeCountStudentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ParentInviteStudentWhereInput
   }
 
 
@@ -13905,6 +14014,7 @@ export namespace Prisma {
     parentNotifications?: boolean | Student$parentNotificationsArgs<ExtArgs>
     parentActivityEvents?: boolean | Student$parentActivityEventsArgs<ExtArgs>
     parentRelationships?: boolean | Student$parentRelationshipsArgs<ExtArgs>
+    parentInviteLinks?: boolean | Student$parentInviteLinksArgs<ExtArgs>
     financeQueries?: boolean | Student$financeQueriesArgs<ExtArgs>
     teacherContactRequests?: boolean | Student$teacherContactRequestsArgs<ExtArgs>
     teacherContactMessages?: boolean | Student$teacherContactMessagesArgs<ExtArgs>
@@ -13989,6 +14099,7 @@ export namespace Prisma {
     parentNotifications?: boolean | Student$parentNotificationsArgs<ExtArgs>
     parentActivityEvents?: boolean | Student$parentActivityEventsArgs<ExtArgs>
     parentRelationships?: boolean | Student$parentRelationshipsArgs<ExtArgs>
+    parentInviteLinks?: boolean | Student$parentInviteLinksArgs<ExtArgs>
     financeQueries?: boolean | Student$financeQueriesArgs<ExtArgs>
     teacherContactRequests?: boolean | Student$teacherContactRequestsArgs<ExtArgs>
     teacherContactMessages?: boolean | Student$teacherContactMessagesArgs<ExtArgs>
@@ -14024,6 +14135,7 @@ export namespace Prisma {
       parentNotifications: Prisma.$ParentNotificationPayload<ExtArgs>[]
       parentActivityEvents: Prisma.$ParentActivityEventPayload<ExtArgs>[]
       parentRelationships: Prisma.$ParentStudentRelationshipPayload<ExtArgs>[]
+      parentInviteLinks: Prisma.$ParentInviteStudentPayload<ExtArgs>[]
       financeQueries: Prisma.$FinanceQueryPayload<ExtArgs>[]
       teacherContactRequests: Prisma.$ParentTeacherContactRequestPayload<ExtArgs>[]
       teacherContactMessages: Prisma.$ParentTeacherContactMessagePayload<ExtArgs>[]
@@ -14452,6 +14564,7 @@ export namespace Prisma {
     parentNotifications<T extends Student$parentNotificationsArgs<ExtArgs> = {}>(args?: Subset<T, Student$parentNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentActivityEvents<T extends Student$parentActivityEventsArgs<ExtArgs> = {}>(args?: Subset<T, Student$parentActivityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentActivityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentRelationships<T extends Student$parentRelationshipsArgs<ExtArgs> = {}>(args?: Subset<T, Student$parentRelationshipsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentStudentRelationshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    parentInviteLinks<T extends Student$parentInviteLinksArgs<ExtArgs> = {}>(args?: Subset<T, Student$parentInviteLinksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInviteStudentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     financeQueries<T extends Student$financeQueriesArgs<ExtArgs> = {}>(args?: Subset<T, Student$financeQueriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FinanceQueryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teacherContactRequests<T extends Student$teacherContactRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Student$teacherContactRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentTeacherContactRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teacherContactMessages<T extends Student$teacherContactMessagesArgs<ExtArgs> = {}>(args?: Subset<T, Student$teacherContactMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentTeacherContactMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -15137,6 +15250,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ParentStudentRelationshipScalarFieldEnum | ParentStudentRelationshipScalarFieldEnum[]
+  }
+
+  /**
+   * Student.parentInviteLinks
+   */
+  export type Student$parentInviteLinksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteStudent
+     */
+    select?: ParentInviteStudentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteStudent
+     */
+    omit?: ParentInviteStudentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteStudentInclude<ExtArgs> | null
+    where?: ParentInviteStudentWhereInput
+    orderBy?: ParentInviteStudentOrderByWithRelationInput | ParentInviteStudentOrderByWithRelationInput[]
+    cursor?: ParentInviteStudentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ParentInviteStudentScalarFieldEnum | ParentInviteStudentScalarFieldEnum[]
   }
 
   /**
@@ -89870,6 +90007,7 @@ export namespace Prisma {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     acceptedParent?: boolean | ParentInvite$acceptedParentArgs<ExtArgs>
     auditLogs?: boolean | ParentInvite$auditLogsArgs<ExtArgs>
+    students?: boolean | ParentInvite$studentsArgs<ExtArgs>
     _count?: boolean | ParentInviteCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["parentInvite"]>
 
@@ -89945,6 +90083,7 @@ export namespace Prisma {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     acceptedParent?: boolean | ParentInvite$acceptedParentArgs<ExtArgs>
     auditLogs?: boolean | ParentInvite$auditLogsArgs<ExtArgs>
+    students?: boolean | ParentInvite$studentsArgs<ExtArgs>
     _count?: boolean | ParentInviteCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ParentInviteIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -89962,6 +90101,7 @@ export namespace Prisma {
       school: Prisma.$SchoolPayload<ExtArgs>
       acceptedParent: Prisma.$ParentPayload<ExtArgs> | null
       auditLogs: Prisma.$ParentInviteAuditLogPayload<ExtArgs>[]
+      students: Prisma.$ParentInviteStudentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -90379,6 +90519,7 @@ export namespace Prisma {
     school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     acceptedParent<T extends ParentInvite$acceptedParentArgs<ExtArgs> = {}>(args?: Subset<T, ParentInvite$acceptedParentArgs<ExtArgs>>): Prisma__ParentClient<$Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     auditLogs<T extends ParentInvite$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, ParentInvite$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInviteAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    students<T extends ParentInvite$studentsArgs<ExtArgs> = {}>(args?: Subset<T, ParentInvite$studentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInviteStudentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -90870,6 +91011,30 @@ export namespace Prisma {
   }
 
   /**
+   * ParentInvite.students
+   */
+  export type ParentInvite$studentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteStudent
+     */
+    select?: ParentInviteStudentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteStudent
+     */
+    omit?: ParentInviteStudentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteStudentInclude<ExtArgs> | null
+    where?: ParentInviteStudentWhereInput
+    orderBy?: ParentInviteStudentOrderByWithRelationInput | ParentInviteStudentOrderByWithRelationInput[]
+    cursor?: ParentInviteStudentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ParentInviteStudentScalarFieldEnum | ParentInviteStudentScalarFieldEnum[]
+  }
+
+  /**
    * ParentInvite without action
    */
   export type ParentInviteDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -90885,6 +91050,1077 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ParentInviteInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ParentInviteStudent
+   */
+
+  export type AggregateParentInviteStudent = {
+    _count: ParentInviteStudentCountAggregateOutputType | null
+    _min: ParentInviteStudentMinAggregateOutputType | null
+    _max: ParentInviteStudentMaxAggregateOutputType | null
+  }
+
+  export type ParentInviteStudentMinAggregateOutputType = {
+    id: string | null
+    schoolId: string | null
+    inviteId: string | null
+    studentId: string | null
+    createdAt: Date | null
+  }
+
+  export type ParentInviteStudentMaxAggregateOutputType = {
+    id: string | null
+    schoolId: string | null
+    inviteId: string | null
+    studentId: string | null
+    createdAt: Date | null
+  }
+
+  export type ParentInviteStudentCountAggregateOutputType = {
+    id: number
+    schoolId: number
+    inviteId: number
+    studentId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type ParentInviteStudentMinAggregateInputType = {
+    id?: true
+    schoolId?: true
+    inviteId?: true
+    studentId?: true
+    createdAt?: true
+  }
+
+  export type ParentInviteStudentMaxAggregateInputType = {
+    id?: true
+    schoolId?: true
+    inviteId?: true
+    studentId?: true
+    createdAt?: true
+  }
+
+  export type ParentInviteStudentCountAggregateInputType = {
+    id?: true
+    schoolId?: true
+    inviteId?: true
+    studentId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type ParentInviteStudentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ParentInviteStudent to aggregate.
+     */
+    where?: ParentInviteStudentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParentInviteStudents to fetch.
+     */
+    orderBy?: ParentInviteStudentOrderByWithRelationInput | ParentInviteStudentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ParentInviteStudentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParentInviteStudents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParentInviteStudents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ParentInviteStudents
+    **/
+    _count?: true | ParentInviteStudentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ParentInviteStudentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ParentInviteStudentMaxAggregateInputType
+  }
+
+  export type GetParentInviteStudentAggregateType<T extends ParentInviteStudentAggregateArgs> = {
+        [P in keyof T & keyof AggregateParentInviteStudent]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateParentInviteStudent[P]>
+      : GetScalarType<T[P], AggregateParentInviteStudent[P]>
+  }
+
+
+
+
+  export type ParentInviteStudentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ParentInviteStudentWhereInput
+    orderBy?: ParentInviteStudentOrderByWithAggregationInput | ParentInviteStudentOrderByWithAggregationInput[]
+    by: ParentInviteStudentScalarFieldEnum[] | ParentInviteStudentScalarFieldEnum
+    having?: ParentInviteStudentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ParentInviteStudentCountAggregateInputType | true
+    _min?: ParentInviteStudentMinAggregateInputType
+    _max?: ParentInviteStudentMaxAggregateInputType
+  }
+
+  export type ParentInviteStudentGroupByOutputType = {
+    id: string
+    schoolId: string
+    inviteId: string
+    studentId: string
+    createdAt: Date
+    _count: ParentInviteStudentCountAggregateOutputType | null
+    _min: ParentInviteStudentMinAggregateOutputType | null
+    _max: ParentInviteStudentMaxAggregateOutputType | null
+  }
+
+  type GetParentInviteStudentGroupByPayload<T extends ParentInviteStudentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ParentInviteStudentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ParentInviteStudentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ParentInviteStudentGroupByOutputType[P]>
+            : GetScalarType<T[P], ParentInviteStudentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ParentInviteStudentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    inviteId?: boolean
+    studentId?: boolean
+    createdAt?: boolean
+    invite?: boolean | ParentInviteDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["parentInviteStudent"]>
+
+  export type ParentInviteStudentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    inviteId?: boolean
+    studentId?: boolean
+    createdAt?: boolean
+    invite?: boolean | ParentInviteDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["parentInviteStudent"]>
+
+  export type ParentInviteStudentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    schoolId?: boolean
+    inviteId?: boolean
+    studentId?: boolean
+    createdAt?: boolean
+    invite?: boolean | ParentInviteDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["parentInviteStudent"]>
+
+  export type ParentInviteStudentSelectScalar = {
+    id?: boolean
+    schoolId?: boolean
+    inviteId?: boolean
+    studentId?: boolean
+    createdAt?: boolean
+  }
+
+  export type ParentInviteStudentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "schoolId" | "inviteId" | "studentId" | "createdAt", ExtArgs["result"]["parentInviteStudent"]>
+  export type ParentInviteStudentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    invite?: boolean | ParentInviteDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+  }
+  export type ParentInviteStudentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    invite?: boolean | ParentInviteDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+  }
+  export type ParentInviteStudentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    invite?: boolean | ParentInviteDefaultArgs<ExtArgs>
+    student?: boolean | StudentDefaultArgs<ExtArgs>
+  }
+
+  export type $ParentInviteStudentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ParentInviteStudent"
+    objects: {
+      invite: Prisma.$ParentInvitePayload<ExtArgs>
+      student: Prisma.$StudentPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      schoolId: string
+      inviteId: string
+      studentId: string
+      createdAt: Date
+    }, ExtArgs["result"]["parentInviteStudent"]>
+    composites: {}
+  }
+
+  type ParentInviteStudentGetPayload<S extends boolean | null | undefined | ParentInviteStudentDefaultArgs> = $Result.GetResult<Prisma.$ParentInviteStudentPayload, S>
+
+  type ParentInviteStudentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ParentInviteStudentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ParentInviteStudentCountAggregateInputType | true
+    }
+
+  export interface ParentInviteStudentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ParentInviteStudent'], meta: { name: 'ParentInviteStudent' } }
+    /**
+     * Find zero or one ParentInviteStudent that matches the filter.
+     * @param {ParentInviteStudentFindUniqueArgs} args - Arguments to find a ParentInviteStudent
+     * @example
+     * // Get one ParentInviteStudent
+     * const parentInviteStudent = await prisma.parentInviteStudent.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ParentInviteStudentFindUniqueArgs>(args: SelectSubset<T, ParentInviteStudentFindUniqueArgs<ExtArgs>>): Prisma__ParentInviteStudentClient<$Result.GetResult<Prisma.$ParentInviteStudentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ParentInviteStudent that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ParentInviteStudentFindUniqueOrThrowArgs} args - Arguments to find a ParentInviteStudent
+     * @example
+     * // Get one ParentInviteStudent
+     * const parentInviteStudent = await prisma.parentInviteStudent.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ParentInviteStudentFindUniqueOrThrowArgs>(args: SelectSubset<T, ParentInviteStudentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ParentInviteStudentClient<$Result.GetResult<Prisma.$ParentInviteStudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ParentInviteStudent that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteStudentFindFirstArgs} args - Arguments to find a ParentInviteStudent
+     * @example
+     * // Get one ParentInviteStudent
+     * const parentInviteStudent = await prisma.parentInviteStudent.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ParentInviteStudentFindFirstArgs>(args?: SelectSubset<T, ParentInviteStudentFindFirstArgs<ExtArgs>>): Prisma__ParentInviteStudentClient<$Result.GetResult<Prisma.$ParentInviteStudentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ParentInviteStudent that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteStudentFindFirstOrThrowArgs} args - Arguments to find a ParentInviteStudent
+     * @example
+     * // Get one ParentInviteStudent
+     * const parentInviteStudent = await prisma.parentInviteStudent.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ParentInviteStudentFindFirstOrThrowArgs>(args?: SelectSubset<T, ParentInviteStudentFindFirstOrThrowArgs<ExtArgs>>): Prisma__ParentInviteStudentClient<$Result.GetResult<Prisma.$ParentInviteStudentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ParentInviteStudents that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteStudentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ParentInviteStudents
+     * const parentInviteStudents = await prisma.parentInviteStudent.findMany()
+     * 
+     * // Get first 10 ParentInviteStudents
+     * const parentInviteStudents = await prisma.parentInviteStudent.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const parentInviteStudentWithIdOnly = await prisma.parentInviteStudent.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ParentInviteStudentFindManyArgs>(args?: SelectSubset<T, ParentInviteStudentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInviteStudentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ParentInviteStudent.
+     * @param {ParentInviteStudentCreateArgs} args - Arguments to create a ParentInviteStudent.
+     * @example
+     * // Create one ParentInviteStudent
+     * const ParentInviteStudent = await prisma.parentInviteStudent.create({
+     *   data: {
+     *     // ... data to create a ParentInviteStudent
+     *   }
+     * })
+     * 
+     */
+    create<T extends ParentInviteStudentCreateArgs>(args: SelectSubset<T, ParentInviteStudentCreateArgs<ExtArgs>>): Prisma__ParentInviteStudentClient<$Result.GetResult<Prisma.$ParentInviteStudentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ParentInviteStudents.
+     * @param {ParentInviteStudentCreateManyArgs} args - Arguments to create many ParentInviteStudents.
+     * @example
+     * // Create many ParentInviteStudents
+     * const parentInviteStudent = await prisma.parentInviteStudent.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ParentInviteStudentCreateManyArgs>(args?: SelectSubset<T, ParentInviteStudentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ParentInviteStudents and returns the data saved in the database.
+     * @param {ParentInviteStudentCreateManyAndReturnArgs} args - Arguments to create many ParentInviteStudents.
+     * @example
+     * // Create many ParentInviteStudents
+     * const parentInviteStudent = await prisma.parentInviteStudent.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ParentInviteStudents and only return the `id`
+     * const parentInviteStudentWithIdOnly = await prisma.parentInviteStudent.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ParentInviteStudentCreateManyAndReturnArgs>(args?: SelectSubset<T, ParentInviteStudentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInviteStudentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ParentInviteStudent.
+     * @param {ParentInviteStudentDeleteArgs} args - Arguments to delete one ParentInviteStudent.
+     * @example
+     * // Delete one ParentInviteStudent
+     * const ParentInviteStudent = await prisma.parentInviteStudent.delete({
+     *   where: {
+     *     // ... filter to delete one ParentInviteStudent
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ParentInviteStudentDeleteArgs>(args: SelectSubset<T, ParentInviteStudentDeleteArgs<ExtArgs>>): Prisma__ParentInviteStudentClient<$Result.GetResult<Prisma.$ParentInviteStudentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ParentInviteStudent.
+     * @param {ParentInviteStudentUpdateArgs} args - Arguments to update one ParentInviteStudent.
+     * @example
+     * // Update one ParentInviteStudent
+     * const parentInviteStudent = await prisma.parentInviteStudent.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ParentInviteStudentUpdateArgs>(args: SelectSubset<T, ParentInviteStudentUpdateArgs<ExtArgs>>): Prisma__ParentInviteStudentClient<$Result.GetResult<Prisma.$ParentInviteStudentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ParentInviteStudents.
+     * @param {ParentInviteStudentDeleteManyArgs} args - Arguments to filter ParentInviteStudents to delete.
+     * @example
+     * // Delete a few ParentInviteStudents
+     * const { count } = await prisma.parentInviteStudent.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ParentInviteStudentDeleteManyArgs>(args?: SelectSubset<T, ParentInviteStudentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ParentInviteStudents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteStudentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ParentInviteStudents
+     * const parentInviteStudent = await prisma.parentInviteStudent.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ParentInviteStudentUpdateManyArgs>(args: SelectSubset<T, ParentInviteStudentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ParentInviteStudents and returns the data updated in the database.
+     * @param {ParentInviteStudentUpdateManyAndReturnArgs} args - Arguments to update many ParentInviteStudents.
+     * @example
+     * // Update many ParentInviteStudents
+     * const parentInviteStudent = await prisma.parentInviteStudent.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ParentInviteStudents and only return the `id`
+     * const parentInviteStudentWithIdOnly = await prisma.parentInviteStudent.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ParentInviteStudentUpdateManyAndReturnArgs>(args: SelectSubset<T, ParentInviteStudentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInviteStudentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ParentInviteStudent.
+     * @param {ParentInviteStudentUpsertArgs} args - Arguments to update or create a ParentInviteStudent.
+     * @example
+     * // Update or create a ParentInviteStudent
+     * const parentInviteStudent = await prisma.parentInviteStudent.upsert({
+     *   create: {
+     *     // ... data to create a ParentInviteStudent
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ParentInviteStudent we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ParentInviteStudentUpsertArgs>(args: SelectSubset<T, ParentInviteStudentUpsertArgs<ExtArgs>>): Prisma__ParentInviteStudentClient<$Result.GetResult<Prisma.$ParentInviteStudentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ParentInviteStudents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteStudentCountArgs} args - Arguments to filter ParentInviteStudents to count.
+     * @example
+     * // Count the number of ParentInviteStudents
+     * const count = await prisma.parentInviteStudent.count({
+     *   where: {
+     *     // ... the filter for the ParentInviteStudents we want to count
+     *   }
+     * })
+    **/
+    count<T extends ParentInviteStudentCountArgs>(
+      args?: Subset<T, ParentInviteStudentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ParentInviteStudentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ParentInviteStudent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteStudentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ParentInviteStudentAggregateArgs>(args: Subset<T, ParentInviteStudentAggregateArgs>): Prisma.PrismaPromise<GetParentInviteStudentAggregateType<T>>
+
+    /**
+     * Group by ParentInviteStudent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentInviteStudentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ParentInviteStudentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ParentInviteStudentGroupByArgs['orderBy'] }
+        : { orderBy?: ParentInviteStudentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ParentInviteStudentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetParentInviteStudentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ParentInviteStudent model
+   */
+  readonly fields: ParentInviteStudentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ParentInviteStudent.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ParentInviteStudentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    invite<T extends ParentInviteDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ParentInviteDefaultArgs<ExtArgs>>): Prisma__ParentInviteClient<$Result.GetResult<Prisma.$ParentInvitePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    student<T extends StudentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StudentDefaultArgs<ExtArgs>>): Prisma__StudentClient<$Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ParentInviteStudent model
+   */
+  interface ParentInviteStudentFieldRefs {
+    readonly id: FieldRef<"ParentInviteStudent", 'String'>
+    readonly schoolId: FieldRef<"ParentInviteStudent", 'String'>
+    readonly inviteId: FieldRef<"ParentInviteStudent", 'String'>
+    readonly studentId: FieldRef<"ParentInviteStudent", 'String'>
+    readonly createdAt: FieldRef<"ParentInviteStudent", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ParentInviteStudent findUnique
+   */
+  export type ParentInviteStudentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteStudent
+     */
+    select?: ParentInviteStudentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteStudent
+     */
+    omit?: ParentInviteStudentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteStudentInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentInviteStudent to fetch.
+     */
+    where: ParentInviteStudentWhereUniqueInput
+  }
+
+  /**
+   * ParentInviteStudent findUniqueOrThrow
+   */
+  export type ParentInviteStudentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteStudent
+     */
+    select?: ParentInviteStudentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteStudent
+     */
+    omit?: ParentInviteStudentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteStudentInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentInviteStudent to fetch.
+     */
+    where: ParentInviteStudentWhereUniqueInput
+  }
+
+  /**
+   * ParentInviteStudent findFirst
+   */
+  export type ParentInviteStudentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteStudent
+     */
+    select?: ParentInviteStudentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteStudent
+     */
+    omit?: ParentInviteStudentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteStudentInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentInviteStudent to fetch.
+     */
+    where?: ParentInviteStudentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParentInviteStudents to fetch.
+     */
+    orderBy?: ParentInviteStudentOrderByWithRelationInput | ParentInviteStudentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ParentInviteStudents.
+     */
+    cursor?: ParentInviteStudentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParentInviteStudents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParentInviteStudents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParentInviteStudents.
+     */
+    distinct?: ParentInviteStudentScalarFieldEnum | ParentInviteStudentScalarFieldEnum[]
+  }
+
+  /**
+   * ParentInviteStudent findFirstOrThrow
+   */
+  export type ParentInviteStudentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteStudent
+     */
+    select?: ParentInviteStudentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteStudent
+     */
+    omit?: ParentInviteStudentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteStudentInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentInviteStudent to fetch.
+     */
+    where?: ParentInviteStudentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParentInviteStudents to fetch.
+     */
+    orderBy?: ParentInviteStudentOrderByWithRelationInput | ParentInviteStudentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ParentInviteStudents.
+     */
+    cursor?: ParentInviteStudentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParentInviteStudents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParentInviteStudents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParentInviteStudents.
+     */
+    distinct?: ParentInviteStudentScalarFieldEnum | ParentInviteStudentScalarFieldEnum[]
+  }
+
+  /**
+   * ParentInviteStudent findMany
+   */
+  export type ParentInviteStudentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteStudent
+     */
+    select?: ParentInviteStudentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteStudent
+     */
+    omit?: ParentInviteStudentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteStudentInclude<ExtArgs> | null
+    /**
+     * Filter, which ParentInviteStudents to fetch.
+     */
+    where?: ParentInviteStudentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParentInviteStudents to fetch.
+     */
+    orderBy?: ParentInviteStudentOrderByWithRelationInput | ParentInviteStudentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ParentInviteStudents.
+     */
+    cursor?: ParentInviteStudentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParentInviteStudents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParentInviteStudents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParentInviteStudents.
+     */
+    distinct?: ParentInviteStudentScalarFieldEnum | ParentInviteStudentScalarFieldEnum[]
+  }
+
+  /**
+   * ParentInviteStudent create
+   */
+  export type ParentInviteStudentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteStudent
+     */
+    select?: ParentInviteStudentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteStudent
+     */
+    omit?: ParentInviteStudentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteStudentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ParentInviteStudent.
+     */
+    data: XOR<ParentInviteStudentCreateInput, ParentInviteStudentUncheckedCreateInput>
+  }
+
+  /**
+   * ParentInviteStudent createMany
+   */
+  export type ParentInviteStudentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ParentInviteStudents.
+     */
+    data: ParentInviteStudentCreateManyInput | ParentInviteStudentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ParentInviteStudent createManyAndReturn
+   */
+  export type ParentInviteStudentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteStudent
+     */
+    select?: ParentInviteStudentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteStudent
+     */
+    omit?: ParentInviteStudentOmit<ExtArgs> | null
+    /**
+     * The data used to create many ParentInviteStudents.
+     */
+    data: ParentInviteStudentCreateManyInput | ParentInviteStudentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteStudentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ParentInviteStudent update
+   */
+  export type ParentInviteStudentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteStudent
+     */
+    select?: ParentInviteStudentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteStudent
+     */
+    omit?: ParentInviteStudentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteStudentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ParentInviteStudent.
+     */
+    data: XOR<ParentInviteStudentUpdateInput, ParentInviteStudentUncheckedUpdateInput>
+    /**
+     * Choose, which ParentInviteStudent to update.
+     */
+    where: ParentInviteStudentWhereUniqueInput
+  }
+
+  /**
+   * ParentInviteStudent updateMany
+   */
+  export type ParentInviteStudentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ParentInviteStudents.
+     */
+    data: XOR<ParentInviteStudentUpdateManyMutationInput, ParentInviteStudentUncheckedUpdateManyInput>
+    /**
+     * Filter which ParentInviteStudents to update
+     */
+    where?: ParentInviteStudentWhereInput
+    /**
+     * Limit how many ParentInviteStudents to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ParentInviteStudent updateManyAndReturn
+   */
+  export type ParentInviteStudentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteStudent
+     */
+    select?: ParentInviteStudentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteStudent
+     */
+    omit?: ParentInviteStudentOmit<ExtArgs> | null
+    /**
+     * The data used to update ParentInviteStudents.
+     */
+    data: XOR<ParentInviteStudentUpdateManyMutationInput, ParentInviteStudentUncheckedUpdateManyInput>
+    /**
+     * Filter which ParentInviteStudents to update
+     */
+    where?: ParentInviteStudentWhereInput
+    /**
+     * Limit how many ParentInviteStudents to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteStudentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ParentInviteStudent upsert
+   */
+  export type ParentInviteStudentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteStudent
+     */
+    select?: ParentInviteStudentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteStudent
+     */
+    omit?: ParentInviteStudentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteStudentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ParentInviteStudent to update in case it exists.
+     */
+    where: ParentInviteStudentWhereUniqueInput
+    /**
+     * In case the ParentInviteStudent found by the `where` argument doesn't exist, create a new ParentInviteStudent with this data.
+     */
+    create: XOR<ParentInviteStudentCreateInput, ParentInviteStudentUncheckedCreateInput>
+    /**
+     * In case the ParentInviteStudent was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ParentInviteStudentUpdateInput, ParentInviteStudentUncheckedUpdateInput>
+  }
+
+  /**
+   * ParentInviteStudent delete
+   */
+  export type ParentInviteStudentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteStudent
+     */
+    select?: ParentInviteStudentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteStudent
+     */
+    omit?: ParentInviteStudentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteStudentInclude<ExtArgs> | null
+    /**
+     * Filter which ParentInviteStudent to delete.
+     */
+    where: ParentInviteStudentWhereUniqueInput
+  }
+
+  /**
+   * ParentInviteStudent deleteMany
+   */
+  export type ParentInviteStudentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ParentInviteStudents to delete
+     */
+    where?: ParentInviteStudentWhereInput
+    /**
+     * Limit how many ParentInviteStudents to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ParentInviteStudent without action
+   */
+  export type ParentInviteStudentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentInviteStudent
+     */
+    select?: ParentInviteStudentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParentInviteStudent
+     */
+    omit?: ParentInviteStudentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInviteStudentInclude<ExtArgs> | null
   }
 
 
@@ -95406,6 +96642,17 @@ export namespace Prisma {
   export type ParentInviteScalarFieldEnum = (typeof ParentInviteScalarFieldEnum)[keyof typeof ParentInviteScalarFieldEnum]
 
 
+  export const ParentInviteStudentScalarFieldEnum: {
+    id: 'id',
+    schoolId: 'schoolId',
+    inviteId: 'inviteId',
+    studentId: 'studentId',
+    createdAt: 'createdAt'
+  };
+
+  export type ParentInviteStudentScalarFieldEnum = (typeof ParentInviteStudentScalarFieldEnum)[keyof typeof ParentInviteStudentScalarFieldEnum]
+
+
   export const ParentInviteAuditLogScalarFieldEnum: {
     id: 'id',
     schoolId: 'schoolId',
@@ -96767,6 +98014,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
     parentRelationships?: ParentStudentRelationshipListRelationFilter
+    parentInviteLinks?: ParentInviteStudentListRelationFilter
     financeQueries?: FinanceQueryListRelationFilter
     teacherContactRequests?: ParentTeacherContactRequestListRelationFilter
     teacherContactMessages?: ParentTeacherContactMessageListRelationFilter
@@ -96802,6 +98050,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationOrderByRelationAggregateInput
     parentActivityEvents?: ParentActivityEventOrderByRelationAggregateInput
     parentRelationships?: ParentStudentRelationshipOrderByRelationAggregateInput
+    parentInviteLinks?: ParentInviteStudentOrderByRelationAggregateInput
     financeQueries?: FinanceQueryOrderByRelationAggregateInput
     teacherContactRequests?: ParentTeacherContactRequestOrderByRelationAggregateInput
     teacherContactMessages?: ParentTeacherContactMessageOrderByRelationAggregateInput
@@ -96840,6 +98089,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
     parentRelationships?: ParentStudentRelationshipListRelationFilter
+    parentInviteLinks?: ParentInviteStudentListRelationFilter
     financeQueries?: FinanceQueryListRelationFilter
     teacherContactRequests?: ParentTeacherContactRequestListRelationFilter
     teacherContactMessages?: ParentTeacherContactMessageListRelationFilter
@@ -102957,6 +104207,7 @@ export namespace Prisma {
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     acceptedParent?: XOR<ParentNullableScalarRelationFilter, ParentWhereInput> | null
     auditLogs?: ParentInviteAuditLogListRelationFilter
+    students?: ParentInviteStudentListRelationFilter
   }
 
   export type ParentInviteOrderByWithRelationInput = {
@@ -102981,6 +104232,7 @@ export namespace Prisma {
     school?: SchoolOrderByWithRelationInput
     acceptedParent?: ParentOrderByWithRelationInput
     auditLogs?: ParentInviteAuditLogOrderByRelationAggregateInput
+    students?: ParentInviteStudentOrderByRelationAggregateInput
   }
 
   export type ParentInviteWhereUniqueInput = Prisma.AtLeast<{
@@ -103008,6 +104260,7 @@ export namespace Prisma {
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     acceptedParent?: XOR<ParentNullableScalarRelationFilter, ParentWhereInput> | null
     auditLogs?: ParentInviteAuditLogListRelationFilter
+    students?: ParentInviteStudentListRelationFilter
   }, "id" | "tokenHash">
 
   export type ParentInviteOrderByWithAggregationInput = {
@@ -103056,6 +104309,65 @@ export namespace Prisma {
     createdBy?: StringWithAggregatesFilter<"ParentInvite"> | string
     createdAt?: DateTimeWithAggregatesFilter<"ParentInvite"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ParentInvite"> | Date | string
+  }
+
+  export type ParentInviteStudentWhereInput = {
+    AND?: ParentInviteStudentWhereInput | ParentInviteStudentWhereInput[]
+    OR?: ParentInviteStudentWhereInput[]
+    NOT?: ParentInviteStudentWhereInput | ParentInviteStudentWhereInput[]
+    id?: StringFilter<"ParentInviteStudent"> | string
+    schoolId?: StringFilter<"ParentInviteStudent"> | string
+    inviteId?: StringFilter<"ParentInviteStudent"> | string
+    studentId?: StringFilter<"ParentInviteStudent"> | string
+    createdAt?: DateTimeFilter<"ParentInviteStudent"> | Date | string
+    invite?: XOR<ParentInviteScalarRelationFilter, ParentInviteWhereInput>
+    student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
+  }
+
+  export type ParentInviteStudentOrderByWithRelationInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    inviteId?: SortOrder
+    studentId?: SortOrder
+    createdAt?: SortOrder
+    invite?: ParentInviteOrderByWithRelationInput
+    student?: StudentOrderByWithRelationInput
+  }
+
+  export type ParentInviteStudentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    inviteId_studentId?: ParentInviteStudentInviteIdStudentIdCompoundUniqueInput
+    AND?: ParentInviteStudentWhereInput | ParentInviteStudentWhereInput[]
+    OR?: ParentInviteStudentWhereInput[]
+    NOT?: ParentInviteStudentWhereInput | ParentInviteStudentWhereInput[]
+    schoolId?: StringFilter<"ParentInviteStudent"> | string
+    inviteId?: StringFilter<"ParentInviteStudent"> | string
+    studentId?: StringFilter<"ParentInviteStudent"> | string
+    createdAt?: DateTimeFilter<"ParentInviteStudent"> | Date | string
+    invite?: XOR<ParentInviteScalarRelationFilter, ParentInviteWhereInput>
+    student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
+  }, "id" | "inviteId_studentId">
+
+  export type ParentInviteStudentOrderByWithAggregationInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    inviteId?: SortOrder
+    studentId?: SortOrder
+    createdAt?: SortOrder
+    _count?: ParentInviteStudentCountOrderByAggregateInput
+    _max?: ParentInviteStudentMaxOrderByAggregateInput
+    _min?: ParentInviteStudentMinOrderByAggregateInput
+  }
+
+  export type ParentInviteStudentScalarWhereWithAggregatesInput = {
+    AND?: ParentInviteStudentScalarWhereWithAggregatesInput | ParentInviteStudentScalarWhereWithAggregatesInput[]
+    OR?: ParentInviteStudentScalarWhereWithAggregatesInput[]
+    NOT?: ParentInviteStudentScalarWhereWithAggregatesInput | ParentInviteStudentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ParentInviteStudent"> | string
+    schoolId?: StringWithAggregatesFilter<"ParentInviteStudent"> | string
+    inviteId?: StringWithAggregatesFilter<"ParentInviteStudent"> | string
+    studentId?: StringWithAggregatesFilter<"ParentInviteStudent"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"ParentInviteStudent"> | Date | string
   }
 
   export type ParentInviteAuditLogWhereInput = {
@@ -103721,6 +105033,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -103752,6 +105065,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -103783,6 +105097,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -103814,6 +105129,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -110335,6 +111651,7 @@ export namespace Prisma {
     school: SchoolCreateNestedOneWithoutParentInvitesInput
     acceptedParent?: ParentCreateNestedOneWithoutAcceptedInvitesInput
     auditLogs?: ParentInviteAuditLogCreateNestedManyWithoutInviteInput
+    students?: ParentInviteStudentCreateNestedManyWithoutInviteInput
   }
 
   export type ParentInviteUncheckedCreateInput = {
@@ -110357,6 +111674,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     auditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutInviteInput
+    students?: ParentInviteStudentUncheckedCreateNestedManyWithoutInviteInput
   }
 
   export type ParentInviteUpdateInput = {
@@ -110379,6 +111697,7 @@ export namespace Prisma {
     school?: SchoolUpdateOneRequiredWithoutParentInvitesNestedInput
     acceptedParent?: ParentUpdateOneWithoutAcceptedInvitesNestedInput
     auditLogs?: ParentInviteAuditLogUpdateManyWithoutInviteNestedInput
+    students?: ParentInviteStudentUpdateManyWithoutInviteNestedInput
   }
 
   export type ParentInviteUncheckedUpdateInput = {
@@ -110401,6 +111720,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     auditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutInviteNestedInput
+    students?: ParentInviteStudentUncheckedUpdateManyWithoutInviteNestedInput
   }
 
   export type ParentInviteCreateManyInput = {
@@ -110462,6 +111782,60 @@ export namespace Prisma {
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParentInviteStudentCreateInput = {
+    id?: string
+    schoolId: string
+    createdAt?: Date | string
+    invite: ParentInviteCreateNestedOneWithoutStudentsInput
+    student: StudentCreateNestedOneWithoutParentInviteLinksInput
+  }
+
+  export type ParentInviteStudentUncheckedCreateInput = {
+    id?: string
+    schoolId: string
+    inviteId: string
+    studentId: string
+    createdAt?: Date | string
+  }
+
+  export type ParentInviteStudentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    invite?: ParentInviteUpdateOneRequiredWithoutStudentsNestedInput
+    student?: StudentUpdateOneRequiredWithoutParentInviteLinksNestedInput
+  }
+
+  export type ParentInviteStudentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    inviteId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParentInviteStudentCreateManyInput = {
+    id?: string
+    schoolId: string
+    inviteId: string
+    studentId: string
+    createdAt?: Date | string
+  }
+
+  export type ParentInviteStudentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParentInviteStudentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    inviteId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ParentInviteAuditLogCreateInput = {
@@ -111530,6 +112904,16 @@ export namespace Prisma {
   export type GradeScalarRelationFilter = {
     is?: GradeWhereInput
     isNot?: GradeWhereInput
+  }
+
+  export type ParentInviteStudentListRelationFilter = {
+    every?: ParentInviteStudentWhereInput
+    some?: ParentInviteStudentWhereInput
+    none?: ParentInviteStudentWhereInput
+  }
+
+  export type ParentInviteStudentOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type StudentCountOrderByAggregateInput = {
@@ -116469,16 +117853,45 @@ export namespace Prisma {
     _max?: NestedEnumParentInviteStatusFilter<$PrismaModel>
   }
 
+  export type ParentInviteScalarRelationFilter = {
+    is?: ParentInviteWhereInput
+    isNot?: ParentInviteWhereInput
+  }
+
+  export type ParentInviteStudentInviteIdStudentIdCompoundUniqueInput = {
+    inviteId: string
+    studentId: string
+  }
+
+  export type ParentInviteStudentCountOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    inviteId?: SortOrder
+    studentId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ParentInviteStudentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    inviteId?: SortOrder
+    studentId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ParentInviteStudentMinOrderByAggregateInput = {
+    id?: SortOrder
+    schoolId?: SortOrder
+    inviteId?: SortOrder
+    studentId?: SortOrder
+    createdAt?: SortOrder
+  }
+
   export type EnumParentInviteAuditActionFilter<$PrismaModel = never> = {
     equals?: $Enums.ParentInviteAuditAction | EnumParentInviteAuditActionFieldRefInput<$PrismaModel>
     in?: $Enums.ParentInviteAuditAction[] | ListEnumParentInviteAuditActionFieldRefInput<$PrismaModel>
     notIn?: $Enums.ParentInviteAuditAction[] | ListEnumParentInviteAuditActionFieldRefInput<$PrismaModel>
     not?: NestedEnumParentInviteAuditActionFilter<$PrismaModel> | $Enums.ParentInviteAuditAction
-  }
-
-  export type ParentInviteScalarRelationFilter = {
-    is?: ParentInviteWhereInput
-    isNot?: ParentInviteWhereInput
   }
 
   export type ParentInviteAuditLogCountOrderByAggregateInput = {
@@ -119327,6 +120740,13 @@ export namespace Prisma {
     connect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
   }
 
+  export type ParentInviteStudentCreateNestedManyWithoutStudentInput = {
+    create?: XOR<ParentInviteStudentCreateWithoutStudentInput, ParentInviteStudentUncheckedCreateWithoutStudentInput> | ParentInviteStudentCreateWithoutStudentInput[] | ParentInviteStudentUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: ParentInviteStudentCreateOrConnectWithoutStudentInput | ParentInviteStudentCreateOrConnectWithoutStudentInput[]
+    createMany?: ParentInviteStudentCreateManyStudentInputEnvelope
+    connect?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+  }
+
   export type FinanceQueryCreateNestedManyWithoutStudentInput = {
     create?: XOR<FinanceQueryCreateWithoutStudentInput, FinanceQueryUncheckedCreateWithoutStudentInput> | FinanceQueryCreateWithoutStudentInput[] | FinanceQueryUncheckedCreateWithoutStudentInput[]
     connectOrCreate?: FinanceQueryCreateOrConnectWithoutStudentInput | FinanceQueryCreateOrConnectWithoutStudentInput[]
@@ -119416,6 +120836,13 @@ export namespace Prisma {
     connectOrCreate?: ParentStudentRelationshipCreateOrConnectWithoutStudentInput | ParentStudentRelationshipCreateOrConnectWithoutStudentInput[]
     createMany?: ParentStudentRelationshipCreateManyStudentInputEnvelope
     connect?: ParentStudentRelationshipWhereUniqueInput | ParentStudentRelationshipWhereUniqueInput[]
+  }
+
+  export type ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput = {
+    create?: XOR<ParentInviteStudentCreateWithoutStudentInput, ParentInviteStudentUncheckedCreateWithoutStudentInput> | ParentInviteStudentCreateWithoutStudentInput[] | ParentInviteStudentUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: ParentInviteStudentCreateOrConnectWithoutStudentInput | ParentInviteStudentCreateOrConnectWithoutStudentInput[]
+    createMany?: ParentInviteStudentCreateManyStudentInputEnvelope
+    connect?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
   }
 
   export type FinanceQueryUncheckedCreateNestedManyWithoutStudentInput = {
@@ -119615,6 +121042,20 @@ export namespace Prisma {
     deleteMany?: ParentStudentRelationshipScalarWhereInput | ParentStudentRelationshipScalarWhereInput[]
   }
 
+  export type ParentInviteStudentUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<ParentInviteStudentCreateWithoutStudentInput, ParentInviteStudentUncheckedCreateWithoutStudentInput> | ParentInviteStudentCreateWithoutStudentInput[] | ParentInviteStudentUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: ParentInviteStudentCreateOrConnectWithoutStudentInput | ParentInviteStudentCreateOrConnectWithoutStudentInput[]
+    upsert?: ParentInviteStudentUpsertWithWhereUniqueWithoutStudentInput | ParentInviteStudentUpsertWithWhereUniqueWithoutStudentInput[]
+    createMany?: ParentInviteStudentCreateManyStudentInputEnvelope
+    set?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+    disconnect?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+    delete?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+    connect?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+    update?: ParentInviteStudentUpdateWithWhereUniqueWithoutStudentInput | ParentInviteStudentUpdateWithWhereUniqueWithoutStudentInput[]
+    updateMany?: ParentInviteStudentUpdateManyWithWhereWithoutStudentInput | ParentInviteStudentUpdateManyWithWhereWithoutStudentInput[]
+    deleteMany?: ParentInviteStudentScalarWhereInput | ParentInviteStudentScalarWhereInput[]
+  }
+
   export type FinanceQueryUpdateManyWithoutStudentNestedInput = {
     create?: XOR<FinanceQueryCreateWithoutStudentInput, FinanceQueryUncheckedCreateWithoutStudentInput> | FinanceQueryCreateWithoutStudentInput[] | FinanceQueryUncheckedCreateWithoutStudentInput[]
     connectOrCreate?: FinanceQueryCreateOrConnectWithoutStudentInput | FinanceQueryCreateOrConnectWithoutStudentInput[]
@@ -119803,6 +121244,20 @@ export namespace Prisma {
     update?: ParentStudentRelationshipUpdateWithWhereUniqueWithoutStudentInput | ParentStudentRelationshipUpdateWithWhereUniqueWithoutStudentInput[]
     updateMany?: ParentStudentRelationshipUpdateManyWithWhereWithoutStudentInput | ParentStudentRelationshipUpdateManyWithWhereWithoutStudentInput[]
     deleteMany?: ParentStudentRelationshipScalarWhereInput | ParentStudentRelationshipScalarWhereInput[]
+  }
+
+  export type ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<ParentInviteStudentCreateWithoutStudentInput, ParentInviteStudentUncheckedCreateWithoutStudentInput> | ParentInviteStudentCreateWithoutStudentInput[] | ParentInviteStudentUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: ParentInviteStudentCreateOrConnectWithoutStudentInput | ParentInviteStudentCreateOrConnectWithoutStudentInput[]
+    upsert?: ParentInviteStudentUpsertWithWhereUniqueWithoutStudentInput | ParentInviteStudentUpsertWithWhereUniqueWithoutStudentInput[]
+    createMany?: ParentInviteStudentCreateManyStudentInputEnvelope
+    set?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+    disconnect?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+    delete?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+    connect?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+    update?: ParentInviteStudentUpdateWithWhereUniqueWithoutStudentInput | ParentInviteStudentUpdateWithWhereUniqueWithoutStudentInput[]
+    updateMany?: ParentInviteStudentUpdateManyWithWhereWithoutStudentInput | ParentInviteStudentUpdateManyWithWhereWithoutStudentInput[]
+    deleteMany?: ParentInviteStudentScalarWhereInput | ParentInviteStudentScalarWhereInput[]
   }
 
   export type FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput = {
@@ -125422,11 +126877,25 @@ export namespace Prisma {
     connect?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
   }
 
+  export type ParentInviteStudentCreateNestedManyWithoutInviteInput = {
+    create?: XOR<ParentInviteStudentCreateWithoutInviteInput, ParentInviteStudentUncheckedCreateWithoutInviteInput> | ParentInviteStudentCreateWithoutInviteInput[] | ParentInviteStudentUncheckedCreateWithoutInviteInput[]
+    connectOrCreate?: ParentInviteStudentCreateOrConnectWithoutInviteInput | ParentInviteStudentCreateOrConnectWithoutInviteInput[]
+    createMany?: ParentInviteStudentCreateManyInviteInputEnvelope
+    connect?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+  }
+
   export type ParentInviteAuditLogUncheckedCreateNestedManyWithoutInviteInput = {
     create?: XOR<ParentInviteAuditLogCreateWithoutInviteInput, ParentInviteAuditLogUncheckedCreateWithoutInviteInput> | ParentInviteAuditLogCreateWithoutInviteInput[] | ParentInviteAuditLogUncheckedCreateWithoutInviteInput[]
     connectOrCreate?: ParentInviteAuditLogCreateOrConnectWithoutInviteInput | ParentInviteAuditLogCreateOrConnectWithoutInviteInput[]
     createMany?: ParentInviteAuditLogCreateManyInviteInputEnvelope
     connect?: ParentInviteAuditLogWhereUniqueInput | ParentInviteAuditLogWhereUniqueInput[]
+  }
+
+  export type ParentInviteStudentUncheckedCreateNestedManyWithoutInviteInput = {
+    create?: XOR<ParentInviteStudentCreateWithoutInviteInput, ParentInviteStudentUncheckedCreateWithoutInviteInput> | ParentInviteStudentCreateWithoutInviteInput[] | ParentInviteStudentUncheckedCreateWithoutInviteInput[]
+    connectOrCreate?: ParentInviteStudentCreateOrConnectWithoutInviteInput | ParentInviteStudentCreateOrConnectWithoutInviteInput[]
+    createMany?: ParentInviteStudentCreateManyInviteInputEnvelope
+    connect?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
   }
 
   export type EnumParentInviteStatusFieldUpdateOperationsInput = {
@@ -125465,6 +126934,20 @@ export namespace Prisma {
     deleteMany?: ParentInviteAuditLogScalarWhereInput | ParentInviteAuditLogScalarWhereInput[]
   }
 
+  export type ParentInviteStudentUpdateManyWithoutInviteNestedInput = {
+    create?: XOR<ParentInviteStudentCreateWithoutInviteInput, ParentInviteStudentUncheckedCreateWithoutInviteInput> | ParentInviteStudentCreateWithoutInviteInput[] | ParentInviteStudentUncheckedCreateWithoutInviteInput[]
+    connectOrCreate?: ParentInviteStudentCreateOrConnectWithoutInviteInput | ParentInviteStudentCreateOrConnectWithoutInviteInput[]
+    upsert?: ParentInviteStudentUpsertWithWhereUniqueWithoutInviteInput | ParentInviteStudentUpsertWithWhereUniqueWithoutInviteInput[]
+    createMany?: ParentInviteStudentCreateManyInviteInputEnvelope
+    set?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+    disconnect?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+    delete?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+    connect?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+    update?: ParentInviteStudentUpdateWithWhereUniqueWithoutInviteInput | ParentInviteStudentUpdateWithWhereUniqueWithoutInviteInput[]
+    updateMany?: ParentInviteStudentUpdateManyWithWhereWithoutInviteInput | ParentInviteStudentUpdateManyWithWhereWithoutInviteInput[]
+    deleteMany?: ParentInviteStudentScalarWhereInput | ParentInviteStudentScalarWhereInput[]
+  }
+
   export type ParentInviteAuditLogUncheckedUpdateManyWithoutInviteNestedInput = {
     create?: XOR<ParentInviteAuditLogCreateWithoutInviteInput, ParentInviteAuditLogUncheckedCreateWithoutInviteInput> | ParentInviteAuditLogCreateWithoutInviteInput[] | ParentInviteAuditLogUncheckedCreateWithoutInviteInput[]
     connectOrCreate?: ParentInviteAuditLogCreateOrConnectWithoutInviteInput | ParentInviteAuditLogCreateOrConnectWithoutInviteInput[]
@@ -125477,6 +126960,48 @@ export namespace Prisma {
     update?: ParentInviteAuditLogUpdateWithWhereUniqueWithoutInviteInput | ParentInviteAuditLogUpdateWithWhereUniqueWithoutInviteInput[]
     updateMany?: ParentInviteAuditLogUpdateManyWithWhereWithoutInviteInput | ParentInviteAuditLogUpdateManyWithWhereWithoutInviteInput[]
     deleteMany?: ParentInviteAuditLogScalarWhereInput | ParentInviteAuditLogScalarWhereInput[]
+  }
+
+  export type ParentInviteStudentUncheckedUpdateManyWithoutInviteNestedInput = {
+    create?: XOR<ParentInviteStudentCreateWithoutInviteInput, ParentInviteStudentUncheckedCreateWithoutInviteInput> | ParentInviteStudentCreateWithoutInviteInput[] | ParentInviteStudentUncheckedCreateWithoutInviteInput[]
+    connectOrCreate?: ParentInviteStudentCreateOrConnectWithoutInviteInput | ParentInviteStudentCreateOrConnectWithoutInviteInput[]
+    upsert?: ParentInviteStudentUpsertWithWhereUniqueWithoutInviteInput | ParentInviteStudentUpsertWithWhereUniqueWithoutInviteInput[]
+    createMany?: ParentInviteStudentCreateManyInviteInputEnvelope
+    set?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+    disconnect?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+    delete?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+    connect?: ParentInviteStudentWhereUniqueInput | ParentInviteStudentWhereUniqueInput[]
+    update?: ParentInviteStudentUpdateWithWhereUniqueWithoutInviteInput | ParentInviteStudentUpdateWithWhereUniqueWithoutInviteInput[]
+    updateMany?: ParentInviteStudentUpdateManyWithWhereWithoutInviteInput | ParentInviteStudentUpdateManyWithWhereWithoutInviteInput[]
+    deleteMany?: ParentInviteStudentScalarWhereInput | ParentInviteStudentScalarWhereInput[]
+  }
+
+  export type ParentInviteCreateNestedOneWithoutStudentsInput = {
+    create?: XOR<ParentInviteCreateWithoutStudentsInput, ParentInviteUncheckedCreateWithoutStudentsInput>
+    connectOrCreate?: ParentInviteCreateOrConnectWithoutStudentsInput
+    connect?: ParentInviteWhereUniqueInput
+  }
+
+  export type StudentCreateNestedOneWithoutParentInviteLinksInput = {
+    create?: XOR<StudentCreateWithoutParentInviteLinksInput, StudentUncheckedCreateWithoutParentInviteLinksInput>
+    connectOrCreate?: StudentCreateOrConnectWithoutParentInviteLinksInput
+    connect?: StudentWhereUniqueInput
+  }
+
+  export type ParentInviteUpdateOneRequiredWithoutStudentsNestedInput = {
+    create?: XOR<ParentInviteCreateWithoutStudentsInput, ParentInviteUncheckedCreateWithoutStudentsInput>
+    connectOrCreate?: ParentInviteCreateOrConnectWithoutStudentsInput
+    upsert?: ParentInviteUpsertWithoutStudentsInput
+    connect?: ParentInviteWhereUniqueInput
+    update?: XOR<XOR<ParentInviteUpdateToOneWithWhereWithoutStudentsInput, ParentInviteUpdateWithoutStudentsInput>, ParentInviteUncheckedUpdateWithoutStudentsInput>
+  }
+
+  export type StudentUpdateOneRequiredWithoutParentInviteLinksNestedInput = {
+    create?: XOR<StudentCreateWithoutParentInviteLinksInput, StudentUncheckedCreateWithoutParentInviteLinksInput>
+    connectOrCreate?: StudentCreateOrConnectWithoutParentInviteLinksInput
+    upsert?: StudentUpsertWithoutParentInviteLinksInput
+    connect?: StudentWhereUniqueInput
+    update?: XOR<XOR<StudentUpdateToOneWithWhereWithoutParentInviteLinksInput, StudentUpdateWithoutParentInviteLinksInput>, StudentUncheckedUpdateWithoutParentInviteLinksInput>
   }
 
   export type SchoolCreateNestedOneWithoutParentInviteAuditLogsInput = {
@@ -126979,6 +128504,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -127009,6 +128535,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -128677,6 +130204,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     acceptedParent?: ParentCreateNestedOneWithoutAcceptedInvitesInput
     auditLogs?: ParentInviteAuditLogCreateNestedManyWithoutInviteInput
+    students?: ParentInviteStudentCreateNestedManyWithoutInviteInput
   }
 
   export type ParentInviteUncheckedCreateWithoutSchoolInput = {
@@ -128698,6 +130226,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     auditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutInviteInput
+    students?: ParentInviteStudentUncheckedCreateNestedManyWithoutInviteInput
   }
 
   export type ParentInviteCreateOrConnectWithoutSchoolInput = {
@@ -132653,6 +134182,30 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ParentInviteStudentCreateWithoutStudentInput = {
+    id?: string
+    schoolId: string
+    createdAt?: Date | string
+    invite: ParentInviteCreateNestedOneWithoutStudentsInput
+  }
+
+  export type ParentInviteStudentUncheckedCreateWithoutStudentInput = {
+    id?: string
+    schoolId: string
+    inviteId: string
+    createdAt?: Date | string
+  }
+
+  export type ParentInviteStudentCreateOrConnectWithoutStudentInput = {
+    where: ParentInviteStudentWhereUniqueInput
+    create: XOR<ParentInviteStudentCreateWithoutStudentInput, ParentInviteStudentUncheckedCreateWithoutStudentInput>
+  }
+
+  export type ParentInviteStudentCreateManyStudentInputEnvelope = {
+    data: ParentInviteStudentCreateManyStudentInput | ParentInviteStudentCreateManyStudentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type FinanceQueryCreateWithoutStudentInput = {
     reason: $Enums.FinanceQueryReason
     message: string
@@ -133250,6 +134803,33 @@ export namespace Prisma {
   export type ParentStudentRelationshipUpdateManyWithWhereWithoutStudentInput = {
     where: ParentStudentRelationshipScalarWhereInput
     data: XOR<ParentStudentRelationshipUpdateManyMutationInput, ParentStudentRelationshipUncheckedUpdateManyWithoutStudentInput>
+  }
+
+  export type ParentInviteStudentUpsertWithWhereUniqueWithoutStudentInput = {
+    where: ParentInviteStudentWhereUniqueInput
+    update: XOR<ParentInviteStudentUpdateWithoutStudentInput, ParentInviteStudentUncheckedUpdateWithoutStudentInput>
+    create: XOR<ParentInviteStudentCreateWithoutStudentInput, ParentInviteStudentUncheckedCreateWithoutStudentInput>
+  }
+
+  export type ParentInviteStudentUpdateWithWhereUniqueWithoutStudentInput = {
+    where: ParentInviteStudentWhereUniqueInput
+    data: XOR<ParentInviteStudentUpdateWithoutStudentInput, ParentInviteStudentUncheckedUpdateWithoutStudentInput>
+  }
+
+  export type ParentInviteStudentUpdateManyWithWhereWithoutStudentInput = {
+    where: ParentInviteStudentScalarWhereInput
+    data: XOR<ParentInviteStudentUpdateManyMutationInput, ParentInviteStudentUncheckedUpdateManyWithoutStudentInput>
+  }
+
+  export type ParentInviteStudentScalarWhereInput = {
+    AND?: ParentInviteStudentScalarWhereInput | ParentInviteStudentScalarWhereInput[]
+    OR?: ParentInviteStudentScalarWhereInput[]
+    NOT?: ParentInviteStudentScalarWhereInput | ParentInviteStudentScalarWhereInput[]
+    id?: StringFilter<"ParentInviteStudent"> | string
+    schoolId?: StringFilter<"ParentInviteStudent"> | string
+    inviteId?: StringFilter<"ParentInviteStudent"> | string
+    studentId?: StringFilter<"ParentInviteStudent"> | string
+    createdAt?: DateTimeFilter<"ParentInviteStudent"> | Date | string
   }
 
   export type FinanceQueryUpsertWithWhereUniqueWithoutStudentInput = {
@@ -134924,6 +136504,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -134954,6 +136535,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -135338,6 +136920,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     school: SchoolCreateNestedOneWithoutParentInvitesInput
     auditLogs?: ParentInviteAuditLogCreateNestedManyWithoutInviteInput
+    students?: ParentInviteStudentCreateNestedManyWithoutInviteInput
   }
 
   export type ParentInviteUncheckedCreateWithoutAcceptedParentInput = {
@@ -135359,6 +136942,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     auditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutInviteInput
+    students?: ParentInviteStudentUncheckedCreateNestedManyWithoutInviteInput
   }
 
   export type ParentInviteCreateOrConnectWithoutAcceptedParentInput = {
@@ -135968,6 +137552,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -135998,6 +137583,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -136270,6 +137856,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -136300,6 +137887,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -142475,6 +144063,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -142505,6 +144094,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -142817,6 +144407,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -142847,6 +144438,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -143644,6 +145236,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
   }
@@ -143674,6 +145267,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
   }
@@ -144055,6 +145649,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
   }
@@ -144085,6 +145680,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
   }
@@ -144550,6 +146146,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
   }
@@ -144580,6 +146177,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
   }
@@ -144990,6 +146588,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
   }
@@ -145020,6 +146619,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
   }
@@ -145263,6 +146863,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -145293,6 +146894,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -145638,6 +147240,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -145668,6 +147271,7 @@ export namespace Prisma {
     homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -145944,6 +147548,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -145974,6 +147579,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -146657,6 +148263,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -146687,6 +148294,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -150318,6 +151926,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -150348,6 +151957,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -150672,6 +152282,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -150702,6 +152313,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -151026,6 +152638,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -151056,6 +152669,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -151335,6 +152949,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -151365,6 +152980,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -151562,6 +153178,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -151592,6 +153209,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -151895,6 +153513,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -151925,6 +153544,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -152220,6 +153840,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -152250,6 +153871,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -152551,6 +154173,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -152581,6 +154204,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -155536,6 +157160,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -155566,6 +157191,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -155904,6 +157530,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -155934,6 +157561,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -156550,6 +158178,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -156580,6 +158209,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -156940,6 +158570,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -156970,6 +158601,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -160142,6 +161774,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
@@ -160172,6 +161805,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
@@ -160591,6 +162225,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -160621,6 +162256,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -163269,6 +164905,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
   }
@@ -163299,6 +164936,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
     parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    parentInviteLinks?: ParentInviteStudentUncheckedCreateNestedManyWithoutStudentInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
   }
@@ -163661,6 +165299,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
   }
@@ -163691,6 +165330,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
   }
@@ -166033,6 +167673,30 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ParentInviteStudentCreateWithoutInviteInput = {
+    id?: string
+    schoolId: string
+    createdAt?: Date | string
+    student: StudentCreateNestedOneWithoutParentInviteLinksInput
+  }
+
+  export type ParentInviteStudentUncheckedCreateWithoutInviteInput = {
+    id?: string
+    schoolId: string
+    studentId: string
+    createdAt?: Date | string
+  }
+
+  export type ParentInviteStudentCreateOrConnectWithoutInviteInput = {
+    where: ParentInviteStudentWhereUniqueInput
+    create: XOR<ParentInviteStudentCreateWithoutInviteInput, ParentInviteStudentUncheckedCreateWithoutInviteInput>
+  }
+
+  export type ParentInviteStudentCreateManyInviteInputEnvelope = {
+    data: ParentInviteStudentCreateManyInviteInput | ParentInviteStudentCreateManyInviteInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SchoolUpsertWithoutParentInvitesInput = {
     update: XOR<SchoolUpdateWithoutParentInvitesInput, SchoolUncheckedUpdateWithoutParentInvitesInput>
     create: XOR<SchoolCreateWithoutParentInvitesInput, SchoolUncheckedCreateWithoutParentInvitesInput>
@@ -166275,6 +167939,266 @@ export namespace Prisma {
     data: XOR<ParentInviteAuditLogUpdateManyMutationInput, ParentInviteAuditLogUncheckedUpdateManyWithoutInviteInput>
   }
 
+  export type ParentInviteStudentUpsertWithWhereUniqueWithoutInviteInput = {
+    where: ParentInviteStudentWhereUniqueInput
+    update: XOR<ParentInviteStudentUpdateWithoutInviteInput, ParentInviteStudentUncheckedUpdateWithoutInviteInput>
+    create: XOR<ParentInviteStudentCreateWithoutInviteInput, ParentInviteStudentUncheckedCreateWithoutInviteInput>
+  }
+
+  export type ParentInviteStudentUpdateWithWhereUniqueWithoutInviteInput = {
+    where: ParentInviteStudentWhereUniqueInput
+    data: XOR<ParentInviteStudentUpdateWithoutInviteInput, ParentInviteStudentUncheckedUpdateWithoutInviteInput>
+  }
+
+  export type ParentInviteStudentUpdateManyWithWhereWithoutInviteInput = {
+    where: ParentInviteStudentScalarWhereInput
+    data: XOR<ParentInviteStudentUpdateManyMutationInput, ParentInviteStudentUncheckedUpdateManyWithoutInviteInput>
+  }
+
+  export type ParentInviteCreateWithoutStudentsInput = {
+    id?: string
+    name: string
+    surname: string
+    email: string
+    phone?: string | null
+    tokenHash: string
+    status?: $Enums.ParentInviteStatus
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    acceptedBy?: string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutParentInvitesInput
+    acceptedParent?: ParentCreateNestedOneWithoutAcceptedInvitesInput
+    auditLogs?: ParentInviteAuditLogCreateNestedManyWithoutInviteInput
+  }
+
+  export type ParentInviteUncheckedCreateWithoutStudentsInput = {
+    id?: string
+    schoolId: string
+    name: string
+    surname: string
+    email: string
+    phone?: string | null
+    tokenHash: string
+    status?: $Enums.ParentInviteStatus
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    acceptedBy?: string | null
+    acceptedParentId?: string | null
+    revokedAt?: Date | string | null
+    revokedBy?: string | null
+    lastSentAt?: Date | string | null
+    createdBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    auditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutInviteInput
+  }
+
+  export type ParentInviteCreateOrConnectWithoutStudentsInput = {
+    where: ParentInviteWhereUniqueInput
+    create: XOR<ParentInviteCreateWithoutStudentsInput, ParentInviteUncheckedCreateWithoutStudentsInput>
+  }
+
+  export type StudentCreateWithoutParentInviteLinksInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    school?: SchoolCreateNestedOneWithoutStudentsInput
+    parent: ParentCreateNestedOneWithoutStudentsInput
+    class: ClassCreateNestedOneWithoutStudentsInput
+    grade: GradeCreateNestedOneWithoutStudentsInput
+    attendances?: AttendanceCreateNestedManyWithoutStudentInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutStudentInput
+    results?: ResultCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutStudentInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutStudentInput
+    bills?: StudentBillCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutStudentInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutStudentInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutStudentInput
+    teacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutStudentInput
+    teacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentUncheckedCreateWithoutParentInviteLinksInput = {
+    id: string
+    username: string
+    name: string
+    surname: string
+    email?: string | null
+    phone?: string | null
+    address: string
+    img?: string | null
+    bloodType: string
+    sex: $Enums.UserSex
+    createdAt?: Date | string
+    schoolId?: string
+    parentId: string
+    classId: number
+    gradeId: number
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutStudentInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutStudentInput
+    results?: ResultUncheckedCreateNestedManyWithoutStudentInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutStudentInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutStudentInput
+    bills?: StudentBillUncheckedCreateNestedManyWithoutStudentInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutStudentInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutStudentInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutStudentInput
+    parentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutStudentInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutStudentInput
+    teacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutStudentInput
+    teacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentCreateOrConnectWithoutParentInviteLinksInput = {
+    where: StudentWhereUniqueInput
+    create: XOR<StudentCreateWithoutParentInviteLinksInput, StudentUncheckedCreateWithoutParentInviteLinksInput>
+  }
+
+  export type ParentInviteUpsertWithoutStudentsInput = {
+    update: XOR<ParentInviteUpdateWithoutStudentsInput, ParentInviteUncheckedUpdateWithoutStudentsInput>
+    create: XOR<ParentInviteCreateWithoutStudentsInput, ParentInviteUncheckedCreateWithoutStudentsInput>
+    where?: ParentInviteWhereInput
+  }
+
+  export type ParentInviteUpdateToOneWithWhereWithoutStudentsInput = {
+    where?: ParentInviteWhereInput
+    data: XOR<ParentInviteUpdateWithoutStudentsInput, ParentInviteUncheckedUpdateWithoutStudentsInput>
+  }
+
+  export type ParentInviteUpdateWithoutStudentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentInviteStatusFieldUpdateOperationsInput | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutParentInvitesNestedInput
+    acceptedParent?: ParentUpdateOneWithoutAcceptedInvitesNestedInput
+    auditLogs?: ParentInviteAuditLogUpdateManyWithoutInviteNestedInput
+  }
+
+  export type ParentInviteUncheckedUpdateWithoutStudentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    status?: EnumParentInviteStatusFieldUpdateOperationsInput | $Enums.ParentInviteStatus
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    acceptedParentId?: NullableStringFieldUpdateOperationsInput | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    auditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutInviteNestedInput
+  }
+
+  export type StudentUpsertWithoutParentInviteLinksInput = {
+    update: XOR<StudentUpdateWithoutParentInviteLinksInput, StudentUncheckedUpdateWithoutParentInviteLinksInput>
+    create: XOR<StudentCreateWithoutParentInviteLinksInput, StudentUncheckedCreateWithoutParentInviteLinksInput>
+    where?: StudentWhereInput
+  }
+
+  export type StudentUpdateToOneWithWhereWithoutParentInviteLinksInput = {
+    where?: StudentWhereInput
+    data: XOR<StudentUpdateWithoutParentInviteLinksInput, StudentUncheckedUpdateWithoutParentInviteLinksInput>
+  }
+
+  export type StudentUpdateWithoutParentInviteLinksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutStudentsNestedInput
+    parent?: ParentUpdateOneRequiredWithoutStudentsNestedInput
+    class?: ClassUpdateOneRequiredWithoutStudentsNestedInput
+    grade?: GradeUpdateOneRequiredWithoutStudentsNestedInput
+    attendances?: AttendanceUpdateManyWithoutStudentNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutStudentNestedInput
+    results?: ResultUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutStudentNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutStudentNestedInput
+    bills?: StudentBillUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutStudentNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
+    teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
+    teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
+  }
+
+  export type StudentUncheckedUpdateWithoutParentInviteLinksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    surname?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    img?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    classId?: IntFieldUpdateOperationsInput | number
+    gradeId?: IntFieldUpdateOperationsInput | number
+    attendances?: AttendanceUncheckedUpdateManyWithoutStudentNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutStudentNestedInput
+    results?: ResultUncheckedUpdateManyWithoutStudentNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutStudentNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutStudentNestedInput
+    bills?: StudentBillUncheckedUpdateManyWithoutStudentNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutStudentNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
+    parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
+    teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
+    teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
+  }
+
   export type SchoolCreateWithoutParentInviteAuditLogsInput = {
     id: string
     name: string
@@ -166461,6 +168385,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     school: SchoolCreateNestedOneWithoutParentInvitesInput
     acceptedParent?: ParentCreateNestedOneWithoutAcceptedInvitesInput
+    students?: ParentInviteStudentCreateNestedManyWithoutInviteInput
   }
 
   export type ParentInviteUncheckedCreateWithoutAuditLogsInput = {
@@ -166482,6 +168407,7 @@ export namespace Prisma {
     createdBy: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    students?: ParentInviteStudentUncheckedCreateNestedManyWithoutInviteInput
   }
 
   export type ParentInviteCreateOrConnectWithoutAuditLogsInput = {
@@ -166692,6 +168618,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutParentInvitesNestedInput
     acceptedParent?: ParentUpdateOneWithoutAcceptedInvitesNestedInput
+    students?: ParentInviteStudentUpdateManyWithoutInviteNestedInput
   }
 
   export type ParentInviteUncheckedUpdateWithoutAuditLogsInput = {
@@ -166713,6 +168640,7 @@ export namespace Prisma {
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    students?: ParentInviteStudentUncheckedUpdateManyWithoutInviteNestedInput
   }
 
   export type SchoolCreateWithoutTeacherInviteAuditLogsInput = {
@@ -168358,6 +170286,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -168388,6 +170317,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -170193,6 +172123,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acceptedParent?: ParentUpdateOneWithoutAcceptedInvitesNestedInput
     auditLogs?: ParentInviteAuditLogUpdateManyWithoutInviteNestedInput
+    students?: ParentInviteStudentUpdateManyWithoutInviteNestedInput
   }
 
   export type ParentInviteUncheckedUpdateWithoutSchoolInput = {
@@ -170214,6 +172145,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     auditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutInviteNestedInput
+    students?: ParentInviteStudentUncheckedUpdateManyWithoutInviteNestedInput
   }
 
   export type ParentInviteUncheckedUpdateManyWithoutSchoolInput = {
@@ -171061,6 +172993,13 @@ export namespace Prisma {
     updatedById?: string | null
   }
 
+  export type ParentInviteStudentCreateManyStudentInput = {
+    id?: string
+    schoolId: string
+    inviteId: string
+    createdAt?: Date | string
+  }
+
   export type FinanceQueryCreateManyStudentInput = {
     id?: number
     reason: $Enums.FinanceQueryReason
@@ -171597,6 +173536,27 @@ export namespace Prisma {
     parentId?: StringFieldUpdateOperationsInput | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ParentInviteStudentUpdateWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    invite?: ParentInviteUpdateOneRequiredWithoutStudentsNestedInput
+  }
+
+  export type ParentInviteStudentUncheckedUpdateWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    inviteId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParentInviteStudentUncheckedUpdateManyWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    inviteId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FinanceQueryUpdateWithoutStudentInput = {
@@ -173098,6 +175058,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -173128,6 +175089,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -173535,6 +175497,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutParentInvitesNestedInput
     auditLogs?: ParentInviteAuditLogUpdateManyWithoutInviteNestedInput
+    students?: ParentInviteStudentUpdateManyWithoutInviteNestedInput
   }
 
   export type ParentInviteUncheckedUpdateWithoutAcceptedParentInput = {
@@ -173556,6 +175519,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     auditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutInviteNestedInput
+    students?: ParentInviteStudentUncheckedUpdateManyWithoutInviteNestedInput
   }
 
   export type ParentInviteUncheckedUpdateManyWithoutAcceptedParentInput = {
@@ -174031,6 +175995,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -174061,6 +176026,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -174428,6 +176394,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutStudentNestedInput
@@ -174458,6 +176425,7 @@ export namespace Prisma {
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutStudentNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutStudentNestedInput
     parentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutStudentNestedInput
+    parentInviteLinks?: ParentInviteStudentUncheckedUpdateManyWithoutStudentNestedInput
     financeQueries?: FinanceQueryUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutStudentNestedInput
     teacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutStudentNestedInput
@@ -176423,6 +178391,13 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type ParentInviteStudentCreateManyInviteInput = {
+    id?: string
+    schoolId: string
+    studentId: string
+    createdAt?: Date | string
+  }
+
   export type ParentInviteAuditLogUpdateWithoutInviteInput = {
     id?: StringFieldUpdateOperationsInput | string
     action?: EnumParentInviteAuditActionFieldUpdateOperationsInput | $Enums.ParentInviteAuditAction
@@ -176447,6 +178422,27 @@ export namespace Prisma {
     action?: EnumParentInviteAuditActionFieldUpdateOperationsInput | $Enums.ParentInviteAuditAction
     performedBy?: StringFieldUpdateOperationsInput | string
     metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParentInviteStudentUpdateWithoutInviteInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    student?: StudentUpdateOneRequiredWithoutParentInviteLinksNestedInput
+  }
+
+  export type ParentInviteStudentUncheckedUpdateWithoutInviteInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParentInviteStudentUncheckedUpdateManyWithoutInviteInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

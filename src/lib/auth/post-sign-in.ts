@@ -45,6 +45,7 @@ async function schoolAwareDashboardPath(role: AppRole, schoolId: string): Promis
 export async function completePostSignIn(
   inviteToken?: string | null,
   teacherInviteToken?: string | null,
+  parentInviteToken?: string | null,
 ): Promise<never> {
   const { userId, sessionClaims } = await auth();
 
@@ -52,7 +53,9 @@ export async function completePostSignIn(
     redirect(SIGN_IN_PATH);
   }
 
-  if (inviteToken && teacherInviteToken) {
+  const inviteCount = [inviteToken, teacherInviteToken, parentInviteToken].filter(Boolean).length;
+
+  if (inviteCount > 1) {
     redirect(INVALID_INVITE_URL);
   }
 
@@ -73,6 +76,10 @@ export async function completePostSignIn(
 
   if (teacherInviteToken) {
     redirect(`/onboarding/teacher/accept?token=${encodeURIComponent(teacherInviteToken)}`);
+  }
+
+  if (parentInviteToken) {
+    redirect(`/onboarding/parent/accept?token=${encodeURIComponent(parentInviteToken)}`);
   }
 
   const { role, schoolId } = await resolveSessionIdentity(userId, sessionClaims);
