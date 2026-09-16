@@ -4,6 +4,7 @@ export type DashboardResource = "admin";
 export type DocumentResource = "daily-finance" | "receipt" | "report-card" | "syllabus";
 
 export type ReferenceDataResource =
+  | "bursars"
   | "classes"
   | "grades"
   | "parents"
