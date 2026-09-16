@@ -146,6 +146,20 @@ exports.Prisma.AdminScalarFieldEnum = {
   schoolId: 'schoolId'
 };
 
+exports.Prisma.BursarScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  name: 'name',
+  surname: 'surname',
+  email: 'email',
+  phone: 'phone',
+  address: 'address',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId'
+};
+
 exports.Prisma.StudentScalarFieldEnum = {
   id: 'id',
   username: 'username',
@@ -1113,6 +1127,38 @@ exports.Prisma.ParentInviteAuditLogScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.BursarInviteScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  name: 'name',
+  surname: 'surname',
+  email: 'email',
+  phone: 'phone',
+  staffId: 'staffId',
+  tokenHash: 'tokenHash',
+  status: 'status',
+  expiresAt: 'expiresAt',
+  acceptedAt: 'acceptedAt',
+  acceptedBy: 'acceptedBy',
+  acceptedBursarId: 'acceptedBursarId',
+  revokedAt: 'revokedAt',
+  revokedBy: 'revokedBy',
+  lastSentAt: 'lastSentAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BursarInviteAuditLogScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  inviteId: 'inviteId',
+  action: 'action',
+  performedBy: 'performedBy',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.ParentAccessAuditLogScalarFieldEnum = {
   id: 'id',
   schoolId: 'schoolId',
@@ -1182,6 +1228,12 @@ exports.SchoolOnboardingStatus = exports.$Enums.SchoolOnboardingStatus = {
   ACADEMIC_DONE: 'ACADEMIC_DONE',
   USERS_DONE: 'USERS_DONE',
   COMPLETED: 'COMPLETED'
+};
+
+exports.BursarStatus = exports.$Enums.BursarStatus = {
+  ACTIVE: 'ACTIVE',
+  SUSPENDED: 'SUSPENDED',
+  LEFT_SCHOOL: 'LEFT_SCHOOL'
 };
 
 exports.UserSex = exports.$Enums.UserSex = {
@@ -1612,6 +1664,22 @@ exports.ParentInviteAuditAction = exports.$Enums.ParentInviteAuditAction = {
   INVITE_ACCEPTED: 'INVITE_ACCEPTED'
 };
 
+exports.BursarInviteStatus = exports.$Enums.BursarInviteStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  EXPIRED: 'EXPIRED',
+  REVOKED: 'REVOKED'
+};
+
+exports.BursarInviteAuditAction = exports.$Enums.BursarInviteAuditAction = {
+  INVITE_CREATED: 'INVITE_CREATED',
+  INVITE_SENT: 'INVITE_SENT',
+  INVITE_RESENT: 'INVITE_RESENT',
+  INVITE_REVOKED: 'INVITE_REVOKED',
+  INVITE_EXPIRED: 'INVITE_EXPIRED',
+  INVITE_ACCEPTED: 'INVITE_ACCEPTED'
+};
+
 exports.ParentAccessAuditAction = exports.$Enums.ParentAccessAuditAction = {
   PARENT_INVITED: 'PARENT_INVITED',
   PARENT_ACCOUNT_ACTIVATED: 'PARENT_ACCOUNT_ACTIVATED',
@@ -1651,6 +1719,7 @@ exports.OnboardingAuditAction = exports.$Enums.OnboardingAuditAction = {
 exports.Prisma.ModelName = {
   School: 'School',
   Admin: 'Admin',
+  Bursar: 'Bursar',
   Student: 'Student',
   Teacher: 'Teacher',
   Parent: 'Parent',
@@ -1715,6 +1784,8 @@ exports.Prisma.ModelName = {
   ParentInvite: 'ParentInvite',
   ParentInviteStudent: 'ParentInviteStudent',
   ParentInviteAuditLog: 'ParentInviteAuditLog',
+  BursarInvite: 'BursarInvite',
+  BursarInviteAuditLog: 'BursarInviteAuditLog',
   ParentAccessAuditLog: 'ParentAccessAuditLog',
   TeacherInviteAuditLog: 'TeacherInviteAuditLog',
   OnboardingAuditLog: 'OnboardingAuditLog'

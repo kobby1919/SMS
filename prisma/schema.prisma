@@ -221,6 +221,28 @@ enum ParentInviteAuditAction {
   INVITE_ACCEPTED
 }
 
+enum BursarStatus {
+  ACTIVE
+  SUSPENDED
+  LEFT_SCHOOL
+}
+
+enum BursarInviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+enum BursarInviteAuditAction {
+  INVITE_CREATED
+  INVITE_SENT
+  INVITE_RESENT
+  INVITE_REVOKED
+  INVITE_EXPIRED
+  INVITE_ACCEPTED
+}
+
 enum OnboardingAuditAction {
   WAITLIST_APPROVED
   WAITLIST_REJECTED
@@ -539,6 +561,9 @@ model School {
   financeQueries                 FinanceQuery[]
   receiptCounters                ReceiptCounter[]
   financeAuditLogs               FinanceAuditLog[]
+  bursars                        Bursar[]
+  bursarInvites                  BursarInvite[]
+  bursarInviteAuditLogs          BursarInviteAuditLog[]
   invites                        SchoolInvite[]
   waitlistEntries                WaitlistEntry[]
   onboardingAuditLogs            OnboardingAuditLog[]
@@ -575,6 +600,29 @@ model Admin {
   school   School @relation(fields: [schoolId], references: [id])
 
   @@index([schoolId])
+}
+
+model Bursar {
+  id        String       @id
+  username  String       @unique
+  name      String
+  surname   String
+  email     String?
+  phone     String?
+  address   String?
+  status    BursarStatus @default(ACTIVE)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
+  acceptedInvites BursarInvite[] @relation("AcceptedBursarInvite")
+
+  @@unique([schoolId, email])
+  @@index([schoolId])
+  @@index([schoolId, status])
+  @@index([schoolId, createdAt])
 }
 
 model Student {
@@ -2274,6 +2322,54 @@ model ParentInviteAuditLog {
 
   school School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   invite ParentInvite @relation(fields: [inviteId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId, createdAt])
+  @@index([inviteId, createdAt])
+  @@index([schoolId, action, createdAt])
+}
+
+model BursarInvite {
+  id               String             @id @default(cuid())
+  schoolId         String
+  name             String
+  surname          String
+  email            String
+  phone            String?
+  staffId          String?
+  tokenHash        String             @unique
+  status           BursarInviteStatus @default(PENDING)
+  expiresAt        DateTime
+  acceptedAt       DateTime?
+  acceptedBy       String?
+  acceptedBursarId String?
+  revokedAt        DateTime?
+  revokedBy        String?
+  lastSentAt       DateTime?
+  createdBy        String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  school         School                 @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  acceptedBursar Bursar?                @relation("AcceptedBursarInvite", fields: [acceptedBursarId], references: [id], onDelete: SetNull)
+  auditLogs      BursarInviteAuditLog[]
+
+  @@index([schoolId, email])
+  @@index([schoolId, status, expiresAt])
+  @@index([schoolId, createdAt])
+  @@index([expiresAt])
+}
+
+model BursarInviteAuditLog {
+  id          String                  @id @default(cuid())
+  schoolId    String
+  inviteId    String
+  action      BursarInviteAuditAction
+  performedBy String
+  metadata    Json
+  createdAt   DateTime                @default(now())
+
+  school School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  invite BursarInvite @relation(fields: [inviteId], references: [id], onDelete: Cascade)
 
   @@index([schoolId, createdAt])
   @@index([inviteId, createdAt])
