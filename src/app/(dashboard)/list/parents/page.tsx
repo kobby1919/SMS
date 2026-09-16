@@ -5,7 +5,6 @@ import ParentInviteActions from "@/src/components/ParentInviteActions";
 import ParentInviteModal from "@/src/components/ParentInviteModal";
 import ParentWardLinkManager from "@/src/components/ParentWardLinkManager";
 import { Clock3, History, Link2, UserCheck, Users } from "lucide-react";
-import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
@@ -341,7 +340,7 @@ function ParentTable({
   return (
     <div className="flex-1 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
       <div className="w-full overflow-x-auto">
-        <table className="w-full min-w-[520px]">
+        <table className="w-full min-w-[460px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/60">
               <th className="px-4 py-3.5 text-left text-xs font-black uppercase tracking-wider text-gray-400">
@@ -354,7 +353,7 @@ function ParentTable({
                 Phone
               </th>
               {role === "admin" && (
-                <th className="w-[100px] px-5 py-3.5 text-right text-xs font-black uppercase tracking-wider text-gray-400">
+                <th className="w-[120px] px-4 py-3.5 text-right text-xs font-black uppercase tracking-wider text-gray-400">
                   Actions
                 </th>
               )}
@@ -393,9 +392,8 @@ function ParentTable({
                   </td>
 
                   {role === "admin" && (
-                    <td className="w-[100px] px-5 py-4">
-                      <div className="flex items-center justify-end gap-2">
-                        <FormModal table="parent" type="update" data={parent} />
+                    <td className="w-[120px] px-4 py-4 align-top">
+                      <div className="flex justify-end">
                         <ParentWardLinkManager parentId={parent.id} relationships={parent.studentRelationships} students={students} />
                       </div>
                     </td>
@@ -437,7 +435,7 @@ function PendingInviteTable({
   return (
     <div className="flex-1 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
       <div className="w-full overflow-x-auto">
-        <table className="w-full min-w-[720px]">
+        <table className="w-full min-w-[560px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/60">
               <th className="px-4 py-3.5 text-left text-xs font-black uppercase tracking-wider text-gray-400">

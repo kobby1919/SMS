@@ -273,7 +273,7 @@ const TeacherListPage = async ({
                 <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden xl:table-cell">Setup</th>
                 <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden xl:table-cell">Phone</th>
                 {role === "admin" && (
-                  <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[120px]">Actions</th>
+                  <th className="text-right px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[96px]">Actions</th>
                 )}
               </tr>
             </thead>
@@ -380,15 +380,14 @@ const TeacherListPage = async ({
                     </td>
 
                     {/* Actions */}
-                    <td className="px-5 py-4 w-[120px]">
-                      <div className="flex items-center justify-end gap-2">
+                    <td className="px-4 py-4 w-[96px]">
+                      <div className="flex items-center justify-end gap-1.5">
                         <Link href={`/list/teachers/${item.id}`}>
                           <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors">
                             <Eye size={14} />
                           </button>
                         </Link>
                         {role === "admin" && <FormModal table="teacher" type="update" data={item} />}
-                        {role === "admin" && <FormModal table="teacher" type="delete" id={item.id} />}
                       </div>
                     </td>
                   </tr>
@@ -440,7 +439,7 @@ function PendingInvitesTable({
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-1">
       <div className="w-full overflow-x-auto">
-        <table className="w-full min-w-[680px]">
+        <table className="w-full min-w-[560px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/60">
               <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Invitee</th>

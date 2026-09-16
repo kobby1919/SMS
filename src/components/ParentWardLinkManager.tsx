@@ -135,14 +135,14 @@ export default function ParentWardLinkManager({
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-slate-50 px-3 py-2 text-xs font-black text-slate-700 ring-1 ring-slate-100 transition hover:bg-slate-100"
+        className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg bg-slate-50 px-3 py-2 text-xs font-black text-slate-700 ring-1 ring-slate-100 transition hover:bg-slate-100"
       >
         <Link2 size={14} />
-        {open ? "Close" : "Manage wards"}
+        {open ? "Close" : "Wards"}
       </button>
 
       {open && (
-        <div className="mt-3 w-full rounded-2xl border border-slate-100 bg-slate-50 p-3 text-left">
+        <div className="mt-3 w-[min(82vw,38rem)] max-w-[38rem] rounded-2xl border border-slate-100 bg-slate-50 p-3 text-left shadow-sm">
           <div className="space-y-3">
             {relationships.length > 0 ? (
               relationships.map((relationship) => (
@@ -162,7 +162,7 @@ export default function ParentWardLinkManager({
                     </span>
                   </div>
 
-                  <div className="mt-3 grid gap-2 lg:grid-cols-[160px_1fr_auto] lg:items-end">
+                  <div className="mt-3 grid gap-2 sm:grid-cols-[150px_1fr] lg:grid-cols-[160px_1fr_auto] lg:items-end">
                     <label className="text-xs font-bold text-slate-500">
                       Status
                       <select
