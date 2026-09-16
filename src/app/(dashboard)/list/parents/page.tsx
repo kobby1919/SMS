@@ -4,7 +4,7 @@ import TableSearch from "@/src/components/TableSearch";
 import ParentInviteActions from "@/src/components/ParentInviteActions";
 import ParentInviteModal from "@/src/components/ParentInviteModal";
 import ParentWardLinkManager from "@/src/components/ParentWardLinkManager";
-import { Clock3, Link2, UserCheck, Users } from "lucide-react";
+import { Clock3, History, Link2, UserCheck, Users } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
@@ -17,6 +17,12 @@ const tabs = [
 
 type ParentTab = (typeof tabs)[number]["key"];
 type ParentInviteRow = Awaited<ReturnType<typeof prisma.parentInvite.findMany>>[number];
+type ParentAccessAuditRow = Prisma.ParentAccessAuditLogGetPayload<{
+  include: {
+    parent: { select: { name: true; surname: true; email: true } };
+    student: { select: { name: true; surname: true; class: { select: { name: true } } } };
+  };
+}>;
 type ParentRow = Prisma.ParentGetPayload<{
   include: {
     studentRelationships: {
@@ -70,7 +76,7 @@ const ParentListPage = async ({
     ];
   }
 
-  const [parents, parentCount, pendingInvites, pendingInviteCount, totalParentCount, activeRelationshipCount, students] =
+  const [parents, parentCount, pendingInvites, pendingInviteCount, totalParentCount, activeRelationshipCount, students, recentAuditLogs] =
     await Promise.all([
       selectedStatus === "all"
         ? prisma.parent.findMany({
@@ -119,6 +125,17 @@ const ParentListPage = async ({
               class: { select: { name: true } },
             },
             orderBy: [{ class: { name: "asc" } }, { name: "asc" }],
+          })
+        : [],
+      role === "admin"
+        ? prisma.parentAccessAuditLog.findMany({
+            where: { schoolId },
+            include: {
+              parent: { select: { name: true, surname: true, email: true } },
+              student: { select: { name: true, surname: true, class: { select: { name: true } } } },
+            },
+            orderBy: { createdAt: "desc" },
+            take: 8,
           })
         : [],
     ]);
@@ -197,11 +214,95 @@ const ParentListPage = async ({
         <ParentTable parents={parents} role={role} searchTerm={searchTerm} students={studentOptions} />
       )}
 
+      {role === "admin" && <ParentAccessAuditTrail logs={recentAuditLogs} />}
+
       <Pagination page={p} count={count} />
     </div>
   );
 };
 
+function parentAccessAuditLabel(action: ParentAccessAuditRow["action"]) {
+  switch (action) {
+    case "PARENT_INVITED":
+      return "Parent invited";
+    case "PARENT_ACCOUNT_ACTIVATED":
+      return "Account activated";
+    case "CHILD_LINKED":
+      return "Ward linked";
+    case "CHILD_REMOVED":
+      return "Ward removed";
+    case "ACCESS_REVOKED":
+      return "Access revoked";
+    case "ACCESS_RESTORED":
+      return "Access restored";
+    case "CHILD_TRANSFERRED":
+      return "Ward transferred";
+    case "CHILD_GRADUATED":
+      return "Ward graduated";
+    case "EMAIL_CHANGED":
+      return "Email changed";
+    default:
+      return action;
+  }
+}
+
+function ParentAccessAuditTrail({ logs }: { logs: ParentAccessAuditRow[] }) {
+  return (
+    <section className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-base font-black text-gray-800">Recent access history</h2>
+          <p className="text-sm font-medium text-gray-400">
+            A short trail of parent invites, ward links, access changes, and sensitive profile updates.
+          </p>
+        </div>
+        <div className="mt-2 flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-600 sm:mt-0">
+          <History size={17} />
+        </div>
+      </div>
+
+      <div className="mt-4 divide-y divide-gray-100">
+        {logs.map((log) => {
+          const parentName = log.parent
+            ? `${log.parent.name} ${log.parent.surname}`.trim()
+            : "Pending parent";
+          const wardName = log.student
+            ? `${log.student.name} ${log.student.surname}`.trim()
+            : "No ward attached";
+
+          return (
+            <div key={log.id} className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <p className="text-sm font-black text-gray-800">{parentAccessAuditLabel(log.action)}</p>
+                <p className="mt-0.5 truncate text-sm font-semibold text-gray-500">
+                  {parentName} · {wardName}
+                  {log.student?.class?.name ? ` · ${log.student.class.name}` : ""}
+                </p>
+              </div>
+              <div className="text-left sm:text-right">
+                <p className="text-xs font-black text-gray-400">
+                  {log.createdAt.toLocaleString("en-GH", {
+                    day: "numeric",
+                    month: "short",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
+                <p className="mt-0.5 text-xs font-semibold text-gray-400">By {log.performedBy}</p>
+              </div>
+            </div>
+          );
+        })}
+        {logs.length === 0 && (
+          <div className="flex items-center gap-3 rounded-xl bg-gray-50 p-4 text-sm font-semibold text-gray-500">
+            <History size={16} />
+            No parent access changes have been recorded yet.
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
 function StatCard({
   label,
   value,

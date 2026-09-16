@@ -1113,6 +1113,19 @@ exports.Prisma.ParentInviteAuditLogScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.ParentAccessAuditLogScalarFieldEnum = {
+  id: 'id',
+  schoolId: 'schoolId',
+  parentId: 'parentId',
+  studentId: 'studentId',
+  inviteId: 'inviteId',
+  relationshipId: 'relationshipId',
+  action: 'action',
+  performedBy: 'performedBy',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.TeacherInviteAuditLogScalarFieldEnum = {
   id: 'id',
   schoolId: 'schoolId',
@@ -1599,6 +1612,18 @@ exports.ParentInviteAuditAction = exports.$Enums.ParentInviteAuditAction = {
   INVITE_ACCEPTED: 'INVITE_ACCEPTED'
 };
 
+exports.ParentAccessAuditAction = exports.$Enums.ParentAccessAuditAction = {
+  PARENT_INVITED: 'PARENT_INVITED',
+  PARENT_ACCOUNT_ACTIVATED: 'PARENT_ACCOUNT_ACTIVATED',
+  CHILD_LINKED: 'CHILD_LINKED',
+  CHILD_REMOVED: 'CHILD_REMOVED',
+  ACCESS_REVOKED: 'ACCESS_REVOKED',
+  ACCESS_RESTORED: 'ACCESS_RESTORED',
+  CHILD_TRANSFERRED: 'CHILD_TRANSFERRED',
+  CHILD_GRADUATED: 'CHILD_GRADUATED',
+  EMAIL_CHANGED: 'EMAIL_CHANGED'
+};
+
 exports.TeacherInviteAuditAction = exports.$Enums.TeacherInviteAuditAction = {
   INVITE_CREATED: 'INVITE_CREATED',
   INVITE_SENT: 'INVITE_SENT',
@@ -1690,6 +1715,7 @@ exports.Prisma.ModelName = {
   ParentInvite: 'ParentInvite',
   ParentInviteStudent: 'ParentInviteStudent',
   ParentInviteAuditLog: 'ParentInviteAuditLog',
+  ParentAccessAuditLog: 'ParentAccessAuditLog',
   TeacherInviteAuditLog: 'TeacherInviteAuditLog',
   OnboardingAuditLog: 'OnboardingAuditLog'
 };

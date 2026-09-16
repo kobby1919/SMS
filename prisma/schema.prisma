@@ -200,6 +200,18 @@ enum TeacherInviteAuditAction {
   INVITE_ACCEPTED
 }
 
+enum ParentAccessAuditAction {
+  PARENT_INVITED
+  PARENT_ACCOUNT_ACTIVATED
+  CHILD_LINKED
+  CHILD_REMOVED
+  ACCESS_REVOKED
+  ACCESS_RESTORED
+  CHILD_TRANSFERRED
+  CHILD_GRADUATED
+  EMAIL_CHANGED
+}
+
 enum ParentInviteAuditAction {
   INVITE_CREATED
   INVITE_SENT
@@ -536,6 +548,7 @@ model School {
   teacherInviteAuditLogs         TeacherInviteAuditLog[]
   parentInvites                  ParentInvite[]
   parentInviteAuditLogs          ParentInviteAuditLog[]
+  parentAccessAuditLogs          ParentAccessAuditLog[]
   parentNotifications            ParentNotification[]
   parentActivityEvents           ParentActivityEvent[]
   notificationSettings           SchoolNotificationSetting?
@@ -601,6 +614,7 @@ model Student {
   financeQueries         FinanceQuery[]
   teacherContactRequests ParentTeacherContactRequest[]
   teacherContactMessages ParentTeacherContactMessage[]
+  parentAccessAuditLogs  ParentAccessAuditLog[]
 
   @@index([schoolId])
   @@index([schoolId, classId])
@@ -672,26 +686,26 @@ model Parent {
   financeQueries         FinanceQuery[]
   teacherContactRequests ParentTeacherContactRequest[]
   teacherContactMessages ParentTeacherContactMessage[]
+  accessAuditLogs        ParentAccessAuditLog[]
   studentRelationships   ParentStudentRelationship[]
-  acceptedInvites        ParentInvite[]                 @relation("AcceptedParentInvite")
+  acceptedInvites        ParentInvite[]                  @relation("AcceptedParentInvite")
 
   @@index([schoolId])
   @@index([schoolId, createdAt])
 }
 
-
 model ParentStudentRelationship {
-  id           String                          @id @default(cuid())
-  status       ParentStudentRelationshipStatus @default(ACTIVE)
-  role         ParentStudentRelationshipRole   @default(PRIMARY_GUARDIAN)
-  canViewFees  Boolean                         @default(true)
-  canViewReports Boolean                        @default(true)
-  canMessageSchool Boolean                      @default(true)
-  note         String?
-  startedAt    DateTime                        @default(now())
-  endedAt      DateTime?
-  createdAt    DateTime                        @default(now())
-  updatedAt    DateTime                        @updatedAt
+  id               String                          @id @default(cuid())
+  status           ParentStudentRelationshipStatus @default(ACTIVE)
+  role             ParentStudentRelationshipRole   @default(PRIMARY_GUARDIAN)
+  canViewFees      Boolean                         @default(true)
+  canViewReports   Boolean                         @default(true)
+  canMessageSchool Boolean                         @default(true)
+  note             String?
+  startedAt        DateTime                        @default(now())
+  endedAt          DateTime?
+  createdAt        DateTime                        @default(now())
+  updatedAt        DateTime                        @updatedAt
 
   schoolId String
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
@@ -702,14 +716,16 @@ model ParentStudentRelationship {
   studentId String
   student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
-  createdById String?
-  updatedById String?
+  createdById     String?
+  updatedById     String?
+  accessAuditLogs ParentAccessAuditLog[]
 
   @@unique([schoolId, parentId, studentId])
   @@index([schoolId, parentId, status])
   @@index([schoolId, studentId, status])
   @@index([schoolId, status, updatedAt])
 }
+
 model SchoolNotificationSetting {
   id                     String               @id @default(cuid())
   timezone               String               @default("Africa/Accra")
@@ -2189,8 +2205,8 @@ model TeacherInvite {
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
 
-  school          School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
-  acceptedTeacher Teacher? @relation("AcceptedTeacherInvite", fields: [acceptedTeacherId], references: [id], onDelete: SetNull)
+  school          School                  @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  acceptedTeacher Teacher?                @relation("AcceptedTeacherInvite", fields: [acceptedTeacherId], references: [id], onDelete: SetNull)
   auditLogs       TeacherInviteAuditLog[]
 
   @@index([schoolId, email])
@@ -2220,10 +2236,11 @@ model ParentInvite {
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
 
-  school         School                 @relation(fields: [schoolId], references: [id], onDelete: Cascade)
-  acceptedParent Parent?                @relation("AcceptedParentInvite", fields: [acceptedParentId], references: [id], onDelete: SetNull)
-  auditLogs      ParentInviteAuditLog[]
-  students       ParentInviteStudent[]
+  school          School                 @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  acceptedParent  Parent?                @relation("AcceptedParentInvite", fields: [acceptedParentId], references: [id], onDelete: SetNull)
+  auditLogs       ParentInviteAuditLog[]
+  accessAuditLogs ParentAccessAuditLog[]
+  students        ParentInviteStudent[]
 
   @@index([schoolId, email])
   @@index([schoolId, status, expiresAt])
@@ -2245,6 +2262,7 @@ model ParentInviteStudent {
   @@index([schoolId, inviteId])
   @@index([schoolId, studentId])
 }
+
 model ParentInviteAuditLog {
   id          String                  @id @default(cuid())
   schoolId    String
@@ -2261,6 +2279,33 @@ model ParentInviteAuditLog {
   @@index([inviteId, createdAt])
   @@index([schoolId, action, createdAt])
 }
+
+model ParentAccessAuditLog {
+  id             String                  @id @default(cuid())
+  schoolId       String
+  parentId       String?
+  studentId      String?
+  inviteId       String?
+  relationshipId String?
+  action         ParentAccessAuditAction
+  performedBy    String
+  metadata       Json
+  createdAt      DateTime                @default(now())
+
+  school       School                     @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  parent       Parent?                    @relation(fields: [parentId], references: [id], onDelete: SetNull)
+  student      Student?                   @relation(fields: [studentId], references: [id], onDelete: SetNull)
+  invite       ParentInvite?              @relation(fields: [inviteId], references: [id], onDelete: SetNull)
+  relationship ParentStudentRelationship? @relation(fields: [relationshipId], references: [id], onDelete: SetNull)
+
+  @@index([schoolId, createdAt])
+  @@index([schoolId, parentId, createdAt])
+  @@index([schoolId, studentId, createdAt])
+  @@index([schoolId, action, createdAt])
+  @@index([relationshipId, createdAt])
+  @@index([inviteId, createdAt])
+}
+
 model TeacherInviteAuditLog {
   id          String                   @id @default(cuid())
   schoolId    String

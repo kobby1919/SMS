@@ -14,6 +14,7 @@ import {
   revalidateReferenceData,
 } from "@/src/lib/cacheTags";
 import { ensurePrimaryParentStudentRelationship } from "@/src/lib/services/parent-student-relationships";
+import { writeParentAccessAudit } from "@/src/lib/services/parent-access-audit";
 
 type ParentCreateInput = z.infer<typeof parentCreateSchema>;
 type ParentUpdateInput = z.infer<typeof parentUpdateSchema>;
@@ -351,10 +352,11 @@ export async function updateParent(
   schoolId: string,
   parentId: string,
   input: ParentUpdateInput,
+  actorId = "system",
 ) {
   const parent = await prisma.parent.findFirst({
     where: { id: parentId, schoolId },
-    select: { id: true },
+    select: { id: true, email: true },
   });
   if (!parent) throw new UserManagementError("Parent not found.", 404);
 
@@ -368,6 +370,21 @@ export async function updateParent(
       address: input.address,
     },
   });
+
+  const previousEmail = parent.email?.toLowerCase() ?? null;
+  const nextEmail = updated.email?.toLowerCase() ?? null;
+  if (previousEmail !== nextEmail) {
+    await writeParentAccessAudit(prisma, {
+      schoolId,
+      parentId,
+      action: "EMAIL_CHANGED",
+      performedBy: actorId,
+      metadata: {
+        previousEmail,
+        nextEmail,
+      },
+    });
+  }
   revalidateDashboard(schoolId);
   return updated;
 }

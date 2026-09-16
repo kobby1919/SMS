@@ -45,6 +45,7 @@ const requiredDelegates = [
   "teacherInviteAuditLog",
   "parentInvite",
   "parentInviteAuditLog",
+  "parentAccessAuditLog",
   "parentInviteStudent",
 ] as const;
 

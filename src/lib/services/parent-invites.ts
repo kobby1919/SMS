@@ -11,6 +11,7 @@ import {
 import { sendParentInviteEmail } from "@/src/lib/services/notifications";
 import type { ParentInviteAuditAction, Prisma } from "@/src/generated/prisma";
 import { normalizeAppRole } from "@/src/lib/roles";
+import { writeParentAccessAudit } from "@/src/lib/services/parent-access-audit";
 
 export type CreatedParentInvite = {
   inviteId: string;
@@ -310,6 +311,22 @@ export async function createParentInvite(
       schoolId: context.schoolId,
       inviteId: createdInvite.id,
       action: "INVITE_CREATED",
+      performedBy: context.userId,
+      metadata: {
+        email: createdInvite.email,
+        name: createdInvite.name,
+        surname: createdInvite.surname,
+        phone: input.phone ?? null,
+        studentIds: uniqueStudentIds,
+        wardNames,
+        expiresAt: createdInvite.expiresAt.toISOString(),
+      },
+    });
+
+    await writeParentAccessAudit(tx, {
+      schoolId: context.schoolId,
+      inviteId: createdInvite.id,
+      action: "PARENT_INVITED",
       performedBy: context.userId,
       metadata: {
         email: createdInvite.email,
@@ -697,7 +714,18 @@ export async function acceptParentInviteForUser(input: {
         });
 
     for (const student of inviteStudents) {
-      await tx.parentStudentRelationship.upsert({
+      const existingRelationship = await tx.parentStudentRelationship.findUnique({
+        where: {
+          schoolId_parentId_studentId: {
+            schoolId: invite.schoolId,
+            parentId: parent.id,
+            studentId: student.id,
+          },
+        },
+        select: { id: true, status: true },
+      });
+
+      const relationship = await tx.parentStudentRelationship.upsert({
         where: {
           schoolId_parentId_studentId: {
             schoolId: invite.schoolId,
@@ -724,6 +752,22 @@ export async function acceptParentInviteForUser(input: {
           canViewReports: true,
           canMessageSchool: true,
           updatedById: input.userId,
+        },
+        select: { id: true },
+      });
+
+      await writeParentAccessAudit(tx, {
+        schoolId: invite.schoolId,
+        action: existingRelationship ? "ACCESS_RESTORED" : "CHILD_LINKED",
+        performedBy: input.userId,
+        parentId: parent.id,
+        studentId: student.id,
+        inviteId: invite.id,
+        relationshipId: relationship.id,
+        metadata: {
+          source: "parent_invite_acceptance",
+          previousStatus: existingRelationship?.status ?? null,
+          email: inviteEmail,
         },
       });
     }
@@ -759,6 +803,19 @@ export async function acceptParentInviteForUser(input: {
         email: inviteEmail,
         parentId: parent.id,
         studentIds: inviteStudents.map((student) => student.id),
+      },
+    });
+
+    await writeParentAccessAudit(tx, {
+      schoolId: invite.schoolId,
+      action: "PARENT_ACCOUNT_ACTIVATED",
+      performedBy: input.userId,
+      parentId: parent.id,
+      inviteId: invite.id,
+      metadata: {
+        email: inviteEmail,
+        studentIds: inviteStudents.map((student) => student.id),
+        createdNewParentRecord: !parentForUser,
       },
     });
 

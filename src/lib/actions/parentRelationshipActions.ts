@@ -8,7 +8,8 @@ import {
   parentRelationshipCreateSchema,
   parentRelationshipStatusUpdateSchema,
 } from "@/src/lib/validation/parent-relationships";
-import type { ParentStudentRelationshipStatus } from "@/src/generated/prisma";
+import type { ParentAccessAuditAction, ParentStudentRelationshipStatus } from "@/src/generated/prisma";
+import { writeParentAccessAudit } from "@/src/lib/services/parent-access-audit";
 
 export type ParentRelationshipActionResult =
   | { ok: true; message: string }
@@ -23,6 +24,23 @@ const INACTIVE_STATUSES: ParentStudentRelationshipStatus[] = [
 
 function statusLabel(status: ParentStudentRelationshipStatus) {
   return status.toLowerCase().replaceAll("_", " ");
+}
+
+function auditActionForStatus(status: ParentStudentRelationshipStatus): ParentAccessAuditAction {
+  switch (status) {
+    case "ACTIVE":
+      return "ACCESS_RESTORED";
+    case "REMOVED":
+      return "CHILD_REMOVED";
+    case "REVOKED":
+      return "ACCESS_REVOKED";
+    case "TRANSFERRED":
+      return "CHILD_TRANSFERRED";
+    case "GRADUATED":
+      return "CHILD_GRADUATED";
+    default:
+      return "ACCESS_REVOKED";
+  }
 }
 
 async function syncLegacyStudentParentId({
@@ -83,15 +101,25 @@ export async function addParentWardLinkAction(input: unknown): Promise<ParentRel
     const { userId, schoolId } = await requireRole(["admin"]);
     const data = parseActionInput(parentRelationshipCreateSchema, input);
 
-    const [parent, student] = await Promise.all([
+    const [parent, student, existingRelationship] = await Promise.all([
       prisma.parent.findFirst({ where: { id: data.parentId, schoolId }, select: { id: true } }),
       prisma.student.findFirst({ where: { id: data.studentId, schoolId }, select: { id: true } }),
+      prisma.parentStudentRelationship.findUnique({
+        where: {
+          schoolId_parentId_studentId: {
+            schoolId,
+            parentId: data.parentId,
+            studentId: data.studentId,
+          },
+        },
+        select: { id: true, status: true, role: true },
+      }),
     ]);
 
     if (!parent) return { ok: false, message: "Parent not found for this school." };
     if (!student) return { ok: false, message: "Ward not found for this school." };
 
-    await prisma.parentStudentRelationship.upsert({
+    const relationship = await prisma.parentStudentRelationship.upsert({
       where: {
         schoolId_parentId_studentId: {
           schoolId,
@@ -121,6 +149,24 @@ export async function addParentWardLinkAction(input: unknown): Promise<ParentRel
         note: data.note ?? null,
         endedAt: null,
         updatedById: userId,
+      },
+      select: { id: true, status: true },
+    });
+
+    await writeParentAccessAudit(prisma, {
+      schoolId,
+      action: existingRelationship ? "ACCESS_RESTORED" : "CHILD_LINKED",
+      performedBy: userId,
+      parentId: data.parentId,
+      studentId: data.studentId,
+      relationshipId: relationship.id,
+      metadata: {
+        previousStatus: existingRelationship?.status ?? null,
+        role: data.role,
+        canViewFees: data.canViewFees,
+        canViewReports: data.canViewReports,
+        canMessageSchool: data.canMessageSchool,
+        note: data.note ?? null,
       },
     });
 
@@ -153,6 +199,10 @@ export async function updateParentWardLinkStatusAction(input: unknown): Promise<
         parentId: true,
         studentId: true,
         status: true,
+        role: true,
+        canViewFees: true,
+        canViewReports: true,
+        canMessageSchool: true,
       },
     });
 
@@ -169,6 +219,30 @@ export async function updateParentWardLinkStatusAction(input: unknown): Promise<
         note: data.note ?? null,
         endedAt: INACTIVE_STATUSES.includes(data.status) ? new Date() : null,
         updatedById: userId,
+      },
+    });
+
+    await writeParentAccessAudit(prisma, {
+      schoolId,
+      action: auditActionForStatus(data.status),
+      performedBy: userId,
+      parentId: relationship.parentId,
+      studentId: relationship.studentId,
+      relationshipId: relationship.id,
+      metadata: {
+        previousStatus: relationship.status,
+        newStatus: data.status,
+        previousPermissions: {
+          canViewFees: relationship.canViewFees,
+          canViewReports: relationship.canViewReports,
+          canMessageSchool: relationship.canMessageSchool,
+        },
+        newPermissions: {
+          canViewFees: isActive,
+          canViewReports: isActive,
+          canMessageSchool: isActive,
+        },
+        note: data.note ?? null,
       },
     });
 

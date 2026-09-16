@@ -25,7 +25,7 @@ export async function PUT(
     const { id } = await params;
     const parsed = parseBody(parentUpdateSchema, await req.json());
     if (!parsed.ok) return parsed.response;
-    return NextResponse.json(await updateParent(schoolId, id, parsed.data));
+    return NextResponse.json(await updateParent(schoolId, id, parsed.data, userId));
   } catch (error) {
     if (error instanceof UserManagementError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
