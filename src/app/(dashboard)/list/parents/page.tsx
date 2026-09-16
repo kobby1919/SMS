@@ -396,7 +396,6 @@ function ParentTable({
                     <td className="w-[100px] px-5 py-4">
                       <div className="flex items-center justify-end gap-2">
                         <FormModal table="parent" type="update" data={parent} />
-                        <FormModal table="parent" type="delete" id={parent.id} />
                         <ParentWardLinkManager parentId={parent.id} relationships={parent.studentRelationships} students={students} />
                       </div>
                     </td>

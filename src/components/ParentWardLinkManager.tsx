@@ -120,6 +120,9 @@ export default function ParentWardLinkManager({
       const response = await updateParentWardLinkStatusAction({
         relationshipId,
         status: String(formData.get("status") ?? ""),
+        canViewFees: formData.get("canViewFees") === "on",
+        canViewReports: formData.get("canViewReports") === "on",
+        canMessageSchool: formData.get("canMessageSchool") === "on",
         note: String(formData.get("note") ?? ""),
       });
       setResult(response);
@@ -159,7 +162,7 @@ export default function ParentWardLinkManager({
                     </span>
                   </div>
 
-                  <div className="mt-3 grid gap-2 sm:grid-cols-[160px_1fr_auto] sm:items-end">
+                  <div className="mt-3 grid gap-2 lg:grid-cols-[160px_1fr_auto] lg:items-end">
                     <label className="text-xs font-bold text-slate-500">
                       Status
                       <select
@@ -189,6 +192,19 @@ export default function ParentWardLinkManager({
                       {pendingKey === relationship.id ? <Loader2 size={14} className="animate-spin" /> : null}
                       Save
                     </button>
+                  </div>
+
+                  <div className="mt-2 grid gap-2 sm:grid-cols-3">
+                    {[
+                      ["canViewFees", "Fees", relationship.canViewFees],
+                      ["canViewReports", "Reports", relationship.canViewReports],
+                      ["canMessageSchool", "Messaging", relationship.canMessageSchool],
+                    ].map(([name, label, checked]) => (
+                      <label key={String(name)} className="flex items-center gap-2 rounded-lg bg-slate-50 px-2.5 py-2 text-xs font-bold text-slate-600">
+                        <input type="checkbox" name={String(name)} defaultChecked={Boolean(checked)} className="h-4 w-4 rounded border-slate-300" />
+                        {label}
+                      </label>
+                    ))}
                   </div>
                 </form>
               ))

@@ -35,6 +35,9 @@ export const parentRelationshipStatusUpdateSchema = z.object({
   relationshipId: z.string().trim().min(1, "Relationship id is required."),
   status: parentRelationshipStatusSchema,
   note: optionalNoteSchema,
+  canViewFees: z.coerce.boolean().default(true),
+  canViewReports: z.coerce.boolean().default(true),
+  canMessageSchool: z.coerce.boolean().default(true),
 });
 
 export type ParentRelationshipCreateInput = z.infer<typeof parentRelationshipCreateSchema>;
