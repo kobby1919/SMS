@@ -3,6 +3,7 @@ import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
 import ParentInviteActions from "@/src/components/ParentInviteActions";
 import ParentInviteModal from "@/src/components/ParentInviteModal";
+import ParentWardLinkManager from "@/src/components/ParentWardLinkManager";
 import { Clock3, Link2, UserCheck, Users } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
@@ -76,7 +77,6 @@ const ParentListPage = async ({
             where: parentQuery,
             include: {
               studentRelationships: {
-                where: { status: "ACTIVE" },
                 include: {
                   student: {
                     select: {
@@ -87,7 +87,7 @@ const ParentListPage = async ({
                     },
                   },
                 },
-                orderBy: { createdAt: "asc" },
+                orderBy: [{ status: "asc" }, { createdAt: "asc" }],
               },
             },
             orderBy: [{ name: "asc" }, { surname: "asc" }],
@@ -194,7 +194,7 @@ const ParentListPage = async ({
       {selectedStatus === "pending-invites" ? (
         <PendingInviteTable invites={pendingInvites} searchTerm={searchTerm} />
       ) : (
-        <ParentTable parents={parents} role={role} searchTerm={searchTerm} />
+        <ParentTable parents={parents} role={role} searchTerm={searchTerm} students={studentOptions} />
       )}
 
       <Pagination page={p} count={count} />
@@ -230,10 +230,12 @@ function ParentTable({
   parents,
   role,
   searchTerm,
+  students,
 }: {
   parents: ParentRow[];
   role?: string;
   searchTerm: string;
+  students: { id: string; name: string; surname: string; className: string }[];
 }) {
   return (
     <div className="flex-1 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
@@ -259,8 +261,9 @@ function ParentTable({
           </thead>
           <tbody className="divide-y divide-gray-50">
             {parents.map((parent) => {
-              const wardNames = parent.studentRelationships
-                ?.map((relationship) => relationship.student)
+              const activeRelationships = parent.studentRelationships.filter((relationship) => relationship.status === "ACTIVE");
+              const wardNames = activeRelationships
+                .map((relationship) => relationship.student)
                 .filter(Boolean)
                 .map((student) => `${student.name} ${student.surname}`.trim()) ?? [];
 
@@ -293,6 +296,7 @@ function ParentTable({
                       <div className="flex items-center justify-end gap-2">
                         <FormModal table="parent" type="update" data={parent} />
                         <FormModal table="parent" type="delete" id={parent.id} />
+                        <ParentWardLinkManager parentId={parent.id} relationships={parent.studentRelationships} students={students} />
                       </div>
                     </td>
                   )}
