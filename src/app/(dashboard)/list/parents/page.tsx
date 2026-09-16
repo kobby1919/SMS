@@ -4,10 +4,12 @@ import TableSearch from "@/src/components/TableSearch";
 import ParentInviteActions from "@/src/components/ParentInviteActions";
 import ParentInviteModal from "@/src/components/ParentInviteModal";
 import ParentWardLinkManager from "@/src/components/ParentWardLinkManager";
+import Link from "next/link";
 import { Clock3, History, Link2, UserCheck, Users } from "lucide-react";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
+import { parentAccessAuditLabel } from "@/src/lib/formatters/parent-access-audit";
 
 const tabs = [
   { key: "all", label: "Parents" },
@@ -75,7 +77,17 @@ const ParentListPage = async ({
     ];
   }
 
-  const [parents, parentCount, pendingInvites, pendingInviteCount, totalParentCount, activeRelationshipCount, students, recentAuditLogs] =
+  const [
+    parents,
+    parentCount,
+    pendingInvites,
+    pendingInviteCount,
+    totalParentCount,
+    activeRelationshipCount,
+    students,
+    recentAuditLogs,
+    parentAccessAuditCount,
+  ] =
     await Promise.all([
       selectedStatus === "all"
         ? prisma.parent.findMany({
@@ -134,9 +146,10 @@ const ParentListPage = async ({
               student: { select: { name: true, surname: true, class: { select: { name: true } } } },
             },
             orderBy: { createdAt: "desc" },
-            take: 8,
+            take: 5,
           })
         : [],
+      role === "admin" ? prisma.parentAccessAuditLog.count({ where: { schoolId } }) : 0,
     ]);
 
   const count = selectedStatus === "pending-invites" ? pendingInviteCount : parentCount;
@@ -213,51 +226,30 @@ const ParentListPage = async ({
         <ParentTable parents={parents} role={role} searchTerm={searchTerm} students={studentOptions} />
       )}
 
-      {role === "admin" && <ParentAccessAuditTrail logs={recentAuditLogs} />}
+      {role === "admin" && <ParentAccessAuditTrail logs={recentAuditLogs} totalCount={parentAccessAuditCount} />}
 
       <Pagination page={p} count={count} />
     </div>
   );
 };
 
-function parentAccessAuditLabel(action: ParentAccessAuditRow["action"]) {
-  switch (action) {
-    case "PARENT_INVITED":
-      return "Parent invited";
-    case "PARENT_ACCOUNT_ACTIVATED":
-      return "Account activated";
-    case "CHILD_LINKED":
-      return "Ward linked";
-    case "CHILD_REMOVED":
-      return "Ward removed";
-    case "ACCESS_REVOKED":
-      return "Access revoked";
-    case "ACCESS_RESTORED":
-      return "Access restored";
-    case "CHILD_TRANSFERRED":
-      return "Ward transferred";
-    case "CHILD_GRADUATED":
-      return "Ward graduated";
-    case "EMAIL_CHANGED":
-      return "Email changed";
-    default:
-      return action;
-  }
-}
-
-function ParentAccessAuditTrail({ logs }: { logs: ParentAccessAuditRow[] }) {
+function ParentAccessAuditTrail({ logs, totalCount }: { logs: ParentAccessAuditRow[]; totalCount: number }) {
   return (
     <section className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-base font-black text-gray-800">Recent access history</h2>
+          <h2 className="text-base font-black text-gray-800">Access history preview</h2>
           <p className="text-sm font-medium text-gray-400">
-            A short trail of parent invites, ward links, access changes, and sensitive profile updates.
+            Showing the latest {logs.length} of {totalCount} parent access event{totalCount === 1 ? "" : "s"}.
           </p>
         </div>
-        <div className="mt-2 flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-600 sm:mt-0">
-          <History size={17} />
-        </div>
+        <Link
+          href="/list/parents/audit"
+          className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-black text-white transition hover:bg-slate-800 sm:mt-0"
+        >
+          <History size={16} />
+          View full history
+        </Link>
       </div>
 
       <div className="mt-4 divide-y divide-gray-100">
