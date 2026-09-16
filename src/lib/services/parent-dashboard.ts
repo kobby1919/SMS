@@ -1173,5 +1173,5 @@ export async function getParentDashboardData(userId: string, schoolId: string) {
     ? Math.round(childrenData.reduce((sum, child) => sum + child.trustScore.score, 0) / childrenData.length)
     : 0;
 
-  return { parent, childrenData, activityFeed, riskAlerts, familyTrustScore };
+  return { parent: parentWithActiveChildren, childrenData, activityFeed, riskAlerts, familyTrustScore };
 }

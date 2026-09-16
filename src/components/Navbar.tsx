@@ -2,6 +2,7 @@ import type { AppRole } from "@/src/lib/roles";
 import { currentUser } from "@clerk/nextjs/server";
 import prisma from "@/src/lib/prisma";
 import { getSchoolBranding } from "@/src/lib/services/school-branding";
+import { listActiveParentChildren } from "@/src/lib/services/parent-student-relationships";
 import { prepareTeacherAccountabilityForView } from "@/src/lib/services/teacher-accountability-view";
 import { getTeacherSelfAccountabilityOverview } from "@/src/lib/queries/teacher-self-accountability";
 import NavbarClient from "./NavbarClient";
@@ -79,25 +80,16 @@ const Navbar = async ({ role, userId, schoolId }: Props) => {
     return <NavbarClient user={userData} />;
   }
 
-  const [parent, notifications] = await Promise.all([
+  const [parent, children, notifications] = await Promise.all([
     prisma.parent.findFirst({
       where: { id: userId, schoolId },
       select: {
         id: true,
         name: true,
         surname: true,
-        students: {
-          where: { schoolId },
-          select: {
-            id: true,
-            name: true,
-            surname: true,
-            class: { select: { name: true } },
-          },
-          orderBy: [{ name: "asc" }, { surname: "asc" }],
-        },
       },
     }),
+    listActiveParentChildren(userId, schoolId),
     prisma.parentNotification.findMany({
       where: { schoolId, parentId: userId },
       select: {
@@ -122,11 +114,11 @@ const Navbar = async ({ role, userId, schoolId }: Props) => {
         fullName: parent ? `${parent.name} ${parent.surname}` : userData.fullName,
       }}
       parentContext={{
-        children: parent?.students.map((student) => ({
+        children: children.map((student) => ({
           id: student.id,
           name: `${student.name} ${student.surname}`,
           className: student.class?.name ?? "Class not set",
-        })) ?? [],
+        })),
         notifications: notifications.map((notification) => ({
           id: notification.id,
           type: notification.type,
