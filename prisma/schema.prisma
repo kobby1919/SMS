@@ -227,6 +227,14 @@ enum BursarStatus {
   LEFT_SCHOOL
 }
 
+enum TeacherStatus {
+  INVITED
+  ACTIVE
+  INCOMPLETE_SETUP
+  SUSPENDED
+  LEFT_SCHOOL
+}
+
 enum BursarInviteStatus {
   PENDING
   ACCEPTED
@@ -682,8 +690,10 @@ model Teacher {
   img        String?
   bloodType  String?
   sex        UserSex?
-  createdAt  DateTime @default(now())
-  maxClasses Int      @default(5)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  status     TeacherStatus @default(ACTIVE)
+  maxClasses Int           @default(5)
 
   schoolId String @default("default-school")
   school   School @relation(fields: [schoolId], references: [id])
@@ -710,6 +720,7 @@ model Teacher {
   acceptedInvites           TeacherInvite[]                 @relation("AcceptedTeacherInvite")
 
   @@index([schoolId])
+  @@index([schoolId, status])
   @@index([schoolId, createdAt])
 }
 
@@ -2434,3 +2445,4 @@ model OnboardingAuditLog {
   @@index([schoolId, createdAt])
   @@index([action, createdAt])
 }
+

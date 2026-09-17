@@ -205,14 +205,10 @@ export async function deleteParent(id: string) {
 
 export async function deleteTeacher(id: string) {
   ({ id } = parseActionInput(stringIdActionSchema, { id }));
-  const { schoolId } = await requireAdmin();
-  await prisma.teacher.deleteMany({ where: { id, schoolId } });
-  revalidatePath("/list/teachers");
-  revalidatePath("/admin/timetable");
-  revalidateReferenceData(schoolId, "teachers");
-  revalidateReferenceData(schoolId, "subjects");
-  revalidateReferenceData(schoolId, "timetable");
-  revalidateDashboard(schoolId);
+  await requireAdmin();
+  throw new Error(
+    "Teacher records cannot be deleted because they may have lessons, attendance, CA, homework, reports, and audit history. Mark the teacher as left school or suspend access instead.",
+  );
 }
 
 export async function deleteStudent(id: string) {
@@ -1667,3 +1663,4 @@ export async function deleteResult(id: number): Promise<void> {
   revalidatePath("/list/results");
   revalidateDashboard(schoolId);
 }
+

@@ -71,7 +71,13 @@ function hasRequiredDelegates(client: ReturnType<typeof prismaClientSingleton>) 
     lessonFieldNames.has(field),
   );
 
-  return hasDelegates && hasReportWorkflowFields && hasPeriodTemplateFields;
+  const teacherFields = runtimeModels?.Teacher?.fields ?? [];
+  const teacherFieldNames = new Set(teacherFields.map((field) => field.name));
+  const hasTeacherLifecycleFields = ["status", "updatedAt"].every((field) =>
+    teacherFieldNames.has(field),
+  );
+
+  return hasDelegates && hasReportWorkflowFields && hasPeriodTemplateFields && hasTeacherLifecycleFields;
 }
 
 let prismaClient = customGlobal.prismaGlobal;
@@ -87,3 +93,4 @@ const prisma = prismaClient;
 export default prisma;
 
 if (process.env.NODE_ENV !== "production") customGlobal.prismaGlobal = prisma;
+

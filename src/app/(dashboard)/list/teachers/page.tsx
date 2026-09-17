@@ -32,17 +32,22 @@ const getSubjectColor = (_: string, idx: number) =>
   SUBJECT_COLORS[idx % SUBJECT_COLORS.length];
 
 type TeacherSetupStatus = "ready" | "needs-setup";
+type TeacherLifecycleTab = "all" | "ready" | "needs-setup" | "active" | "incomplete" | "suspended" | "left-school" | "pending-invites";
 type TeacherInviteRow = Awaited<
   ReturnType<typeof prisma.teacherInvite.findMany>
 >[number];
 
 const statusTabs: Array<{
-  key: "all" | "ready" | "needs-setup" | "pending-invites";
+  key: TeacherLifecycleTab;
   label: string;
 }> = [
   { key: "all", label: "All teachers" },
   { key: "ready", label: "Ready" },
   { key: "needs-setup", label: "Needs setup" },
+  { key: "active", label: "Active" },
+  { key: "incomplete", label: "Incomplete setup" },
+  { key: "suspended", label: "Suspended" },
+  { key: "left-school", label: "Left school" },
   { key: "pending-invites", label: "Pending invites" },
 ];
 
@@ -55,9 +60,13 @@ const TeacherListPage = async ({
 
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
-  const selectedStatus =
+  const selectedStatus: TeacherLifecycleTab =
     queryParams.status === "ready" ||
     queryParams.status === "needs-setup" ||
+    queryParams.status === "active" ||
+    queryParams.status === "incomplete" ||
+    queryParams.status === "suspended" ||
+    queryParams.status === "left-school" ||
     queryParams.status === "pending-invites"
       ? queryParams.status
       : "all";
@@ -162,16 +171,28 @@ const TeacherListPage = async ({
     return { teacher, taughtClasses, setupStatus, missingSetup };
   });
 
-  const readyTeachers = enrichedTeachers.filter((item) => item.setupStatus === "ready");
-  const teachersNeedingSetup = enrichedTeachers.filter((item) => item.setupStatus === "needs-setup");
+  const readyTeachers = enrichedTeachers.filter((item) => item.setupStatus === "ready" && item.teacher.status === "ACTIVE");
+  const teachersNeedingSetup = enrichedTeachers.filter((item) => item.setupStatus === "needs-setup" || item.teacher.status === "INCOMPLETE_SETUP");
+  const activeTeachers = enrichedTeachers.filter((item) => item.teacher.status === "ACTIVE");
+  const incompleteTeachers = enrichedTeachers.filter((item) => item.teacher.status === "INCOMPLETE_SETUP");
+  const suspendedTeachers = enrichedTeachers.filter((item) => item.teacher.status === "SUSPENDED");
+  const leftSchoolTeachers = enrichedTeachers.filter((item) => item.teacher.status === "LEFT_SCHOOL");
   const filteredTeachers =
     selectedStatus === "ready"
       ? readyTeachers
       : selectedStatus === "needs-setup"
         ? teachersNeedingSetup
-        : selectedStatus === "pending-invites"
-          ? []
-          : enrichedTeachers;
+        : selectedStatus === "active"
+          ? activeTeachers
+          : selectedStatus === "incomplete"
+            ? incompleteTeachers
+            : selectedStatus === "suspended"
+              ? suspendedTeachers
+              : selectedStatus === "left-school"
+                ? leftSchoolTeachers
+                : selectedStatus === "pending-invites"
+                  ? []
+                  : enrichedTeachers;
   const count =
     selectedStatus === "pending-invites"
       ? pendingInviteListCount
@@ -214,7 +235,7 @@ const TeacherListPage = async ({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: "Registered", value: allTeachers.length, icon: <Users size={16} />, color: "bg-indigo-50 text-indigo-600" },
-          { label: "Ready", value: readyTeachers.length, icon: <CheckCircle2 size={16} />, color: "bg-emerald-50 text-emerald-600" },
+          { label: "Active", value: activeTeachers.length, icon: <CheckCircle2 size={16} />, color: "bg-emerald-50 text-emerald-600" },
           { label: "Needs setup", value: teachersNeedingSetup.length, icon: <AlertCircle size={16} />, color: "bg-amber-50 text-amber-600" },
           { label: "Pending invites", value: pendingInviteCount, icon: <Clock3 size={16} />, color: "bg-violet-50 text-violet-600" },
         ].map((stat) => (
@@ -279,6 +300,7 @@ const TeacherListPage = async ({
             </thead>
             <tbody className="divide-y divide-gray-50">
               {teachers.map(({ teacher: item, taughtClasses, setupStatus, missingSetup }) => {
+                const lifecycle = teacherStatusMeta(item.status);
 
                 return (
                   <tr key={item.id} className="hover:bg-indigo-50/30 transition-colors duration-150 group">
@@ -299,14 +321,8 @@ const TeacherListPage = async ({
                           <p className="font-bold text-sm text-gray-800 truncate">{item.name} {item.surname}</p>
                           <p className="text-xs text-gray-400 truncate">{item.email}</p>
                           <div className="mt-2 flex flex-wrap gap-1 md:hidden">
-                            <span
-                              className={`rounded-full px-2 py-0.5 text-[11px] font-black ${
-                                setupStatus === "ready"
-                                  ? "bg-emerald-50 text-emerald-700"
-                                  : "bg-amber-50 text-amber-700"
-                              }`}
-                            >
-                              {setupStatus === "ready" ? "Ready" : "Needs setup"}
+                            <span className={`rounded-full px-2 py-0.5 text-[11px] font-black ${lifecycle.className}`}>
+                              {lifecycle.label}
                             </span>
                             <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-bold text-gray-500">
                               {taughtClasses.length} classes
@@ -356,21 +372,13 @@ const TeacherListPage = async ({
 
                     <td className="px-3 py-3.5 hidden xl:table-cell">
                       <div className="flex flex-col gap-1">
-                        <span
-                          className={`inline-flex w-fit items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black ${
-                            setupStatus === "ready"
-                              ? "bg-emerald-50 text-emerald-700"
-                              : "bg-amber-50 text-amber-700"
-                          }`}
-                        >
-                          <ShieldCheck size={12} />
-                          {setupStatus === "ready" ? "Ready" : "Needs setup"}
+                        <span className={`inline-flex w-fit items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black ${lifecycle.className}`}>
+                          {item.status === "ACTIVE" ? <ShieldCheck size={12} /> : <AlertCircle size={12} />}
+                          {lifecycle.label}
                         </span>
-                        {missingSetup.length > 0 && (
-                          <span className="max-w-[220px] text-xs font-semibold text-gray-400">
-                            Missing {missingSetup.join(", ")}
-                          </span>
-                        )}
+                        <span className="text-xs font-semibold text-gray-400">
+                          {setupStatus === "ready" ? "Setup ready" : `Missing ${missingSetup.join(", ")}`}
+                        </span>
                       </div>
                     </td>
 
@@ -547,4 +555,22 @@ function teacherTypeLabel(type: TeacherInviteRow["teacherType"]) {
   }
 }
 
+
+function teacherStatusMeta(status: "INVITED" | "ACTIVE" | "INCOMPLETE_SETUP" | "SUSPENDED" | "LEFT_SCHOOL") {
+  switch (status) {
+    case "ACTIVE":
+      return { label: "Active", className: "bg-emerald-50 text-emerald-700" };
+    case "INCOMPLETE_SETUP":
+      return { label: "Incomplete setup", className: "bg-amber-50 text-amber-700" };
+    case "SUSPENDED":
+      return { label: "Suspended", className: "bg-rose-50 text-rose-700" };
+    case "LEFT_SCHOOL":
+      return { label: "Left school", className: "bg-gray-100 text-gray-600" };
+    case "INVITED":
+    default:
+      return { label: "Invited", className: "bg-violet-50 text-violet-700" };
+  }
+}
 export default TeacherListPage;
+
+

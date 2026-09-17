@@ -587,6 +587,7 @@ export async function acceptTeacherInviteForUser(input: {
             surname: invite.surname,
             email: inviteEmail,
             phone: invite.phone ?? null,
+            status: "ACTIVE",
           },
           select: { id: true },
         })
@@ -599,6 +600,7 @@ export async function acceptTeacherInviteForUser(input: {
             surname: invite.surname,
             email: inviteEmail,
             phone: invite.phone ?? null,
+            status: "ACTIVE",
             address: null,
             bloodType: null,
             sex: null,
@@ -660,3 +662,4 @@ export async function acceptTeacherInviteForUser(input: {
     teacherId: acceptedTeacher.id,
   };
 }
+

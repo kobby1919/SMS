@@ -42,6 +42,21 @@ async function getBursarIdentityFromDatabase(userId: string): Promise<{
 
   return { role: "bursar", schoolId: bursar.schoolId };
 }
+async function getTeacherIdentityFromDatabase(userId: string): Promise<{
+  role: AppRole;
+  schoolId: string;
+} | null> {
+  const teacher = await prisma.teacher.findUnique({
+    where: { id: userId },
+    select: { schoolId: true, status: true },
+  });
+
+  if (!teacher || teacher.status !== "ACTIVE") {
+    return null;
+  }
+
+  return { role: "teacher", schoolId: teacher.schoolId };
+}
 
 function schoolIdFromSessionClaims(sessionClaims: unknown): string | undefined {
   if (!sessionClaims || typeof sessionClaims !== "object") return undefined;
@@ -89,6 +104,14 @@ export async function resolveSessionIdentity(
   const roleFromClaims = roleFromSessionClaims(sessionClaims);
   const schoolIdFromClaims = schoolIdFromSessionClaims(sessionClaims);
 
+  if (roleFromClaims === "teacher" && userId) {
+    const teacherIdentity = await getTeacherIdentityFromDatabase(userId);
+    return {
+      role: teacherIdentity?.role,
+      schoolId: teacherIdentity?.schoolId ?? schoolIdFromClaims ?? DEFAULT_SCHOOL_ID,
+    };
+  }
+
   if ((roleFromClaims && schoolIdFromClaims) || !userId) {
     return {
       role: roleFromClaims,
@@ -107,6 +130,14 @@ export async function resolveSessionIdentity(
         ? metadataSchoolId
         : undefined);
 
+    if (resolvedRole === "teacher") {
+      const teacherIdentity = await getTeacherIdentityFromDatabase(userId);
+      return {
+        role: teacherIdentity?.role,
+        schoolId: teacherIdentity?.schoolId ?? resolvedSchoolId ?? DEFAULT_SCHOOL_ID,
+      };
+    }
+
     if (resolvedRole) {
       return {
         role: resolvedRole,
@@ -118,6 +149,11 @@ export async function resolveSessionIdentity(
   }
 
   if (!roleFromClaims) {
+    const teacherIdentity = await getTeacherIdentityFromDatabase(userId);
+    if (teacherIdentity) {
+      return teacherIdentity;
+    }
+
     const bursarIdentity = await getBursarIdentityFromDatabase(userId);
     if (bursarIdentity) {
       return bursarIdentity;
@@ -144,10 +180,16 @@ export async function resolveSessionRole(
   try {
     const user = await getClerkUserWithTimeout(userId);
     const metadataRole = normalizeAppRole(user.publicMetadata?.role);
+    if (metadataRole === "teacher") {
+      return (await getTeacherIdentityFromDatabase(userId))?.role;
+    }
     if (metadataRole) return metadataRole;
   } catch {
     // Fall back to database identity checks below.
   }
+
+  const teacherIdentity = await getTeacherIdentityFromDatabase(userId);
+  if (teacherIdentity) return teacherIdentity.role;
 
   const bursarIdentity = await getBursarIdentityFromDatabase(userId);
   return bursarIdentity?.role;
@@ -173,8 +215,13 @@ export async function resolveSessionSchoolId(
     // fall through to database/default tenant
   }
 
+  const teacherIdentity = await getTeacherIdentityFromDatabase(userId);
+  if (teacherIdentity) return teacherIdentity.schoolId;
+
   const bursarIdentity = await getBursarIdentityFromDatabase(userId);
   if (bursarIdentity) return bursarIdentity.schoolId;
 
   return DEFAULT_SCHOOL_ID;
 }
+
+

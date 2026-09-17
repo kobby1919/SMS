@@ -683,6 +683,17 @@ export const BursarStatus: {
 export type BursarStatus = (typeof BursarStatus)[keyof typeof BursarStatus]
 
 
+export const TeacherStatus: {
+  INVITED: 'INVITED',
+  ACTIVE: 'ACTIVE',
+  INCOMPLETE_SETUP: 'INCOMPLETE_SETUP',
+  SUSPENDED: 'SUSPENDED',
+  LEFT_SCHOOL: 'LEFT_SCHOOL'
+};
+
+export type TeacherStatus = (typeof TeacherStatus)[keyof typeof TeacherStatus]
+
+
 export const BursarInviteStatus: {
   PENDING: 'PENDING',
   ACCEPTED: 'ACCEPTED',
@@ -1171,6 +1182,10 @@ export const ParentInviteAuditAction: typeof $Enums.ParentInviteAuditAction
 export type BursarStatus = $Enums.BursarStatus
 
 export const BursarStatus: typeof $Enums.BursarStatus
+
+export type TeacherStatus = $Enums.TeacherStatus
+
+export const TeacherStatus: typeof $Enums.TeacherStatus
 
 export type BursarInviteStatus = $Enums.BursarInviteStatus
 
@@ -17292,6 +17307,8 @@ export namespace Prisma {
     bloodType: string | null
     sex: $Enums.UserSex | null
     createdAt: Date | null
+    updatedAt: Date | null
+    status: $Enums.TeacherStatus | null
     maxClasses: number | null
     schoolId: string | null
   }
@@ -17308,6 +17325,8 @@ export namespace Prisma {
     bloodType: string | null
     sex: $Enums.UserSex | null
     createdAt: Date | null
+    updatedAt: Date | null
+    status: $Enums.TeacherStatus | null
     maxClasses: number | null
     schoolId: string | null
   }
@@ -17324,6 +17343,8 @@ export namespace Prisma {
     bloodType: number
     sex: number
     createdAt: number
+    updatedAt: number
+    status: number
     maxClasses: number
     schoolId: number
     _all: number
@@ -17350,6 +17371,8 @@ export namespace Prisma {
     bloodType?: true
     sex?: true
     createdAt?: true
+    updatedAt?: true
+    status?: true
     maxClasses?: true
     schoolId?: true
   }
@@ -17366,6 +17389,8 @@ export namespace Prisma {
     bloodType?: true
     sex?: true
     createdAt?: true
+    updatedAt?: true
+    status?: true
     maxClasses?: true
     schoolId?: true
   }
@@ -17382,6 +17407,8 @@ export namespace Prisma {
     bloodType?: true
     sex?: true
     createdAt?: true
+    updatedAt?: true
+    status?: true
     maxClasses?: true
     schoolId?: true
     _all?: true
@@ -17485,6 +17512,8 @@ export namespace Prisma {
     bloodType: string | null
     sex: $Enums.UserSex | null
     createdAt: Date
+    updatedAt: Date
+    status: $Enums.TeacherStatus
     maxClasses: number
     schoolId: string
     _count: TeacherCountAggregateOutputType | null
@@ -17520,6 +17549,8 @@ export namespace Prisma {
     bloodType?: boolean
     sex?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
+    status?: boolean
     maxClasses?: boolean
     schoolId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
@@ -17557,6 +17588,8 @@ export namespace Prisma {
     bloodType?: boolean
     sex?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
+    status?: boolean
     maxClasses?: boolean
     schoolId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
@@ -17574,6 +17607,8 @@ export namespace Prisma {
     bloodType?: boolean
     sex?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
+    status?: boolean
     maxClasses?: boolean
     schoolId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
@@ -17591,11 +17626,13 @@ export namespace Prisma {
     bloodType?: boolean
     sex?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
+    status?: boolean
     maxClasses?: boolean
     schoolId?: boolean
   }
 
-  export type TeacherOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "name" | "surname" | "email" | "phone" | "address" | "img" | "bloodType" | "sex" | "createdAt" | "maxClasses" | "schoolId", ExtArgs["result"]["teacher"]>
+  export type TeacherOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "name" | "surname" | "email" | "phone" | "address" | "img" | "bloodType" | "sex" | "createdAt" | "updatedAt" | "status" | "maxClasses" | "schoolId", ExtArgs["result"]["teacher"]>
   export type TeacherInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     subjects?: boolean | Teacher$subjectsArgs<ExtArgs>
@@ -17662,6 +17699,8 @@ export namespace Prisma {
       bloodType: string | null
       sex: $Enums.UserSex | null
       createdAt: Date
+      updatedAt: Date
+      status: $Enums.TeacherStatus
       maxClasses: number
       schoolId: string
     }, ExtArgs["result"]["teacher"]>
@@ -18118,6 +18157,8 @@ export namespace Prisma {
     readonly bloodType: FieldRef<"Teacher", 'String'>
     readonly sex: FieldRef<"Teacher", 'UserSex'>
     readonly createdAt: FieldRef<"Teacher", 'DateTime'>
+    readonly updatedAt: FieldRef<"Teacher", 'DateTime'>
+    readonly status: FieldRef<"Teacher", 'TeacherStatus'>
     readonly maxClasses: FieldRef<"Teacher", 'Int'>
     readonly schoolId: FieldRef<"Teacher", 'String'>
   }
@@ -101163,6 +101204,8 @@ export namespace Prisma {
     bloodType: 'bloodType',
     sex: 'sex',
     createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    status: 'status',
     maxClasses: 'maxClasses',
     schoolId: 'schoolId'
   };
@@ -102504,6 +102547,20 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TeacherStatus'
+   */
+  export type EnumTeacherStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'TeacherStatus[]'
+   */
+  export type ListEnumTeacherStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeacherStatus[]'>
     
 
 
@@ -103991,6 +104048,8 @@ export namespace Prisma {
     bloodType?: StringNullableFilter<"Teacher"> | string | null
     sex?: EnumUserSexNullableFilter<"Teacher"> | $Enums.UserSex | null
     createdAt?: DateTimeFilter<"Teacher"> | Date | string
+    updatedAt?: DateTimeFilter<"Teacher"> | Date | string
+    status?: EnumTeacherStatusFilter<"Teacher"> | $Enums.TeacherStatus
     maxClasses?: IntFilter<"Teacher"> | number
     schoolId?: StringFilter<"Teacher"> | string
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
@@ -104027,6 +104086,8 @@ export namespace Prisma {
     bloodType?: SortOrderInput | SortOrder
     sex?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
+    status?: SortOrder
     maxClasses?: SortOrder
     schoolId?: SortOrder
     school?: SchoolOrderByWithRelationInput
@@ -104066,6 +104127,8 @@ export namespace Prisma {
     bloodType?: StringNullableFilter<"Teacher"> | string | null
     sex?: EnumUserSexNullableFilter<"Teacher"> | $Enums.UserSex | null
     createdAt?: DateTimeFilter<"Teacher"> | Date | string
+    updatedAt?: DateTimeFilter<"Teacher"> | Date | string
+    status?: EnumTeacherStatusFilter<"Teacher"> | $Enums.TeacherStatus
     maxClasses?: IntFilter<"Teacher"> | number
     schoolId?: StringFilter<"Teacher"> | string
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
@@ -104102,6 +104165,8 @@ export namespace Prisma {
     bloodType?: SortOrderInput | SortOrder
     sex?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
+    status?: SortOrder
     maxClasses?: SortOrder
     schoolId?: SortOrder
     _count?: TeacherCountOrderByAggregateInput
@@ -104126,6 +104191,8 @@ export namespace Prisma {
     bloodType?: StringNullableWithAggregatesFilter<"Teacher"> | string | null
     sex?: EnumUserSexNullableWithAggregatesFilter<"Teacher"> | $Enums.UserSex | null
     createdAt?: DateTimeWithAggregatesFilter<"Teacher"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Teacher"> | Date | string
+    status?: EnumTeacherStatusWithAggregatesFilter<"Teacher"> | $Enums.TeacherStatus
     maxClasses?: IntWithAggregatesFilter<"Teacher"> | number
     schoolId?: StringWithAggregatesFilter<"Teacher"> | string
   }
@@ -111455,6 +111522,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -111490,6 +111559,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -111525,6 +111596,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -111560,6 +111633,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -111595,6 +111670,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
   }
@@ -111611,6 +111688,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
   }
 
@@ -111626,6 +111705,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
   }
@@ -119697,6 +119778,13 @@ export namespace Prisma {
     not?: NestedEnumUserSexNullableFilter<$PrismaModel> | $Enums.UserSex | null
   }
 
+  export type EnumTeacherStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherStatus | EnumTeacherStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherStatus[] | ListEnumTeacherStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherStatus[] | ListEnumTeacherStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherStatusFilter<$PrismaModel> | $Enums.TeacherStatus
+  }
+
   export type TeacherCountOrderByAggregateInput = {
     id?: SortOrder
     username?: SortOrder
@@ -119709,6 +119797,8 @@ export namespace Prisma {
     bloodType?: SortOrder
     sex?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
+    status?: SortOrder
     maxClasses?: SortOrder
     schoolId?: SortOrder
   }
@@ -119729,6 +119819,8 @@ export namespace Prisma {
     bloodType?: SortOrder
     sex?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
+    status?: SortOrder
     maxClasses?: SortOrder
     schoolId?: SortOrder
   }
@@ -119745,6 +119837,8 @@ export namespace Prisma {
     bloodType?: SortOrder
     sex?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
+    status?: SortOrder
     maxClasses?: SortOrder
     schoolId?: SortOrder
   }
@@ -119761,6 +119855,16 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumUserSexNullableFilter<$PrismaModel>
     _max?: NestedEnumUserSexNullableFilter<$PrismaModel>
+  }
+
+  export type EnumTeacherStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherStatus | EnumTeacherStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherStatus[] | ListEnumTeacherStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherStatus[] | ListEnumTeacherStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherStatusWithAggregatesFilter<$PrismaModel> | $Enums.TeacherStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTeacherStatusFilter<$PrismaModel>
+    _max?: NestedEnumTeacherStatusFilter<$PrismaModel>
   }
 
   export type ParentNotificationPreferenceNullableScalarRelationFilter = {
@@ -128732,6 +128836,10 @@ export namespace Prisma {
     set?: $Enums.UserSex | null
   }
 
+  export type EnumTeacherStatusFieldUpdateOperationsInput = {
+    set?: $Enums.TeacherStatus
+  }
+
   export type SchoolUpdateOneRequiredWithoutTeachersNestedInput = {
     create?: XOR<SchoolCreateWithoutTeachersInput, SchoolUncheckedCreateWithoutTeachersInput>
     connectOrCreate?: SchoolCreateOrConnectWithoutTeachersInput
@@ -134779,6 +134887,13 @@ export namespace Prisma {
     not?: NestedEnumUserSexNullableFilter<$PrismaModel> | $Enums.UserSex | null
   }
 
+  export type NestedEnumTeacherStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherStatus | EnumTeacherStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherStatus[] | ListEnumTeacherStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherStatus[] | ListEnumTeacherStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherStatusFilter<$PrismaModel> | $Enums.TeacherStatus
+  }
+
   export type NestedEnumUserSexNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.UserSex | EnumUserSexFieldRefInput<$PrismaModel> | null
     in?: $Enums.UserSex[] | ListEnumUserSexFieldRefInput<$PrismaModel> | null
@@ -134787,6 +134902,16 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumUserSexNullableFilter<$PrismaModel>
     _max?: NestedEnumUserSexNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumTeacherStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TeacherStatus | EnumTeacherStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TeacherStatus[] | ListEnumTeacherStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TeacherStatus[] | ListEnumTeacherStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTeacherStatusWithAggregatesFilter<$PrismaModel> | $Enums.TeacherStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTeacherStatusFilter<$PrismaModel>
+    _max?: NestedEnumTeacherStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumParentStudentRelationshipStatusFilter<$PrismaModel = never> = {
@@ -136105,6 +136230,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
     lessons?: LessonCreateNestedManyWithoutTeacherInput
@@ -136139,6 +136266,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
     lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
@@ -138771,6 +138900,8 @@ export namespace Prisma {
     bloodType?: StringNullableFilter<"Teacher"> | string | null
     sex?: EnumUserSexNullableFilter<"Teacher"> | $Enums.UserSex | null
     createdAt?: DateTimeFilter<"Teacher"> | Date | string
+    updatedAt?: DateTimeFilter<"Teacher"> | Date | string
+    status?: EnumTeacherStatusFilter<"Teacher"> | $Enums.TeacherStatus
     maxClasses?: IntFilter<"Teacher"> | number
     schoolId?: StringFilter<"Teacher"> | string
   }
@@ -147305,6 +147436,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -147339,6 +147472,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -147570,6 +147705,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -147604,6 +147741,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -149434,6 +149573,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -149468,6 +149609,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -149777,6 +149920,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -149811,6 +149956,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -150052,6 +150199,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -150086,6 +150235,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -150362,6 +150513,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -150396,6 +150549,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -150656,6 +150811,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -150690,6 +150847,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -150966,6 +151125,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -151000,6 +151161,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -151260,6 +151423,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -151294,6 +151459,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -151525,6 +151692,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -151559,6 +151728,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -151768,6 +151939,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -151802,6 +151975,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -152033,6 +152208,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -152067,6 +152244,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -154070,6 +154249,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -154104,6 +154285,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -154501,6 +154684,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -154535,6 +154720,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -154862,6 +155049,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -154896,6 +155085,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -155310,6 +155501,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -155344,6 +155537,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -155746,6 +155941,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -155780,6 +155977,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -156141,6 +156340,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -156175,6 +156376,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -157003,6 +157206,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -157037,6 +157242,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -157717,6 +157924,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -157751,6 +157960,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -158150,6 +158361,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     lessons?: LessonCreateNestedManyWithoutTeacherInput
@@ -158184,6 +158397,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     lessons?: LessonUncheckedCreateNestedManyWithoutTeacherInput
@@ -158956,6 +159171,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -158990,6 +159207,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -159483,6 +159702,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -159517,6 +159738,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -160931,6 +161154,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -160965,6 +161190,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -161303,6 +161530,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -161337,6 +161566,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -164776,6 +165007,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -164810,6 +165043,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -165166,6 +165401,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -165200,6 +165437,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -165533,6 +165772,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -165567,6 +165808,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -165957,6 +166200,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -165991,6 +166236,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -166325,6 +166572,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -166359,6 +166608,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -166711,6 +166962,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -166745,6 +166998,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -167379,6 +167634,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -167413,6 +167670,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -167787,6 +168046,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -167821,6 +168082,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -169730,6 +169993,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -169764,6 +170029,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -170083,6 +170350,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -170117,6 +170386,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -176507,6 +176778,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     school?: SchoolCreateNestedOneWithoutTeachersInput
     subjects?: SubjectCreateNestedManyWithoutTeachersInput
@@ -176541,6 +176814,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
     schoolId?: string
     subjects?: SubjectUncheckedCreateNestedManyWithoutTeachersInput
@@ -176800,6 +177075,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
@@ -176834,6 +177111,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
@@ -180776,6 +181055,8 @@ export namespace Prisma {
     bloodType?: string | null
     sex?: $Enums.UserSex | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: $Enums.TeacherStatus
     maxClasses?: number
   }
 
@@ -181716,6 +181997,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     subjects?: SubjectUpdateManyWithoutTeachersNestedInput
     lessons?: LessonUpdateManyWithoutTeacherNestedInput
@@ -181750,6 +182033,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     subjects?: SubjectUncheckedUpdateManyWithoutTeachersNestedInput
     lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
@@ -181784,6 +182069,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
   }
 
@@ -188665,6 +188952,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     school?: SchoolUpdateOneRequiredWithoutTeachersNestedInput
     lessons?: LessonUpdateManyWithoutTeacherNestedInput
@@ -188699,6 +188988,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
     lessons?: LessonUncheckedUpdateManyWithoutTeacherNestedInput
@@ -188733,6 +189024,8 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumUserSexFieldUpdateOperationsInput | $Enums.UserSex | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumTeacherStatusFieldUpdateOperationsInput | $Enums.TeacherStatus
     maxClasses?: IntFieldUpdateOperationsInput | number
     schoolId?: StringFieldUpdateOperationsInput | string
   }

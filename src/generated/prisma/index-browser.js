@@ -190,6 +190,8 @@ exports.Prisma.TeacherScalarFieldEnum = {
   bloodType: 'bloodType',
   sex: 'sex',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  status: 'status',
   maxClasses: 'maxClasses',
   schoolId: 'schoolId'
 };
@@ -1239,6 +1241,14 @@ exports.BursarStatus = exports.$Enums.BursarStatus = {
 exports.UserSex = exports.$Enums.UserSex = {
   MALE: 'MALE',
   FEMALE: 'FEMALE'
+};
+
+exports.TeacherStatus = exports.$Enums.TeacherStatus = {
+  INVITED: 'INVITED',
+  ACTIVE: 'ACTIVE',
+  INCOMPLETE_SETUP: 'INCOMPLETE_SETUP',
+  SUSPENDED: 'SUSPENDED',
+  LEFT_SCHOOL: 'LEFT_SCHOOL'
 };
 
 exports.ParentStudentRelationshipStatus = exports.$Enums.ParentStudentRelationshipStatus = {
