@@ -26,7 +26,7 @@ const ClerkSignIn = dynamic(
 
 type SignInViewProps = {
   inviteContext?: {
-    role: "school_admin" | "teacher" | "parent";
+    role: "school_admin" | "teacher" | "parent" | "bursar";
     email?: string;
     schoolName?: string;
     callbackUrl: string;
@@ -53,6 +53,12 @@ const inviteCopy = {
     subtitle: "Secure parent invite access",
     warning: "Use the parent email invited by the school admin.",
   },
+  bursar: {
+    label: "bursar",
+    title: "Bursar invite sign-in",
+    subtitle: "Secure finance invite access",
+    warning: "Use the bursar email invited by the school admin.",
+  },
 } satisfies Record<
   NonNullable<SignInViewProps["inviteContext"]>["role"],
   { label: string; title: string; subtitle: string; warning: string }
@@ -70,13 +76,16 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
   const teacherInviteToken = searchParams.get("teacherInvite");
   const schoolInviteToken = searchParams.get("invite");
   const parentInviteToken = searchParams.get("parentInvite");
+  const bursarInviteToken = searchParams.get("bursarInvite");
   const signUpUrl = parentInviteToken
     ? `/sign-up?parentInvite=${encodeURIComponent(parentInviteToken)}`
     : teacherInviteToken
       ? `/sign-up?teacherInvite=${encodeURIComponent(teacherInviteToken)}`
-    : schoolInviteToken
-      ? `/sign-up?invite=${encodeURIComponent(schoolInviteToken)}`
-      : "/sign-up";
+      : bursarInviteToken
+        ? `/sign-up?bursarInvite=${encodeURIComponent(bursarInviteToken)}`
+        : schoolInviteToken
+          ? `/sign-up?invite=${encodeURIComponent(schoolInviteToken)}`
+          : "/sign-up";
 
   useEffect(() => {
     const maxAge = 20 * 60;
@@ -89,7 +98,10 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
     if (parentInviteToken) {
       document.cookie = `edujay_parent_invite=${encodeURIComponent(parentInviteToken)}; path=/; max-age=${maxAge}; samesite=lax`;
     }
-  }, [parentInviteToken, schoolInviteToken, teacherInviteToken]);
+    if (bursarInviteToken) {
+      document.cookie = `edujay_bursar_invite=${encodeURIComponent(bursarInviteToken)}; path=/; max-age=${maxAge}; samesite=lax`;
+    }
+  }, [bursarInviteToken, parentInviteToken, schoolInviteToken, teacherInviteToken]);
 
   return (
     <main className="min-h-dvh overflow-x-hidden bg-[#f5f7fb] text-slate-950">

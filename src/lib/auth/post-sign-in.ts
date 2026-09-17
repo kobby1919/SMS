@@ -40,12 +40,13 @@ async function schoolAwareDashboardPath(role: AppRole, schoolId: string): Promis
 
 /**
  * Completes sign-in on the server: resolve role (JWT + Clerk fallback) and redirect.
- * Used by /auth/callback only — middleware must not call Clerk on the edge.
+ * Used by /auth/callback only - middleware must not call Clerk on the edge.
  */
 export async function completePostSignIn(
   inviteToken?: string | null,
   teacherInviteToken?: string | null,
   parentInviteToken?: string | null,
+  bursarInviteToken?: string | null,
 ): Promise<never> {
   const { userId, sessionClaims } = await auth();
 
@@ -53,7 +54,12 @@ export async function completePostSignIn(
     redirect(SIGN_IN_PATH);
   }
 
-  const inviteCount = [inviteToken, teacherInviteToken, parentInviteToken].filter(Boolean).length;
+  const inviteCount = [
+    inviteToken,
+    teacherInviteToken,
+    parentInviteToken,
+    bursarInviteToken,
+  ].filter(Boolean).length;
 
   if (inviteCount > 1) {
     redirect(INVALID_INVITE_URL);
@@ -80,6 +86,10 @@ export async function completePostSignIn(
 
   if (parentInviteToken) {
     redirect(`/onboarding/parent/accept?token=${encodeURIComponent(parentInviteToken)}`);
+  }
+
+  if (bursarInviteToken) {
+    redirect(`/onboarding/bursar/accept?token=${encodeURIComponent(bursarInviteToken)}`);
   }
 
   const { role, schoolId } = await resolveSessionIdentity(userId, sessionClaims);

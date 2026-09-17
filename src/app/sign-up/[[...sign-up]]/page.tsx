@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import SignUpView from "./SignUpView";
+import { getBursarInvitePreview } from "@/src/lib/services/bursar-invites";
 import { getParentInvitePreview } from "@/src/lib/services/parent-invites";
 import { getTeacherInvitePreview } from "@/src/lib/services/teacher-invites";
 import { getInvitePreview } from "@/src/lib/services/onboarding";
@@ -10,16 +11,20 @@ type SignUpPageProps = {
     invite?: string;
     teacherInvite?: string;
     parentInvite?: string;
+    bursarInvite?: string;
   }>;
 };
 
 export default async function SignUpPage({ searchParams }: SignUpPageProps) {
-  const { invite, teacherInvite, parentInvite } = await searchParams;
+  const { invite, teacherInvite, parentInvite, bursarInvite } = await searchParams;
   const teacherInvitePreview = teacherInvite
     ? await getTeacherInvitePreview(teacherInvite)
     : null;
   const parentInvitePreview = parentInvite
     ? await getParentInvitePreview(parentInvite)
+    : null;
+  const bursarInvitePreview = bursarInvite
+    ? await getBursarInvitePreview(bursarInvite)
     : null;
   const schoolAdminInvitePreview = invite ? await getInvitePreview(invite) : null;
   const schoolAdminInviteUsable = Boolean(
@@ -41,20 +46,27 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
                 callbackUrl: `/onboarding/parent/accept?token=${encodeURIComponent(parentInvite ?? "")}`,
               }
             : teacherInvitePreview?.usable
-                ? {
-                role: "teacher",
-                email: teacherInvitePreview.email,
-                schoolName: teacherInvitePreview.schoolName,
-                callbackUrl: `/onboarding/teacher/accept?token=${encodeURIComponent(teacherInvite ?? "")}`,
-              }
-            : schoolAdminInviteUsable
-                ? {
-                  role: "school_admin",
-                  email: schoolAdminInvitePreview?.email,
-                  schoolName: schoolAdminInvitePreview?.schoolName,
-                  callbackUrl: `/onboarding/accept?token=${encodeURIComponent(invite ?? "")}`,
+              ? {
+                  role: "teacher",
+                  email: teacherInvitePreview.email,
+                  schoolName: teacherInvitePreview.schoolName,
+                  callbackUrl: `/onboarding/teacher/accept?token=${encodeURIComponent(teacherInvite ?? "")}`,
                 }
-                : undefined
+              : bursarInvitePreview?.usable
+                ? {
+                    role: "bursar",
+                    email: bursarInvitePreview.email,
+                    schoolName: bursarInvitePreview.schoolName,
+                    callbackUrl: `/onboarding/bursar/accept?token=${encodeURIComponent(bursarInvite ?? "")}`,
+                  }
+                : schoolAdminInviteUsable
+                  ? {
+                      role: "school_admin",
+                      email: schoolAdminInvitePreview?.email,
+                      schoolName: schoolAdminInvitePreview?.schoolName,
+                      callbackUrl: `/onboarding/accept?token=${encodeURIComponent(invite ?? "")}`,
+                    }
+                  : undefined
         }
       />
     </Suspense>

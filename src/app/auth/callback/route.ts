@@ -3,7 +3,12 @@ import { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { auth } from "@clerk/nextjs/server";
 import { enforceRateLimit } from "@/src/lib/rate-limit";
-import { AUTH_PARENT_INVITE_COOKIE, AUTH_SCHOOL_INVITE_COOKIE, AUTH_TEACHER_INVITE_COOKIE } from "@/src/lib/auth/constants";
+import {
+  AUTH_BURSAR_INVITE_COOKIE,
+  AUTH_PARENT_INVITE_COOKIE,
+  AUTH_SCHOOL_INVITE_COOKIE,
+  AUTH_TEACHER_INVITE_COOKIE,
+} from "@/src/lib/auth/constants";
 
 /** Post sign-in: resolve role from Clerk when JWT claims are not ready yet. */
 export async function GET(req: NextRequest) {
@@ -13,9 +18,11 @@ export async function GET(req: NextRequest) {
     req.nextUrl.searchParams.get("invite") ||
       req.nextUrl.searchParams.get("teacherInvite") ||
       req.nextUrl.searchParams.get("parentInvite") ||
+      req.nextUrl.searchParams.get("bursarInvite") ||
       cookieStore.get(AUTH_SCHOOL_INVITE_COOKIE)?.value ||
       cookieStore.get(AUTH_TEACHER_INVITE_COOKIE)?.value ||
-      cookieStore.get(AUTH_PARENT_INVITE_COOKIE)?.value,
+      cookieStore.get(AUTH_PARENT_INVITE_COOKIE)?.value ||
+      cookieStore.get(AUTH_BURSAR_INVITE_COOKIE)?.value,
   );
   const limited = await enforceRateLimit(req, {
     scope: hasInviteContext ? "auth:callback:invite" : "auth:callback",
@@ -36,10 +43,20 @@ export async function GET(req: NextRequest) {
     req.nextUrl.searchParams.get("parentInvite") ??
     cookieStore.get(AUTH_PARENT_INVITE_COOKIE)?.value ??
     null;
+  const bursarInviteToken =
+    req.nextUrl.searchParams.get("bursarInvite") ??
+    cookieStore.get(AUTH_BURSAR_INVITE_COOKIE)?.value ??
+    null;
 
   if (inviteToken) cookieStore.delete(AUTH_SCHOOL_INVITE_COOKIE);
   if (teacherInviteToken) cookieStore.delete(AUTH_TEACHER_INVITE_COOKIE);
   if (parentInviteToken) cookieStore.delete(AUTH_PARENT_INVITE_COOKIE);
+  if (bursarInviteToken) cookieStore.delete(AUTH_BURSAR_INVITE_COOKIE);
 
-  return completePostSignIn(inviteToken, teacherInviteToken, parentInviteToken);
+  return completePostSignIn(
+    inviteToken,
+    teacherInviteToken,
+    parentInviteToken,
+    bursarInviteToken,
+  );
 }
