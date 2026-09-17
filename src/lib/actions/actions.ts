@@ -209,33 +209,41 @@ export async function updateSubject(id: number, data: { name?: string; teacherId
 export async function deleteSubject(id: number) {
   ({ id } = parseActionInput(numericIdSchema, { id }));
   const { schoolId } = await requireAdmin();
-  const subject = await prisma.subject.findFirst({
-    where: { id, schoolId },
-    select: {
-      id: true,
-      schoolId: true,
-      _count: {
-        select: {
-          lessons: true,
-          caBuckets: true,
-          caActivities: true,
-          continuousAssessments: true,
-          syllabi: true,
+  const [subject, publishedLessonCount] = await Promise.all([
+    prisma.subject.findFirst({
+      where: { id, schoolId },
+      select: {
+        id: true,
+        schoolId: true,
+        _count: {
+          select: {
+            caBuckets: true,
+            caActivities: true,
+            continuousAssessments: true,
+            syllabi: true,
+          },
         },
       },
-    },
-  });
+    }),
+    prisma.publishedTimetableLesson.count({
+      where: {
+        schoolId,
+        subjectId: id,
+        publication: { status: "ACTIVE" },
+      },
+    }),
+  ]);
   assertSameSchool(subject, schoolId);
 
   const usageCount =
-    subject._count.lessons +
+    publishedLessonCount +
     subject._count.caBuckets +
     subject._count.caActivities +
     subject._count.continuousAssessments +
     subject._count.syllabi;
 
   if (usageCount > 0) {
-    throw new Error("This subject is already used by timetable, CA, syllabus, or report records. Archive or migrate those records before removing it.");
+    throw new Error("This subject is already used by a published timetable, CA, syllabus, or report records. Archive or migrate those records before removing it.");
   }
 
   await prisma.subject.deleteMany({ where: { id, schoolId } });
@@ -1717,6 +1725,7 @@ export async function deleteResult(id: number): Promise<void> {
   revalidatePath("/list/results");
   revalidateDashboard(schoolId);
 }
+
 
 
 

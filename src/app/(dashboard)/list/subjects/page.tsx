@@ -3,26 +3,20 @@
 import Pagination from "@/src/components/pagination";
 import { requirePageSession } from "@/src/lib/authz";
 import TableSearch from "@/src/components/TableSearch";
-import Image from "next/image";
-import { Users } from "lucide-react";
 import FormModal from "@/src/components/FormModal";
 import { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
+import { BookOpen, CheckCircle2, Clock3, Users } from "lucide-react";
 
-// Dynamic color by index — no hardcoded subject names
-const SUBJECT_COLORS = [
-  "bg-blue-100 text-blue-700",
-  "bg-amber-100 text-amber-700",
-  "bg-emerald-100 text-emerald-700",
-  "bg-violet-100 text-violet-700",
-  "bg-rose-100 text-rose-700",
-  "bg-orange-100 text-orange-700",
-  "bg-teal-100 text-teal-700",
-  "bg-pink-100 text-pink-700",
-  "bg-cyan-100 text-cyan-700",
-  "bg-lime-100 text-lime-700",
+const subjectColors = [
+  "bg-blue-50 text-blue-700 border-blue-100",
+  "bg-amber-50 text-amber-700 border-amber-100",
+  "bg-emerald-50 text-emerald-700 border-emerald-100",
+  "bg-violet-50 text-violet-700 border-violet-100",
+  "bg-rose-50 text-rose-700 border-rose-100",
+  "bg-cyan-50 text-cyan-700 border-cyan-100",
 ];
 
 const SubjectListPage = async ({
@@ -30,7 +24,6 @@ const SubjectListPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  // ── Auth ────────────────────────────────────────────────────────────────────
   const { role, schoolId } = await requirePageSession();
 
   const { page, ...queryParams } = await searchParams;
@@ -55,7 +48,15 @@ const SubjectListPage = async ({
       where: query,
       include: {
         teachers: { where: { status: "ACTIVE" }, select: { id: true, name: true, surname: true } },
-        _count: { select: { lessons: true, caBuckets: true, caActivities: true, continuousAssessments: true, syllabi: true } },
+        _count: {
+          select: {
+            lessons: true,
+            caBuckets: true,
+            caActivities: true,
+            continuousAssessments: true,
+            syllabi: true,
+          },
+        },
       },
       orderBy: { name: "asc" },
       take: ITEM_PER_PAGE,
@@ -64,6 +65,7 @@ const SubjectListPage = async ({
     prisma.subject.count({ where: query }),
     listLiveTimetableLessons(schoolId),
   ]);
+
   const liveLessonCountBySubjectId = new Map<number, number>();
   for (const lesson of liveLessons) {
     liveLessonCountBySubjectId.set(
@@ -71,133 +73,150 @@ const SubjectListPage = async ({
       (liveLessonCountBySubjectId.get(lesson.subjectId) ?? 0) + 1,
     );
   }
-  const totalLessons = liveLessons.length;
+
+  const capableTeacherIds = new Set(subjects.flatMap((subject) => subject.teachers.map((teacher) => teacher.id)));
+  const readySubjects = subjects.filter((subject) => subject.teachers.length > 0).length;
+  const subjectsNeedingTeachers = subjects.filter((subject) => subject.teachers.length === 0).length;
 
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
-
-      {/* ── Page header ── */}
-      <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-black text-gray-800 tracking-tight">Subjects</h1>
-            <p className="text-sm text-gray-400 mt-0.5 font-medium">{count} subjects in curriculum</p>
+      <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="max-w-3xl">
+            <h1 className="text-xl font-black tracking-tight text-gray-900">Subjects</h1>
+            <p className="mt-1 text-sm font-medium leading-6 text-gray-500">
+              Define the school curriculum and declare which active teachers are allowed to teach each subject. This is teacher capability; the published timetable decides where those teachers actually teach.
+            </p>
           </div>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+          <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center lg:w-auto">
             <TableSearch />
-            <div className="flex items-center gap-2">
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                <Image src="/filter.png" alt="" width={16} height={16} />
-                <span className="hidden sm:inline">Filter</span>
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                <Image src="/sort.png" alt="" width={16} height={16} />
-                <span className="hidden sm:inline">Sort</span>
-              </button>
-              {role === "admin" && <FormModal table="subject" type="create" />}
-            </div>
+            {role === "admin" && <FormModal table="subject" type="create" />}
           </div>
         </div>
       </div>
 
-      {/* ── Stats ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          { label: "Total Subjects", value: count,                                                         color: "bg-indigo-50 text-indigo-600"  },
-          { label: "Total Lessons",  value: totalLessons,        color: "bg-emerald-50 text-emerald-600" },
-          { label: "Capable Teachers", value: new Set(subjects.flatMap((s) => s.teachers.map((t) => t.id))).size, color: "bg-violet-50 text-violet-600"  },
-        ].map((s) => (
-          <div key={s.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${s.color}`}>
-              <Users size={16} />
+          { label: "Curriculum subjects", value: count, icon: BookOpen, tone: "bg-indigo-50 text-indigo-700" },
+          { label: "Ready for timetable", value: readySubjects, icon: CheckCircle2, tone: "bg-emerald-50 text-emerald-700" },
+          { label: "Capable teachers", value: capableTeacherIds.size, icon: Users, tone: "bg-violet-50 text-violet-700" },
+          { label: "Need teacher setup", value: subjectsNeedingTeachers, icon: Clock3, tone: "bg-amber-50 text-amber-700" },
+        ].map((stat) => {
+          const Icon = stat.icon;
+          return (
+            <div key={stat.label} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+              <div className="flex items-center gap-3">
+                <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${stat.tone}`}>
+                  <Icon size={17} />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-2xl font-black leading-none text-gray-900">{stat.value}</p>
+                  <p className="mt-1 text-xs font-bold uppercase tracking-wide text-gray-400">{stat.label}</p>
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="text-xl font-black text-gray-800 leading-none">{s.value}</p>
-              <p className="text-xs text-gray-400 font-medium mt-0.5">{s.label}</p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* ── Table ── */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-1">
-        <div className="w-full overflow-x-auto">
-          <table className="w-full min-w-full">
-            <thead>
-              <tr className="border-b border-gray-100 bg-gray-50/60">
-                <th className="text-left px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Subject</th>
-                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">Teachers</th>
-                <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">Lessons</th>
-                {role === "admin" && (
-                  <th className="text-right px-5 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 w-[100px]">Actions</th>
-                )}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {subjects.map((item, idx) => {
-                const color = SUBJECT_COLORS[idx % SUBJECT_COLORS.length];
-                const usageCount = item._count.lessons + item._count.caBuckets + item._count.caActivities + item._count.continuousAssessments + item._count.syllabi;
-                return (
-                  <tr key={item.id} className="hover:bg-indigo-50/30 transition-colors duration-150 group">
+      <div className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-amber-800">
+        Draft timetable slots are setup work. They become live only after the timetable is published. A subject is protected from deletion only when it has published timetable usage, CA/report records, or syllabus records.
+      </div>
 
-                    {/* Subject name with color dot */}
-                    <td className="px-5 py-4">
-                      <div className="flex items-start gap-3">
-                        <span className={`mt-1.5 w-2.5 h-2.5 rounded-full shrink-0 ${color.split(" ")[0].replace("bg-", "bg-").replace("100", "400")}`} />
-                        <div className="min-w-0">
-                          <p className="font-bold text-sm text-gray-800">{item.name}</p>
-                          <div className="mt-2 flex flex-wrap gap-1 md:hidden">
-                            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-bold text-gray-500">
-                              {item.teachers.length} capable teachers
-                            </span>
-                            <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${usageCount > 0 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
-                              {usageCount > 0 ? "In use" : "Not in use"}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Teachers — fixed: shows actual names not just first */}
-                    <td className="px-4 py-4 hidden md:table-cell">
-                      {item.teachers.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {item.teachers.slice(0, 3).map((t) => (
-                            <span key={t.id} className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
-                              {t.name} {t.surname}
-                            </span>
-                          ))}
-                          {item.teachers.length > 3 && (
-                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-400">
-                              +{item.teachers.length - 3} more
-                            </span>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-xs text-gray-300 italic">No teachers assigned</span>
-                      )}
-                    </td>
-
-                    {/* Lesson count */}
-                    <td className="px-4 py-4 hidden lg:table-cell">
-                      <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-600">
-                        {liveLessonCountBySubjectId.get(item.id) ?? 0} lessons · {usageCount} records
-                      </span>
-                    </td>
-
-                    {/* Actions */}
-                    <td className="px-5 py-4 w-[100px]">
-                      <div className="flex items-center justify-end gap-2">
-                        {role === "admin" && <FormModal table="subject" type="update" data={item} />}
-                        {role === "admin" && usageCount === 0 && <FormModal table="subject" type="delete" id={item.id} />}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+      <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="border-b border-gray-100 px-4 py-3 sm:px-5">
+          <h2 className="text-sm font-black uppercase tracking-wide text-gray-500">Subject capability list</h2>
         </div>
+
+        <div className="divide-y divide-gray-100">
+          {subjects.map((subject, index) => {
+            const liveLessonCount = liveLessonCountBySubjectId.get(subject.id) ?? 0;
+            const academicRecordCount =
+              subject._count.caBuckets +
+              subject._count.caActivities +
+              subject._count.continuousAssessments +
+              subject._count.syllabi;
+            const protectedUsageCount = liveLessonCount + academicRecordCount;
+            const draftLessonCount = subject._count.lessons;
+            const color = subjectColors[index % subjectColors.length];
+            const statusLabel = subject.teachers.length === 0 ? "Needs teacher" : liveLessonCount > 0 ? "Live" : "Setup ready";
+            const statusClass = subject.teachers.length === 0
+              ? "bg-amber-50 text-amber-700"
+              : liveLessonCount > 0
+                ? "bg-emerald-50 text-emerald-700"
+                : "bg-indigo-50 text-indigo-700";
+
+            return (
+              <div key={subject.id} className="p-4 sm:p-5">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`rounded-full border px-2.5 py-1 text-xs font-black ${color}`}>
+                        {subject.name}
+                      </span>
+                      <span className={`rounded-full px-2.5 py-1 text-xs font-black ${statusClass}`}>
+                        {statusLabel}
+                      </span>
+                      {protectedUsageCount > 0 && (
+                        <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-black text-gray-600">
+                          Protected
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="mt-3 grid gap-3 text-sm sm:grid-cols-2 xl:grid-cols-4">
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-wide text-gray-400">Capable teachers</p>
+                        <p className="mt-1 font-bold text-gray-800">{subject.teachers.length}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-wide text-gray-400">Published lessons</p>
+                        <p className="mt-1 font-bold text-gray-800">{liveLessonCount}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-wide text-gray-400">Draft slots</p>
+                        <p className="mt-1 font-bold text-gray-800">{draftLessonCount}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-wide text-gray-400">Academic records</p>
+                        <p className="mt-1 font-bold text-gray-800">{academicRecordCount}</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {subject.teachers.length > 0 ? (
+                        subject.teachers.map((teacher) => (
+                          <span key={teacher.id} className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-bold text-gray-600">
+                            {teacher.name} {teacher.surname}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="rounded-full bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-600">
+                          No active teacher capability set
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {role === "admin" && (
+                    <div className="flex shrink-0 items-center justify-end gap-2 lg:pt-1">
+                      <FormModal table="subject" type="update" data={subject} />
+                      {protectedUsageCount === 0 && <FormModal table="subject" type="delete" id={subject.id} />}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+
+          {subjects.length === 0 && (
+            <div className="px-4 py-12 text-center sm:px-5">
+              <p className="text-sm font-bold text-gray-500">No subjects found.</p>
+              <p className="mt-1 text-xs font-semibold text-gray-400">Create subjects first, then declare teacher capability before building the timetable.</p>
+            </div>
+          )}
+        </div>
+
         <div className="border-t border-gray-100">
           <Pagination page={p} count={count} />
         </div>
@@ -207,5 +226,3 @@ const SubjectListPage = async ({
 };
 
 export default SubjectListPage;
-
-
