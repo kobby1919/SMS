@@ -1,7 +1,5 @@
-import { unstable_cache } from "next/cache";
 import type { Prisma } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
-import { referenceDataTag } from "@/src/lib/cacheTags";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 
 type ClassListFilters = {
@@ -21,55 +19,39 @@ export async function getClassesPage(
   const hasClassScope = Array.isArray(filters.classIds);
   const classIds = filters.classIds?.filter((id) => Number.isFinite(id)) ?? [];
 
-  return unstable_cache(
-    async () => {
-      const where: Prisma.ClassWhereInput = {
-        schoolId,
-        ...(supervisorId ? { supervisorId } : {}),
-        ...(hasClassScope ? { id: { in: classIds } } : {}),
-        ...(search
-          ? { name: { contains: search, mode: "insensitive" } }
-          : {}),
-      };
+  const where: Prisma.ClassWhereInput = {
+    schoolId,
+    ...(supervisorId ? { supervisorId } : {}),
+    ...(hasClassScope ? { id: { in: classIds } } : {}),
+    ...(search
+      ? { name: { contains: search, mode: "insensitive" } }
+      : {}),
+  };
 
-      const [classes, count] = await Promise.all([
-        prisma.class.findMany({
-          where,
-          include: {
-            supervisor: { select: { id: true, name: true, surname: true, status: true } },
-            grade: { select: { id: true, level: true, order: true } },
-            _count: {
-              select: {
-                students: true,
-                lessons: true,
-                caBuckets: true,
-                caActivities: true,
-                continuousAssessments: true,
-                reportPublications: true,
-                syllabusTopicProgress: true,
-              },
-            },
+  const [classes, count] = await Promise.all([
+    prisma.class.findMany({
+      where,
+      include: {
+        supervisor: { select: { id: true, name: true, surname: true, status: true } },
+        grade: { select: { id: true, level: true, order: true } },
+        _count: {
+          select: {
+            students: true,
+            lessons: true,
+            caBuckets: true,
+            caActivities: true,
+            continuousAssessments: true,
+            reportPublications: true,
+            syllabusTopicProgress: true,
           },
-          orderBy: [{ grade: { order: "asc" } }, { name: "asc" }],
-          take: ITEM_PER_PAGE,
-          skip: ITEM_PER_PAGE * (normalizedPage - 1),
-        }),
-        prisma.class.count({ where }),
-      ]);
+        },
+      },
+      orderBy: [{ grade: { order: "asc" } }, { name: "asc" }],
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (normalizedPage - 1),
+    }),
+    prisma.class.count({ where }),
+  ]);
 
-      return { classes, count };
-    },
-    [
-      "classes-page",
-      schoolId,
-      String(normalizedPage),
-      search || "all",
-      supervisorId || "all",
-      hasClassScope ? classIds.join(",") || "none" : "all",
-    ],
-    {
-      revalidate: 60,
-      tags: [referenceDataTag(schoolId, "classes")],
-    },
-  )();
+  return { classes, count };
 }
