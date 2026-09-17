@@ -98,6 +98,43 @@ export async function sendFirstAdminInviteEmail(input: {
     `,
   });
 }
+export async function sendSchoolAdminInviteEmail(input: {
+  to: string;
+  schoolName: string;
+  inviteUrl: string;
+  expiresAt: Date;
+}) {
+  const expiry = input.expiresAt.toLocaleDateString("en", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  return sendEmail({
+    to: input.to,
+    subject: `${input.schoolName} invited you as an Edujay admin`,
+    text: [
+      `You have been invited to manage ${input.schoolName} on Edujay as a school admin.`,
+      "",
+      `Open this secure invite link: ${input.inviteUrl}`,
+      "",
+      `This invite expires on ${expiry}.`,
+      "Sign in or sign up with this same email address to accept the invitation.",
+    ].join("\n"),
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
+        <h1 style="font-size:22px;margin:0 0 12px">Join ${input.schoolName} on Edujay</h1>
+        <p>You have been invited to manage <strong>${input.schoolName}</strong> as a school admin.</p>
+        <p>
+          <a href="${input.inviteUrl}" style="display:inline-block;background:#1d4ed8;color:white;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700">
+            Accept admin invite
+          </a>
+        </p>
+        <p style="color:#4b5563;font-size:14px">This invite expires on ${expiry}. Sign in or sign up with this same email address to accept it.</p>
+      </div>
+    `,
+  });
+}
 
 export async function sendTeacherInviteEmail(input: {
   to: string;
@@ -224,3 +261,4 @@ export async function sendBursarInviteEmail(input: {
     `,
   });
 }
+

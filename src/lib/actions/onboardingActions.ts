@@ -4,19 +4,23 @@ import { revalidatePath } from "next/cache";
 import { requireRole } from "@/src/lib/authz";
 import {
   approveWaitlistEntry,
+  createSchoolAdminInviteForCurrentSchool,
   completeSchoolOnboarding,
   createDefaultAcademicSetup,
   recordInviteSent,
   recordOnboardingImport,
   rejectWaitlistEntry,
   resendSchoolInvite,
+  resendCurrentSchoolAdminInvite,
   revokeSchoolInvite,
+  revokeCurrentSchoolAdminInvite,
   updateSchoolProfileSetup,
   type CreatedSchoolInvite,
 } from "@/src/lib/services/onboarding";
 import {
   approveWaitlistEntrySchema,
   inviteIdSchema,
+  schoolAdminInviteCreateSchema,
   onboardingImportSchema,
   rejectWaitlistEntrySchema,
   schoolProfileSetupSchema,
@@ -25,6 +29,7 @@ import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   appBaseUrl,
   sendFirstAdminInviteEmail,
+  sendSchoolAdminInviteEmail,
 } from "@/src/lib/services/notifications";
 
 export type OnboardingActionResult =
@@ -61,6 +66,73 @@ export async function approveWaitlistEntryAction(
     return {
       ok: false,
       message: error instanceof Error ? error.message : "Could not approve onboarding request.",
+    };
+  }
+}
+export async function createSchoolAdminInviteAction(
+  input: unknown,
+): Promise<OnboardingActionResult> {
+  try {
+    const context = await requireRole(["admin"]);
+    const data = parseActionInput(schoolAdminInviteCreateSchema, input);
+    const invite = await createSchoolAdminInviteForCurrentSchool(data, context);
+    const inviteUrl = `${appBaseUrl()}${invite.invitePath}`;
+    const email = await sendSchoolAdminInviteEmail({
+      to: invite.email,
+      schoolName: invite.schoolName,
+      inviteUrl,
+      expiresAt: invite.expiresAt,
+    });
+    await recordInviteSent({
+      inviteId: invite.inviteId,
+      provider: email.provider,
+      warning: email.ok ? undefined : email.message,
+    }, context);
+    revalidatePath("/list/admins");
+    return {
+      ok: true,
+      invite,
+      emailProvider: email.provider,
+      emailWarning: email.ok ? undefined : email.message,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Could not create admin invite.",
+    };
+  }
+}
+
+export async function resendCurrentSchoolAdminInviteAction(
+  input: unknown,
+): Promise<OnboardingActionResult> {
+  try {
+    const context = await requireRole(["admin"]);
+    const data = parseActionInput(inviteIdSchema, input);
+    const invite = await resendCurrentSchoolAdminInvite(data, context);
+    revalidatePath("/list/admins");
+    return { ok: true, invite };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Could not resend admin invite.",
+    };
+  }
+}
+
+export async function revokeCurrentSchoolAdminInviteAction(
+  input: unknown,
+): Promise<OnboardingActionResult> {
+  try {
+    const context = await requireRole(["admin"]);
+    const data = parseActionInput(inviteIdSchema, input);
+    await revokeCurrentSchoolAdminInvite(data, context);
+    revalidatePath("/list/admins");
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Could not revoke admin invite.",
     };
   }
 }
@@ -178,3 +250,5 @@ export async function recordOnboardingImportAction(
     };
   }
 }
+
+

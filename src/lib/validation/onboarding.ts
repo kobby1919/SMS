@@ -26,6 +26,11 @@ export const inviteIdSchema = z.object({
   inviteId: z.string().trim().min(1),
 });
 
+export const schoolAdminInviteCreateSchema = z.object({
+  email: z.string().trim().email("Enter a valid admin email.").max(160),
+  expiresInDays: z.coerce.number().int().min(1).max(30).default(7),
+});
+
 export const onboardingImportSchema = z.object({
   importType: z.enum(["teachers", "students"]),
   fileName: z.string().trim().min(1).max(200),
@@ -35,4 +40,6 @@ export const onboardingImportSchema = z.object({
 export type ApproveWaitlistEntryInput = z.infer<typeof approveWaitlistEntrySchema>;
 export type RejectWaitlistEntryInput = z.infer<typeof rejectWaitlistEntrySchema>;
 export type SchoolProfileSetupInput = z.infer<typeof schoolProfileSetupSchema>;
+export type SchoolAdminInviteCreateInput = z.infer<typeof schoolAdminInviteCreateSchema>;
 export type OnboardingImportInput = z.infer<typeof onboardingImportSchema>;
+

@@ -185,6 +185,12 @@ const menuItems = [
     title: "Management",
     items: [
       {
+        icon: ShieldCheck,
+        label: "Admins",
+        href: "/list/admins",
+        visible: ["admin"],
+      },
+      {
         icon: Users,
         label: "Teachers",
         href: "/list/teachers",
@@ -437,3 +443,4 @@ const MenuClient = ({ role }: { role: string }) => {
 };
 
 export default MenuClient;
+

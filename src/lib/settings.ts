@@ -18,6 +18,7 @@ export const routeAccessMap: RouteAccessMap = {
   "/bursar(.*)":                  ["bursar", "admin"],
 
   // ── People management ─────────────────────────────────────────────────────
+  "/list/admins(.*)":             ["admin"],
   "/list/teachers(.*)":           ["admin", "teacher"],
   "/list/students(.*)":           ["admin", "teacher"],
   "/list/parents(.*)":            ["admin", "teacher"],
@@ -72,3 +73,4 @@ export const routeAccessMap: RouteAccessMap = {
   "/api/finance/receipt":                   ["admin", "bursar", "parent", "student"],
   "/api/finance/(.*)":                      ["admin", "bursar"],
 };
+

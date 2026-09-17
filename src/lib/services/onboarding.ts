@@ -3,7 +3,7 @@ import { clerkClient } from "@clerk/nextjs/server";
 import prisma from "@/src/lib/prisma";
 import type { AuthzContext } from "@/src/lib/authz";
 import { normalizeAppRole, type AppRole } from "@/src/lib/roles";
-import { appBaseUrl, sendFirstAdminInviteEmail } from "@/src/lib/services/notifications";
+import { appBaseUrl, sendFirstAdminInviteEmail, sendSchoolAdminInviteEmail } from "@/src/lib/services/notifications";
 import { getSchoolAdminInviteAccountSafety } from "@/src/lib/services/onboarding-policy";
 import type { OnboardingAuditAction, Prisma } from "@/src/generated/prisma";
 
@@ -479,6 +479,228 @@ export async function approveWaitlistEntry(
   };
 }
 
+export async function createSchoolAdminInviteForCurrentSchool(
+  input: { email: string; expiresInDays: number },
+  context: AuthzContext,
+): Promise<CreatedSchoolInvite> {
+  if (context.role !== "admin") {
+    throw new Error("Only a school admin can invite another school admin.");
+  }
+
+  const email = input.email.toLowerCase().trim();
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + input.expiresInDays * 24 * 60 * 60_000);
+
+  const [school, existingAdmin, activeInvite] = await Promise.all([
+    prisma.school.findUnique({
+      where: { id: context.schoolId },
+      select: { id: true, name: true },
+    }),
+    prisma.admin.findUnique({
+      where: { username: email },
+      select: { id: true, schoolId: true },
+    }),
+    prisma.schoolInvite.findFirst({
+      where: {
+        schoolId: context.schoolId,
+        email,
+        role: "ADMIN",
+        acceptedAt: null,
+        revokedAt: null,
+        expiresAt: { gt: now },
+      },
+      select: { id: true },
+    }),
+  ]);
+
+  if (!school) {
+    throw new Error("School not found for this admin account.");
+  }
+
+  if (existingAdmin) {
+    throw new Error(
+      existingAdmin.schoolId === context.schoolId
+        ? "This email is already an admin for this school."
+        : "This email is already linked to an admin account for another school.",
+    );
+  }
+
+  if (activeInvite) {
+    throw new Error("This email already has a pending school admin invite.");
+  }
+
+  const inviteToken = createInviteToken();
+  const tokenHash = hashInviteToken(inviteToken);
+
+  const invite = await prisma.$transaction(async (tx) => {
+    const created = await tx.schoolInvite.create({
+      data: {
+        schoolId: school.id,
+        email,
+        role: "ADMIN",
+        tokenHash,
+        expiresAt,
+        createdBy: context.userId,
+      },
+      select: {
+        id: true,
+        expiresAt: true,
+      },
+    });
+
+    await tx.onboardingAuditLog.create({
+      data: {
+        action: "INVITE_CREATED",
+        performedBy: context.userId,
+        schoolId: school.id,
+        inviteId: created.id,
+        metadata: { email, purpose: "existing-school-admin" },
+      },
+    });
+
+    return created;
+  });
+
+  return {
+    schoolId: school.id,
+    schoolName: school.name,
+    inviteId: invite.id,
+    email,
+    inviteToken,
+    invitePath: `/onboarding/accept?token=${encodeURIComponent(inviteToken)}`,
+    expiresAt: invite.expiresAt,
+  };
+}
+
+export async function resendCurrentSchoolAdminInvite(
+  input: { inviteId: string },
+  context: AuthzContext,
+): Promise<CreatedSchoolInvite> {
+  if (context.role !== "admin") {
+    throw new Error("Only a school admin can resend school admin invites.");
+  }
+
+  const invite = await prisma.schoolInvite.findUnique({
+    where: { id: input.inviteId },
+    include: { school: { select: { id: true, name: true } } },
+  });
+
+  if (!invite || invite.schoolId !== context.schoolId) {
+    throw new Error("Invite not found for this school.");
+  }
+
+  if (invite.acceptedAt) {
+    throw new Error("Accepted invites cannot be resent.");
+  }
+
+  if (invite.revokedAt) {
+    throw new Error("Revoked invites cannot be resent.");
+  }
+
+  if (invite.expiresAt.getTime() < Date.now()) {
+    throw new Error("Expired invites cannot be resent. Create a fresh admin invite.");
+  }
+
+  const inviteToken = createInviteToken();
+  const tokenHash = hashInviteToken(inviteToken);
+  const invitePath = `/onboarding/accept?token=${encodeURIComponent(inviteToken)}`;
+  const inviteUrl = `${appBaseUrl()}${invitePath}`;
+
+  const email = await sendSchoolAdminInviteEmail({
+    to: invite.email,
+    schoolName: invite.school.name,
+    inviteUrl,
+    expiresAt: invite.expiresAt,
+  });
+
+  await prisma.$transaction(async (tx) => {
+    await tx.schoolInvite.update({
+      where: { id: invite.id },
+      data: {
+        tokenHash,
+        lastSentAt: new Date(),
+      },
+    });
+
+    await tx.onboardingAuditLog.create({
+      data: {
+        action: "INVITE_RESENT",
+        performedBy: context.userId,
+        schoolId: invite.schoolId,
+        inviteId: invite.id,
+        metadata: {
+          email: invite.email,
+          provider: email.provider,
+          warning: email.ok ? undefined : email.message,
+          rotatedToken: true,
+          purpose: "existing-school-admin",
+        },
+      },
+    });
+  });
+
+  return {
+    schoolId: invite.schoolId,
+    schoolName: invite.school.name,
+    inviteId: invite.id,
+    email: invite.email,
+    inviteToken,
+    invitePath,
+    expiresAt: invite.expiresAt,
+  };
+}
+
+export async function revokeCurrentSchoolAdminInvite(
+  input: { inviteId: string },
+  context: AuthzContext,
+) {
+  if (context.role !== "admin") {
+    throw new Error("Only a school admin can revoke school admin invites.");
+  }
+
+  const invite = await prisma.schoolInvite.findUnique({
+    where: { id: input.inviteId },
+    select: {
+      id: true,
+      schoolId: true,
+      email: true,
+      acceptedAt: true,
+      revokedAt: true,
+    },
+  });
+
+  if (!invite || invite.schoolId !== context.schoolId) {
+    throw new Error("Invite not found for this school.");
+  }
+
+  if (invite.acceptedAt) {
+    throw new Error("Accepted invites cannot be revoked.");
+  }
+
+  if (invite.revokedAt) {
+    throw new Error("Invite is already revoked.");
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.schoolInvite.update({
+      where: { id: invite.id },
+      data: {
+        revokedAt: new Date(),
+        revokedBy: context.userId,
+      },
+    });
+
+    await tx.onboardingAuditLog.create({
+      data: {
+        action: "INVITE_REVOKED",
+        performedBy: context.userId,
+        schoolId: invite.schoolId,
+        inviteId: invite.id,
+        metadata: { email: invite.email, purpose: "existing-school-admin" },
+      },
+    });
+  });
+}
 export async function rejectWaitlistEntry(
   input: { waitlistEntryId: string },
   context: AuthzContext,
@@ -777,5 +999,7 @@ export async function acceptSchoolInviteForUser(
 
   return { role, schoolId: invite.schoolId };
 }
+
+
 
 
