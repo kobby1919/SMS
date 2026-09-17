@@ -4,6 +4,7 @@ import prisma from "@/src/lib/prisma";
 import type { AuthzContext } from "@/src/lib/authz";
 import { normalizeAppRole, type AppRole } from "@/src/lib/roles";
 import { appBaseUrl, sendFirstAdminInviteEmail } from "@/src/lib/services/notifications";
+import { getSchoolAdminInviteAccountSafety } from "@/src/lib/services/onboarding-policy";
 import type { OnboardingAuditAction, Prisma } from "@/src/generated/prisma";
 
 const INVITE_TOKEN_BYTES = 32;
@@ -686,30 +687,53 @@ export async function acceptSchoolInviteForUser(
   const user = await client.users.getUser(input.userId);
   const signedInEmail = clerkPrimaryEmail(user);
   const existingRole = normalizeAppRole(user.publicMetadata?.role);
-
-  if (existingRole) {
-    throw new Error(
-      "This signed-in account already belongs to another Edujay role. Sign out and accept the school admin invite with the admin's own account.",
-    );
-  }
-
-  if (!signedInEmail || signedInEmail !== invite.email.toLowerCase()) {
-    throw new Error("Please sign in with the email address that received this invitation.");
-  }
+  const metadataSchoolId = typeof user.publicMetadata?.schoolId === "string"
+    ? user.publicMetadata.schoolId
+    : null;
 
   const role = inviteRoleToAppRole(invite.role);
+  const inviteEmail = invite.email.toLowerCase();
 
-  const [existingAdmin, existingTeacher, existingParent, existingStudent] =
+  const [existingAdmin, existingTeacher, existingParent, existingStudent, existingBursar, adminForEmail] =
     await Promise.all([
       prisma.admin.findUnique({ where: { id: input.userId }, select: { id: true } }),
       prisma.teacher.findUnique({ where: { id: input.userId }, select: { id: true } }),
       prisma.parent.findUnique({ where: { id: input.userId }, select: { id: true } }),
       prisma.student.findUnique({ where: { id: input.userId }, select: { id: true } }),
+      prisma.bursar.findUnique({ where: { id: input.userId }, select: { id: true } }),
+      prisma.admin.findUnique({ where: { username: inviteEmail }, select: { id: true } }),
     ]);
 
-  if (existingAdmin || existingTeacher || existingParent || existingStudent) {
+  const accountSafety = getSchoolAdminInviteAccountSafety({
+    signedInEmail,
+    inviteEmail,
+    existingRole,
+    metadataSchoolId,
+    inviteSchoolId: invite.schoolId,
+    existingRoleRecord: Boolean(existingAdmin || existingTeacher || existingParent || existingStudent || existingBursar),
+    adminForEmailUserId: adminForEmail?.id ?? null,
+    userId: input.userId,
+  });
+
+  if (!accountSafety.allowed) {
+    if (accountSafety.reason === "wrong-role") {
+      throw new Error(
+        "This signed-in account already belongs to another Edujay role. Sign out and accept the school admin invite with the admin's own account.",
+      );
+    }
+
+    if (accountSafety.reason === "wrong-email") {
+      throw new Error("Please sign in with the email address that received this invitation.");
+    }
+
+    if (accountSafety.reason === "email-already-linked") {
+      throw new Error(
+        "This school admin email is already connected to another Edujay account. Sign in with that account or ask the Edujay team to issue a fresh invite.",
+      );
+    }
+
     throw new Error(
-      "This Edujay account is already linked to an existing role. Use a fresh account for this school admin invite.",
+      "This Edujay account is already linked to an existing school role. Use a fresh account for this school admin invite.",
     );
   }
 
@@ -753,3 +777,5 @@ export async function acceptSchoolInviteForUser(
 
   return { role, schoolId: invite.schoolId };
 }
+
+
