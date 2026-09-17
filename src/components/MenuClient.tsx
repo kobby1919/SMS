@@ -203,6 +203,12 @@ const menuItems = [
         visible: ["admin", "teacher"],
       },
       {
+        icon: Wallet,
+        label: "Bursars",
+        href: "/list/bursars",
+        visible: ["admin"],
+      },
+      {
         icon: School,
         label: "Classes",
         href: "/list/classes",
