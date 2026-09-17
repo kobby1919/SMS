@@ -54,7 +54,8 @@ const SubjectListPage = async ({
     prisma.subject.findMany({
       where: query,
       include: {
-        teachers: { select: { id: true, name: true, surname: true } },
+        teachers: { where: { status: "ACTIVE" }, select: { id: true, name: true, surname: true } },
+        _count: { select: { lessons: true, caBuckets: true, caActivities: true, continuousAssessments: true, syllabi: true } },
       },
       orderBy: { name: "asc" },
       take: ITEM_PER_PAGE,
@@ -104,7 +105,7 @@ const SubjectListPage = async ({
         {[
           { label: "Total Subjects", value: count,                                                         color: "bg-indigo-50 text-indigo-600"  },
           { label: "Total Lessons",  value: totalLessons,        color: "bg-emerald-50 text-emerald-600" },
-          { label: "Total Teachers", value: new Set(subjects.flatMap((s) => s.teachers.map((t) => t.id))).size, color: "bg-violet-50 text-violet-600"  },
+          { label: "Capable Teachers", value: new Set(subjects.flatMap((s) => s.teachers.map((t) => t.id))).size, color: "bg-violet-50 text-violet-600"  },
         ].map((s) => (
           <div key={s.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${s.color}`}>
@@ -135,14 +136,25 @@ const SubjectListPage = async ({
             <tbody className="divide-y divide-gray-50">
               {subjects.map((item, idx) => {
                 const color = SUBJECT_COLORS[idx % SUBJECT_COLORS.length];
+                const usageCount = item._count.lessons + item._count.caBuckets + item._count.caActivities + item._count.continuousAssessments + item._count.syllabi;
                 return (
                   <tr key={item.id} className="hover:bg-indigo-50/30 transition-colors duration-150 group">
 
                     {/* Subject name with color dot */}
                     <td className="px-5 py-4">
-                      <div className="flex items-center gap-3">
-                        <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${color.split(" ")[0].replace("bg-", "bg-").replace("100", "400")}`} />
-                        <p className="font-bold text-sm text-gray-800">{item.name}</p>
+                      <div className="flex items-start gap-3">
+                        <span className={`mt-1.5 w-2.5 h-2.5 rounded-full shrink-0 ${color.split(" ")[0].replace("bg-", "bg-").replace("100", "400")}`} />
+                        <div className="min-w-0">
+                          <p className="font-bold text-sm text-gray-800">{item.name}</p>
+                          <div className="mt-2 flex flex-wrap gap-1 md:hidden">
+                            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-bold text-gray-500">
+                              {item.teachers.length} capable teachers
+                            </span>
+                            <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${usageCount > 0 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
+                              {usageCount > 0 ? "In use" : "Not in use"}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </td>
 
@@ -169,7 +181,7 @@ const SubjectListPage = async ({
                     {/* Lesson count */}
                     <td className="px-4 py-4 hidden lg:table-cell">
                       <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-600">
-                        {liveLessonCountBySubjectId.get(item.id) ?? 0} lessons
+                        {liveLessonCountBySubjectId.get(item.id) ?? 0} lessons · {usageCount} records
                       </span>
                     </td>
 
@@ -177,7 +189,7 @@ const SubjectListPage = async ({
                     <td className="px-5 py-4 w-[100px]">
                       <div className="flex items-center justify-end gap-2">
                         {role === "admin" && <FormModal table="subject" type="update" data={item} />}
-                        {role === "admin" && <FormModal table="subject" type="delete" id={item.id} />}
+                        {role === "admin" && usageCount === 0 && <FormModal table="subject" type="delete" id={item.id} />}
                       </div>
                     </td>
                   </tr>
@@ -195,3 +207,5 @@ const SubjectListPage = async ({
 };
 
 export default SubjectListPage;
+
+

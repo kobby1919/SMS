@@ -89,8 +89,6 @@ const TeacherForm = ({
     setSelectedSubs((prev) =>
       prev.includes(id)
         ? prev.filter((x) => x !== id)
-        : prev.length >= 5
-        ? prev  // max 5 subjects
         : [...prev, id]
     );
   };
@@ -203,41 +201,43 @@ const TeacherForm = ({
         </div>
       </div>
 
-      {/* ── Subject Assignment ── */}
+      {/* ── Subject Capability ── */}
       <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">
-            Subjects
+            Subject capability
           </span>
-          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full
-            ${selectedSubs.length >= 5 ? "bg-rose-50 text-rose-600" : "bg-gray-100 text-gray-400"}`}>
-            {selectedSubs.length}/5
+          <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-bold text-gray-500">
+            {selectedSubs.length} selected
           </span>
         </div>
-        <div className="max-h-[180px] overflow-y-auto border border-gray-200 rounded-xl divide-y divide-gray-50">
+        <p className="text-xs font-semibold text-gray-400">
+          Select the subjects this teacher is approved to teach. Timetable assignment is handled separately.
+        </p>
+        <div className="max-h-[180px] overflow-y-auto rounded-xl border border-gray-200 divide-y divide-gray-50">
           {subjects.map((s) => {
-            const isSel   = selectedSubs.includes(s.id);
-            const atLimit = !isSel && selectedSubs.length >= 5;
+            const isSel = selectedSubs.includes(s.id);
             return (
               <button
                 key={s.id}
                 type="button"
                 onClick={() => toggleSubject(s.id)}
-                disabled={atLimit}
-                className={`w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors
-                  ${isSel ? "bg-indigo-50 text-indigo-700" : atLimit ? "opacity-40 cursor-not-allowed bg-white" : "bg-white hover:bg-gray-50 text-gray-700"}`}
+                className={`w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors ${
+                  isSel ? "bg-indigo-50 text-indigo-700" : "bg-white hover:bg-gray-50 text-gray-700"
+                }`}
               >
                 <span className="text-sm font-semibold">{s.name}</span>
                 {isSel && <CheckCircle2 size={14} className="text-indigo-500 shrink-0" />}
               </button>
             );
           })}
+          {subjects.length === 0 && (
+            <div className="px-4 py-6 text-center text-xs font-semibold text-gray-400">
+              No subjects are available yet. Create school subjects first.
+            </div>
+          )}
         </div>
-        {selectedSubs.length >= 5 && (
-          <p className="text-[10px] text-rose-500 font-semibold">Max 5 subjects per teacher.</p>
-        )}
       </div>
-
       <button
         type="submit"
         disabled={isPending}
@@ -251,4 +251,7 @@ const TeacherForm = ({
 };
 
 export default TeacherForm;
+
+
+
 

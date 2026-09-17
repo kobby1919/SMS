@@ -67,7 +67,7 @@ export async function getCachedSubjects(schoolId: string, teacherId?: string) {
 export async function getCachedTeachers(schoolId: string) {
   return unstable_cache(
     () => prisma.teacher.findMany({
-      where: { schoolId },
+      where: { schoolId, status: "ACTIVE" },
       select: { id: true, name: true, surname: true, maxClasses: true },
       orderBy: [{ name: "asc" }, { surname: "asc" }],
     }),
@@ -79,7 +79,7 @@ export async function getCachedTeachers(schoolId: string) {
 export async function getCachedTimetableTeachers(schoolId: string) {
   return unstable_cache(
     () => prisma.teacher.findMany({
-      where: { schoolId },
+      where: { schoolId, status: "ACTIVE" },
       select: {
         id: true,
         name: true,
@@ -140,3 +140,4 @@ export async function getCachedPeriodTemplates(schoolId: string) {
     { revalidate: 60, tags: [referenceDataTag(schoolId, "timetable")] },
   )();
 }
+

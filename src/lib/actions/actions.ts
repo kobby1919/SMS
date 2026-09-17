@@ -143,20 +143,43 @@ export async function deleteClass(id: number) {
 // ═══════════════════════════════════════════════════════════════════════════════
 // SUBJECT
 // ═══════════════════════════════════════════════════════════════════════════════
+async function assertSubjectCapabilityTeachers(schoolId: string, teacherIds: string[] | undefined) {
+  const uniqueTeacherIds = Array.from(new Set(teacherIds ?? []));
+  if (uniqueTeacherIds.length === 0) return uniqueTeacherIds;
+
+  const teachers = await prisma.teacher.findMany({
+    where: {
+      schoolId,
+      id: { in: uniqueTeacherIds },
+      status: "ACTIVE",
+    },
+    select: { id: true },
+  });
+
+  if (teachers.length !== uniqueTeacherIds.length) {
+    throw new Error("Subject capability can only be assigned to active teachers in this school.");
+  }
+
+  return uniqueTeacherIds;
+}
+
 export async function createSubject(data: { name: string; teacherIds?: string[] }) {
   data = parseActionInput(subjectCreateSchema, data);
   const { schoolId } = await requireAdmin();
+  const teacherIds = await assertSubjectCapabilityTeachers(schoolId, data.teacherIds);
   await prisma.subject.create({
     data: {
       schoolId,
       name: data.name,
-      teachers: data.teacherIds?.length
-        ? { connect: data.teacherIds.map((id) => ({ id })) }
+      teachers: teacherIds.length
+        ? { connect: teacherIds.map((id) => ({ id })) }
         : undefined,
     },
   });
   revalidatePath("/list/subjects");
   revalidateReferenceData(schoolId, "subjects");
+  revalidateReferenceData(schoolId, "teachers");
+  revalidateReferenceData(schoolId, "timetable");
   revalidateDashboard(schoolId);
 }
 
@@ -166,17 +189,19 @@ export async function updateSubject(id: number, data: { name?: string; teacherId
   const { schoolId } = await requireAdmin();
   const existing = await prisma.subject.findFirst({ where: { id, schoolId } });
   assertSameSchool(existing, schoolId);
+  const teacherIds = await assertSubjectCapabilityTeachers(schoolId, data.teacherIds);
   await prisma.subject.update({
     where: { id },
     data: {
       name: data.name,
       teachers: data.teacherIds
-        ? { set: data.teacherIds.map((tid) => ({ id: tid })) }
+        ? { set: teacherIds.map((tid) => ({ id: tid })) }
         : undefined,
     },
   });
   revalidatePath("/list/subjects");
   revalidateReferenceData(schoolId, "subjects");
+  revalidateReferenceData(schoolId, "teachers");
   revalidateReferenceData(schoolId, "timetable");
   revalidateDashboard(schoolId);
 }
@@ -184,14 +209,43 @@ export async function updateSubject(id: number, data: { name?: string; teacherId
 export async function deleteSubject(id: number) {
   ({ id } = parseActionInput(numericIdSchema, { id }));
   const { schoolId } = await requireAdmin();
+  const subject = await prisma.subject.findFirst({
+    where: { id, schoolId },
+    select: {
+      id: true,
+      schoolId: true,
+      _count: {
+        select: {
+          lessons: true,
+          caBuckets: true,
+          caActivities: true,
+          continuousAssessments: true,
+          syllabi: true,
+        },
+      },
+    },
+  });
+  assertSameSchool(subject, schoolId);
+
+  const usageCount =
+    subject._count.lessons +
+    subject._count.caBuckets +
+    subject._count.caActivities +
+    subject._count.continuousAssessments +
+    subject._count.syllabi;
+
+  if (usageCount > 0) {
+    throw new Error("This subject is already used by timetable, CA, syllabus, or report records. Archive or migrate those records before removing it.");
+  }
+
   await prisma.subject.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/subjects");
   revalidatePath("/admin/timetable");
   revalidateReferenceData(schoolId, "subjects");
+  revalidateReferenceData(schoolId, "teachers");
   revalidateReferenceData(schoolId, "timetable");
   revalidateDashboard(schoolId);
 }
-
 // ═══════════════════════════════════════════════════════════════════════════════
 // PARENT / TEACHER / STUDENT
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1663,4 +1717,6 @@ export async function deleteResult(id: number): Promise<void> {
   revalidatePath("/list/results");
   revalidateDashboard(schoolId);
 }
+
+
 
