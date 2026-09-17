@@ -19,18 +19,12 @@ const personNameSchema = nonEmptyStringSchema
   );
 
 const phoneSchema = z.preprocess(
-  (value) => {
-    if (typeof value !== "string") return value;
-    const trimmed = value.trim();
-    return trimmed.length > 0 ? trimmed : null;
-  },
+  (value) => (typeof value === "string" ? value.trim() : value),
   z
     .string()
-    .min(7, "Phone number is too short.")
+    .min(7, "Phone number is required and must be at least 7 characters.")
     .max(30, "Phone number is too long.")
-    .regex(/^[+\d\s().-]+$/, "Phone number contains invalid characters.")
-    .nullable()
-    .optional(),
+    .regex(/^[+\d\s().-]+$/, "Phone number contains invalid characters."),
 );
 
 export const teacherInviteTypeSchema = z.enum([
@@ -66,3 +60,4 @@ export type TeacherInviteCreateInput = z.infer<typeof teacherInviteCreateSchema>
 export type TeacherInviteIdInput = z.infer<typeof teacherInviteIdSchema>;
 export type TeacherInviteTokenInput = z.infer<typeof teacherInviteTokenSchema>;
 export type TeacherInviteTypeInput = z.infer<typeof teacherInviteTypeSchema>;
+

@@ -40,7 +40,7 @@ export const teacherCreateSchema = z.object({
   password: z.string().min(8),
   name: nonEmptyStringSchema,
   surname: nonEmptyStringSchema,
-  phone: z.string().trim().optional().nullable(),
+  phone: z.string().trim().min(7, "Phone number is required and must be at least 7 characters."),
   address: nonEmptyStringSchema,
   bloodType: nonEmptyStringSchema,
   sex: userSexSchema,
@@ -59,3 +59,4 @@ export const teacherUpdateSchema = teacherCreateSchema.omit({
   email: true,
   password: true,
 });
+

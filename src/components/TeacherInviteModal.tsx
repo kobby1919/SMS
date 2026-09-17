@@ -164,7 +164,7 @@ export default function TeacherInviteModal() {
                   placeholder="teacher@school.edu"
                 />
                 <Input
-                  label="Phone"
+                  label="Phone (required)"
                   value={form.phone}
                   onChange={(value) => updateField("phone", value)}
                   placeholder="0240000000"
@@ -257,3 +257,4 @@ function Input({
     </div>
   );
 }
+

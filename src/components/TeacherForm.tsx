@@ -16,7 +16,7 @@ const createSchema = z.object({
   password:  z.string().min(8, "At least 8 characters"),
   name:      z.string().min(1, "First name required"),
   surname:   z.string().min(1, "Last name required"),
-  phone:     z.string().min(1, "Phone required"),
+  phone:     z.string().trim().min(7, "Phone number is required"),
   address:   z.string().min(1, "Address required"),
   bloodType: z.string().min(1, "Required"),
   birthday:  z.string().min(1, "Required"),
@@ -27,7 +27,7 @@ const createSchema = z.object({
 const updateSchema = z.object({
   name:      z.string().min(1, "First name required"),
   surname:   z.string().min(1, "Last name required"),
-  phone:     z.string().optional(),
+  phone:     z.string().trim().min(7, "Phone number is required"),
   address:   z.string().min(1, "Address required"),
   bloodType: z.string().min(1, "Required"),
   birthday:  z.string().optional(),
@@ -251,3 +251,4 @@ const TeacherForm = ({
 };
 
 export default TeacherForm;
+
