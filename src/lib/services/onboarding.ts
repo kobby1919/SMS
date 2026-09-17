@@ -491,25 +491,101 @@ export async function createSchoolAdminInviteForCurrentSchool(
   const now = new Date();
   const expiresAt = new Date(now.getTime() + input.expiresInDays * 24 * 60 * 60_000);
 
-  const [school, existingAdmin, activeInvite] = await Promise.all([
+  const [
+    school,
+    existingAdmin,
+    existingTeacher,
+    existingParent,
+    existingStudent,
+    existingBursar,
+    activeAdminInvite,
+    activeTeacherInvite,
+    activeParentInvite,
+    activeBursarInvite,
+  ] = await Promise.all([
     prisma.school.findUnique({
       where: { id: context.schoolId },
       select: { id: true, name: true },
     }),
-    prisma.admin.findUnique({
-      where: { username: email },
+    prisma.admin.findFirst({
+      where: { username: { equals: email, mode: "insensitive" } },
+      select: { id: true, schoolId: true },
+    }),
+    prisma.teacher.findFirst({
+      where: {
+        OR: [
+          { email: { equals: email, mode: "insensitive" } },
+          { username: { equals: email, mode: "insensitive" } },
+        ],
+      },
+      select: { id: true, schoolId: true },
+    }),
+    prisma.parent.findFirst({
+      where: {
+        OR: [
+          { email: { equals: email, mode: "insensitive" } },
+          { username: { equals: email, mode: "insensitive" } },
+        ],
+      },
+      select: { id: true, schoolId: true },
+    }),
+    prisma.student.findFirst({
+      where: {
+        OR: [
+          { email: { equals: email, mode: "insensitive" } },
+          { username: { equals: email, mode: "insensitive" } },
+        ],
+      },
+      select: { id: true, schoolId: true },
+    }),
+    prisma.bursar.findFirst({
+      where: {
+        OR: [
+          { email: { equals: email, mode: "insensitive" } },
+          { username: { equals: email, mode: "insensitive" } },
+        ],
+      },
       select: { id: true, schoolId: true },
     }),
     prisma.schoolInvite.findFirst({
       where: {
-        schoolId: context.schoolId,
-        email,
+        email: { equals: email, mode: "insensitive" },
         role: "ADMIN",
         acceptedAt: null,
         revokedAt: null,
         expiresAt: { gt: now },
       },
-      select: { id: true },
+      select: { id: true, schoolId: true },
+    }),
+    prisma.teacherInvite.findFirst({
+      where: {
+        email: { equals: email, mode: "insensitive" },
+        status: "PENDING",
+        acceptedAt: null,
+        revokedAt: null,
+        expiresAt: { gt: now },
+      },
+      select: { id: true, schoolId: true },
+    }),
+    prisma.parentInvite.findFirst({
+      where: {
+        email: { equals: email, mode: "insensitive" },
+        status: "PENDING",
+        acceptedAt: null,
+        revokedAt: null,
+        expiresAt: { gt: now },
+      },
+      select: { id: true, schoolId: true },
+    }),
+    prisma.bursarInvite.findFirst({
+      where: {
+        email: { equals: email, mode: "insensitive" },
+        status: "PENDING",
+        acceptedAt: null,
+        revokedAt: null,
+        expiresAt: { gt: now },
+      },
+      select: { id: true, schoolId: true },
     }),
   ]);
 
@@ -525,8 +601,42 @@ export async function createSchoolAdminInviteForCurrentSchool(
     );
   }
 
-  if (activeInvite) {
-    throw new Error("This email already has a pending school admin invite.");
+  const existingRole = existingTeacher
+    ? "teacher"
+    : existingParent
+      ? "parent"
+      : existingStudent
+        ? "student"
+        : existingBursar
+          ? "bursar"
+          : null;
+
+  if (existingRole) {
+    throw new Error(
+      `This email is already linked to a ${existingRole} account. Use a fresh email for the admin invite.`,
+    );
+  }
+
+  if (activeAdminInvite) {
+    throw new Error(
+      activeAdminInvite.schoolId === context.schoolId
+        ? "This email already has a pending school admin invite."
+        : "This email already has a pending admin invite for another school.",
+    );
+  }
+
+  const pendingRoleInvite = activeTeacherInvite
+    ? "teacher"
+    : activeParentInvite
+      ? "parent"
+      : activeBursarInvite
+        ? "bursar"
+        : null;
+
+  if (pendingRoleInvite) {
+    throw new Error(
+      `This email already has a pending ${pendingRoleInvite} invite. Revoke that invite or use a different admin email.`,
+    );
   }
 
   const inviteToken = createInviteToken();
@@ -960,6 +1070,20 @@ export async function acceptSchoolInviteForUser(
   }
 
   await prisma.$transaction(async (tx) => {
+    const claimedInvite = await tx.schoolInvite.updateMany({
+      where: {
+        id: invite.id,
+        acceptedAt: null,
+        revokedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+      data: { acceptedAt: new Date() },
+    });
+
+    if (claimedInvite.count !== 1) {
+      throw new Error("This invitation is no longer available to accept.");
+    }
+
     await tx.admin.upsert({
       where: { id: input.userId },
       update: {
@@ -971,11 +1095,6 @@ export async function acceptSchoolInviteForUser(
         username: invite.email.toLowerCase(),
         schoolId: invite.schoolId,
       },
-    });
-
-    await tx.schoolInvite.update({
-      where: { id: invite.id },
-      data: { acceptedAt: new Date() },
     });
 
     await tx.onboardingAuditLog.create({
@@ -999,6 +1118,8 @@ export async function acceptSchoolInviteForUser(
 
   return { role, schoolId: invite.schoolId };
 }
+
+
 
 
 
