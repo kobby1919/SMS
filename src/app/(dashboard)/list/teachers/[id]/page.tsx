@@ -10,6 +10,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { CalendarLesson } from "@/src/components/BigCalendar";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
+import { getTeacherProfileCompletion } from "@/src/lib/services/teacher-profile-completion";
+import FormModal from "@/src/components/FormModal";
 import {
   Mail, Phone, Droplets, Calendar,
   BookOpen, Users, Clock, Award,
@@ -33,6 +35,8 @@ const SingleTeacherPage = async ({
   });
 
   if (!teacher) notFound();
+  const profileCompletion = getTeacherProfileCompletion(teacher);
+  const lifecycle = teacherStatusMeta(teacher.status);
   const liveLessons = await listLiveTimetableLessons(schoolId, { teacherId: teacher.id });
   const liveLessonIds = liveLessons.map((lesson) => lesson.id);
 
@@ -99,17 +103,18 @@ const SingleTeacherPage = async ({
                   <h1 className="text-xl font-black text-gray-800 tracking-tight">
                     {teacher.name} {teacher.surname}
                   </h1>
-                  <p className="text-sm text-indigo-600 font-semibold">
-                    {teacher.subjects.map((s) => s.name).join(", ") || "No subjects assigned"}
-                  </p>
+                  <div className="mt-1 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+                    <span className={`rounded-full px-2.5 py-1 text-xs font-black ${lifecycle.className}`}>{lifecycle.label}</span>
+                    <span className="text-sm font-semibold text-indigo-600">
+                      {teacher.subjects.map((s) => s.name).join(", ") || "No subjects assigned"}
+                    </span>
+                  </div>
                 </div>
               </div>
 
               {role === "admin" && (
                 <div className="flex justify-center sm:justify-start gap-2 shrink-0">
-                  <button className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-all active:scale-95 shadow-sm">
-                    Edit Profile
-                  </button>
+                  <FormModal table="teacher" type="update" data={teacher} />
                 </div>
               )}
             </div>
@@ -185,6 +190,31 @@ const SingleTeacherPage = async ({
       {/* ── RIGHT ── */}
       <div className="w-full xl:w-1/3 flex flex-col gap-4">
 
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h2 className="text-base font-black text-gray-800">Profile Readiness</h2>
+              <p className="mt-0.5 text-xs font-semibold text-gray-400">
+                Required before the teacher is fully ready for school operations.
+              </p>
+            </div>
+            <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-black ${profileCompletion.isComplete ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
+              {profileCompletion.completionPercent}%
+            </span>
+          </div>
+          <div className="mt-4 h-2 overflow-hidden rounded-full bg-gray-100">
+            <div
+              className={`h-full rounded-full ${profileCompletion.isComplete ? "bg-emerald-500" : "bg-amber-500"}`}
+              style={{ width: `${profileCompletion.completionPercent}%` }}
+            />
+          </div>
+          <div className="mt-4 rounded-xl bg-gray-50 p-3">
+            <p className="text-xs font-black uppercase tracking-wide text-gray-400">Missing fields</p>
+            <p className="mt-1 text-sm font-bold text-gray-700">
+              {profileCompletion.isComplete ? "None. Profile is complete." : profileCompletion.missingFields.join(", ")}
+            </p>
+          </div>
+        </div>
         {/* Quick access — real IDs */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
@@ -222,4 +252,21 @@ const SingleTeacherPage = async ({
   );
 };
 
+
+function teacherStatusMeta(status: "INVITED" | "ACTIVE" | "INCOMPLETE_SETUP" | "SUSPENDED" | "LEFT_SCHOOL") {
+  switch (status) {
+    case "ACTIVE":
+      return { label: "Active", className: "bg-emerald-50 text-emerald-700" };
+    case "INCOMPLETE_SETUP":
+      return { label: "Incomplete setup", className: "bg-amber-50 text-amber-700" };
+    case "SUSPENDED":
+      return { label: "Suspended", className: "bg-rose-50 text-rose-700" };
+    case "LEFT_SCHOOL":
+      return { label: "Left school", className: "bg-gray-100 text-gray-600" };
+    case "INVITED":
+    default:
+      return { label: "Invited", className: "bg-violet-50 text-violet-700" };
+  }
+}
 export default SingleTeacherPage;
+

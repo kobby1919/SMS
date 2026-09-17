@@ -1,5 +1,6 @@
 import { clerkClient } from "@clerk/nextjs/server";
 import prisma from "@/src/lib/prisma";
+import { nextTeacherProfileStatus } from "@/src/lib/services/teacher-profile-completion";
 import type { AuthzContext } from "@/src/lib/authz";
 import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
 import type { TeacherInviteCreateInput } from "@/src/lib/validation/teacher-invites";
@@ -551,14 +552,14 @@ export async function acceptTeacherInviteForUser(input: {
   const [teacherForUser, teacherForEmail] = await Promise.all([
     prisma.teacher.findUnique({
       where: { id: input.userId },
-      select: { id: true, schoolId: true, email: true },
+      select: { id: true, schoolId: true, email: true, phone: true, address: true, status: true },
     }),
     prisma.teacher.findFirst({
       where: {
         schoolId: invite.schoolId,
         OR: [{ email: inviteEmail }, { username: inviteEmail }],
       },
-      select: { id: true, schoolId: true, email: true },
+      select: { id: true, schoolId: true, email: true, phone: true, address: true, status: true },
     }),
   ]);
 
@@ -577,6 +578,16 @@ export async function acceptTeacherInviteForUser(input: {
   }
 
   const acceptedTeacher = await prisma.$transaction(async (tx) => {
+    const teacherProfile = {
+      name: invite.name,
+      surname: invite.surname,
+      email: inviteEmail,
+      phone: invite.phone ?? teacherForUser?.phone ?? null,
+      address: teacherForUser?.address ?? null,
+      status: teacherForUser?.status ?? "INVITED",
+    } as const;
+    const status = nextTeacherProfileStatus(teacherProfile);
+
     const teacher = teacherForUser
       ? await tx.teacher.update({
           where: { id: input.userId },
@@ -586,8 +597,8 @@ export async function acceptTeacherInviteForUser(input: {
             name: invite.name,
             surname: invite.surname,
             email: inviteEmail,
-            phone: invite.phone ?? null,
-            status: "ACTIVE",
+            phone: invite.phone ?? teacherForUser.phone ?? null,
+            status,
           },
           select: { id: true },
         })
@@ -600,7 +611,7 @@ export async function acceptTeacherInviteForUser(input: {
             surname: invite.surname,
             email: inviteEmail,
             phone: invite.phone ?? null,
-            status: "ACTIVE",
+            status,
             address: null,
             bloodType: null,
             sex: null,

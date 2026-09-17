@@ -20,6 +20,7 @@ import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 import TeacherInviteActions from "@/src/components/TeacherInviteActions";
 import TeacherInviteModal from "@/src/components/TeacherInviteModal";
+import { getTeacherProfileCompletion } from "@/src/lib/services/teacher-profile-completion";
 
 // Dynamic subject color by name initial
 const SUBJECT_COLORS = [
@@ -159,16 +160,16 @@ const TeacherListPage = async ({
     );
     const hasSubjects = teacher.subjects.length > 0;
     const hasLiveClasses = taughtClasses.length > 0;
-    const hasContact = Boolean(teacher.email || teacher.phone);
+    const profileCompletion = getTeacherProfileCompletion(teacher);
     const setupStatus: TeacherSetupStatus =
-      hasSubjects && hasLiveClasses && hasContact ? "ready" : "needs-setup";
+      profileCompletion.isComplete && hasSubjects && hasLiveClasses ? "ready" : "needs-setup";
     const missingSetup = [
-      !hasContact ? "contact" : null,
+      ...profileCompletion.missingFields,
       !hasSubjects ? "subjects" : null,
       !hasLiveClasses ? "published timetable classes" : null,
     ].filter(Boolean) as string[];
 
-    return { teacher, taughtClasses, setupStatus, missingSetup };
+    return { teacher, taughtClasses, setupStatus, missingSetup, profileCompletion };
   });
 
   const readyTeachers = enrichedTeachers.filter((item) => item.setupStatus === "ready" && item.teacher.status === "ACTIVE");
@@ -299,7 +300,7 @@ const TeacherListPage = async ({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {teachers.map(({ teacher: item, taughtClasses, setupStatus, missingSetup }) => {
+              {teachers.map(({ teacher: item, taughtClasses, setupStatus, missingSetup, profileCompletion }) => {
                 const lifecycle = teacherStatusMeta(item.status);
 
                 return (
@@ -325,7 +326,7 @@ const TeacherListPage = async ({
                               {lifecycle.label}
                             </span>
                             <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-bold text-gray-500">
-                              {taughtClasses.length} classes
+                              {profileCompletion.completionPercent}% profile
                             </span>
                           </div>
                         </div>
@@ -377,7 +378,7 @@ const TeacherListPage = async ({
                           {lifecycle.label}
                         </span>
                         <span className="text-xs font-semibold text-gray-400">
-                          {setupStatus === "ready" ? "Setup ready" : `Missing ${missingSetup.join(", ")}`}
+                          {setupStatus === "ready" ? "Setup ready" : `${profileCompletion.completionPercent}% profile · Missing ${missingSetup.join(", ")}`}
                         </span>
                       </div>
                     </td>

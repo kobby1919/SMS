@@ -15,6 +15,7 @@ import {
 } from "@/src/lib/cacheTags";
 import { ensurePrimaryParentStudentRelationship } from "@/src/lib/services/parent-student-relationships";
 import { writeParentAccessAudit } from "@/src/lib/services/parent-access-audit";
+import { nextTeacherProfileStatus } from "@/src/lib/services/teacher-profile-completion";
 
 type ParentCreateInput = z.infer<typeof parentCreateSchema>;
 type ParentUpdateInput = z.infer<typeof parentUpdateSchema>;
@@ -114,6 +115,13 @@ export async function createTeacher(
         address: input.address,
         bloodType: input.bloodType,
         sex: input.sex,
+        status: nextTeacherProfileStatus({
+          name: input.name,
+          surname: input.surname,
+          email: input.email,
+          phone: input.phone || null,
+          address: input.address,
+        }),
         subjects: subjects.length
           ? { connect: subjects.map(({ id }) => ({ id })) }
           : undefined,
@@ -244,7 +252,7 @@ export async function updateTeacher(
   const [teacher, subjects] = await Promise.all([
     prisma.teacher.findFirst({
       where: { id: teacherId, schoolId },
-      select: { id: true, name: true, surname: true },
+      select: { id: true, name: true, surname: true, email: true, status: true },
     }),
     input.subjectIds.length
       ? prisma.subject.findMany({
@@ -274,6 +282,14 @@ export async function updateTeacher(
         address: input.address,
         bloodType: input.bloodType,
         sex: input.sex,
+        status: nextTeacherProfileStatus({
+          status: teacher.status,
+          name: input.name,
+          surname: input.surname,
+          email: teacher.email,
+          phone: input.phone || null,
+          address: input.address,
+        }),
         subjects: { set: subjects.map(({ id }) => ({ id })) },
       },
     });
@@ -388,3 +404,4 @@ export async function updateParent(
   revalidateDashboard(schoolId);
   return updated;
 }
+
