@@ -8,6 +8,7 @@ import {
   hashBursarInviteToken,
   isBursarInviteExpired,
 } from "@/src/lib/services/bursar-invite-tokens";
+import { sendBursarInviteEmail } from "@/src/lib/services/notifications";
 import type { BursarInviteAuditAction, Prisma } from "@/src/generated/prisma";
 import { normalizeAppRole } from "@/src/lib/roles";
 
@@ -21,6 +22,8 @@ export type CreatedBursarInvite = {
   invitePath: string;
   inviteUrl: string;
   expiresAt: Date;
+  emailProvider?: "resend" | "console";
+  emailWarning?: string;
 };
 
 export class BursarInviteServiceError extends Error {
@@ -192,7 +195,7 @@ export async function createBursarInvite(
   const [school, existingBursar, activeInvite] = await Promise.all([
     prisma.school.findUnique({
       where: { id: context.schoolId },
-      select: { id: true },
+      select: { id: true, name: true, displayName: true, emailFromName: true },
     }),
     prisma.bursar.findFirst({
       where: { schoolId: context.schoolId, email },
@@ -273,6 +276,35 @@ export async function createBursarInvite(
     return createdInvite;
   });
 
+  const emailResult = await sendBursarInviteEmail({
+    to: invite.email,
+    schoolName: schoolDisplayName(school),
+    bursarName: bursarDisplayName(invite),
+    inviteUrl: tokenBundle.inviteUrl,
+    expiresAt: tokenBundle.expiresAt,
+  });
+
+  await prisma.$transaction(async (tx) => {
+    if (emailResult.ok) {
+      await tx.bursarInvite.update({
+        where: { id: invite.id },
+        data: { lastSentAt: new Date() },
+      });
+    }
+
+    await writeBursarInviteAudit(tx, {
+      schoolId: context.schoolId,
+      inviteId: invite.id,
+      action: "INVITE_SENT",
+      performedBy: context.userId,
+      metadata: {
+        email: invite.email,
+        provider: emailResult.provider,
+        warning: emailResult.ok ? undefined : emailResult.message,
+      },
+    });
+  });
+
   revalidateReferenceData(context.schoolId, "bursars");
   revalidateDashboard(context.schoolId);
 
@@ -286,6 +318,8 @@ export async function createBursarInvite(
     invitePath: tokenBundle.invitePath,
     inviteUrl: tokenBundle.inviteUrl,
     expiresAt: invite.expiresAt,
+    emailProvider: emailResult.provider,
+    emailWarning: emailResult.ok ? undefined : emailResult.message,
   };
 }
 
@@ -299,15 +333,15 @@ export async function resendBursarInvite(
       id: input.inviteId,
       schoolId: context.schoolId,
     },
-    select: {
-      id: true,
-      schoolId: true,
-      name: true,
-      surname: true,
-      email: true,
-      acceptedAt: true,
-      revokedAt: true,
-      status: true,
+    include: {
+      school: {
+        select: {
+          id: true,
+          name: true,
+          displayName: true,
+          emailFromName: true,
+        },
+      },
     },
   });
 
@@ -360,6 +394,35 @@ export async function resendBursarInvite(
     });
   });
 
+  const emailResult = await sendBursarInviteEmail({
+    to: invite.email,
+    schoolName: schoolDisplayName(invite.school),
+    bursarName: bursarDisplayName(invite),
+    inviteUrl: tokenBundle.inviteUrl,
+    expiresAt: tokenBundle.expiresAt,
+  });
+
+  await prisma.$transaction(async (tx) => {
+    if (emailResult.ok) {
+      await tx.bursarInvite.update({
+        where: { id: invite.id },
+        data: { lastSentAt: new Date() },
+      });
+    }
+
+    await writeBursarInviteAudit(tx, {
+      schoolId: context.schoolId,
+      inviteId: invite.id,
+      action: "INVITE_SENT",
+      performedBy: context.userId,
+      metadata: {
+        email: invite.email,
+        provider: emailResult.provider,
+        warning: emailResult.ok ? undefined : emailResult.message,
+      },
+    });
+  });
+
   revalidateReferenceData(context.schoolId, "bursars");
   revalidateDashboard(context.schoolId);
 
@@ -373,6 +436,8 @@ export async function resendBursarInvite(
     invitePath: tokenBundle.invitePath,
     inviteUrl: tokenBundle.inviteUrl,
     expiresAt: tokenBundle.expiresAt,
+    emailProvider: emailResult.provider,
+    emailWarning: emailResult.ok ? undefined : emailResult.message,
   };
 }
 
