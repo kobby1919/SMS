@@ -212,7 +212,7 @@ const ClassListPage = async ({
                   </div>
 
                   <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 xl:pt-1">
-                    {role === "teacher" && isMyClass ? (
+                    {(role === "admin" || (role === "teacher" && isMyClass)) ? (
                       <Link
                         href={`/teacher/classes/${item.id}`}
                         className="inline-flex h-9 items-center justify-center gap-1 rounded-xl bg-slate-900 px-3 text-xs font-black text-white transition-colors hover:bg-slate-800"

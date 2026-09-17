@@ -30,12 +30,12 @@ const ClassTeacherControlPage = async ({
 }: {
   params: Promise<{ classId: string }>;
 }) => {
-  const { userId, schoolId } = await requirePageSession(["teacher"]);
+  const { userId, role, schoolId } = await requirePageSession(["teacher", "admin"]);
   const { classId: rawClassId } = await params;
   const classId = parseClassId(rawClassId);
   if (!classId) notFound();
 
-  const overview = await getClassTeacherOverview({ schoolId, teacherId: userId, classId });
+  const overview = await getClassTeacherOverview({ schoolId, teacherId: userId, classId, viewerRole: role === "admin" ? "admin" : "teacher" });
   if (!overview) notFound();
 
   const attendanceMarkedPct = overview.todayAttendance.lessonCount > 0
@@ -47,7 +47,7 @@ const ClassTeacherControlPage = async ({
       <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="min-w-0">
-            <p className="text-xs font-black uppercase text-gray-400">Class Teacher Control Center</p>
+            <p className="text-xs font-black uppercase text-gray-400">{role === "admin" ? "Admin Class Overview" : "Class Teacher Control Center"}</p>
             <h1 className="mt-1 break-words text-2xl font-black text-edujay-ink sm:text-3xl">
               {overview.class.name}
             </h1>
@@ -304,7 +304,7 @@ const ClassTeacherControlPage = async ({
           <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
               <h2 className="text-base font-black text-edujay-ink">Report Submission Status</h2>
-              <p className="text-xs font-semibold leading-relaxed text-gray-400">Class teacher review before admin publishing.</p>
+              <p className="text-xs font-semibold leading-relaxed text-gray-400">{role === "admin" ? "Admin review of class readiness before final publishing." : "Class teacher review before admin publishing."}</p>
             </div>
             <FileText size={18} className="shrink-0 text-edujay-primary" />
           </div>

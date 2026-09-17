@@ -42,10 +42,12 @@ export async function getClassTeacherOverview({
   schoolId,
   teacherId,
   classId,
+  viewerRole = "teacher",
 }: {
   schoolId: string;
   teacherId: string;
   classId: number;
+  viewerRole?: "admin" | "teacher";
 }) {
   const today = new Date();
   const todayStart = startOfDay(today);
@@ -56,7 +58,11 @@ export async function getClassTeacherOverview({
   const [activePeriod, klass, lessons] = await Promise.all([
     getActiveAcademicPeriod(schoolId),
     prisma.class.findFirst({
-      where: { id: classId, schoolId, supervisorId: teacherId },
+      where: {
+        id: classId,
+        schoolId,
+        ...(viewerRole === "teacher" ? { supervisorId: teacherId } : {}),
+      },
       select: {
         id: true,
         name: true,

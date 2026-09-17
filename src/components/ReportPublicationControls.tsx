@@ -54,7 +54,7 @@ export default function ReportPublicationControls({
   const isPublished = status === "PUBLISHED";
   const isSubmitted = status === "SUBMITTED";
   const canPublish = role === "admin" && isSubmitted && canSubmit;
-  const canTeacherSubmit = role === "teacher" && isClassTeacher && canSubmit && !isPublished;
+  const canTeacherSubmit = role === "teacher" && isClassTeacher && canSubmit && ["UNSUBMITTED", "UNPUBLISHED", "REJECTED"].includes(status);
 
   const statusCopy = {
     PUBLISHED: {
@@ -197,7 +197,7 @@ export default function ReportPublicationControls({
             type="button"
             onClick={() => run("submit")}
             disabled={!canTeacherSubmit || isPending}
-            title={!canTeacherSubmit ? "Only the class teacher can submit when every report entry is complete." : "Submit class for admin review"}
+            title={!isClassTeacher ? "Only the assigned class teacher can submit this class." : isSubmitted ? "This class is already waiting for admin review." : isPublished ? "Published report cards cannot be resubmitted by the class teacher." : !canSubmit ? "Every report entry must be complete before submission." : "Submit class for admin review"}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-xs font-black text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {isPending ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}

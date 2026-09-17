@@ -1480,6 +1480,24 @@ export async function submitClassReportCardsForReviewAction(data: {
     );
   }
 
+  const currentPublication = await prisma.reportCardPublication.findUnique({
+    where: {
+      schoolId_classId_term_academicYear: {
+        schoolId,
+        classId: parsed.classId,
+        term: parsed.term,
+        academicYear: parsed.academicYear,
+      },
+    },
+    select: { status: true },
+  });
+  if (currentPublication?.status === "SUBMITTED") {
+    throw new Error("This class is already submitted and waiting for admin review.");
+  }
+  if (currentPublication?.status === "PUBLISHED") {
+    throw new Error("Published report cards cannot be resubmitted by the class teacher. Ask an admin to unpublish or return the report set first.");
+  }
+
   const publication = await prisma.reportCardPublication.upsert({
     where: {
       schoolId_classId_term_academicYear: {
