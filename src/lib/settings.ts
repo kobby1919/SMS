@@ -19,8 +19,8 @@ export const routeAccessMap: RouteAccessMap = {
 
   // ── People management ─────────────────────────────────────────────────────
   "/list/teachers(.*)":           ["admin", "teacher"],
-  "/list/students(.*)":           ["admin", "teacher", "bursar"],
-  "/list/parents(.*)":            ["admin", "teacher", "bursar"],
+  "/list/students(.*)":           ["admin", "teacher"],
+  "/list/parents(.*)":            ["admin", "teacher"],
   "/list/bursars(.*)":            ["admin"],
   "/list/subjects(.*)":           ["admin"],
   "/list/classes(.*)":            ["admin", "teacher"],

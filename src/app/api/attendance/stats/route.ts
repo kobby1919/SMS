@@ -16,7 +16,6 @@ export async function GET(req: NextRequest) {
       "teacher",
       "student",
       "parent",
-      "bursar",
     ]);
     const limited = await enforceRateLimit(req, {
       scope: "attendance:stats",

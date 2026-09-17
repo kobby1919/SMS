@@ -100,8 +100,9 @@ const roleShortcuts: Record<string, SearchItem[]> = {
   ],
   bursar: [
     { label: "Finance home", description: "Bursar dashboard", href: "/bursar", keywords: "bursar finance dashboard", icon: <Home size={15} /> },
-    { label: "Bills", description: "Student bills", href: "/list/finance/bills", keywords: "bills fees balances", icon: <WalletCards size={15} /> },
+    { label: "Bills", description: "Student bills", href: "/list/finance/bills", keywords: "bills fees balances outstanding", icon: <WalletCards size={15} /> },
     { label: "Payments", description: "Receipts and collections", href: "/list/finance/payments", keywords: "payments receipts collections", icon: <FileText size={15} /> },
+    { label: "Fee Structures", description: "Term fee setup", href: "/list/finance/fee-structures", keywords: "fee structures term setup bills", icon: <WalletCards size={15} /> },
   ],
   student: [
     { label: "Student home", description: "Academic overview", href: "/student", keywords: "student home dashboard", icon: <Home size={15} /> },

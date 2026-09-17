@@ -315,8 +315,20 @@ const menuItems = [
     items: [
       {
         icon: Wallet,
-        label: "Fees & Payments",
+        label: "Bills",
+        href: "/list/finance/bills",
+        visible: ["admin", "bursar"],
+      },
+      {
+        icon: FileText,
+        label: "Payments",
         href: "/list/finance/payments",
+        visible: ["admin", "bursar"],
+      },
+      {
+        icon: ScrollText,
+        label: "Fee Structures",
+        href: "/list/finance/fee-structures",
         visible: ["admin", "bursar"],
       },
       {
