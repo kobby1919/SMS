@@ -100,15 +100,43 @@ async function getClassInSchool(classId: number | null | undefined, schoolId: st
 // ═══════════════════════════════════════════════════════════════════════════════
 // CLASS
 // ═══════════════════════════════════════════════════════════════════════════════
+async function assertClassSetupReferences(schoolId: string, data: {
+  gradeId?: number;
+  supervisorId?: string | null;
+}) {
+  const [grade, supervisor] = await Promise.all([
+    data.gradeId
+      ? prisma.grade.findFirst({ where: { id: data.gradeId, schoolId }, select: { id: true } })
+      : Promise.resolve(null),
+    data.supervisorId
+      ? prisma.teacher.findFirst({
+          where: { id: data.supervisorId, schoolId, status: "ACTIVE" },
+          select: { id: true },
+        })
+      : Promise.resolve(null),
+  ]);
+
+  if (data.gradeId && !grade) {
+    throw new Error("Selected grade does not belong to this school.");
+  }
+
+  if (data.supervisorId && !supervisor) {
+    throw new Error("Class teacher must be an active teacher in this school.");
+  }
+}
+
 export async function createClass(data: {
   name: string; capacity: number; gradeId: number;
   section?: string; supervisorId?: string;
 }) {
   data = parseActionInput(classCreateSchema, data);
   const { schoolId } = await requireAdmin();
+  await assertClassSetupReferences(schoolId, data);
   await prisma.class.create({ data: { ...data, schoolId } });
   revalidatePath("/list/classes");
   revalidateReferenceData(schoolId, "classes");
+  revalidateReferenceData(schoolId, "teachers");
+  revalidateReferenceData(schoolId, "timetable");
   revalidateDashboard(schoolId);
 }
 
@@ -121,25 +149,69 @@ export async function updateClass(id: number, data: {
   const { schoolId } = await requireAdmin();
   const existing = await prisma.class.findFirst({ where: { id, schoolId } });
   assertSameSchool(existing, schoolId);
+  await assertClassSetupReferences(schoolId, data);
   await prisma.class.update({ where: { id }, data });
   revalidatePath("/list/classes");
   revalidateReferenceData(schoolId, "classes");
   revalidateReferenceData(schoolId, "students");
+  revalidateReferenceData(schoolId, "teachers");
+  revalidateReferenceData(schoolId, "timetable");
   revalidateDashboard(schoolId);
 }
 
 export async function deleteClass(id: number) {
   ({ id } = parseActionInput(numericIdSchema, { id }));
   const { schoolId } = await requireAdmin();
+  const [klass, publishedLessonCount] = await Promise.all([
+    prisma.class.findFirst({
+      where: { id, schoolId },
+      select: {
+        id: true,
+        schoolId: true,
+        _count: {
+          select: {
+            students: true,
+            caBuckets: true,
+            caActivities: true,
+            continuousAssessments: true,
+            reportPublications: true,
+            syllabusTopicProgress: true,
+          },
+        },
+      },
+    }),
+    prisma.publishedTimetableLesson.count({
+      where: {
+        schoolId,
+        classId: id,
+        publication: { status: "ACTIVE" },
+      },
+    }),
+  ]);
+  assertSameSchool(klass, schoolId);
+
+  const usageCount =
+    klass._count.students +
+    publishedLessonCount +
+    klass._count.caBuckets +
+    klass._count.caActivities +
+    klass._count.continuousAssessments +
+    klass._count.reportPublications +
+    klass._count.syllabusTopicProgress;
+
+  if (usageCount > 0) {
+    throw new Error("This class already has students, published timetable usage, CA, report, or syllabus records. Archive or migrate those records before removing it.");
+  }
+
   await prisma.class.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/classes");
   revalidatePath("/admin/timetable");
   revalidateReferenceData(schoolId, "classes");
   revalidateReferenceData(schoolId, "students");
+  revalidateReferenceData(schoolId, "teachers");
   revalidateReferenceData(schoolId, "timetable");
   revalidateDashboard(schoolId);
 }
-
 // ═══════════════════════════════════════════════════════════════════════════════
 // SUBJECT
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1725,6 +1797,7 @@ export async function deleteResult(id: number): Promise<void> {
   revalidatePath("/list/results");
   revalidateDashboard(schoolId);
 }
+
 
 
 

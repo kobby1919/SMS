@@ -210,23 +210,32 @@ const ClassForm = ({
           </select>
         </div>
 
-        {/* Supervisor */}
-        <div className="flex flex-col gap-1 w-full">
-          <label className="text-xs text-gray-500 font-semibold">
-            Class Supervisor{" "}
-            <span className="text-gray-300 font-normal">(optional)</span>
-          </label>
+        {/* Class teacher */}
+        <div className="flex flex-col gap-2 w-full rounded-2xl border border-gray-100 bg-gray-50/60 p-3">
+          <div>
+            <label className="text-xs font-black uppercase tracking-wide text-gray-500">
+              Class teacher responsibility
+            </label>
+            <p className="mt-1 text-xs font-semibold leading-5 text-gray-400">
+              Pick the active teacher responsible for supervising this class. Subject teachers are attached later through the published timetable.
+            </p>
+          </div>
           <select
             {...register("supervisorId")}
-            className="ring-[1.5px] ring-gray-200 p-2.5 rounded-xl text-sm focus:ring-indigo-600 outline-none bg-white h-[42px]"
+            className="h-[42px] rounded-xl bg-white p-2.5 text-sm outline-none ring-[1.5px] ring-gray-200 transition-all focus:ring-indigo-600"
           >
-            <option value="">No supervisor assigned</option>
+            <option value="">No class teacher assigned</option>
             {teachers.map((t) => (
               <option key={t.id} value={t.id}>
                 {t.name} {t.surname}
               </option>
             ))}
           </select>
+          {teachers.length === 0 && (
+            <p className="text-[11px] font-semibold text-amber-600">
+              Invite and activate teachers before assigning class teacher responsibility.
+            </p>
+          )}
         </div>
       </div>
 
@@ -247,3 +256,4 @@ const ClassForm = ({
 };
 
 export default ClassForm;
+

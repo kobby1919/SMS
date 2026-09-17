@@ -36,9 +36,19 @@ export async function getClassesPage(
         prisma.class.findMany({
           where,
           include: {
-            supervisor: { select: { name: true, surname: true } },
-            grade: { select: { level: true } },
-            _count: { select: { students: true } },
+            supervisor: { select: { id: true, name: true, surname: true, status: true } },
+            grade: { select: { id: true, level: true, order: true } },
+            _count: {
+              select: {
+                students: true,
+                lessons: true,
+                caBuckets: true,
+                caActivities: true,
+                continuousAssessments: true,
+                reportPublications: true,
+                syllabusTopicProgress: true,
+              },
+            },
           },
           orderBy: [{ grade: { order: "asc" } }, { name: "asc" }],
           take: ITEM_PER_PAGE,
