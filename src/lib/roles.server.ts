@@ -1,5 +1,6 @@
 import { clerkClient } from "@clerk/nextjs/server";
 import { DEFAULT_SCHOOL_ID } from "@/src/lib/constants/tenant";
+import prisma from "@/src/lib/prisma";
 import {
   normalizeAppRole,
   roleFromSessionClaims,
@@ -24,6 +25,22 @@ async function getClerkUserWithTimeout(userId: string) {
   } finally {
     if (timeout) clearTimeout(timeout);
   }
+}
+
+async function getBursarIdentityFromDatabase(userId: string): Promise<{
+  role: AppRole;
+  schoolId: string;
+} | null> {
+  const bursar = await prisma.bursar.findUnique({
+    where: { id: userId },
+    select: { schoolId: true, status: true },
+  });
+
+  if (!bursar || bursar.status !== "ACTIVE") {
+    return null;
+  }
+
+  return { role: "bursar", schoolId: bursar.schoolId };
 }
 
 function schoolIdFromSessionClaims(sessionClaims: unknown): string | undefined {
@@ -59,7 +76,7 @@ function schoolIdFromSessionClaims(sessionClaims: unknown): string | undefined {
 
 export type ResolveSessionRoleOptions = {
   /**
-   * Middleware runs on the edge — avoid Clerk API calls there.
+   * Middleware runs on the edge - avoid Clerk API calls there.
    * Without a JWT role, send the user to /auth/callback (Node) for full resolution.
    */
   jwtOnly?: boolean;
@@ -81,21 +98,36 @@ export async function resolveSessionIdentity(
 
   try {
     const user = await getClerkUserWithTimeout(userId);
+    const metadataRole = normalizeAppRole(user.publicMetadata?.role);
     const metadataSchoolId = user.publicMetadata?.schoolId;
-    return {
-      role: roleFromClaims ?? normalizeAppRole(user.publicMetadata?.role),
-      schoolId:
-        schoolIdFromClaims ??
-        (typeof metadataSchoolId === "string" && metadataSchoolId.length > 0
-          ? metadataSchoolId
-          : DEFAULT_SCHOOL_ID),
-    };
+    const resolvedRole = roleFromClaims ?? metadataRole;
+    const resolvedSchoolId =
+      schoolIdFromClaims ??
+      (typeof metadataSchoolId === "string" && metadataSchoolId.length > 0
+        ? metadataSchoolId
+        : undefined);
+
+    if (resolvedRole) {
+      return {
+        role: resolvedRole,
+        schoolId: resolvedSchoolId ?? DEFAULT_SCHOOL_ID,
+      };
+    }
   } catch {
-    return {
-      role: roleFromClaims,
-      schoolId: schoolIdFromClaims ?? DEFAULT_SCHOOL_ID,
-    };
+    // Fall back to database identity checks below.
   }
+
+  if (!roleFromClaims) {
+    const bursarIdentity = await getBursarIdentityFromDatabase(userId);
+    if (bursarIdentity) {
+      return bursarIdentity;
+    }
+  }
+
+  return {
+    role: roleFromClaims,
+    schoolId: schoolIdFromClaims ?? DEFAULT_SCHOOL_ID,
+  };
 }
 
 /** Resolve role from JWT, falling back to Clerk publicMetadata when claims lag after sign-in. */
@@ -111,10 +143,14 @@ export async function resolveSessionRole(
 
   try {
     const user = await getClerkUserWithTimeout(userId);
-    return normalizeAppRole(user.publicMetadata?.role);
+    const metadataRole = normalizeAppRole(user.publicMetadata?.role);
+    if (metadataRole) return metadataRole;
   } catch {
-    return undefined;
+    // Fall back to database identity checks below.
   }
+
+  const bursarIdentity = await getBursarIdentityFromDatabase(userId);
+  return bursarIdentity?.role;
 }
 
 /** Resolve school tenant id from JWT, falling back to Clerk publicMetadata. */
@@ -134,8 +170,11 @@ export async function resolveSessionSchoolId(
       return schoolId;
     }
   } catch {
-    // fall through to default tenant
+    // fall through to database/default tenant
   }
+
+  const bursarIdentity = await getBursarIdentityFromDatabase(userId);
+  if (bursarIdentity) return bursarIdentity.schoolId;
 
   return DEFAULT_SCHOOL_ID;
 }

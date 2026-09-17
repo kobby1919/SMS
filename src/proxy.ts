@@ -31,6 +31,7 @@ const isPublicRoute = createRouteMatcher([
   "/onboarding/accept(.*)",
   "/onboarding/teacher/accept(.*)",
   "/onboarding/parent/accept(.*)",
+  "/onboarding/bursar/accept(.*)",
   "/api/webhooks/payments(.*)",
   "/api/internal/finance/jobs/run",
   "/api/internal/parent-summaries/run",
@@ -48,10 +49,12 @@ export default clerkMiddleware(async (auth, req) => {
     const schoolInvite = req.nextUrl.searchParams.get("invite");
     const teacherInvite = req.nextUrl.searchParams.get("teacherInvite");
     const parentInvite = req.nextUrl.searchParams.get("parentInvite");
+    const bursarInvite = req.nextUrl.searchParams.get("bursarInvite");
 
     if (schoolInvite) callbackUrl.searchParams.set("invite", schoolInvite);
     if (teacherInvite) callbackUrl.searchParams.set("teacherInvite", teacherInvite);
     if (parentInvite) callbackUrl.searchParams.set("parentInvite", parentInvite);
+    if (bursarInvite) callbackUrl.searchParams.set("bursarInvite", bursarInvite);
 
     return callbackUrl;
   }
@@ -74,7 +77,8 @@ export default clerkMiddleware(async (auth, req) => {
       (pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up")) &&
       (req.nextUrl.searchParams.has("invite") ||
         req.nextUrl.searchParams.has("teacherInvite") ||
-        req.nextUrl.searchParams.has("parentInvite"))
+        req.nextUrl.searchParams.has("parentInvite") ||
+        req.nextUrl.searchParams.has("bursarInvite"))
     ) {
       return NextResponse.redirect(authCallbackUrlWithInvite());
     }
