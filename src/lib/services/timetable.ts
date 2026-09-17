@@ -282,6 +282,7 @@ async function validateLessonInput(
         where: {
           id: input.teacherId,
           schoolId,
+          status: "ACTIVE",
           subjects: { some: { id: input.subjectId, schoolId } },
         },
         select: { id: true, maxClasses: true },
@@ -498,3 +499,4 @@ export async function publishTimetableDraft(
     lessonCount: publication._count.lessons,
   };
 }
+

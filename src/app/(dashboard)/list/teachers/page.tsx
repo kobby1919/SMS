@@ -446,13 +446,87 @@ function PendingInvitesTable({
 }) {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-1">
-      <div className="w-full overflow-x-auto">
-        <table className="w-full min-w-[560px]">
+      <div className="divide-y divide-gray-100 md:hidden">
+        {invites.map((invite) => {
+          const expired = invite.expiresAt.getTime() <= now.getTime();
+          return (
+            <div key={invite.id} className="p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-black text-gray-800">
+                    {invite.name} {invite.surname}
+                  </p>
+                  <p className="mt-0.5 truncate text-xs font-semibold text-gray-400">{invite.email}</p>
+                </div>
+                <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-black ${expired ? "bg-rose-50 text-rose-700" : "bg-violet-50 text-violet-700"}`}>
+                  {expired ? "Expired" : "Pending"}
+                </span>
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                <div className="rounded-xl bg-gray-50 p-2">
+                  <p className="font-black uppercase tracking-wide text-gray-400">Type</p>
+                  <p className="mt-0.5 font-bold text-gray-700">{teacherTypeLabel(invite.teacherType)}</p>
+                </div>
+                <div className="rounded-xl bg-gray-50 p-2">
+                  <p className="font-black uppercase tracking-wide text-gray-400">Expires</p>
+                  <p className="mt-0.5 font-bold text-gray-700">
+                    {invite.expiresAt.toLocaleDateString("en-GH", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
+                <div className="rounded-xl bg-gray-50 p-2">
+                  <p className="font-black uppercase tracking-wide text-gray-400">Created</p>
+                  <p className="mt-0.5 font-bold text-gray-700">
+                    {invite.createdAt.toLocaleDateString("en-GH", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
+                <div className="rounded-xl bg-gray-50 p-2">
+                  <p className="font-black uppercase tracking-wide text-gray-400">Last sent</p>
+                  <p className="mt-0.5 font-bold text-gray-700">
+                    {invite.lastSentAt
+                      ? invite.lastSentAt.toLocaleDateString("en-GH", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      : "Not sent"}
+                  </p>
+                </div>
+              </div>
+              {role === "admin" && (
+                <div className="mt-3 flex justify-end">
+                  <TeacherInviteActions inviteId={invite.id} />
+                </div>
+              )}
+            </div>
+          );
+        })}
+        {invites.length === 0 && (
+          <div className="px-5 py-12 text-center">
+            <p className="text-sm font-black text-gray-500">
+              {searchTerm ? "No pending invites match this search." : "No pending teacher invites yet."}
+            </p>
+            <p className="mt-1 text-xs font-semibold text-gray-400">
+              Use Invite teacher to create secure teacher onboarding links.
+            </p>
+          </div>
+        )}
+      </div>
+
+      <div className="hidden w-full overflow-x-auto md:block">
+        <table className="w-full min-w-[720px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/60">
               <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Invitee</th>
-              <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden md:table-cell">Teacher type</th>
-              <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden lg:table-cell">Expires</th>
+              <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Teacher type</th>
+              <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Expires</th>
               <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden xl:table-cell">Created</th>
               <th className="text-left px-3 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400 hidden xl:table-cell">Last sent</th>
               {role === "admin" && (
@@ -470,22 +544,19 @@ function PendingInvitesTable({
                       {invite.name} {invite.surname}
                     </p>
                     <p className="text-xs text-gray-400 truncate">{invite.email}</p>
-                    <div className="mt-2 flex flex-wrap gap-1 md:hidden">
-                      <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[11px] font-black text-indigo-700">
-                        {teacherTypeLabel(invite.teacherType)}
-                      </span>
+                    <div className="mt-2 flex flex-wrap gap-1 lg:hidden">
                       <span className={`rounded-full px-2 py-0.5 text-[11px] font-black ${expired ? "bg-rose-50 text-rose-700" : "bg-violet-50 text-violet-700"}`}>
                         {expired ? "Expired" : "Pending"}
                       </span>
                     </div>
                   </td>
-                  <td className="px-3 py-4 hidden md:table-cell">
+                  <td className="px-3 py-4">
                     <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-black text-indigo-700">
                       {teacherTypeLabel(invite.teacherType)}
                     </span>
                   </td>
-                  <td className="px-3 py-4 hidden lg:table-cell">
-                    <span className="text-sm font-semibold text-gray-600">
+                  <td className="px-3 py-4">
+                    <span className={`text-sm font-semibold ${expired ? "text-rose-600" : "text-gray-600"}`}>
                       {invite.expiresAt.toLocaleDateString("en-GH", {
                         day: "numeric",
                         month: "short",
@@ -542,7 +613,6 @@ function PendingInvitesTable({
     </div>
   );
 }
-
 function teacherTypeLabel(type: TeacherInviteRow["teacherType"]) {
   switch (type) {
     case "CLASS_TEACHER":
@@ -572,5 +642,4 @@ function teacherStatusMeta(status: "INVITED" | "ACTIVE" | "INCOMPLETE_SETUP" | "
   }
 }
 export default TeacherListPage;
-
 

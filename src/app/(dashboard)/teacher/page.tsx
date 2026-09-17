@@ -128,7 +128,7 @@ const TeacherPage = async () => {
 
   const [teacher, liveLessons, activeTimetablePublication, activePeriod, accountability, teacherScope] = await Promise.all([
     prisma.teacher.findFirst({
-      where: { id: userId, schoolId },
+      where: { id: userId, schoolId, status: "ACTIVE" },
       include: { classes: { select: { id: true, name: true } } },
     }),
     listLiveTimetableLessons(schoolId, { teacherId: userId }),
@@ -865,3 +865,4 @@ const TeacherPage = async () => {
 };
 
 export default TeacherPage;
+

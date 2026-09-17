@@ -130,9 +130,9 @@ export async function createParentTeacherContactRequest(data: unknown) {
         id: route.selectedTeacherId,
         schoolId,
       },
-      select: { id: true },
+      select: { id: true, status: true },
     });
-    if (!selectedTeacher) {
+    if (!selectedTeacher || selectedTeacher.status !== "ACTIVE") {
       throw new Error("The selected contact teacher is no longer available.");
     }
     routedTeacherId = selectedTeacher.id;
@@ -143,9 +143,9 @@ export async function createParentTeacherContactRequest(data: unknown) {
         id: routedTeacherId,
         schoolId,
       },
-      select: { id: true },
+      select: { id: true, status: true },
     });
-    if (!fallbackTeacher) {
+    if (!fallbackTeacher || fallbackTeacher.status !== "ACTIVE") {
       throw new Error("The school office route is not ready yet. Please contact the school office directly.");
     }
   }
@@ -658,3 +658,4 @@ export async function closeParentTeacherContactRequestAsAdminWithState(
     };
   }
 }
+

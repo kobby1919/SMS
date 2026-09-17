@@ -11,7 +11,6 @@ import {
   deleteClass,
   deleteSubject,
   deleteParent,
-  deleteTeacher,
   deleteStudent,
   deleteExam,
   deleteResult,
@@ -104,7 +103,6 @@ const deleteActions: Partial<Record<string, (id: number | string) => Promise<voi
   class: (id) => deleteClass(Number(id)),
   subject: (id) => deleteSubject(Number(id)),
   parent: (id) => deleteParent(String(id)),
-  teacher: (id) => deleteTeacher(String(id)),
   student: (id) => deleteStudent(String(id)),
   exam: (id) => deleteExam(Number(id)),
   result: (id) => deleteResult(Number(id)),
@@ -296,3 +294,4 @@ const FormModal = ({ table, type, data, id }: Props) => {
 };
 
 export default FormModal;
+
