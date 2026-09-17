@@ -171,7 +171,6 @@ export async function deleteClass(id: number) {
         _count: {
           select: {
             students: true,
-            caBuckets: true,
             caActivities: true,
             continuousAssessments: true,
             reportPublications: true,
@@ -193,14 +192,13 @@ export async function deleteClass(id: number) {
   const usageCount =
     klass._count.students +
     publishedLessonCount +
-    klass._count.caBuckets +
     klass._count.caActivities +
     klass._count.continuousAssessments +
     klass._count.reportPublications +
     klass._count.syllabusTopicProgress;
 
   if (usageCount > 0) {
-    throw new Error("This class already has students, published timetable usage, CA, report, or syllabus records. Archive or migrate those records before removing it.");
+    throw new Error("This class already has students, published timetable usage, CA activity, report, or syllabus records. Archive or migrate those records before removing it.");
   }
 
   await prisma.class.deleteMany({ where: { id, schoolId } });
@@ -289,7 +287,6 @@ export async function deleteSubject(id: number) {
         schoolId: true,
         _count: {
           select: {
-            caBuckets: true,
             caActivities: true,
             continuousAssessments: true,
             syllabi: true,
@@ -309,13 +306,12 @@ export async function deleteSubject(id: number) {
 
   const usageCount =
     publishedLessonCount +
-    subject._count.caBuckets +
     subject._count.caActivities +
     subject._count.continuousAssessments +
     subject._count.syllabi;
 
   if (usageCount > 0) {
-    throw new Error("This subject is already used by a published timetable, CA, syllabus, or report records. Archive or migrate those records before removing it.");
+    throw new Error("This subject is already used by a published timetable, CA activity, syllabus, or report records. Archive or migrate those records before removing it.");
   }
 
   await prisma.subject.deleteMany({ where: { id, schoolId } });
@@ -1797,6 +1793,7 @@ export async function deleteResult(id: number): Promise<void> {
   revalidatePath("/list/results");
   revalidateDashboard(schoolId);
 }
+
 
 
 

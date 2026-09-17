@@ -117,8 +117,8 @@ const ClassListPage = async ({
             const isTaughtClass = taughtClassIds.has(item.id);
             const liveLessonCount = liveLessonCountByClassId.get(item.id) ?? 0;
             const liveTeacherCount = liveTeacherCountByClassId.get(item.id)?.size ?? 0;
+            const caSetupCount = item._count.caBuckets;
             const academicRecordCount =
-              item._count.caBuckets +
               item._count.caActivities +
               item._count.continuousAssessments +
               item._count.reportPublications +
@@ -198,9 +198,14 @@ const ClassListPage = async ({
                           Ready for daily operation
                         </span>
                       )}
+                      {caSetupCount > 0 && (
+                        <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700">
+                          {caSetupCount} CA setup item{caSetupCount === 1 ? "" : "s"}
+                        </span>
+                      )}
                       {academicRecordCount > 0 && (
                         <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-bold text-gray-600">
-                          {academicRecordCount} academic records
+                          {academicRecordCount} academic record{academicRecordCount === 1 ? "" : "s"}
                         </span>
                       )}
                     </div>
@@ -261,3 +266,4 @@ const ClassListPage = async ({
 };
 
 export default ClassListPage;
+

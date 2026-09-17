@@ -120,7 +120,7 @@ const SubjectListPage = async ({
       </div>
 
       <div className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-amber-800">
-        Draft timetable slots are setup work. They become live only after the timetable is published. A subject is protected from deletion only when it has published timetable usage, CA/report records, or syllabus records.
+        Draft timetable slots and empty CA buckets are setup work. They become operational only after timetable publishing or score/activity records exist. A subject is protected from deletion only when it has published timetable usage, CA activity/report records, or syllabus records.
       </div>
 
       <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
@@ -131,8 +131,8 @@ const SubjectListPage = async ({
         <div className="divide-y divide-gray-100">
           {subjects.map((subject, index) => {
             const liveLessonCount = liveLessonCountBySubjectId.get(subject.id) ?? 0;
+            const caSetupCount = subject._count.caBuckets;
             const academicRecordCount =
-              subject._count.caBuckets +
               subject._count.caActivities +
               subject._count.continuousAssessments +
               subject._count.syllabi;
@@ -178,8 +178,8 @@ const SubjectListPage = async ({
                         <p className="mt-1 font-bold text-gray-800">{draftLessonCount}</p>
                       </div>
                       <div>
-                        <p className="text-xs font-black uppercase tracking-wide text-gray-400">Academic records</p>
-                        <p className="mt-1 font-bold text-gray-800">{academicRecordCount}</p>
+                        <p className="text-xs font-black uppercase tracking-wide text-gray-400">CA setup</p>
+                        <p className="mt-1 font-bold text-gray-800">{caSetupCount}</p>
                       </div>
                     </div>
 
@@ -226,3 +226,4 @@ const SubjectListPage = async ({
 };
 
 export default SubjectListPage;
+
