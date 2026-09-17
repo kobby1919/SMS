@@ -32,13 +32,14 @@ export type RoleIdentityReadiness = {
     teachers: number;
     parents: number;
     students: number;
+    bursars: number;
   };
   issues: IdentityAuditIssue[];
   healthy: boolean;
 };
 
 type IdentityRecord = {
-  role: Exclude<IdentityRole, "platform_admin" | "bursar">;
+  role: Exclude<IdentityRole, "platform_admin">;
   id: string;
   username: string;
   email: string | null;
@@ -75,18 +76,18 @@ export const defaultSchoolTestIdentityPlan: TestIdentityPlanItem[] = [
   {
     role: "parent",
     title: "Parent",
-    accountRule: "Parent should be linked to wards through a parent invite flow.",
-    inviteFlow: "Parent invite/linking flow is the next production target.",
+    accountRule: "Parent must accept a parent invite with the invited email.",
+    inviteFlow: "School admin links the parent to approved wards and sends /onboarding/parent/accept.",
     recommendedEmail: `parent-one@${DEFAULT_TEST_DOMAIN}`,
-    status: "planned",
+    status: "implemented",
   },
   {
     role: "bursar",
     title: "Bursar",
-    accountRule: "Finance staff should be invited as staff, not manually shared.",
-    inviteFlow: "Staff/bursar invite flow is planned after parent/teacher hardening.",
+    accountRule: "Bursar must accept a finance invite with the invited email.",
+    inviteFlow: "School admin sends /onboarding/bursar/accept and Edujay links the account to finance access.",
     recommendedEmail: `bursar@${DEFAULT_TEST_DOMAIN}`,
-    status: "planned",
+    status: "implemented",
   },
 ];
 
@@ -154,7 +155,7 @@ function pushSeededIdWarnings(
 export async function getRoleIdentityReadiness(
   schoolId = "default-school",
 ): Promise<RoleIdentityReadiness> {
-  const [admins, teachers, parents, students] = await Promise.all([
+  const [admins, teachers, parents, students, bursars] = await Promise.all([
     prisma.admin.findMany({
       where: { schoolId },
       select: { id: true, username: true },
@@ -171,6 +172,11 @@ export async function getRoleIdentityReadiness(
       orderBy: [{ name: "asc" }, { surname: "asc" }],
     }),
     prisma.student.findMany({
+      where: { schoolId },
+      select: { id: true, username: true, email: true, name: true, surname: true },
+      orderBy: [{ name: "asc" }, { surname: "asc" }],
+    }),
+    prisma.bursar.findMany({
       where: { schoolId },
       select: { id: true, username: true, email: true, name: true, surname: true },
       orderBy: [{ name: "asc" }, { surname: "asc" }],
@@ -206,6 +212,13 @@ export async function getRoleIdentityReadiness(
       email: normalizeEmail(student.email) ?? normalizeEmail(student.username),
       label: `${student.name} ${student.surname}`.trim() || student.username,
     })),
+    ...bursars.map((bursar) => ({
+      role: "bursar" as const,
+      id: bursar.id,
+      username: bursar.username,
+      email: normalizeEmail(bursar.email) ?? normalizeEmail(bursar.username),
+      label: `${bursar.name} ${bursar.surname}`.trim() || bursar.username,
+    })),
   ];
 
   const issues: IdentityAuditIssue[] = [];
@@ -222,6 +235,7 @@ export async function getRoleIdentityReadiness(
       teachers: teachers.length,
       parents: parents.length,
       students: students.length,
+      bursars: bursars.length,
     },
     issues,
     healthy: !issues.some((issue) => issue.severity === "critical"),

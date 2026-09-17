@@ -551,11 +551,21 @@ export async function acceptBursarInviteForUser(input: {
   const user = await client.users.getUser(input.userId);
   const signedInEmail = clerkPrimaryEmail(user);
   const existingRole = normalizeAppRole(user.publicMetadata?.role);
+  const metadataSchoolId = typeof user.publicMetadata?.schoolId === "string"
+    ? user.publicMetadata.schoolId
+    : null;
   const inviteEmail = invite.email.toLowerCase();
 
   if (existingRole && existingRole !== "bursar") {
     throw new BursarInviteServiceError(
       "This signed-in account already belongs to another Edujay role. Sign out and accept the invite with the bursar's own account.",
+      409,
+    );
+  }
+
+  if (existingRole === "bursar" && metadataSchoolId && metadataSchoolId !== invite.schoolId) {
+    throw new BursarInviteServiceError(
+      "This bursar account already belongs to another school on Edujay. Sign out and accept the invite with the correct account.",
       409,
     );
   }
@@ -574,7 +584,6 @@ export async function acceptBursarInviteForUser(input: {
     }),
     prisma.bursar.findFirst({
       where: {
-        schoolId: invite.schoolId,
         OR: [{ email: inviteEmail }, { username: inviteEmail }],
       },
       select: { id: true, schoolId: true, email: true },
@@ -590,7 +599,9 @@ export async function acceptBursarInviteForUser(input: {
 
   if (bursarForEmail && bursarForEmail.id !== input.userId) {
     throw new BursarInviteServiceError(
-      "This bursar email is already connected to another account in this school.",
+      bursarForEmail.schoolId === invite.schoolId
+        ? "This bursar email is already connected to another account in this school."
+        : "This bursar email is already connected to another school on Edujay.",
       409,
     );
   }
