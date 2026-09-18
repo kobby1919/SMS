@@ -15,7 +15,7 @@ type Props = {
 // ── Per-role config ────────────────────────────────────────────────────────────
 const ROLE_CONFIG = {
   admin: {
-    greeting:  "Welcome back",
+    greeting:  "Good day",
     roleLabel: "Administrator",
     accent:    "bg-edujay-primary",
     ring:      "ring-edujay-ring",
@@ -23,7 +23,7 @@ const ROLE_CONFIG = {
     tagBg:     "bg-edujay-soft text-edujay-primary",
   },
   teacher: {
-    greeting:  "Welcome back",
+    greeting:  "Good day",
     roleLabel: "Teacher",
     accent:    "bg-edujay-primary",
     ring:      "ring-edujay-ring",
@@ -31,7 +31,7 @@ const ROLE_CONFIG = {
     tagBg:     "bg-edujay-soft text-edujay-primary",
   },
   student: {
-    greeting:  "Welcome",
+    greeting:  "Good day",
     roleLabel: "Student",
     accent:    "bg-edujay-primary",
     ring:      "ring-edujay-ring",
@@ -39,7 +39,7 @@ const ROLE_CONFIG = {
     tagBg:     "bg-edujay-soft text-edujay-primary",
   },
   parent: {
-    greeting:  "Welcome",
+    greeting:  "Good day",
     roleLabel: "Parent",
     accent:    "bg-edujay-primary",
     ring:      "ring-edujay-ring",
@@ -47,7 +47,7 @@ const ROLE_CONFIG = {
     tagBg:     "bg-edujay-soft text-edujay-primary",
   },
   bursar: {
-    greeting:  "Welcome back",
+    greeting:  "Good day",
     roleLabel: "Bursar",
     accent:    "bg-edujay-primary",
     ring:      "ring-edujay-ring",
@@ -121,3 +121,4 @@ const WelcomeBanner = ({ role, name, subtitle, tag }: Props) => {
 };
 
 export default WelcomeBanner;
+

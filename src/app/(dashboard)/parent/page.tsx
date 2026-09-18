@@ -352,7 +352,7 @@ export default async function Page() {
     <div className="flex flex-col gap-5 p-4">
       <section className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
         <p className="text-xs font-black uppercase tracking-widest text-gray-400">Parent Portal</p>
-        <h1 className="mt-2 text-2xl font-black text-gray-900">Hello, {parentName}</h1>
+        <h1 className="mt-2 text-2xl font-black text-gray-900">Good day, {parentName}</h1>
         <p className="mt-1 text-sm font-semibold text-gray-500">
           {childCount} child{childCount !== 1 ? "ren" : ""} linked at {branding.displayName}. Start with today&apos;s update, then open a ward only when you need more detail.
         </p>
@@ -393,4 +393,5 @@ export default async function Page() {
     </div>
   );
 }
+
 
