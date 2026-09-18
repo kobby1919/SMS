@@ -477,7 +477,7 @@ const TeacherPage = async () => {
                   </div>
                   <div className="mt-3">
                     <Link
-                      href={`/teacher/classes/${cls.id}`}
+                      href={`/list/classes/${cls.id}/overview`}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-edujay-ink px-3 py-2.5 text-xs font-black text-white transition hover:bg-edujay-primaryDark"
                     >
                       <GraduationCap size={14} />

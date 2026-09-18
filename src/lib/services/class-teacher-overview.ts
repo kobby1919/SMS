@@ -66,6 +66,7 @@ export async function getClassTeacherOverview({
       select: {
         id: true,
         name: true,
+        supervisorId: true,
         capacity: true,
         section: true,
         grade: { select: { level: true } },
@@ -334,6 +335,7 @@ export async function getClassTeacherOverview({
       capacity: klass.capacity,
       section: klass.section,
       gradeLevel: klass.grade.level,
+      supervisorId: klass.supervisorId,
       supervisorName: klass.supervisor ? `${klass.supervisor.name} ${klass.supervisor.surname}` : "Not assigned",
     },
     activePeriod,
