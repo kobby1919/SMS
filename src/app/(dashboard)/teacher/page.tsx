@@ -36,6 +36,12 @@ function formatTime(value: Date) {
   }).format(value);
 }
 
+function formatTeacherGreetingName(teacher: { name: string; sex: "MALE" | "FEMALE" | null } | null) {
+  const name = teacher?.name?.trim() || "Teacher";
+  if (teacher?.sex === "MALE") return `Mr. ${name}`;
+  if (teacher?.sex === "FEMALE") return `Ms. ${name}`;
+  return name;
+}
 function formatTerm(term: string) {
   return term.replace("TERM_", "Term ");
 }
@@ -389,6 +395,7 @@ const TeacherPage = async () => {
   ];
 
   const teacherFirstName = teacher?.name ?? "Teacher";
+  const teacherGreetingName = formatTeacherGreetingName(teacher);
   const teacherFullName  = teacher ? `${teacher.name} ${teacher.surname}` : teacherFirstName;
   const lessonsByDay = schoolDays.map((day) => ({
     day,
@@ -407,7 +414,7 @@ const TeacherPage = async () => {
 
         <WelcomeBanner
           role="teacher"
-          name={teacherFirstName}
+          name={teacherGreetingName}
           subtitle={`${todayLabel} · ${taskCount} item${taskCount === 1 ? "" : "s"} needing attention today`}
           tag={`${formatTerm(activePeriod.currentTerm)} · ${activePeriod.academicYear}`}
         />
