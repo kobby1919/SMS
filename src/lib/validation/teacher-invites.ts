@@ -36,6 +36,9 @@ export const teacherInviteTypeSchema = z.enum([
 export const teacherInviteCreateSchema = z.object({
   name: personNameSchema,
   surname: personNameSchema,
+  sex: z.enum(["MALE", "FEMALE"], {
+    error: "Select the teacher's sex so Edujay can use the correct title.",
+  }),
   email: z
     .string()
     .trim()

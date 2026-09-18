@@ -1071,6 +1071,7 @@ exports.Prisma.TeacherInviteScalarFieldEnum = {
   schoolId: 'schoolId',
   name: 'name',
   surname: 'surname',
+  sex: 'sex',
   email: 'email',
   phone: 'phone',
   teacherType: 'teacherType',

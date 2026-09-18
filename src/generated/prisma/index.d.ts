@@ -90415,6 +90415,7 @@ export namespace Prisma {
     schoolId: string | null
     name: string | null
     surname: string | null
+    sex: $Enums.UserSex | null
     email: string | null
     phone: string | null
     teacherType: $Enums.TeacherInviteType | null
@@ -90439,6 +90440,7 @@ export namespace Prisma {
     schoolId: string | null
     name: string | null
     surname: string | null
+    sex: $Enums.UserSex | null
     email: string | null
     phone: string | null
     teacherType: $Enums.TeacherInviteType | null
@@ -90463,6 +90465,7 @@ export namespace Prisma {
     schoolId: number
     name: number
     surname: number
+    sex: number
     email: number
     phone: number
     teacherType: number
@@ -90489,6 +90492,7 @@ export namespace Prisma {
     schoolId?: true
     name?: true
     surname?: true
+    sex?: true
     email?: true
     phone?: true
     teacherType?: true
@@ -90513,6 +90517,7 @@ export namespace Prisma {
     schoolId?: true
     name?: true
     surname?: true
+    sex?: true
     email?: true
     phone?: true
     teacherType?: true
@@ -90537,6 +90542,7 @@ export namespace Prisma {
     schoolId?: true
     name?: true
     surname?: true
+    sex?: true
     email?: true
     phone?: true
     teacherType?: true
@@ -90634,6 +90640,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
+    sex: $Enums.UserSex
     email: string
     phone: string | null
     teacherType: $Enums.TeacherInviteType
@@ -90675,6 +90682,7 @@ export namespace Prisma {
     schoolId?: boolean
     name?: boolean
     surname?: boolean
+    sex?: boolean
     email?: boolean
     phone?: boolean
     teacherType?: boolean
@@ -90703,6 +90711,7 @@ export namespace Prisma {
     schoolId?: boolean
     name?: boolean
     surname?: boolean
+    sex?: boolean
     email?: boolean
     phone?: boolean
     teacherType?: boolean
@@ -90729,6 +90738,7 @@ export namespace Prisma {
     schoolId?: boolean
     name?: boolean
     surname?: boolean
+    sex?: boolean
     email?: boolean
     phone?: boolean
     teacherType?: boolean
@@ -90755,6 +90765,7 @@ export namespace Prisma {
     schoolId?: boolean
     name?: boolean
     surname?: boolean
+    sex?: boolean
     email?: boolean
     phone?: boolean
     teacherType?: boolean
@@ -90774,7 +90785,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type TeacherInviteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "schoolId" | "name" | "surname" | "email" | "phone" | "teacherType" | "staffId" | "employmentType" | "tokenHash" | "status" | "expiresAt" | "acceptedAt" | "acceptedBy" | "acceptedTeacherId" | "revokedAt" | "revokedBy" | "lastSentAt" | "createdBy" | "createdAt" | "updatedAt", ExtArgs["result"]["teacherInvite"]>
+  export type TeacherInviteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "schoolId" | "name" | "surname" | "sex" | "email" | "phone" | "teacherType" | "staffId" | "employmentType" | "tokenHash" | "status" | "expiresAt" | "acceptedAt" | "acceptedBy" | "acceptedTeacherId" | "revokedAt" | "revokedBy" | "lastSentAt" | "createdBy" | "createdAt" | "updatedAt", ExtArgs["result"]["teacherInvite"]>
   export type TeacherInviteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
     acceptedTeacher?: boolean | TeacherInvite$acceptedTeacherArgs<ExtArgs>
@@ -90802,6 +90813,7 @@ export namespace Prisma {
       schoolId: string
       name: string
       surname: string
+      sex: $Enums.UserSex
       email: string
       phone: string | null
       teacherType: $Enums.TeacherInviteType
@@ -91249,6 +91261,7 @@ export namespace Prisma {
     readonly schoolId: FieldRef<"TeacherInvite", 'String'>
     readonly name: FieldRef<"TeacherInvite", 'String'>
     readonly surname: FieldRef<"TeacherInvite", 'String'>
+    readonly sex: FieldRef<"TeacherInvite", 'UserSex'>
     readonly email: FieldRef<"TeacherInvite", 'String'>
     readonly phone: FieldRef<"TeacherInvite", 'String'>
     readonly teacherType: FieldRef<"TeacherInvite", 'TeacherInviteType'>
@@ -102262,6 +102275,7 @@ export namespace Prisma {
     schoolId: 'schoolId',
     name: 'name',
     surname: 'surname',
+    sex: 'sex',
     email: 'email',
     phone: 'phone',
     teacherType: 'teacherType',
@@ -109959,6 +109973,7 @@ export namespace Prisma {
     schoolId?: StringFilter<"TeacherInvite"> | string
     name?: StringFilter<"TeacherInvite"> | string
     surname?: StringFilter<"TeacherInvite"> | string
+    sex?: EnumUserSexFilter<"TeacherInvite"> | $Enums.UserSex
     email?: StringFilter<"TeacherInvite"> | string
     phone?: StringNullableFilter<"TeacherInvite"> | string | null
     teacherType?: EnumTeacherInviteTypeFilter<"TeacherInvite"> | $Enums.TeacherInviteType
@@ -109986,6 +110001,7 @@ export namespace Prisma {
     schoolId?: SortOrder
     name?: SortOrder
     surname?: SortOrder
+    sex?: SortOrder
     email?: SortOrder
     phone?: SortOrderInput | SortOrder
     teacherType?: SortOrder
@@ -110017,6 +110033,7 @@ export namespace Prisma {
     schoolId?: StringFilter<"TeacherInvite"> | string
     name?: StringFilter<"TeacherInvite"> | string
     surname?: StringFilter<"TeacherInvite"> | string
+    sex?: EnumUserSexFilter<"TeacherInvite"> | $Enums.UserSex
     email?: StringFilter<"TeacherInvite"> | string
     phone?: StringNullableFilter<"TeacherInvite"> | string | null
     teacherType?: EnumTeacherInviteTypeFilter<"TeacherInvite"> | $Enums.TeacherInviteType
@@ -110043,6 +110060,7 @@ export namespace Prisma {
     schoolId?: SortOrder
     name?: SortOrder
     surname?: SortOrder
+    sex?: SortOrder
     email?: SortOrder
     phone?: SortOrderInput | SortOrder
     teacherType?: SortOrder
@@ -110073,6 +110091,7 @@ export namespace Prisma {
     schoolId?: StringWithAggregatesFilter<"TeacherInvite"> | string
     name?: StringWithAggregatesFilter<"TeacherInvite"> | string
     surname?: StringWithAggregatesFilter<"TeacherInvite"> | string
+    sex?: EnumUserSexWithAggregatesFilter<"TeacherInvite"> | $Enums.UserSex
     email?: StringWithAggregatesFilter<"TeacherInvite"> | string
     phone?: StringNullableWithAggregatesFilter<"TeacherInvite"> | string | null
     teacherType?: EnumTeacherInviteTypeWithAggregatesFilter<"TeacherInvite"> | $Enums.TeacherInviteType
@@ -117812,6 +117831,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
+    sex?: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -117838,6 +117858,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
+    sex?: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -117862,6 +117883,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     surname?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     teacherType?: EnumTeacherInviteTypeFieldUpdateOperationsInput | $Enums.TeacherInviteType
@@ -117888,6 +117910,7 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     surname?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     teacherType?: EnumTeacherInviteTypeFieldUpdateOperationsInput | $Enums.TeacherInviteType
@@ -117913,6 +117936,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
+    sex?: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -117936,6 +117960,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     surname?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     teacherType?: EnumTeacherInviteTypeFieldUpdateOperationsInput | $Enums.TeacherInviteType
@@ -117959,6 +117984,7 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     surname?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     teacherType?: EnumTeacherInviteTypeFieldUpdateOperationsInput | $Enums.TeacherInviteType
@@ -124474,6 +124500,7 @@ export namespace Prisma {
     schoolId?: SortOrder
     name?: SortOrder
     surname?: SortOrder
+    sex?: SortOrder
     email?: SortOrder
     phone?: SortOrder
     teacherType?: SortOrder
@@ -124498,6 +124525,7 @@ export namespace Prisma {
     schoolId?: SortOrder
     name?: SortOrder
     surname?: SortOrder
+    sex?: SortOrder
     email?: SortOrder
     phone?: SortOrder
     teacherType?: SortOrder
@@ -124522,6 +124550,7 @@ export namespace Prisma {
     schoolId?: SortOrder
     name?: SortOrder
     surname?: SortOrder
+    sex?: SortOrder
     email?: SortOrder
     phone?: SortOrder
     teacherType?: SortOrder
@@ -137896,6 +137925,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
+    sex?: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -137920,6 +137950,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
+    sex?: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -140316,6 +140347,7 @@ export namespace Prisma {
     schoolId?: StringFilter<"TeacherInvite"> | string
     name?: StringFilter<"TeacherInvite"> | string
     surname?: StringFilter<"TeacherInvite"> | string
+    sex?: EnumUserSexFilter<"TeacherInvite"> | $Enums.UserSex
     email?: StringFilter<"TeacherInvite"> | string
     phone?: StringNullableFilter<"TeacherInvite"> | string | null
     teacherType?: EnumTeacherInviteTypeFilter<"TeacherInvite"> | $Enums.TeacherInviteType
@@ -144271,6 +144303,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
+    sex?: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -144296,6 +144329,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
+    sex?: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -180376,6 +180410,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
+    sex?: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -180401,6 +180436,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
+    sex?: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -180621,6 +180657,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     surname?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     teacherType?: EnumTeacherInviteTypeFieldUpdateOperationsInput | $Enums.TeacherInviteType
@@ -180646,6 +180683,7 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     surname?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     teacherType?: EnumTeacherInviteTypeFieldUpdateOperationsInput | $Enums.TeacherInviteType
@@ -181610,6 +181648,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
+    sex?: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -183796,6 +183835,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     surname?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     teacherType?: EnumTeacherInviteTypeFieldUpdateOperationsInput | $Enums.TeacherInviteType
@@ -183820,6 +183860,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     surname?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     teacherType?: EnumTeacherInviteTypeFieldUpdateOperationsInput | $Enums.TeacherInviteType
@@ -183844,6 +183885,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     surname?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     teacherType?: EnumTeacherInviteTypeFieldUpdateOperationsInput | $Enums.TeacherInviteType
@@ -185935,6 +185977,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
+    sex?: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -186770,6 +186813,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     surname?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     teacherType?: EnumTeacherInviteTypeFieldUpdateOperationsInput | $Enums.TeacherInviteType
@@ -186795,6 +186839,7 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     surname?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     teacherType?: EnumTeacherInviteTypeFieldUpdateOperationsInput | $Enums.TeacherInviteType
@@ -186819,6 +186864,7 @@ export namespace Prisma {
     schoolId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     surname?: StringFieldUpdateOperationsInput | string
+    sex?: EnumUserSexFieldUpdateOperationsInput | $Enums.UserSex
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     teacherType?: EnumTeacherInviteTypeFieldUpdateOperationsInput | $Enums.TeacherInviteType

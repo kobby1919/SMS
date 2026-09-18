@@ -2246,6 +2246,7 @@ model TeacherInvite {
   schoolId          String
   name              String
   surname           String
+  sex               UserSex             @default(MALE)
   email             String
   phone             String?
   teacherType       TeacherInviteType

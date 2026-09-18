@@ -19,6 +19,7 @@ export type CreatedTeacherInvite = {
   email: string;
   name: string;
   surname: string;
+  sex: TeacherInviteCreateInput["sex"];
   teacherType: TeacherInviteCreateInput["teacherType"];
   inviteToken: string;
   invitePath: string;
@@ -114,6 +115,7 @@ export async function getTeacherInvitePreview(
       schoolId: true,
       name: true,
       surname: true,
+      sex: true,
       email: true,
       teacherType: true,
       status: true,
@@ -142,6 +144,7 @@ export async function getTeacherInvitePreview(
     schoolSlug: invite.school.slug,
     teacherName: teacherDisplayName(invite),
     email: invite.email,
+    sex: invite.sex,
     teacherType: invite.teacherType,
     expiresAt: invite.expiresAt,
   };
@@ -244,6 +247,7 @@ export async function createTeacherInvite(
         schoolId: context.schoolId,
         name: input.name,
         surname: input.surname,
+        sex: input.sex,
         email,
         phone: input.phone ?? null,
         teacherType: input.teacherType,
@@ -258,6 +262,7 @@ export async function createTeacherInvite(
         schoolId: true,
         name: true,
         surname: true,
+        sex: true,
         email: true,
         teacherType: true,
         expiresAt: true,
@@ -273,6 +278,7 @@ export async function createTeacherInvite(
         email: createdInvite.email,
         name: createdInvite.name,
         surname: createdInvite.surname,
+        sex: createdInvite.sex,
         teacherType: createdInvite.teacherType,
         staffId: input.staffId ?? null,
         employmentType: input.employmentType ?? null,
@@ -292,6 +298,7 @@ export async function createTeacherInvite(
     email: invite.email,
     name: invite.name,
     surname: invite.surname,
+    sex: invite.sex,
     teacherType: invite.teacherType,
     inviteToken: tokenBundle.token,
     invitePath: tokenBundle.invitePath,
@@ -581,6 +588,7 @@ export async function acceptTeacherInviteForUser(input: {
     const teacherProfile = {
       name: invite.name,
       surname: invite.surname,
+      sex: invite.sex,
       email: inviteEmail,
       phone: invite.phone ?? teacherForUser?.phone ?? null,
       address: teacherForUser?.address ?? null,
@@ -596,6 +604,7 @@ export async function acceptTeacherInviteForUser(input: {
             username: inviteEmail,
             name: invite.name,
             surname: invite.surname,
+            sex: invite.sex,
             email: inviteEmail,
             phone: invite.phone ?? teacherForUser.phone ?? null,
             status,
@@ -609,12 +618,12 @@ export async function acceptTeacherInviteForUser(input: {
             username: inviteEmail,
             name: invite.name,
             surname: invite.surname,
+            sex: invite.sex,
             email: inviteEmail,
             phone: invite.phone ?? null,
             status,
             address: null,
             bloodType: null,
-            sex: null,
           },
           select: { id: true },
         });
@@ -649,6 +658,7 @@ export async function acceptTeacherInviteForUser(input: {
       metadata: {
         email: inviteEmail,
         teacherId: teacher.id,
+        sex: invite.sex,
       },
     });
 

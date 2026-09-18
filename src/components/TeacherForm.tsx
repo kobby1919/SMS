@@ -7,10 +7,8 @@ import { useForm, type Resolver, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import InputField from "./InputField";
-import { Upload, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 
-const TEACHER_PHOTO_MAX_SIZE = 2 * 1024 * 1024;
-const TEACHER_PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
 const createSchema = z.object({
@@ -24,7 +22,6 @@ const createSchema = z.object({
   bloodType: z.string().min(1, "Required"),
   birthday:  z.string().min(1, "Required"),
   sex:       z.enum(["MALE", "FEMALE"]),
-  img:       z.custom<FileList>().optional(),
 });
 
 const updateSchema = z.object({
@@ -35,7 +32,6 @@ const updateSchema = z.object({
   bloodType: z.string().min(1, "Required"),
   birthday:  z.string().optional(),
   sex:       z.enum(["MALE", "FEMALE"]),
-  img:       z.custom<FileList>().optional(),
 });
 
 type CreateInputs = z.infer<typeof createSchema>;
@@ -98,17 +94,6 @@ const TeacherForm = ({
 
   const onSubmit = async (formData: CreateInputs): Promise<void> => {
     setApiError(null);
-    const photo = formData.img?.[0];
-    if (photo) {
-      if (!TEACHER_PHOTO_TYPES.includes(photo.type)) {
-        setApiError("Teacher photo must be a JPG, PNG, or WebP image.");
-        return;
-      }
-      if (photo.size > TEACHER_PHOTO_MAX_SIZE) {
-        setApiError("Teacher photo must be 2MB or smaller.");
-        return;
-      }
-    }
     startTransition(async () => {
       try {
         const url    = type === "create" ? "/api/teachers" : `/api/teachers/${data?.id}`;
@@ -116,12 +101,10 @@ const TeacherForm = ({
 
         const body = new FormData();
         Object.entries(formData).forEach(([k, v]) => {
-          if (v !== undefined && v !== null && k !== "img") {
+          if (v !== undefined && v !== null) {
             body.append(k, String(v));
           }
         });
-        // Attach file if provided
-        if (formData.img?.[0]) body.append("img", formData.img[0]);
         body.append("subjectIds", JSON.stringify(selectedSubs));
 
         const res  = await fetch(url, { method, body });
@@ -198,23 +181,6 @@ const TeacherForm = ({
             </select>
             {errors.sex && <p className="text-[10px] text-red-500 font-medium">{errors.sex.message}</p>}
           </div>
-
-          {/* Photo upload */}
-          <div className="flex flex-col gap-2 w-full md:w-[31%] justify-center">
-            <label
-              htmlFor="teacher-img"
-              className="text-xs text-gray-500 font-semibold flex items-center gap-2 cursor-pointer border-2 border-dashed border-gray-200 p-2 rounded-xl hover:bg-gray-50 transition-colors h-[42px]"
-            >
-              <Upload size={16} className="text-gray-400" />
-              <span className="text-gray-400 truncate">
-                {type === "create" ? "Upload photo" : "Change photo"}
-              </span>
-            </label>
-            <input type="file" id="teacher-img" accept="image/jpeg,image/png,image/webp" {...register("img")} className="hidden" />
-            <p className="text-[11px] font-semibold leading-4 text-gray-400">
-              JPG, PNG, or WebP only. Maximum 2MB. Use a clear headshot with the face centered.
-            </p>
-          </div>
         </div>
       </div>
 
@@ -268,7 +234,4 @@ const TeacherForm = ({
 };
 
 export default TeacherForm;
-
-
-
 

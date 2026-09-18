@@ -7,7 +7,10 @@ import {
   createTeacherInviteAction,
   type TeacherInviteCreateActionResult,
 } from "@/src/lib/actions/teacherInviteActions";
-import type { TeacherInviteTypeInput } from "@/src/lib/validation/teacher-invites";
+import type {
+  TeacherInviteCreateInput,
+  TeacherInviteTypeInput,
+} from "@/src/lib/validation/teacher-invites";
 
 const teacherTypes: Array<{ value: TeacherInviteTypeInput; label: string }> = [
   { value: "SUBJECT_TEACHER", label: "Subject teacher" },
@@ -18,6 +21,7 @@ const teacherTypes: Array<{ value: TeacherInviteTypeInput; label: string }> = [
 const initialForm = {
   name: "",
   surname: "",
+  sex: "" as "" | TeacherInviteCreateInput["sex"],
   email: "",
   phone: "",
   teacherType: "SUBJECT_TEACHER" as TeacherInviteTypeInput,
@@ -42,7 +46,12 @@ export default function TeacherInviteModal() {
   function updateField(field: keyof typeof form, value: string) {
     setForm((current) => ({
       ...current,
-      [field]: field === "teacherType" ? (value as TeacherInviteTypeInput) : value,
+      [field]:
+        field === "teacherType"
+          ? (value as TeacherInviteTypeInput)
+          : field === "sex"
+            ? (value as TeacherInviteCreateInput["sex"])
+            : value,
     }));
   }
 
@@ -156,6 +165,24 @@ export default function TeacherInviteModal() {
                   onChange={(value) => updateField("surname", value)}
                   placeholder="Mensah"
                 />
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-black uppercase tracking-wide text-gray-500">
+                    Sex
+                  </label>
+                  <select
+                    required
+                    value={form.sex}
+                    onChange={(event) => updateField("sex", event.target.value)}
+                    className="h-11 rounded-xl border border-gray-200 bg-white px-3 text-sm font-semibold text-gray-700 outline-none transition focus:border-edujay-primary focus:ring-2 focus:ring-edujay-ring"
+                  >
+                    <option value="">Select sex</option>
+                    <option value="MALE">Male - Mr.</option>
+                    <option value="FEMALE">Female - Madam/Ms.</option>
+                  </select>
+                  <p className="text-[11px] font-semibold leading-4 text-gray-400">
+                    Edujay uses this for respectful titles across teacher pages.
+                  </p>
+                </div>
                 <Input
                   label="Email"
                   type="email"
