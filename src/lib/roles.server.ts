@@ -42,6 +42,33 @@ async function getBursarIdentityFromDatabase(userId: string): Promise<{
 
   return { role: "bursar", schoolId: bursar.schoolId };
 }
+export async function getTeacherAccessBlock(userId: string | null | undefined): Promise<{
+  status: string;
+  schoolId: string;
+  message: string;
+} | null> {
+  if (!userId) return null;
+
+  const teacher = await prisma.teacher.findUnique({
+    where: { id: userId },
+    select: { schoolId: true, status: true },
+  });
+
+  if (!teacher || teacher.status === "ACTIVE") return null;
+
+  const statusMessage: Record<string, string> = {
+    INVITED: "This teacher account has not completed onboarding yet.",
+    INCOMPLETE_SETUP: "This teacher account is not ready to operate yet. Ask the school admin to complete setup.",
+    SUSPENDED: "This teacher account has been suspended by the school admin.",
+    LEFT_SCHOOL: "This teacher account has been marked as left school and can no longer operate.",
+  };
+
+  return {
+    status: teacher.status,
+    schoolId: teacher.schoolId,
+    message: statusMessage[teacher.status] ?? "This teacher account is not active.",
+  };
+}
 async function getTeacherIdentityFromDatabase(userId: string): Promise<{
   role: AppRole;
   schoolId: string;
@@ -223,5 +250,4 @@ export async function resolveSessionSchoolId(
 
   return DEFAULT_SCHOOL_ID;
 }
-
 

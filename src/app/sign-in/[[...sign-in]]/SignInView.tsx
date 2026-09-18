@@ -5,7 +5,11 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { BadgeCheck, Building2, MailCheck, ShieldCheck } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { AUTH_CALLBACK_PATH, MISSING_ROLE_QUERY } from "@/src/lib/auth/constants";
+import {
+  AUTH_CALLBACK_PATH,
+  MISSING_ROLE_QUERY,
+  TEACHER_ACCESS_BLOCKED_QUERY,
+} from "@/src/lib/auth/constants";
 import InviteSignOutButton from "@/src/components/InviteSignOutButton";
 
 const ClerkSignIn = dynamic(
@@ -67,6 +71,8 @@ const inviteCopy = {
 export default function SignInView({ inviteContext }: SignInViewProps) {
   const searchParams = useSearchParams();
   const missingRole = searchParams.get("error") === MISSING_ROLE_QUERY;
+  const teacherAccessBlocked = searchParams.get("error") === TEACHER_ACCESS_BLOCKED_QUERY;
+  const blockedTeacherStatus = searchParams.get("status");
   const invalidInvite = searchParams.get("error") === "invalid_invite";
   const activeInvite = inviteContext ? inviteCopy[inviteContext.role] : null;
   const inviteEmail = inviteContext?.email;
@@ -176,6 +182,20 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
                 </div>
               )}
 
+
+              {teacherAccessBlocked && (
+                <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+                  <p className="font-semibold">Teacher access is currently blocked</p>
+                  <p className="mt-1 text-rose-800/90">
+                    This teacher account is not active in Edujay{blockedTeacherStatus ? ` (${blockedTeacherStatus.replaceAll("_", " ").toLowerCase()})` : ""}.
+                    Please contact the school admin before trying to use the teacher dashboard.
+                  </p>
+                  <InviteSignOutButton
+                    redirectUrl="/sign-in"
+                    label="Sign out"
+                  />
+                </div>
+              )}
               {invalidInvite && (
                 <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
                   <p className="font-semibold">Invitation could not be accepted</p>
@@ -286,3 +306,5 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
     </main>
   );
 }
+
+

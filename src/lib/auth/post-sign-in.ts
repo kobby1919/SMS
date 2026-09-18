@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { dashboardPathForRole, type AppRole } from "@/src/lib/roles";
-import { resolveSessionIdentity } from "@/src/lib/roles.server";
+import { getTeacherAccessBlock, resolveSessionIdentity } from "@/src/lib/roles.server";
 import {
   acceptSchoolInviteForUser,
 } from "@/src/lib/services/onboarding";
@@ -9,6 +9,7 @@ import {
   AUTH_CALLBACK_PATH,
   MISSING_ROLE_QUERY,
   SIGN_IN_PATH,
+  TEACHER_ACCESS_BLOCKED_QUERY,
 } from "@/src/lib/auth/constants";
 import prisma from "@/src/lib/prisma";
 
@@ -97,6 +98,13 @@ export async function completePostSignIn(
     redirect(await schoolAwareDashboardPath(role, schoolId));
   }
 
+  const teacherBlock = await getTeacherAccessBlock(userId);
+  if (teacherBlock) {
+    redirect(
+      `${SIGN_IN_PATH}?error=${TEACHER_ACCESS_BLOCKED_QUERY}&status=${encodeURIComponent(teacherBlock.status)}`,
+    );
+  }
+
   redirect(`${SIGN_IN_PATH}?error=${MISSING_ROLE_QUERY}`);
 }
 
@@ -111,3 +119,5 @@ export function isAuthCallbackPath(pathname: string): boolean {
 export function dashboardPathForResolvedRole(role: AppRole): string {
   return dashboardPathForRole(role);
 }
+
+

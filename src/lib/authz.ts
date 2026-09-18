@@ -1,9 +1,13 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
-import { AUTH_CALLBACK_PATH, SIGN_IN_PATH } from "@/src/lib/auth/constants";
+import {
+  AUTH_CALLBACK_PATH,
+  SIGN_IN_PATH,
+  TEACHER_ACCESS_BLOCKED_QUERY,
+} from "@/src/lib/auth/constants";
 import { dashboardPathForRole, isAppRole, type AppRole } from "@/src/lib/roles";
-import { resolveSessionIdentity } from "@/src/lib/roles.server";
+import { getTeacherAccessBlock, resolveSessionIdentity } from "@/src/lib/roles.server";
 
 import { DEFAULT_SCHOOL_ID } from "@/src/lib/constants/tenant";
 
@@ -71,6 +75,12 @@ export async function requirePageSession(
   const session = await resolvePageSession();
 
   if (!session) {
+    const teacherBlock = await getTeacherAccessBlock(userId);
+    if (teacherBlock) {
+      redirect(
+        `${SIGN_IN_PATH}?error=${TEACHER_ACCESS_BLOCKED_QUERY}&status=${encodeURIComponent(teacherBlock.status)}`,
+      );
+    }
     redirect(AUTH_CALLBACK_PATH);
   }
 
@@ -85,6 +95,11 @@ export async function requireRole(allowedRoles: AppRole[]): Promise<AuthzContext
   const context = await getAuthzContext();
 
   if (!context) {
+    const { userId } = await auth();
+    const teacherBlock = await getTeacherAccessBlock(userId);
+    if (teacherBlock) {
+      throw new AuthorizationError(teacherBlock.message, 403);
+    }
     throw new AuthorizationError("You must be signed in to perform this action.", 401);
   }
 
@@ -122,3 +137,5 @@ export function unauthorizedResponse(error: unknown) {
 }
 
 export { isAppRole };
+
+
