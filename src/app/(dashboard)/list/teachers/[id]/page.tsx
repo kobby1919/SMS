@@ -160,6 +160,7 @@ const SingleTeacherPage = async ({
     hasPendingInvite: invite?.status === "PENDING" && !invite.acceptedAt && !invite.revokedAt,
   });
   const profileCompletion = readiness.profileCompletion;
+  const teacherName = formatTeacherName(teacher);
   const lifecycle = teacherStatusMeta(teacher.status);
   const joinYear = new Date(teacher.createdAt).getFullYear();
   const attendancePct = totalAttendance > 0 ? Math.round((presentAttendance / totalAttendance) * 100) : 0;
@@ -182,15 +183,15 @@ const SingleTeacherPage = async ({
               <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center">
                 <Image
                   src={teacher.img || "/noAvatar.png"}
-                  alt={teacher.name}
+                  alt={teacherName}
                   width={80}
                   height={80}
                   className="h-20 w-20 rounded-2xl bg-white object-cover ring-1 ring-gray-200"
                 />
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h1 className="text-2xl font-black text-gray-900">
-                      {teacher.name} {teacher.surname}
+                    <h1 className="min-w-0 break-words text-2xl font-black text-gray-900">
+                      {teacherName}
                     </h1>
                     <StatusBadge className={lifecycle.className}>{lifecycle.label}</StatusBadge>
                     <StatusBadge className={teacherReadinessToneClass(readiness.tone)}>{readiness.label}</StatusBadge>
@@ -206,12 +207,12 @@ const SingleTeacherPage = async ({
                 </div>
               </div>
               {role === "admin" && (
-                <div className="flex shrink-0 flex-wrap gap-2">
+                <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end">
                   <FormModal table="teacher" type="update" data={teacher} />
-                  <Link href="/list/subjects" className="rounded-xl bg-indigo-50 px-3 py-2 text-xs font-black text-indigo-700 hover:bg-indigo-100">
+                  <Link href="/list/subjects" className="text-center rounded-xl bg-indigo-50 px-3 py-2 text-xs font-black text-indigo-700 hover:bg-indigo-100">
                     Manage subjects
                   </Link>
-                  <Link href="/list/classes" className="rounded-xl bg-violet-50 px-3 py-2 text-xs font-black text-violet-700 hover:bg-violet-100">
+                  <Link href="/list/classes" className="text-center rounded-xl bg-violet-50 px-3 py-2 text-xs font-black text-violet-700 hover:bg-violet-100">
                     Manage classes
                   </Link>
                 </div>
@@ -219,7 +220,7 @@ const SingleTeacherPage = async ({
             </div>
           </div>
 
-          <div className="grid gap-3 p-5 sm:grid-cols-2 xl:grid-cols-5">
+          <div className="grid min-w-0 gap-3 p-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             <MetricCard icon={<ShieldCheck size={17} />} label="Readiness" value={readiness.label} tone={teacherReadinessToneClass(readiness.tone)} />
             <MetricCard icon={<BookOpen size={17} />} label="Published lessons" value={liveLessons.length} tone="bg-amber-50 text-amber-700" />
             <MetricCard icon={<Users size={17} />} label="Teaching classes" value={taughtClasses.length} tone="bg-emerald-50 text-emerald-700" />
@@ -228,11 +229,11 @@ const SingleTeacherPage = async ({
           </div>
         </section>
 
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(340px,0.8fr)]">
+        <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,0.8fr)]">
           <div className="flex min-w-0 flex-col gap-4">
             <SectionCard title="1. Teacher Identity" description="The basic staff record Edujay uses everywhere this teacher appears.">
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                <DataTile label="Full name" value={`${teacher.name} ${teacher.surname}`} />
+              <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <DataTile label="Full name" value={teacherName} />
                 <DataTile label="Email" value={teacher.email ?? "Not provided"} />
                 <DataTile label="Phone" value={teacher.phone ?? "Not provided"} />
                 <DataTile label="Username" value={teacher.username} />
@@ -292,7 +293,7 @@ const SingleTeacherPage = async ({
                       </div>
                       <div className="divide-y divide-gray-100">
                         {group.lessons.map((lesson) => (
-                          <div key={lesson.id} className="grid gap-2 px-3 py-3 text-sm sm:grid-cols-[110px_minmax(0,1fr)_minmax(0,1fr)] sm:items-center">
+                          <div key={lesson.id} className="grid gap-2 px-3 py-3 text-sm sm:grid-cols-[minmax(90px,110px)_minmax(0,1fr)_minmax(0,1fr)] sm:items-center">
                             <p className="font-black text-gray-800">{formatLessonTime(lesson.startTime)} - {formatLessonTime(lesson.endTime)}</p>
                             <p className="font-bold text-gray-700">{lesson.class.name}</p>
                             <p className="font-semibold text-gray-500">{lesson.subject.name}</p>
@@ -389,9 +390,7 @@ const SingleTeacherPage = async ({
                 <ActionLink href="/list/classes" label="Update class teacher responsibility" icon={<UserCheck size={15} />} />
                 <ActionLink href="/admin/timetable" label="Publish timetable duties" icon={<Calendar size={15} />} />
                 <ActionLink href="/admin/accountability" label="Review accountability" icon={<ShieldAlert size={15} />} />
-                <div className="rounded-xl bg-gray-50 px-3 py-2 text-xs font-semibold text-gray-500">
-                  Suspend, reactivate, and mark-left-school controls belong to Section 15 Admin Controls. This page now shows the correct state and history first.
-                </div>
+
               </div>
             </SectionCard>
           </aside>
@@ -486,13 +485,20 @@ function ReadinessLine({ label, value, ok }: { label: string; value: string; ok:
 
 function ActionLink({ href, label, icon }: { href: string; label: string; icon: React.ReactNode }) {
   return (
-    <Link href={href} className="flex items-center justify-between rounded-xl bg-gray-50 px-3 py-3 text-sm font-black text-gray-700 hover:bg-gray-100">
-      <span className="inline-flex items-center gap-2">{icon}{label}</span>
+    <Link href={href} className="flex min-w-0 items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-3 text-sm font-black text-gray-700 hover:bg-gray-100">
+      <span className="inline-flex min-w-0 items-center gap-2"><span className="shrink-0">{icon}</span><span className="break-words">{label}</span></span>
       <ArrowRight size={15} className="text-gray-400" />
     </Link>
   );
 }
 
+
+function formatTeacherName(teacher: { name: string; surname: string; sex: "MALE" | "FEMALE" | null }) {
+  const fullName = `${teacher.name} ${teacher.surname}`.trim();
+  if (teacher.sex === "MALE") return `Mr. ${fullName}`;
+  if (teacher.sex === "FEMALE") return `Ms. ${fullName}`;
+  return fullName;
+}
 function teacherStatusMeta(status: "INVITED" | "ACTIVE" | "INCOMPLETE_SETUP" | "SUSPENDED" | "LEFT_SCHOOL") {
   switch (status) {
     case "ACTIVE":
