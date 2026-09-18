@@ -112,8 +112,8 @@ export default function AuthShell({
 
 function BrandLockup({ subtitle }: { subtitle: string }) {
   return (
-    <div className="inline-flex items-center gap-2">
-      <Image src="/edujay-mark.svg" alt="Edujay" width={46} height={46} className="h-11 w-11" priority />
+    <div className="inline-flex items-center gap-1.5">
+      <Image src="/edujay-logo.png" alt="Edujay" width={112} height={76} className="h-14 w-auto sm:h-16 lg:h-20" priority />
       <div>
         <p className="font-nunito text-2xl font-black tracking-tight text-slate-950">Edujay</p>
         <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
@@ -123,4 +123,5 @@ function BrandLockup({ subtitle }: { subtitle: string }) {
     </div>
   );
 }
+
 
