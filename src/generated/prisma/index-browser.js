@@ -151,6 +151,7 @@ exports.Prisma.BursarScalarFieldEnum = {
   username: 'username',
   name: 'name',
   surname: 'surname',
+  sex: 'sex',
   email: 'email',
   phone: 'phone',
   address: 'address',
@@ -201,6 +202,7 @@ exports.Prisma.ParentScalarFieldEnum = {
   username: 'username',
   name: 'name',
   surname: 'surname',
+  sex: 'sex',
   email: 'email',
   phone: 'phone',
   address: 'address',
@@ -1096,6 +1098,7 @@ exports.Prisma.ParentInviteScalarFieldEnum = {
   schoolId: 'schoolId',
   name: 'name',
   surname: 'surname',
+  sex: 'sex',
   email: 'email',
   phone: 'phone',
   tokenHash: 'tokenHash',
@@ -1135,6 +1138,7 @@ exports.Prisma.BursarInviteScalarFieldEnum = {
   schoolId: 'schoolId',
   name: 'name',
   surname: 'surname',
+  sex: 'sex',
   email: 'email',
   phone: 'phone',
   staffId: 'staffId',
@@ -1233,15 +1237,15 @@ exports.SchoolOnboardingStatus = exports.$Enums.SchoolOnboardingStatus = {
   COMPLETED: 'COMPLETED'
 };
 
+exports.UserSex = exports.$Enums.UserSex = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE'
+};
+
 exports.BursarStatus = exports.$Enums.BursarStatus = {
   ACTIVE: 'ACTIVE',
   SUSPENDED: 'SUSPENDED',
   LEFT_SCHOOL: 'LEFT_SCHOOL'
-};
-
-exports.UserSex = exports.$Enums.UserSex = {
-  MALE: 'MALE',
-  FEMALE: 'FEMALE'
 };
 
 exports.TeacherStatus = exports.$Enums.TeacherStatus = {

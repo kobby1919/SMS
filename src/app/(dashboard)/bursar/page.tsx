@@ -10,6 +10,7 @@ import WelcomeBanner from "@/src/components/WelcomeBanner";
 import EventCalendar from "@/src/components/EventCalendar";
 import EventList from "@/src/components/EventList";
 import Announcements from "@/src/components/Announcements";
+import { formatTitledFirstName } from "@/src/lib/format-role-name";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,14 @@ const BursarPage = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-  const { schoolId } = await requirePageSession(["admin", "bursar"]);
+  const { userId, role, schoolId } = await requirePageSession(["admin", "bursar"]);
+  const bursarProfile = role === "bursar"
+    ? await prisma.bursar.findFirst({
+        where: { id: userId, schoolId, status: "ACTIVE" },
+        select: { name: true, surname: true, sex: true },
+      })
+    : null;
+  const bursarGreetingName = formatTitledFirstName(bursarProfile, role === "bursar" ? "Bursar" : "Admin");
 
   // ── Key stats ──────────────────────────────────────────────────────────────
   const [billStatusCounts, structureStatusCounts] = await Promise.all([
@@ -124,7 +132,7 @@ const BursarPage = async ({
       {/* ── Welcome banner (full width) ── */}
       <WelcomeBanner
         role="bursar"
-        name="Bursar"
+        name={bursarGreetingName}
         subtitle="Finance overview — manage fees, bills, and payments"
         tag={`${new Date().getFullYear()} Financial Year`}
       />
@@ -386,3 +394,4 @@ const BursarPage = async ({
 };
 
 export default BursarPage;
+

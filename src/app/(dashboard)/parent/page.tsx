@@ -17,6 +17,7 @@ import {
 } from "@/src/lib/services/parent-dashboard";
 import { getSchoolBranding } from "@/src/lib/services/school-branding";
 import { getActiveTimetablePublication } from "@/src/lib/services/timetable";
+import { formatTitledFirstName } from "@/src/lib/format-role-name";
 
 export const dynamic = "force-dynamic";
 
@@ -339,7 +340,7 @@ export default async function Page() {
     getActiveTimetablePublication(schoolId),
   ]);
   const childCount = parent?.students.length ?? 0;
-  const parentName = parent ? `${parent.name} ${parent.surname}` : "Parent";
+  const parentName = formatTitledFirstName(parent, "Parent");
   const actionCues = childrenData.flatMap((child) =>
     child.actionCues.map((cue) => ({
       ...cue,
@@ -392,3 +393,4 @@ export default async function Page() {
     </div>
   );
 }
+

@@ -27,6 +27,9 @@ const phoneSchema = z.preprocess(
 export const parentInviteCreateSchema = z.object({
   name: personNameSchema,
   surname: personNameSchema,
+  sex: z.enum(["MALE", "FEMALE"], {
+    error: "Select the parent's sex so Edujay can use the correct title.",
+  }),
   email: z
     .string()
     .trim()
@@ -50,3 +53,4 @@ export const parentInviteTokenSchema = z.object({
 export type ParentInviteCreateInput = z.infer<typeof parentInviteCreateSchema>;
 export type ParentInviteIdInput = z.infer<typeof parentInviteIdSchema>;
 export type ParentInviteTokenInput = z.infer<typeof parentInviteTokenSchema>;
+

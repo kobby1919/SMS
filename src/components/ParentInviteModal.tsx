@@ -7,6 +7,7 @@ import {
   createParentInviteAction,
   type ParentInviteCreateActionResult,
 } from "@/src/lib/actions/parentInviteActions";
+import type { ParentInviteCreateInput } from "@/src/lib/validation/parent-invites";
 
 type StudentOption = {
   id: string;
@@ -18,6 +19,7 @@ type StudentOption = {
 const initialForm = {
   name: "",
   surname: "",
+  sex: "" as "" | ParentInviteCreateInput["sex"],
   email: "",
   phone: "",
   studentIds: [] as string[],
@@ -52,7 +54,10 @@ export default function ParentInviteModal({ students }: { students: StudentOptio
   }
 
   function updateField(field: keyof Omit<typeof form, "studentIds">, value: string) {
-    setForm((current) => ({ ...current, [field]: value }));
+    setForm((current) => ({
+      ...current,
+      [field]: field === "sex" ? (value as ParentInviteCreateInput["sex"]): value,
+    }));
   }
 
   function toggleStudent(studentId: string) {
@@ -176,6 +181,24 @@ export default function ParentInviteModal({ students }: { students: StudentOptio
                   onChange={(value) => updateField("surname", value)}
                   placeholder="Owusu"
                 />
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-black uppercase tracking-wide text-gray-500">
+                    Sex
+                  </label>
+                  <select
+                    required
+                    value={form.sex}
+                    onChange={(event) => updateField("sex", event.target.value)}
+                    className="h-11 rounded-xl border border-gray-200 bg-white px-3 text-sm font-semibold text-gray-700 outline-none transition focus:border-edujay-primary focus:ring-2 focus:ring-edujay-ring"
+                  >
+                    <option value="">Select sex</option>
+                    <option value="MALE">Male - Mr.</option>
+                    <option value="FEMALE">Female - Madam/Ms.</option>
+                  </select>
+                  <p className="text-[11px] font-semibold leading-4 text-gray-400">
+                    Edujay uses this for respectful titles across parent pages.
+                  </p>
+                </div>
                 <Input
                   label="Email"
                   type="email"
@@ -315,3 +338,4 @@ function Input({
     </div>
   );
 }
+

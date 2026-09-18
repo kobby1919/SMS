@@ -36,6 +36,9 @@ const phoneSchema = z.preprocess(
 export const bursarInviteCreateSchema = z.object({
   name: personNameSchema,
   surname: personNameSchema,
+  sex: z.enum(["MALE", "FEMALE"], {
+    error: "Select the bursar's sex so Edujay can use the correct title.",
+  }),
   email: z
     .string()
     .trim()
@@ -57,3 +60,5 @@ export const bursarInviteTokenSchema = z.object({
 export type BursarInviteCreateInput = z.infer<typeof bursarInviteCreateSchema>;
 export type BursarInviteIdInput = z.infer<typeof bursarInviteIdSchema>;
 export type BursarInviteTokenInput = z.infer<typeof bursarInviteTokenSchema>;
+
+

@@ -18,6 +18,7 @@ export type CreatedBursarInvite = {
   email: string;
   name: string;
   surname: string;
+  sex: BursarInviteCreateInput["sex"];
   inviteToken: string;
   invitePath: string;
   inviteUrl: string;
@@ -113,6 +114,7 @@ export async function getBursarInvitePreview(
       schoolId: true,
       name: true,
       surname: true,
+      sex: true,
       email: true,
       status: true,
       acceptedAt: true,
@@ -241,6 +243,7 @@ export async function createBursarInvite(
         schoolId: context.schoolId,
         name: input.name,
         surname: input.surname,
+        sex: input.sex,
         email,
         phone: input.phone ?? null,
         staffId: input.staffId ?? null,
@@ -253,6 +256,7 @@ export async function createBursarInvite(
         schoolId: true,
         name: true,
         surname: true,
+        sex: true,
         email: true,
         expiresAt: true,
       },
@@ -267,6 +271,7 @@ export async function createBursarInvite(
         email: createdInvite.email,
         name: createdInvite.name,
         surname: createdInvite.surname,
+        sex: createdInvite.sex,
         phone: input.phone ?? null,
         staffId: input.staffId ?? null,
         expiresAt: createdInvite.expiresAt.toISOString(),
@@ -314,6 +319,7 @@ export async function createBursarInvite(
     email: invite.email,
     name: invite.name,
     surname: invite.surname,
+    sex: invite.sex,
     inviteToken: tokenBundle.token,
     invitePath: tokenBundle.invitePath,
     inviteUrl: tokenBundle.inviteUrl,
@@ -432,6 +438,7 @@ export async function resendBursarInvite(
     email: invite.email,
     name: invite.name,
     surname: invite.surname,
+    sex: invite.sex,
     inviteToken: tokenBundle.token,
     invitePath: tokenBundle.invitePath,
     inviteUrl: tokenBundle.inviteUrl,
@@ -615,6 +622,7 @@ export async function acceptBursarInviteForUser(input: {
             username: inviteEmail,
             name: invite.name,
             surname: invite.surname,
+            sex: invite.sex,
             email: inviteEmail,
             phone: invite.phone ?? null,
             status: "ACTIVE",
@@ -628,6 +636,7 @@ export async function acceptBursarInviteForUser(input: {
             username: inviteEmail,
             name: invite.name,
             surname: invite.surname,
+            sex: invite.sex,
             email: inviteEmail,
             phone: invite.phone ?? null,
             address: null,
@@ -666,6 +675,7 @@ export async function acceptBursarInviteForUser(input: {
       metadata: {
         email: inviteEmail,
         bursarId: bursar.id,
+        sex: invite.sex,
       },
     });
 
@@ -689,3 +699,6 @@ export async function acceptBursarInviteForUser(input: {
     bursarId: acceptedBursar.id,
   };
 }
+
+
+

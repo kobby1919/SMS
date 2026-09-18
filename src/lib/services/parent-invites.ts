@@ -19,6 +19,7 @@ export type CreatedParentInvite = {
   email: string;
   name: string;
   surname: string;
+  sex: ParentInviteCreateInput["sex"];
   studentIds: string[];
   wardNames: string[];
   inviteToken: string;
@@ -117,6 +118,7 @@ export async function getParentInvitePreview(
       schoolId: true,
       name: true,
       surname: true,
+      sex: true,
       email: true,
       status: true,
       acceptedAt: true,
@@ -282,6 +284,7 @@ export async function createParentInvite(
         schoolId: context.schoolId,
         name: input.name,
         surname: input.surname,
+        sex: input.sex,
         email,
         phone: input.phone ?? null,
         tokenHash: tokenBundle.tokenHash,
@@ -293,6 +296,7 @@ export async function createParentInvite(
         schoolId: true,
         name: true,
         surname: true,
+        sex: true,
         email: true,
         expiresAt: true,
       },
@@ -316,6 +320,7 @@ export async function createParentInvite(
         email: createdInvite.email,
         name: createdInvite.name,
         surname: createdInvite.surname,
+        sex: createdInvite.sex,
         phone: input.phone ?? null,
         studentIds: uniqueStudentIds,
         wardNames,
@@ -332,6 +337,7 @@ export async function createParentInvite(
         email: createdInvite.email,
         name: createdInvite.name,
         surname: createdInvite.surname,
+        sex: createdInvite.sex,
         phone: input.phone ?? null,
         studentIds: uniqueStudentIds,
         wardNames,
@@ -382,6 +388,7 @@ export async function createParentInvite(
     email: invite.email,
     name: invite.name,
     surname: invite.surname,
+    sex: invite.sex,
     studentIds: uniqueStudentIds,
     wardNames,
     inviteToken: tokenBundle.token,
@@ -704,6 +711,7 @@ export async function acceptParentInviteForUser(input: {
             username: inviteEmail,
             name: invite.name,
             surname: invite.surname,
+            sex: invite.sex,
             email: inviteEmail,
             phone: invite.phone ?? null,
           },
@@ -716,6 +724,7 @@ export async function acceptParentInviteForUser(input: {
             username: inviteEmail,
             name: invite.name,
             surname: invite.surname,
+            sex: invite.sex,
             email: inviteEmail,
             phone: invite.phone ?? null,
             address: "",
@@ -812,6 +821,7 @@ export async function acceptParentInviteForUser(input: {
       metadata: {
         email: inviteEmail,
         parentId: parent.id,
+        sex: invite.sex,
         studentIds: inviteStudents.map((student) => student.id),
       },
     });
@@ -850,3 +860,6 @@ export async function acceptParentInviteForUser(input: {
     parentId: acceptedParent.id,
   };
 }
+
+
+
