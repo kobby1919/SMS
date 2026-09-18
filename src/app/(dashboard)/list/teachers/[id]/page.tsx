@@ -26,6 +26,7 @@ import {
   getTeacherReadiness,
   teacherReadinessToneClass,
 } from "@/src/lib/services/teacher-readiness";
+import { effectiveObligationStatus } from "@/src/lib/queries/teacher-accountability-status";
 import type {
   TeacherAccountabilityAuditAction,
   TeacherInviteAuditAction,
@@ -40,7 +41,7 @@ const SingleTeacherPage = async ({
   params: Promise<{ id: string }>;
 }) => {
   const { id } = await params;
-  const { role, schoolId } = await requirePageSession();
+  const { userId, role, schoolId } = await requirePageSession();
 
   const teacher = await prisma.teacher.findFirst({
     where: { id, schoolId },
@@ -59,6 +60,10 @@ const SingleTeacherPage = async ({
 
   if (!teacher) notFound();
 
+  if (role !== "admin" && !(role === "teacher" && teacher.id === userId)) {
+    notFound();
+  }
+
   const liveLessons = await listLiveTimetableLessons(schoolId, { teacherId: teacher.id });
   const liveLessonIds = liveLessons.map((lesson) => lesson.id);
   const taughtClasses = Array.from(
@@ -69,7 +74,7 @@ const SingleTeacherPage = async ({
     totalAttendance,
     presentAttendance,
     invite,
-    accountabilityCounts,
+    accountabilityObligations,
     openEscalations,
     pendingCorrections,
     recentAccountabilityLogs,
@@ -96,10 +101,16 @@ const SingleTeacherPage = async ({
       },
       orderBy: { createdAt: "desc" },
     }),
-    prisma.teacherObligation.groupBy({
-      by: ["status"],
+    prisma.teacherObligation.findMany({
       where: { schoolId, teacherId: teacher.id },
-      _count: { _all: true },
+      select: {
+        status: true,
+        expectedAt: true,
+        completedAt: true,
+        metadata: true,
+      },
+      orderBy: { expectedAt: "desc" },
+      take: 1000,
     }),
     prisma.teacherEscalation.findMany({
       where: {
@@ -153,7 +164,7 @@ const SingleTeacherPage = async ({
   const joinYear = new Date(teacher.createdAt).getFullYear();
   const attendancePct = totalAttendance > 0 ? Math.round((presentAttendance / totalAttendance) * 100) : 0;
   const groupedLessons = groupLessonsByDay(liveLessons);
-  const accountabilitySummary = buildAccountabilitySummary(accountabilityCounts);
+  const accountabilitySummary = buildAccountabilitySummary(accountabilityObligations, new Date());
   const reliabilityScore = accountabilitySummary.total > 0
     ? Math.round(((accountabilitySummary.completed + accountabilitySummary.completedLate * 0.7 + accountabilitySummary.pending * 0.4) / accountabilitySummary.total) * 100)
     : null;
@@ -302,7 +313,7 @@ const SingleTeacherPage = async ({
               <div className="space-y-3">
                 <ReadinessLine label="Lifecycle status" value={lifecycle.label} ok={teacher.status === "ACTIVE"} />
                 <ReadinessLine label="Invite status" value={invite ? inviteStatusLabel(invite.status, invite.acceptedAt, invite.revokedAt) : "No invite record found"} ok={invite?.status === "ACCEPTED" || teacher.status === "ACTIVE"} />
-                <ReadinessLine label="Clerk account link" value={teacher.id.startsWith("user_") ? "Linked to authenticated account" : "Legacy or seed account"} ok={teacher.id.startsWith("user_")} />
+                <ReadinessLine label="Account link" value={teacherAccountLinkLabel(teacher.id, invite?.acceptedBy ?? null)} ok={Boolean(invite?.acceptedBy) || teacher.id.startsWith("user_")} />
                 <ReadinessLine label="Can operate" value={readiness.canOperate ? "Yes" : "No"} ok={readiness.canOperate} />
                 {invite?.acceptedAt && <DataTile label="Invite accepted" value={formatDateTime(invite.acceptedAt)} />}
               </div>
@@ -511,13 +522,19 @@ function classTeacherTypeLabel(supervisedClassCount: number, lessonCount: number
   return "Not assigned yet";
 }
 
+
+function teacherAccountLinkLabel(teacherId: string, acceptedBy: string | null) {
+  if (acceptedBy) return "Linked through accepted invite";
+  if (teacherId.startsWith("user_")) return "Linked to authenticated account";
+  return "Legacy or seed account";
+}
 function inviteStatusLabel(status: string, acceptedAt: Date | null, revokedAt: Date | null) {
   if (acceptedAt) return "Accepted";
   if (revokedAt) return "Revoked";
   return status.replaceAll("_", " ").toLowerCase().replace(/^./, (char) => char.toUpperCase());
 }
 
-function buildAccountabilitySummary(rows: { status: TeacherObligationStatus; _count: { _all: number } }[]) {
+function buildAccountabilitySummary(rows: { status: TeacherObligationStatus; expectedAt: Date; completedAt: Date | null; metadata: unknown }[], now: Date) {
   const summary = {
     total: 0,
     pending: 0,
@@ -528,12 +545,13 @@ function buildAccountabilitySummary(rows: { status: TeacherObligationStatus; _co
   };
 
   for (const row of rows) {
-    summary.total += row._count._all;
-    if (row.status === "PENDING") summary.pending += row._count._all;
-    if (row.status === "COMPLETED") summary.completed += row._count._all;
-    if (row.status === "COMPLETED_LATE") summary.completedLate += row._count._all;
-    if (row.status === "MISSED") summary.missed += row._count._all;
-    if (row.status === "ESCALATED") summary.escalated += row._count._all;
+    const status = effectiveObligationStatus(row, now);
+    summary.total += 1;
+    if (status === "PENDING") summary.pending += 1;
+    if (status === "COMPLETED") summary.completed += 1;
+    if (status === "COMPLETED_LATE") summary.completedLate += 1;
+    if (status === "MISSED") summary.missed += 1;
+    if (status === "ESCALATED") summary.escalated += 1;
   }
 
   return summary;
