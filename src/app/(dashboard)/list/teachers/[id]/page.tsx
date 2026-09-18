@@ -3,22 +3,36 @@
 import prisma from "@/src/lib/prisma";
 import { notFound } from "next/navigation";
 import { requirePageSession } from "@/src/lib/authz";
-import Announcements from "@/src/components/Announcements";
-import BigCalendar from "@/src/components/BigCalendar";
-import Performance from "@/src/components/Performance";
+import FormModal from "@/src/components/FormModal";
 import Image from "next/image";
 import Link from "next/link";
-import type { CalendarLesson } from "@/src/components/BigCalendar";
+import {
+  AlertCircle,
+  ArrowRight,
+  Award,
+  BookOpen,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  Mail,
+  Phone,
+  ShieldAlert,
+  ShieldCheck,
+  UserCheck,
+  Users,
+} from "lucide-react";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 import {
   getTeacherReadiness,
   teacherReadinessToneClass,
 } from "@/src/lib/services/teacher-readiness";
-import FormModal from "@/src/components/FormModal";
-import {
-  Mail, Phone, Droplets, Calendar,
-  BookOpen, Users, Clock, Award,
-} from "lucide-react";
+import type {
+  TeacherAccountabilityAuditAction,
+  TeacherInviteAuditAction,
+  TeacherObligationStatus,
+} from "@/src/generated/prisma";
+
+const dayOrder = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
 
 const SingleTeacherPage = async ({
   params,
@@ -28,24 +42,99 @@ const SingleTeacherPage = async ({
   const { id } = await params;
   const { role, schoolId } = await requirePageSession();
 
-  // Fetch teacher with all relations
   const teacher = await prisma.teacher.findFirst({
     where: { id, schoolId },
     include: {
       subjects: { select: { id: true, name: true } },
-      classes: { select: { id: true, name: true } }, // supervised classes
+      classes: {
+        select: {
+          id: true,
+          name: true,
+          _count: { select: { students: true } },
+        },
+        orderBy: { name: "asc" },
+      },
     },
   });
 
   if (!teacher) notFound();
-  const lifecycle = teacherStatusMeta(teacher.status);
+
   const liveLessons = await listLiveTimetableLessons(schoolId, { teacherId: teacher.id });
   const liveLessonIds = liveLessons.map((lesson) => lesson.id);
-
-  // ── Unique classes taught (from lessons) ─────────────────────────────────
   const taughtClasses = Array.from(
-    new Map(liveLessons.map((l) => [l.class.id, l.class])).values()
-  );
+    new Map(liveLessons.map((lesson) => [lesson.class.id, lesson.class])).values(),
+  ).sort((a, b) => a.name.localeCompare(b.name));
+
+  const [
+    totalAttendance,
+    presentAttendance,
+    invite,
+    accountabilityCounts,
+    openEscalations,
+    pendingCorrections,
+    recentAccountabilityLogs,
+  ] = await Promise.all([
+    liveLessonIds.length
+      ? prisma.attendance.count({ where: { schoolId, lessonId: { in: liveLessonIds } } })
+      : 0,
+    liveLessonIds.length
+      ? prisma.attendance.count({ where: { schoolId, lessonId: { in: liveLessonIds }, present: true } })
+      : 0,
+    prisma.teacherInvite.findFirst({
+      where: {
+        schoolId,
+        OR: [
+          { acceptedTeacherId: teacher.id },
+          ...(teacher.email ? [{ email: teacher.email.toLowerCase() }] : []),
+        ],
+      },
+      include: {
+        auditLogs: {
+          orderBy: { createdAt: "desc" },
+          take: 8,
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.teacherObligation.groupBy({
+      by: ["status"],
+      where: { schoolId, teacherId: teacher.id },
+      _count: { _all: true },
+    }),
+    prisma.teacherEscalation.findMany({
+      where: {
+        schoolId,
+        teacherId: teacher.id,
+        status: { in: ["OPEN", "ACKNOWLEDGED"] },
+      },
+      include: {
+        obligation: {
+          select: {
+            title: true,
+            expectedAt: true,
+            metadata: true,
+          },
+        },
+      },
+      orderBy: { escalatedAt: "desc" },
+      take: 5,
+    }),
+    prisma.teacherCorrectionRequest.findMany({
+      where: {
+        schoolId,
+        teacherId: teacher.id,
+        status: "PENDING",
+      },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    }),
+    prisma.teacherAccountabilityAuditLog.findMany({
+      where: { schoolId, teacherId: teacher.id },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+    }),
+  ]);
+
   const readiness = getTeacherReadiness({
     status: teacher.status,
     name: teacher.name,
@@ -57,265 +146,341 @@ const SingleTeacherPage = async ({
     publishedLessonCount: liveLessons.length,
     taughtClassCount: taughtClasses.length,
     supervisedClassCount: teacher.classes.length,
+    hasPendingInvite: invite?.status === "PENDING" && !invite.acceptedAt && !invite.revokedAt,
   });
   const profileCompletion = readiness.profileCompletion;
-
-  // ── Calendar lessons ─────────────────────────────────────────────────────
-  const calendarLessons: CalendarLesson[] = liveLessons.map((l) => ({
-    title:     l.subject.name,
-    day:       l.day,
-    startTime: l.startTime,
-    endTime:   l.endTime,
-    className: l.class.name,
-  }));
-
-  // ── Stats ─────────────────────────────────────────────────────────────────
+  const lifecycle = teacherStatusMeta(teacher.status);
   const joinYear = new Date(teacher.createdAt).getFullYear();
-
-  // Attendance across all their lessons' attendance records
-  const [totalAttendance, presentAttendance] = await Promise.all([
-    liveLessonIds.length
-      ? prisma.attendance.count({ where: { schoolId, lessonId: { in: liveLessonIds } } })
-      : 0,
-    liveLessonIds.length
-      ? prisma.attendance.count({ where: { schoolId, lessonId: { in: liveLessonIds }, present: true } })
-      : 0,
-  ]);
-  const attendancePct = totalAttendance > 0
-    ? Math.round((presentAttendance / totalAttendance) * 100)
-    : 0;
+  const attendancePct = totalAttendance > 0 ? Math.round((presentAttendance / totalAttendance) * 100) : 0;
+  const groupedLessons = groupLessonsByDay(liveLessons);
+  const accountabilitySummary = buildAccountabilitySummary(accountabilityCounts);
+  const reliabilityScore = accountabilitySummary.total > 0
+    ? Math.round(((accountabilitySummary.completed + accountabilitySummary.completedLate * 0.7 + accountabilitySummary.pending * 0.4) / accountabilitySummary.total) * 100)
+    : null;
+  const auditRows = buildTeacherAuditRows({
+    inviteLogs: invite?.auditLogs ?? [],
+    accountabilityLogs: recentAccountabilityLogs,
+  });
 
   return (
-    <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
-
-      {/* ── LEFT ── */}
-      <div className="w-full xl:w-2/3 flex flex-col gap-4">
-
-        {/* ── Hero card ── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="h-24 bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-600 relative">
-            <div className="absolute inset-0 opacity-20"
-              style={{
-                backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px)",
-                backgroundSize: "40px 40px",
-              }}
-            />
-          </div>
-
-          <div className="px-5 pb-5">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 -mt-10 sm:-mt-12 mb-4">
-              <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4">
-                <div className="relative shrink-0">
-                  <Image
-                    src={teacher.img || "/noAvatar.png"}
-                    alt={teacher.name}
-                    width={96} height={96}
-                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover ring-4 ring-white shadow-md bg-white"
-                  />
-                  <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full border-2 border-white" />
-                </div>
-                <div className="mb-1 text-center sm:text-left">
-                  <h1 className="text-xl font-black text-gray-800 tracking-tight">
-                    {teacher.name} {teacher.surname}
-                  </h1>
-                  <div className="mt-1 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-                    <span className={`rounded-full px-2.5 py-1 text-xs font-black ${lifecycle.className}`}>{lifecycle.label}</span>
-                    <span className={`rounded-full px-2.5 py-1 text-xs font-black ${teacherReadinessToneClass(readiness.tone)}`}>{readiness.label}</span>
-                    <span className="text-sm font-semibold text-indigo-600">
-                      {teacher.subjects.map((s) => s.name).join(", ") || "No subjects assigned"}
-                    </span>
+    <div className="flex-1 p-4">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4">
+        <section className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+          <div className="border-b border-gray-100 bg-gray-50 px-5 py-4">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center">
+                <Image
+                  src={teacher.img || "/noAvatar.png"}
+                  alt={teacher.name}
+                  width={80}
+                  height={80}
+                  className="h-20 w-20 rounded-2xl bg-white object-cover ring-1 ring-gray-200"
+                />
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h1 className="text-2xl font-black text-gray-900">
+                      {teacher.name} {teacher.surname}
+                    </h1>
+                    <StatusBadge className={lifecycle.className}>{lifecycle.label}</StatusBadge>
+                    <StatusBadge className={teacherReadinessToneClass(readiness.tone)}>{readiness.label}</StatusBadge>
+                  </div>
+                  <p className="mt-1 text-sm font-semibold text-gray-500">
+                    Teacher control center for access, setup, timetable duties, accountability, and history.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold text-gray-600">
+                    <InfoPill icon={<Mail size={13} />} label={teacher.email ?? "No email"} />
+                    <InfoPill icon={<Phone size={13} />} label={teacher.phone ?? "No phone"} />
+                    <InfoPill icon={<Calendar size={13} />} label={`Joined ${joinYear}`} />
                   </div>
                 </div>
               </div>
-
               {role === "admin" && (
-                <div className="flex justify-center sm:justify-start gap-2 shrink-0">
+                <div className="flex shrink-0 flex-wrap gap-2">
                   <FormModal table="teacher" type="update" data={teacher} />
+                  <Link href="/list/subjects" className="rounded-xl bg-indigo-50 px-3 py-2 text-xs font-black text-indigo-700 hover:bg-indigo-100">
+                    Manage subjects
+                  </Link>
+                  <Link href="/list/classes" className="rounded-xl bg-violet-50 px-3 py-2 text-xs font-black text-violet-700 hover:bg-violet-100">
+                    Manage classes
+                  </Link>
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Info pills */}
-            <div className="flex flex-wrap justify-center sm:justify-start gap-2.5">
-              {[
-                { icon: <Droplets size={13} />, label: teacher.bloodType },
-                { icon: <Calendar size={13} />,  label: `Joined ${joinYear}` },
-                ...(teacher.email ? [{ icon: <Mail size={13} />, label: teacher.email }] : []),
-                ...(teacher.phone ? [{ icon: <Phone size={13} />, label: teacher.phone }] : []),
-              ].map(({ icon, label }) => (
-                <div key={label} className="flex items-center gap-1.5 bg-gray-100 rounded-full px-3 py-1.5 text-xs font-medium text-gray-600">
-                  <span className="text-indigo-500">{icon}</span>
-                  {label}
+          <div className="grid gap-3 p-5 sm:grid-cols-2 xl:grid-cols-5">
+            <MetricCard icon={<ShieldCheck size={17} />} label="Readiness" value={readiness.label} tone={teacherReadinessToneClass(readiness.tone)} />
+            <MetricCard icon={<BookOpen size={17} />} label="Published lessons" value={liveLessons.length} tone="bg-amber-50 text-amber-700" />
+            <MetricCard icon={<Users size={17} />} label="Teaching classes" value={taughtClasses.length} tone="bg-emerald-50 text-emerald-700" />
+            <MetricCard icon={<Clock size={17} />} label="Attendance records" value={totalAttendance > 0 ? `${attendancePct}% present` : "No records"} tone="bg-sky-50 text-sky-700" />
+            <MetricCard icon={<ShieldAlert size={17} />} label="Reliability" value={reliabilityScore === null ? "No duties yet" : `${reliabilityScore}%`} tone="bg-rose-50 text-rose-700" />
+          </div>
+        </section>
+
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(340px,0.8fr)]">
+          <div className="flex min-w-0 flex-col gap-4">
+            <SectionCard title="1. Teacher Identity" description="The basic staff record Edujay uses everywhere this teacher appears.">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <DataTile label="Full name" value={`${teacher.name} ${teacher.surname}`} />
+                <DataTile label="Email" value={teacher.email ?? "Not provided"} />
+                <DataTile label="Phone" value={teacher.phone ?? "Not provided"} />
+                <DataTile label="Username" value={teacher.username} />
+                <DataTile label="Staff ID" value={invite?.staffId ?? "Not recorded"} />
+                <DataTile label="Employment type" value={invite?.employmentType ?? "Not recorded"} />
+                <DataTile label="Teacher type" value={invite ? teacherTypeLabel(invite.teacherType) : classTeacherTypeLabel(teacher.classes.length, liveLessons.length)} />
+                <DataTile label="Blood group" value={teacher.bloodType ?? "Not provided"} />
+                <DataTile label="Address" value={teacher.address ?? "Not provided"} />
+              </div>
+            </SectionCard>
+
+            <SectionCard title="4. Subject Capability" description="Subjects this teacher is allowed to teach. The published timetable decides where they actually teach.">
+              <PillList
+                emptyLabel="No subject capability assigned yet."
+                items={teacher.subjects.map((subject) => ({ id: subject.id, label: subject.name }))}
+                tone="bg-indigo-50 text-indigo-700"
+              />
+            </SectionCard>
+
+            <SectionCard title="5. Class Scope" description="Classes this teacher is connected to through the current published timetable.">
+              <PillList
+                emptyLabel="No published teaching class yet. Publish the timetable after assigning lessons."
+                items={taughtClasses.map((cls) => ({ id: cls.id, label: cls.name }))}
+                tone="bg-emerald-50 text-emerald-700"
+              />
+            </SectionCard>
+
+            <SectionCard title="6. Class Teacher Responsibility" description="Classes supervised by this teacher. Class teachers get wider follow-up and report submission responsibility.">
+              {teacher.classes.length > 0 ? (
+                <div className="grid gap-3 md:grid-cols-2">
+                  {teacher.classes.map((cls) => (
+                    <Link
+                      key={cls.id}
+                      href={`/list/classes/${cls.id}/overview`}
+                      className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 p-3 hover:bg-gray-100"
+                    >
+                      <div>
+                        <p className="text-sm font-black text-gray-800">{cls.name}</p>
+                        <p className="text-xs font-semibold text-gray-500">{cls._count.students} student{cls._count.students === 1 ? "" : "s"}</p>
+                      </div>
+                      <ArrowRight size={16} className="text-gray-400" />
+                    </Link>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
+              ) : (
+                <EmptyState message="This teacher is not assigned as a class teacher yet." />
+              )}
+            </SectionCard>
 
-        {/* ── Stats ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {[
-            { icon: <Clock size={16} />,    value: `${attendancePct}%`,    label: "Class Attendance", color: "bg-indigo-50 text-indigo-600"   },
-            { icon: <BookOpen size={16} />, value: liveLessons.length,     label: "Total Lessons",    color: "bg-amber-50 text-amber-600"    },
-            { icon: <Users size={16} />,    value: taughtClasses.length,   label: "Classes",          color: "bg-emerald-50 text-emerald-600" },
-            { icon: <Award size={16} />,    value: teacher.subjects.length, label: "Subjects",        color: "bg-violet-50 text-violet-600"  },
-          ].map((stat) => (
-            <div key={stat.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
-                {stat.icon}
+            <SectionCard title="7. Published Timetable Duties" description="Runtime duties come only from the published timetable, not draft lessons.">
+              {groupedLessons.length > 0 ? (
+                <div className="space-y-3">
+                  {groupedLessons.map((group) => (
+                    <div key={group.day} className="rounded-xl border border-gray-100 bg-white">
+                      <div className="border-b border-gray-100 bg-gray-50 px-3 py-2 text-xs font-black uppercase tracking-wide text-gray-500">
+                        {formatDay(group.day)}
+                      </div>
+                      <div className="divide-y divide-gray-100">
+                        {group.lessons.map((lesson) => (
+                          <div key={lesson.id} className="grid gap-2 px-3 py-3 text-sm sm:grid-cols-[110px_minmax(0,1fr)_minmax(0,1fr)] sm:items-center">
+                            <p className="font-black text-gray-800">{formatLessonTime(lesson.startTime)} - {formatLessonTime(lesson.endTime)}</p>
+                            <p className="font-bold text-gray-700">{lesson.class.name}</p>
+                            <p className="font-semibold text-gray-500">{lesson.subject.name}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <EmptyState message="No published timetable duties yet. Draft timetable lessons will not appear here." />
+              )}
+            </SectionCard>
+          </div>
+
+          <aside className="flex min-w-0 flex-col gap-4">
+            <SectionCard title="2. Access And Login Status" description="Shows whether this teacher account is connected and allowed to operate.">
+              <div className="space-y-3">
+                <ReadinessLine label="Lifecycle status" value={lifecycle.label} ok={teacher.status === "ACTIVE"} />
+                <ReadinessLine label="Invite status" value={invite ? inviteStatusLabel(invite.status, invite.acceptedAt, invite.revokedAt) : "No invite record found"} ok={invite?.status === "ACCEPTED" || teacher.status === "ACTIVE"} />
+                <ReadinessLine label="Clerk account link" value={teacher.id.startsWith("user_") ? "Linked to authenticated account" : "Legacy or seed account"} ok={teacher.id.startsWith("user_")} />
+                <ReadinessLine label="Can operate" value={readiness.canOperate ? "Yes" : "No"} ok={readiness.canOperate} />
+                {invite?.acceptedAt && <DataTile label="Invite accepted" value={formatDateTime(invite.acceptedAt)} />}
               </div>
-              <div>
-                <p className="text-xl font-black text-gray-800 leading-none">{stat.value}</p>
-                <p className="text-xs text-gray-400 font-medium mt-0.5">{stat.label}</p>
+            </SectionCard>
+
+            <SectionCard title="3. Readiness Check" description="Admin should fix these before relying on this teacher operationally.">
+              <div className="space-y-3">
+                <div className="h-2 overflow-hidden rounded-full bg-gray-100">
+                  <div
+                    className={`h-full rounded-full ${profileCompletion.isComplete ? "bg-emerald-500" : "bg-amber-500"}`}
+                    style={{ width: `${profileCompletion.completionPercent}%` }}
+                  />
+                </div>
+                <p className="text-sm font-black text-gray-800">Profile: {profileCompletion.completionPercent}% complete</p>
+                {[...readiness.blockers, ...readiness.setupWarnings].length > 0 ? (
+                  <ul className="space-y-2 text-sm font-semibold text-gray-700">
+                    {[...readiness.blockers, ...readiness.setupWarnings].map((item) => (
+                      <li key={item} className="rounded-xl bg-amber-50 px-3 py-2 text-amber-800">{item}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="rounded-xl bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-700">No readiness blockers.</p>
+                )}
               </div>
-            </div>
-          ))}
+            </SectionCard>
+
+            <SectionCard title="8. Accountability Summary" description="Recent operating discipline for attendance, CA, homework, and correction requests.">
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <DataTile label="Total duties" value={accountabilitySummary.total} />
+                <DataTile label="Pending" value={accountabilitySummary.pending} />
+                <DataTile label="Completed" value={accountabilitySummary.completed} />
+                <DataTile label="Late" value={accountabilitySummary.completedLate} />
+                <DataTile label="Missed" value={accountabilitySummary.missed} />
+                <DataTile label="Escalated" value={accountabilitySummary.escalated} />
+              </div>
+              <div className="mt-3 space-y-2">
+                {openEscalations.length > 0 ? openEscalations.map((escalation) => (
+                  <div key={escalation.id} className="rounded-xl bg-rose-50 p-3 text-sm">
+                    <p className="font-black text-rose-800">{escalation.obligation.title}</p>
+                    <p className="mt-1 font-semibold text-rose-700">{escalation.reason}</p>
+                    <p className="mt-1 text-xs font-bold text-rose-600">Due {formatDateTime(escalation.obligation.expectedAt)}</p>
+                  </div>
+                )) : (
+                  <p className="rounded-xl bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-700">No open escalations.</p>
+                )}
+                {pendingCorrections.length > 0 && (
+                  <div className="rounded-xl bg-amber-50 p-3 text-sm font-bold text-amber-800">
+                    {pendingCorrections.length} pending correction request{pendingCorrections.length === 1 ? "" : "s"} need admin review.
+                  </div>
+                )}
+              </div>
+            </SectionCard>
+
+            <SectionCard title="9. Audit History" description="Important teacher events kept for accountability.">
+              {auditRows.length > 0 ? (
+                <div className="space-y-2">
+                  {auditRows.map((row) => (
+                    <div key={row.id} className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+                      <p className="text-sm font-black text-gray-800">{row.title}</p>
+                      <p className="mt-1 text-xs font-semibold text-gray-500">{row.message}</p>
+                      <p className="mt-1 text-[11px] font-bold uppercase tracking-wide text-gray-400">{formatDateTime(row.createdAt)}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <EmptyState message="No audit history recorded for this teacher yet." />
+              )}
+            </SectionCard>
+
+            <SectionCard title="10. Admin Actions" description="Controlled actions. Destructive teacher deletion is intentionally not offered.">
+              <div className="grid gap-2">
+                <ActionLink href="/list/subjects" label="Update subject capability" icon={<Award size={15} />} />
+                <ActionLink href="/list/classes" label="Update class teacher responsibility" icon={<UserCheck size={15} />} />
+                <ActionLink href="/admin/timetable" label="Publish timetable duties" icon={<Calendar size={15} />} />
+                <ActionLink href="/admin/accountability" label="Review accountability" icon={<ShieldAlert size={15} />} />
+                <div className="rounded-xl bg-gray-50 px-3 py-2 text-xs font-semibold text-gray-500">
+                  Suspend, reactivate, and mark-left-school controls belong to Section 15 Admin Controls. This page now shows the correct state and history first.
+                </div>
+              </div>
+            </SectionCard>
+          </aside>
         </div>
-
-        {/* ── Class pills ── */}
-        {taughtClasses.length > 0 && (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Teaching</p>
-            <div className="flex flex-wrap gap-2">
-              {taughtClasses.map((c) => (
-                <span key={c.id} className="text-xs font-bold px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-xl">
-                  {c.name}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ── Timetable ── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex-1 min-h-[400px]">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
-            <div>
-              <h2 className="text-base font-black text-gray-800">Teaching Schedule</h2>
-              <p className="text-xs text-gray-400 mt-0.5">
-                {liveLessons.length > 0 ? `${teacher.name} — all published lessons` : "No published timetable lessons yet"}
-              </p>
-            </div>
-            <span className="text-xs font-semibold bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full">
-              This Week
-            </span>
-          </div>
-          <BigCalendar lessons={calendarLessons} viewAs="teacher" />
-        </div>
-      </div>
-
-      {/* ── RIGHT ── */}
-      <div className="w-full xl:w-1/3 flex flex-col gap-4">
-
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h2 className="text-base font-black text-gray-800">Teacher Readiness</h2>
-              <p className="mt-0.5 text-xs font-semibold text-gray-400">
-                One source-of-truth check for whether this teacher can operate in Edujay.
-              </p>
-            </div>
-            <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-black ${teacherReadinessToneClass(readiness.tone)}`}>
-              {readiness.label}
-            </span>
-          </div>
-          <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-            <div className="rounded-xl bg-gray-50 p-3">
-              <p className="font-black uppercase tracking-wide text-gray-400">Subjects</p>
-              <p className="mt-1 font-black text-gray-800">{teacher.subjects.length}</p>
-            </div>
-            <div className="rounded-xl bg-gray-50 p-3">
-              <p className="font-black uppercase tracking-wide text-gray-400">Live lessons</p>
-              <p className="mt-1 font-black text-gray-800">{liveLessons.length}</p>
-            </div>
-            <div className="rounded-xl bg-gray-50 p-3">
-              <p className="font-black uppercase tracking-wide text-gray-400">Teaching classes</p>
-              <p className="mt-1 font-black text-gray-800">{taughtClasses.length}</p>
-            </div>
-            <div className="rounded-xl bg-gray-50 p-3">
-              <p className="font-black uppercase tracking-wide text-gray-400">Supervising</p>
-              <p className="mt-1 font-black text-gray-800">{teacher.classes.length}</p>
-            </div>
-          </div>
-          <div className="mt-4 rounded-xl bg-gray-50 p-3">
-            <p className="text-xs font-black uppercase tracking-wide text-gray-400">
-              {readiness.isReady ? "Operational status" : "Blocks to fix"}
-            </p>
-            {readiness.isReady ? (
-              <p className="mt-1 text-sm font-bold text-emerald-700">
-                This teacher is ready for school operations.
-              </p>
-            ) : (
-              <ul className="mt-2 space-y-1 text-sm font-semibold text-gray-700">
-                {[...readiness.blockers, ...readiness.setupWarnings].map((item) => (
-                  <li key={item}>- {item}</li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h2 className="text-base font-black text-gray-800">Profile Readiness</h2>
-              <p className="mt-0.5 text-xs font-semibold text-gray-400">
-                Required before the teacher is fully ready for school operations.
-              </p>
-            </div>
-            <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-black ${profileCompletion.isComplete ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
-              {profileCompletion.completionPercent}%
-            </span>
-          </div>
-          <div className="mt-4 h-2 overflow-hidden rounded-full bg-gray-100">
-            <div
-              className={`h-full rounded-full ${profileCompletion.isComplete ? "bg-emerald-500" : "bg-amber-500"}`}
-              style={{ width: `${profileCompletion.completionPercent}%` }}
-            />
-          </div>
-          <div className="mt-4 rounded-xl bg-gray-50 p-3">
-            <p className="text-xs font-black uppercase tracking-wide text-gray-400">Missing fields</p>
-            <p className="mt-1 text-sm font-bold text-gray-700">
-              {profileCompletion.isComplete ? "None. Profile is complete." : profileCompletion.missingFields.join(", ")}
-            </p>
-          </div>
-        </div>
-        {/* Quick access — real IDs */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-black text-gray-800">Quick Access</h2>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Shortcuts</span>
-          </div>
-          <div className="grid grid-cols-2 gap-2.5">
-            {[
-              { label: "Classes",     href: `/list/classes?supervisorId=${teacher.id}`,   color: "bg-indigo-50 text-indigo-600 hover:bg-indigo-100",   icon: "🏫" },
-              { label: "Students",    href: `/list/students?teacherId=${teacher.id}`,      color: "bg-violet-50 text-violet-600 hover:bg-violet-100",   icon: "👨‍🎓" },
-              { label: "Lessons",     href: `/list/lessons?teacherId=${teacher.id}`,       color: "bg-amber-50 text-amber-600 hover:bg-amber-100",      icon: "📚" },
-              { label: "Exams",       href: `/list/exams?teacherId=${teacher.id}`,         color: "bg-rose-50 text-rose-600 hover:bg-rose-100",         icon: "📝" },
-              { label: "Assignments", href: `/list/assignments?teacherId=${teacher.id}`,   color: "bg-emerald-50 text-emerald-600 hover:bg-emerald-100", icon: "✏️" },
-            ].map(({ label, href, color, icon }) => (
-              <Link key={label} href={href}
-                className={`flex items-center gap-2.5 px-3 py-3 rounded-xl text-xs font-bold transition-all hover:translate-x-1 ${color}`}
-              >
-                <span className="text-base leading-none">{icon}</span>
-                {label}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        <Performance
-          currentSemesterValue={attendancePct}
-          previousSemesterValue={0}
-          trendLabel="Attendance Rate"
-          rankingLabel={`${taughtClasses.length} classes · ${liveLessons.length} lessons`}
-          chartColor="#6366f1"
-        />
-        <Announcements />
       </div>
     </div>
   );
 };
 
+function SectionCard({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
+  return (
+    <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+      <div className="mb-4">
+        <h2 className="text-base font-black text-gray-900">{title}</h2>
+        <p className="mt-1 text-xs font-semibold leading-5 text-gray-500">{description}</p>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function MetricCard({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: React.ReactNode; tone: string }) {
+  return (
+    <div className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tone}`}>{icon}</div>
+      <div className="min-w-0">
+        <p className="truncate text-base font-black text-gray-900">{value}</p>
+        <p className="text-xs font-bold text-gray-400">{label}</p>
+      </div>
+    </div>
+  );
+}
+
+function DataTile({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="min-w-0 rounded-xl bg-gray-50 p-3">
+      <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">{label}</p>
+      <p className="mt-1 break-words text-sm font-bold text-gray-800">{value}</p>
+    </div>
+  );
+}
+
+function StatusBadge({ className, children }: { className: string; children: React.ReactNode }) {
+  return <span className={`rounded-full px-2.5 py-1 text-xs font-black ${className}`}>{children}</span>;
+}
+
+function InfoPill({ icon, label }: { icon: React.ReactNode; label: string }) {
+  return (
+    <span className="inline-flex max-w-full items-center gap-1.5 rounded-full bg-white px-3 py-1.5 ring-1 ring-gray-200">
+      <span className="shrink-0 text-indigo-500">{icon}</span>
+      <span className="truncate">{label}</span>
+    </span>
+  );
+}
+
+function PillList({
+  items,
+  emptyLabel,
+  tone,
+}: {
+  items: { id: number | string; label: string }[];
+  emptyLabel: string;
+  tone: string;
+}) {
+  if (items.length === 0) return <EmptyState message={emptyLabel} />;
+  return (
+    <div className="flex flex-wrap gap-2">
+      {items.map((item) => (
+        <span key={item.id} className={`rounded-xl px-3 py-1.5 text-xs font-black ${tone}`}>
+          {item.label}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function EmptyState({ message }: { message: string }) {
+  return <p className="rounded-xl bg-gray-50 px-3 py-3 text-sm font-semibold text-gray-500">{message}</p>;
+}
+
+function ReadinessLine({ label, value, ok }: { label: string; value: string; ok: boolean }) {
+  return (
+    <div className="flex items-start justify-between gap-3 rounded-xl bg-gray-50 p-3">
+      <div>
+        <p className="text-xs font-black uppercase tracking-wide text-gray-400">{label}</p>
+        <p className="mt-1 text-sm font-bold text-gray-800">{value}</p>
+      </div>
+      {ok ? <CheckCircle2 size={18} className="shrink-0 text-emerald-600" /> : <AlertCircle size={18} className="shrink-0 text-amber-600" />}
+    </div>
+  );
+}
+
+function ActionLink({ href, label, icon }: { href: string; label: string; icon: React.ReactNode }) {
+  return (
+    <Link href={href} className="flex items-center justify-between rounded-xl bg-gray-50 px-3 py-3 text-sm font-black text-gray-700 hover:bg-gray-100">
+      <span className="inline-flex items-center gap-2">{icon}{label}</span>
+      <ArrowRight size={15} className="text-gray-400" />
+    </Link>
+  );
+}
 
 function teacherStatusMeta(status: "INVITED" | "ACTIVE" | "INCOMPLETE_SETUP" | "SUSPENDED" | "LEFT_SCHOOL") {
   switch (status) {
@@ -332,5 +497,111 @@ function teacherStatusMeta(status: "INVITED" | "ACTIVE" | "INCOMPLETE_SETUP" | "
       return { label: "Invited", className: "bg-violet-50 text-violet-700" };
   }
 }
-export default SingleTeacherPage;
 
+function teacherTypeLabel(type: "SUBJECT_TEACHER" | "CLASS_TEACHER" | "BOTH") {
+  if (type === "CLASS_TEACHER") return "Class teacher";
+  if (type === "BOTH") return "Subject and class teacher";
+  return "Subject teacher";
+}
+
+function classTeacherTypeLabel(supervisedClassCount: number, lessonCount: number) {
+  if (supervisedClassCount > 0 && lessonCount > 0) return "Subject and class teacher";
+  if (supervisedClassCount > 0) return "Class teacher";
+  if (lessonCount > 0) return "Subject teacher";
+  return "Not assigned yet";
+}
+
+function inviteStatusLabel(status: string, acceptedAt: Date | null, revokedAt: Date | null) {
+  if (acceptedAt) return "Accepted";
+  if (revokedAt) return "Revoked";
+  return status.replaceAll("_", " ").toLowerCase().replace(/^./, (char) => char.toUpperCase());
+}
+
+function buildAccountabilitySummary(rows: { status: TeacherObligationStatus; _count: { _all: number } }[]) {
+  const summary = {
+    total: 0,
+    pending: 0,
+    completed: 0,
+    completedLate: 0,
+    missed: 0,
+    escalated: 0,
+  };
+
+  for (const row of rows) {
+    summary.total += row._count._all;
+    if (row.status === "PENDING") summary.pending += row._count._all;
+    if (row.status === "COMPLETED") summary.completed += row._count._all;
+    if (row.status === "COMPLETED_LATE") summary.completedLate += row._count._all;
+    if (row.status === "MISSED") summary.missed += row._count._all;
+    if (row.status === "ESCALATED") summary.escalated += row._count._all;
+  }
+
+  return summary;
+}
+
+function groupLessonsByDay<T extends { day: string; startTime: Date }>(lessons: T[]) {
+  const rows = dayOrder.flatMap((day) => {
+    const lessonsForDay = lessons
+      .filter((lesson) => lesson.day === day)
+      .sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
+    return lessonsForDay.length > 0 ? [{ day, lessons: lessonsForDay }] : [];
+  });
+  return rows;
+}
+
+function formatDay(day: string) {
+  return day.charAt(0) + day.slice(1).toLowerCase();
+}
+
+
+function formatLessonTime(value: Date) {
+  return value.toLocaleTimeString("en-GH", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+}
+function formatDateTime(date: Date) {
+  return date.toLocaleString("en-GH", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function inviteAuditTitle(action: TeacherInviteAuditAction) {
+  return action.replaceAll("_", " ").toLowerCase().replace(/^./, (char) => char.toUpperCase());
+}
+
+function accountabilityAuditTitle(action: TeacherAccountabilityAuditAction) {
+  return action.replaceAll("_", " ").toLowerCase().replace(/^./, (char) => char.toUpperCase());
+}
+
+function buildTeacherAuditRows({
+  inviteLogs,
+  accountabilityLogs,
+}: {
+  inviteLogs: { id: string; action: TeacherInviteAuditAction; createdAt: Date; metadata: unknown }[];
+  accountabilityLogs: { id: string; action: TeacherAccountabilityAuditAction; createdAt: Date; message: string | null }[];
+}) {
+  const inviteRows = inviteLogs.map((log) => ({
+    id: `invite-${log.id}`,
+    title: inviteAuditTitle(log.action),
+    message: "Teacher invite event recorded.",
+    createdAt: log.createdAt,
+  }));
+  const accountabilityRows = accountabilityLogs.map((log) => ({
+    id: `accountability-${log.id}`,
+    title: accountabilityAuditTitle(log.action),
+    message: log.message ?? "Accountability event recorded.",
+    createdAt: log.createdAt,
+  }));
+
+  return [...inviteRows, ...accountabilityRows]
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    .slice(0, 10);
+}
+
+export default SingleTeacherPage;
