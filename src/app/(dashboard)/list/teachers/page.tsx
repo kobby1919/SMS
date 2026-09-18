@@ -20,7 +20,10 @@ import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
 import TeacherInviteActions from "@/src/components/TeacherInviteActions";
 import TeacherInviteModal from "@/src/components/TeacherInviteModal";
-import { getTeacherProfileCompletion } from "@/src/lib/services/teacher-profile-completion";
+import {
+  getTeacherReadiness,
+  teacherReadinessToneClass,
+} from "@/src/lib/services/teacher-readiness";
 
 // Dynamic subject color by name initial
 const SUBJECT_COLORS = [
@@ -124,6 +127,7 @@ const TeacherListPage = async ({
       where: query,
       include: {
         subjects: true,
+        classes: { select: { id: true, name: true } },
       },
       orderBy: { name: "asc" },
     }),
@@ -158,22 +162,26 @@ const TeacherListPage = async ({
     const taughtClasses = Array.from(
       new Map(teacherLessons.map((l) => [l.class.id, l.class])).values(),
     );
-    const hasSubjects = teacher.subjects.length > 0;
-    const hasLiveClasses = taughtClasses.length > 0;
-    const profileCompletion = getTeacherProfileCompletion(teacher);
-    const setupStatus: TeacherSetupStatus =
-      profileCompletion.isComplete && hasSubjects && hasLiveClasses ? "ready" : "needs-setup";
-    const missingSetup = [
-      ...profileCompletion.missingFields,
-      !hasSubjects ? "subjects" : null,
-      !hasLiveClasses ? "published timetable classes" : null,
-    ].filter(Boolean) as string[];
+    const readiness = getTeacherReadiness({
+      status: teacher.status,
+      name: teacher.name,
+      surname: teacher.surname,
+      email: teacher.email,
+      phone: teacher.phone,
+      address: teacher.address,
+      subjectCount: teacher.subjects.length,
+      publishedLessonCount: teacherLessons.length,
+      taughtClassCount: taughtClasses.length,
+      supervisedClassCount: teacher.classes.length,
+    });
+    const setupStatus: TeacherSetupStatus = readiness.isReady ? "ready" : "needs-setup";
+    const missingSetup = [...readiness.blockers, ...readiness.setupWarnings];
 
-    return { teacher, taughtClasses, setupStatus, missingSetup, profileCompletion };
+    return { teacher, taughtClasses, setupStatus, missingSetup, readiness };
   });
 
-  const readyTeachers = enrichedTeachers.filter((item) => item.setupStatus === "ready" && item.teacher.status === "ACTIVE");
-  const teachersNeedingSetup = enrichedTeachers.filter((item) => item.setupStatus === "needs-setup" || item.teacher.status === "INCOMPLETE_SETUP");
+  const readyTeachers = enrichedTeachers.filter((item) => item.readiness.isReady);
+  const teachersNeedingSetup = enrichedTeachers.filter((item) => item.readiness.status === "NEEDS_SETUP" || item.readiness.status === "INVITED");
   const activeTeachers = enrichedTeachers.filter((item) => item.teacher.status === "ACTIVE");
   const incompleteTeachers = enrichedTeachers.filter((item) => item.teacher.status === "INCOMPLETE_SETUP");
   const suspendedTeachers = enrichedTeachers.filter((item) => item.teacher.status === "SUSPENDED");
@@ -300,8 +308,9 @@ const TeacherListPage = async ({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {teachers.map(({ teacher: item, taughtClasses, setupStatus, missingSetup, profileCompletion }) => {
+              {teachers.map(({ teacher: item, taughtClasses, setupStatus, missingSetup, readiness }) => {
                 const lifecycle = teacherStatusMeta(item.status);
+                const profileCompletion = readiness.profileCompletion;
 
                 return (
                   <tr key={item.id} className="hover:bg-indigo-50/30 transition-colors duration-150 group">
@@ -327,6 +336,9 @@ const TeacherListPage = async ({
                             </span>
                             <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-bold text-gray-500">
                               {profileCompletion.completionPercent}% profile
+                            </span>
+                            <span className={`rounded-full px-2 py-0.5 text-[11px] font-black ${teacherReadinessToneClass(readiness.tone)}`}>
+                              {readiness.label}
                             </span>
                           </div>
                         </div>
@@ -377,8 +389,12 @@ const TeacherListPage = async ({
                           {item.status === "ACTIVE" ? <ShieldCheck size={12} /> : <AlertCircle size={12} />}
                           {lifecycle.label}
                         </span>
+                        <span className={`inline-flex w-fit items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black ${teacherReadinessToneClass(readiness.tone)}`}>
+                          {readiness.isReady ? <ShieldCheck size={12} /> : <AlertCircle size={12} />}
+                          {readiness.label}
+                        </span>
                         <span className="text-xs font-semibold text-gray-400">
-                          {setupStatus === "ready" ? "Setup ready" : `${profileCompletion.completionPercent}% profile · Missing ${missingSetup.join(", ")}`}
+                          {setupStatus === "ready" ? "Ready for school operations" : `${profileCompletion.completionPercent}% profile · ${missingSetup.slice(0, 2).join(", ")}${missingSetup.length > 2 ? ` +${missingSetup.length - 2} more` : ""}`}
                         </span>
                       </div>
                     </td>

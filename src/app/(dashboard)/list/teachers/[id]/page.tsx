@@ -10,7 +10,10 @@ import Image from "next/image";
 import Link from "next/link";
 import type { CalendarLesson } from "@/src/components/BigCalendar";
 import { listLiveTimetableLessons } from "@/src/lib/services/timetable";
-import { getTeacherProfileCompletion } from "@/src/lib/services/teacher-profile-completion";
+import {
+  getTeacherReadiness,
+  teacherReadinessToneClass,
+} from "@/src/lib/services/teacher-readiness";
 import FormModal from "@/src/components/FormModal";
 import {
   Mail, Phone, Droplets, Calendar,
@@ -35,7 +38,6 @@ const SingleTeacherPage = async ({
   });
 
   if (!teacher) notFound();
-  const profileCompletion = getTeacherProfileCompletion(teacher);
   const lifecycle = teacherStatusMeta(teacher.status);
   const liveLessons = await listLiveTimetableLessons(schoolId, { teacherId: teacher.id });
   const liveLessonIds = liveLessons.map((lesson) => lesson.id);
@@ -44,6 +46,19 @@ const SingleTeacherPage = async ({
   const taughtClasses = Array.from(
     new Map(liveLessons.map((l) => [l.class.id, l.class])).values()
   );
+  const readiness = getTeacherReadiness({
+    status: teacher.status,
+    name: teacher.name,
+    surname: teacher.surname,
+    email: teacher.email,
+    phone: teacher.phone,
+    address: teacher.address,
+    subjectCount: teacher.subjects.length,
+    publishedLessonCount: liveLessons.length,
+    taughtClassCount: taughtClasses.length,
+    supervisedClassCount: teacher.classes.length,
+  });
+  const profileCompletion = readiness.profileCompletion;
 
   // ── Calendar lessons ─────────────────────────────────────────────────────
   const calendarLessons: CalendarLesson[] = liveLessons.map((l) => ({
@@ -105,6 +120,7 @@ const SingleTeacherPage = async ({
                   </h1>
                   <div className="mt-1 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
                     <span className={`rounded-full px-2.5 py-1 text-xs font-black ${lifecycle.className}`}>{lifecycle.label}</span>
+                    <span className={`rounded-full px-2.5 py-1 text-xs font-black ${teacherReadinessToneClass(readiness.tone)}`}>{readiness.label}</span>
                     <span className="text-sm font-semibold text-indigo-600">
                       {teacher.subjects.map((s) => s.name).join(", ") || "No subjects assigned"}
                     </span>
@@ -176,7 +192,7 @@ const SingleTeacherPage = async ({
             <div>
               <h2 className="text-base font-black text-gray-800">Teaching Schedule</h2>
               <p className="text-xs text-gray-400 mt-0.5">
-                {teacher.name} — all classes, weekly timetable
+                {liveLessons.length > 0 ? `${teacher.name} — all published lessons` : "No published timetable lessons yet"}
               </p>
             </div>
             <span className="text-xs font-semibold bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full">
@@ -189,6 +205,54 @@ const SingleTeacherPage = async ({
 
       {/* ── RIGHT ── */}
       <div className="w-full xl:w-1/3 flex flex-col gap-4">
+
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h2 className="text-base font-black text-gray-800">Teacher Readiness</h2>
+              <p className="mt-0.5 text-xs font-semibold text-gray-400">
+                One source-of-truth check for whether this teacher can operate in Edujay.
+              </p>
+            </div>
+            <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-black ${teacherReadinessToneClass(readiness.tone)}`}>
+              {readiness.label}
+            </span>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
+            <div className="rounded-xl bg-gray-50 p-3">
+              <p className="font-black uppercase tracking-wide text-gray-400">Subjects</p>
+              <p className="mt-1 font-black text-gray-800">{teacher.subjects.length}</p>
+            </div>
+            <div className="rounded-xl bg-gray-50 p-3">
+              <p className="font-black uppercase tracking-wide text-gray-400">Live lessons</p>
+              <p className="mt-1 font-black text-gray-800">{liveLessons.length}</p>
+            </div>
+            <div className="rounded-xl bg-gray-50 p-3">
+              <p className="font-black uppercase tracking-wide text-gray-400">Teaching classes</p>
+              <p className="mt-1 font-black text-gray-800">{taughtClasses.length}</p>
+            </div>
+            <div className="rounded-xl bg-gray-50 p-3">
+              <p className="font-black uppercase tracking-wide text-gray-400">Supervising</p>
+              <p className="mt-1 font-black text-gray-800">{teacher.classes.length}</p>
+            </div>
+          </div>
+          <div className="mt-4 rounded-xl bg-gray-50 p-3">
+            <p className="text-xs font-black uppercase tracking-wide text-gray-400">
+              {readiness.isReady ? "Operational status" : "Blocks to fix"}
+            </p>
+            {readiness.isReady ? (
+              <p className="mt-1 text-sm font-bold text-emerald-700">
+                This teacher is ready for school operations.
+              </p>
+            ) : (
+              <ul className="mt-2 space-y-1 text-sm font-semibold text-gray-700">
+                {[...readiness.blockers, ...readiness.setupWarnings].map((item) => (
+                  <li key={item}>- {item}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
 
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-start justify-between gap-3">
