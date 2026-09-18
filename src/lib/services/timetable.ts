@@ -435,6 +435,21 @@ export async function updateTimetableLesson(
 }
 
 export async function deleteTimetableLesson(schoolId: string, id: number) {
+  const activeUsage = await prisma.publishedTimetableLesson.findFirst({
+    where: {
+      schoolId,
+      sourceId: id,
+      publication: { status: "ACTIVE" },
+    },
+    select: { id: true },
+  });
+  if (activeUsage) {
+    throw new TimetableServiceError(
+      "This lesson is part of the active published timetable. Publish a replacement timetable before deleting it.",
+      409,
+    );
+  }
+
   const result = await prisma.lesson.deleteMany({ where: { id, schoolId } });
   if (result.count === 0) throw new TimetableServiceError("Lesson not found.", 404);
   invalidateTimetable(schoolId);

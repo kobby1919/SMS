@@ -523,6 +523,7 @@ export async function createCABucketAction(data: {
   const parsed = parseActionInput(caBucketSchema, data);
   const { userId, role, schoolId } = await requireRole(["admin", "teacher"]);
 
+  await assertClassSubjectInPublishedTimetable({ schoolId, classId: parsed.classId, subjectId: parsed.subjectId });
   await assertTeacherCanManageCAContext({
     userId,
     role,

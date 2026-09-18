@@ -80,6 +80,18 @@ async function assertTeacherActionWithinSchoolHours(
 export async function deleteLesson(id: number) {
   ({ id } = parseActionInput(numericIdSchema, { id }));
   const { schoolId } = await requireAdmin();
+  const activeUsage = await prisma.publishedTimetableLesson.findFirst({
+    where: {
+      schoolId,
+      sourceId: id,
+      publication: { status: "ACTIVE" },
+    },
+    select: { id: true },
+  });
+  if (activeUsage) {
+    throw new Error("This lesson is part of the active published timetable. Publish a replacement timetable before deleting it.");
+  }
+
   await prisma.lesson.deleteMany({ where: { id, schoolId } });
   revalidatePath("/list/lessons");
   revalidatePath("/admin/timetable");
@@ -1793,7 +1805,6 @@ export async function deleteResult(id: number): Promise<void> {
   revalidatePath("/list/results");
   revalidateDashboard(schoolId);
 }
-
 
 
 
