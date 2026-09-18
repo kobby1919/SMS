@@ -41,6 +41,7 @@ import { getClassReportReadiness } from "@/src/lib/services/report-card-readines
 import { getTeacherScope } from "@/src/lib/services/teacher-scope";
 import { recordApprovedCorrectionParentEvent } from "@/src/lib/services/correction-parent-events";
 import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
+import { assertClassSubjectInPublishedTimetable } from "@/src/lib/services/timetable";
 
 // ─── Ghana BECE Grading System ────────────────────────────────────────────────
 // Score ranges → letter grade + grade point
@@ -232,6 +233,7 @@ async function computeCA(
 export async function createCA(data: CAInput) {
   const parsed = parseActionInput(caRecordSchema, data);
   const { userId: teacherId, role, schoolId } = await requireCAAccess(parsed.classId);
+  await assertClassSubjectInPublishedTimetable({ schoolId, classId: parsed.classId, subjectId: parsed.subjectId });
   await assertTeacherUsesActivePeriod({ schoolId, role, term: parsed.term, academicYear: parsed.academicYear });
   if (role === "teacher") {
     await assertWithinSchoolOperatingHours(schoolId, "Creating an assessment record");
@@ -292,6 +294,7 @@ export async function updateCA(data: CAInput) {
   if (!data.id) throw new Error("CA ID required for update.");
   const parsed = parseActionInput(caRecordUpdateSchema, data);
   const { userId: teacherId, role, schoolId } = await requireCAAccess(parsed.classId);
+  await assertClassSubjectInPublishedTimetable({ schoolId, classId: parsed.classId, subjectId: parsed.subjectId });
   await assertTeacherUsesActivePeriod({ schoolId, role, term: parsed.term, academicYear: parsed.academicYear });
   if (role === "teacher") {
     await assertWithinSchoolOperatingHours(schoolId, "Updating an assessment record");
@@ -394,6 +397,7 @@ export async function bulkUpsertCA(
   term = parsed.term;
   academicYear = parsed.academicYear;
   const { userId: teacherId, role, schoolId } = await requireCAAccess(classId);
+  await assertClassSubjectInPublishedTimetable({ schoolId, classId, subjectId });
   await assertTeacherUsesActivePeriod({ schoolId, role, term, academicYear });
   if (role === "teacher") {
     await assertWithinSchoolOperatingHours(schoolId, "Saving assessment scores");

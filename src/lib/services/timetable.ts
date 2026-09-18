@@ -168,6 +168,35 @@ export async function getLiveTimetableLessonBySourceId(
   return lesson ? mapPublishedLessonToLiveLesson(lesson) : null;
 }
 
+export async function assertClassSubjectInPublishedTimetable({
+  schoolId,
+  classId,
+  subjectId,
+}: {
+  schoolId: string;
+  classId: number;
+  subjectId: number;
+}) {
+  const lesson = await prisma.publishedTimetableLesson.findFirst({
+    where: {
+      schoolId,
+      classId,
+      subjectId,
+      publication: { status: "ACTIVE" },
+    },
+    select: { sourceId: true },
+  });
+
+  if (!lesson) {
+    throw new TimetableServiceError(
+      "This class and subject are not part of the active published timetable. Publish the timetable before recording academic work for it.",
+      409,
+    );
+  }
+
+  return lesson;
+}
+
 export async function getActiveTimetablePublication(
   schoolId: string,
 ): Promise<TimetablePublicationSummary> {
