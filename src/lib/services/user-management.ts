@@ -16,6 +16,7 @@ import {
 import { ensurePrimaryParentStudentRelationship } from "@/src/lib/services/parent-student-relationships";
 import { writeParentAccessAudit } from "@/src/lib/services/parent-access-audit";
 import { nextTeacherProfileStatus } from "@/src/lib/services/teacher-profile-completion";
+import { assertTeacherSubjectRemovalAllowed } from "@/src/lib/services/teacher-assignment-safety";
 
 type ParentCreateInput = z.infer<typeof parentCreateSchema>;
 type ParentUpdateInput = z.infer<typeof parentUpdateSchema>;
@@ -265,6 +266,12 @@ export async function updateTeacher(
   if (subjects.length !== input.subjectIds.length) {
     throw new UserManagementError("One or more subjects were not found.", 404);
   }
+
+  await assertTeacherSubjectRemovalAllowed({
+    schoolId,
+    teacherId,
+    nextSubjectIds: subjects.map(({ id }) => id),
+  });
 
   const clerk = await clerkClient();
   await clerk.users.updateUser(teacherId, {

@@ -19,6 +19,7 @@ import {
 import { syncHomeworkCheckingObligation } from "@/src/lib/services/teacher-homework-obligations";
 import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
 import { getLiveTimetableLessonBySourceId } from "@/src/lib/services/timetable";
+import { assertSubjectCapabilityRemovalAllowed } from "@/src/lib/services/teacher-assignment-safety";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   announcementFormSchema,
@@ -272,6 +273,13 @@ export async function updateSubject(id: number, data: { name?: string; teacherId
   const existing = await prisma.subject.findFirst({ where: { id, schoolId } });
   assertSameSchool(existing, schoolId);
   const teacherIds = await assertSubjectCapabilityTeachers(schoolId, data.teacherIds);
+  if (data.teacherIds) {
+    await assertSubjectCapabilityRemovalAllowed({
+      schoolId,
+      subjectId: id,
+      nextTeacherIds: teacherIds,
+    });
+  }
   await prisma.subject.update({
     where: { id },
     data: {
