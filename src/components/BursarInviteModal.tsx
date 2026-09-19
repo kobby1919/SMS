@@ -40,6 +40,7 @@ export default function BursarInviteModal() {
   }
 
   function submitInvite() {
+    if (isPending) return;
     setResult(null);
     setCopied(false);
 
@@ -251,5 +252,6 @@ function Input({
     </div>
   );
 }
+
 
 

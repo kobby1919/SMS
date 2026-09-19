@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
   );
   const limited = await enforceRateLimit(req, {
     scope: hasInviteContext ? "auth:callback:invite" : "auth:callback",
-    limit: hasInviteContext ? 40 : 20,
+    limit: hasInviteContext ? 120 : 60,
     windowMs: 60_000,
     actorId: userId ?? sessionId ?? undefined,
   });
@@ -60,3 +60,4 @@ export async function GET(req: NextRequest) {
     bursarInviteToken,
   );
 }
+
