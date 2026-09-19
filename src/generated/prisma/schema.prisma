@@ -615,7 +615,7 @@ model Bursar {
   username  String       @unique
   name      String
   surname   String
-  sex       UserSex      @default(MALE)
+  sex       UserSex
   email     String?
   phone     String?
   address   String?
@@ -2248,7 +2248,7 @@ model TeacherInvite {
   schoolId          String
   name              String
   surname           String
-  sex               UserSex             @default(MALE)
+  sex               UserSex
   email             String
   phone             String?
   teacherType       TeacherInviteType
@@ -2283,7 +2283,7 @@ model ParentInvite {
   schoolId         String
   name             String
   surname          String
-  sex              UserSex            @default(MALE)
+  sex              UserSex
   email            String
   phone            String?
   tokenHash        String             @unique
@@ -2348,7 +2348,7 @@ model BursarInvite {
   schoolId         String
   name             String
   surname          String
-  sex              UserSex            @default(MALE)
+  sex              UserSex
   email            String
   phone            String?
   staffId          String?
@@ -2450,3 +2450,4 @@ model OnboardingAuditLog {
   @@index([schoolId, createdAt])
   @@index([action, createdAt])
 }
+
