@@ -1,5 +1,12 @@
 import prisma from "@/src/lib/prisma";
 
+export class TeacherAssignmentSafetyError extends Error {
+  constructor(message: string, readonly status = 409) {
+    super(message);
+    this.name = "TeacherAssignmentSafetyError";
+  }
+}
+
 function summarizeExamples(
   rows: Array<{ teacherName?: string | null; subjectName?: string | null; className?: string | null }>,
 ) {
@@ -42,7 +49,7 @@ export async function assertSubjectCapabilityRemovalAllowed({
   if (liveLessons.length === 0) return;
 
   const examples = summarizeExamples(liveLessons);
-  throw new Error(
+  throw new TeacherAssignmentSafetyError(
     `Cannot remove subject capability because the active published timetable still uses it${examples ? ` (${examples})` : ""}. Publish a replacement timetable first, then update the subject capability.`,
   );
 }
@@ -79,7 +86,43 @@ export async function assertTeacherSubjectRemovalAllowed({
   if (liveLessons.length === 0) return;
 
   const examples = summarizeExamples(liveLessons);
-  throw new Error(
+  throw new TeacherAssignmentSafetyError(
     `Cannot remove this teacher's subject capability because the active published timetable still uses it${examples ? ` (${examples})` : ""}. Publish a replacement timetable first, then update the teacher profile.`,
+  );
+}
+
+export async function assertTeacherHasNoActivePublishedLessons({
+  schoolId,
+  teacherId,
+  actionLabel,
+}: {
+  schoolId: string;
+  teacherId: string;
+  actionLabel: string;
+}) {
+  const liveLessons = await prisma.publishedTimetableLesson.findMany({
+    where: {
+      schoolId,
+      teacherId,
+      publication: { status: "ACTIVE" },
+    },
+    select: {
+      subjectName: true,
+      className: true,
+      day: true,
+    },
+    take: 6,
+    orderBy: [{ day: "asc" }, { className: "asc" }, { subjectName: "asc" }],
+  });
+
+  if (liveLessons.length === 0) return;
+
+  const examples = liveLessons
+    .slice(0, 3)
+    .map((lesson) => [lesson.subjectName, lesson.className, lesson.day].filter(Boolean).join(" - "))
+    .join("; ");
+
+  throw new TeacherAssignmentSafetyError(
+    `Cannot ${actionLabel} because this teacher still has lessons in the active published timetable${examples ? ` (${examples})` : ""}. Publish a replacement timetable first so attendance, homework, CA, and accountability do not point to a teacher who cannot operate.`,
   );
 }

@@ -5,6 +5,7 @@ import prisma from "@/src/lib/prisma";
 import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
 import { nextTeacherProfileStatus } from "@/src/lib/services/teacher-profile-completion";
 import { getTeacherLifecycleAvailability } from "@/src/lib/teacher-lifecycle-rules";
+import { assertTeacherHasNoActivePublishedLessons } from "@/src/lib/services/teacher-assignment-safety";
 import type { TeacherLifecycleMutationInput } from "@/src/lib/validation/teacher-lifecycle";
 
 export class TeacherLifecycleError extends Error {
@@ -101,6 +102,13 @@ export async function updateTeacherLifecycleStatus(
   }
 
   const nextStatus = nextStatusForAction(teacher, input.action);
+  if (input.action === "SUSPEND" || input.action === "MARK_LEFT_SCHOOL") {
+    await assertTeacherHasNoActivePublishedLessons({
+      schoolId: context.schoolId,
+      teacherId: teacher.id,
+      actionLabel: input.action === "SUSPEND" ? "suspend this teacher" : "mark this teacher as left school",
+    });
+  }
   if (nextStatus === teacher.status) {
     throw new TeacherLifecycleError("This lifecycle action would not change the teacher status.", 409);
   }

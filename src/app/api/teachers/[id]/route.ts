@@ -7,6 +7,7 @@ import {
   updateTeacher,
   UserManagementError,
 } from "@/src/lib/services/user-management";
+import { TeacherAssignmentSafetyError } from "@/src/lib/services/teacher-assignment-safety";
 
 export async function PUT(
   req: NextRequest,
@@ -36,7 +37,7 @@ export async function PUT(
     if (!parsed.ok) return parsed.response;
     return NextResponse.json(await updateTeacher(schoolId, id, parsed.data));
   } catch (error) {
-    if (error instanceof UserManagementError) {
+    if (error instanceof UserManagementError || error instanceof TeacherAssignmentSafetyError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
     if (error instanceof Error && error.name === "AuthorizationError") {
