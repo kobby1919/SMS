@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import prisma from "@/src/lib/prisma";
 import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTags";
 import { nextTeacherProfileStatus } from "@/src/lib/services/teacher-profile-completion";
+import { getTeacherLifecycleAvailability } from "@/src/lib/teacher-lifecycle-rules";
 import type { TeacherLifecycleMutationInput } from "@/src/lib/validation/teacher-lifecycle";
 
 export class TeacherLifecycleError extends Error {
@@ -23,47 +24,6 @@ type TeacherLifecycleTeacher = {
   phone: string | null;
   address: string | null;
 };
-
-export type TeacherLifecycleAvailability = {
-  canSuspend: boolean;
-  canReactivate: boolean;
-  canMarkLeftSchool: boolean;
-  reasons: {
-    suspend?: string;
-    reactivate?: string;
-    markLeftSchool?: string;
-  };
-};
-
-export function getTeacherLifecycleAvailability(
-  status: TeacherStatus,
-): TeacherLifecycleAvailability {
-  return {
-    canSuspend: status === "ACTIVE" || status === "INCOMPLETE_SETUP" || status === "INVITED",
-    canReactivate: status === "SUSPENDED",
-    canMarkLeftSchool:
-      status === "ACTIVE" ||
-      status === "INCOMPLETE_SETUP" ||
-      status === "INVITED" ||
-      status === "SUSPENDED",
-    reasons: {
-      suspend:
-        status === "SUSPENDED"
-          ? "Teacher is already suspended."
-          : status === "LEFT_SCHOOL"
-            ? "Teacher has already left the school."
-            : undefined,
-      reactivate:
-        status === "SUSPENDED"
-          ? undefined
-          : status === "LEFT_SCHOOL"
-            ? "Teachers marked as left school must be invited again if they return."
-            : "Only suspended teachers can be reactivated.",
-      markLeftSchool:
-        status === "LEFT_SCHOOL" ? "Teacher has already been marked as left school." : undefined,
-    },
-  };
-}
 
 function actionLabel(action: TeacherLifecycleMutationInput["action"]) {
   switch (action) {
@@ -202,4 +162,5 @@ export async function updateTeacherLifecycleStatus(
 
   return updated;
 }
+
 

@@ -4,6 +4,7 @@ import prisma from "@/src/lib/prisma";
 import { notFound } from "next/navigation";
 import { requirePageSession } from "@/src/lib/authz";
 import FormModal from "@/src/components/FormModal";
+import TeacherLifecycleControls from "@/src/components/TeacherLifecycleControls";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -390,7 +391,13 @@ const SingleTeacherPage = async ({
                 <ActionLink href="/list/classes" label="Update class teacher responsibility" icon={<UserCheck size={15} />} />
                 <ActionLink href="/admin/timetable" label="Publish timetable duties" icon={<Calendar size={15} />} />
                 <ActionLink href="/admin/accountability" label="Review accountability" icon={<ShieldAlert size={15} />} />
-
+              </div>
+              <div className="mt-4 border-t border-gray-100 pt-4">
+                <TeacherLifecycleControls
+                  teacherId={teacher.id}
+                  teacherName={teacherName}
+                  status={teacher.status}
+                />
               </div>
             </SectionCard>
           </aside>
