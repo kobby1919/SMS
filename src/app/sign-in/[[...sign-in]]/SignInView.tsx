@@ -1,8 +1,6 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useEffect } from "react";
-import Link from "next/link";
 import { MailCheck } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import {
@@ -12,22 +10,7 @@ import {
 } from "@/src/lib/auth/constants";
 import InviteSignOutButton from "@/src/components/InviteSignOutButton";
 import AuthShell from "@/src/components/auth/AuthShell";
-
-const ClerkSignIn = dynamic(
-  () => import("@clerk/nextjs").then((mod) => mod.SignIn),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="w-full rounded-2xl bg-white p-2">
-        <div className="space-y-4">
-          <div className="h-12 rounded-xl bg-slate-100" />
-          <div className="h-12 rounded-xl bg-slate-100" />
-          <div className="h-12 rounded-xl bg-blue-100" />
-        </div>
-      </div>
-    ),
-  },
-);
+import CustomSignInForm from "@/src/components/auth/CustomSignInForm";
 
 type SignInViewProps = {
   inviteContext?: {
@@ -42,31 +25,27 @@ const inviteCopy = {
   school_admin: {
     label: "school admin",
     title: "School admin invite sign-in",
-    subtitle: "Secure school admin invite access",
     warning:
       "Use the school admin email invited by the school owner or Edujay platform team.",
   },
   teacher: {
     label: "teacher",
     title: "Teacher invite sign-in",
-    subtitle: "Secure teacher invite access",
     warning: "Use the teacher email invited by the school admin.",
   },
   parent: {
     label: "parent",
     title: "Parent invite sign-in",
-    subtitle: "Secure parent invite access",
     warning: "Use the parent email invited by the school admin.",
   },
   bursar: {
     label: "bursar",
     title: "Bursar invite sign-in",
-    subtitle: "Secure finance invite access",
     warning: "Use the bursar email invited by the school admin.",
   },
 } satisfies Record<
   NonNullable<SignInViewProps["inviteContext"]>["role"],
-  { label: string; title: string; subtitle: string; warning: string }
+  { label: string; title: string; warning: string }
 >;
 
 export default function SignInView({ inviteContext }: SignInViewProps) {
@@ -78,7 +57,6 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
   const activeInvite = inviteContext ? inviteCopy[inviteContext.role] : null;
   const inviteEmail = inviteContext?.email;
   const inviteSchoolName = inviteContext?.schoolName ?? "the school";
-  const pageSubtitle = activeInvite?.subtitle ?? "Secure school access";
   const callbackUrl = inviteContext?.callbackUrl ?? AUTH_CALLBACK_PATH;
   const teacherInviteToken = searchParams.get("teacherInvite");
   const schoolInviteToken = searchParams.get("invite");
@@ -111,7 +89,7 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
   }, [bursarInviteToken, parentInviteToken, schoolInviteToken, teacherInviteToken]);
 
   return (
-    <AuthShell mode="sign-in" subtitle={pageSubtitle} eyebrow={activeInvite?.title ?? "Secure school access"}>
+    <AuthShell mode="sign-in" eyebrow={activeInvite?.title ?? "Secure school access"} alternateHref={signUpUrl}>
       {activeInvite && (
         <div className="mb-4 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-950">
           <div className="flex items-start gap-3">
@@ -167,90 +145,7 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
           </p>
         </div>
       )}
-
-      <ClerkSignIn
-        forceRedirectUrl={callbackUrl}
-        fallbackRedirectUrl={callbackUrl}
-        signUpUrl={signUpUrl}
-        signUpFallbackRedirectUrl={callbackUrl}
-        initialValues={
-          inviteEmail
-            ? {
-                emailAddress: inviteEmail,
-              }
-            : undefined
-        }
-        routing="path"
-        path="/sign-in"
-        appearance={{
-          layout: {
-            logoPlacement: "none",
-            showOptionalFields: false,
-          },
-          elements: {
-            rootBox: "w-full",
-            card: "w-full max-w-none rounded-none border-0 bg-transparent shadow-none",
-            cardBox: "w-full shadow-none",
-            main: "p-0",
-            header: "hidden",
-            headerTitle: "hidden",
-            headerSubtitle: "hidden",
-            form: "w-full space-y-4",
-            formField: "space-y-1.5",
-            formFieldLabel: "text-xs font-black uppercase tracking-wide text-slate-500",
-            formFieldInput:
-              "h-12 rounded-xl border border-slate-200 bg-slate-50 px-3 text-[15px] font-semibold text-slate-900 " +
-              "placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-blue-500 " +
-              "focus:bg-white focus:ring-4 focus:ring-blue-100",
-            formFieldInputShowPasswordButton: "text-slate-400 hover:text-slate-600",
-            formButtonPrimary:
-              "h-12 w-full rounded-xl bg-blue-700 text-sm font-black text-white transition-colors " +
-              "duration-200 hover:bg-blue-800 normal-case shadow-none",
-            footerActionLink: "font-black text-blue-700 hover:text-blue-900",
-            footerActionText: "text-sm text-slate-500",
-            dividerLine: "bg-slate-100",
-            dividerText: "text-xs font-bold text-slate-400",
-            formFieldErrorText: "text-xs font-semibold text-rose-500",
-            alert: "rounded-xl border border-rose-100 bg-rose-50",
-            alertText: "text-sm font-semibold text-rose-600",
-            socialButtonsBlockButton:
-              "h-12 rounded-xl border border-slate-200 text-sm font-bold transition-colors hover:bg-slate-50",
-            formContainer: "w-full",
-            identityPreview: "rounded-xl border border-slate-100 bg-slate-50",
-            footer: "hidden",
-            footerAction: "hidden",
-            footerPages: "hidden",
-          },
-          variables: {
-            colorPrimary: "#1d4ed8",
-            colorText: "#0f172a",
-            colorTextSecondary: "#64748b",
-            colorBackground: "#ffffff",
-            colorInputBackground: "#f8fafc",
-            colorInputText: "#0f172a",
-            borderRadius: "0.875rem",
-            fontFamily: "var(--font-nunito)",
-          },
-        }}
-      />
-
-      <div className="mt-4 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-center text-sm font-bold text-slate-600">
-        {activeInvite ? (
-          <>
-            New invited user?{" "}
-            <Link href={signUpUrl} className="font-black text-blue-700 hover:text-blue-900">
-              Create your {activeInvite.label} account
-            </Link>
-          </>
-        ) : (
-          <>
-            New to Edujay?{" "}
-            <Link href={signUpUrl} className="font-black text-blue-700 hover:text-blue-900">
-              Create an account
-            </Link>
-          </>
-        )}
-      </div>
+      <CustomSignInForm callbackUrl={callbackUrl} initialEmail={inviteEmail} />
     </AuthShell>
   );
 }

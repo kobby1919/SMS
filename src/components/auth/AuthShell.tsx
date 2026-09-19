@@ -1,127 +1,126 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import type { ReactNode } from "react";
-import { BadgeCheck, ShieldCheck } from "lucide-react";
 
 type AuthShellProps = {
   mode: "sign-in" | "sign-up";
-  subtitle: string;
   eyebrow?: string;
+  alternateHref?: string;
   children: ReactNode;
 };
 
+const DEFAULT_EYEBROW = "Secure school access";
+
 export default function AuthShell({
   mode,
-  subtitle,
-  eyebrow = "Secure school access",
+  eyebrow = DEFAULT_EYEBROW,
+  alternateHref,
   children,
 }: AuthShellProps) {
-  const title = mode === "sign-in"
-    ? "Good day, continue to Edujay"
-    : "Good day, create your Edujay account";
-  const helper = mode === "sign-in"
-    ? "Sign in with the email connected to your school account."
-    : "Use the email from your school invite so Edujay can link your role correctly.";
+  const isSignIn = mode === "sign-in";
+  const title = isSignIn ? "Welcome back" : "Create account";
+  const helper = isSignIn
+    ? "Sign in to your school workspace."
+    : "Create your account with the email from your school invite.";
+  const signInHref = isSignIn ? "/sign-in" : (alternateHref ?? "/sign-in");
+  const signUpHref = isSignIn ? (alternateHref ?? "/sign-up") : "/sign-up";
+
+  const showEyebrowBadge = eyebrow !== DEFAULT_EYEBROW;
 
   return (
-    <main className="min-h-dvh overflow-x-hidden bg-white text-slate-950">
-      <section className="grid min-h-dvh w-full grid-cols-1 lg:grid-cols-[minmax(340px,38%)_1fr]">
-        <aside className="relative hidden min-h-dvh overflow-hidden bg-[#f8fafc] px-10 py-10 lg:flex xl:px-14">
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 opacity-70"
-            style={{
-              backgroundImage: "url('/edujay-auth-pattern.svg')",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "top right",
-              backgroundSize: "420px 420px",
-            }}
-          />
-          <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-white to-transparent" />
-          <div className="relative z-10 flex min-h-full w-full flex-col justify-between">
-            <BrandLockup subtitle="One source of truth for modern schools" />
+    <main className="relative min-h-dvh overflow-x-hidden bg-white text-slate-950">
+      <AuthBackground />
 
-            <div className="my-16 max-w-md">
-              <p className="text-xs font-black uppercase tracking-[0.22em] text-edujay-primary">
-                {eyebrow}
-              </p>
-              <h1 className="mt-5 font-nunito text-4xl font-black leading-[1.06] tracking-tight text-slate-950 xl:text-5xl">
-                School access that stays simple.
-              </h1>
-              <p className="mt-5 max-w-sm text-base font-semibold leading-8 text-slate-500">
-                Edujay keeps each user connected to the right school, role, and records.
-              </p>
-            </div>
-
-            <p className="max-w-sm text-xs font-bold leading-6 text-slate-400">
-              Attendance, academics, fees, communication, and operations under one controlled login.
+      <section className="relative z-10 grid min-h-dvh w-full grid-cols-1 lg:grid-cols-2">
+        <aside className="hidden min-h-dvh items-center px-10 py-10 text-white lg:flex xl:px-16">
+          <div className="max-w-md">
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-white/65">
+              Edujay school access
             </p>
+            <h1 className="mt-5 font-nunito text-4xl font-black leading-[1.05] tracking-tight xl:text-5xl">
+              One secure login for every school role.
+            </h1>
+            <p className="mt-5 max-w-sm text-base font-semibold leading-8 text-white/72">
+              Staff, parents, finance teams, and school leaders enter through one controlled gateway.
+            </p>
+            <div className="mt-8 grid gap-3 text-sm font-bold text-white/70">
+              <p>Role-aware access</p>
+              <p>Invite-only setup</p>
+              <p>Protected school records</p>
+            </div>
           </div>
         </aside>
 
-        <div
-          className="relative flex min-h-dvh items-start justify-center overflow-hidden px-5 py-6 sm:px-6 lg:items-center lg:bg-[#f5f7fb] lg:px-12"
-          style={{
-            backgroundImage: "url('/edujay-auth-pattern.svg')",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "top right",
-            backgroundSize: "min(82vw, 320px)",
-          }}
-        >
-          <div className="absolute inset-0 bg-white/88 lg:hidden" aria-hidden="true" />
-          <section className="relative z-10 flex min-h-[calc(100dvh-3rem)] w-full max-w-[460px] flex-col lg:min-h-0">
-            <div className="pt-2 lg:hidden">
-              <BrandLockup subtitle={subtitle} />
+        <div className="flex min-h-dvh items-start justify-center px-5 py-8 sm:px-6 lg:items-center lg:px-10 lg:py-10">
+          <div className="flex w-full max-w-[476px] flex-col">
+            <div className="flex items-center gap-3">
+              <Image src="/edujay-logo.png" alt="Edujay" width={72} height={48} className="h-7 w-auto" priority unoptimized />
+              <span className="font-nunito text-xl font-black tracking-tight text-[#061f5f]">
+                Edujay
+              </span>
             </div>
 
-            <div className="flex flex-1 flex-col justify-center py-8 lg:block lg:flex-none lg:py-0">
-              <div className="mb-7 text-center lg:text-left">
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-edujay-primary">
+            <div className="mt-14 sm:mt-16 lg:mt-14">
+              {showEyebrowBadge && (
+                <span className="mb-4 inline-flex items-center rounded-full bg-edujay-primary/10 px-3 py-1 text-xs font-black uppercase tracking-wide text-edujay-primary">
                   {eyebrow}
-                </p>
-                <h1 className="mt-3 font-nunito text-[1.95rem] font-black leading-tight tracking-tight text-slate-950 sm:text-4xl lg:text-3xl">
-                  {title}
-                </h1>
-                <p className="mx-auto mt-3 max-w-sm text-sm font-semibold leading-6 text-slate-500 lg:mx-0">
-                  {helper}
-                </p>
-              </div>
-
-              <div className="rounded-none border-0 bg-transparent p-0 shadow-none lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-5 lg:shadow-sm">
-                {children}
-
-                <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-slate-100 pt-4 text-xs font-bold text-slate-500">
-                  <span className="inline-flex items-center gap-1.5">
-                    <ShieldCheck size={14} className="text-emerald-600" />
-                    Protected by Clerk
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <BadgeCheck size={14} className="text-edujay-primary" />
-                    Edujay role verified
-                  </span>
-                </div>
-              </div>
+                </span>
+              )}
+              <h1 className="font-nunito text-[2rem] font-black leading-tight tracking-tight text-slate-950 sm:text-[2.25rem]">
+                {title}
+              </h1>
+              <p className="mt-2 text-lg font-medium leading-7 text-slate-500">
+                {helper}
+              </p>
             </div>
-          </section>
+
+            <div className="mt-7 grid h-[54px] grid-cols-2 rounded-xl bg-slate-100 p-1 text-base font-medium text-slate-600">
+              {isSignIn ? (
+                <span className="flex items-center justify-center rounded-lg bg-white text-[#061f5f] shadow-sm">
+                  Sign in
+                </span>
+              ) : (
+                <Link href={signInHref} className="flex items-center justify-center rounded-lg transition hover:text-[#061f5f]">
+                  Sign in
+                </Link>
+              )}
+              {isSignIn ? (
+                <Link href={signUpHref} className="flex items-center justify-center rounded-lg transition hover:text-[#061f5f]">
+                  Create account
+                </Link>
+              ) : (
+                <span className="flex items-center justify-center rounded-lg bg-white text-[#061f5f] shadow-sm">
+                  Create account
+                </span>
+              )}
+            </div>
+
+            <div className="mt-8">{children}</div>
+
+            <p className="mt-8 text-center text-base font-medium text-slate-500">
+              {isSignIn ? "Don't have an account?" : "Already have an account?"}{" "}
+              <Link href={isSignIn ? signUpHref : signInHref} className="font-black text-[#061f5f] hover:text-blue-800">
+                {isSignIn ? "Create one" : "Sign in"}
+              </Link>
+            </p>
+          </div>
         </div>
       </section>
     </main>
   );
 }
 
-function BrandLockup({ subtitle }: { subtitle: string }) {
+function AuthBackground() {
   return (
-    <div className="inline-flex items-center gap-1.5">
-      <Image src="/edujay-logo.png" alt="Edujay" width={112} height={76} className="h-14 w-auto sm:h-16 lg:h-20" priority />
-      <div>
-        <p className="font-nunito text-2xl font-black tracking-tight text-slate-950">Edujay</p>
-        <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
-          {subtitle}
-        </p>
-      </div>
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div
+        className="absolute inset-0 hidden bg-cover bg-center bg-no-repeat lg:block"
+        style={{ backgroundImage: "url('/edujay-auth-split-desktop.png')" }}
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,_#ffffff_0%,_#f8fbff_58%,_#edf7ff_100%)] lg:hidden" />
     </div>
   );
 }
-
 
