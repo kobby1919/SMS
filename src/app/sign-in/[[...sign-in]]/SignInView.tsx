@@ -5,6 +5,7 @@ import { MailCheck } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import {
   AUTH_CALLBACK_PATH,
+  AUTH_RATE_LIMITED_QUERY,
   MISSING_ROLE_QUERY,
   TEACHER_ACCESS_BLOCKED_QUERY,
 } from "@/src/lib/auth/constants";
@@ -54,6 +55,8 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
   const teacherAccessBlocked = searchParams.get("error") === TEACHER_ACCESS_BLOCKED_QUERY;
   const blockedTeacherStatus = searchParams.get("status");
   const invalidInvite = searchParams.get("error") === "invalid_invite";
+  const authRateLimited = searchParams.get("error") === AUTH_RATE_LIMITED_QUERY;
+  const retryAfter = searchParams.get("retryAfter");
   const activeInvite = inviteContext ? inviteCopy[inviteContext.role] : null;
   const inviteEmail = inviteContext?.email;
   const inviteSchoolName = inviteContext?.schoolName ?? "the school";
@@ -137,6 +140,14 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
         </div>
       )}
 
+      {authRateLimited && (
+        <div className="mb-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-950">
+          <p className="font-semibold">Sign-in is catching up</p>
+          <p className="mt-1 text-blue-900/90">
+            Edujay received several secure sign-in checks from this device. Please wait{retryAfter ? ` about ${retryAfter} seconds` : " a moment"} and try again.
+          </p>
+        </div>
+      )}
       {invalidInvite && (
         <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
           <p className="font-semibold">Invitation could not be accepted</p>
@@ -149,3 +160,4 @@ export default function SignInView({ inviteContext }: SignInViewProps) {
     </AuthShell>
   );
 }
+
