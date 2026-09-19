@@ -14,7 +14,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { userId, schoolId } = await requireRole(["admin"]);
+    const { userId, role, schoolId } = await requireRole(["admin"]);
     const limited = await enforceRateLimit(req, {
       scope: "users:update-teacher",
       actorId: userId,
@@ -35,7 +35,7 @@ export async function PUT(
       subjectIds: formData.get("subjectIds") ?? "[]",
     });
     if (!parsed.ok) return parsed.response;
-    return NextResponse.json(await updateTeacher(schoolId, id, parsed.data));
+    return NextResponse.json(await updateTeacher(schoolId, id, parsed.data, { userId, role }));
   } catch (error) {
     if (error instanceof UserManagementError || error instanceof TeacherAssignmentSafetyError) {
       return NextResponse.json({ error: error.message }, { status: error.status });

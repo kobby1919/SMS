@@ -21,6 +21,7 @@ import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-oper
 import { getLiveTimetableLessonBySourceId } from "@/src/lib/services/timetable";
 import { assertSubjectCapabilityRemovalAllowed } from "@/src/lib/services/teacher-assignment-safety";
 import { assertClassTeacherChangeAllowed } from "@/src/lib/services/class-teacher-safety";
+import { writeTeacherAdminAuditLogs } from "@/src/lib/services/teacher-admin-audit";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   announcementFormSchema,
@@ -46,6 +47,16 @@ const ATTENDANCE_STATUS_LABELS: Record<AttendanceStatus, string> = {
   EXCUSED: "Excused",
 };
 
+function teacherName(
+  teacher: { name: string; surname?: string | null } | null | undefined,
+) {
+  if (!teacher) return "None";
+  return [teacher.name, teacher.surname].filter(Boolean).join(" ");
+}
+
+function uniqueStrings(values: Array<string | null | undefined>) {
+  return Array.from(new Set(values.filter((value): value is string => Boolean(value))));
+}
 // ─── Auth guards ──────────────────────────────────────────────────────────────
 const requireAdmin = () => requireRole(["admin"]);
 const requireAdminOrTeacher = () => requireRole(["admin", "teacher"]);
@@ -160,18 +171,76 @@ export async function updateClass(id: number, data: {
 }) {
   ({ id } = parseActionInput(numericIdSchema, { id }));
   data = parseActionInput(classUpdateSchema, data);
-  const { schoolId } = await requireAdmin();
-  const existing = await prisma.class.findFirst({ where: { id, schoolId } });
+  const ctx = await requireAdmin();
+  const { schoolId } = ctx;
+  const existing = await prisma.class.findFirst({
+    where: { id, schoolId },
+    select: {
+      id: true,
+      schoolId: true,
+      name: true,
+      supervisorId: true,
+      supervisor: { select: { id: true, name: true, surname: true } },
+    },
+  });
   assertSameSchool(existing, schoolId);
   await assertClassSetupReferences(schoolId, data);
-  if ("supervisorId" in data) {
+
+  const nextSupervisorId = "supervisorId" in data ? data.supervisorId ?? null : undefined;
+  if (nextSupervisorId !== undefined) {
     await assertClassTeacherChangeAllowed({
       schoolId,
       classId: id,
-      nextSupervisorId: data.supervisorId ?? null,
+      nextSupervisorId,
     });
   }
-  await prisma.class.update({ where: { id }, data });
+
+  const supervisorChanged =
+    nextSupervisorId !== undefined && nextSupervisorId !== (existing.supervisorId ?? null);
+  const impactedTeacherIds = supervisorChanged
+    ? uniqueStrings([existing.supervisorId, nextSupervisorId])
+    : [];
+  const impactedTeachers = impactedTeacherIds.length
+    ? await prisma.teacher.findMany({
+        where: { schoolId, id: { in: impactedTeacherIds } },
+        select: { id: true, name: true, surname: true },
+      })
+    : [];
+  const teacherById = new Map(impactedTeachers.map((teacher) => [teacher.id, teacher]));
+  const previousSupervisorName = teacherName(
+    existing.supervisorId ? teacherById.get(existing.supervisorId) ?? existing.supervisor : null,
+  );
+  const nextSupervisorName = teacherName(nextSupervisorId ? teacherById.get(nextSupervisorId) : null);
+
+  await prisma.$transaction(async (tx) => {
+    await tx.class.update({ where: { id }, data });
+    if (!supervisorChanged) return;
+
+    await writeTeacherAdminAuditLogs(
+      tx,
+      impactedTeacherIds.map((teacherId) => ({
+        schoolId,
+        teacherId,
+        actorId: ctx.userId,
+        actorRole: ctx.role,
+        sourceModel: "CLASS_TEACHER_RESPONSIBILITY",
+        sourceId: String(id),
+        before: {
+          classId: id,
+          className: existing.name,
+          supervisorId: existing.supervisorId,
+          supervisorName: previousSupervisorName,
+        },
+        after: {
+          classId: id,
+          className: data.name ?? existing.name,
+          supervisorId: nextSupervisorId,
+          supervisorName: nextSupervisorName,
+        },
+        message: `Class teacher responsibility for ${data.name ?? existing.name} changed from ${previousSupervisorName} to ${nextSupervisorName}.`,
+      })),
+    );
+  });
   revalidatePath("/list/classes");
   revalidateReferenceData(schoolId, "classes");
   revalidateReferenceData(schoolId, "students");
@@ -179,7 +248,6 @@ export async function updateClass(id: number, data: {
   revalidateReferenceData(schoolId, "timetable");
   revalidateDashboard(schoolId);
 }
-
 export async function deleteClass(id: number) {
   ({ id } = parseActionInput(numericIdSchema, { id }));
   const { schoolId } = await requireAdmin();
@@ -256,16 +324,43 @@ async function assertSubjectCapabilityTeachers(schoolId: string, teacherIds: str
 
 export async function createSubject(data: { name: string; teacherIds?: string[] }) {
   data = parseActionInput(subjectCreateSchema, data);
-  const { schoolId } = await requireAdmin();
+  const ctx = await requireAdmin();
+  const { schoolId } = ctx;
   const teacherIds = await assertSubjectCapabilityTeachers(schoolId, data.teacherIds);
-  await prisma.subject.create({
-    data: {
-      schoolId,
-      name: data.name,
-      teachers: teacherIds.length
-        ? { connect: teacherIds.map((id) => ({ id })) }
-        : undefined,
-    },
+  const teachers = teacherIds.length
+    ? await prisma.teacher.findMany({
+        where: { schoolId, id: { in: teacherIds } },
+        select: { id: true, name: true, surname: true },
+      })
+    : [];
+  const teacherById = new Map(teachers.map((teacher) => [teacher.id, teacher]));
+
+  await prisma.$transaction(async (tx) => {
+    const subject = await tx.subject.create({
+      data: {
+        schoolId,
+        name: data.name,
+        teachers: teacherIds.length
+          ? { connect: teacherIds.map((id) => ({ id })) }
+          : undefined,
+      },
+      select: { id: true, name: true },
+    });
+
+    await writeTeacherAdminAuditLogs(
+      tx,
+      teacherIds.map((teacherId) => ({
+        schoolId,
+        teacherId,
+        actorId: ctx.userId,
+        actorRole: ctx.role,
+        sourceModel: "TEACHER_SUBJECT_CAPABILITY",
+        sourceId: String(subject.id),
+        before: { subjectId: subject.id, subjectName: subject.name, assigned: false },
+        after: { subjectId: subject.id, subjectName: subject.name, assigned: true },
+        message: `${teacherName(teacherById.get(teacherId))} was allowed to teach ${subject.name}.`,
+      })),
+    );
   });
   revalidatePath("/list/subjects");
   revalidateReferenceData(schoolId, "subjects");
@@ -277,8 +372,17 @@ export async function createSubject(data: { name: string; teacherIds?: string[] 
 export async function updateSubject(id: number, data: { name?: string; teacherIds?: string[] }) {
   ({ id } = parseActionInput(numericIdSchema, { id }));
   data = parseActionInput(subjectUpdateSchema, data);
-  const { schoolId } = await requireAdmin();
-  const existing = await prisma.subject.findFirst({ where: { id, schoolId } });
+  const ctx = await requireAdmin();
+  const { schoolId } = ctx;
+  const existing = await prisma.subject.findFirst({
+    where: { id, schoolId },
+    select: {
+      id: true,
+      schoolId: true,
+      name: true,
+      teachers: { select: { id: true, name: true, surname: true } },
+    },
+  });
   assertSameSchool(existing, schoolId);
   const teacherIds = await assertSubjectCapabilityTeachers(schoolId, data.teacherIds);
   if (data.teacherIds) {
@@ -288,14 +392,65 @@ export async function updateSubject(id: number, data: { name?: string; teacherId
       nextTeacherIds: teacherIds,
     });
   }
-  await prisma.subject.update({
-    where: { id },
-    data: {
-      name: data.name,
-      teachers: data.teacherIds
-        ? { set: teacherIds.map((tid) => ({ id: tid })) }
-        : undefined,
-    },
+
+  const previousTeacherIds = existing.teachers.map((teacher) => teacher.id);
+  const capabilityChanged = Boolean(data.teacherIds);
+  const addedTeacherIds = capabilityChanged
+    ? teacherIds.filter((teacherId) => !previousTeacherIds.includes(teacherId))
+    : [];
+  const removedTeacherIds = capabilityChanged
+    ? previousTeacherIds.filter((teacherId) => !teacherIds.includes(teacherId))
+    : [];
+  const impactedTeacherIds = uniqueStrings([...addedTeacherIds, ...removedTeacherIds]);
+  const teacherDetails = impactedTeacherIds.length
+    ? await prisma.teacher.findMany({
+        where: { schoolId, id: { in: impactedTeacherIds } },
+        select: { id: true, name: true, surname: true },
+      })
+    : [];
+  const teacherById = new Map([
+    ...existing.teachers.map((teacher) => [teacher.id, teacher] as const),
+    ...teacherDetails.map((teacher) => [teacher.id, teacher] as const),
+  ]);
+  const nextSubjectName = data.name ?? existing.name;
+
+  await prisma.$transaction(async (tx) => {
+    await tx.subject.update({
+      where: { id },
+      data: {
+        name: data.name,
+        teachers: data.teacherIds
+          ? { set: teacherIds.map((tid) => ({ id: tid })) }
+          : undefined,
+      },
+    });
+
+    await writeTeacherAdminAuditLogs(
+      tx,
+      impactedTeacherIds.map((teacherId) => {
+        const wasAssigned = previousTeacherIds.includes(teacherId);
+        const isAssigned = teacherIds.includes(teacherId);
+        return {
+          schoolId,
+          teacherId,
+          actorId: ctx.userId,
+          actorRole: ctx.role,
+          sourceModel: "TEACHER_SUBJECT_CAPABILITY",
+          sourceId: String(id),
+          before: {
+            subjectId: id,
+            subjectName: existing.name,
+            assigned: wasAssigned,
+          },
+          after: {
+            subjectId: id,
+            subjectName: nextSubjectName,
+            assigned: isAssigned,
+          },
+          message: `${teacherName(teacherById.get(teacherId))} ${isAssigned ? "was allowed to teach" : "was removed from"} ${nextSubjectName}.`,
+        };
+      }),
+    );
   });
   revalidatePath("/list/subjects");
   revalidateReferenceData(schoolId, "subjects");
@@ -303,7 +458,6 @@ export async function updateSubject(id: number, data: { name?: string; teacherId
   revalidateReferenceData(schoolId, "timetable");
   revalidateDashboard(schoolId);
 }
-
 export async function deleteSubject(id: number) {
   ({ id } = parseActionInput(numericIdSchema, { id }));
   const { schoolId } = await requireAdmin();

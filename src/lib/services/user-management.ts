@@ -17,7 +17,7 @@ import { ensurePrimaryParentStudentRelationship } from "@/src/lib/services/paren
 import { writeParentAccessAudit } from "@/src/lib/services/parent-access-audit";
 import { nextTeacherProfileStatus } from "@/src/lib/services/teacher-profile-completion";
 import { assertTeacherSubjectRemovalAllowed } from "@/src/lib/services/teacher-assignment-safety";
-
+import { writeTeacherAdminAuditLog } from "@/src/lib/services/teacher-admin-audit";
 type ParentCreateInput = z.infer<typeof parentCreateSchema>;
 type ParentUpdateInput = z.infer<typeof parentUpdateSchema>;
 type StudentCreateInput = z.infer<typeof studentCreateSchema>;
@@ -25,6 +25,9 @@ type StudentUpdateInput = z.infer<typeof studentUpdateSchema>;
 type TeacherCreateInput = z.infer<typeof teacherCreateSchema>;
 type TeacherUpdateInput = z.infer<typeof teacherUpdateSchema>;
 
+function displayName(user: { name: string; surname?: string | null }) {
+  return [user.name, user.surname].filter(Boolean).join(" ");
+}
 export class UserManagementError extends Error {
   constructor(message: string, readonly status: number) {
     super(message);
@@ -249,16 +252,24 @@ export async function updateTeacher(
   schoolId: string,
   teacherId: string,
   input: TeacherUpdateInput,
+  actor: { userId: string; role: string } = { userId: "system", role: "system" },
 ) {
   const [teacher, subjects] = await Promise.all([
     prisma.teacher.findFirst({
       where: { id: teacherId, schoolId },
-      select: { id: true, name: true, surname: true, email: true, status: true },
+      select: {
+        id: true,
+        name: true,
+        surname: true,
+        email: true,
+        status: true,
+        subjects: { select: { id: true, name: true } },
+      },
     }),
     input.subjectIds.length
       ? prisma.subject.findMany({
           where: { id: { in: input.subjectIds }, schoolId },
-          select: { id: true },
+          select: { id: true, name: true },
         })
       : [],
   ]);
@@ -273,6 +284,12 @@ export async function updateTeacher(
     nextSubjectIds: subjects.map(({ id }) => id),
   });
 
+  const previousSubjectIds = teacher.subjects.map((subject) => subject.id);
+  const nextSubjectIds = subjects.map((subject) => subject.id);
+  const addedSubjects = subjects.filter((subject) => !previousSubjectIds.includes(subject.id));
+  const removedSubjects = teacher.subjects.filter((subject) => !nextSubjectIds.includes(subject.id));
+  const subjectCapabilityChanged = addedSubjects.length > 0 || removedSubjects.length > 0;
+
   const clerk = await clerkClient();
   await clerk.users.updateUser(teacherId, {
     firstName: input.name,
@@ -280,25 +297,51 @@ export async function updateTeacher(
   });
 
   try {
-    const updated = await prisma.teacher.update({
-      where: { id: teacherId },
-      data: {
-        name: input.name,
-        surname: input.surname,
-        phone: input.phone || null,
-        address: input.address,
-        bloodType: input.bloodType,
-        sex: input.sex,
-        status: nextTeacherProfileStatus({
-          status: teacher.status,
+    const updated = await prisma.$transaction(async (tx) => {
+      const row = await tx.teacher.update({
+        where: { id: teacherId },
+        data: {
           name: input.name,
           surname: input.surname,
-          email: teacher.email,
           phone: input.phone || null,
           address: input.address,
-        }),
-        subjects: { set: subjects.map(({ id }) => ({ id })) },
-      },
+          bloodType: input.bloodType,
+          sex: input.sex,
+          status: nextTeacherProfileStatus({
+            status: teacher.status,
+            name: input.name,
+            surname: input.surname,
+            email: teacher.email,
+            phone: input.phone || null,
+            address: input.address,
+          }),
+          subjects: { set: subjects.map(({ id }) => ({ id })) },
+        },
+      });
+
+      if (subjectCapabilityChanged) {
+        await writeTeacherAdminAuditLog(tx, {
+          schoolId,
+          teacherId,
+          actorId: actor.userId,
+          actorRole: actor.role,
+          sourceModel: "TEACHER_PROFILE_SUBJECTS",
+          sourceId: teacherId,
+          before: {
+            teacherId,
+            teacherName: displayName(teacher),
+            subjects: teacher.subjects.map((subject) => ({ id: subject.id, name: subject.name })),
+          },
+          after: {
+            teacherId,
+            teacherName: displayName(row),
+            subjects: subjects.map((subject) => ({ id: subject.id, name: subject.name })),
+          },
+          message: `${displayName(row)} subject capability changed. Added: ${addedSubjects.map((subject) => subject.name).join(", ") || "None"}. Removed: ${removedSubjects.map((subject) => subject.name).join(", ") || "None"}.`,
+        });
+      }
+
+      return row;
     });
     revalidateReferenceData(schoolId, "teachers");
     revalidateReferenceData(schoolId, "subjects");
@@ -310,7 +353,6 @@ export async function updateTeacher(
     throw error;
   }
 }
-
 export async function updateStudent(
   schoolId: string,
   studentId: string,
