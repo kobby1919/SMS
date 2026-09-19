@@ -385,21 +385,23 @@ const SingleTeacherPage = async ({
               )}
             </SectionCard>
 
-            <SectionCard title="10. Admin Actions" description="Controlled actions. Destructive teacher deletion is intentionally not offered.">
-              <div className="grid gap-2">
-                <ActionLink href="/list/subjects" label="Update subject capability" icon={<Award size={15} />} />
-                <ActionLink href="/list/classes" label="Update class teacher responsibility" icon={<UserCheck size={15} />} />
-                <ActionLink href="/admin/timetable" label="Publish timetable duties" icon={<Calendar size={15} />} />
-                <ActionLink href="/admin/accountability" label="Review accountability" icon={<ShieldAlert size={15} />} />
-              </div>
-              <div className="mt-4 border-t border-gray-100 pt-4">
-                <TeacherLifecycleControls
-                  teacherId={teacher.id}
-                  teacherName={teacherName}
-                  status={teacher.status}
-                />
-              </div>
-            </SectionCard>
+            {role === "admin" && (
+              <SectionCard title="10. Admin Actions" description="Controlled actions. Destructive teacher deletion is intentionally not offered.">
+                <div className="grid gap-2">
+                  <ActionLink href="/list/subjects" label="Update subject capability" icon={<Award size={15} />} />
+                  <ActionLink href="/list/classes" label="Update class teacher responsibility" icon={<UserCheck size={15} />} />
+                  <ActionLink href="/admin/timetable" label="Publish timetable duties" icon={<Calendar size={15} />} />
+                  <ActionLink href="/admin/accountability" label="Review accountability" icon={<ShieldAlert size={15} />} />
+                </div>
+                <div className="mt-4 border-t border-gray-100 pt-4">
+                  <TeacherLifecycleControls
+                    teacherId={teacher.id}
+                    teacherName={teacherName}
+                    status={teacher.status}
+                  />
+                </div>
+              </SectionCard>
+            )}
           </aside>
         </div>
       </div>
