@@ -2,7 +2,7 @@ import type { ReportPublicationStatus } from "@/src/generated/prisma";
 import prisma from "@/src/lib/prisma";
 import { getActiveAcademicPeriod } from "@/src/lib/services/academic-period";
 
-const LOCKED_REPORT_STATUSES: ReportPublicationStatus[] = ["SUBMITTED", "PUBLISHED"];
+const LOCKED_REPORT_STATUSES: ReportPublicationStatus[] = ["SUBMITTED", "REJECTED", "PUBLISHED"];
 
 export class ClassTeacherSafetyError extends Error {
   constructor(message: string, readonly status = 409) {

@@ -1,9 +1,9 @@
 import Menu from "@/src/components/Menu";
 import Navbar from "@/src/components/Navbar";
-import Image from "next/image";
 import Link from "next/link";
 import { requirePageSession } from "@/src/lib/authz";
 import NavigationProgress from "@/src/components/NavigationProgress";
+import EdujayBrandLogo from "@/src/components/EdujayBrandLogo";
 
 export default async function DashboardLayout({
   children,
@@ -17,12 +17,11 @@ export default async function DashboardLayout({
       <div className="w-14 md:w-56 lg:w-60 xl:w-64 p-3 lg:p-4 border-r border-gray-100 bg-white flex flex-col gap-6 shrink-0 overflow-y-auto overflow-x-hidden no-scrollbar">
         <Link
           href="/"
-          className="flex items-center justify-center md:justify-start gap-2"
+          className="flex items-center justify-center md:justify-start"
+          aria-label="Edujay dashboard"
         >
-          <Image src="/school.svg" alt="logo" width={32} height={32} priority />
-          <span className="hidden md:block font-nunito font-extrabold text-lg tracking-tight text-gray-800">
-            Edujay
-          </span>
+          <EdujayBrandLogo size="sm" showWordmark={false} priority className="md:hidden" />
+          <EdujayBrandLogo size="md" priority className="hidden md:inline-flex" />
         </Link>
         <Menu role={session.role} />
       </div>

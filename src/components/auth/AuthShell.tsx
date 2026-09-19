@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import EdujayBrandLogo from "@/src/components/EdujayBrandLogo";
 
 type AuthShellProps = {
   mode: "sign-in" | "sign-up";
@@ -55,11 +55,8 @@ export default function AuthShell({
 
         <div className="flex min-h-dvh items-start justify-center px-5 py-8 sm:px-6 lg:items-center lg:px-10 lg:py-10">
           <div className="flex w-full max-w-[476px] flex-col">
-            <div className="flex items-center gap-3">
-              <Image src="/edujay-logo.png" alt="Edujay" width={72} height={48} className="h-7 w-auto" priority unoptimized />
-              <span className="font-nunito text-xl font-black tracking-tight text-[#061f5f]">
-                Edujay
-              </span>
+            <div>
+              <EdujayBrandLogo size="sm" priority />
             </div>
 
             <div className="mt-14 sm:mt-16 lg:mt-14">
