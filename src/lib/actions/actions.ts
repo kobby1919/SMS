@@ -20,6 +20,7 @@ import { syncHomeworkCheckingObligation } from "@/src/lib/services/teacher-homew
 import { assertWithinSchoolOperatingHours } from "@/src/lib/services/school-operating-hours";
 import { getLiveTimetableLessonBySourceId } from "@/src/lib/services/timetable";
 import { assertSubjectCapabilityRemovalAllowed } from "@/src/lib/services/teacher-assignment-safety";
+import { assertClassTeacherChangeAllowed } from "@/src/lib/services/class-teacher-safety";
 import { parseActionInput } from "@/src/lib/validation/parse";
 import {
   announcementFormSchema,
@@ -163,6 +164,13 @@ export async function updateClass(id: number, data: {
   const existing = await prisma.class.findFirst({ where: { id, schoolId } });
   assertSameSchool(existing, schoolId);
   await assertClassSetupReferences(schoolId, data);
+  if ("supervisorId" in data) {
+    await assertClassTeacherChangeAllowed({
+      schoolId,
+      classId: id,
+      nextSupervisorId: data.supervisorId ?? null,
+    });
+  }
   await prisma.class.update({ where: { id }, data });
   revalidatePath("/list/classes");
   revalidateReferenceData(schoolId, "classes");

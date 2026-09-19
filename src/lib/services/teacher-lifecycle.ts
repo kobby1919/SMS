@@ -6,6 +6,7 @@ import { revalidateDashboard, revalidateReferenceData } from "@/src/lib/cacheTag
 import { nextTeacherProfileStatus } from "@/src/lib/services/teacher-profile-completion";
 import { getTeacherLifecycleAvailability } from "@/src/lib/teacher-lifecycle-rules";
 import { assertTeacherHasNoActivePublishedLessons } from "@/src/lib/services/teacher-assignment-safety";
+import { assertTeacherHasNoClassTeacherResponsibilities } from "@/src/lib/services/class-teacher-safety";
 import type { TeacherLifecycleMutationInput } from "@/src/lib/validation/teacher-lifecycle";
 
 export class TeacherLifecycleError extends Error {
@@ -103,10 +104,16 @@ export async function updateTeacherLifecycleStatus(
 
   const nextStatus = nextStatusForAction(teacher, input.action);
   if (input.action === "SUSPEND" || input.action === "MARK_LEFT_SCHOOL") {
+    const blockedActionLabel = input.action === "SUSPEND" ? "suspend this teacher" : "mark this teacher as left school";
     await assertTeacherHasNoActivePublishedLessons({
       schoolId: context.schoolId,
       teacherId: teacher.id,
-      actionLabel: input.action === "SUSPEND" ? "suspend this teacher" : "mark this teacher as left school",
+      actionLabel: blockedActionLabel,
+    });
+    await assertTeacherHasNoClassTeacherResponsibilities({
+      schoolId: context.schoolId,
+      teacherId: teacher.id,
+      actionLabel: blockedActionLabel,
     });
   }
   if (nextStatus === teacher.status) {

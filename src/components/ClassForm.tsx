@@ -79,18 +79,23 @@ const ClassForm = ({
     setApiError(null);
     setSubmitting(true);
     try {
-      const payload = {
+      const basePayload = {
         name: formData.name,
         capacity: formData.capacity,
         gradeId: formData.gradeId,
         section: formData.section || undefined,
-        supervisorId: formData.supervisorId || undefined,
       };
       if (type === "create") {
-        await createClass(payload);
+        await createClass({
+          ...basePayload,
+          supervisorId: formData.supervisorId || undefined,
+        });
       } else {
         if (!data) throw new Error("Class data is required for an update.");
-        await updateClass(data.id, payload);
+        await updateClass(data.id, {
+          ...basePayload,
+          supervisorId: formData.supervisorId || null,
+        });
       }
       setSuccess(true);
       setTimeout(() => {

@@ -19,7 +19,7 @@ export const classCreateSchema = z.object({
   supervisorId: stringIdSchema.optional(),
 });
 
-export const classUpdateSchema = classCreateSchema.partial().refine(
+export const classUpdateSchema = classCreateSchema.extend({ supervisorId: stringIdSchema.nullable().optional() }).partial().refine(
   (value) => Object.keys(value).length > 0,
   "Provide at least one class field to update.",
 );
