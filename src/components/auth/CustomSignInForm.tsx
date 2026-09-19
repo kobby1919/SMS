@@ -22,7 +22,11 @@ type MfaChallenge = {
 function getClerkError(error: unknown, fallback = "Sign in failed. Please try again.") {
   if (typeof error === "object" && error && "errors" in error) {
     const clerkError = error as { errors?: Array<{ longMessage?: string; message?: string }> };
-    return clerkError.errors?.[0]?.longMessage ?? clerkError.errors?.[0]?.message ?? fallback;
+    const message = clerkError.errors?.[0]?.longMessage ?? clerkError.errors?.[0]?.message;
+    if (message?.includes("does not match one of the allowed values for parameter strategy")) {
+      return "Google sign-in is not enabled in Clerk yet. Enable Google as a social connection in Clerk, then try again.";
+    }
+    return message ?? fallback;
   }
   if (error instanceof Error) return error.message;
   return fallback;
@@ -447,6 +451,7 @@ export default function CustomSignInForm({ callbackUrl, initialEmail = "" }: Cus
   return (
     <form onSubmit={handlePasswordSignIn} className="space-y-5">
       <AuthMessages notice={notice} error={error} />
+      <SocialAuthButtons disabled={!isLoaded || isSubmitting} onSelect={handleSocialSignIn} />
 
       <label className="block space-y-2">
         <span className="text-xs font-black uppercase tracking-wide text-slate-500">Email or username</span>
@@ -494,8 +499,6 @@ export default function CustomSignInForm({ callbackUrl, initialEmail = "" }: Cus
         {isSubmitting ? "Signing in..." : "Sign in"}
         <span aria-hidden="true">→</span>
       </button>
-
-      <SocialAuthButtons disabled={!isLoaded || isSubmitting} onSelect={handleSocialSignIn} />
     </form>
   );
 }
@@ -516,4 +519,3 @@ function AuthMessages({ notice, error }: { notice: string | null; error: string 
     </>
   );
 }
-

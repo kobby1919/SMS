@@ -12,7 +12,11 @@ type CustomSignUpFormProps = {
 function getClerkError(error: unknown) {
   if (typeof error === "object" && error && "errors" in error) {
     const clerkError = error as { errors?: Array<{ longMessage?: string; message?: string }> };
-    return clerkError.errors?.[0]?.longMessage ?? clerkError.errors?.[0]?.message ?? "Account creation failed. Please try again.";
+    const message = clerkError.errors?.[0]?.longMessage ?? clerkError.errors?.[0]?.message;
+    if (message?.includes("does not match one of the allowed values for parameter strategy")) {
+      return "Google sign-up is not enabled in Clerk yet. Enable Google as a social connection in Clerk, then try again.";
+    }
+    return message ?? "Account creation failed. Please try again.";
   }
   if (error instanceof Error) return error.message;
   return "Account creation failed. Please try again.";
@@ -130,6 +134,8 @@ export default function CustomSignUpForm({ callbackUrl, initialEmail = "" }: Cus
         </div>
       )}
 
+      <SocialAuthButtons disabled={!isLoaded || isSubmitting} onSelect={handleSocialSignUp} />
+
       <label className="block space-y-2">
         <span className="text-xs font-black uppercase tracking-wide text-slate-500">Email address</span>
         <input
@@ -180,11 +186,6 @@ export default function CustomSignUpForm({ callbackUrl, initialEmail = "" }: Cus
         {isSubmitting ? "Creating account..." : "Create account"}
         <span aria-hidden="true">→</span>
       </button>
-
-      <SocialAuthButtons disabled={!isLoaded || isSubmitting} onSelect={handleSocialSignUp} />
     </form>
   );
 }
-
-
-
