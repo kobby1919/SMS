@@ -97,7 +97,7 @@ const SingleTeacherPage = async ({
       include: {
         auditLogs: {
           orderBy: { createdAt: "desc" },
-          take: 8,
+          take: 20,
         },
       },
       orderBy: { createdAt: "desc" },
@@ -143,7 +143,7 @@ const SingleTeacherPage = async ({
     prisma.teacherAccountabilityAuditLog.findMany({
       where: { schoolId, teacherId: teacher.id },
       orderBy: { createdAt: "desc" },
-      take: 10,
+      take: 20,
     }),
   ]);
 
@@ -369,14 +369,26 @@ const SingleTeacherPage = async ({
               </div>
             </SectionCard>
 
-            <SectionCard title="9. Audit History" description="Important teacher events kept for accountability.">
+            <SectionCard title="9. Audit History" description="Newest verified events for invite, setup, access, and accountability.">
               {auditRows.length > 0 ? (
                 <div className="space-y-2">
                   {auditRows.map((row) => (
                     <div key={row.id} className="rounded-xl border border-gray-100 bg-gray-50 p-3">
-                      <p className="text-sm font-black text-gray-800">{row.title}</p>
-                      <p className="mt-1 text-xs font-semibold text-gray-500">{row.message}</p>
-                      <p className="mt-1 text-[11px] font-bold uppercase tracking-wide text-gray-400">{formatDateTime(row.createdAt)}</p>
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <StatusBadge className={auditCategoryClass(row.category)}>{row.category}</StatusBadge>
+                            <p className="text-sm font-black text-gray-800">{row.title}</p>
+                          </div>
+                          <p className="mt-1 text-xs font-semibold leading-relaxed text-gray-500">{row.message}</p>
+                        </div>
+                        <p className="shrink-0 text-left text-[11px] font-bold uppercase tracking-wide text-gray-400 sm:text-right">
+                          {formatDateTime(row.createdAt)}
+                        </p>
+                      </div>
+                      {row.actor && (
+                        <p className="mt-2 text-[11px] font-bold uppercase tracking-wide text-gray-400">Actor: {row.actor}</p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -604,8 +616,60 @@ function formatDateTime(date: Date) {
   });
 }
 
+function auditMetadataValue(metadata: unknown, key: string) {
+  if (!metadata || typeof metadata !== "object") return undefined;
+  const value = (metadata as Record<string, unknown>)[key];
+  return typeof value === "string" && value.trim() ? value : undefined;
+}
+
+function formatMaybeDate(value?: string) {
+  if (!value) return undefined;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return formatDateTime(date);
+}
+
 function inviteAuditTitle(action: TeacherInviteAuditAction) {
-  return action.replaceAll("_", " ").toLowerCase().replace(/^./, (char) => char.toUpperCase());
+  const titles: Record<TeacherInviteAuditAction, string> = {
+    INVITE_CREATED: "Teacher invite created",
+    INVITE_SENT: "Teacher invite sent",
+    INVITE_RESENT: "Teacher invite resent",
+    INVITE_REVOKED: "Teacher invite revoked",
+    INVITE_EXPIRED: "Teacher invite expired",
+    INVITE_ACCEPTED: "Teacher invite accepted",
+  };
+  return titles[action];
+}
+
+function inviteAuditMessage(action: TeacherInviteAuditAction, metadata: unknown) {
+  const email = auditMetadataValue(metadata, "email");
+  const teacherId = auditMetadataValue(metadata, "teacherId");
+  const expiresAt = formatMaybeDate(auditMetadataValue(metadata, "expiresAt"));
+  const provider = auditMetadataValue(metadata, "provider");
+  const warning = auditMetadataValue(metadata, "warning");
+  const reason = auditMetadataValue(metadata, "reason");
+
+  if (action === "INVITE_CREATED") {
+    return `Invite opened for ${email ?? "this teacher"}${expiresAt ? `, expiring ${expiresAt}` : ""}.`;
+  }
+  if (action === "INVITE_SENT") {
+    return warning
+      ? `Delivery attempted${provider ? ` through ${provider}` : ""}. Warning: ${warning}`
+      : `Invite delivered${provider ? ` through ${provider}` : ""}${email ? ` to ${email}` : ""}.`;
+  }
+  if (action === "INVITE_RESENT") {
+    return `Invite link was rotated and resent${expiresAt ? ` with a new expiry of ${expiresAt}` : ""}.`;
+  }
+  if (action === "INVITE_REVOKED") {
+    return `Invite access was revoked${reason ? `: ${reason}` : "."}`;
+  }
+  if (action === "INVITE_EXPIRED") {
+    return `Invite expired${expiresAt ? ` at ${expiresAt}` : ""}.`;
+  }
+  if (action === "INVITE_ACCEPTED") {
+    return `Invite accepted and linked to teacher profile${teacherId ? ` ${teacherId}` : ""}.`;
+  }
+  return "Teacher invite event recorded.";
 }
 
 function accountabilityAuditTitle(action: TeacherAccountabilityAuditAction, sourceModel?: string | null) {
@@ -616,29 +680,55 @@ function accountabilityAuditTitle(action: TeacherAccountabilityAuditAction, sour
   return action.replaceAll("_", " ").toLowerCase().replace(/^./, (char) => char.toUpperCase());
 }
 
+function auditCategoryClass(category: string) {
+  if (category === "Invite") return "bg-blue-50 text-blue-700";
+  if (category === "Setup") return "bg-indigo-50 text-indigo-700";
+  if (category === "Access") return "bg-purple-50 text-purple-700";
+  return "bg-amber-50 text-amber-700";
+}
+
+function accountabilityAuditCategory(sourceModel?: string | null) {
+  if (sourceModel === "CLASS_TEACHER_RESPONSIBILITY") return "Setup";
+  if (sourceModel === "TEACHER_SUBJECT_CAPABILITY") return "Setup";
+  if (sourceModel === "TEACHER_PROFILE_SUBJECTS") return "Setup";
+  if (sourceModel === "TEACHER_LIFECYCLE") return "Access";
+  return "Accountability";
+}
+
 function buildTeacherAuditRows({
   inviteLogs,
   accountabilityLogs,
 }: {
-  inviteLogs: { id: string; action: TeacherInviteAuditAction; createdAt: Date; metadata: unknown }[];
-  accountabilityLogs: { id: string; action: TeacherAccountabilityAuditAction; sourceModel: string; createdAt: Date; message: string | null }[];
+  inviteLogs: { id: string; action: TeacherInviteAuditAction; performedBy: string; createdAt: Date; metadata: unknown }[];
+  accountabilityLogs: {
+    id: string;
+    action: TeacherAccountabilityAuditAction;
+    sourceModel: string;
+    actorId: string | null;
+    actorRole: string | null;
+    createdAt: Date;
+    message: string | null;
+  }[];
 }) {
   const inviteRows = inviteLogs.map((log) => ({
     id: `invite-${log.id}`,
     title: inviteAuditTitle(log.action),
-    message: "Teacher invite event recorded.",
+    message: inviteAuditMessage(log.action, log.metadata),
+    actor: log.performedBy,
+    category: "Invite",
     createdAt: log.createdAt,
   }));
   const accountabilityRows = accountabilityLogs.map((log) => ({
     id: `accountability-${log.id}`,
     title: accountabilityAuditTitle(log.action, log.sourceModel),
     message: log.message ?? "Accountability event recorded.",
+    actor: [log.actorRole, log.actorId].filter(Boolean).join(": ") || null,
+    category: accountabilityAuditCategory(log.sourceModel),
     createdAt: log.createdAt,
   }));
 
   return [...inviteRows, ...accountabilityRows]
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-    .slice(0, 10);
+    .slice(0, 12);
 }
-
 export default SingleTeacherPage;

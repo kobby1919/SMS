@@ -155,16 +155,55 @@ export async function createClass(data: {
   section?: string; supervisorId?: string;
 }) {
   data = parseActionInput(classCreateSchema, data);
-  const { schoolId } = await requireAdmin();
+  const ctx = await requireAdmin();
+  const { schoolId } = ctx;
   await assertClassSetupReferences(schoolId, data);
-  await prisma.class.create({ data: { ...data, schoolId } });
+
+  const supervisor = data.supervisorId
+    ? await prisma.teacher.findFirst({
+        where: { id: data.supervisorId, schoolId, status: "ACTIVE" },
+        select: { id: true, name: true, surname: true },
+      })
+    : null;
+
+  await prisma.$transaction(async (tx) => {
+    const created = await tx.class.create({
+      data: { ...data, schoolId },
+      select: { id: true, name: true, supervisorId: true },
+    });
+
+    if (!created.supervisorId) return;
+
+    await writeTeacherAdminAuditLogs(tx, [
+      {
+        schoolId,
+        teacherId: created.supervisorId,
+        actorId: ctx.userId,
+        actorRole: ctx.role,
+        sourceModel: "CLASS_TEACHER_RESPONSIBILITY",
+        sourceId: String(created.id),
+        before: {
+          classId: created.id,
+          className: created.name,
+          supervisorId: null,
+          supervisorName: "None",
+        },
+        after: {
+          classId: created.id,
+          className: created.name,
+          supervisorId: created.supervisorId,
+          supervisorName: teacherName(supervisor),
+        },
+        message: `${teacherName(supervisor)} was assigned as class teacher for ${created.name}.`,
+      },
+    ]);
+  });
   revalidatePath("/list/classes");
   revalidateReferenceData(schoolId, "classes");
   revalidateReferenceData(schoolId, "teachers");
   revalidateReferenceData(schoolId, "timetable");
   revalidateDashboard(schoolId);
 }
-
 export async function updateClass(id: number, data: {
   name?: string; capacity?: number; gradeId?: number;
   section?: string; supervisorId?: string | null;
