@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import EdujayBrandLogo from "@/src/components/EdujayBrandLogo";
 
 const footerLinks = {
   Product: [
@@ -115,21 +116,7 @@ export default function Footer() {
           {/* Brand col — 2 cols wide */}
           <div className="lg:col-span-2 flex flex-col gap-5">
             {/* Logo */}
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-                style={{ background: "linear-gradient(135deg, #5B4FE9 0%, #8B7FF5 100%)" }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 3L4 7V12C4 16.4 7.4 20.5 12 21.5C16.6 20.5 20 16.4 20 12V7L12 3Z"
-                    fill="white" fillOpacity="0.9" />
-                  <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </div>
-              <span className="text-xl font-bold tracking-tight text-white"
-                style={{ fontFamily: "'Sora', sans-serif" }}>
-                Edu<span style={{ color: "#8B7FF5" }}>Jay</span>
-              </span>
-            </div>
-
+            <EdujayBrandLogo size="md" wordmarkClassName="text-white" />
             {/* Tagline */}
             <p className="text-sm leading-relaxed max-w-xs"
               style={{ color: "rgba(255,255,255,0.4)", fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import EdujayBrandLogo from "@/src/components/EdujayBrandLogo";
 
 const navLinks = [
   { label: "Features",     href: "/features" },
@@ -66,32 +67,14 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16 sm:h-[72px]">
 
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-              <div
-                className="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm transition-transform duration-300 group-hover:scale-105"
-                style={{ background: "linear-gradient(135deg, #5B4FE9 0%, #8B7FF5 100%)" }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 3L4 7V12C4 16.4 7.4 20.5 12 21.5C16.6 20.5 20 16.4 20 12V7L12 3Z"
-                    fill="white" fillOpacity="0.9"
-                  />
-                  <path
-                    d="M9 12L11 14L15 10"
-                    stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-              <span
-                className={`text-xl font-bold tracking-tight transition-colors duration-300 ${
-                  isLight ? "text-gray-900" : "text-white"
-                }`}
-                style={{ fontFamily: "'Sora', sans-serif" }}
-              >
-                Edu<span style={{ color: "#8B7FF5" }}>Jay</span>
-              </span>
+            <Link href="/" className="group shrink-0" aria-label="Edujay home">
+              <EdujayBrandLogo
+                size="md"
+                priority
+                wordmarkClassName={isLight ? "text-gray-900" : "text-white"}
+                className="transition-transform duration-300 group-hover:scale-[1.02]"
+              />
             </Link>
-
             {/* Desktop Nav Links */}
             <div className="hidden md:flex items-center gap-1">
               {navLinks.map((link) => (
@@ -216,7 +199,7 @@ export default function Navbar() {
               >
                 Sign In
               </Link>
-              <a
+              <Link
                 href="/sign-up"
                 className="nav-item-enter px-4 py-3 text-sm font-semibold text-white rounded-xl text-center shadow-md transition-all duration-300 hover:shadow-lg hover:shadow-[#5B4FE9]/20"
                 style={{
@@ -226,7 +209,7 @@ export default function Navbar() {
                 }}
               >
                 Get Started Free
-              </a>
+              </Link>
             </div>
           </div>
         </div>

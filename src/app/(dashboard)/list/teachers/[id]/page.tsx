@@ -608,7 +608,11 @@ function inviteAuditTitle(action: TeacherInviteAuditAction) {
   return action.replaceAll("_", " ").toLowerCase().replace(/^./, (char) => char.toUpperCase());
 }
 
-function accountabilityAuditTitle(action: TeacherAccountabilityAuditAction) {
+function accountabilityAuditTitle(action: TeacherAccountabilityAuditAction, sourceModel?: string | null) {
+  if (sourceModel === "CLASS_TEACHER_RESPONSIBILITY") return "Class teacher responsibility updated";
+  if (sourceModel === "TEACHER_SUBJECT_CAPABILITY") return "Subject capability updated";
+  if (sourceModel === "TEACHER_PROFILE_SUBJECTS") return "Teacher profile subjects updated";
+  if (sourceModel === "TEACHER_LIFECYCLE") return "Teacher status updated";
   return action.replaceAll("_", " ").toLowerCase().replace(/^./, (char) => char.toUpperCase());
 }
 
@@ -617,7 +621,7 @@ function buildTeacherAuditRows({
   accountabilityLogs,
 }: {
   inviteLogs: { id: string; action: TeacherInviteAuditAction; createdAt: Date; metadata: unknown }[];
-  accountabilityLogs: { id: string; action: TeacherAccountabilityAuditAction; createdAt: Date; message: string | null }[];
+  accountabilityLogs: { id: string; action: TeacherAccountabilityAuditAction; sourceModel: string; createdAt: Date; message: string | null }[];
 }) {
   const inviteRows = inviteLogs.map((log) => ({
     id: `invite-${log.id}`,
@@ -627,7 +631,7 @@ function buildTeacherAuditRows({
   }));
   const accountabilityRows = accountabilityLogs.map((log) => ({
     id: `accountability-${log.id}`,
-    title: accountabilityAuditTitle(log.action),
+    title: accountabilityAuditTitle(log.action, log.sourceModel),
     message: log.message ?? "Accountability event recorded.",
     createdAt: log.createdAt,
   }));
