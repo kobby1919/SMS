@@ -2,6 +2,7 @@
 
 import Pagination from "@/src/components/pagination";
 import { requirePageSession } from "@/src/lib/authz";
+import { clerkClient } from "@clerk/nextjs/server";
 import TableSearch from "@/src/components/TableSearch";
 import Image from "next/image";
 import Link from "next/link";
@@ -222,6 +223,7 @@ const TeacherListPage = async ({
     ITEM_PER_PAGE * (p - 1),
     ITEM_PER_PAGE * p,
   );
+  const clerkTeacherImages = await syncVisibleTeacherPhotos(teachers);
   const pendingInvites = pendingInviteRows;
   const activeTabHref = (status: string) => {
     const params = new URLSearchParams();
@@ -319,7 +321,7 @@ const TeacherListPage = async ({
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex min-w-0 items-start gap-3">
                     <Image
-                      src={item.img || "/noAvatar.png"}
+                      src={clerkTeacherImages.get(item.id) || item.img || "/noAvatar.png"}
                       alt={item.name}
                       width={44}
                       height={44}
@@ -451,7 +453,7 @@ const TeacherListPage = async ({
                       <div className="flex items-center gap-3">
                         <div className="relative shrink-0">
                           <Image
-                            src={item.img || "/noAvatar.png"}
+                            src={clerkTeacherImages.get(item.id) || item.img || "/noAvatar.png"}
                             alt={item.name}
                             width={40} height={40}
                             className="w-10 h-10 rounded-xl object-cover ring-2 ring-gray-100"
@@ -585,6 +587,33 @@ const TeacherListPage = async ({
     </div>
   );
 };
+
+
+async function syncVisibleTeacherPhotos(
+  rows: Array<{ teacher: { id: string; schoolId: string; img: string | null } }>,
+) {
+  const imageByTeacherId = new Map<string, string>();
+  if (rows.length === 0) return imageByTeacherId;
+
+  const client = await clerkClient();
+  await Promise.allSettled(
+    rows.map(async ({ teacher }) => {
+      const user = await client.users.getUser(teacher.id);
+      const imageUrl = user.imageUrl;
+      if (!imageUrl) return;
+
+      imageByTeacherId.set(teacher.id, imageUrl);
+      if (imageUrl !== teacher.img) {
+        await prisma.teacher.updateMany({
+          where: { id: teacher.id, schoolId: teacher.schoolId },
+          data: { img: imageUrl },
+        });
+      }
+    }),
+  );
+
+  return imageByTeacherId;
+}
 
 function PendingInvitesTable({
   invites,
