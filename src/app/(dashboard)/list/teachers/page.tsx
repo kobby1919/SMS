@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   Clock3,
   Eye,
+  GraduationCap,
   ShieldCheck,
   Users,
 } from "lucide-react";
@@ -162,6 +163,7 @@ const TeacherListPage = async ({
     const taughtClasses = Array.from(
       new Map(teacherLessons.map((l) => [l.class.id, l.class])).values(),
     );
+    const classBadges = buildClassBadges(taughtClasses, teacher.classes);
     const readiness = getTeacherReadiness({
       status: teacher.status,
       name: teacher.name,
@@ -177,7 +179,7 @@ const TeacherListPage = async ({
     const setupStatus: TeacherSetupStatus = readiness.isReady ? "ready" : "needs-setup";
     const missingSetup = [...readiness.blockers, ...readiness.setupWarnings];
 
-    return { teacher, taughtClasses, setupStatus, missingSetup, readiness };
+    return { teacher, taughtClasses, classBadges, setupStatus, missingSetup, readiness };
   });
 
   const readyTeachers = enrichedTeachers.filter((item) => item.readiness.isReady);
@@ -202,6 +204,16 @@ const TeacherListPage = async ({
                 : selectedStatus === "pending-invites"
                   ? []
                   : enrichedTeachers;
+  const tabCounts: Record<TeacherLifecycleTab, number> = {
+    all: enrichedTeachers.length,
+    ready: readyTeachers.length,
+    "needs-setup": teachersNeedingSetup.length,
+    active: activeTeachers.length,
+    incomplete: incompleteTeachers.length,
+    suspended: suspendedTeachers.length,
+    "left-school": leftSchoolTeachers.length,
+    "pending-invites": pendingInviteListCount,
+  };
   const count =
     selectedStatus === "pending-invites"
       ? pendingInviteListCount
@@ -241,10 +253,11 @@ const TeacherListPage = async ({
       </div>
 
       {/* ── Stats — all from DB, no hardcoded values ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
         {[
           { label: "Registered", value: allTeachers.length, icon: <Users size={16} />, color: "bg-indigo-50 text-indigo-600" },
           { label: "Active", value: activeTeachers.length, icon: <CheckCircle2 size={16} />, color: "bg-emerald-50 text-emerald-600" },
+          { label: "Ready", value: readyTeachers.length, icon: <GraduationCap size={16} />, color: "bg-blue-50 text-blue-600" },
           { label: "Needs setup", value: teachersNeedingSetup.length, icon: <AlertCircle size={16} />, color: "bg-amber-50 text-amber-600" },
           { label: "Pending invites", value: pendingInviteCount, icon: <Clock3 size={16} />, color: "bg-violet-50 text-violet-600" },
         ].map((stat) => (
@@ -268,13 +281,16 @@ const TeacherListPage = async ({
               <Link
                 key={tab.key}
                 href={activeTabHref(tab.key)}
-                className={`whitespace-nowrap rounded-xl px-4 py-2 text-sm font-black transition ${
+                className={`inline-flex items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2 text-sm font-black transition ${
                   active
                     ? "bg-edujay-primary text-white shadow-sm"
                     : "text-gray-500 hover:bg-gray-50"
                 }`}
               >
-                {tab.label}
+                <span>{tab.label}</span>
+                <span className={`rounded-full px-2 py-0.5 text-[11px] font-black ${active ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"}`}>
+                  {tabCounts[tab.key]}
+                </span>
               </Link>
             );
           })}
@@ -308,7 +324,7 @@ const TeacherListPage = async ({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {teachers.map(({ teacher: item, taughtClasses, setupStatus, missingSetup, readiness }) => {
+              {teachers.map(({ teacher: item, classBadges, setupStatus, missingSetup, readiness }) => {
                 const lifecycle = teacherStatusMeta(item.status);
                 const profileCompletion = readiness.profileCompletion;
 
@@ -341,6 +357,11 @@ const TeacherListPage = async ({
                               {readiness.label}
                             </span>
                           </div>
+                          {missingSetup.length > 0 && (
+                            <p className="mt-1 line-clamp-2 text-[11px] font-semibold text-amber-600 md:hidden">
+                              {missingSetup.slice(0, 2).join(" · ")}{missingSetup.length > 2 ? ` · +${missingSetup.length - 2} more` : ""}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </td>
@@ -367,18 +388,18 @@ const TeacherListPage = async ({
                     {/* Classes — from lessons, not supervisor relation */}
                     <td className="px-3 py-3.5 hidden lg:table-cell">
                       <div className="flex flex-wrap gap-1">
-                        {taughtClasses.slice(0, 3).map((c) => (
-                          <span key={c.id} className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600">
-                            {c.name}
+                        {classBadges.slice(0, 3).map((c) => (
+                          <span key={`${c.kind}-${c.id}`} className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${c.kind === "supervises" ? "bg-emerald-50 text-emerald-700" : "bg-indigo-50 text-indigo-600"}`}>
+                            {c.name}{c.kind === "supervises" ? " · class teacher" : ""}
                           </span>
                         ))}
-                        {taughtClasses.length > 3 && (
+                        {classBadges.length > 3 && (
                           <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
-                            +{taughtClasses.length - 3}
+                            +{classBadges.length - 3}
                           </span>
                         )}
-                        {taughtClasses.length === 0 && (
-                          <span className="text-xs text-gray-300 italic">No classes yet</span>
+                        {classBadges.length === 0 && (
+                          <span className="text-xs text-gray-300 italic">No class scope yet</span>
                         )}
                       </div>
                     </td>
@@ -630,6 +651,23 @@ function PendingInvitesTable({
     </div>
   );
 }
+function buildClassBadges(
+  taughtClasses: Array<{ id: number; name: string }>,
+  supervisedClasses: Array<{ id: number; name: string }>,
+) {
+  const rows: Array<{ id: number; name: string; kind: "teaches" | "supervises" }> = [];
+  for (const klass of taughtClasses) rows.push({ ...klass, kind: "teaches" });
+  for (const klass of supervisedClasses) {
+    const existing = rows.find((row) => row.id === klass.id);
+    if (existing) {
+      existing.kind = "supervises";
+    } else {
+      rows.push({ ...klass, kind: "supervises" });
+    }
+  }
+  return rows.sort((a, b) => a.name.localeCompare(b.name));
+}
+
 function teacherTypeLabel(type: TeacherInviteRow["teacherType"]) {
   switch (type) {
     case "CLASS_TEACHER":
