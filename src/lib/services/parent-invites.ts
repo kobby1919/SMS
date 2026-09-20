@@ -419,6 +419,11 @@ export async function resendParentInvite(
           emailFromName: true,
         },
       },
+      students: {
+        include: {
+          student: { select: { name: true, surname: true } },
+        },
+      },
     },
   });
 
@@ -437,6 +442,9 @@ export async function resendParentInvite(
   const tokenBundle = createParentInviteTokenBundle(now);
   const parentName = parentDisplayName(invite);
   const schoolName = schoolDisplayName(invite.school);
+  const wardNames = invite.students
+    .map((item) => `${item.student.name} ${item.student.surname}`.trim())
+    .filter(Boolean);
 
   await prisma.$transaction(async (tx) => {
     const updated = await tx.parentInvite.updateMany({
@@ -468,6 +476,7 @@ export async function resendParentInvite(
         email: invite.email,
         rotatedToken: true,
         expiresAt: tokenBundle.expiresAt.toISOString(),
+        wardNames,
       },
     });
   });
@@ -476,7 +485,7 @@ export async function resendParentInvite(
     to: invite.email,
     schoolName,
     parentName,
-    wardNames: [],
+    wardNames,
     inviteUrl: tokenBundle.inviteUrl,
     expiresAt: tokenBundle.expiresAt,
   });
@@ -860,6 +869,3 @@ export async function acceptParentInviteForUser(input: {
     parentId: acceptedParent.id,
   };
 }
-
-
-

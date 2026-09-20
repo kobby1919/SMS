@@ -42,7 +42,30 @@ function channelAllowed(
       return policy.allowWhatsappMessages;
   }
 }
+async function requireActiveRoutedTeacher({
+  schoolId,
+  teacherId,
+  unavailableMessage,
+}: {
+  schoolId: string;
+  teacherId: string | null | undefined;
+  unavailableMessage: string;
+}) {
+  if (!teacherId) {
+    throw new Error(unavailableMessage);
+  }
 
+  const teacher = await prisma.teacher.findFirst({
+    where: { id: teacherId, schoolId },
+    select: { id: true, status: true },
+  });
+
+  if (!teacher || teacher.status !== "ACTIVE") {
+    throw new Error(unavailableMessage);
+  }
+
+  return teacher;
+}
 export async function createParentTeacherContactRequest(data: unknown) {
   const { userId, schoolId } = await requireRole(["parent"]);
   const input =
@@ -116,11 +139,21 @@ export async function createParentTeacherContactRequest(data: unknown) {
     if (!teacherLesson || teacherLesson.classId !== student.classId) {
       throw new Error("This teacher is not assigned to this ward's class in the active published timetable.");
     }
+    await requireActiveRoutedTeacher({
+      schoolId,
+      teacherId: routedTeacherId,
+      unavailableMessage: "This subject teacher is no longer available for parent contact.",
+    });
   } else if (routeTarget === "CLASS_TEACHER") {
     if (!student.class.supervisorId) {
       throw new Error("No class teacher has been assigned for this ward's class yet.");
     }
     routedTeacherId = student.class.supervisorId;
+    await requireActiveRoutedTeacher({
+      schoolId,
+      teacherId: routedTeacherId,
+      unavailableMessage: "This class teacher is no longer available for parent contact.",
+    });
   } else if (routeTarget === "SELECTED_TEACHER") {
     if (!route?.selectedTeacherId) {
       throw new Error("The school has not selected a teacher for this contact category yet.");
@@ -270,8 +303,13 @@ export async function acknowledgeParentTeacherContactRequest(data: unknown) {
   });
 
   if (request.status === "PENDING") {
-    await prisma.parentTeacherContactRequest.update({
-      where: { id: request.id },
+    await prisma.parentTeacherContactRequest.updateMany({
+      where: {
+        id: request.id,
+        schoolId,
+        teacherId: userId,
+        status: "PENDING",
+      },
       data: {
         status: "ACKNOWLEDGED",
         acknowledgedAt: new Date(),
@@ -282,7 +320,6 @@ export async function acknowledgeParentTeacherContactRequest(data: unknown) {
   revalidatePath("/teacher/communications");
   revalidatePath(`/parent/children/${request.studentId}`);
 }
-
 export async function respondToParentTeacherContactRequest(data: unknown) {
   const { userId, schoolId } = await requireRole(["teacher"]);
   const input =
@@ -369,26 +406,79 @@ export async function closeParentTeacherContactRequest(data: unknown) {
     requestId: parsed.requestId,
   });
 
-  await prisma.parentTeacherContactRequest.update({
-    where: { id: request.id },
-    data: {
-      status: "CLOSED",
-      closedAt: new Date(),
-      messages: {
-        create: {
+  const notification = await prisma.$transaction(async (tx) => {
+    const updated = await tx.parentTeacherContactRequest.updateMany({
+      where: {
+        id: request.id,
+        schoolId,
+        teacherId: userId,
+        status: { notIn: ["CLOSED", "CANCELLED"] },
+      },
+      data: {
+        status: "CLOSED",
+        closedAt: new Date(),
+      },
+    });
+
+    if (updated.count !== 1) {
+      throw new Error("This contact request is already closed.");
+    }
+
+    const message = await tx.parentTeacherContactMessage.create({
+      data: {
+        schoolId,
+        requestId: request.id,
+        teacherId: userId,
+        parentId: request.parentId,
+        studentId: request.studentId,
+        senderRole: "SYSTEM",
+        senderId: userId,
+        body: "The teacher marked this parent contact request as closed.",
+        internalOnly: false,
+      },
+    });
+
+    return tx.parentNotification.upsert({
+      where: {
+        schoolId_parentId_sourceKey: {
           schoolId,
-          teacherId: userId,
-          senderRole: "SYSTEM",
-          senderId: userId,
-          body: "The teacher marked this parent contact request as closed.",
-          internalOnly: false,
+          parentId: request.parentId,
+          sourceKey: `parent-contact-teacher-closed:${request.id}`,
         },
       },
-    },
+      create: {
+        schoolId,
+        parentId: request.parentId,
+        studentId: request.studentId,
+        type: "CONTACT",
+        priority: "NORMAL",
+        title: "Contact request closed",
+        body: `The teacher closed your contact request: ${request.subject}`,
+        href: `/parent/children/${request.studentId}#teachers`,
+        sourceModel: "ParentTeacherContactMessage",
+        sourceId: message.id,
+        sourceKey: `parent-contact-teacher-closed:${request.id}`,
+        occurredAt: new Date(),
+        payload: {
+          requestId: request.id,
+          messageId: message.id,
+          action: "TEACHER_CLOSED",
+        },
+      },
+      update: {},
+    });
+  });
+
+  await deliverParentContactNotification({
+    schoolId,
+    parentId: request.parentId,
+    notification,
   });
 
   revalidatePath("/teacher/communications");
   revalidatePath(`/parent/children/${request.studentId}`);
+  revalidatePath("/parent/updates");
+  revalidatePath("/parent");
 }
 
 export async function escalateParentTeacherContactRequestAsAdmin(data: unknown) {
@@ -658,4 +748,3 @@ export async function closeParentTeacherContactRequestAsAdminWithState(
     };
   }
 }
-

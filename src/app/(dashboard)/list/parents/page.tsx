@@ -46,7 +46,7 @@ const ParentListPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { role, schoolId } = await requirePageSession();
+  const { role, schoolId } = await requirePageSession(["admin"]);
 
   const { page, status, search } = await searchParams;
   const selectedStatus: ParentTab = status === "pending-invites" ? status : "all";
@@ -331,7 +331,64 @@ function ParentTable({
 }) {
   return (
     <div className="flex-1 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-      <div className="w-full overflow-x-auto">
+      <div className="divide-y divide-gray-100 md:hidden">
+        {parents.map((parent) => {
+          const activeRelationships = parent.studentRelationships.filter((relationship) => relationship.status === "ACTIVE");
+          const wardNames = activeRelationships
+            .map((relationship) => relationship.student)
+            .filter(Boolean)
+            .map((student) => `${student.name} ${student.surname}`.trim()) ?? [];
+
+          return (
+            <div key={parent.id} className="p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-black text-gray-800">
+                    {parent.name} {parent.surname}
+                  </p>
+                  <p className="truncate text-xs font-semibold text-gray-400">{parent.email ?? "No email set"}</p>
+                </div>
+                <span className="shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700">
+                  {activeRelationships.length} ward{activeRelationships.length === 1 ? "" : "s"}
+                </span>
+              </div>
+
+              <div className="mt-3 grid grid-cols-1 gap-2 min-[420px]:grid-cols-2">
+                <div className="rounded-xl bg-gray-50 p-3">
+                  <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Phone</p>
+                  <p className="mt-1 truncate text-sm font-bold text-gray-700">{parent.phone ?? "Not set"}</p>
+                </div>
+                <div className="rounded-xl bg-gray-50 p-3">
+                  <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Active wards</p>
+                  <p className="mt-1 line-clamp-2 text-sm font-bold text-gray-700">
+                    {wardNames.length > 0 ? wardNames.join(", ") : "No active ward link"}
+                  </p>
+                </div>
+              </div>
+
+              {role === "admin" && (
+                <div className="mt-3 flex justify-end">
+                  <ParentWardLinkManager parentId={parent.id} relationships={parent.studentRelationships} students={students} />
+                </div>
+              )}
+            </div>
+          );
+        })}
+        {parents.length === 0 && (
+          <div className="px-4 py-10 text-center">
+            <div className="mx-auto flex max-w-sm flex-col items-center gap-2 text-gray-400">
+              <UserCheck size={28} />
+              <p className="text-sm font-black text-gray-500">
+                {searchTerm ? "No parents match this search." : "No parent accounts yet."}
+              </p>
+              <p className="text-xs font-semibold">
+                Invite parents so Edujay can link each account to the right ward.
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="hidden w-full overflow-x-auto md:block">
         <table className="w-full min-w-[460px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/60">
@@ -426,7 +483,71 @@ function PendingInviteTable({
 
   return (
     <div className="flex-1 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-      <div className="w-full overflow-x-auto">
+      <div className="divide-y divide-gray-100 md:hidden">
+        {invites.map((invite) => {
+          const expired = invite.expiresAt.getTime() <= now.getTime();
+          return (
+            <div key={invite.id} className="p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-black text-gray-800">
+                    {invite.name} {invite.surname}
+                  </p>
+                  <p className="truncate text-xs font-semibold text-gray-400">{invite.email}</p>
+                </div>
+                <span
+                  className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-black ${
+                    expired ? "bg-amber-50 text-amber-700" : "bg-blue-50 text-edujay-primary"
+                  }`}
+                >
+                  {expired ? "Expired" : "Pending"}
+                </span>
+              </div>
+              <div className="mt-3 grid grid-cols-1 gap-2 min-[420px]:grid-cols-2">
+                <div className="rounded-xl bg-gray-50 p-3">
+                  <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Expires</p>
+                  <p className="mt-1 text-sm font-bold text-gray-700">
+                    {invite.expiresAt.toLocaleDateString("en-GH", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
+                <div className="rounded-xl bg-gray-50 p-3">
+                  <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Last sent</p>
+                  <p className="mt-1 text-sm font-bold text-gray-700">
+                    {invite.lastSentAt
+                      ? invite.lastSentAt.toLocaleDateString("en-GH", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      : "Not sent"}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-3 flex justify-end">
+                <ParentInviteActions inviteId={invite.id} />
+              </div>
+            </div>
+          );
+        })}
+        {invites.length === 0 && (
+          <div className="px-4 py-10 text-center">
+            <div className="mx-auto flex max-w-sm flex-col items-center gap-2 text-gray-400">
+              <Clock3 size={28} />
+              <p className="text-sm font-black text-gray-500">
+                {searchTerm ? "No pending invites match this search." : "No pending parent invites."}
+              </p>
+              <p className="text-xs font-semibold">
+                New parent access should start from a secure invite, not manual login sharing.
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="hidden w-full overflow-x-auto md:block">
         <table className="w-full min-w-[560px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/60">
