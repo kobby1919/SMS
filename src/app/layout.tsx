@@ -9,9 +9,9 @@ export const metadata: Metadata = {
   },
   description: "Modern School Management System",
   icons: {
-    icon: "/edujay-logo.png",
-    shortcut: "/edujay-logo.png",
-    apple: "/edujay-logo.png",
+    icon: "/edujay-favicon.png",
+    shortcut: "/edujay-favicon.png",
+    apple: "/edujay-favicon.png",
   },
 };
 
