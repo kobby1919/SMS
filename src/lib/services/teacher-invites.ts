@@ -559,14 +559,14 @@ export async function acceptTeacherInviteForUser(input: {
   const [teacherForUser, teacherForEmail] = await Promise.all([
     prisma.teacher.findUnique({
       where: { id: input.userId },
-      select: { id: true, schoolId: true, email: true, phone: true, address: true, status: true },
+      select: { id: true, schoolId: true, email: true, phone: true, address: true, status: true, img: true },
     }),
     prisma.teacher.findFirst({
       where: {
         schoolId: invite.schoolId,
         OR: [{ email: inviteEmail }, { username: inviteEmail }],
       },
-      select: { id: true, schoolId: true, email: true, phone: true, address: true, status: true },
+      select: { id: true, schoolId: true, email: true, phone: true, address: true, status: true, img: true },
     }),
   ]);
 
@@ -593,6 +593,7 @@ export async function acceptTeacherInviteForUser(input: {
       phone: invite.phone ?? teacherForUser?.phone ?? null,
       address: teacherForUser?.address ?? null,
       status: teacherForUser?.status ?? "INVITED",
+      img: user.imageUrl ?? teacherForUser?.img ?? null,
     } as const;
     const status = nextTeacherProfileStatus(teacherProfile);
 
@@ -607,6 +608,7 @@ export async function acceptTeacherInviteForUser(input: {
             sex: invite.sex,
             email: inviteEmail,
             phone: invite.phone ?? teacherForUser.phone ?? null,
+            img: user.imageUrl ?? teacherForUser.img ?? null,
             status,
           },
           select: { id: true },
@@ -621,6 +623,7 @@ export async function acceptTeacherInviteForUser(input: {
             sex: invite.sex,
             email: inviteEmail,
             phone: invite.phone ?? null,
+            img: user.imageUrl ?? null,
             status,
             address: null,
             bloodType: null,
@@ -631,6 +634,7 @@ export async function acceptTeacherInviteForUser(input: {
     const updated = await tx.teacherInvite.updateMany({
       where: {
         id: invite.id,
+        schoolId: invite.schoolId,
         status: "PENDING",
         acceptedAt: null,
         revokedAt: null,

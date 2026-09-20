@@ -30,6 +30,31 @@ function needsTeacherReview(status: string, escalationStatus: string | null) {
   return status === "ESCALATED" || Boolean(escalationStatus);
 }
 
+async function syncSignedInProfilePhoto({
+  role,
+  userId,
+  schoolId,
+  imageUrl,
+}: {
+  role: AppRole;
+  userId: string;
+  schoolId: string;
+  imageUrl?: string | null;
+}) {
+  if (role !== "teacher" || !imageUrl) return;
+
+  await prisma.teacher
+    .updateMany({
+      where: {
+        id: userId,
+        schoolId,
+        NOT: { img: imageUrl },
+      },
+      data: { img: imageUrl },
+    })
+    .catch(() => null);
+}
+
 const Navbar = async ({ role, userId, schoolId }: Props) => {
   const [clerkUser, branding] = await Promise.all([
     currentUser().catch(() => null),
@@ -37,6 +62,13 @@ const Navbar = async ({ role, userId, schoolId }: Props) => {
       ? Promise.resolve(null)
       : getSchoolBranding(schoolId).catch(() => null),
   ]);
+
+  await syncSignedInProfilePhoto({
+    role,
+    userId,
+    schoolId,
+    imageUrl: clerkUser?.imageUrl,
+  });
 
   const userData = {
     fullName:

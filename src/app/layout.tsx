@@ -3,8 +3,16 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
-  title: "Edujay",
+  title: {
+    default: "Edujay",
+    template: "%s — Edujay",
+  },
   description: "Modern School Management System",
+  icons: {
+    icon: "/edujay-logo.png",
+    shortcut: "/edujay-logo.png",
+    apple: "/edujay-logo.png",
+  },
 };
 
 export default function RootLayout({
