@@ -166,6 +166,10 @@ export async function createClass(data: {
       })
     : null;
 
+  if (data.supervisorId && !supervisor) {
+    throw new Error("Class teacher must still be active before the class can be saved.");
+  }
+
   await prisma.$transaction(async (tx) => {
     const created = await tx.class.create({
       data: { ...data, schoolId },
@@ -433,14 +437,17 @@ export async function updateSubject(id: number, data: { name?: string; teacherId
   }
 
   const previousTeacherIds = existing.teachers.map((teacher) => teacher.id);
+  const nextCapabilityTeacherIds = data.teacherIds ? teacherIds : previousTeacherIds;
   const capabilityChanged = Boolean(data.teacherIds);
+  const subjectNameChanged = Boolean(data.name && data.name !== existing.name);
   const addedTeacherIds = capabilityChanged
     ? teacherIds.filter((teacherId) => !previousTeacherIds.includes(teacherId))
     : [];
   const removedTeacherIds = capabilityChanged
     ? previousTeacherIds.filter((teacherId) => !teacherIds.includes(teacherId))
     : [];
-  const impactedTeacherIds = uniqueStrings([...addedTeacherIds, ...removedTeacherIds]);
+  const renamedTeacherIds = subjectNameChanged ? nextCapabilityTeacherIds : [];
+  const impactedTeacherIds = uniqueStrings([...addedTeacherIds, ...removedTeacherIds, ...renamedTeacherIds]);
   const teacherDetails = impactedTeacherIds.length
     ? await prisma.teacher.findMany({
         where: { schoolId, id: { in: impactedTeacherIds } },
@@ -468,7 +475,7 @@ export async function updateSubject(id: number, data: { name?: string; teacherId
       tx,
       impactedTeacherIds.map((teacherId) => {
         const wasAssigned = previousTeacherIds.includes(teacherId);
-        const isAssigned = teacherIds.includes(teacherId);
+        const isAssigned = nextCapabilityTeacherIds.includes(teacherId);
         return {
           schoolId,
           teacherId,
@@ -486,7 +493,9 @@ export async function updateSubject(id: number, data: { name?: string; teacherId
             subjectName: nextSubjectName,
             assigned: isAssigned,
           },
-          message: `${teacherName(teacherById.get(teacherId))} ${isAssigned ? "was allowed to teach" : "was removed from"} ${nextSubjectName}.`,
+          message: wasAssigned === isAssigned && subjectNameChanged
+            ? `${teacherName(teacherById.get(teacherId))} subject capability was renamed from ${existing.name} to ${nextSubjectName}.`
+            : `${teacherName(teacherById.get(teacherId))} ${isAssigned ? "was allowed to teach" : "was removed from"} ${nextSubjectName}.`,
         };
       }),
     );
