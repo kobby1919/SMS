@@ -309,8 +309,123 @@ const TeacherListPage = async ({
       {/* ── Table ── */}
       {selectedStatus !== "pending-invites" && (
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-1">
-        <div className="w-full overflow-x-auto">
-          <table className="w-full min-w-[360px]">
+        <div className="divide-y divide-gray-100 md:hidden">
+          {teachers.map(({ teacher: item, classBadges, setupStatus, missingSetup, readiness }) => {
+            const lifecycle = teacherStatusMeta(item.status);
+            const profileCompletion = readiness.profileCompletion;
+
+            return (
+              <div key={item.id} className="p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <Image
+                      src={item.img || "/noAvatar.png"}
+                      alt={item.name}
+                      width={44}
+                      height={44}
+                      className="h-11 w-11 shrink-0 rounded-xl object-cover ring-2 ring-gray-100"
+                    />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-black text-gray-800">
+                        {item.name} {item.surname}
+                      </p>
+                      <p className="mt-0.5 truncate text-xs font-semibold text-gray-400">
+                        {item.email}
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        <span className={`rounded-full px-2 py-0.5 text-[11px] font-black ${lifecycle.className}`}>
+                          {lifecycle.label}
+                        </span>
+                        <span className={`rounded-full px-2 py-0.5 text-[11px] font-black ${teacherReadinessToneClass(readiness.tone)}`}>
+                          {readiness.label}
+                        </span>
+                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-bold text-gray-500">
+                          {profileCompletion.completionPercent}% profile
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    <Link href={`/list/teachers/${item.id}`}>
+                      <button className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 transition-colors hover:bg-indigo-100">
+                        <Eye size={15} />
+                      </button>
+                    </Link>
+                    {role === "admin" && <FormModal table="teacher" type="update" data={item} />}
+                  </div>
+                </div>
+
+                <div className="mt-4 grid grid-cols-1 gap-2">
+                  <div className="rounded-xl bg-gray-50 p-3">
+                    <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Subjects</p>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {item.subjects.slice(0, 3).map((s: Subject, idx: number) => (
+                        <span key={s.id} className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${getSubjectColor(s.name, idx)}`}>
+                          {s.name}
+                        </span>
+                      ))}
+                      {item.subjects.length > 3 && (
+                        <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-gray-500">
+                          +{item.subjects.length - 3}
+                        </span>
+                      )}
+                      {item.subjects.length === 0 && (
+                        <span className="text-xs font-semibold italic text-gray-300">None assigned</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl bg-gray-50 p-3">
+                    <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Class scope</p>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {classBadges.slice(0, 3).map((c) => (
+                        <span key={`${c.kind}-${c.id}`} className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${c.kind === "supervises" ? "bg-emerald-50 text-emerald-700" : "bg-indigo-50 text-indigo-600"}`}>
+                          {c.name}{c.kind === "supervises" ? " · class teacher" : ""}
+                        </span>
+                      ))}
+                      {classBadges.length > 3 && (
+                        <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-gray-500">
+                          +{classBadges.length - 3}
+                        </span>
+                      )}
+                      {classBadges.length === 0 && (
+                        <span className="text-xs font-semibold italic text-gray-300">No class scope yet</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2">
+                    <div className="rounded-xl bg-gray-50 p-3">
+                      <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Phone</p>
+                      <p className="mt-1 truncate text-sm font-bold text-gray-700">{item.phone ?? "Not provided"}</p>
+                    </div>
+                    <div className="rounded-xl bg-gray-50 p-3">
+                      <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Setup</p>
+                      <p className={`mt-1 line-clamp-2 text-xs font-bold ${setupStatus === "ready" ? "text-emerald-700" : "text-amber-700"}`}>
+                        {setupStatus === "ready"
+                          ? "Ready for school operations"
+                          : missingSetup.slice(0, 2).join(" · ")}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {teachers.length === 0 && (
+            <div className="px-5 py-12 text-center">
+              <p className="text-sm font-black text-gray-500">
+                No teachers match this view.
+              </p>
+              <p className="mt-1 text-xs font-semibold text-gray-400">
+                Try another tab or search term.
+              </p>
+            </div>
+          )}
+        </div>
+
+        <div className="hidden w-full overflow-x-auto md:block">
+          <table className="w-full min-w-[820px]">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/60">
                 <th className="text-left px-4 py-3.5 text-xs font-black uppercase tracking-wider text-gray-400">Teacher</th>
