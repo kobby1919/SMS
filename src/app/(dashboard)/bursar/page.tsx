@@ -4,13 +4,15 @@ import Link from "next/link";
 import {
   Wallet, TrendingUp, AlertCircle, CheckCircle2,
   Clock, Users, FileText, ChevronRight, ArrowUpRight,
+  Receipt, RotateCcw, ShieldAlert,
 } from "lucide-react";
-import { formatGHS, BILL_STATUS_STYLES } from "@/src/lib/constants/finance";
+import { formatGHS, BILL_STATUS_STYLES, PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 import WelcomeBanner from "@/src/components/WelcomeBanner";
 import EventCalendar from "@/src/components/EventCalendar";
 import EventList from "@/src/components/EventList";
 import Announcements from "@/src/components/Announcements";
 import { formatTitledFirstName } from "@/src/lib/format-role-name";
+import { getBursarMoneyPulse } from "@/src/lib/services/bursar-money-pulse";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +29,7 @@ const BursarPage = async ({
       })
     : null;
   const bursarGreetingName = formatTitledFirstName(bursarProfile, role === "bursar" ? "Bursar" : "Admin");
+  const moneyPulse = await getBursarMoneyPulse(schoolId);
 
   // ── Key stats ──────────────────────────────────────────────────────────────
   const [billStatusCounts, structureStatusCounts] = await Promise.all([
@@ -125,6 +128,46 @@ const BursarPage = async ({
   const termLabels: Record<string, string> = {
     TERM_1: "Term 1", TERM_2: "Term 2", TERM_3: "Term 3",
   };
+  const todayLabel = moneyPulse.date.toLocaleDateString("en-GH", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  const moneyPulseCards = [
+    {
+      label: "Received today",
+      value: formatGHS(moneyPulse.amountReceivedToday),
+      sub: `${moneyPulse.paymentsReceivedToday} confirmed payment${moneyPulse.paymentsReceivedToday === 1 ? "" : "s"}`,
+      href: "/list/finance/payments?status=CONFIRMED",
+      icon: <TrendingUp size={18} />,
+      color: "bg-emerald-50 text-emerald-700",
+    },
+    {
+      label: "Pending confirmations",
+      value: moneyPulse.pendingConfirmationCount,
+      sub: "Transfers or proof needing review",
+      href: "/list/finance/payments?status=PENDING",
+      icon: <Clock size={18} />,
+      color: "bg-amber-50 text-amber-700",
+    },
+    {
+      label: "Receipts issued",
+      value: moneyPulse.receiptsIssuedToday,
+      sub: "Confirmed receipts today",
+      href: "/list/finance/payments?status=CONFIRMED",
+      icon: <Receipt size={18} />,
+      color: "bg-blue-50 text-blue-700",
+    },
+    {
+      label: "Corrections / reversals",
+      value: moneyPulse.reversalCountToday + moneyPulse.correctionCountToday,
+      sub: `${moneyPulse.reversalCountToday} reversal${moneyPulse.reversalCountToday === 1 ? "" : "s"} today`,
+      href: "/list/finance/payments?status=REVERSED",
+      icon: <RotateCcw size={18} />,
+      color: "bg-rose-50 text-rose-700",
+    },
+  ];
 
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
@@ -137,6 +180,139 @@ const BursarPage = async ({
         tag={`${new Date().getFullYear()} Financial Year`}
       />
 
+      <section className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-600">Today&apos;s money pulse</p>
+            <h2 className="mt-1 text-xl font-black tracking-tight text-gray-900">{todayLabel}</h2>
+            <p className="mt-1 max-w-2xl text-sm font-semibold text-gray-500">
+              Daily finance control for collections, receipts, corrections, and parent payment issues.
+            </p>
+          </div>
+          <a
+            href={`/api/finance/reports/daily?date=${moneyPulse.date.toISOString().split("T")[0]}`}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-black text-white transition hover:bg-slate-800"
+          >
+            <FileText size={15} /> Daily report
+          </a>
+        </div>
+
+        {(moneyPulse.quietFinanceDay || moneyPulse.isWeekend) && (
+          <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-800">
+            {moneyPulse.isWeekend
+              ? "Weekend finance activity may be quiet. Use the term collection sections below for the full picture."
+              : "No payment activity has been recorded today yet. Edujay will surface confirmations and urgent issues here once they appear."}
+          </div>
+        )}
+
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {moneyPulseCards.map((card) => (
+            <Link
+              key={card.label}
+              href={card.href}
+              className="group rounded-2xl border border-gray-100 bg-gray-50/60 p-4 transition hover:border-gray-200 hover:bg-white hover:shadow-sm"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-xs font-black uppercase tracking-wide text-gray-400">{card.label}</p>
+                  <p className="mt-2 truncate text-2xl font-black leading-none text-gray-900">{card.value}</p>
+                  <p className="mt-1 text-xs font-semibold text-gray-500">{card.sub}</p>
+                </div>
+                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${card.color}`}>
+                  {card.icon}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {moneyPulse.methodBreakdown.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {moneyPulse.methodBreakdown.map((method) => (
+              <span key={method.method} className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-black text-emerald-700">
+                {PAYMENT_METHOD_LABELS[method.method] ?? method.method}: {formatGHS(method.amount)} · {method.count}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-3">
+          <div className="rounded-2xl border border-gray-100 bg-white p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-black text-gray-900">Low collection classes</h3>
+                <p className="text-xs font-semibold text-gray-400">Classes needing fee follow-up.</p>
+              </div>
+              <ShieldAlert size={18} className="text-amber-500" />
+            </div>
+            <div className="mt-3 space-y-2">
+              {moneyPulse.lowCollectionClasses.length === 0 ? (
+                <p className="rounded-xl bg-gray-50 p-4 text-sm font-semibold text-gray-400">No class collection concern yet.</p>
+              ) : moneyPulse.lowCollectionClasses.map((item) => (
+                <Link key={item.classId} href={`/list/finance/bills?classId=${item.classId}`} className="block rounded-xl border border-gray-100 p-3 transition hover:bg-amber-50/50">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-black text-gray-800">{item.className}</p>
+                    <span className="rounded-full bg-amber-50 px-2 py-1 text-xs font-black text-amber-700">{item.collectionRate}%</span>
+                  </div>
+                  <p className="mt-1 text-xs font-semibold text-gray-500">
+                    {formatGHS(item.outstanding)} outstanding · {formatGHS(item.collectedToday)} today
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-gray-100 bg-white p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-black text-gray-900">Urgent payment issues</h3>
+                <p className="text-xs font-semibold text-gray-400">Queries, overpayments, and highest balances.</p>
+              </div>
+              <AlertCircle size={18} className="text-rose-500" />
+            </div>
+            <div className="mt-3 space-y-2">
+              {moneyPulse.urgentIssues.length === 0 ? (
+                <p className="rounded-xl bg-gray-50 p-4 text-sm font-semibold text-gray-400">No urgent payment issue waiting.</p>
+              ) : moneyPulse.urgentIssues.slice(0, 5).map((issue) => (
+                <Link key={issue.id} href={issue.href} className="block rounded-xl border border-gray-100 p-3 transition hover:bg-rose-50/50">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="truncate text-sm font-black text-gray-800">{issue.title}</p>
+                    <span className="shrink-0 text-xs font-black text-rose-600">{formatGHS(Math.abs(issue.amount))}</span>
+                  </div>
+                  <p className="mt-1 truncate text-xs font-semibold text-gray-500">{issue.className} · {issue.detail}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-gray-100 bg-white p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-black text-gray-900">Recent activity today</h3>
+                <p className="text-xs font-semibold text-gray-400">Latest payments and status changes.</p>
+              </div>
+              <Wallet size={18} className="text-emerald-600" />
+            </div>
+            <div className="mt-3 space-y-2">
+              {moneyPulse.recentPayments.length === 0 ? (
+                <p className="rounded-xl bg-gray-50 p-4 text-sm font-semibold text-gray-400">No payment activity today.</p>
+              ) : moneyPulse.recentPayments.map((payment) => (
+                <Link key={payment.id} href={`/list/finance/payments?search=${encodeURIComponent(payment.receiptNumber)}`} className="block rounded-xl border border-gray-100 p-3 transition hover:bg-emerald-50/50">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="truncate text-sm font-black text-gray-800">
+                      {payment.studentBill.student.name} {payment.studentBill.student.surname}
+                    </p>
+                    <span className="shrink-0 text-xs font-black text-emerald-700">{formatGHS(payment.amount)}</span>
+                  </div>
+                  <p className="mt-1 truncate text-xs font-semibold text-gray-500">
+                    {payment.receiptNumber} · {PAYMENT_METHOD_LABELS[payment.paymentMethod] ?? payment.paymentMethod} · {payment.status.toLowerCase()}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
       {/* ── Outer two-column layout: main content | sidebar ── */}
       <div className="flex flex-col xl:flex-row gap-4">
 
@@ -394,4 +570,3 @@ const BursarPage = async ({
 };
 
 export default BursarPage;
-
