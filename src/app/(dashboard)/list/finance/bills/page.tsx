@@ -182,6 +182,11 @@ const BillsPage = async ({
   }
   if (Object.keys(studentWhere).length > 0) where.student = { is: studentWhere };
 
+  const summaryWhere: Prisma.StudentBillWhereInput = { ...where };
+  delete summaryWhere.status;
+  delete summaryWhere.discounts;
+  delete summaryWhere.financeQueries;
+
   const [bills, count, classes, academicYears, statusCounts, discountCount, issueCount, outstandingAggregate] = await Promise.all([
     prisma.studentBill.findMany({
       where,
@@ -193,6 +198,16 @@ const BillsPage = async ({
             img: true,
             class: { select: { id: true, name: true } },
             parent: { select: { name: true, surname: true, phone: true, email: true } },
+            _count: { select: { parentRelationships: true } },
+            parentRelationships: {
+              where: { status: "ACTIVE", canViewFees: true },
+              orderBy: { createdAt: "asc" },
+              take: 1,
+              select: {
+                role: true,
+                parent: { select: { name: true, surname: true, phone: true, email: true } },
+              },
+            },
           },
         },
         feeStructure: {
@@ -233,17 +248,17 @@ const BillsPage = async ({
     }),
     prisma.studentBill.groupBy({
       by: ["status"],
-      where: { schoolId },
+      where: summaryWhere,
       _count: { _all: true },
     }),
     prisma.studentBill.count({
-      where: { schoolId, discounts: { some: { status: "ACTIVE" } } },
+      where: { ...summaryWhere, discounts: { some: { status: "ACTIVE" } } },
     }),
     prisma.studentBill.count({
-      where: { schoolId, financeQueries: { some: { status: { in: ["OPEN", "IN_REVIEW"] } } } },
+      where: { ...summaryWhere, financeQueries: { some: { status: { in: ["OPEN", "IN_REVIEW"] } } } },
     }),
     prisma.studentBill.aggregate({
-      where: { schoolId, status: { in: ["UNPAID", "PARTIAL"] } },
+      where: { ...summaryWhere, status: { in: ["UNPAID", "PARTIAL"] } },
       _sum: { balance: true },
     }),
   ]);
@@ -426,7 +441,7 @@ const BillsPage = async ({
                     const hasActiveDiscount = bill.discounts.length > 0;
                     const meta = statusMeta({ status: bill.status, hasActiveDiscount, hasOpenIssue });
                     const lastPayment = bill.payments[0];
-                    const parent = bill.student.parent;
+                    const guardian = bill.student.parentRelationships[0]?.parent ?? (bill.student._count.parentRelationships === 0 ? bill.student.parent : null);
                     const canRecordPayment = bill.status !== "PAID" && bill.status !== "WAIVED";
 
                     return (
@@ -456,12 +471,12 @@ const BillsPage = async ({
                           {lastPayment && <p className="text-xs font-semibold text-gray-400">{formatGHS(lastPayment.amount)}</p>}
                         </td>
                         <td className="px-4 py-4 text-sm font-bold text-gray-600">
-                          {parent ? (
+                          {guardian ? (
                             <div>
-                              <p>{parent.name} {parent.surname}</p>
-                              <p className="text-xs font-semibold text-gray-400">{parent.phone || parent.email || "No contact saved"}</p>
+                              <p>{guardian.name} {guardian.surname}</p>
+                              <p className="text-xs font-semibold text-gray-400">{guardian.phone || guardian.email || "No contact saved"}</p>
                             </div>
-                          ) : <span className="text-xs font-black text-rose-500">No guardian linked</span>}
+                          ) : <span className="text-xs font-black text-rose-500">No fee guardian linked</span>}
                         </td>
                         <td className="px-4 py-4">
                           <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase ${meta.tone}`}>
@@ -493,7 +508,7 @@ const BillsPage = async ({
                 const hasActiveDiscount = bill.discounts.length > 0;
                 const meta = statusMeta({ status: bill.status, hasActiveDiscount, hasOpenIssue });
                 const lastPayment = bill.payments[0];
-                const parent = bill.student.parent;
+                const guardian = bill.student.parentRelationships[0]?.parent ?? (bill.student._count.parentRelationships === 0 ? bill.student.parent : null);
                 const canRecordPayment = bill.status !== "PAID" && bill.status !== "WAIVED";
 
                 return (
@@ -537,13 +552,13 @@ const BillsPage = async ({
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                           <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Parent / guardian</p>
-                          {parent ? (
-                            <p className="mt-0.5 text-sm font-bold text-gray-700">{parent.name} {parent.surname}</p>
-                          ) : <p className="mt-0.5 text-sm font-bold text-rose-600">No guardian linked</p>}
+                          {guardian ? (
+                            <p className="mt-0.5 text-sm font-bold text-gray-700">{guardian.name} {guardian.surname}</p>
+                          ) : <p className="mt-0.5 text-sm font-bold text-rose-600">No fee guardian linked</p>}
                         </div>
-                        {parent?.phone && (
-                          <a href={`tel:${parent.phone}`} className="inline-flex items-center gap-1 text-xs font-black text-emerald-700">
-                            <Phone size={13} /> {parent.phone}
+                        {guardian?.phone && (
+                          <a href={`tel:${guardian.phone}`} className="inline-flex items-center gap-1 text-xs font-black text-emerald-700">
+                            <Phone size={13} /> {guardian.phone}
                           </a>
                         )}
                       </div>
