@@ -60,6 +60,10 @@ export const routeAccessMap: RouteAccessMap = {
   "/list/finance/payments":                 ["admin", "bursar"],
   "/list/finance/payments/(.*)":            ["admin", "bursar"],
 
+  // Receipts — official payment proof history
+  "/list/finance/receipts":                 ["admin", "bursar"],
+  "/list/finance/receipts/(.*)":            ["admin", "bursar"],
+
   // Discounts — both can view, both can apply (audit tracked)
   "/list/finance/discounts":                ["admin", "bursar"],
 
@@ -73,4 +77,3 @@ export const routeAccessMap: RouteAccessMap = {
   "/api/finance/receipt":                   ["admin", "bursar", "parent", "student"],
   "/api/finance/(.*)":                      ["admin", "bursar"],
 };
-

@@ -630,16 +630,34 @@ export async function GET(req: NextRequest) {
       return new NextResponse("Forbidden", { status: 403 });
     }
 
-    // Load who recorded the payment (bursar/admin username)
-    let recordedByName = "Bursar";
+    // Load who recorded the payment. Receipts must name the real source where possible.
+    let recordedByName = "Finance office";
     try {
-      const admin = await prisma.admin.findFirst({
-        where: { id: payment.recordedBy, schoolId },
-        select: { username: true },
-      });
-      if (admin) recordedByName = admin.username;
+      if (payment.recordedBy === "system:webhook") {
+        recordedByName = "Online payment provider";
+      } else {
+        const [admin, bursar] = await Promise.all([
+          prisma.admin.findFirst({
+            where: { id: payment.recordedBy, schoolId },
+            select: { username: true },
+          }),
+          prisma.bursar.findFirst({
+            where: { id: payment.recordedBy, schoolId },
+            select: { name: true, surname: true, username: true },
+          }),
+        ]);
+
+        if (bursar) {
+          recordedByName =
+            `${bursar.name ?? ""} ${bursar.surname ?? ""}`.trim() ||
+            bursar.username ||
+            "Finance office";
+        } else if (admin) {
+          recordedByName = admin.username;
+        }
+      }
     } catch {
-      // recordedBy may not correspond to an Admin row — silently fall back
+      // recordedBy may be a legacy/system value. Keep the receipt printable.
     }
 
     const branding = await getSchoolBranding(schoolId);
@@ -700,7 +718,8 @@ export async function GET(req: NextRequest) {
     const filename =
       `receipt-${payment.receiptNumber}-${bill.student.surname}.pdf`
         .toLowerCase()
-        .replace(/\s+/g, "-");
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9._-]/g, "");
 
     return new NextResponse(new Uint8Array(pdfBuffer), {
       status: 200,
@@ -708,6 +727,7 @@ export async function GET(req: NextRequest) {
         "Content-Type": "application/pdf",
         "Content-Disposition": `inline; filename="${filename}"`,
         "Content-Length": String(pdfBuffer.byteLength),
+        "Cache-Control": "private, no-store",
       },
     });
   } catch (err: unknown) {

@@ -25,6 +25,7 @@ import {
   SlidersHorizontal,
   Star,
   ScrollText,
+  ReceiptText,
   BellRing,
   ShieldCheck,
 } from "lucide-react";
@@ -332,6 +333,12 @@ const menuItems = [
         visible: ["admin", "bursar"],
       },
       {
+        icon: ReceiptText,
+        label: "Receipts",
+        href: "/list/finance/receipts",
+        visible: ["admin", "bursar"],
+      },
+      {
         icon: ScrollText,
         label: "Fee Structures",
         href: "/list/finance/fee-structures",
@@ -443,4 +450,3 @@ const MenuClient = ({ role }: { role: string }) => {
 };
 
 export default MenuClient;
-

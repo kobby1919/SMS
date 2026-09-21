@@ -15,6 +15,7 @@ import {
   Home,
   Menu,
   MessageCircle,
+  ReceiptText,
   Search,
   Settings,
   UserRound,
@@ -102,6 +103,7 @@ const roleShortcuts: Record<string, SearchItem[]> = {
     { label: "Finance home", description: "Bursar dashboard", href: "/bursar", keywords: "bursar finance dashboard", icon: <Home size={15} /> },
     { label: "Bills", description: "Student bills", href: "/list/finance/bills", keywords: "bills fees balances outstanding", icon: <WalletCards size={15} /> },
     { label: "Payments", description: "Receipts and collections", href: "/list/finance/payments", keywords: "payments receipts collections", icon: <FileText size={15} /> },
+    { label: "Receipts", description: "Official payment proof", href: "/list/finance/receipts", keywords: "receipts proof download print paid receipt number", icon: <ReceiptText size={15} /> },
     { label: "Fee Structures", description: "Term fee setup", href: "/list/finance/fee-structures", keywords: "fee structures term setup bills", icon: <WalletCards size={15} /> },
   ],
   student: [

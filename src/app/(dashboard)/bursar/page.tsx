@@ -299,7 +299,7 @@ const BursarPage = async ({
               {moneyPulse.recentPayments.length === 0 ? (
                 <p className="rounded-xl bg-gray-50 p-4 text-sm font-semibold text-gray-400">No payment activity today.</p>
               ) : moneyPulse.recentPayments.map((payment) => (
-                <Link key={payment.id} href={`/list/finance/payments?search=${encodeURIComponent(payment.receiptNumber)}`} className="block rounded-xl border border-gray-100 p-3 transition hover:bg-emerald-50/50">
+                <Link key={payment.id} href={`/list/finance/receipts?search=${encodeURIComponent(payment.receiptNumber)}`} className="block rounded-xl border border-gray-100 p-3 transition hover:bg-emerald-50/50">
                   <div className="flex items-center justify-between gap-3">
                     <p className="truncate text-sm font-black text-gray-800">
                       {payment.studentBill.student.name} {payment.studentBill.student.surname}
@@ -528,7 +528,7 @@ const BursarPage = async ({
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                 <h2 className="text-sm font-black text-gray-800">Recent Payments</h2>
-                <Link href="/list/finance/payments" className="text-xs font-bold text-violet-600 hover:text-violet-700">
+                <Link href="/list/finance/receipts" className="text-xs font-bold text-violet-600 hover:text-violet-700">
                   View all →
                 </Link>
               </div>
@@ -647,7 +647,7 @@ const BursarPage = async ({
               {[
                 { label: "New Fee Structure", href: "/list/finance/fee-structures/new", icon: <FileText size={16} />,     color: "bg-violet-50 text-violet-600 hover:bg-violet-100"   },
                 { label: "View All Bills",    href: "/list/finance/bills",              icon: <Users size={16} />,         color: "bg-indigo-50 text-indigo-600 hover:bg-indigo-100"   },
-                { label: "All Payments",      href: "/list/finance/payments",           icon: <Wallet size={16} />,        color: "bg-emerald-50 text-emerald-600 hover:bg-emerald-100" },
+                { label: "All Receipts",      href: "/list/finance/receipts",           icon: <Receipt size={16} />,       color: "bg-emerald-50 text-emerald-600 hover:bg-emerald-100" },
                 { label: "Finance Reports",   href: "/list/finance/reports",            icon: <ArrowUpRight size={16} />,  color: "bg-amber-50 text-amber-600 hover:bg-amber-100"      },
               ].map((a) => (
                 <Link
