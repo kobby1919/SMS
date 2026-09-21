@@ -53,6 +53,8 @@ const BursarPage = async ({
   const unpaidBills = billCountByStatus.UNPAID ?? 0;
   const partialBills = billCountByStatus.PARTIAL ?? 0;
   const paidBills = billCountByStatus.PAID ?? 0;
+  const overpaidBills = billCountByStatus.OVERPAID ?? 0;
+  const settledBills = paidBills + overpaidBills;
   const waivedBills = billCountByStatus.WAIVED ?? 0;
   const totalBills = billStatusCounts.reduce((sum, row) => sum + row._count._all, 0);
   const publishedStructures = structureCountByStatus.PUBLISHED ?? 0;
@@ -62,7 +64,7 @@ const BursarPage = async ({
   const yearStart = new Date(new Date().getFullYear(), 0, 1);
   const collectedResult = await prisma.payment.aggregate({
     _sum:  { amount: true },
-    where: { schoolId, status: "CONFIRMED", createdAt: { gte: yearStart } },
+    where: { schoolId, status: "CONFIRMED", paymentDate: { gte: yearStart } },
   });
   const totalCollected = collectedResult._sum.amount ?? 0;
 
@@ -442,9 +444,9 @@ const BursarPage = async ({
                 href:  "/list/finance/bills",
               },
               {
-                label: "Bills Paid",
-                value: paidBills,
-                sub:   `of ${totalBills} total bills`,
+                label: "Bills Settled",
+                value: settledBills,
+                sub:   `${paidBills} paid · ${overpaidBills} overpaid`,
                 icon:  <CheckCircle2 size={18} />,
                 color: "bg-blue-50 text-blue-600",
                 href:  "/list/finance/bills",
@@ -484,11 +486,12 @@ const BursarPage = async ({
                 View all →
               </Link>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3">
               {[
                 { status: "UNPAID",  count: unpaidBills  },
                 { status: "PARTIAL", count: partialBills },
                 { status: "PAID",    count: paidBills    },
+                { status: "OVERPAID", count: overpaidBills },
                 { status: "WAIVED",  count: waivedBills  },
               ].map(({ status, count }) => {
                 const style = BILL_STATUS_STYLES[status];
