@@ -43,8 +43,6 @@ function classSortKey(name: string) {
 
 export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
   const { start, end } = dayBounds(date);
-  const weekStart = new Date(start);
-  weekStart.setDate(weekStart.getDate() - 7);
 
   const [
     todayByMethod,
@@ -56,7 +54,7 @@ export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
     openFinanceQueries,
     overpaidBills,
     highOutstandingBills,
-    classes,
+    classBills,
     recentPayments,
   ] = await Promise.all([
     prisma.payment.groupBy({
@@ -107,7 +105,7 @@ export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
       where: {
         schoolId,
         status: "CONFIRMED",
-        paymentDate: { gte: start, lte: end },
+        createdAt: { gte: start, lte: end },
       },
     }),
     prisma.paymentReversal.findMany({
@@ -144,7 +142,7 @@ export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
     prisma.financeAuditLog.findMany({
       where: {
         schoolId,
-        action: { in: ["DISCOUNT_APPLIED", "DISCOUNT_REMOVED", "PAYMENT_REVERSED"] },
+        action: { in: ["DISCOUNT_APPLIED", "DISCOUNT_REMOVED"] },
         createdAt: { gte: start, lte: end },
       },
       select: {
@@ -223,40 +221,32 @@ export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
       orderBy: { balance: "desc" },
       take: 5,
     }),
-    prisma.class.findMany({
+    prisma.studentBill.findMany({
       where: { schoolId },
       select: {
-        id: true,
-        name: true,
-        students: {
+        totalAmount: true,
+        amountPaid: true,
+        discountAmount: true,
+        balance: true,
+        status: true,
+        payments: {
+          where: {
+            status: "CONFIRMED",
+            paymentDate: { gte: start, lte: end },
+          },
+          select: { amount: true },
+        },
+        student: {
           select: {
-            bills: {
-              select: {
-                totalAmount: true,
-                amountPaid: true,
-                discountAmount: true,
-                balance: true,
-                status: true,
-                payments: {
-                  where: {
-                    status: "CONFIRMED",
-                    paymentDate: { gte: start, lte: end },
-                  },
-                  select: {
-                    amount: true,
-                  },
-                },
-              },
-            },
+            class: { select: { id: true, name: true } },
           },
         },
       },
-      orderBy: { name: "asc" },
     }),
     prisma.payment.findMany({
       where: {
         schoolId,
-        paymentDate: { gte: start, lte: end },
+        createdAt: { gte: start, lte: end },
       },
       select: {
         id: true,
@@ -265,6 +255,7 @@ export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
         status: true,
         paymentMethod: true,
         paymentDate: true,
+        createdAt: true,
         paidBy: true,
         studentBill: {
           select: {
@@ -278,7 +269,7 @@ export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
           },
         },
       },
-      orderBy: { paymentDate: "desc" },
+      orderBy: { createdAt: "desc" },
       take: 6,
     }),
   ]);
@@ -294,35 +285,53 @@ export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
     amount: asNumber(row._sum.amount),
   }));
 
-  const collectionByClass = classes
-    .map((klass) => {
-      const bills = klass.students.flatMap((student) => student.bills);
-      const expected = bills.reduce(
-        (sum, bill) => sum + asNumber(bill.totalAmount) - asNumber(bill.discountAmount),
-        0,
-      );
-      const collected = bills.reduce((sum, bill) => sum + asNumber(bill.amountPaid), 0);
-      const outstanding = bills.reduce((sum, bill) => sum + asNumber(bill.balance), 0);
-      const collectedToday = bills.reduce(
-        (sum, bill) => sum + bill.payments.reduce((paymentSum, payment) => paymentSum + asNumber(payment.amount), 0),
-        0,
-      );
-      const paidBills = bills.filter((bill) => bill.status === "PAID" || bill.status === "OVERPAID").length;
-      const unpaidBills = bills.filter((bill) => bill.status === "UNPAID" || bill.status === "PARTIAL").length;
+  const classCollectionMap = new Map<
+    number,
+    {
+      classId: number;
+      className: string;
+      expected: number;
+      collected: number;
+      outstanding: number;
+      collectedToday: number;
+      billCount: number;
+      paidBills: number;
+      unpaidBills: number;
+    }
+  >();
 
-      return {
-        classId: klass.id,
-        className: klass.name,
-        expected,
-        collected,
-        outstanding,
-        collectedToday,
-        billCount: bills.length,
-        paidBills,
-        unpaidBills,
-        collectionRate: collectionRate(collected, expected),
-      };
-    })
+  for (const bill of classBills) {
+    const klass = bill.student.class;
+    if (!klass) continue;
+
+    const current = classCollectionMap.get(klass.id) ?? {
+      classId: klass.id,
+      className: klass.name,
+      expected: 0,
+      collected: 0,
+      outstanding: 0,
+      collectedToday: 0,
+      billCount: 0,
+      paidBills: 0,
+      unpaidBills: 0,
+    };
+
+    current.expected += Math.max(0, asNumber(bill.totalAmount) - asNumber(bill.discountAmount));
+    current.collected += Math.max(0, asNumber(bill.amountPaid));
+    current.outstanding += Math.max(0, asNumber(bill.balance));
+    current.collectedToday += bill.payments.reduce((sum, payment) => sum + asNumber(payment.amount), 0);
+    current.billCount += 1;
+    if (bill.status === "PAID" || bill.status === "OVERPAID") current.paidBills += 1;
+    if (bill.status === "UNPAID" || bill.status === "PARTIAL") current.unpaidBills += 1;
+
+    classCollectionMap.set(klass.id, current);
+  }
+
+  const collectionByClass = Array.from(classCollectionMap.values())
+    .map((item) => ({
+      ...item,
+      collectionRate: collectionRate(item.collected, item.expected),
+    }))
     .filter((item) => item.expected > 0 || item.billCount > 0)
     .sort((a, b) => classSortKey(a.className) - classSortKey(b.className) || a.className.localeCompare(b.className));
 
@@ -366,7 +375,7 @@ export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
 
   const quietFinanceDay =
     paymentsReceivedToday === 0 &&
-    pendingConfirmations.length === 0 &&
+    pendingConfirmationCount === 0 &&
     reversalsToday.length === 0 &&
     openFinanceQueries.length === 0;
 

@@ -162,7 +162,7 @@ const BursarPage = async ({
     {
       label: "Corrections / reversals",
       value: moneyPulse.reversalCountToday + moneyPulse.correctionCountToday,
-      sub: `${moneyPulse.reversalCountToday} reversal${moneyPulse.reversalCountToday === 1 ? "" : "s"} today`,
+      sub: `${moneyPulse.reversalCountToday} reversal${moneyPulse.reversalCountToday === 1 ? "" : "s"} · ${moneyPulse.correctionCountToday} correction${moneyPulse.correctionCountToday === 1 ? "" : "s"}`,
       href: "/list/finance/payments?status=REVERSED",
       icon: <RotateCcw size={18} />,
       color: "bg-rose-50 text-rose-700",
@@ -414,7 +414,9 @@ const BursarPage = async ({
             </div>
           </>
         )}
-      </section>      {/* ── Outer two-column layout: main content | sidebar ── */}
+      </section>
+
+      {/* ── Outer two-column layout: main content | sidebar ── */}
       <div className="flex flex-col xl:flex-row gap-4">
 
         {/* ── LEFT / MAIN COLUMN ── */}
