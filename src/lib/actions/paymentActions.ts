@@ -5,7 +5,6 @@ import prisma from "@/src/lib/prisma";
 import { revalidatePath } from "next/cache";
 import {
   requireFinanceAccess,
-  generateReceiptNumber,
   writeAuditLog,
   recomputeBillStatus,
 } from "@/src/lib/actions/financeActions";
@@ -56,6 +55,35 @@ function normalizeManualPaymentDate(dateString?: string | null) {
   return date;
 }
 
+
+async function generateReceiptNumberInTransaction(
+  tx: Prisma.TransactionClient,
+  schoolId: string,
+) {
+  const year = new Date().getFullYear();
+
+  await tx.receiptCounter.upsert({
+    where: { schoolId_year: { schoolId, year } },
+    create: { schoolId, year, lastCounter: 0 },
+    update: {},
+  });
+
+  const counter = await tx.receiptCounter.update({
+    where: { schoolId_year: { schoolId, year } },
+    data: { lastCounter: { increment: 1 } },
+  });
+
+  return `RCP-${year}-${String(counter.lastCounter).padStart(3, "0")}`;
+}
+
+function isPrismaErrorCode(error: unknown, code: string) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === code
+  );
+}
 // ─── Record a payment ─────────────────────────────────────────────────────────
 
 export type RecordPaymentInput = {
@@ -92,19 +120,6 @@ export async function recordPayment(input: RecordPaymentInput) {
     }
   }
 
-  const bill = requireResourceAccess(
-    await prisma.studentBill.findFirst({
-      where:   { id: data.studentBillId, schoolId },
-      include: {
-        student:      { select: { name: true, surname: true } },
-        lineItems:    true,
-      },
-    }),
-    ctx,
-    "Bill not found.",
-  );
-  assertCanRecordPayment(bill.status);
-
   if (data.paymentMethod === "CASH" && referenceNo) {
     throw new Error("Cash payments should not use an external reference number. Edujay will generate the receipt number.");
   }
@@ -113,112 +128,132 @@ export async function recordPayment(input: RecordPaymentInput) {
     throw new Error("Reference number is required for this payment method.");
   }
 
-  if (referenceNo) {
-    const duplicateReference = await prisma.payment.findFirst({
-      where: {
-        schoolId,
-        paymentMethod: data.paymentMethod,
-        referenceNo: { equals: referenceNo, mode: "insensitive" },
-        status: { notIn: ["FAILED", "REVERSED"] },
-      },
-      select: { id: true, receiptNumber: true, idempotencyKey: true },
-    });
+  const paymentAmount = new Prisma.Decimal(data.amount);
+  let reusedIdempotentPayment = false;
+  let transactionResult;
 
-    if (duplicateReference && duplicateReference.idempotencyKey !== idempotencyKey) {
-      throw new Error(`Reference number already used on receipt ${duplicateReference.receiptNumber}. Use reversal/correction if the first record was wrong.`);
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    try {
+      transactionResult = await prisma.$transaction(async (tx) => {
+        const bill = await tx.studentBill.findFirst({
+          where: { id: data.studentBillId, schoolId },
+          include: {
+            student: { select: { id: true, name: true, surname: true } },
+            lineItems: true,
+          },
+        });
+
+        const safeBill = requireResourceAccess(bill, ctx, "Bill not found.");
+        assertCanRecordPayment(safeBill.status);
+        assertPaymentWithinAllowedOverpay({
+          amount: paymentAmount,
+          currentBalance: safeBill.balance,
+        });
+
+        if (referenceNo) {
+          const duplicateReference = await tx.payment.findFirst({
+            where: {
+              schoolId,
+              paymentMethod: data.paymentMethod,
+              referenceNo: { equals: referenceNo, mode: "insensitive" },
+              status: { notIn: ["FAILED", "REVERSED"] },
+            },
+            select: { id: true, receiptNumber: true, idempotencyKey: true },
+          });
+
+          if (duplicateReference && duplicateReference.idempotencyKey !== idempotencyKey) {
+            throw new Error(`Reference number already used on receipt ${duplicateReference.receiptNumber}. Use reversal/correction if the first record was wrong.`);
+          }
+        }
+
+        const receiptNumber = await generateReceiptNumberInTransaction(tx, schoolId);
+        const payment = await tx.payment.create({
+          data: {
+            receiptNumber,
+            amount: paymentAmount,
+            schoolId,
+            paymentMethod: data.paymentMethod,
+            paymentDate,
+            paidBy: data.paidBy.trim(),
+            referenceNo,
+            idempotencyKey,
+            notes: data.notes?.trim() ?? null,
+            status: "CONFIRMED",
+            studentBillId: data.studentBillId,
+            recordedBy: userId,
+          },
+        });
+
+        await tx.studentBill.update({
+          where: { id: data.studentBillId },
+          data: { amountPaid: { increment: paymentAmount } },
+        });
+
+        let remaining = new Prisma.Decimal(paymentAmount);
+        const sortedLines = [...safeBill.lineItems].sort((a, b) => a.id - b.id);
+
+        for (const line of sortedLines) {
+          if (remaining.lte(0)) break;
+          if (line.isPaid) continue;
+
+          const lineBalance = new Prisma.Decimal(line.balance);
+          if (lineBalance.lte(0)) continue;
+
+          const allocated = Prisma.Decimal.min(remaining, lineBalance);
+          const newPaid = new Prisma.Decimal(line.amountPaid).add(allocated);
+          const newBal = new Prisma.Decimal(line.amount).sub(newPaid);
+
+          await tx.billLineItem.update({
+            where: { id: line.id },
+            data: {
+              amountPaid: newPaid,
+              balance: Prisma.Decimal.max(newBal, 0),
+              isPaid: newBal.lte(0),
+            },
+          });
+
+          remaining = remaining.sub(allocated);
+        }
+
+        return { payment, bill: safeBill, receiptNumber };
+      }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+      break;
+    } catch (error: unknown) {
+      if (idempotencyKey && isPrismaErrorCode(error, "P2002")) {
+        const existingPayment = await prisma.payment.findFirst({
+          where: { schoolId, idempotencyKey },
+        });
+
+        if (existingPayment) {
+          reusedIdempotentPayment = true;
+          transactionResult = {
+            payment: existingPayment,
+            bill: null,
+            receiptNumber: existingPayment.receiptNumber,
+          };
+          break;
+        }
+      }
+
+      if (isPrismaErrorCode(error, "P2034") && attempt === 1) {
+        continue;
+      }
+
+      throw error;
     }
   }
 
-  const currentBalance = new Prisma.Decimal(bill.balance);
-  const paymentAmount = new Prisma.Decimal(data.amount);
+  if (!transactionResult) {
+    throw new Error("Could not record payment safely. Please try again.");
+  }
 
-  assertPaymentWithinAllowedOverpay({
-    amount: paymentAmount,
-    currentBalance,
-  });
-
-  const receiptNumber = await generateReceiptNumber();
-
-  let reusedIdempotentPayment = false;
-
-  const payment = await prisma.$transaction(async (tx) => {
-    // 1. Create the Payment record
-    const pmt = await tx.payment.create({
-      data: {
-        receiptNumber,
-        amount:         paymentAmount,
-        schoolId,
-        paymentMethod: data.paymentMethod,
-        paymentDate,
-        paidBy:         data.paidBy.trim(),
-        referenceNo,
-        idempotencyKey,
-        notes:          data.notes?.trim() ?? null,
-        status:         "CONFIRMED",
-        studentBillId: data.studentBillId,
-        recordedBy:     userId,
-      },
-    });
-
-    // 2. Update bill amountPaid
-    await tx.studentBill.update({
-      where: { id: data.studentBillId },
-      data:  {
-        amountPaid: { increment: paymentAmount },
-      },
-    });
-
-    // 3. Allocate payment across line items (FIFO)
-    let remaining = new Prisma.Decimal(paymentAmount);
-    const sortedLines = [...bill.lineItems].sort((a, b) => a.id - b.id);
-
-    for (const line of sortedLines) {
-      if (remaining.lte(0)) break;
-      if (line.isPaid) continue;
-
-      const lineBalance = new Prisma.Decimal(line.balance);
-      if (lineBalance.lte(0)) continue;
-
-      const allocated = Prisma.Decimal.min(remaining, lineBalance);
-      const newPaid   = new Prisma.Decimal(line.amountPaid).add(allocated);
-      const newBal    = new Prisma.Decimal(line.amount).sub(newPaid);
-
-      await tx.billLineItem.update({
-        where: { id: line.id },
-        data: {
-          amountPaid: newPaid,
-          balance:    Prisma.Decimal.max(newBal, 0),
-          isPaid:     newBal.lte(0),
-        },
-      });
-
-      remaining = remaining.sub(allocated);
-    }
-
-    return pmt;
-  }).catch(async (error: unknown) => {
-    if (
-      idempotencyKey &&
-      typeof error === "object" &&
-      error !== null &&
-      "code" in error &&
-      error.code === "P2002"
-    ) {
-      const existingPayment = await prisma.payment.findFirst({
-        where: { schoolId, idempotencyKey },
-      });
-
-      if (existingPayment) {
-        reusedIdempotentPayment = true;
-        return existingPayment;
-      }
-    }
-
-    throw error;
-  });
-
+  const { payment, bill, receiptNumber } = transactionResult;
   if (reusedIdempotentPayment) {
     return payment;
+  }
+
+  if (!bill) {
+    throw new Error("Payment was recorded but bill context was not available.");
   }
 
   await recomputeBillStatus(data.studentBillId, schoolId);
