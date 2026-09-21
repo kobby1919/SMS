@@ -157,6 +157,40 @@ export default async function ParentFinancePage({
         </div>
       </section>
 
+
+      {finance.recentPayments.length > 0 && (
+        <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-wider text-gray-400">Recent Receipts</p>
+              <p className="mt-1 text-sm font-semibold text-gray-500">Confirmed payments your family can prove and download anytime.</p>
+            </div>
+          </div>
+          <div className="mt-4 grid gap-2">
+            {finance.recentPayments.map((payment) => (
+              <a
+                key={payment.id}
+                href={payment.receiptHref}
+                className="flex flex-col gap-3 rounded-xl border border-gray-100 bg-gray-50 px-3 py-3 transition hover:border-emerald-200 hover:bg-emerald-50/50 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-black text-gray-900">{payment.receiptNumber}</p>
+                  <p className="mt-0.5 text-xs font-semibold text-gray-400">
+                    {payment.methodLabel} - {formatDate(payment.date)}
+                    {payment.referenceNo ? ` - Ref: ${payment.referenceNo}` : ""}
+                  </p>
+                </div>
+                <div className="flex items-center justify-between gap-3 sm:justify-end">
+                  <span className="text-sm font-black text-emerald-700">{formatGHS(payment.amount)}</span>
+                  <span className="inline-flex items-center gap-1 rounded-xl bg-gray-900 px-3 py-2 text-xs font-black text-white">
+                    <ReceiptText size={13} /> Receipt
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
       {finance.bills.length === 0 ? (
         <section className="rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-sm">
           <ReceiptText size={28} className="mx-auto text-gray-200" />

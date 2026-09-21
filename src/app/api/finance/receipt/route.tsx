@@ -304,12 +304,14 @@ function ReceiptPDF(p: ReceiptPDFProps) {
     WAIVED: "WAIVED",
   };
 
-  const formattedPaymentDate = new Date(p.paymentDate).toLocaleDateString(
+  const formattedPaymentDate = new Date(p.paymentDate).toLocaleString(
     "en-GH",
     {
       day: "numeric",
       month: "long",
       year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     },
   );
 
@@ -334,7 +336,7 @@ function ReceiptPDF(p: ReceiptPDFProps) {
           <View style={S.receiptBadge}>
             <Text style={S.receiptLabel}>RECEIPT NO.</Text>
             <Text style={S.receiptNumber}>{p.receiptNumber}</Text>
-            <Text style={S.receiptDate}>{formattedPaymentDate}</Text>
+            <Text style={S.receiptDate}>Paid: {formattedPaymentDate}</Text>
           </View>
         </View>
 
@@ -368,9 +370,9 @@ function ReceiptPDF(p: ReceiptPDFProps) {
             <Text style={S.infoSub}>Paid by: {p.paidBy}</Text>
           </View>
           <View style={S.infoBox}>
-            <Text style={S.infoLbl}>RECORDED BY</Text>
+            <Text style={S.infoLbl}>RECEIVED BY</Text>
             <Text style={S.infoVal}>{p.recordedBy}</Text>
-            <Text style={S.infoSub}>{formattedToday}</Text>
+            <Text style={S.infoSub}>Generated: {formattedToday}</Text>
           </View>
         </View>
 

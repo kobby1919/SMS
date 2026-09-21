@@ -104,6 +104,7 @@ export type ParentFinanceOverview = {
     openQueryCount: number;
   };
   lastPayment?: ParentFinancePayment;
+  recentPayments: ParentFinancePayment[];
 };
 
 function toNumber(value: unknown) {
@@ -190,6 +191,7 @@ export async function getParentFinanceOverview(parentId: string, schoolId: strin
         dueSoonBillCount: 0,
         openQueryCount: 0,
       },
+      recentPayments: [],
     };
   }
 
@@ -377,6 +379,7 @@ export async function getParentFinanceOverview(parentId: string, schoolId: strin
       openQueryCount: bills.flatMap((bill) => bill.queries).filter((query) => query.status === "OPEN" || query.status === "IN_REVIEW").length,
     },
     lastPayment: allPayments[0],
+    recentPayments: allPayments.slice(0, 5),
   };
 }
 
