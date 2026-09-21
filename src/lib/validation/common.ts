@@ -21,6 +21,7 @@ export const paymentMethodSchema = z.enum([
   "AIRTELTIGO_MONEY",
   "BANK_TRANSFER",
   "CHEQUE",
+  "POS",
   "OTHER",
 ]);
 export const billStatusSchema = z.enum([

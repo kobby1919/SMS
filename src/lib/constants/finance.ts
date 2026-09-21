@@ -9,6 +9,7 @@ export const PAYMENT_METHOD_LABELS: Record<string, string> = {
   AIRTELTIGO_MONEY: "AirtelTigo Money",
   BANK_TRANSFER: "Bank Transfer",
   CHEQUE: "Cheque",
+  POS: "POS",
   OTHER: "Other",
 };
 

@@ -8,20 +8,44 @@ import {
   termSchema,
 } from "./common";
 
+const referenceRequiredPaymentMethods = new Set([
+  "MTN_MOMO",
+  "VODAFONE_CASH",
+  "AIRTELTIGO_MONEY",
+  "BANK_TRANSFER",
+  "CHEQUE",
+  "POS",
+]);
+
 export const recordPaymentSchema = z.object({
   studentBillId: positiveIntSchema,
-  amount: z.coerce.number().positive(),
+  amount: z.coerce.number().positive().max(1_000_000),
   paymentMethod: paymentMethodSchema,
-  paidBy: nonEmptyStringSchema,
-  referenceNo: z.string().trim().optional().nullable(),
+  paidBy: nonEmptyStringSchema.max(150),
+  referenceNo: z.string().trim().max(120).optional().nullable(),
   idempotencyKey: z.string().trim().min(8).max(120).optional().nullable(),
-  notes: z.string().trim().optional().nullable(),
-  paymentDate: z.string().trim().optional(),
+  notes: z.string().trim().max(500).optional().nullable(),
+  paymentDate: z
+    .string()
+    .trim()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD date format.")
+    .optional(),
+}).superRefine((value, ctx) => {
+  if (
+    referenceRequiredPaymentMethods.has(value.paymentMethod) &&
+    !value.referenceNo?.trim()
+  ) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["referenceNo"],
+      message: "Reference number is required for this payment method.",
+    });
+  }
 });
 
 export const reversePaymentSchema = z.object({
   paymentId: positiveIntSchema,
-  reason: nonEmptyStringSchema,
+  reason: nonEmptyStringSchema.min(10).max(500),
 });
 
 export const generateBillsSchema = z.object({

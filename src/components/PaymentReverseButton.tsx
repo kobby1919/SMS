@@ -24,7 +24,7 @@ const PaymentReverseButton = ({ paymentId, receiptNumber, amount }: Props) => {
   const [isPending, startTransition] = useTransition();
 
   const handleReverse = () => {
-    if (!reason.trim()) { setError("A reason is required to reverse a payment."); return; }
+    if (reason.trim().length < 10) { setError("Enter a clear reason with at least 10 characters before reversing this payment."); return; }
     setError(null);
     startTransition(async () => {
       try {
@@ -96,7 +96,8 @@ const PaymentReverseButton = ({ paymentId, receiptNumber, amount }: Props) => {
                   rows={3}
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  placeholder="e.g. Wrong amount entered, duplicate payment, payment bounced…"
+                  placeholder="e.g. Wrong amount entered on receipt, duplicate payment, payment bounced..."
+                  maxLength={500}
                   className="ring-[1.5px] ring-gray-200 px-3 py-2.5 rounded-xl text-sm text-gray-700 focus:ring-rose-400 outline-none resize-none"
                 />
               </div>
@@ -118,7 +119,7 @@ const PaymentReverseButton = ({ paymentId, receiptNumber, amount }: Props) => {
                 <button
                   type="button"
                   onClick={handleReverse}
-                  disabled={isPending}
+                  disabled={isPending || reason.trim().length < 10}
                   className="flex-1 py-3 bg-rose-600 text-white font-bold rounded-xl hover:bg-rose-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2 text-sm shadow-lg shadow-rose-100"
                 >
                   {isPending

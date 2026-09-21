@@ -29,6 +29,33 @@ import {
 import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
 import { PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 
+const REFERENCE_REQUIRED_PAYMENT_METHODS = new Set<PaymentMethod>([
+  "MTN_MOMO",
+  "VODAFONE_CASH",
+  "AIRTELTIGO_MONEY",
+  "BANK_TRANSFER",
+  "CHEQUE",
+  "POS",
+]);
+
+function normalizeManualPaymentDate(dateString?: string | null) {
+  const date = dateString
+    ? new Date(`${dateString}T12:00:00.000Z`)
+    : new Date();
+
+  if (Number.isNaN(date.getTime())) {
+    throw new Error("Use a valid payment date.");
+  }
+
+  const todayEnd = new Date();
+  todayEnd.setHours(23, 59, 59, 999);
+  if (date > todayEnd) {
+    throw new Error("Payment date cannot be in the future.");
+  }
+
+  return date;
+}
+
 // ─── Record a payment ─────────────────────────────────────────────────────────
 
 export type RecordPaymentInput = {
@@ -52,6 +79,8 @@ export async function recordPayment(input: RecordPaymentInput) {
   });
   const data = parseActionInput(recordPaymentSchema, input);
   const idempotencyKey = data.idempotencyKey?.trim() || null;
+  const referenceNo = data.referenceNo?.trim() || null;
+  const paymentDate = normalizeManualPaymentDate(data.paymentDate);
 
   if (idempotencyKey) {
     const existingPayment = await prisma.payment.findFirst({
@@ -76,6 +105,30 @@ export async function recordPayment(input: RecordPaymentInput) {
   );
   assertCanRecordPayment(bill.status);
 
+  if (data.paymentMethod === "CASH" && referenceNo) {
+    throw new Error("Cash payments should not use an external reference number. Edujay will generate the receipt number.");
+  }
+
+  if (REFERENCE_REQUIRED_PAYMENT_METHODS.has(data.paymentMethod) && !referenceNo) {
+    throw new Error("Reference number is required for this payment method.");
+  }
+
+  if (referenceNo) {
+    const duplicateReference = await prisma.payment.findFirst({
+      where: {
+        schoolId,
+        paymentMethod: data.paymentMethod,
+        referenceNo: { equals: referenceNo, mode: "insensitive" },
+        status: { notIn: ["FAILED", "REVERSED"] },
+      },
+      select: { id: true, receiptNumber: true, idempotencyKey: true },
+    });
+
+    if (duplicateReference && duplicateReference.idempotencyKey !== idempotencyKey) {
+      throw new Error(`Reference number already used on receipt ${duplicateReference.receiptNumber}. Use reversal/correction if the first record was wrong.`);
+    }
+  }
+
   const currentBalance = new Prisma.Decimal(bill.balance);
   const paymentAmount = new Prisma.Decimal(data.amount);
 
@@ -96,9 +149,9 @@ export async function recordPayment(input: RecordPaymentInput) {
         amount:         paymentAmount,
         schoolId,
         paymentMethod: data.paymentMethod,
-        paymentDate:    data.paymentDate ? new Date(data.paymentDate) : new Date(),
+        paymentDate,
         paidBy:         data.paidBy.trim(),
-        referenceNo:    data.referenceNo?.trim() ?? null,
+        referenceNo,
         idempotencyKey,
         notes:          data.notes?.trim() ?? null,
         status:         "CONFIRMED",
@@ -188,6 +241,8 @@ export async function recordPayment(input: RecordPaymentInput) {
       amount:         paymentAmount.toNumber(),
       paymentMethod: data.paymentMethod,
       paidBy:         data.paidBy,
+      referenceNo,
+      paymentDate:    paymentDate.toISOString().slice(0, 10),
       studentBillId: data.studentBillId,
       studentName:   `${bill.student.name} ${bill.student.surname}`,
     },

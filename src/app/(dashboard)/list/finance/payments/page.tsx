@@ -37,6 +37,7 @@ const PAYMENT_METHODS = [
   "AIRTELTIGO_MONEY",
   "BANK_TRANSFER",
   "CHEQUE",
+  "POS",
   "OTHER",
 ] as const;
 
@@ -203,7 +204,7 @@ const PaymentsPage = async ({
     .filter((row) => ["MTN_MOMO", "VODAFONE_CASH", "AIRTELTIGO_MONEY"].includes(row.paymentMethod))
     .reduce((sum, row) => sum + Number(row._sum.amount ?? 0), 0);
   const todayBankAmt = todayByMethod
-    .filter((row) => ["BANK_TRANSFER", "CHEQUE"].includes(row.paymentMethod))
+    .filter((row) => ["BANK_TRANSFER", "CHEQUE", "POS"].includes(row.paymentMethod))
     .reduce((sum, row) => sum + Number(row._sum.amount ?? 0), 0);
   const yearCollected = Number(
     yearlyByStatus.find((row) => row.status === "CONFIRMED")?._sum.amount ?? 0,
@@ -291,7 +292,7 @@ const PaymentsPage = async ({
                 border: "border-amber-100",
               },
               {
-                label: "Bank / Cheque",
+                label: "Bank / POS",
                 amount: todayBankAmt,
                 color: "bg-indigo-50 text-indigo-700",
                 border: "border-indigo-100",

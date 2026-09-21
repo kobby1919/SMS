@@ -8,7 +8,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   Receipt, Loader2, AlertCircle, CheckCircle2,
-  Printer,
+  Printer, ShieldCheck, BadgeInfo,
 } from "lucide-react";
 import { recordPayment } from "@/src/lib/actions/paymentActions";
 import type { PaymentMethod } from "@/src/generated/prisma";
@@ -26,6 +26,25 @@ type SuccessData = {
   method:        string;
   paidBy:        string;
 };
+
+const RECORDABLE_PAYMENT_METHODS = [
+  "CASH",
+  "MTN_MOMO",
+  "VODAFONE_CASH",
+  "AIRTELTIGO_MONEY",
+  "BANK_TRANSFER",
+  "CHEQUE",
+  "POS",
+] as const;
+
+const REFERENCE_REQUIRED_METHODS = new Set<string>([
+  "MTN_MOMO",
+  "VODAFONE_CASH",
+  "AIRTELTIGO_MONEY",
+  "BANK_TRANSFER",
+  "CHEQUE",
+  "POS",
+]);
 
 const RecordPaymentForm = ({ billId, balance, defaultPayerName }: Props) => {
   const router = useRouter();
@@ -45,9 +64,10 @@ const RecordPaymentForm = ({ billId, balance, defaultPayerName }: Props) => {
   const [success,       setSuccess]       = useState<SuccessData | null>(null);
 
   // Show reference field for non-cash methods
-  const needsReference = method !== "CASH";
+  const needsReference = REFERENCE_REQUIRED_METHODS.has(method);
 
   const handleSubmit = () => {
+    if (isPending) return;
     setError(null);
 
     const amountNum = parseFloat(amount);
@@ -57,6 +77,10 @@ const RecordPaymentForm = ({ billId, balance, defaultPayerName }: Props) => {
     }
     if (!paidBy.trim()) {
       setError("Payer name is required.");
+      return;
+    }
+    if (method === "CASH" && referenceNo.trim()) {
+      setError("Cash payments should not use an external reference number. Edujay will generate the official receipt number.");
       return;
     }
     if (needsReference && !referenceNo.trim()) {
@@ -226,7 +250,9 @@ const RecordPaymentForm = ({ billId, balance, defaultPayerName }: Props) => {
         </label>
         {/* Method pills */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          {Object.entries(PAYMENT_METHOD_LABELS).map(([val, label]) => (
+          {RECORDABLE_PAYMENT_METHODS.map((val) => {
+            const label = PAYMENT_METHOD_LABELS[val];
+            return (
             <button
               key={val}
               type="button"
@@ -238,7 +264,8 @@ const RecordPaymentForm = ({ billId, balance, defaultPayerName }: Props) => {
             >
               {label}
             </button>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -260,6 +287,8 @@ const RecordPaymentForm = ({ billId, balance, defaultPayerName }: Props) => {
                 ? "e.g. MTN-1234567890"
                 : method === "CHEQUE"
                 ? "e.g. CHQ-001234"
+                : method === "POS"
+                ? "e.g. POS terminal reference"
                 : "Bank reference number"
             }
             className="ring-[1.5px] ring-gray-200 px-3 py-3 rounded-xl text-sm font-semibold text-gray-700 focus:ring-emerald-500 outline-none"
@@ -309,20 +338,25 @@ const RecordPaymentForm = ({ billId, balance, defaultPayerName }: Props) => {
         />
       </div>
 
-      {/* Info */}
-      <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
-        <p className="text-[10px] text-indigo-700 font-semibold leading-relaxed">
-          A receipt number will be auto-generated in the format{" "}
-          <span className="font-black">RCP-{new Date().getFullYear()}-XXX</span> after you confirm.
-          This payment cannot be edited once recorded — use the reversal feature if a correction
-          is needed.
-        </p>
+      <div className="grid gap-3">
+        <div className="flex items-start gap-2.5 p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
+          <ShieldCheck size={15} className="mt-0.5 shrink-0 text-indigo-600" />
+          <p className="text-[11px] text-indigo-800 font-semibold leading-relaxed">
+            Edujay will generate the official receipt number after confirmation. This payment cannot be edited or deleted after recording. If a mistake happens, use reversal/correction with a reason.
+          </p>
+        </div>
+        <div className="flex items-start gap-2.5 p-3 bg-amber-50 border border-amber-100 rounded-xl">
+          <BadgeInfo size={15} className="mt-0.5 shrink-0 text-amber-600" />
+          <p className="text-[11px] text-amber-800 font-semibold leading-relaxed">
+            Scholarship, bursary, and discount adjustments are not cash received. Apply them from the bill discount/waiver section so collection reports stay accurate.
+          </p>
+        </div>
       </div>
 
       <button
         type="button"
         onClick={handleSubmit}
-        disabled={isPending}
+        disabled={isPending || Boolean(success)}
         className="w-full py-3.5 bg-emerald-600 text-white font-black rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-base shadow-lg shadow-emerald-100"
       >
         {isPending

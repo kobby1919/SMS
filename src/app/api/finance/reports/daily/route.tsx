@@ -149,7 +149,7 @@ export async function GET(req: NextRequest) {
 
     const cashTotal = byMethod["CASH"] ?? 0;
     const momoTotal = (byMethod["MTN_MOMO"] ?? 0) + (byMethod["VODAFONE_CASH"] ?? 0) + (byMethod["AIRTELTIGO_MONEY"] ?? 0);
-    const bankTotal = (byMethod["BANK_TRANSFER"] ?? 0) + (byMethod["CHEQUE"] ?? 0);
+    const bankTotal = (byMethod["BANK_TRANSFER"] ?? 0) + (byMethod["CHEQUE"] ?? 0) + (byMethod["POS"] ?? 0);
 
     const dateLabel = new Date(dateStr).toLocaleDateString("en-GH", {
       weekday: "long", day: "numeric", month: "long", year: "numeric",
@@ -211,10 +211,10 @@ export async function GET(req: NextRequest) {
               </Text>
             </View>
             <View style={[S.summaryBox, { borderColor: "#e0e7ff" }]}>
-              <Text style={S.summaryLbl}>BANK / CHEQUE</Text>
+              <Text style={S.summaryLbl}>BANK / POS</Text>
               <Text style={[S.summaryVal, { color: "#4338ca" }]}>{formatGHS(bankTotal)}</Text>
               <Text style={S.summarySub}>
-                {payments.filter((p) => ["BANK_TRANSFER","CHEQUE"].includes(p.paymentMethod)).length} payments
+                {payments.filter((p) => ["BANK_TRANSFER","CHEQUE","POS"].includes(p.paymentMethod)).length} payments
               </Text>
             </View>
           </View>

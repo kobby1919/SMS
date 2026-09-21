@@ -93,6 +93,7 @@ enum PaymentMethod {
   AIRTELTIGO_MONEY
   BANK_TRANSFER
   CHEQUE
+  POS
   OTHER
 }
 

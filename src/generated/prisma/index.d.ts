@@ -495,6 +495,7 @@ export const PaymentMethod: {
   AIRTELTIGO_MONEY: 'AIRTELTIGO_MONEY',
   BANK_TRANSFER: 'BANK_TRANSFER',
   CHEQUE: 'CHEQUE',
+  POS: 'POS',
   OTHER: 'OTHER'
 };
 
@@ -111327,7 +111328,7 @@ export namespace Prisma {
     username: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email?: string | null
     phone?: string | null
     address?: string | null
@@ -111343,7 +111344,7 @@ export namespace Prisma {
     username: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email?: string | null
     phone?: string | null
     address?: string | null
@@ -111391,7 +111392,7 @@ export namespace Prisma {
     username: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email?: string | null
     phone?: string | null
     address?: string | null
@@ -117921,7 +117922,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -117948,7 +117949,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -118026,7 +118027,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -118098,7 +118099,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     tokenHash: string
@@ -118124,7 +118125,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     tokenHash: string
@@ -118199,7 +118200,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     tokenHash: string
@@ -118384,7 +118385,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     staffId?: string | null
@@ -118409,7 +118410,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     staffId?: string | null
@@ -118481,7 +118482,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     staffId?: string | null
@@ -137737,7 +137738,7 @@ export namespace Prisma {
     username: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email?: string | null
     phone?: string | null
     address?: string | null
@@ -137752,7 +137753,7 @@ export namespace Prisma {
     username: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email?: string | null
     phone?: string | null
     address?: string | null
@@ -137776,7 +137777,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     staffId?: string | null
@@ -137799,7 +137800,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     staffId?: string | null
@@ -138047,7 +138048,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -138072,7 +138073,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -138135,7 +138136,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     tokenHash: string
@@ -138159,7 +138160,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     tokenHash: string
@@ -141799,7 +141800,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     staffId?: string | null
@@ -141823,7 +141824,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     staffId?: string | null
@@ -144437,7 +144438,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -144463,7 +144464,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -145617,7 +145618,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     tokenHash: string
@@ -145642,7 +145643,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     tokenHash: string
@@ -177955,7 +177956,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     tokenHash: string
@@ -177980,7 +177981,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     tokenHash: string
@@ -178386,7 +178387,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     tokenHash: string
@@ -178411,7 +178412,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     tokenHash: string
@@ -178855,7 +178856,7 @@ export namespace Prisma {
     username: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email?: string | null
     phone?: string | null
     address?: string | null
@@ -178870,7 +178871,7 @@ export namespace Prisma {
     username: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email?: string | null
     phone?: string | null
     address?: string | null
@@ -179330,7 +179331,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     staffId?: string | null
@@ -179354,7 +179355,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     staffId?: string | null
@@ -179914,7 +179915,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     tokenHash: string
@@ -179939,7 +179940,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     tokenHash: string
@@ -180606,7 +180607,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -180632,7 +180633,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -181734,7 +181735,7 @@ export namespace Prisma {
     username: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email?: string | null
     phone?: string | null
     address?: string | null
@@ -181747,7 +181748,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     staffId?: string | null
@@ -181847,7 +181848,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -181880,7 +181881,7 @@ export namespace Prisma {
     id?: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     tokenHash: string
@@ -184918,7 +184919,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     staffId?: string | null
@@ -186193,7 +186194,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     teacherType: $Enums.TeacherInviteType
@@ -187254,7 +187255,7 @@ export namespace Prisma {
     schoolId: string
     name: string
     surname: string
-    sex?: $Enums.UserSex
+    sex: $Enums.UserSex
     email: string
     phone?: string | null
     tokenHash: string

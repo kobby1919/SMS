@@ -1540,6 +1540,7 @@ exports.PaymentMethod = exports.$Enums.PaymentMethod = {
   AIRTELTIGO_MONEY: 'AIRTELTIGO_MONEY',
   BANK_TRANSFER: 'BANK_TRANSFER',
   CHEQUE: 'CHEQUE',
+  POS: 'POS',
   OTHER: 'OTHER'
 };
 

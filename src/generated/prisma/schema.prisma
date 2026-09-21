@@ -93,6 +93,7 @@ enum PaymentMethod {
   AIRTELTIGO_MONEY
   BANK_TRANSFER
   CHEQUE
+  POS
   OTHER
 }
 
@@ -2450,4 +2451,3 @@ model OnboardingAuditLog {
   @@index([schoolId, createdAt])
   @@index([action, createdAt])
 }
-
