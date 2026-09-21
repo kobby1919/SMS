@@ -313,7 +313,108 @@ const BursarPage = async ({
           </div>
         </div>
       </section>
-      {/* ── Outer two-column layout: main content | sidebar ── */}
+
+      <section className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-600">Fee collection by class</p>
+            <h2 className="mt-1 text-lg font-black tracking-tight text-gray-900">Class collection health</h2>
+            <p className="mt-1 max-w-2xl text-sm font-semibold text-gray-500">
+              See expected fees, collected money, outstanding balances, and collection rate for each class.
+            </p>
+          </div>
+          <Link
+            href="/list/finance/bills"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-black text-gray-700 transition hover:bg-gray-50"
+          >
+            View all bills <ChevronRight size={15} />
+          </Link>
+        </div>
+
+        {moneyPulse.collectionByClass.length === 0 ? (
+          <div className="mt-4 rounded-xl bg-gray-50 p-5 text-sm font-semibold text-gray-500">
+            No generated class bills yet. Publish fee structures and generate student bills to see collection health here.
+          </div>
+        ) : (
+          <>
+            <div className="mt-4 hidden overflow-hidden rounded-2xl border border-gray-100 md:block">
+              <table className="w-full min-w-[760px]">
+                <thead className="bg-gray-50/80">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-black uppercase tracking-wide text-gray-400">Class</th>
+                    <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-wide text-gray-400">Expected</th>
+                    <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-wide text-gray-400">Collected</th>
+                    <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-wide text-gray-400">Outstanding</th>
+                    <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-wide text-gray-400">Rate</th>
+                    <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-wide text-gray-400">Follow-up</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {moneyPulse.collectionByClass.map((item) => {
+                    const weak = item.collectionRate < 50 && item.outstanding > 0;
+                    const healthy = item.collectionRate >= 80;
+                    return (
+                      <tr key={item.classId} className="hover:bg-blue-50/30">
+                        <td className="px-4 py-3">
+                          <p className="text-sm font-black text-gray-800">{item.className}</p>
+                          <p className="text-xs font-semibold text-gray-400">{item.billCount} bill{item.billCount === 1 ? "" : "s"} · {item.unpaidBills} pending</p>
+                        </td>
+                        <td className="px-4 py-3 text-right text-sm font-bold text-gray-700">{formatGHS(item.expected)}</td>
+                        <td className="px-4 py-3 text-right text-sm font-bold text-emerald-700">{formatGHS(item.collected)}</td>
+                        <td className="px-4 py-3 text-right text-sm font-bold text-rose-600">{formatGHS(item.outstanding)}</td>
+                        <td className="px-4 py-3 text-right">
+                          <span className={`rounded-full px-2.5 py-1 text-xs font-black ${weak ? "bg-rose-50 text-rose-700" : healthy ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
+                            {item.collectionRate}%
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <Link href={`/list/finance/bills?classId=${item.classId}`} className="text-xs font-black text-blue-700 hover:text-blue-900">
+                            Review
+                          </Link>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 gap-3 md:hidden">
+              {moneyPulse.collectionByClass.map((item) => {
+                const weak = item.collectionRate < 50 && item.outstanding > 0;
+                const healthy = item.collectionRate >= 80;
+                return (
+                  <Link key={item.classId} href={`/list/finance/bills?classId=${item.classId}`} className="rounded-2xl border border-gray-100 p-4 transition hover:bg-blue-50/40">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-black text-gray-900">{item.className}</p>
+                        <p className="mt-0.5 text-xs font-semibold text-gray-400">{item.billCount} bills · {item.unpaidBills} pending</p>
+                      </div>
+                      <span className={`rounded-full px-2.5 py-1 text-xs font-black ${weak ? "bg-rose-50 text-rose-700" : healthy ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
+                        {item.collectionRate}%
+                      </span>
+                    </div>
+                    <div className="mt-3 grid grid-cols-1 gap-2 min-[420px]:grid-cols-3">
+                      <div className="rounded-xl bg-gray-50 p-3">
+                        <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Expected</p>
+                        <p className="mt-1 text-sm font-black text-gray-800">{formatGHS(item.expected)}</p>
+                      </div>
+                      <div className="rounded-xl bg-emerald-50 p-3">
+                        <p className="text-[11px] font-black uppercase tracking-wide text-emerald-500">Collected</p>
+                        <p className="mt-1 text-sm font-black text-emerald-700">{formatGHS(item.collected)}</p>
+                      </div>
+                      <div className="rounded-xl bg-rose-50 p-3">
+                        <p className="text-[11px] font-black uppercase tracking-wide text-rose-500">Outstanding</p>
+                        <p className="mt-1 text-sm font-black text-rose-700">{formatGHS(item.outstanding)}</p>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </>
+        )}
+      </section>      {/* ── Outer two-column layout: main content | sidebar ── */}
       <div className="flex flex-col xl:flex-row gap-4">
 
         {/* ── LEFT / MAIN COLUMN ── */}

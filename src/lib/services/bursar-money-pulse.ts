@@ -23,6 +23,24 @@ function collectionRate(collected: number, expected: number) {
   return Math.min(100, Math.round((collected / expected) * 100));
 }
 
+function classSortKey(name: string) {
+  const normalized = name.trim().toLowerCase();
+  if (normalized.includes("nursery")) return 10;
+  if (normalized.includes("kg") || normalized.includes("kindergarten")) {
+    const match = normalized.match(/\d+/);
+    return 20 + Number(match?.[0] ?? 0);
+  }
+  if (normalized.includes("class")) {
+    const match = normalized.match(/\d+/);
+    return 40 + Number(match?.[0] ?? 0);
+  }
+  if (normalized.includes("jhs")) {
+    const match = normalized.match(/\d+/);
+    return 70 + Number(match?.[0] ?? 0);
+  }
+  return 999;
+}
+
 export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
   const { start, end } = dayBounds(date);
   const weekStart = new Date(start);
@@ -276,7 +294,7 @@ export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
     amount: asNumber(row._sum.amount),
   }));
 
-  const lowCollectionClasses = classes
+  const collectionByClass = classes
     .map((klass) => {
       const bills = klass.students.flatMap((student) => student.bills);
       const expected = bills.reduce(
@@ -289,6 +307,7 @@ export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
         (sum, bill) => sum + bill.payments.reduce((paymentSum, payment) => paymentSum + asNumber(payment.amount), 0),
         0,
       );
+      const paidBills = bills.filter((bill) => bill.status === "PAID" || bill.status === "OVERPAID").length;
       const unpaidBills = bills.filter((bill) => bill.status === "UNPAID" || bill.status === "PARTIAL").length;
 
       return {
@@ -298,10 +317,16 @@ export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
         collected,
         outstanding,
         collectedToday,
+        billCount: bills.length,
+        paidBills,
         unpaidBills,
         collectionRate: collectionRate(collected, expected),
       };
     })
+    .filter((item) => item.expected > 0 || item.billCount > 0)
+    .sort((a, b) => classSortKey(a.className) - classSortKey(b.className) || a.className.localeCompare(b.className));
+
+  const lowCollectionClasses = collectionByClass
     .filter((item) => item.expected > 0 && item.outstanding > 0)
     .sort((a, b) => a.collectionRate - b.collectionRate || b.outstanding - a.outstanding)
     .slice(0, 5);
@@ -362,9 +387,9 @@ export async function getBursarMoneyPulse(schoolId: string, date = new Date()) {
     correctionAuditsToday,
     correctionCountToday: correctionAuditsToday.length,
     lowCollectionClasses,
+    collectionByClass,
     urgentIssues,
     urgentIssueCount: urgentIssues.length,
     recentPayments,
   };
 }
-
