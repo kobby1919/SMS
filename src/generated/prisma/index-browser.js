@@ -937,6 +937,29 @@ exports.Prisma.PaymentScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.PaymentCorrectionRequestScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  requestedAction: 'requestedAction',
+  status: 'status',
+  reason: 'reason',
+  proposedChange: 'proposedChange',
+  evidenceRef: 'evidenceRef',
+  requestedBy: 'requestedBy',
+  requestedAt: 'requestedAt',
+  reviewedBy: 'reviewedBy',
+  reviewedAt: 'reviewedAt',
+  reviewNote: 'reviewNote',
+  appliedBy: 'appliedBy',
+  appliedAt: 'appliedAt',
+  schoolId: 'schoolId',
+  originalPaymentId: 'originalPaymentId',
+  studentBillId: 'studentBillId',
+  correctedPaymentId: 'correctedPaymentId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.PaymentReversalScalarFieldEnum = {
   id: 'id',
   reason: 'reason',
@@ -1564,6 +1587,34 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   REVERSED: 'REVERSED'
 };
 
+exports.PaymentCorrectionType = exports.$Enums.PaymentCorrectionType = {
+  WRONG_AMOUNT: 'WRONG_AMOUNT',
+  WRONG_STUDENT: 'WRONG_STUDENT',
+  DUPLICATE_PAYMENT: 'DUPLICATE_PAYMENT',
+  WRONG_METHOD: 'WRONG_METHOD',
+  WRONG_REFERENCE: 'WRONG_REFERENCE',
+  PAYMENT_BOUNCED: 'PAYMENT_BOUNCED',
+  RECEIPT_CANCELLATION: 'RECEIPT_CANCELLATION',
+  OTHER: 'OTHER'
+};
+
+exports.PaymentCorrectionRequestedAction = exports.$Enums.PaymentCorrectionRequestedAction = {
+  REVERSE_PAYMENT: 'REVERSE_PAYMENT',
+  REPLACE_PAYMENT: 'REPLACE_PAYMENT',
+  MOVE_PAYMENT: 'MOVE_PAYMENT',
+  MARK_DUPLICATE: 'MARK_DUPLICATE',
+  FIX_REFERENCE_OR_METHOD: 'FIX_REFERENCE_OR_METHOD',
+  CANCEL_RECEIPT: 'CANCEL_RECEIPT'
+};
+
+exports.PaymentCorrectionStatus = exports.$Enums.PaymentCorrectionStatus = {
+  PENDING_REVIEW: 'PENDING_REVIEW',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  APPLIED: 'APPLIED',
+  CANCELLED: 'CANCELLED'
+};
+
 exports.DiscountType = exports.$Enums.DiscountType = {
   SCHOLARSHIP: 'SCHOLARSHIP',
   SIBLING: 'SIBLING',
@@ -1585,6 +1636,11 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   BILL_WAIVED: 'BILL_WAIVED',
   PAYMENT_RECORDED: 'PAYMENT_RECORDED',
   PAYMENT_REVERSED: 'PAYMENT_REVERSED',
+  PAYMENT_CORRECTION_REQUESTED: 'PAYMENT_CORRECTION_REQUESTED',
+  PAYMENT_CORRECTION_APPROVED: 'PAYMENT_CORRECTION_APPROVED',
+  PAYMENT_CORRECTION_REJECTED: 'PAYMENT_CORRECTION_REJECTED',
+  PAYMENT_CORRECTION_APPLIED: 'PAYMENT_CORRECTION_APPLIED',
+  PAYMENT_CORRECTION_CANCELLED: 'PAYMENT_CORRECTION_CANCELLED',
   DISCOUNT_APPLIED: 'DISCOUNT_APPLIED',
   DISCOUNT_REMOVED: 'DISCOUNT_REMOVED',
   FINANCE_QUERY_OPENED: 'FINANCE_QUERY_OPENED',
@@ -1786,6 +1842,7 @@ exports.Prisma.ModelName = {
   StudentBill: 'StudentBill',
   BillLineItem: 'BillLineItem',
   Payment: 'Payment',
+  PaymentCorrectionRequest: 'PaymentCorrectionRequest',
   PaymentReversal: 'PaymentReversal',
   Discount: 'Discount',
   ReceiptCounter: 'ReceiptCounter',

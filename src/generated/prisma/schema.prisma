@@ -104,6 +104,34 @@ enum PaymentStatus {
   REVERSED
 }
 
+enum PaymentCorrectionStatus {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  APPLIED
+  CANCELLED
+}
+
+enum PaymentCorrectionType {
+  WRONG_AMOUNT
+  WRONG_STUDENT
+  DUPLICATE_PAYMENT
+  WRONG_METHOD
+  WRONG_REFERENCE
+  PAYMENT_BOUNCED
+  RECEIPT_CANCELLATION
+  OTHER
+}
+
+enum PaymentCorrectionRequestedAction {
+  REVERSE_PAYMENT
+  REPLACE_PAYMENT
+  MOVE_PAYMENT
+  MARK_DUPLICATE
+  FIX_REFERENCE_OR_METHOD
+  CANCEL_RECEIPT
+}
+
 enum DiscountType {
   SCHOLARSHIP
   SIBLING
@@ -125,6 +153,11 @@ enum AuditAction {
   BILL_WAIVED
   PAYMENT_RECORDED
   PAYMENT_REVERSED
+  PAYMENT_CORRECTION_REQUESTED
+  PAYMENT_CORRECTION_APPROVED
+  PAYMENT_CORRECTION_REJECTED
+  PAYMENT_CORRECTION_APPLIED
+  PAYMENT_CORRECTION_CANCELLED
   DISCOUNT_APPLIED
   DISCOUNT_REMOVED
   FINANCE_QUERY_OPENED
@@ -566,6 +599,7 @@ model School {
   studentBills                   StudentBill[]
   payments                       Payment[]
   paymentReversals               PaymentReversal[]
+  paymentCorrectionRequests      PaymentCorrectionRequest[]
   discounts                      Discount[]
   financeQueries                 FinanceQuery[]
   receiptCounters                ReceiptCounter[]
@@ -1945,10 +1979,11 @@ model StudentBill {
   feeStructureId Int
   feeStructure   FeeStructure @relation(fields: [feeStructureId], references: [id])
 
-  lineItems      BillLineItem[]
-  payments       Payment[]
-  discounts      Discount[]
-  financeQueries FinanceQuery[]
+  lineItems          BillLineItem[]
+  payments           Payment[]
+  discounts          Discount[]
+  financeQueries     FinanceQuery[]
+  correctionRequests PaymentCorrectionRequest[]
 
   generatedBy String
   createdAt   DateTime @default(now())
@@ -2013,9 +2048,11 @@ model Payment {
   recordedBy String
   createdAt  DateTime @default(now())
 
-  reversal       PaymentReversal?
-  webhookEvents  PaymentWebhookEvent[]
-  financeQueries FinanceQuery[]
+  reversal                    PaymentReversal?
+  correctionRequests          PaymentCorrectionRequest[] @relation("OriginalPaymentCorrections")
+  correctedPaymentCorrections PaymentCorrectionRequest[] @relation("CorrectedPaymentCorrections")
+  webhookEvents               PaymentWebhookEvent[]
+  financeQueries              FinanceQuery[]
 
   @@unique([schoolId, receiptNumber])
   @@unique([schoolId, externalProvider, externalReference])
@@ -2030,6 +2067,48 @@ model Payment {
 // PaymentReversal: voids a confirmed payment.
 // Sets Payment.status to REVERSED and restores the bill balance.
 // Both records kept permanently for audit trail.
+
+// PaymentCorrectionRequest: controlled workflow for money mistakes.
+// Bursars request corrections; admin/owner reviews before balances or receipts change.
+// Original payment is never deleted. Corrected payment is linked after approval/application.
+
+model PaymentCorrectionRequest {
+  id              Int                              @id @default(autoincrement())
+  type            PaymentCorrectionType
+  requestedAction PaymentCorrectionRequestedAction
+  status          PaymentCorrectionStatus          @default(PENDING_REVIEW)
+  reason          String
+  proposedChange  String?
+  evidenceRef     String?
+
+  requestedBy String
+  requestedAt DateTime  @default(now())
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  reviewNote  String?
+  appliedBy   String?
+  appliedAt   DateTime?
+
+  schoolId String @default("default-school")
+  school   School @relation(fields: [schoolId], references: [id])
+
+  originalPaymentId Int
+  originalPayment   Payment @relation("OriginalPaymentCorrections", fields: [originalPaymentId], references: [id])
+
+  studentBillId Int
+  studentBill   StudentBill @relation(fields: [studentBillId], references: [id])
+
+  correctedPaymentId Int?
+  correctedPayment   Payment? @relation("CorrectedPaymentCorrections", fields: [correctedPaymentId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId, status, requestedAt])
+  @@index([schoolId, requestedBy, requestedAt])
+  @@index([schoolId, originalPaymentId])
+  @@index([schoolId, studentBillId])
+}
 
 model PaymentReversal {
   id         Int      @id @default(autoincrement())

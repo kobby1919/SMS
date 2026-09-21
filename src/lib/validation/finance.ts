@@ -2,6 +2,8 @@ import { z } from "zod";
 import {
   billStatusSchema,
   nonEmptyStringSchema,
+  paymentCorrectionRequestedActionSchema,
+  paymentCorrectionTypeSchema,
   paymentMethodSchema,
   paymentStatusSchema,
   positiveIntSchema,
@@ -39,6 +41,34 @@ export const recordPaymentSchema = z.object({
       code: "custom",
       path: ["referenceNo"],
       message: "Reference number is required for this payment method.",
+    });
+  }
+});
+
+export const paymentCorrectionRequestSchema = z.object({
+  paymentId: positiveIntSchema,
+  type: paymentCorrectionTypeSchema,
+  requestedAction: paymentCorrectionRequestedActionSchema,
+  reason: nonEmptyStringSchema.min(10).max(500),
+  proposedChange: z.string().trim().max(1000).optional().nullable(),
+  evidenceRef: z.string().trim().max(500).optional().nullable(),
+}).superRefine((value, ctx) => {
+  const compatible: Record<string, string[]> = {
+    WRONG_AMOUNT: ["REPLACE_PAYMENT", "REVERSE_PAYMENT"],
+    WRONG_STUDENT: ["MOVE_PAYMENT", "REPLACE_PAYMENT", "REVERSE_PAYMENT"],
+    DUPLICATE_PAYMENT: ["MARK_DUPLICATE", "REVERSE_PAYMENT", "CANCEL_RECEIPT"],
+    WRONG_METHOD: ["FIX_REFERENCE_OR_METHOD", "REPLACE_PAYMENT"],
+    WRONG_REFERENCE: ["FIX_REFERENCE_OR_METHOD"],
+    PAYMENT_BOUNCED: ["REVERSE_PAYMENT", "CANCEL_RECEIPT"],
+    RECEIPT_CANCELLATION: ["CANCEL_RECEIPT", "REVERSE_PAYMENT"],
+    OTHER: ["REVERSE_PAYMENT", "REPLACE_PAYMENT", "MOVE_PAYMENT", "MARK_DUPLICATE", "FIX_REFERENCE_OR_METHOD", "CANCEL_RECEIPT"],
+  };
+
+  if (!compatible[value.type]?.includes(value.requestedAction)) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["requestedAction"],
+      message: "Requested action does not match the selected correction type.",
     });
   }
 });

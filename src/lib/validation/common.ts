@@ -32,6 +32,24 @@ export const billStatusSchema = z.enum([
   "WAIVED",
 ]);
 export const paymentStatusSchema = z.enum(["PENDING", "CONFIRMED", "FAILED", "REVERSED"]);
+export const paymentCorrectionTypeSchema = z.enum([
+  "WRONG_AMOUNT",
+  "WRONG_STUDENT",
+  "DUPLICATE_PAYMENT",
+  "WRONG_METHOD",
+  "WRONG_REFERENCE",
+  "PAYMENT_BOUNCED",
+  "RECEIPT_CANCELLATION",
+  "OTHER",
+]);
+export const paymentCorrectionRequestedActionSchema = z.enum([
+  "REVERSE_PAYMENT",
+  "REPLACE_PAYMENT",
+  "MOVE_PAYMENT",
+  "MARK_DUPLICATE",
+  "FIX_REFERENCE_OR_METHOD",
+  "CANCEL_RECEIPT",
+]);
 
 export const positiveIntSchema = z.coerce.number().int().positive();
 export const nonEmptyStringSchema = z.string().trim().min(1);
