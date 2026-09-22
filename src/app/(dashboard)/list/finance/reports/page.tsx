@@ -20,6 +20,7 @@ import {
   getDailyFinanceReport,
   parseDailyReportDate,
 } from "@/src/lib/services/daily-finance-report";
+import { getBursarArrearsFollowUp } from "@/src/lib/services/bursar-arrears";
 
 export const dynamic = "force-dynamic";
 
@@ -59,7 +60,10 @@ const FinanceReportsPage = async ({
   const params = await searchParams;
   const selectedDate = parseDailyReportDate(params.date);
   const selectedDateValue = dailyReportDateInputValue(selectedDate);
-  const report = await getDailyFinanceReport(schoolId, selectedDate);
+  const [report, arrearsReport] = await Promise.all([
+    getDailyFinanceReport(schoolId, selectedDate),
+    getBursarArrearsFollowUp(schoolId, { asOf: selectedDate, limit: 10 }),
+  ]);
 
   const cards = [
     {
@@ -91,6 +95,33 @@ const FinanceReportsPage = async ({
       tone: "bg-rose-50 text-rose-700",
     },
   ];
+  const arrearsCards = [
+    {
+      label: "Total arrears",
+      value: formatGHS(arrearsReport.summary.totalOwed),
+      sub: `${arrearsReport.summary.totalStudents} student${arrearsReport.summary.totalStudents === 1 ? "" : "s"} owing`,
+      tone: "bg-slate-50 text-slate-800",
+    },
+    {
+      label: "Overdue amount",
+      value: formatGHS(arrearsReport.summary.overdueAmount),
+      sub: `${arrearsReport.summary.overdueStudents} overdue student${arrearsReport.summary.overdueStudents === 1 ? "" : "s"}`,
+      tone: "bg-rose-50 text-rose-700",
+    },
+    {
+      label: "Critical risk",
+      value: formatGHS(arrearsReport.summary.criticalAmount),
+      sub: `${arrearsReport.summary.byPriority.Critical} critical bill${arrearsReport.summary.byPriority.Critical === 1 ? "" : "s"}`,
+      tone: "bg-amber-50 text-amber-700",
+    },
+    {
+      label: "No parent contact",
+      value: arrearsReport.summary.noParentContact,
+      sub: "Follow-up blocked by missing contact",
+      tone: "bg-blue-50 text-blue-700",
+    },
+  ];
+  const topArrearsClasses = arrearsReport.summary.byClass.slice(0, 5);
 
   return (
     <div className="m-4 mt-0 flex flex-col gap-4">
@@ -161,6 +192,97 @@ const FinanceReportsPage = async ({
             </div>
           );
         })}
+      </section>
+
+      <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-rose-600">Arrears report</p>
+            <h2 className="mt-1 text-lg font-black text-gray-900">Who is owing and where follow-up must happen</h2>
+            <p className="mt-1 max-w-3xl text-sm font-semibold text-gray-500">
+              Built from StudentBill only: unpaid and part-paid bills with balance above zero. Paid, waived, and settled bills are excluded.
+            </p>
+          </div>
+          <Link href="/list/finance/bills" className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-black text-gray-700 transition hover:bg-gray-50">
+            Open bill register <ChevronRight size={15} />
+          </Link>
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {arrearsCards.map((card) => (
+            <div key={card.label} className="rounded-2xl border border-gray-100 bg-gray-50/60 p-4">
+              <p className="text-xs font-black uppercase tracking-wide text-gray-400">{card.label}</p>
+              <p className="mt-2 truncate text-2xl font-black leading-none text-gray-900">{card.value}</p>
+              <p className={`mt-3 inline-flex rounded-full px-2.5 py-1 text-xs font-black ${card.tone}`}>{card.sub}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[0.95fr_1.35fr]">
+          <div className="rounded-2xl border border-gray-100 bg-gray-50/70 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-black text-gray-900">Weakest classes by arrears</h3>
+                <p className="mt-1 text-xs font-semibold text-gray-500">Owners can see where collection follow-up is weakest.</p>
+              </div>
+              <AlertTriangle size={18} className="shrink-0 text-rose-500" />
+            </div>
+            <div className="mt-3 space-y-2">
+              {topArrearsClasses.length === 0 ? (
+                <div className="rounded-xl bg-white p-4 text-sm font-bold text-gray-400">No class arrears to report.</div>
+              ) : topArrearsClasses.map((klass) => (
+                <Link
+                  key={klass.classId ?? "NO_CLASS"}
+                  href={klass.classId ? `/list/finance/bills?classId=${klass.classId}` : "/list/finance/bills"}
+                  className="block rounded-xl border border-gray-100 bg-white p-3 transition hover:bg-rose-50/40"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-black text-gray-900">{klass.className}</p>
+                      <p className="mt-1 text-xs font-semibold text-gray-400">
+                        {klass.studentCount} student{klass.studentCount === 1 ? "" : "s"} - {klass.billCount} bill{klass.billCount === 1 ? "" : "s"}
+                      </p>
+                    </div>
+                    <span className="shrink-0 text-sm font-black text-rose-700">{formatGHS(klass.amountOwed)}</span>
+                  </div>
+                  <p className="mt-2 text-xs font-semibold text-gray-500">
+                    {formatGHS(klass.overdueAmount)} overdue - {klass.criticalCount} critical bill{klass.criticalCount === 1 ? "" : "s"}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-gray-100 bg-white">
+            <div className="border-b border-gray-100 p-4">
+              <h3 className="text-sm font-black text-gray-900">Highest priority student follow-ups</h3>
+              <p className="mt-1 text-xs font-semibold text-gray-500">Sorted by risk first, then overdue days and amount owed.</p>
+            </div>
+            {arrearsReport.items.length === 0 ? (
+              <div className="p-6 text-center text-sm font-bold text-gray-400">No student arrears need follow-up.</div>
+            ) : (
+              <div className="divide-y divide-gray-50">
+                {arrearsReport.items.map((item) => (
+                  <Link key={item.billId} href={item.href} className="block p-4 transition hover:bg-gray-50/70">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-black text-gray-900">{item.studentName}</p>
+                        <p className="mt-1 text-xs font-semibold text-gray-400">{item.className ?? "No class"} - {item.feeTitle}</p>
+                        <p className="mt-1 text-xs font-semibold text-gray-500">
+                          {item.parentContact ? `${item.parentContact.name} - ${item.parentContact.phone || item.parentContact.email || "No phone or email saved"}` : "No contact saved"}
+                        </p>
+                      </div>
+                      <div className="shrink-0 text-left sm:text-right">
+                        <p className="text-sm font-black text-rose-700">{formatGHS(item.amountOwed)}</p>
+                        <p className="mt-1 text-xs font-black text-gray-500">{item.priority} - {item.isOverdue ? `${item.daysOverdue} day${item.daysOverdue === 1 ? "" : "s"} overdue` : "Not overdue"}</p>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </section>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.4fr_0.9fr]">

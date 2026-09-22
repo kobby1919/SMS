@@ -52,13 +52,26 @@ export type BursarArrearsItem = {
   href: string;
 };
 
+export type BursarArrearsClassSummary = {
+  classId: number | null;
+  className: string;
+  amountOwed: number;
+  billCount: number;
+  studentCount: number;
+  overdueAmount: number;
+  criticalCount: number;
+};
+
 export type BursarArrearsSummary = {
   totalOwed: number;
+  overdueAmount: number;
+  criticalAmount: number;
   totalStudents: number;
   overdueStudents: number;
   partPaidStudents: number;
   noParentContact: number;
   byPriority: Record<ArrearsPriority, number>;
+  byClass: BursarArrearsClassSummary[];
 };
 
 export type BursarArrearsFollowUp = {
@@ -235,7 +248,6 @@ export async function getBursarArrearsFollowUp(
       },
     },
     orderBy: [{ balance: "desc" }, { dueDate: "asc" }, { updatedAt: "desc" }],
-    take: Math.max(limit * 4, limit),
   });
 
   const billIds = bills.map((bill) => bill.id);
@@ -332,9 +344,40 @@ export async function getBursarArrearsFollowUp(
     return b.amountOwed - a.amountOwed;
   });
 
+  const classMap = new Map<string, {
+    classId: number | null;
+    className: string;
+    amountOwed: number;
+    billCount: number;
+    studentIds: Set<string>;
+    overdueAmount: number;
+    criticalCount: number;
+  }>();
+
+  for (const item of items) {
+    const key = item.classId === null ? "NO_CLASS" : String(item.classId);
+    const current = classMap.get(key) ?? {
+      classId: item.classId,
+      className: item.className ?? "No class",
+      amountOwed: 0,
+      billCount: 0,
+      studentIds: new Set<string>(),
+      overdueAmount: 0,
+      criticalCount: 0,
+    };
+    current.amountOwed += item.amountOwed;
+    current.billCount += 1;
+    current.studentIds.add(item.studentId);
+    if (item.isOverdue) current.overdueAmount += item.amountOwed;
+    if (item.priority === "Critical") current.criticalCount += 1;
+    classMap.set(key, current);
+  }
+
   const limitedItems = items.slice(0, limit);
   const summary: BursarArrearsSummary = {
     totalOwed: items.reduce((sum, item) => sum + item.amountOwed, 0),
+    overdueAmount: items.filter((item) => item.isOverdue).reduce((sum, item) => sum + item.amountOwed, 0),
+    criticalAmount: items.filter((item) => item.priority === "Critical").reduce((sum, item) => sum + item.amountOwed, 0),
     totalStudents: new Set(items.map((item) => item.studentId)).size,
     overdueStudents: new Set(items.filter((item) => item.isOverdue).map((item) => item.studentId)).size,
     partPaidStudents: new Set(items.filter((item) => item.billStatus === "PARTIAL").map((item) => item.studentId)).size,
@@ -345,6 +388,17 @@ export async function getBursarArrearsFollowUp(
       Medium: items.filter((item) => item.priority === "Medium").length,
       Low: items.filter((item) => item.priority === "Low").length,
     },
+    byClass: Array.from(classMap.values())
+      .map((item) => ({
+        classId: item.classId,
+        className: item.className,
+        amountOwed: item.amountOwed,
+        billCount: item.billCount,
+        studentCount: item.studentIds.size,
+        overdueAmount: item.overdueAmount,
+        criticalCount: item.criticalCount,
+      }))
+      .sort((a, b) => b.amountOwed - a.amountOwed || a.className.localeCompare(b.className)),
   };
 
   return {
