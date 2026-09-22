@@ -3,12 +3,17 @@ import { Prisma } from "@/src/generated/prisma";
 import type { BillStatus, FeeCategory } from "@/src/generated/prisma";
 
 export type ArrearsPriority = "Critical" | "High" | "Medium" | "Low";
+export type ArrearsBillStatusFilter = "UNPAID" | "PARTIAL" | "OVERDUE";
 
 export type BursarArrearsOptions = {
   asOf?: Date;
   limit?: number;
   criticalBalanceThreshold?: number;
   highBalanceThreshold?: number;
+  classId?: number | null;
+  billStatus?: ArrearsBillStatusFilter | null;
+  minBalance?: number | null;
+  feeCategory?: FeeCategory | null;
 };
 
 export type ArrearsParentContact = {
@@ -137,15 +142,38 @@ export async function getBursarArrearsFollowUp(
 ): Promise<BursarArrearsFollowUp> {
   const asOf = options.asOf ?? new Date();
   const limit = Math.min(Math.max(options.limit ?? 12, 1), 100);
+  const minBalance = Math.max(Number(options.minBalance ?? 0), 0);
+  const statusFilter: Array<Extract<BillStatus, "UNPAID" | "PARTIAL">> =
+    options.billStatus === "UNPAID"
+      ? ["UNPAID"]
+      : options.billStatus === "PARTIAL"
+        ? ["PARTIAL"]
+        : ARREARS_STATUSES;
+  const studentWhere: Prisma.StudentWhereInput = {
+    schoolId,
+    ...(options.classId ? { classId: options.classId } : {}),
+  };
+  const where: Prisma.StudentBillWhereInput = {
+    schoolId,
+    status: { in: statusFilter },
+    balance: { gt: minBalance },
+    student: studentWhere,
+    feeStructure: { schoolId },
+    ...(options.billStatus === "OVERDUE" ? { dueDate: { lt: startOfDay(asOf) } } : {}),
+    ...(options.feeCategory
+      ? {
+          lineItems: {
+            some: {
+              balance: { gt: 0 },
+              feeItem: { category: options.feeCategory },
+            },
+          },
+        }
+      : {}),
+  };
 
   const bills = await prisma.studentBill.findMany({
-    where: {
-      schoolId,
-      status: { in: ARREARS_STATUSES },
-      balance: { gt: 0 },
-      student: { schoolId },
-      feeStructure: { schoolId },
-    },
+    where,
     include: {
       student: {
         select: {
