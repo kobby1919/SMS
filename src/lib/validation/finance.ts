@@ -79,6 +79,27 @@ export const paymentCorrectionReviewSchema = z.object({
   reviewNote: nonEmptyStringSchema.min(10).max(1000),
 });
 
+export const paymentCorrectionApplySchema = z.object({
+  correctionId: positiveIntSchema,
+  applicationNote: nonEmptyStringSchema.min(10).max(1000),
+  correctedAmount: z.coerce.number().positive().max(1_000_000).optional().nullable(),
+  targetStudentBillId: positiveIntSchema.optional().nullable(),
+  paymentMethod: paymentMethodSchema.optional().nullable(),
+  referenceNo: z.string().trim().max(120).optional().nullable(),
+  paidBy: z.string().trim().max(150).optional().nullable(),
+  paymentDate: z
+    .string()
+    .trim()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD date format.")
+    .optional()
+    .nullable(),
+});
+
+export const paymentCorrectionCancelSchema = z.object({
+  correctionId: positiveIntSchema,
+  cancelReason: nonEmptyStringSchema.min(10).max(1000),
+});
+
 export const reversePaymentSchema = z.object({
   paymentId: positiveIntSchema,
   reason: nonEmptyStringSchema.min(10).max(500),

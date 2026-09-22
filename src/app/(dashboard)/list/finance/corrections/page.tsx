@@ -14,7 +14,7 @@ import { formatGHS, PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
-import { reviewPaymentCorrection } from "@/src/lib/actions/paymentCorrectionActions";
+import { applyPaymentCorrection, reviewPaymentCorrection } from "@/src/lib/actions/paymentCorrectionActions";
 import type { PaymentCorrectionStatus } from "@/src/generated/prisma";
 import { Prisma } from "@/src/generated/prisma";
 
@@ -93,6 +93,41 @@ async function reviewCorrectionForm(formData: FormData) {
 
   revalidatePath("/list/finance/corrections");
 }
+
+async function applyCorrectionForm(formData: FormData) {
+  "use server";
+
+  const correctedAmountValue = String(formData.get("correctedAmount") ?? "").trim();
+  const targetStudentBillIdValue = String(formData.get("targetStudentBillId") ?? "").trim();
+  const paymentMethodValue = String(formData.get("paymentMethod") ?? "").trim();
+  const referenceNoValue = String(formData.get("referenceNo") ?? "").trim();
+  const paidByValue = String(formData.get("paidBy") ?? "").trim();
+  const paymentDateValue = String(formData.get("paymentDate") ?? "").trim();
+
+  await applyPaymentCorrection({
+    correctionId: Number(formData.get("correctionId")),
+    applicationNote: String(formData.get("applicationNote") ?? ""),
+    correctedAmount: correctedAmountValue ? Number(correctedAmountValue) : null,
+    targetStudentBillId: targetStudentBillIdValue ? Number(targetStudentBillIdValue) : null,
+    paymentMethod: paymentMethodValue ? paymentMethodValue as never : null,
+    referenceNo: referenceNoValue || null,
+    paidBy: paidByValue || null,
+    paymentDate: paymentDateValue || null,
+  });
+
+  revalidatePath("/list/finance/corrections");
+}
+
+const PAYMENT_METHODS = [
+  "CASH",
+  "MTN_MOMO",
+  "VODAFONE_CASH",
+  "AIRTELTIGO_MONEY",
+  "BANK_TRANSFER",
+  "CHEQUE",
+  "POS",
+  "OTHER",
+] as const;
 
 export default async function PaymentCorrectionsPage({
   searchParams,
@@ -201,6 +236,8 @@ export default async function PaymentCorrectionsPage({
           const student = bill.student;
           const meta = STATUS_META[item.status];
           const canReview = role === "admin" && item.status === "PENDING_REVIEW";
+          const canApply = role === "admin" && item.status === "APPROVED";
+          const needsCorrectedPayment = ["REPLACE_PAYMENT", "MOVE_PAYMENT", "FIX_REFERENCE_OR_METHOD"].includes(item.requestedAction);
           const sourceMismatch = item.studentBillId !== payment.studentBillId || payment.schoolId !== schoolId;
 
           return (
@@ -283,11 +320,110 @@ export default async function PaymentCorrectionsPage({
                       </button>
                     </div>
                   </form>
+                ) : canApply ? (
+                  <form action={applyCorrectionForm} className="w-full max-w-xl rounded-lg border border-blue-100 bg-blue-50/60 p-3 xl:w-[420px]">
+                    <input type="hidden" name="correctionId" value={item.id} />
+                    <p className="text-sm font-semibold text-blue-950">Apply approved correction</p>
+                    <p className="mt-1 text-xs leading-5 text-blue-800">
+                      This will void the original receipt and {needsCorrectedPayment ? "create a corrected receipt." : "keep the receipt cancelled/reversed."}
+                    </p>
+
+                    <label className="mt-3 block text-xs font-semibold uppercase text-slate-500" htmlFor={`application-note-${item.id}`}>
+                      Application note
+                    </label>
+                    <textarea
+                      id={`application-note-${item.id}`}
+                      name="applicationNote"
+                      minLength={10}
+                      maxLength={1000}
+                      required
+                      rows={3}
+                      placeholder="State exactly what is being applied."
+                      className="mt-2 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    />
+
+                    {item.requestedAction === "REPLACE_PAYMENT" && (
+                      <label className="mt-3 block text-xs font-semibold uppercase text-slate-500">
+                        Corrected amount
+                        <input
+                          name="correctedAmount"
+                          type="number"
+                          min="0.01"
+                          step="0.01"
+                          required
+                          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                        />
+                      </label>
+                    )}
+
+                    {item.requestedAction === "MOVE_PAYMENT" && (
+                      <label className="mt-3 block text-xs font-semibold uppercase text-slate-500">
+                        Target bill ID
+                        <input
+                          name="targetStudentBillId"
+                          type="number"
+                          min="1"
+                          required
+                          placeholder="Enter the bill ID receiving this payment"
+                          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                        />
+                      </label>
+                    )}
+
+                    {item.requestedAction === "FIX_REFERENCE_OR_METHOD" && (
+                      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                        <label className="block text-xs font-semibold uppercase text-slate-500">
+                          Method
+                          <select name="paymentMethod" defaultValue={payment.paymentMethod} className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+                            {PAYMENT_METHODS.map((method) => (
+                              <option key={method} value={method}>{PAYMENT_METHOD_LABELS[method] ?? method}</option>
+                            ))}
+                          </select>
+                        </label>
+                        <label className="block text-xs font-semibold uppercase text-slate-500">
+                          Reference
+                          <input
+                            name="referenceNo"
+                            defaultValue={payment.referenceNo ?? ""}
+                            className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                          />
+                        </label>
+                      </div>
+                    )}
+
+                    {needsCorrectedPayment && (
+                      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                        <label className="block text-xs font-semibold uppercase text-slate-500">
+                          Paid by
+                          <input
+                            name="paidBy"
+                            defaultValue={payment.paidBy}
+                            className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                          />
+                        </label>
+                        <label className="block text-xs font-semibold uppercase text-slate-500">
+                          Payment date
+                          <input
+                            name="paymentDate"
+                            type="date"
+                            defaultValue={payment.paymentDate.toISOString().slice(0, 10)}
+                            className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                          />
+                        </label>
+                      </div>
+                    )}
+
+                    <button className="mt-3 w-full rounded-md bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-800">
+                      Apply correction
+                    </button>
+                  </form>
                 ) : (
                   <div className="w-full rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600 xl:w-[360px]">
                     <p className="font-semibold text-slate-800">Review status</p>
                     <p className="mt-1">{item.reviewNote || "No admin review note yet."}</p>
                     {item.reviewedAt && <p className="mt-2 text-xs text-slate-500">Reviewed {formatDateTime(item.reviewedAt)}</p>}
+                    {item.appliedAt && <p className="mt-2 text-xs text-slate-500">Applied {formatDateTime(item.appliedAt)}</p>}
+                    {item.correctedPayment && <p className="mt-2 text-xs font-semibold text-slate-700">Corrected receipt: {item.correctedPayment.receiptNumber}</p>}
                   </div>
                 )}
               </div>
