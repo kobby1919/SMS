@@ -234,6 +234,13 @@ export async function requestPaymentCorrection(input: RequestPaymentCorrectionIn
           select: { id: true, status: true },
           take: 1,
         },
+        correctedPaymentCorrections: {
+          select: {
+            id: true,
+            originalPayment: { select: { receiptNumber: true } },
+          },
+          take: 1,
+        },
         reversal: { select: { id: true, reason: true, reversedAt: true } },
       },
     }),
@@ -251,6 +258,12 @@ export async function requestPaymentCorrection(input: RequestPaymentCorrectionIn
 
   if (payment.correctionRequests.length > 0) {
     throw new Error("This receipt already has an open correction request awaiting admin review.");
+  }
+
+  if (payment.correctedPaymentCorrections.length > 0) {
+    throw new Error(
+      "This receipt was already issued as a correction. If it is still wrong, ask the admin to review the finance history before another correction is created.",
+    );
   }
 
   try {
@@ -685,29 +698,70 @@ export async function applyPaymentCorrection(input: ApplyPaymentCorrectionInput)
     revalidatePath(`/list/finance/bills/${billId}`);
   }
 
-  await recordParentActivityEvents({
-    schoolId,
-    studentIds: [originalPayment.studentBill.student.id],
-    type: "PAYMENT",
-    title: result.correctedPayment
-      ? `Payment correction applied: ${result.correctedPayment.receiptNumber}`
-      : `Receipt voided: ${originalPayment.receiptNumber}`,
-    body: result.correctedPayment
-      ? `A payment correction has been approved and applied. Original receipt ${originalPayment.receiptNumber} was voided and corrected receipt ${result.correctedPayment.receiptNumber} was issued.`
-      : `A payment correction has been approved and applied. Receipt ${originalPayment.receiptNumber} was voided and remains visible only for history.`,
-    href: `/parent/finance/bills/${result.correctedPayment?.studentBillId ?? originalPayment.studentBillId}`,
-    sourceModel: "PaymentCorrectionRequest",
-    sourceId: String(correction.id),
-    sourceKey: `payment-correction:${correction.id}:applied`,
-    occurredAt: appliedAt,
-    payload: {
-      correctionId: correction.id,
-      originalPaymentId: originalPayment.id,
-      originalReceiptNumber: originalPayment.receiptNumber,
-      correctedPaymentId: result.correctedPayment?.id ?? null,
-      correctedReceiptNumber: result.correctedPayment?.receiptNumber ?? null,
-    },
-  });
+  const originalStudentId = originalPayment.studentBill.student.id;
+  const correctedBill = result.correctedPayment
+    ? await prisma.studentBill.findFirst({
+        where: { id: result.correctedPayment.studentBillId, schoolId },
+        select: { studentId: true },
+      })
+    : null;
+  const correctedStudentId = correctedBill?.studentId ?? null;
+  const correctionPayload = {
+    correctionId: correction.id,
+    originalPaymentId: originalPayment.id,
+    originalReceiptNumber: originalPayment.receiptNumber,
+    correctedPaymentId: result.correctedPayment?.id ?? null,
+    correctedReceiptNumber: result.correctedPayment?.receiptNumber ?? null,
+  };
+
+  if (result.correctedPayment && correctedStudentId && correctedStudentId !== originalStudentId) {
+    await Promise.all([
+      recordParentActivityEvents({
+        schoolId,
+        studentIds: [originalStudentId],
+        type: "PAYMENT",
+        title: `Receipt voided: ${originalPayment.receiptNumber}`,
+        body: `A payment correction has been approved and applied. Receipt ${originalPayment.receiptNumber} was voided and remains visible only for history.`,
+        href: `/parent/finance/bills/${originalPayment.studentBillId}`,
+        sourceModel: "PaymentCorrectionRequest",
+        sourceId: String(correction.id),
+        sourceKey: `payment-correction:${correction.id}:applied:original`,
+        occurredAt: appliedAt,
+        payload: correctionPayload,
+      }),
+      recordParentActivityEvents({
+        schoolId,
+        studentIds: [correctedStudentId],
+        type: "PAYMENT",
+        title: `Corrected receipt issued: ${result.correctedPayment.receiptNumber}`,
+        body: `A payment correction has been approved and applied. Corrected receipt ${result.correctedPayment.receiptNumber} was issued after the school voided the original payment record.`,
+        href: `/parent/finance/bills/${result.correctedPayment.studentBillId}`,
+        sourceModel: "PaymentCorrectionRequest",
+        sourceId: String(correction.id),
+        sourceKey: `payment-correction:${correction.id}:applied:corrected`,
+        occurredAt: appliedAt,
+        payload: correctionPayload,
+      }),
+    ]);
+  } else {
+    await recordParentActivityEvents({
+      schoolId,
+      studentIds: [originalStudentId],
+      type: "PAYMENT",
+      title: result.correctedPayment
+        ? `Payment correction applied: ${result.correctedPayment.receiptNumber}`
+        : `Receipt voided: ${originalPayment.receiptNumber}`,
+      body: result.correctedPayment
+        ? `A payment correction has been approved and applied. Original receipt ${originalPayment.receiptNumber} was voided and corrected receipt ${result.correctedPayment.receiptNumber} was issued.`
+        : `A payment correction has been approved and applied. Receipt ${originalPayment.receiptNumber} was voided and remains visible only for history.`,
+      href: `/parent/finance/bills/${result.correctedPayment?.studentBillId ?? originalPayment.studentBillId}`,
+      sourceModel: "PaymentCorrectionRequest",
+      sourceId: String(correction.id),
+      sourceKey: `payment-correction:${correction.id}:applied`,
+      occurredAt: appliedAt,
+      payload: correctionPayload,
+    });
+  }
   await writeAuditLog({
     schoolId,
     action: "PAYMENT_CORRECTION_APPLIED",

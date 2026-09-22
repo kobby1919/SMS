@@ -525,7 +525,7 @@ const PaymentsPage = async ({
               const statusMeta = PAYMENT_STATUS_META[p.status];
               const correction = p.correctionRequests[0];
               const correctedFrom = p.correctedPaymentCorrections[0]?.originalPayment.receiptNumber;
-              const canRequestCorrection = role === "bursar" && isConfirmed && !correction;
+              const canRequestCorrection = role === "bursar" && isConfirmed && !correction && !correctedFrom;
               return (
                 <div
                   key={p.id}
