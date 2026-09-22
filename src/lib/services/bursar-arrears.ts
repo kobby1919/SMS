@@ -1,0 +1,328 @@
+import prisma from "@/src/lib/prisma";
+import { Prisma } from "@/src/generated/prisma";
+import type { BillStatus, FeeCategory } from "@/src/generated/prisma";
+
+export type ArrearsPriority = "Critical" | "High" | "Medium" | "Low";
+
+export type BursarArrearsOptions = {
+  asOf?: Date;
+  limit?: number;
+  criticalBalanceThreshold?: number;
+  highBalanceThreshold?: number;
+};
+
+export type ArrearsParentContact = {
+  parentId: string;
+  name: string;
+  phone: string | null;
+  email: string | null;
+  relationshipRole: string;
+  source: "RELATIONSHIP" | "LEGACY";
+};
+
+export type BursarArrearsItem = {
+  billId: number;
+  studentId: string;
+  studentName: string;
+  classId: number | null;
+  className: string | null;
+  feeStructureId: number;
+  feeTitle: string;
+  feeType: string;
+  feeCategories: FeeCategory[];
+  academicYear: string;
+  term: string;
+  amountOwed: number;
+  totalAmount: number;
+  amountPaid: number;
+  discountAmount: number;
+  billStatus: Extract<BillStatus, "UNPAID" | "PARTIAL">;
+  dueDate: Date | null;
+  daysOverdue: number;
+  isOverdue: boolean;
+  parentContact: ArrearsParentContact | null;
+  lastReminderSentAt: Date | null;
+  priority: ArrearsPriority;
+  priorityReason: string;
+  href: string;
+};
+
+export type BursarArrearsSummary = {
+  totalOwed: number;
+  totalStudents: number;
+  overdueStudents: number;
+  partPaidStudents: number;
+  noParentContact: number;
+  byPriority: Record<ArrearsPriority, number>;
+};
+
+export type BursarArrearsFollowUp = {
+  asOf: Date;
+  sourceOfTruth: "StudentBill";
+  items: BursarArrearsItem[];
+  summary: BursarArrearsSummary;
+};
+
+const ARREARS_STATUSES: Array<Extract<BillStatus, "UNPAID" | "PARTIAL">> = ["UNPAID", "PARTIAL"];
+const REMINDER_SOURCE_MODELS = ["FinanceReminder", "ArrearsReminder", "PaymentReminder"];
+
+function asNumber(value: Prisma.Decimal | number | string | null | undefined) {
+  if (value instanceof Prisma.Decimal) return value.toNumber();
+  return Number(value ?? 0);
+}
+
+function startOfDay(date: Date) {
+  const value = new Date(date);
+  value.setHours(0, 0, 0, 0);
+  return value;
+}
+
+function daysOverdue(dueDate: Date | null, asOf: Date) {
+  if (!dueDate) return 0;
+  const due = startOfDay(dueDate).getTime();
+  const today = startOfDay(asOf).getTime();
+  const diff = Math.floor((today - due) / 86_400_000);
+  return Math.max(0, diff);
+}
+
+export function arrearsPriority(input: {
+  amountOwed: number;
+  daysOverdue: number;
+  criticalBalanceThreshold?: number;
+  highBalanceThreshold?: number;
+}): { priority: ArrearsPriority; reason: string } {
+  const criticalBalanceThreshold = input.criticalBalanceThreshold ?? 2_000;
+  const highBalanceThreshold = input.highBalanceThreshold ?? 1_000;
+
+  if (input.daysOverdue > 30) {
+    return { priority: "Critical", reason: "Overdue by more than 30 days" };
+  }
+
+  if (input.amountOwed >= criticalBalanceThreshold) {
+    return { priority: "Critical", reason: `Owes at least GHS ${criticalBalanceThreshold.toLocaleString("en-GH")}` };
+  }
+
+  if (input.daysOverdue >= 14) {
+    return { priority: "High", reason: "Overdue by 14 to 30 days" };
+  }
+
+  if (input.amountOwed >= highBalanceThreshold) {
+    return { priority: "High", reason: `Owes at least GHS ${highBalanceThreshold.toLocaleString("en-GH")}` };
+  }
+
+  if (input.daysOverdue > 0) {
+    return { priority: "Medium", reason: "Recently overdue" };
+  }
+
+  return { priority: "Low", reason: "Owing but not overdue yet" };
+}
+
+function comparePriority(a: ArrearsPriority, b: ArrearsPriority) {
+  const order: Record<ArrearsPriority, number> = {
+    Critical: 0,
+    High: 1,
+    Medium: 2,
+    Low: 3,
+  };
+  return order[a] - order[b];
+}
+
+function contactName(parent: { name: string | null; surname: string | null; username?: string | null }) {
+  return `${parent.name ?? ""} ${parent.surname ?? ""}`.trim() || parent.username || "Parent";
+}
+
+export async function getBursarArrearsFollowUp(
+  schoolId: string,
+  options: BursarArrearsOptions = {},
+): Promise<BursarArrearsFollowUp> {
+  const asOf = options.asOf ?? new Date();
+  const limit = Math.min(Math.max(options.limit ?? 12, 1), 100);
+
+  const bills = await prisma.studentBill.findMany({
+    where: {
+      schoolId,
+      status: { in: ARREARS_STATUSES },
+      balance: { gt: 0 },
+      student: { schoolId },
+      feeStructure: { schoolId },
+    },
+    include: {
+      student: {
+        select: {
+          id: true,
+          name: true,
+          surname: true,
+          parentId: true,
+          classId: true,
+          class: { select: { id: true, name: true } },
+          parent: {
+            select: {
+              id: true,
+              name: true,
+              surname: true,
+              username: true,
+              phone: true,
+              email: true,
+              schoolId: true,
+            },
+          },
+          parentRelationships: {
+            where: {
+              schoolId,
+              status: "ACTIVE",
+              canViewFees: true,
+              parent: { schoolId },
+            },
+            select: {
+              role: true,
+              parent: {
+                select: {
+                  id: true,
+                  name: true,
+                  surname: true,
+                  username: true,
+                  phone: true,
+                  email: true,
+                },
+              },
+            },
+            orderBy: [{ role: "asc" }, { updatedAt: "desc" }],
+            take: 1,
+          },
+        },
+      },
+      feeStructure: {
+        select: {
+          id: true,
+          title: true,
+          academicYear: true,
+          term: true,
+        },
+      },
+      lineItems: {
+        select: {
+          balance: true,
+          feeItem: { select: { category: true } },
+        },
+      },
+    },
+    orderBy: [{ balance: "desc" }, { dueDate: "asc" }, { updatedAt: "desc" }],
+    take: Math.max(limit * 4, limit),
+  });
+
+  const billIds = bills.map((bill) => bill.id);
+  const reminderRows = billIds.length > 0
+    ? await prisma.parentNotification.findMany({
+        where: {
+          schoolId,
+          sourceModel: { in: REMINDER_SOURCE_MODELS },
+          sourceId: { in: billIds.map(String) },
+        },
+        select: { sourceId: true, occurredAt: true },
+        orderBy: { occurredAt: "desc" },
+      })
+    : [];
+
+  const lastReminderByBillId = new Map<number, Date>();
+  for (const row of reminderRows) {
+    const billId = Number(row.sourceId);
+    if (Number.isInteger(billId) && !lastReminderByBillId.has(billId)) {
+      lastReminderByBillId.set(billId, row.occurredAt);
+    }
+  }
+
+  const items = bills.map((bill): BursarArrearsItem => {
+    const amountOwed = asNumber(bill.balance);
+    const overdueDays = daysOverdue(bill.dueDate, asOf);
+    const priority = arrearsPriority({
+      amountOwed,
+      daysOverdue: overdueDays,
+      criticalBalanceThreshold: options.criticalBalanceThreshold,
+      highBalanceThreshold: options.highBalanceThreshold,
+    });
+    const relationship = bill.student.parentRelationships[0];
+    const legacyParent = bill.student.parent?.schoolId === schoolId ? bill.student.parent : null;
+    const parentContact: ArrearsParentContact | null = relationship
+      ? {
+          parentId: relationship.parent.id,
+          name: contactName(relationship.parent),
+          phone: relationship.parent.phone,
+          email: relationship.parent.email,
+          relationshipRole: relationship.role,
+          source: "RELATIONSHIP",
+        }
+      : legacyParent
+        ? {
+            parentId: legacyParent.id,
+            name: contactName(legacyParent),
+            phone: legacyParent.phone,
+            email: legacyParent.email,
+            relationshipRole: "LEGACY_PRIMARY_GUARDIAN",
+            source: "LEGACY",
+          }
+        : null;
+    const categories = [
+      ...new Set(
+        bill.lineItems
+          .filter((line) => asNumber(line.balance) > 0)
+          .map((line) => line.feeItem.category),
+      ),
+    ];
+
+    return {
+      billId: bill.id,
+      studentId: bill.student.id,
+      studentName: `${bill.student.name} ${bill.student.surname}`,
+      classId: bill.student.class?.id ?? bill.student.classId ?? null,
+      className: bill.student.class?.name ?? null,
+      feeStructureId: bill.feeStructure.id,
+      feeTitle: bill.feeStructure.title,
+      feeType: categories.length === 1 ? categories[0] : categories.length > 1 ? "Mixed fees" : "Fees",
+      feeCategories: categories,
+      academicYear: bill.feeStructure.academicYear,
+      term: bill.feeStructure.term,
+      amountOwed,
+      totalAmount: asNumber(bill.totalAmount),
+      amountPaid: asNumber(bill.amountPaid),
+      discountAmount: asNumber(bill.discountAmount),
+      billStatus: bill.status as Extract<BillStatus, "UNPAID" | "PARTIAL">,
+      dueDate: bill.dueDate,
+      daysOverdue: overdueDays,
+      isOverdue: overdueDays > 0,
+      parentContact,
+      lastReminderSentAt: lastReminderByBillId.get(bill.id) ?? null,
+      priority: priority.priority,
+      priorityReason: priority.reason,
+      href: `/list/finance/bills/${bill.id}`,
+    };
+  });
+
+  items.sort((a, b) => {
+    const priorityOrder = comparePriority(a.priority, b.priority);
+    if (priorityOrder !== 0) return priorityOrder;
+    if (b.daysOverdue !== a.daysOverdue) return b.daysOverdue - a.daysOverdue;
+    return b.amountOwed - a.amountOwed;
+  });
+
+  const limitedItems = items.slice(0, limit);
+  const summary: BursarArrearsSummary = {
+    totalOwed: items.reduce((sum, item) => sum + item.amountOwed, 0),
+    totalStudents: new Set(items.map((item) => item.studentId)).size,
+    overdueStudents: new Set(items.filter((item) => item.isOverdue).map((item) => item.studentId)).size,
+    partPaidStudents: new Set(items.filter((item) => item.billStatus === "PARTIAL").map((item) => item.studentId)).size,
+    noParentContact: items.filter((item) => !item.parentContact).length,
+    byPriority: {
+      Critical: items.filter((item) => item.priority === "Critical").length,
+      High: items.filter((item) => item.priority === "High").length,
+      Medium: items.filter((item) => item.priority === "Medium").length,
+      Low: items.filter((item) => item.priority === "Low").length,
+    },
+  };
+
+  return {
+    asOf,
+    sourceOfTruth: "StudentBill",
+    items: limitedItems,
+    summary,
+  };
+}
