@@ -21,6 +21,7 @@ import {
   parseDailyReportDate,
 } from "@/src/lib/services/daily-finance-report";
 import { getBursarArrearsFollowUp } from "@/src/lib/services/bursar-arrears";
+import { getClassCollectionReport } from "@/src/lib/services/class-collection-report";
 
 export const dynamic = "force-dynamic";
 
@@ -60,9 +61,10 @@ const FinanceReportsPage = async ({
   const params = await searchParams;
   const selectedDate = parseDailyReportDate(params.date);
   const selectedDateValue = dailyReportDateInputValue(selectedDate);
-  const [report, arrearsReport] = await Promise.all([
+  const [report, arrearsReport, classCollectionReport] = await Promise.all([
     getDailyFinanceReport(schoolId, selectedDate),
     getBursarArrearsFollowUp(schoolId, { asOf: selectedDate, limit: 10 }),
+    getClassCollectionReport(schoolId),
   ]);
 
   const cards = [
@@ -283,6 +285,116 @@ const FinanceReportsPage = async ({
             )}
           </div>
         </div>
+      </section>
+
+      <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-indigo-600">Class collection report</p>
+            <h2 className="mt-1 text-lg font-black text-gray-900">Which classes are financially healthy</h2>
+            <p className="mt-1 max-w-3xl text-sm font-semibold text-gray-500">
+              Class-level view of expected fees, collected amount, outstanding balance, collection rate, and follow-up risk.
+            </p>
+          </div>
+          <div className="rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-2 text-xs font-black text-indigo-700">
+            {classCollectionReport.totalClasses} class{classCollectionReport.totalClasses === 1 ? "" : "es"} with bills - {classCollectionReport.weakClassCount} weak
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            { label: "Expected", value: formatGHS(classCollectionReport.expected), sub: "Total billable fees", tone: "bg-slate-50 text-slate-800" },
+            { label: "Collected", value: formatGHS(classCollectionReport.collected), sub: `${classCollectionReport.collectionRate}% collection rate`, tone: "bg-emerald-50 text-emerald-700" },
+            { label: "Outstanding", value: formatGHS(classCollectionReport.outstanding), sub: "Still to collect", tone: "bg-rose-50 text-rose-700" },
+            { label: "Weak classes", value: classCollectionReport.weakClassCount, sub: "Need owner follow-up", tone: "bg-amber-50 text-amber-700" },
+          ].map((card) => (
+            <div key={card.label} className="rounded-2xl border border-gray-100 bg-gray-50/60 p-4">
+              <p className="text-xs font-black uppercase tracking-wide text-gray-400">{card.label}</p>
+              <p className="mt-2 truncate text-2xl font-black leading-none text-gray-900">{card.value}</p>
+              <p className={`mt-3 inline-flex rounded-full px-2.5 py-1 text-xs font-black ${card.tone}`}>{card.sub}</p>
+            </div>
+          ))}
+        </div>
+
+        {classCollectionReport.rows.length === 0 ? (
+          <div className="mt-4 rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center">
+            <p className="text-sm font-black text-gray-700">No class collection report yet.</p>
+            <p className="mt-1 text-sm font-semibold text-gray-400">Generate student bills first, then Edujay can compare classes properly.</p>
+          </div>
+        ) : (
+          <>
+            <div className="mt-4 hidden overflow-hidden rounded-2xl border border-gray-100 lg:block">
+              <table className="w-full min-w-[980px]">
+                <thead className="bg-gray-50/80">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-black uppercase tracking-wide text-gray-400">Class</th>
+                    <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-wide text-gray-400">Expected</th>
+                    <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-wide text-gray-400">Collected</th>
+                    <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-wide text-gray-400">Outstanding</th>
+                    <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-wide text-gray-400">Rate</th>
+                    <th className="px-4 py-3 text-left text-xs font-black uppercase tracking-wide text-gray-400">Risk</th>
+                    <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-wide text-gray-400">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {classCollectionReport.rows.map((row) => {
+                    const riskTone = row.risk === "Critical" ? "bg-rose-50 text-rose-700" : row.risk === "Weak" ? "bg-amber-50 text-amber-700" : row.risk === "Watch" ? "bg-blue-50 text-blue-700" : "bg-emerald-50 text-emerald-700";
+                    return (
+                      <tr key={row.classId} className="hover:bg-indigo-50/30">
+                        <td className="px-4 py-3">
+                          <p className="text-sm font-black text-gray-900">{row.className}</p>
+                          <p className="text-xs font-semibold text-gray-400">{row.studentCount} student{row.studentCount === 1 ? "" : "s"} - {row.billCount} bill{row.billCount === 1 ? "" : "s"}</p>
+                        </td>
+                        <td className="px-4 py-3 text-right text-sm font-bold text-gray-700">{formatGHS(row.expected)}</td>
+                        <td className="px-4 py-3 text-right text-sm font-bold text-emerald-700">{formatGHS(row.collected)}</td>
+                        <td className="px-4 py-3 text-right text-sm font-bold text-rose-600">{formatGHS(row.outstanding)}</td>
+                        <td className="px-4 py-3 text-right text-sm font-black text-gray-800">{row.collectionRate}%</td>
+                        <td className="px-4 py-3">
+                          <span className={`rounded-full px-2.5 py-1 text-xs font-black ${riskTone}`}>{row.risk}</span>
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <Link href={`/list/finance/bills?classId=${row.classId}`} className="text-xs font-black text-indigo-700 hover:text-indigo-900">Review bills</Link>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 gap-3 lg:hidden">
+              {classCollectionReport.rows.map((row) => {
+                const riskTone = row.risk === "Critical" ? "bg-rose-50 text-rose-700" : row.risk === "Weak" ? "bg-amber-50 text-amber-700" : row.risk === "Watch" ? "bg-blue-50 text-blue-700" : "bg-emerald-50 text-emerald-700";
+                return (
+                  <Link key={row.classId} href={`/list/finance/bills?classId=${row.classId}`} className="rounded-2xl border border-gray-100 p-4 transition hover:bg-indigo-50/40">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-black text-gray-900">{row.className}</p>
+                        <p className="mt-1 text-xs font-semibold text-gray-400">{row.studentCount} students - {row.billCount} bills</p>
+                      </div>
+                      <span className={`rounded-full px-2.5 py-1 text-xs font-black ${riskTone}`}>{row.risk}</span>
+                    </div>
+                    <div className="mt-3 grid grid-cols-1 gap-2 min-[430px]:grid-cols-3">
+                      <div className="rounded-xl bg-gray-50 p-3">
+                        <p className="text-[11px] font-black uppercase tracking-wide text-gray-400">Expected</p>
+                        <p className="mt-1 text-sm font-black text-gray-800">{formatGHS(row.expected)}</p>
+                      </div>
+                      <div className="rounded-xl bg-emerald-50 p-3">
+                        <p className="text-[11px] font-black uppercase tracking-wide text-emerald-500">Collected</p>
+                        <p className="mt-1 text-sm font-black text-emerald-700">{formatGHS(row.collected)}</p>
+                      </div>
+                      <div className="rounded-xl bg-rose-50 p-3">
+                        <p className="text-[11px] font-black uppercase tracking-wide text-rose-500">Outstanding</p>
+                        <p className="mt-1 text-sm font-black text-rose-700">{formatGHS(row.outstanding)}</p>
+                      </div>
+                    </div>
+                    <p className="mt-3 text-xs font-black text-gray-500">Collection rate: {row.collectionRate}%</p>
+                  </Link>
+                );
+              })}
+            </div>
+          </>
+        )}
       </section>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.4fr_0.9fr]">
