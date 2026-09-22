@@ -22,6 +22,7 @@ import {
 } from "@/src/lib/services/daily-finance-report";
 import { getBursarArrearsFollowUp } from "@/src/lib/services/bursar-arrears";
 import { getClassCollectionReport } from "@/src/lib/services/class-collection-report";
+import { getReceiptIntegrityReport } from "@/src/lib/services/receipt-integrity-report";
 
 export const dynamic = "force-dynamic";
 
@@ -61,10 +62,11 @@ const FinanceReportsPage = async ({
   const params = await searchParams;
   const selectedDate = parseDailyReportDate(params.date);
   const selectedDateValue = dailyReportDateInputValue(selectedDate);
-  const [report, arrearsReport, classCollectionReport] = await Promise.all([
+  const [report, arrearsReport, classCollectionReport, receiptIntegrityReport] = await Promise.all([
     getDailyFinanceReport(schoolId, selectedDate),
     getBursarArrearsFollowUp(schoolId, { asOf: selectedDate, limit: 10 }),
     getClassCollectionReport(schoolId),
+    getReceiptIntegrityReport(schoolId),
   ]);
 
   const cards = [
@@ -395,6 +397,85 @@ const FinanceReportsPage = async ({
             </div>
           </>
         )}
+      </section>
+
+      <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-violet-600">Receipt integrity report</p>
+            <h2 className="mt-1 text-lg font-black text-gray-900">Can the school trust the receipts?</h2>
+            <p className="mt-1 max-w-3xl text-sm font-semibold text-gray-500">
+              Tracks confirmed receipts, voided receipts, corrected receipts, unconfirmed records, duplicate-looking references, and receipt sequence gaps.
+            </p>
+          </div>
+          <Link href="/list/finance/receipts" className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-black text-gray-700 transition hover:bg-gray-50">
+            Open receipt register <ChevronRight size={15} />
+          </Link>
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            { label: "Confirmed receipts", value: receiptIntegrityReport.confirmedReceipts, sub: `${receiptIntegrityReport.totalReceipts} total receipt records`, tone: "bg-emerald-50 text-emerald-700" },
+            { label: "Voided receipts", value: receiptIntegrityReport.voidedReceipts, sub: "Not valid proof of payment", tone: "bg-rose-50 text-rose-700" },
+            { label: "Corrected receipts", value: receiptIntegrityReport.correctedReceipts, sub: `${receiptIntegrityReport.correctionLinkedReceipts} correction-linked`, tone: "bg-blue-50 text-blue-700" },
+            { label: "Integrity flags", value: receiptIntegrityReport.duplicateReferenceCount + receiptIntegrityReport.receiptGapCount + receiptIntegrityReport.pendingReceipts + receiptIntegrityReport.failedReceipts, sub: "Duplicates, gaps, pending, failed", tone: "bg-amber-50 text-amber-700" },
+          ].map((card) => (
+            <div key={card.label} className="rounded-2xl border border-gray-100 bg-gray-50/60 p-4">
+              <p className="text-xs font-black uppercase tracking-wide text-gray-400">{card.label}</p>
+              <p className="mt-2 truncate text-2xl font-black leading-none text-gray-900">{card.value}</p>
+              <p className={`mt-3 inline-flex rounded-full px-2.5 py-1 text-xs font-black ${card.tone}`}>{card.sub}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[0.8fr_1.2fr]">
+          <div className="rounded-2xl border border-gray-100 bg-gray-50/70 p-4">
+            <h3 className="text-sm font-black text-gray-900">Integrity checklist</h3>
+            <div className="mt-3 space-y-2">
+              {[
+                { label: "Pending receipts", value: receiptIntegrityReport.pendingReceipts, tone: receiptIntegrityReport.pendingReceipts > 0 ? "text-amber-700" : "text-emerald-700" },
+                { label: "Failed receipt records", value: receiptIntegrityReport.failedReceipts, tone: receiptIntegrityReport.failedReceipts > 0 ? "text-rose-700" : "text-emerald-700" },
+                { label: "Duplicate references", value: receiptIntegrityReport.duplicateReferenceCount, tone: receiptIntegrityReport.duplicateReferenceCount > 0 ? "text-rose-700" : "text-emerald-700" },
+                { label: "Receipt number gaps", value: receiptIntegrityReport.receiptGapCount, tone: receiptIntegrityReport.receiptGapCount > 0 ? "text-amber-700" : "text-emerald-700" },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center justify-between gap-3 rounded-xl bg-white p-3">
+                  <p className="text-sm font-bold text-gray-700">{item.label}</p>
+                  <p className={`text-sm font-black ${item.tone}`}>{item.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-gray-100 bg-white">
+            <div className="border-b border-gray-100 p-4">
+              <h3 className="text-sm font-black text-gray-900">Receipt issues to review</h3>
+              <p className="mt-1 text-xs font-semibold text-gray-500">Owners see only items that can create payment confusion or trust concerns.</p>
+            </div>
+            {receiptIntegrityReport.issues.length === 0 ? (
+              <div className="p-6 text-center text-sm font-bold text-emerald-700">No receipt integrity issue found.</div>
+            ) : (
+              <div className="divide-y divide-gray-50">
+                {receiptIntegrityReport.issues.map((issue) => {
+                  const riskTone = issue.risk === "Risk" ? "bg-rose-50 text-rose-700" : issue.risk === "Watch" ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700";
+                  return (
+                    <Link key={issue.id} href={issue.href} className="block p-4 transition hover:bg-gray-50/70">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-black text-gray-900">{issue.title}</p>
+                          <p className="mt-1 line-clamp-2 text-xs font-semibold text-gray-500">{issue.detail}</p>
+                        </div>
+                        <div className="shrink-0 text-left sm:text-right">
+                          <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-black ${riskTone}`}>{issue.risk}</span>
+                          {issue.amount !== null && <p className="mt-1 text-sm font-black text-gray-800">{formatGHS(issue.amount)}</p>}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
       </section>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.4fr_0.9fr]">
