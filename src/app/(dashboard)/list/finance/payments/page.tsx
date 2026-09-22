@@ -678,8 +678,8 @@ const PaymentsPage = async ({
                       </a>
                     )}
 
-                    {/* Reverse button (admin/bursar, confirmed only) */}
-                    {isConfirmed && (
+                    {/* Reverse button (admin/bursar, confirmed only, no active correction chain) */}
+                    {isConfirmed && !correction && !correctedFrom && (
                       <PaymentReverseButton
                         paymentId={p.id}
                         receiptNumber={p.receiptNumber}

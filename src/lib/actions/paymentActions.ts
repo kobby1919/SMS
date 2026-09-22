@@ -391,6 +391,15 @@ export async function reversePayment(paymentId: number, reason: string) {
           },
         },
         reversal: true,
+        correctionRequests: {
+          where: { status: { in: ["PENDING_REVIEW", "APPROVED"] } },
+          select: { id: true, status: true },
+          take: 1,
+        },
+        correctedPaymentCorrections: {
+          select: { id: true, originalPayment: { select: { receiptNumber: true } } },
+          take: 1,
+        },
       },
     }),
     ctx,
@@ -401,6 +410,13 @@ export async function reversePayment(paymentId: number, reason: string) {
     hasReversal: Boolean(payment.reversal),
   });
 
+  if (payment.correctionRequests.length > 0) {
+    throw new Error("This payment already has an open correction request. Review or cancel that request before reversing the receipt directly.");
+  }
+
+  if (payment.correctedPaymentCorrections.length > 0) {
+    throw new Error("This receipt was issued as a correction. Ask an admin to review the finance history before reversing it directly.");
+  }
   const billId = payment.studentBillId;
   const amountToReverse = new Prisma.Decimal(payment.amount);
 
