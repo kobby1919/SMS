@@ -1,6 +1,7 @@
 // src/app/(dashboard)/list/finance/payments/page.tsx
  
 
+import { revalidatePath } from "next/cache";
 import { requirePageSession } from "@/src/lib/authz";
 import prisma from "@/src/lib/prisma";
 import Link from "next/link";
@@ -19,6 +20,7 @@ import { formatGHS, PAYMENT_METHOD_LABELS } from "@/src/lib/constants/finance";
 import { ITEM_PER_PAGE } from "@/src/lib/settings";
 import Pagination from "@/src/components/pagination";
 import PaymentReverseButton from "@/src/components/PaymentReverseButton";
+import { requestPaymentCorrection } from "@/src/lib/actions/paymentCorrectionActions";
 import { Prisma } from "@/src/generated/prisma";
 import type { PaymentMethod, PaymentStatus } from "@/src/generated/prisma";
 
@@ -94,13 +96,28 @@ function parsePaymentMethod(value: string | undefined): PaymentMethod | undefine
     ? (value as PaymentMethod)
     : undefined;
 }
+async function requestCorrectionForm(formData: FormData) {
+  "use server";
+
+  await requestPaymentCorrection({
+    paymentId: Number(formData.get("paymentId")),
+    type: String(formData.get("type") ?? ""),
+    requestedAction: String(formData.get("requestedAction") ?? ""),
+    reason: String(formData.get("reason") ?? ""),
+    proposedChange: String(formData.get("proposedChange") ?? "").trim() || null,
+    evidenceRef: String(formData.get("evidenceRef") ?? "").trim() || null,
+  });
+
+  revalidatePath("/list/finance/payments");
+  revalidatePath("/list/finance/corrections");
+}
 
 const PaymentsPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { schoolId } = await requirePageSession(["admin", "bursar"]);
+  const { schoolId, role } = await requirePageSession(["admin", "bursar"]);
 
   const sp = await searchParams;
   const page = sp.page ? parseInt(sp.page) : 1;
@@ -158,6 +175,24 @@ const PaymentsPage = async ({
         },
         reversal: {
           select: { reason: true, reversedAt: true, reversedBy: true },
+        },
+              correctionRequests: {
+          orderBy: { requestedAt: "desc" },
+          take: 1,
+          select: {
+            id: true,
+            status: true,
+            type: true,
+            requestedAction: true,
+            correctedPayment: { select: { receiptNumber: true } },
+          },
+        },
+        correctedPaymentCorrections: {
+          take: 1,
+          select: {
+            id: true,
+            originalPayment: { select: { receiptNumber: true } },
+          },
         },
       },
       orderBy: { createdAt: "desc" },
@@ -488,6 +523,9 @@ const PaymentsPage = async ({
               const isReversed = p.status === "REVERSED";
               const isConfirmed = p.status === "CONFIRMED";
               const statusMeta = PAYMENT_STATUS_META[p.status];
+              const correction = p.correctionRequests[0];
+              const correctedFrom = p.correctedPaymentCorrections[0]?.originalPayment.receiptNumber;
+              const canRequestCorrection = role === "bursar" && isConfirmed && !correction;
               return (
                 <div
                   key={p.id}
@@ -535,6 +573,60 @@ const PaymentsPage = async ({
                       <p className="text-[10px] text-rose-500 font-semibold mt-0.5">
                         Reversed: {p.reversal.reason}
                       </p>
+                    )}
+                    {correction && (
+                      <p className="mt-1 inline-flex rounded-lg bg-blue-50 px-2 py-1 text-[10px] font-bold text-blue-700">
+                        Correction: {correction.status.replaceAll("_", " ").toLowerCase()}
+                        {correction.correctedPayment?.receiptNumber ? ` · Corrected receipt ${correction.correctedPayment.receiptNumber}` : ""}
+                      </p>
+                    )}
+                    {correctedFrom && (
+                      <p className="mt-1 inline-flex rounded-lg bg-emerald-50 px-2 py-1 text-[10px] font-bold text-emerald-700">
+                        Corrected from {correctedFrom}
+                      </p>
+                    )}
+                    {canRequestCorrection && (
+                      <details className="mt-2 rounded-xl border border-amber-100 bg-amber-50 p-3 text-xs">
+                        <summary className="cursor-pointer font-black text-amber-800">Request correction</summary>
+                        <form action={requestCorrectionForm} className="mt-3 grid gap-2 sm:grid-cols-2">
+                          <input type="hidden" name="paymentId" value={p.id} />
+                          <label className="font-bold text-gray-600">
+                            What went wrong
+                            <select name="type" required className="mt-1 w-full rounded-lg border border-amber-100 bg-white px-2 py-2 text-xs font-semibold outline-none">
+                              <option value="WRONG_AMOUNT">Wrong amount</option>
+                              <option value="WRONG_STUDENT">Wrong student</option>
+                              <option value="DUPLICATE_PAYMENT">Duplicate payment</option>
+                              <option value="WRONG_METHOD">Wrong method</option>
+                              <option value="WRONG_REFERENCE">Wrong reference</option>
+                              <option value="PAYMENT_BOUNCED">Payment bounced</option>
+                              <option value="RECEIPT_CANCELLATION">Cancel receipt</option>
+                              <option value="OTHER">Other</option>
+                            </select>
+                          </label>
+                          <label className="font-bold text-gray-600">
+                            Requested action
+                            <select name="requestedAction" required className="mt-1 w-full rounded-lg border border-amber-100 bg-white px-2 py-2 text-xs font-semibold outline-none">
+                              <option value="REVERSE_PAYMENT">Reverse payment</option>
+                              <option value="REPLACE_PAYMENT">Replace payment</option>
+                              <option value="MOVE_PAYMENT">Move payment</option>
+                              <option value="MARK_DUPLICATE">Mark duplicate</option>
+                              <option value="FIX_REFERENCE_OR_METHOD">Fix reference/method</option>
+                              <option value="CANCEL_RECEIPT">Cancel receipt</option>
+                            </select>
+                          </label>
+                          <label className="font-bold text-gray-600 sm:col-span-2">
+                            Reason
+                            <textarea name="reason" required minLength={10} maxLength={500} rows={2} className="mt-1 w-full rounded-lg border border-amber-100 bg-white px-2 py-2 text-xs font-semibold outline-none" placeholder="Explain the mistake clearly." />
+                          </label>
+                          <label className="font-bold text-gray-600 sm:col-span-2">
+                            Optional note/reference
+                            <input name="proposedChange" maxLength={1000} className="mt-1 w-full rounded-lg border border-amber-100 bg-white px-2 py-2 text-xs font-semibold outline-none" placeholder="Example: should be GHS 250, not GHS 520" />
+                          </label>
+                          <button className="rounded-lg bg-amber-700 px-3 py-2 text-xs font-black text-white hover:bg-amber-800 sm:col-span-2">
+                            Send request to admin
+                          </button>
+                        </form>
+                      </details>
                     )}
                   </div>
 

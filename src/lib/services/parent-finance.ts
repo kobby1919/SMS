@@ -21,6 +21,9 @@ export type ParentFinancePayment = {
   status: PaymentStatus;
   referenceNo?: string | null;
   receiptHref: string;
+  correctionStatus?: string | null;
+  correctedReceiptNumber?: string | null;
+  originalReceiptNumber?: string | null;
 };
 
 export type ParentFinanceQuery = {
@@ -223,6 +226,20 @@ export async function getParentFinanceOverview(parentId: string, schoolId: strin
               reversedAt: true,
             },
           },
+          correctionRequests: {
+            orderBy: { requestedAt: "desc" },
+            take: 1,
+            select: {
+              status: true,
+              correctedPayment: { select: { receiptNumber: true } },
+            },
+          },
+          correctedPaymentCorrections: {
+            take: 1,
+            select: {
+              originalPayment: { select: { receiptNumber: true } },
+            },
+          },
         },
       },
       discounts: {
@@ -275,17 +292,24 @@ export async function getParentFinanceOverview(parentId: string, schoolId: strin
       daysUntilDue: state.daysUntilDue,
       balanceExplanation: explainBalance({ title, totalAmount, amountPaid, discountAmount, balance, lineItems }),
       lineItems,
-      payments: bill.payments.map((payment) => ({
-        id: payment.id,
-        receiptNumber: payment.receiptNumber,
-        amount: toNumber(payment.amount),
-        method: payment.paymentMethod,
-        methodLabel: PAYMENT_METHOD_LABELS[payment.paymentMethod] ?? payment.paymentMethod,
-        date: payment.paymentDate,
-        status: payment.status,
-        referenceNo: payment.referenceNo,
-        receiptHref: `/api/finance/receipt?billId=${bill.id}&receiptNumber=${encodeURIComponent(payment.receiptNumber)}`,
-      })),
+      payments: bill.payments.map((payment) => {
+        const correction = payment.correctionRequests[0];
+        const originalCorrection = payment.correctedPaymentCorrections[0];
+        return {
+          id: payment.id,
+          receiptNumber: payment.receiptNumber,
+          amount: toNumber(payment.amount),
+          method: payment.paymentMethod,
+          methodLabel: PAYMENT_METHOD_LABELS[payment.paymentMethod] ?? payment.paymentMethod,
+          date: payment.paymentDate,
+          status: payment.status,
+          referenceNo: payment.referenceNo,
+          receiptHref: `/api/finance/receipt?billId=${bill.id}&receiptNumber=${encodeURIComponent(payment.receiptNumber)}`,
+          correctionStatus: correction?.status ?? null,
+          correctedReceiptNumber: correction?.correctedPayment?.receiptNumber ?? null,
+          originalReceiptNumber: originalCorrection?.originalPayment.receiptNumber ?? null,
+        };
+      }),
       adjustments: [
         ...bill.discounts.map((discount) => ({
           id: `discount:${discount.id}`,

@@ -11,6 +11,7 @@ import { Prisma } from "@/src/generated/prisma";
 import type { PaymentMethod } from "@/src/generated/prisma";
 import { revalidateDashboard, revalidateDocument } from "@/src/lib/cacheTags";
 import { enqueueFinanceJob } from "@/src/lib/services/finance-queue";
+import { recordParentActivityEvents } from "@/src/lib/services/parent-activity-events";
 
 export type RequestPaymentCorrectionInput = {
   paymentId: number;
@@ -684,6 +685,29 @@ export async function applyPaymentCorrection(input: ApplyPaymentCorrectionInput)
     revalidatePath(`/list/finance/bills/${billId}`);
   }
 
+  await recordParentActivityEvents({
+    schoolId,
+    studentIds: [originalPayment.studentBill.student.id],
+    type: "PAYMENT",
+    title: result.correctedPayment
+      ? `Payment correction applied: ${result.correctedPayment.receiptNumber}`
+      : `Receipt voided: ${originalPayment.receiptNumber}`,
+    body: result.correctedPayment
+      ? `A payment correction has been approved and applied. Original receipt ${originalPayment.receiptNumber} was voided and corrected receipt ${result.correctedPayment.receiptNumber} was issued.`
+      : `A payment correction has been approved and applied. Receipt ${originalPayment.receiptNumber} was voided and remains visible only for history.`,
+    href: `/parent/finance/bills/${result.correctedPayment?.studentBillId ?? originalPayment.studentBillId}`,
+    sourceModel: "PaymentCorrectionRequest",
+    sourceId: String(correction.id),
+    sourceKey: `payment-correction:${correction.id}:applied`,
+    occurredAt: appliedAt,
+    payload: {
+      correctionId: correction.id,
+      originalPaymentId: originalPayment.id,
+      originalReceiptNumber: originalPayment.receiptNumber,
+      correctedPaymentId: result.correctedPayment?.id ?? null,
+      correctedReceiptNumber: result.correctedPayment?.receiptNumber ?? null,
+    },
+  });
   await writeAuditLog({
     schoolId,
     action: "PAYMENT_CORRECTION_APPLIED",

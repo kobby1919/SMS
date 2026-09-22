@@ -161,6 +161,23 @@ export default async function ReceiptsPage({
           },
         },
         reversal: { select: { reason: true, reversedAt: true, reversedBy: true } },
+        correctionRequests: {
+          orderBy: { requestedAt: "desc" },
+          take: 1,
+          select: {
+            id: true,
+            status: true,
+            requestedAction: true,
+            correctedPayment: { select: { receiptNumber: true } },
+          },
+        },
+        correctedPaymentCorrections: {
+          take: 1,
+          select: {
+            id: true,
+            originalPayment: { select: { receiptNumber: true } },
+          },
+        },
       },
       orderBy: [{ paymentDate: "desc" }, { createdAt: "desc" }],
       take: ITEM_PER_PAGE,
@@ -310,6 +327,8 @@ export default async function ReceiptsPage({
               const receivedBy = receipt.recordedBy === "system:webhook"
                 ? "Online payment provider"
                 : bursarNames.get(receipt.recordedBy) ?? adminNames.get(receipt.recordedBy) ?? "Finance office";
+              const correction = receipt.correctionRequests[0];
+              const correctedFrom = receipt.correctedPaymentCorrections[0]?.originalPayment.receiptNumber;
               const canDownload = receipt.status === "CONFIRMED";
 
               return (
@@ -321,6 +340,16 @@ export default async function ReceiptsPage({
                           {statusIcon(receipt.status)} {meta.label}
                         </span>
                         <p className="text-sm font-black text-gray-900">{receipt.receiptNumber}</p>
+                        {correction?.correctedPayment?.receiptNumber && (
+                          <span className="rounded-full bg-blue-50 px-2 py-1 text-[10px] font-black text-blue-700">
+                            Corrected by {correction.correctedPayment.receiptNumber}
+                          </span>
+                        )}
+                        {correctedFrom && (
+                          <span className="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-black text-emerald-700">
+                            Corrected from {correctedFrom}
+                          </span>
+                        )}
                       </div>
                       <div className="mt-2 grid grid-cols-1 gap-2 text-sm sm:grid-cols-2 xl:grid-cols-4">
                         <div>
@@ -347,7 +376,12 @@ export default async function ReceiptsPage({
                       <p className="mt-3 rounded-xl bg-gray-50 px-3 py-2 text-xs font-semibold text-gray-500">{meta.note}</p>
                       {receipt.status === "REVERSED" && receipt.reversal && (
                         <p className="mt-2 inline-flex items-center gap-2 rounded-xl bg-rose-50 px-3 py-2 text-xs font-bold text-rose-700">
-                          <RotateCcw size={13} /> Reversed: {receipt.reversal.reason}
+                          <RotateCcw size={13} /> Voided: {receipt.reversal.reason}
+                        </p>
+                      )}
+                      {correction && receipt.status === "REVERSED" && (
+                        <p className="mt-2 rounded-xl bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600">
+                          This receipt remains visible for audit history only. It is not valid payment proof.
                         </p>
                       )}
                     </div>

@@ -163,8 +163,18 @@ export default async function ParentFinanceBillPage({
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="text-sm font-black text-gray-900">{payment.receiptNumber}</p>
                         <span className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase ${PAYMENT_STATUS_STYLES[payment.status] ?? "bg-slate-50 text-slate-700"}`}>
-                          {payment.status.toLowerCase()}
+                          {payment.status === "REVERSED" ? "voided" : payment.status.toLowerCase()}
                         </span>
+                        {payment.correctedReceiptNumber && (
+                          <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[9px] font-black uppercase text-blue-700">
+                            corrected by {payment.correctedReceiptNumber}
+                          </span>
+                        )}
+                        {payment.originalReceiptNumber && (
+                          <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-black uppercase text-emerald-700">
+                            corrected from {payment.originalReceiptNumber}
+                          </span>
+                        )}
                       </div>
                       <p className="mt-0.5 text-xs font-semibold text-gray-400">
                         {payment.methodLabel} - {formatDate(payment.date)}
@@ -173,7 +183,7 @@ export default async function ParentFinanceBillPage({
                     </div>
                     <div className="flex items-center gap-3">
                       <p className="text-sm font-black text-emerald-700">{formatGHS(payment.amount)}</p>
-                      {payment.status === "CONFIRMED" && (
+                      {payment.status === "CONFIRMED" ? (
                         <Link
                           href={payment.receiptHref}
                           className="inline-flex items-center gap-1 rounded-xl bg-gray-900 px-3 py-2 text-xs font-black text-white hover:bg-gray-800"
@@ -181,6 +191,10 @@ export default async function ParentFinanceBillPage({
                           <Download size={13} />
                           Receipt
                         </Link>
+                      ) : (
+                        <span className="rounded-xl bg-gray-100 px-3 py-2 text-xs font-black text-gray-400">
+                          History only
+                        </span>
                       )}
                     </div>
                   </div>
