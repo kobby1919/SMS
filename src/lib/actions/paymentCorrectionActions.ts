@@ -5,7 +5,7 @@ import prisma from "@/src/lib/prisma";
 import { requireFinanceAccess, writeAuditLog } from "@/src/lib/actions/financeActions";
 import { requireResourceAccess } from "@/src/lib/authz";
 import { parseActionInput } from "@/src/lib/validation/parse";
-import { paymentCorrectionRequestSchema } from "@/src/lib/validation/finance";
+import { paymentCorrectionRequestSchema, paymentCorrectionReviewSchema } from "@/src/lib/validation/finance";
 import { enforceActionRateLimit } from "@/src/lib/rate-limit";
 
 export type RequestPaymentCorrectionInput = {
@@ -15,6 +15,12 @@ export type RequestPaymentCorrectionInput = {
   reason: string;
   proposedChange?: string | null;
   evidenceRef?: string | null;
+};
+
+export type ReviewPaymentCorrectionInput = {
+  correctionId: number;
+  decision: "APPROVE" | "REJECT";
+  reviewNote: string;
 };
 
 function isPrismaErrorCode(error: unknown, code: string) {
@@ -140,4 +146,132 @@ export async function requestPaymentCorrection(input: RequestPaymentCorrectionIn
     }
     throw error;
   }
+}
+export async function reviewPaymentCorrection(input: ReviewPaymentCorrectionInput) {
+  const ctx = await requireFinanceAccess();
+  const { userId, schoolId, role } = ctx;
+
+  if (role !== "admin") {
+    throw new Error("Only an admin can review payment correction requests. Bursars request corrections; admins approve or reject them.");
+  }
+
+  await enforceActionRateLimit({
+    key: `finance:payment-correction-review:${schoolId}:${userId}`,
+    limit: 20,
+    windowMs: 10 * 60_000,
+  });
+
+  const data = parseActionInput(paymentCorrectionReviewSchema, input);
+  const nextStatus = data.decision === "APPROVE" ? "APPROVED" : "REJECTED";
+
+  const correction = requireResourceAccess(
+    await prisma.paymentCorrectionRequest.findFirst({
+      where: { id: data.correctionId, schoolId },
+      include: {
+        originalPayment: {
+          include: {
+            studentBill: {
+              select: {
+                id: true,
+                schoolId: true,
+                studentId: true,
+                status: true,
+                balance: true,
+                amountPaid: true,
+                student: {
+                  select: {
+                    id: true,
+                    name: true,
+                    surname: true,
+                    class: { select: { name: true } },
+                  },
+                },
+              },
+            },
+            reversal: { select: { id: true, reason: true, reversedAt: true } },
+          },
+        },
+        correctedPayment: { select: { id: true, receiptNumber: true, status: true } },
+      },
+    }),
+    ctx,
+    "Correction request not found.",
+  );
+
+  if (correction.status !== "PENDING_REVIEW") {
+    throw new Error("Only pending correction requests can be reviewed.");
+  }
+
+  if (correction.requestedBy === userId) {
+    throw new Error("You cannot approve or reject a correction request you created.");
+  }
+
+  if (data.decision === "APPROVE") {
+    if (correction.originalPayment.status !== "CONFIRMED") {
+      throw new Error("Only corrections for confirmed payments can be approved. Reject this request and create a fresh correction if needed.");
+    }
+
+    if (correction.originalPayment.reversal) {
+      throw new Error("This payment has already been reversed. Reject this request and review the reversal history instead.");
+    }
+  }
+
+  const reviewedAt = new Date();
+  const updated = await prisma.$transaction(async (tx) => {
+    const result = await tx.paymentCorrectionRequest.updateMany({
+      where: {
+        id: correction.id,
+        schoolId,
+        status: "PENDING_REVIEW",
+      },
+      data: {
+        status: nextStatus,
+        reviewedBy: userId,
+        reviewedAt,
+        reviewNote: data.reviewNote.trim(),
+      },
+    });
+
+    if (result.count !== 1) {
+      throw new Error("This correction request has already been reviewed. Refresh the page and check the latest status.");
+    }
+
+    return tx.paymentCorrectionRequest.findUniqueOrThrow({
+      where: { id: correction.id },
+    });
+  });
+
+  await writeAuditLog({
+    schoolId,
+    action: data.decision === "APPROVE" ? "PAYMENT_CORRECTION_APPROVED" : "PAYMENT_CORRECTION_REJECTED",
+    performedBy: userId,
+    entityType: "PaymentCorrectionRequest",
+    entityId: correction.id,
+    metadata: {
+      correctionId: correction.id,
+      correctionType: correction.type,
+      requestedAction: correction.requestedAction,
+      previousStatus: correction.status,
+      status: updated.status,
+      originalPaymentId: correction.originalPaymentId,
+      correctedPaymentId: correction.correctedPaymentId,
+      receiptNumber: correction.originalPayment.receiptNumber,
+      paymentAmount: Number(correction.originalPayment.amount),
+      paymentMethod: correction.originalPayment.paymentMethod,
+      studentBillId: correction.studentBillId,
+      studentId: correction.originalPayment.studentBill.student.id,
+      studentName: `${correction.originalPayment.studentBill.student.name} ${correction.originalPayment.studentBill.student.surname}`,
+      className: correction.originalPayment.studentBill.student.class?.name ?? null,
+      requestedBy: correction.requestedBy,
+      reviewedBy: userId,
+      reviewNote: updated.reviewNote,
+    },
+  });
+
+  revalidatePath("/bursar");
+  revalidatePath("/list/finance/payments");
+  revalidatePath("/list/finance/receipts");
+  revalidatePath(`/list/finance/bills/${correction.studentBillId}`);
+
+  return updated;
 }

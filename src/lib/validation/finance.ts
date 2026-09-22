@@ -73,6 +73,12 @@ export const paymentCorrectionRequestSchema = z.object({
   }
 });
 
+export const paymentCorrectionReviewSchema = z.object({
+  correctionId: positiveIntSchema,
+  decision: z.enum(["APPROVE", "REJECT"]),
+  reviewNote: nonEmptyStringSchema.min(10).max(1000),
+});
+
 export const reversePaymentSchema = z.object({
   paymentId: positiveIntSchema,
   reason: nonEmptyStringSchema.min(10).max(500),
