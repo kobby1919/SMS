@@ -198,6 +198,14 @@ export async function reviewPaymentCorrection(input: ReviewPaymentCorrectionInpu
     "Correction request not found.",
   );
 
+  if (correction.originalPayment.schoolId !== schoolId || correction.originalPayment.studentBill.schoolId !== schoolId) {
+    throw new Error("Correction source records do not belong to this school.");
+  }
+
+  if (correction.originalPayment.studentBillId !== correction.studentBillId) {
+    throw new Error("Correction source records are inconsistent. The affected bill must match the original payment bill.");
+  }
+
   if (correction.status !== "PENDING_REVIEW") {
     throw new Error("Only pending correction requests can be reviewed.");
   }

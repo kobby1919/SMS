@@ -339,6 +339,12 @@ const menuItems = [
         visible: ["admin", "bursar"],
       },
       {
+        icon: ShieldCheck,
+        label: "Corrections",
+        href: "/list/finance/corrections",
+        visible: ["admin", "bursar"],
+      },
+      {
         icon: ScrollText,
         label: "Fee Structures",
         href: "/list/finance/fee-structures",
