@@ -119,6 +119,11 @@ export type ParentNotificationPreference = $Result.DefaultSelection<Prisma.$Pare
  */
 export type AppNotification = $Result.DefaultSelection<Prisma.$AppNotificationPayload>
 /**
+ * Model AppNotificationDelivery
+ * 
+ */
+export type AppNotificationDelivery = $Result.DefaultSelection<Prisma.$AppNotificationDeliveryPayload>
+/**
  * Model ParentNotification
  * 
  */
@@ -952,6 +957,28 @@ export const AppNotificationType: {
 export type AppNotificationType = (typeof AppNotificationType)[keyof typeof AppNotificationType]
 
 
+export const AppNotificationDeliveryChannel: {
+  IN_APP: 'IN_APP',
+  EMAIL: 'EMAIL',
+  SMS: 'SMS',
+  WHATSAPP: 'WHATSAPP'
+};
+
+export type AppNotificationDeliveryChannel = (typeof AppNotificationDeliveryChannel)[keyof typeof AppNotificationDeliveryChannel]
+
+
+export const AppNotificationDeliveryStatus: {
+  PENDING: 'PENDING',
+  SENT: 'SENT',
+  DELIVERED: 'DELIVERED',
+  FAILED: 'FAILED',
+  RETRYING: 'RETRYING',
+  CANCELLED: 'CANCELLED'
+};
+
+export type AppNotificationDeliveryStatus = (typeof AppNotificationDeliveryStatus)[keyof typeof AppNotificationDeliveryStatus]
+
+
 export const ParentDeliveryChannel: {
   EMAIL: 'EMAIL',
   SMS: 'SMS',
@@ -1368,6 +1395,14 @@ export type AppNotificationType = $Enums.AppNotificationType
 
 export const AppNotificationType: typeof $Enums.AppNotificationType
 
+export type AppNotificationDeliveryChannel = $Enums.AppNotificationDeliveryChannel
+
+export const AppNotificationDeliveryChannel: typeof $Enums.AppNotificationDeliveryChannel
+
+export type AppNotificationDeliveryStatus = $Enums.AppNotificationDeliveryStatus
+
+export const AppNotificationDeliveryStatus: typeof $Enums.AppNotificationDeliveryStatus
+
 export type ParentDeliveryChannel = $Enums.ParentDeliveryChannel
 
 export const ParentDeliveryChannel: typeof $Enums.ParentDeliveryChannel
@@ -1774,6 +1809,16 @@ export class PrismaClient<
     * ```
     */
   get appNotification(): Prisma.AppNotificationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.appNotificationDelivery`: Exposes CRUD operations for the **AppNotificationDelivery** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AppNotificationDeliveries
+    * const appNotificationDeliveries = await prisma.appNotificationDelivery.findMany()
+    * ```
+    */
+  get appNotificationDelivery(): Prisma.AppNotificationDeliveryDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.parentNotification`: Exposes CRUD operations for the **ParentNotification** model.
@@ -2759,6 +2804,7 @@ export namespace Prisma {
     TeacherAccountabilityAuditLog: 'TeacherAccountabilityAuditLog',
     ParentNotificationPreference: 'ParentNotificationPreference',
     AppNotification: 'AppNotification',
+    AppNotificationDelivery: 'AppNotificationDelivery',
     ParentNotification: 'ParentNotification',
     ParentNotificationDeliveryLog: 'ParentNotificationDeliveryLog',
     ParentTeacherContactRequest: 'ParentTeacherContactRequest',
@@ -2827,7 +2873,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "school" | "admin" | "bursar" | "student" | "teacher" | "parent" | "parentStudentRelationship" | "schoolNotificationSetting" | "schoolCommunicationPolicy" | "schoolCommunicationRoute" | "schoolPeriodTemplate" | "timetablePublication" | "publishedTimetableLesson" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "appNotification" | "parentNotification" | "parentNotificationDeliveryLog" | "parentTeacherContactRequest" | "parentTeacherContactMessage" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentCorrectionRequest" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "teacherInvite" | "parentInvite" | "parentInviteStudent" | "parentInviteAuditLog" | "bursarInvite" | "bursarInviteAuditLog" | "parentAccessAuditLog" | "teacherInviteAuditLog" | "onboardingAuditLog"
+      modelProps: "school" | "admin" | "bursar" | "student" | "teacher" | "parent" | "parentStudentRelationship" | "schoolNotificationSetting" | "schoolCommunicationPolicy" | "schoolCommunicationRoute" | "schoolPeriodTemplate" | "timetablePublication" | "publishedTimetableLesson" | "teacherAccountabilitySetting" | "teacherObligation" | "teacherReminder" | "teacherEscalation" | "teacherCorrectionRequest" | "teacherAccountabilityAuditLog" | "parentNotificationPreference" | "appNotification" | "appNotificationDelivery" | "parentNotification" | "parentNotificationDeliveryLog" | "parentTeacherContactRequest" | "parentTeacherContactMessage" | "parentActivityEvent" | "grade" | "class" | "subject" | "lesson" | "exam" | "assignment" | "homeworkSubmission" | "result" | "attendance" | "attendanceAuditLog" | "event" | "announcement" | "cAConfig" | "cABucket" | "cAActivity" | "cAActivityScore" | "cAAuditLog" | "continuousAssessment" | "reportCardPublication" | "examEntryWindow" | "syllabus" | "syllabusTopic" | "syllabusTopicProgress" | "feeStructure" | "feeItem" | "studentBill" | "billLineItem" | "payment" | "paymentCorrectionRequest" | "paymentReversal" | "discount" | "receiptCounter" | "financeAuditLog" | "financeQuery" | "financeJob" | "paymentWebhookEvent" | "rateLimitBucket" | "waitlistEntry" | "schoolInvite" | "teacherInvite" | "parentInvite" | "parentInviteStudent" | "parentInviteAuditLog" | "bursarInvite" | "bursarInviteAuditLog" | "parentAccessAuditLog" | "teacherInviteAuditLog" | "onboardingAuditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -4382,6 +4428,80 @@ export namespace Prisma {
           count: {
             args: Prisma.AppNotificationCountArgs<ExtArgs>
             result: $Utils.Optional<AppNotificationCountAggregateOutputType> | number
+          }
+        }
+      }
+      AppNotificationDelivery: {
+        payload: Prisma.$AppNotificationDeliveryPayload<ExtArgs>
+        fields: Prisma.AppNotificationDeliveryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AppNotificationDeliveryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppNotificationDeliveryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AppNotificationDeliveryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppNotificationDeliveryPayload>
+          }
+          findFirst: {
+            args: Prisma.AppNotificationDeliveryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppNotificationDeliveryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AppNotificationDeliveryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppNotificationDeliveryPayload>
+          }
+          findMany: {
+            args: Prisma.AppNotificationDeliveryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppNotificationDeliveryPayload>[]
+          }
+          create: {
+            args: Prisma.AppNotificationDeliveryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppNotificationDeliveryPayload>
+          }
+          createMany: {
+            args: Prisma.AppNotificationDeliveryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AppNotificationDeliveryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppNotificationDeliveryPayload>[]
+          }
+          delete: {
+            args: Prisma.AppNotificationDeliveryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppNotificationDeliveryPayload>
+          }
+          update: {
+            args: Prisma.AppNotificationDeliveryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppNotificationDeliveryPayload>
+          }
+          deleteMany: {
+            args: Prisma.AppNotificationDeliveryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AppNotificationDeliveryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AppNotificationDeliveryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppNotificationDeliveryPayload>[]
+          }
+          upsert: {
+            args: Prisma.AppNotificationDeliveryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppNotificationDeliveryPayload>
+          }
+          aggregate: {
+            args: Prisma.AppNotificationDeliveryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAppNotificationDelivery>
+          }
+          groupBy: {
+            args: Prisma.AppNotificationDeliveryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AppNotificationDeliveryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AppNotificationDeliveryCountArgs<ExtArgs>
+            result: $Utils.Optional<AppNotificationDeliveryCountAggregateOutputType> | number
           }
         }
       }
@@ -8436,6 +8556,7 @@ export namespace Prisma {
     teacherAccountabilityAuditLog?: TeacherAccountabilityAuditLogOmit
     parentNotificationPreference?: ParentNotificationPreferenceOmit
     appNotification?: AppNotificationOmit
+    appNotificationDelivery?: AppNotificationDeliveryOmit
     parentNotification?: ParentNotificationOmit
     parentNotificationDeliveryLog?: ParentNotificationDeliveryLogOmit
     parentTeacherContactRequest?: ParentTeacherContactRequestOmit
@@ -8621,6 +8742,7 @@ export namespace Prisma {
     parentInviteAuditLogs: number
     parentAccessAuditLogs: number
     appNotifications: number
+    appNotificationDeliveries: number
     parentNotifications: number
     parentActivityEvents: number
     communicationRoutes: number
@@ -8689,6 +8811,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: boolean | SchoolCountOutputTypeCountParentInviteAuditLogsArgs
     parentAccessAuditLogs?: boolean | SchoolCountOutputTypeCountParentAccessAuditLogsArgs
     appNotifications?: boolean | SchoolCountOutputTypeCountAppNotificationsArgs
+    appNotificationDeliveries?: boolean | SchoolCountOutputTypeCountAppNotificationDeliveriesArgs
     parentNotifications?: boolean | SchoolCountOutputTypeCountParentNotificationsArgs
     parentActivityEvents?: boolean | SchoolCountOutputTypeCountParentActivityEventsArgs
     communicationRoutes?: boolean | SchoolCountOutputTypeCountCommunicationRoutesArgs
@@ -9077,6 +9200,13 @@ export namespace Prisma {
    */
   export type SchoolCountOutputTypeCountAppNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AppNotificationWhereInput
+  }
+
+  /**
+   * SchoolCountOutputType without action
+   */
+  export type SchoolCountOutputTypeCountAppNotificationDeliveriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AppNotificationDeliveryWhereInput
   }
 
   /**
@@ -9794,6 +9924,37 @@ export namespace Prisma {
    */
   export type TeacherObligationCountOutputTypeCountEscalationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TeacherEscalationWhereInput
+  }
+
+
+  /**
+   * Count Type AppNotificationCountOutputType
+   */
+
+  export type AppNotificationCountOutputType = {
+    deliveries: number
+  }
+
+  export type AppNotificationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    deliveries?: boolean | AppNotificationCountOutputTypeCountDeliveriesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * AppNotificationCountOutputType without action
+   */
+  export type AppNotificationCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppNotificationCountOutputType
+     */
+    select?: AppNotificationCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * AppNotificationCountOutputType without action
+   */
+  export type AppNotificationCountOutputTypeCountDeliveriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AppNotificationDeliveryWhereInput
   }
 
 
@@ -11012,6 +11173,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: boolean | School$parentInviteAuditLogsArgs<ExtArgs>
     parentAccessAuditLogs?: boolean | School$parentAccessAuditLogsArgs<ExtArgs>
     appNotifications?: boolean | School$appNotificationsArgs<ExtArgs>
+    appNotificationDeliveries?: boolean | School$appNotificationDeliveriesArgs<ExtArgs>
     parentNotifications?: boolean | School$parentNotificationsArgs<ExtArgs>
     parentActivityEvents?: boolean | School$parentActivityEventsArgs<ExtArgs>
     notificationSettings?: boolean | School$notificationSettingsArgs<ExtArgs>
@@ -11145,6 +11307,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: boolean | School$parentInviteAuditLogsArgs<ExtArgs>
     parentAccessAuditLogs?: boolean | School$parentAccessAuditLogsArgs<ExtArgs>
     appNotifications?: boolean | School$appNotificationsArgs<ExtArgs>
+    appNotificationDeliveries?: boolean | School$appNotificationDeliveriesArgs<ExtArgs>
     parentNotifications?: boolean | School$parentNotificationsArgs<ExtArgs>
     parentActivityEvents?: boolean | School$parentActivityEventsArgs<ExtArgs>
     notificationSettings?: boolean | School$notificationSettingsArgs<ExtArgs>
@@ -11221,6 +11384,7 @@ export namespace Prisma {
       parentInviteAuditLogs: Prisma.$ParentInviteAuditLogPayload<ExtArgs>[]
       parentAccessAuditLogs: Prisma.$ParentAccessAuditLogPayload<ExtArgs>[]
       appNotifications: Prisma.$AppNotificationPayload<ExtArgs>[]
+      appNotificationDeliveries: Prisma.$AppNotificationDeliveryPayload<ExtArgs>[]
       parentNotifications: Prisma.$ParentNotificationPayload<ExtArgs>[]
       parentActivityEvents: Prisma.$ParentActivityEventPayload<ExtArgs>[]
       notificationSettings: Prisma.$SchoolNotificationSettingPayload<ExtArgs> | null
@@ -11702,6 +11866,7 @@ export namespace Prisma {
     parentInviteAuditLogs<T extends School$parentInviteAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$parentInviteAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentInviteAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentAccessAuditLogs<T extends School$parentAccessAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, School$parentAccessAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentAccessAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     appNotifications<T extends School$appNotificationsArgs<ExtArgs> = {}>(args?: Subset<T, School$appNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    appNotificationDeliveries<T extends School$appNotificationDeliveriesArgs<ExtArgs> = {}>(args?: Subset<T, School$appNotificationDeliveriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppNotificationDeliveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentNotifications<T extends School$parentNotificationsArgs<ExtArgs> = {}>(args?: Subset<T, School$parentNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parentActivityEvents<T extends School$parentActivityEventsArgs<ExtArgs> = {}>(args?: Subset<T, School$parentActivityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentActivityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notificationSettings<T extends School$notificationSettingsArgs<ExtArgs> = {}>(args?: Subset<T, School$notificationSettingsArgs<ExtArgs>>): Prisma__SchoolNotificationSettingClient<$Result.GetResult<Prisma.$SchoolNotificationSettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -13402,6 +13567,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: AppNotificationScalarFieldEnum | AppNotificationScalarFieldEnum[]
+  }
+
+  /**
+   * School.appNotificationDeliveries
+   */
+  export type School$appNotificationDeliveriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppNotificationDelivery
+     */
+    select?: AppNotificationDeliverySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppNotificationDelivery
+     */
+    omit?: AppNotificationDeliveryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AppNotificationDeliveryInclude<ExtArgs> | null
+    where?: AppNotificationDeliveryWhereInput
+    orderBy?: AppNotificationDeliveryOrderByWithRelationInput | AppNotificationDeliveryOrderByWithRelationInput[]
+    cursor?: AppNotificationDeliveryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AppNotificationDeliveryScalarFieldEnum | AppNotificationDeliveryScalarFieldEnum[]
   }
 
   /**
@@ -38323,6 +38512,8 @@ export namespace Prisma {
     updatedAt?: boolean
     schoolId?: boolean
     school?: boolean | SchoolDefaultArgs<ExtArgs>
+    deliveries?: boolean | AppNotification$deliveriesArgs<ExtArgs>
+    _count?: boolean | AppNotificationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["appNotification"]>
 
   export type AppNotificationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -38393,6 +38584,8 @@ export namespace Prisma {
   export type AppNotificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "recipientType" | "recipientId" | "type" | "category" | "priority" | "title" | "body" | "href" | "payload" | "sourceModel" | "sourceId" | "idempotencyKey" | "readAt" | "expiresAt" | "createdAt" | "updatedAt" | "schoolId", ExtArgs["result"]["appNotification"]>
   export type AppNotificationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
+    deliveries?: boolean | AppNotification$deliveriesArgs<ExtArgs>
+    _count?: boolean | AppNotificationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type AppNotificationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
@@ -38405,6 +38598,7 @@ export namespace Prisma {
     name: "AppNotification"
     objects: {
       school: Prisma.$SchoolPayload<ExtArgs>
+      deliveries: Prisma.$AppNotificationDeliveryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -38820,6 +39014,7 @@ export namespace Prisma {
   export interface Prisma__AppNotificationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    deliveries<T extends AppNotification$deliveriesArgs<ExtArgs> = {}>(args?: Subset<T, AppNotification$deliveriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppNotificationDeliveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -39268,6 +39463,30 @@ export namespace Prisma {
   }
 
   /**
+   * AppNotification.deliveries
+   */
+  export type AppNotification$deliveriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppNotificationDelivery
+     */
+    select?: AppNotificationDeliverySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppNotificationDelivery
+     */
+    omit?: AppNotificationDeliveryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AppNotificationDeliveryInclude<ExtArgs> | null
+    where?: AppNotificationDeliveryWhereInput
+    orderBy?: AppNotificationDeliveryOrderByWithRelationInput | AppNotificationDeliveryOrderByWithRelationInput[]
+    cursor?: AppNotificationDeliveryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AppNotificationDeliveryScalarFieldEnum | AppNotificationDeliveryScalarFieldEnum[]
+  }
+
+  /**
    * AppNotification without action
    */
   export type AppNotificationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -39283,6 +39502,1254 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: AppNotificationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AppNotificationDelivery
+   */
+
+  export type AggregateAppNotificationDelivery = {
+    _count: AppNotificationDeliveryCountAggregateOutputType | null
+    _avg: AppNotificationDeliveryAvgAggregateOutputType | null
+    _sum: AppNotificationDeliverySumAggregateOutputType | null
+    _min: AppNotificationDeliveryMinAggregateOutputType | null
+    _max: AppNotificationDeliveryMaxAggregateOutputType | null
+  }
+
+  export type AppNotificationDeliveryAvgAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type AppNotificationDeliverySumAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type AppNotificationDeliveryMinAggregateOutputType = {
+    id: string | null
+    channel: $Enums.AppNotificationDeliveryChannel | null
+    status: $Enums.AppNotificationDeliveryStatus | null
+    provider: string | null
+    destination: string | null
+    attempts: number | null
+    lastError: string | null
+    providerMessageId: string | null
+    sentAt: Date | null
+    deliveredAt: Date | null
+    failedAt: Date | null
+    nextAttemptAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+    notificationId: string | null
+  }
+
+  export type AppNotificationDeliveryMaxAggregateOutputType = {
+    id: string | null
+    channel: $Enums.AppNotificationDeliveryChannel | null
+    status: $Enums.AppNotificationDeliveryStatus | null
+    provider: string | null
+    destination: string | null
+    attempts: number | null
+    lastError: string | null
+    providerMessageId: string | null
+    sentAt: Date | null
+    deliveredAt: Date | null
+    failedAt: Date | null
+    nextAttemptAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    schoolId: string | null
+    notificationId: string | null
+  }
+
+  export type AppNotificationDeliveryCountAggregateOutputType = {
+    id: number
+    channel: number
+    status: number
+    provider: number
+    destination: number
+    attempts: number
+    lastError: number
+    providerMessageId: number
+    sentAt: number
+    deliveredAt: number
+    failedAt: number
+    nextAttemptAt: number
+    createdAt: number
+    updatedAt: number
+    schoolId: number
+    notificationId: number
+    _all: number
+  }
+
+
+  export type AppNotificationDeliveryAvgAggregateInputType = {
+    attempts?: true
+  }
+
+  export type AppNotificationDeliverySumAggregateInputType = {
+    attempts?: true
+  }
+
+  export type AppNotificationDeliveryMinAggregateInputType = {
+    id?: true
+    channel?: true
+    status?: true
+    provider?: true
+    destination?: true
+    attempts?: true
+    lastError?: true
+    providerMessageId?: true
+    sentAt?: true
+    deliveredAt?: true
+    failedAt?: true
+    nextAttemptAt?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    notificationId?: true
+  }
+
+  export type AppNotificationDeliveryMaxAggregateInputType = {
+    id?: true
+    channel?: true
+    status?: true
+    provider?: true
+    destination?: true
+    attempts?: true
+    lastError?: true
+    providerMessageId?: true
+    sentAt?: true
+    deliveredAt?: true
+    failedAt?: true
+    nextAttemptAt?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    notificationId?: true
+  }
+
+  export type AppNotificationDeliveryCountAggregateInputType = {
+    id?: true
+    channel?: true
+    status?: true
+    provider?: true
+    destination?: true
+    attempts?: true
+    lastError?: true
+    providerMessageId?: true
+    sentAt?: true
+    deliveredAt?: true
+    failedAt?: true
+    nextAttemptAt?: true
+    createdAt?: true
+    updatedAt?: true
+    schoolId?: true
+    notificationId?: true
+    _all?: true
+  }
+
+  export type AppNotificationDeliveryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AppNotificationDelivery to aggregate.
+     */
+    where?: AppNotificationDeliveryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppNotificationDeliveries to fetch.
+     */
+    orderBy?: AppNotificationDeliveryOrderByWithRelationInput | AppNotificationDeliveryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AppNotificationDeliveryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppNotificationDeliveries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppNotificationDeliveries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AppNotificationDeliveries
+    **/
+    _count?: true | AppNotificationDeliveryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AppNotificationDeliveryAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AppNotificationDeliverySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AppNotificationDeliveryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AppNotificationDeliveryMaxAggregateInputType
+  }
+
+  export type GetAppNotificationDeliveryAggregateType<T extends AppNotificationDeliveryAggregateArgs> = {
+        [P in keyof T & keyof AggregateAppNotificationDelivery]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAppNotificationDelivery[P]>
+      : GetScalarType<T[P], AggregateAppNotificationDelivery[P]>
+  }
+
+
+
+
+  export type AppNotificationDeliveryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AppNotificationDeliveryWhereInput
+    orderBy?: AppNotificationDeliveryOrderByWithAggregationInput | AppNotificationDeliveryOrderByWithAggregationInput[]
+    by: AppNotificationDeliveryScalarFieldEnum[] | AppNotificationDeliveryScalarFieldEnum
+    having?: AppNotificationDeliveryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AppNotificationDeliveryCountAggregateInputType | true
+    _avg?: AppNotificationDeliveryAvgAggregateInputType
+    _sum?: AppNotificationDeliverySumAggregateInputType
+    _min?: AppNotificationDeliveryMinAggregateInputType
+    _max?: AppNotificationDeliveryMaxAggregateInputType
+  }
+
+  export type AppNotificationDeliveryGroupByOutputType = {
+    id: string
+    channel: $Enums.AppNotificationDeliveryChannel
+    status: $Enums.AppNotificationDeliveryStatus
+    provider: string | null
+    destination: string
+    attempts: number
+    lastError: string | null
+    providerMessageId: string | null
+    sentAt: Date | null
+    deliveredAt: Date | null
+    failedAt: Date | null
+    nextAttemptAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    schoolId: string
+    notificationId: string
+    _count: AppNotificationDeliveryCountAggregateOutputType | null
+    _avg: AppNotificationDeliveryAvgAggregateOutputType | null
+    _sum: AppNotificationDeliverySumAggregateOutputType | null
+    _min: AppNotificationDeliveryMinAggregateOutputType | null
+    _max: AppNotificationDeliveryMaxAggregateOutputType | null
+  }
+
+  type GetAppNotificationDeliveryGroupByPayload<T extends AppNotificationDeliveryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AppNotificationDeliveryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AppNotificationDeliveryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AppNotificationDeliveryGroupByOutputType[P]>
+            : GetScalarType<T[P], AppNotificationDeliveryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AppNotificationDeliverySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    channel?: boolean
+    status?: boolean
+    provider?: boolean
+    destination?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    providerMessageId?: boolean
+    sentAt?: boolean
+    deliveredAt?: boolean
+    failedAt?: boolean
+    nextAttemptAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    notificationId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    notification?: boolean | AppNotificationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["appNotificationDelivery"]>
+
+  export type AppNotificationDeliverySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    channel?: boolean
+    status?: boolean
+    provider?: boolean
+    destination?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    providerMessageId?: boolean
+    sentAt?: boolean
+    deliveredAt?: boolean
+    failedAt?: boolean
+    nextAttemptAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    notificationId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    notification?: boolean | AppNotificationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["appNotificationDelivery"]>
+
+  export type AppNotificationDeliverySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    channel?: boolean
+    status?: boolean
+    provider?: boolean
+    destination?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    providerMessageId?: boolean
+    sentAt?: boolean
+    deliveredAt?: boolean
+    failedAt?: boolean
+    nextAttemptAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    notificationId?: boolean
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    notification?: boolean | AppNotificationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["appNotificationDelivery"]>
+
+  export type AppNotificationDeliverySelectScalar = {
+    id?: boolean
+    channel?: boolean
+    status?: boolean
+    provider?: boolean
+    destination?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    providerMessageId?: boolean
+    sentAt?: boolean
+    deliveredAt?: boolean
+    failedAt?: boolean
+    nextAttemptAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    schoolId?: boolean
+    notificationId?: boolean
+  }
+
+  export type AppNotificationDeliveryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "channel" | "status" | "provider" | "destination" | "attempts" | "lastError" | "providerMessageId" | "sentAt" | "deliveredAt" | "failedAt" | "nextAttemptAt" | "createdAt" | "updatedAt" | "schoolId" | "notificationId", ExtArgs["result"]["appNotificationDelivery"]>
+  export type AppNotificationDeliveryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    notification?: boolean | AppNotificationDefaultArgs<ExtArgs>
+  }
+  export type AppNotificationDeliveryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    notification?: boolean | AppNotificationDefaultArgs<ExtArgs>
+  }
+  export type AppNotificationDeliveryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    school?: boolean | SchoolDefaultArgs<ExtArgs>
+    notification?: boolean | AppNotificationDefaultArgs<ExtArgs>
+  }
+
+  export type $AppNotificationDeliveryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AppNotificationDelivery"
+    objects: {
+      school: Prisma.$SchoolPayload<ExtArgs>
+      notification: Prisma.$AppNotificationPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      channel: $Enums.AppNotificationDeliveryChannel
+      status: $Enums.AppNotificationDeliveryStatus
+      provider: string | null
+      destination: string
+      attempts: number
+      lastError: string | null
+      providerMessageId: string | null
+      sentAt: Date | null
+      deliveredAt: Date | null
+      failedAt: Date | null
+      nextAttemptAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+      schoolId: string
+      notificationId: string
+    }, ExtArgs["result"]["appNotificationDelivery"]>
+    composites: {}
+  }
+
+  type AppNotificationDeliveryGetPayload<S extends boolean | null | undefined | AppNotificationDeliveryDefaultArgs> = $Result.GetResult<Prisma.$AppNotificationDeliveryPayload, S>
+
+  type AppNotificationDeliveryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AppNotificationDeliveryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AppNotificationDeliveryCountAggregateInputType | true
+    }
+
+  export interface AppNotificationDeliveryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AppNotificationDelivery'], meta: { name: 'AppNotificationDelivery' } }
+    /**
+     * Find zero or one AppNotificationDelivery that matches the filter.
+     * @param {AppNotificationDeliveryFindUniqueArgs} args - Arguments to find a AppNotificationDelivery
+     * @example
+     * // Get one AppNotificationDelivery
+     * const appNotificationDelivery = await prisma.appNotificationDelivery.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AppNotificationDeliveryFindUniqueArgs>(args: SelectSubset<T, AppNotificationDeliveryFindUniqueArgs<ExtArgs>>): Prisma__AppNotificationDeliveryClient<$Result.GetResult<Prisma.$AppNotificationDeliveryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AppNotificationDelivery that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AppNotificationDeliveryFindUniqueOrThrowArgs} args - Arguments to find a AppNotificationDelivery
+     * @example
+     * // Get one AppNotificationDelivery
+     * const appNotificationDelivery = await prisma.appNotificationDelivery.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AppNotificationDeliveryFindUniqueOrThrowArgs>(args: SelectSubset<T, AppNotificationDeliveryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AppNotificationDeliveryClient<$Result.GetResult<Prisma.$AppNotificationDeliveryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AppNotificationDelivery that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppNotificationDeliveryFindFirstArgs} args - Arguments to find a AppNotificationDelivery
+     * @example
+     * // Get one AppNotificationDelivery
+     * const appNotificationDelivery = await prisma.appNotificationDelivery.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AppNotificationDeliveryFindFirstArgs>(args?: SelectSubset<T, AppNotificationDeliveryFindFirstArgs<ExtArgs>>): Prisma__AppNotificationDeliveryClient<$Result.GetResult<Prisma.$AppNotificationDeliveryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AppNotificationDelivery that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppNotificationDeliveryFindFirstOrThrowArgs} args - Arguments to find a AppNotificationDelivery
+     * @example
+     * // Get one AppNotificationDelivery
+     * const appNotificationDelivery = await prisma.appNotificationDelivery.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AppNotificationDeliveryFindFirstOrThrowArgs>(args?: SelectSubset<T, AppNotificationDeliveryFindFirstOrThrowArgs<ExtArgs>>): Prisma__AppNotificationDeliveryClient<$Result.GetResult<Prisma.$AppNotificationDeliveryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AppNotificationDeliveries that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppNotificationDeliveryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AppNotificationDeliveries
+     * const appNotificationDeliveries = await prisma.appNotificationDelivery.findMany()
+     * 
+     * // Get first 10 AppNotificationDeliveries
+     * const appNotificationDeliveries = await prisma.appNotificationDelivery.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const appNotificationDeliveryWithIdOnly = await prisma.appNotificationDelivery.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AppNotificationDeliveryFindManyArgs>(args?: SelectSubset<T, AppNotificationDeliveryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppNotificationDeliveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AppNotificationDelivery.
+     * @param {AppNotificationDeliveryCreateArgs} args - Arguments to create a AppNotificationDelivery.
+     * @example
+     * // Create one AppNotificationDelivery
+     * const AppNotificationDelivery = await prisma.appNotificationDelivery.create({
+     *   data: {
+     *     // ... data to create a AppNotificationDelivery
+     *   }
+     * })
+     * 
+     */
+    create<T extends AppNotificationDeliveryCreateArgs>(args: SelectSubset<T, AppNotificationDeliveryCreateArgs<ExtArgs>>): Prisma__AppNotificationDeliveryClient<$Result.GetResult<Prisma.$AppNotificationDeliveryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AppNotificationDeliveries.
+     * @param {AppNotificationDeliveryCreateManyArgs} args - Arguments to create many AppNotificationDeliveries.
+     * @example
+     * // Create many AppNotificationDeliveries
+     * const appNotificationDelivery = await prisma.appNotificationDelivery.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AppNotificationDeliveryCreateManyArgs>(args?: SelectSubset<T, AppNotificationDeliveryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AppNotificationDeliveries and returns the data saved in the database.
+     * @param {AppNotificationDeliveryCreateManyAndReturnArgs} args - Arguments to create many AppNotificationDeliveries.
+     * @example
+     * // Create many AppNotificationDeliveries
+     * const appNotificationDelivery = await prisma.appNotificationDelivery.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AppNotificationDeliveries and only return the `id`
+     * const appNotificationDeliveryWithIdOnly = await prisma.appNotificationDelivery.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AppNotificationDeliveryCreateManyAndReturnArgs>(args?: SelectSubset<T, AppNotificationDeliveryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppNotificationDeliveryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AppNotificationDelivery.
+     * @param {AppNotificationDeliveryDeleteArgs} args - Arguments to delete one AppNotificationDelivery.
+     * @example
+     * // Delete one AppNotificationDelivery
+     * const AppNotificationDelivery = await prisma.appNotificationDelivery.delete({
+     *   where: {
+     *     // ... filter to delete one AppNotificationDelivery
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AppNotificationDeliveryDeleteArgs>(args: SelectSubset<T, AppNotificationDeliveryDeleteArgs<ExtArgs>>): Prisma__AppNotificationDeliveryClient<$Result.GetResult<Prisma.$AppNotificationDeliveryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AppNotificationDelivery.
+     * @param {AppNotificationDeliveryUpdateArgs} args - Arguments to update one AppNotificationDelivery.
+     * @example
+     * // Update one AppNotificationDelivery
+     * const appNotificationDelivery = await prisma.appNotificationDelivery.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AppNotificationDeliveryUpdateArgs>(args: SelectSubset<T, AppNotificationDeliveryUpdateArgs<ExtArgs>>): Prisma__AppNotificationDeliveryClient<$Result.GetResult<Prisma.$AppNotificationDeliveryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AppNotificationDeliveries.
+     * @param {AppNotificationDeliveryDeleteManyArgs} args - Arguments to filter AppNotificationDeliveries to delete.
+     * @example
+     * // Delete a few AppNotificationDeliveries
+     * const { count } = await prisma.appNotificationDelivery.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AppNotificationDeliveryDeleteManyArgs>(args?: SelectSubset<T, AppNotificationDeliveryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AppNotificationDeliveries.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppNotificationDeliveryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AppNotificationDeliveries
+     * const appNotificationDelivery = await prisma.appNotificationDelivery.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AppNotificationDeliveryUpdateManyArgs>(args: SelectSubset<T, AppNotificationDeliveryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AppNotificationDeliveries and returns the data updated in the database.
+     * @param {AppNotificationDeliveryUpdateManyAndReturnArgs} args - Arguments to update many AppNotificationDeliveries.
+     * @example
+     * // Update many AppNotificationDeliveries
+     * const appNotificationDelivery = await prisma.appNotificationDelivery.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AppNotificationDeliveries and only return the `id`
+     * const appNotificationDeliveryWithIdOnly = await prisma.appNotificationDelivery.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AppNotificationDeliveryUpdateManyAndReturnArgs>(args: SelectSubset<T, AppNotificationDeliveryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppNotificationDeliveryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AppNotificationDelivery.
+     * @param {AppNotificationDeliveryUpsertArgs} args - Arguments to update or create a AppNotificationDelivery.
+     * @example
+     * // Update or create a AppNotificationDelivery
+     * const appNotificationDelivery = await prisma.appNotificationDelivery.upsert({
+     *   create: {
+     *     // ... data to create a AppNotificationDelivery
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AppNotificationDelivery we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AppNotificationDeliveryUpsertArgs>(args: SelectSubset<T, AppNotificationDeliveryUpsertArgs<ExtArgs>>): Prisma__AppNotificationDeliveryClient<$Result.GetResult<Prisma.$AppNotificationDeliveryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AppNotificationDeliveries.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppNotificationDeliveryCountArgs} args - Arguments to filter AppNotificationDeliveries to count.
+     * @example
+     * // Count the number of AppNotificationDeliveries
+     * const count = await prisma.appNotificationDelivery.count({
+     *   where: {
+     *     // ... the filter for the AppNotificationDeliveries we want to count
+     *   }
+     * })
+    **/
+    count<T extends AppNotificationDeliveryCountArgs>(
+      args?: Subset<T, AppNotificationDeliveryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AppNotificationDeliveryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AppNotificationDelivery.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppNotificationDeliveryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AppNotificationDeliveryAggregateArgs>(args: Subset<T, AppNotificationDeliveryAggregateArgs>): Prisma.PrismaPromise<GetAppNotificationDeliveryAggregateType<T>>
+
+    /**
+     * Group by AppNotificationDelivery.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppNotificationDeliveryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AppNotificationDeliveryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AppNotificationDeliveryGroupByArgs['orderBy'] }
+        : { orderBy?: AppNotificationDeliveryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AppNotificationDeliveryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAppNotificationDeliveryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AppNotificationDelivery model
+   */
+  readonly fields: AppNotificationDeliveryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AppNotificationDelivery.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AppNotificationDeliveryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    school<T extends SchoolDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDefaultArgs<ExtArgs>>): Prisma__SchoolClient<$Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    notification<T extends AppNotificationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AppNotificationDefaultArgs<ExtArgs>>): Prisma__AppNotificationClient<$Result.GetResult<Prisma.$AppNotificationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AppNotificationDelivery model
+   */
+  interface AppNotificationDeliveryFieldRefs {
+    readonly id: FieldRef<"AppNotificationDelivery", 'String'>
+    readonly channel: FieldRef<"AppNotificationDelivery", 'AppNotificationDeliveryChannel'>
+    readonly status: FieldRef<"AppNotificationDelivery", 'AppNotificationDeliveryStatus'>
+    readonly provider: FieldRef<"AppNotificationDelivery", 'String'>
+    readonly destination: FieldRef<"AppNotificationDelivery", 'String'>
+    readonly attempts: FieldRef<"AppNotificationDelivery", 'Int'>
+    readonly lastError: FieldRef<"AppNotificationDelivery", 'String'>
+    readonly providerMessageId: FieldRef<"AppNotificationDelivery", 'String'>
+    readonly sentAt: FieldRef<"AppNotificationDelivery", 'DateTime'>
+    readonly deliveredAt: FieldRef<"AppNotificationDelivery", 'DateTime'>
+    readonly failedAt: FieldRef<"AppNotificationDelivery", 'DateTime'>
+    readonly nextAttemptAt: FieldRef<"AppNotificationDelivery", 'DateTime'>
+    readonly createdAt: FieldRef<"AppNotificationDelivery", 'DateTime'>
+    readonly updatedAt: FieldRef<"AppNotificationDelivery", 'DateTime'>
+    readonly schoolId: FieldRef<"AppNotificationDelivery", 'String'>
+    readonly notificationId: FieldRef<"AppNotificationDelivery", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AppNotificationDelivery findUnique
+   */
+  export type AppNotificationDeliveryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppNotificationDelivery
+     */
+    select?: AppNotificationDeliverySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppNotificationDelivery
+     */
+    omit?: AppNotificationDeliveryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AppNotificationDeliveryInclude<ExtArgs> | null
+    /**
+     * Filter, which AppNotificationDelivery to fetch.
+     */
+    where: AppNotificationDeliveryWhereUniqueInput
+  }
+
+  /**
+   * AppNotificationDelivery findUniqueOrThrow
+   */
+  export type AppNotificationDeliveryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppNotificationDelivery
+     */
+    select?: AppNotificationDeliverySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppNotificationDelivery
+     */
+    omit?: AppNotificationDeliveryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AppNotificationDeliveryInclude<ExtArgs> | null
+    /**
+     * Filter, which AppNotificationDelivery to fetch.
+     */
+    where: AppNotificationDeliveryWhereUniqueInput
+  }
+
+  /**
+   * AppNotificationDelivery findFirst
+   */
+  export type AppNotificationDeliveryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppNotificationDelivery
+     */
+    select?: AppNotificationDeliverySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppNotificationDelivery
+     */
+    omit?: AppNotificationDeliveryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AppNotificationDeliveryInclude<ExtArgs> | null
+    /**
+     * Filter, which AppNotificationDelivery to fetch.
+     */
+    where?: AppNotificationDeliveryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppNotificationDeliveries to fetch.
+     */
+    orderBy?: AppNotificationDeliveryOrderByWithRelationInput | AppNotificationDeliveryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AppNotificationDeliveries.
+     */
+    cursor?: AppNotificationDeliveryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppNotificationDeliveries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppNotificationDeliveries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AppNotificationDeliveries.
+     */
+    distinct?: AppNotificationDeliveryScalarFieldEnum | AppNotificationDeliveryScalarFieldEnum[]
+  }
+
+  /**
+   * AppNotificationDelivery findFirstOrThrow
+   */
+  export type AppNotificationDeliveryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppNotificationDelivery
+     */
+    select?: AppNotificationDeliverySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppNotificationDelivery
+     */
+    omit?: AppNotificationDeliveryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AppNotificationDeliveryInclude<ExtArgs> | null
+    /**
+     * Filter, which AppNotificationDelivery to fetch.
+     */
+    where?: AppNotificationDeliveryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppNotificationDeliveries to fetch.
+     */
+    orderBy?: AppNotificationDeliveryOrderByWithRelationInput | AppNotificationDeliveryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AppNotificationDeliveries.
+     */
+    cursor?: AppNotificationDeliveryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppNotificationDeliveries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppNotificationDeliveries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AppNotificationDeliveries.
+     */
+    distinct?: AppNotificationDeliveryScalarFieldEnum | AppNotificationDeliveryScalarFieldEnum[]
+  }
+
+  /**
+   * AppNotificationDelivery findMany
+   */
+  export type AppNotificationDeliveryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppNotificationDelivery
+     */
+    select?: AppNotificationDeliverySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppNotificationDelivery
+     */
+    omit?: AppNotificationDeliveryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AppNotificationDeliveryInclude<ExtArgs> | null
+    /**
+     * Filter, which AppNotificationDeliveries to fetch.
+     */
+    where?: AppNotificationDeliveryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppNotificationDeliveries to fetch.
+     */
+    orderBy?: AppNotificationDeliveryOrderByWithRelationInput | AppNotificationDeliveryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AppNotificationDeliveries.
+     */
+    cursor?: AppNotificationDeliveryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppNotificationDeliveries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppNotificationDeliveries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AppNotificationDeliveries.
+     */
+    distinct?: AppNotificationDeliveryScalarFieldEnum | AppNotificationDeliveryScalarFieldEnum[]
+  }
+
+  /**
+   * AppNotificationDelivery create
+   */
+  export type AppNotificationDeliveryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppNotificationDelivery
+     */
+    select?: AppNotificationDeliverySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppNotificationDelivery
+     */
+    omit?: AppNotificationDeliveryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AppNotificationDeliveryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AppNotificationDelivery.
+     */
+    data: XOR<AppNotificationDeliveryCreateInput, AppNotificationDeliveryUncheckedCreateInput>
+  }
+
+  /**
+   * AppNotificationDelivery createMany
+   */
+  export type AppNotificationDeliveryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AppNotificationDeliveries.
+     */
+    data: AppNotificationDeliveryCreateManyInput | AppNotificationDeliveryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AppNotificationDelivery createManyAndReturn
+   */
+  export type AppNotificationDeliveryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppNotificationDelivery
+     */
+    select?: AppNotificationDeliverySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppNotificationDelivery
+     */
+    omit?: AppNotificationDeliveryOmit<ExtArgs> | null
+    /**
+     * The data used to create many AppNotificationDeliveries.
+     */
+    data: AppNotificationDeliveryCreateManyInput | AppNotificationDeliveryCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AppNotificationDeliveryIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AppNotificationDelivery update
+   */
+  export type AppNotificationDeliveryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppNotificationDelivery
+     */
+    select?: AppNotificationDeliverySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppNotificationDelivery
+     */
+    omit?: AppNotificationDeliveryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AppNotificationDeliveryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AppNotificationDelivery.
+     */
+    data: XOR<AppNotificationDeliveryUpdateInput, AppNotificationDeliveryUncheckedUpdateInput>
+    /**
+     * Choose, which AppNotificationDelivery to update.
+     */
+    where: AppNotificationDeliveryWhereUniqueInput
+  }
+
+  /**
+   * AppNotificationDelivery updateMany
+   */
+  export type AppNotificationDeliveryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AppNotificationDeliveries.
+     */
+    data: XOR<AppNotificationDeliveryUpdateManyMutationInput, AppNotificationDeliveryUncheckedUpdateManyInput>
+    /**
+     * Filter which AppNotificationDeliveries to update
+     */
+    where?: AppNotificationDeliveryWhereInput
+    /**
+     * Limit how many AppNotificationDeliveries to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AppNotificationDelivery updateManyAndReturn
+   */
+  export type AppNotificationDeliveryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppNotificationDelivery
+     */
+    select?: AppNotificationDeliverySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppNotificationDelivery
+     */
+    omit?: AppNotificationDeliveryOmit<ExtArgs> | null
+    /**
+     * The data used to update AppNotificationDeliveries.
+     */
+    data: XOR<AppNotificationDeliveryUpdateManyMutationInput, AppNotificationDeliveryUncheckedUpdateManyInput>
+    /**
+     * Filter which AppNotificationDeliveries to update
+     */
+    where?: AppNotificationDeliveryWhereInput
+    /**
+     * Limit how many AppNotificationDeliveries to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AppNotificationDeliveryIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AppNotificationDelivery upsert
+   */
+  export type AppNotificationDeliveryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppNotificationDelivery
+     */
+    select?: AppNotificationDeliverySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppNotificationDelivery
+     */
+    omit?: AppNotificationDeliveryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AppNotificationDeliveryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AppNotificationDelivery to update in case it exists.
+     */
+    where: AppNotificationDeliveryWhereUniqueInput
+    /**
+     * In case the AppNotificationDelivery found by the `where` argument doesn't exist, create a new AppNotificationDelivery with this data.
+     */
+    create: XOR<AppNotificationDeliveryCreateInput, AppNotificationDeliveryUncheckedCreateInput>
+    /**
+     * In case the AppNotificationDelivery was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AppNotificationDeliveryUpdateInput, AppNotificationDeliveryUncheckedUpdateInput>
+  }
+
+  /**
+   * AppNotificationDelivery delete
+   */
+  export type AppNotificationDeliveryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppNotificationDelivery
+     */
+    select?: AppNotificationDeliverySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppNotificationDelivery
+     */
+    omit?: AppNotificationDeliveryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AppNotificationDeliveryInclude<ExtArgs> | null
+    /**
+     * Filter which AppNotificationDelivery to delete.
+     */
+    where: AppNotificationDeliveryWhereUniqueInput
+  }
+
+  /**
+   * AppNotificationDelivery deleteMany
+   */
+  export type AppNotificationDeliveryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AppNotificationDeliveries to delete
+     */
+    where?: AppNotificationDeliveryWhereInput
+    /**
+     * Limit how many AppNotificationDeliveries to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AppNotificationDelivery without action
+   */
+  export type AppNotificationDeliveryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppNotificationDelivery
+     */
+    select?: AppNotificationDeliverySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppNotificationDelivery
+     */
+    omit?: AppNotificationDeliveryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AppNotificationDeliveryInclude<ExtArgs> | null
   }
 
 
@@ -104674,6 +106141,28 @@ export namespace Prisma {
   export type AppNotificationScalarFieldEnum = (typeof AppNotificationScalarFieldEnum)[keyof typeof AppNotificationScalarFieldEnum]
 
 
+  export const AppNotificationDeliveryScalarFieldEnum: {
+    id: 'id',
+    channel: 'channel',
+    status: 'status',
+    provider: 'provider',
+    destination: 'destination',
+    attempts: 'attempts',
+    lastError: 'lastError',
+    providerMessageId: 'providerMessageId',
+    sentAt: 'sentAt',
+    deliveredAt: 'deliveredAt',
+    failedAt: 'failedAt',
+    nextAttemptAt: 'nextAttemptAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    schoolId: 'schoolId',
+    notificationId: 'notificationId'
+  };
+
+  export type AppNotificationDeliveryScalarFieldEnum = (typeof AppNotificationDeliveryScalarFieldEnum)[keyof typeof AppNotificationDeliveryScalarFieldEnum]
+
+
   export const ParentNotificationScalarFieldEnum: {
     id: 'id',
     type: 'type',
@@ -106047,6 +107536,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'AppNotificationDeliveryChannel'
+   */
+  export type EnumAppNotificationDeliveryChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AppNotificationDeliveryChannel'>
+    
+
+
+  /**
+   * Reference to a field of type 'AppNotificationDeliveryChannel[]'
+   */
+  export type ListEnumAppNotificationDeliveryChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AppNotificationDeliveryChannel[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'AppNotificationDeliveryStatus'
+   */
+  export type EnumAppNotificationDeliveryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AppNotificationDeliveryStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'AppNotificationDeliveryStatus[]'
+   */
+  export type ListEnumAppNotificationDeliveryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AppNotificationDeliveryStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'ParentNotificationType'
    */
   export type EnumParentNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParentNotificationType'>
@@ -106780,6 +108297,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogListRelationFilter
     parentAccessAuditLogs?: ParentAccessAuditLogListRelationFilter
     appNotifications?: AppNotificationListRelationFilter
+    appNotificationDeliveries?: AppNotificationDeliveryListRelationFilter
     parentNotifications?: ParentNotificationListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
     notificationSettings?: XOR<SchoolNotificationSettingNullableScalarRelationFilter, SchoolNotificationSettingWhereInput> | null
@@ -106868,6 +108386,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogOrderByRelationAggregateInput
     parentAccessAuditLogs?: ParentAccessAuditLogOrderByRelationAggregateInput
     appNotifications?: AppNotificationOrderByRelationAggregateInput
+    appNotificationDeliveries?: AppNotificationDeliveryOrderByRelationAggregateInput
     parentNotifications?: ParentNotificationOrderByRelationAggregateInput
     parentActivityEvents?: ParentActivityEventOrderByRelationAggregateInput
     notificationSettings?: SchoolNotificationSettingOrderByWithRelationInput
@@ -106959,6 +108478,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogListRelationFilter
     parentAccessAuditLogs?: ParentAccessAuditLogListRelationFilter
     appNotifications?: AppNotificationListRelationFilter
+    appNotificationDeliveries?: AppNotificationDeliveryListRelationFilter
     parentNotifications?: ParentNotificationListRelationFilter
     parentActivityEvents?: ParentActivityEventListRelationFilter
     notificationSettings?: XOR<SchoolNotificationSettingNullableScalarRelationFilter, SchoolNotificationSettingWhereInput> | null
@@ -109164,6 +110684,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"AppNotification"> | Date | string
     schoolId?: StringFilter<"AppNotification"> | string
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    deliveries?: AppNotificationDeliveryListRelationFilter
   }
 
   export type AppNotificationOrderByWithRelationInput = {
@@ -109186,6 +110707,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     schoolId?: SortOrder
     school?: SchoolOrderByWithRelationInput
+    deliveries?: AppNotificationDeliveryOrderByRelationAggregateInput
   }
 
   export type AppNotificationWhereUniqueInput = Prisma.AtLeast<{
@@ -109212,6 +110734,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"AppNotification"> | Date | string
     schoolId?: StringFilter<"AppNotification"> | string
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    deliveries?: AppNotificationDeliveryListRelationFilter
   }, "id" | "schoolId_idempotencyKey">
 
   export type AppNotificationOrderByWithAggregationInput = {
@@ -109260,6 +110783,122 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"AppNotification"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"AppNotification"> | Date | string
     schoolId?: StringWithAggregatesFilter<"AppNotification"> | string
+  }
+
+  export type AppNotificationDeliveryWhereInput = {
+    AND?: AppNotificationDeliveryWhereInput | AppNotificationDeliveryWhereInput[]
+    OR?: AppNotificationDeliveryWhereInput[]
+    NOT?: AppNotificationDeliveryWhereInput | AppNotificationDeliveryWhereInput[]
+    id?: StringFilter<"AppNotificationDelivery"> | string
+    channel?: EnumAppNotificationDeliveryChannelFilter<"AppNotificationDelivery"> | $Enums.AppNotificationDeliveryChannel
+    status?: EnumAppNotificationDeliveryStatusFilter<"AppNotificationDelivery"> | $Enums.AppNotificationDeliveryStatus
+    provider?: StringNullableFilter<"AppNotificationDelivery"> | string | null
+    destination?: StringFilter<"AppNotificationDelivery"> | string
+    attempts?: IntFilter<"AppNotificationDelivery"> | number
+    lastError?: StringNullableFilter<"AppNotificationDelivery"> | string | null
+    providerMessageId?: StringNullableFilter<"AppNotificationDelivery"> | string | null
+    sentAt?: DateTimeNullableFilter<"AppNotificationDelivery"> | Date | string | null
+    deliveredAt?: DateTimeNullableFilter<"AppNotificationDelivery"> | Date | string | null
+    failedAt?: DateTimeNullableFilter<"AppNotificationDelivery"> | Date | string | null
+    nextAttemptAt?: DateTimeNullableFilter<"AppNotificationDelivery"> | Date | string | null
+    createdAt?: DateTimeFilter<"AppNotificationDelivery"> | Date | string
+    updatedAt?: DateTimeFilter<"AppNotificationDelivery"> | Date | string
+    schoolId?: StringFilter<"AppNotificationDelivery"> | string
+    notificationId?: StringFilter<"AppNotificationDelivery"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    notification?: XOR<AppNotificationScalarRelationFilter, AppNotificationWhereInput>
+  }
+
+  export type AppNotificationDeliveryOrderByWithRelationInput = {
+    id?: SortOrder
+    channel?: SortOrder
+    status?: SortOrder
+    provider?: SortOrderInput | SortOrder
+    destination?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrderInput | SortOrder
+    providerMessageId?: SortOrderInput | SortOrder
+    sentAt?: SortOrderInput | SortOrder
+    deliveredAt?: SortOrderInput | SortOrder
+    failedAt?: SortOrderInput | SortOrder
+    nextAttemptAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    notificationId?: SortOrder
+    school?: SchoolOrderByWithRelationInput
+    notification?: AppNotificationOrderByWithRelationInput
+  }
+
+  export type AppNotificationDeliveryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    notificationId_channel_destination?: AppNotificationDeliveryNotificationIdChannelDestinationCompoundUniqueInput
+    AND?: AppNotificationDeliveryWhereInput | AppNotificationDeliveryWhereInput[]
+    OR?: AppNotificationDeliveryWhereInput[]
+    NOT?: AppNotificationDeliveryWhereInput | AppNotificationDeliveryWhereInput[]
+    channel?: EnumAppNotificationDeliveryChannelFilter<"AppNotificationDelivery"> | $Enums.AppNotificationDeliveryChannel
+    status?: EnumAppNotificationDeliveryStatusFilter<"AppNotificationDelivery"> | $Enums.AppNotificationDeliveryStatus
+    provider?: StringNullableFilter<"AppNotificationDelivery"> | string | null
+    destination?: StringFilter<"AppNotificationDelivery"> | string
+    attempts?: IntFilter<"AppNotificationDelivery"> | number
+    lastError?: StringNullableFilter<"AppNotificationDelivery"> | string | null
+    providerMessageId?: StringNullableFilter<"AppNotificationDelivery"> | string | null
+    sentAt?: DateTimeNullableFilter<"AppNotificationDelivery"> | Date | string | null
+    deliveredAt?: DateTimeNullableFilter<"AppNotificationDelivery"> | Date | string | null
+    failedAt?: DateTimeNullableFilter<"AppNotificationDelivery"> | Date | string | null
+    nextAttemptAt?: DateTimeNullableFilter<"AppNotificationDelivery"> | Date | string | null
+    createdAt?: DateTimeFilter<"AppNotificationDelivery"> | Date | string
+    updatedAt?: DateTimeFilter<"AppNotificationDelivery"> | Date | string
+    schoolId?: StringFilter<"AppNotificationDelivery"> | string
+    notificationId?: StringFilter<"AppNotificationDelivery"> | string
+    school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
+    notification?: XOR<AppNotificationScalarRelationFilter, AppNotificationWhereInput>
+  }, "id" | "notificationId_channel_destination">
+
+  export type AppNotificationDeliveryOrderByWithAggregationInput = {
+    id?: SortOrder
+    channel?: SortOrder
+    status?: SortOrder
+    provider?: SortOrderInput | SortOrder
+    destination?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrderInput | SortOrder
+    providerMessageId?: SortOrderInput | SortOrder
+    sentAt?: SortOrderInput | SortOrder
+    deliveredAt?: SortOrderInput | SortOrder
+    failedAt?: SortOrderInput | SortOrder
+    nextAttemptAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    notificationId?: SortOrder
+    _count?: AppNotificationDeliveryCountOrderByAggregateInput
+    _avg?: AppNotificationDeliveryAvgOrderByAggregateInput
+    _max?: AppNotificationDeliveryMaxOrderByAggregateInput
+    _min?: AppNotificationDeliveryMinOrderByAggregateInput
+    _sum?: AppNotificationDeliverySumOrderByAggregateInput
+  }
+
+  export type AppNotificationDeliveryScalarWhereWithAggregatesInput = {
+    AND?: AppNotificationDeliveryScalarWhereWithAggregatesInput | AppNotificationDeliveryScalarWhereWithAggregatesInput[]
+    OR?: AppNotificationDeliveryScalarWhereWithAggregatesInput[]
+    NOT?: AppNotificationDeliveryScalarWhereWithAggregatesInput | AppNotificationDeliveryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AppNotificationDelivery"> | string
+    channel?: EnumAppNotificationDeliveryChannelWithAggregatesFilter<"AppNotificationDelivery"> | $Enums.AppNotificationDeliveryChannel
+    status?: EnumAppNotificationDeliveryStatusWithAggregatesFilter<"AppNotificationDelivery"> | $Enums.AppNotificationDeliveryStatus
+    provider?: StringNullableWithAggregatesFilter<"AppNotificationDelivery"> | string | null
+    destination?: StringWithAggregatesFilter<"AppNotificationDelivery"> | string
+    attempts?: IntWithAggregatesFilter<"AppNotificationDelivery"> | number
+    lastError?: StringNullableWithAggregatesFilter<"AppNotificationDelivery"> | string | null
+    providerMessageId?: StringNullableWithAggregatesFilter<"AppNotificationDelivery"> | string | null
+    sentAt?: DateTimeNullableWithAggregatesFilter<"AppNotificationDelivery"> | Date | string | null
+    deliveredAt?: DateTimeNullableWithAggregatesFilter<"AppNotificationDelivery"> | Date | string | null
+    failedAt?: DateTimeNullableWithAggregatesFilter<"AppNotificationDelivery"> | Date | string | null
+    nextAttemptAt?: DateTimeNullableWithAggregatesFilter<"AppNotificationDelivery"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"AppNotificationDelivery"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"AppNotificationDelivery"> | Date | string
+    schoolId?: StringWithAggregatesFilter<"AppNotificationDelivery"> | string
+    notificationId?: StringWithAggregatesFilter<"AppNotificationDelivery"> | string
   }
 
   export type ParentNotificationWhereInput = {
@@ -114433,6 +116072,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -114521,6 +116161,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -114609,6 +116250,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -114697,6 +116339,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -117218,6 +118861,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     school: SchoolCreateNestedOneWithoutAppNotificationsInput
+    deliveries?: AppNotificationDeliveryCreateNestedManyWithoutNotificationInput
   }
 
   export type AppNotificationUncheckedCreateInput = {
@@ -117239,6 +118883,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     schoolId: string
+    deliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutNotificationInput
   }
 
   export type AppNotificationUpdateInput = {
@@ -117260,6 +118905,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     school?: SchoolUpdateOneRequiredWithoutAppNotificationsNestedInput
+    deliveries?: AppNotificationDeliveryUpdateManyWithoutNotificationNestedInput
   }
 
   export type AppNotificationUncheckedUpdateInput = {
@@ -117281,6 +118927,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
+    deliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutNotificationNestedInput
   }
 
   export type AppNotificationCreateManyInput = {
@@ -117343,6 +118990,137 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type AppNotificationDeliveryCreateInput = {
+    id?: string
+    channel: $Enums.AppNotificationDeliveryChannel
+    status?: $Enums.AppNotificationDeliveryStatus
+    provider?: string | null
+    destination: string
+    attempts?: number
+    lastError?: string | null
+    providerMessageId?: string | null
+    sentAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    failedAt?: Date | string | null
+    nextAttemptAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutAppNotificationDeliveriesInput
+    notification: AppNotificationCreateNestedOneWithoutDeliveriesInput
+  }
+
+  export type AppNotificationDeliveryUncheckedCreateInput = {
+    id?: string
+    channel: $Enums.AppNotificationDeliveryChannel
+    status?: $Enums.AppNotificationDeliveryStatus
+    provider?: string | null
+    destination: string
+    attempts?: number
+    lastError?: string | null
+    providerMessageId?: string | null
+    sentAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    failedAt?: Date | string | null
+    nextAttemptAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    notificationId: string
+  }
+
+  export type AppNotificationDeliveryUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: EnumAppNotificationDeliveryChannelFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryChannel
+    status?: EnumAppNotificationDeliveryStatusFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryStatus
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    destination?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    providerMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutAppNotificationDeliveriesNestedInput
+    notification?: AppNotificationUpdateOneRequiredWithoutDeliveriesNestedInput
+  }
+
+  export type AppNotificationDeliveryUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: EnumAppNotificationDeliveryChannelFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryChannel
+    status?: EnumAppNotificationDeliveryStatusFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryStatus
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    destination?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    providerMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    notificationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type AppNotificationDeliveryCreateManyInput = {
+    id?: string
+    channel: $Enums.AppNotificationDeliveryChannel
+    status?: $Enums.AppNotificationDeliveryStatus
+    provider?: string | null
+    destination: string
+    attempts?: number
+    lastError?: string | null
+    providerMessageId?: string | null
+    sentAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    failedAt?: Date | string | null
+    nextAttemptAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+    notificationId: string
+  }
+
+  export type AppNotificationDeliveryUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: EnumAppNotificationDeliveryChannelFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryChannel
+    status?: EnumAppNotificationDeliveryStatusFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryStatus
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    destination?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    providerMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AppNotificationDeliveryUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: EnumAppNotificationDeliveryChannelFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryChannel
+    status?: EnumAppNotificationDeliveryStatusFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryStatus
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    destination?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    providerMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+    notificationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ParentNotificationCreateInput = {
@@ -123015,6 +124793,12 @@ export namespace Prisma {
     none?: AppNotificationWhereInput
   }
 
+  export type AppNotificationDeliveryListRelationFilter = {
+    every?: AppNotificationDeliveryWhereInput
+    some?: AppNotificationDeliveryWhereInput
+    none?: AppNotificationDeliveryWhereInput
+  }
+
   export type ParentNotificationListRelationFilter = {
     every?: ParentNotificationWhereInput
     some?: ParentNotificationWhereInput
@@ -123318,6 +125102,10 @@ export namespace Prisma {
   }
 
   export type AppNotificationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AppNotificationDeliveryOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -125273,6 +127061,116 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumAppNotificationPriorityFilter<$PrismaModel>
     _max?: NestedEnumAppNotificationPriorityFilter<$PrismaModel>
+  }
+
+  export type EnumAppNotificationDeliveryChannelFilter<$PrismaModel = never> = {
+    equals?: $Enums.AppNotificationDeliveryChannel | EnumAppNotificationDeliveryChannelFieldRefInput<$PrismaModel>
+    in?: $Enums.AppNotificationDeliveryChannel[] | ListEnumAppNotificationDeliveryChannelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AppNotificationDeliveryChannel[] | ListEnumAppNotificationDeliveryChannelFieldRefInput<$PrismaModel>
+    not?: NestedEnumAppNotificationDeliveryChannelFilter<$PrismaModel> | $Enums.AppNotificationDeliveryChannel
+  }
+
+  export type EnumAppNotificationDeliveryStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.AppNotificationDeliveryStatus | EnumAppNotificationDeliveryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AppNotificationDeliveryStatus[] | ListEnumAppNotificationDeliveryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AppNotificationDeliveryStatus[] | ListEnumAppNotificationDeliveryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAppNotificationDeliveryStatusFilter<$PrismaModel> | $Enums.AppNotificationDeliveryStatus
+  }
+
+  export type AppNotificationScalarRelationFilter = {
+    is?: AppNotificationWhereInput
+    isNot?: AppNotificationWhereInput
+  }
+
+  export type AppNotificationDeliveryNotificationIdChannelDestinationCompoundUniqueInput = {
+    notificationId: string
+    channel: $Enums.AppNotificationDeliveryChannel
+    destination: string
+  }
+
+  export type AppNotificationDeliveryCountOrderByAggregateInput = {
+    id?: SortOrder
+    channel?: SortOrder
+    status?: SortOrder
+    provider?: SortOrder
+    destination?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    providerMessageId?: SortOrder
+    sentAt?: SortOrder
+    deliveredAt?: SortOrder
+    failedAt?: SortOrder
+    nextAttemptAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    notificationId?: SortOrder
+  }
+
+  export type AppNotificationDeliveryAvgOrderByAggregateInput = {
+    attempts?: SortOrder
+  }
+
+  export type AppNotificationDeliveryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    channel?: SortOrder
+    status?: SortOrder
+    provider?: SortOrder
+    destination?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    providerMessageId?: SortOrder
+    sentAt?: SortOrder
+    deliveredAt?: SortOrder
+    failedAt?: SortOrder
+    nextAttemptAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    notificationId?: SortOrder
+  }
+
+  export type AppNotificationDeliveryMinOrderByAggregateInput = {
+    id?: SortOrder
+    channel?: SortOrder
+    status?: SortOrder
+    provider?: SortOrder
+    destination?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    providerMessageId?: SortOrder
+    sentAt?: SortOrder
+    deliveredAt?: SortOrder
+    failedAt?: SortOrder
+    nextAttemptAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    schoolId?: SortOrder
+    notificationId?: SortOrder
+  }
+
+  export type AppNotificationDeliverySumOrderByAggregateInput = {
+    attempts?: SortOrder
+  }
+
+  export type EnumAppNotificationDeliveryChannelWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AppNotificationDeliveryChannel | EnumAppNotificationDeliveryChannelFieldRefInput<$PrismaModel>
+    in?: $Enums.AppNotificationDeliveryChannel[] | ListEnumAppNotificationDeliveryChannelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AppNotificationDeliveryChannel[] | ListEnumAppNotificationDeliveryChannelFieldRefInput<$PrismaModel>
+    not?: NestedEnumAppNotificationDeliveryChannelWithAggregatesFilter<$PrismaModel> | $Enums.AppNotificationDeliveryChannel
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAppNotificationDeliveryChannelFilter<$PrismaModel>
+    _max?: NestedEnumAppNotificationDeliveryChannelFilter<$PrismaModel>
+  }
+
+  export type EnumAppNotificationDeliveryStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AppNotificationDeliveryStatus | EnumAppNotificationDeliveryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AppNotificationDeliveryStatus[] | ListEnumAppNotificationDeliveryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AppNotificationDeliveryStatus[] | ListEnumAppNotificationDeliveryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAppNotificationDeliveryStatusWithAggregatesFilter<$PrismaModel> | $Enums.AppNotificationDeliveryStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAppNotificationDeliveryStatusFilter<$PrismaModel>
+    _max?: NestedEnumAppNotificationDeliveryStatusFilter<$PrismaModel>
   }
 
   export type EnumParentNotificationTypeFilter<$PrismaModel = never> = {
@@ -129631,6 +131529,13 @@ export namespace Prisma {
     connect?: AppNotificationWhereUniqueInput | AppNotificationWhereUniqueInput[]
   }
 
+  export type AppNotificationDeliveryCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<AppNotificationDeliveryCreateWithoutSchoolInput, AppNotificationDeliveryUncheckedCreateWithoutSchoolInput> | AppNotificationDeliveryCreateWithoutSchoolInput[] | AppNotificationDeliveryUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: AppNotificationDeliveryCreateOrConnectWithoutSchoolInput | AppNotificationDeliveryCreateOrConnectWithoutSchoolInput[]
+    createMany?: AppNotificationDeliveryCreateManySchoolInputEnvelope
+    connect?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+  }
+
   export type ParentNotificationCreateNestedManyWithoutSchoolInput = {
     create?: XOR<ParentNotificationCreateWithoutSchoolInput, ParentNotificationUncheckedCreateWithoutSchoolInput> | ParentNotificationCreateWithoutSchoolInput[] | ParentNotificationUncheckedCreateWithoutSchoolInput[]
     connectOrCreate?: ParentNotificationCreateOrConnectWithoutSchoolInput | ParentNotificationCreateOrConnectWithoutSchoolInput[]
@@ -130102,6 +132007,13 @@ export namespace Prisma {
     connectOrCreate?: AppNotificationCreateOrConnectWithoutSchoolInput | AppNotificationCreateOrConnectWithoutSchoolInput[]
     createMany?: AppNotificationCreateManySchoolInputEnvelope
     connect?: AppNotificationWhereUniqueInput | AppNotificationWhereUniqueInput[]
+  }
+
+  export type AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput = {
+    create?: XOR<AppNotificationDeliveryCreateWithoutSchoolInput, AppNotificationDeliveryUncheckedCreateWithoutSchoolInput> | AppNotificationDeliveryCreateWithoutSchoolInput[] | AppNotificationDeliveryUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: AppNotificationDeliveryCreateOrConnectWithoutSchoolInput | AppNotificationDeliveryCreateOrConnectWithoutSchoolInput[]
+    createMany?: AppNotificationDeliveryCreateManySchoolInputEnvelope
+    connect?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
   }
 
   export type ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput = {
@@ -130959,6 +132871,20 @@ export namespace Prisma {
     update?: AppNotificationUpdateWithWhereUniqueWithoutSchoolInput | AppNotificationUpdateWithWhereUniqueWithoutSchoolInput[]
     updateMany?: AppNotificationUpdateManyWithWhereWithoutSchoolInput | AppNotificationUpdateManyWithWhereWithoutSchoolInput[]
     deleteMany?: AppNotificationScalarWhereInput | AppNotificationScalarWhereInput[]
+  }
+
+  export type AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<AppNotificationDeliveryCreateWithoutSchoolInput, AppNotificationDeliveryUncheckedCreateWithoutSchoolInput> | AppNotificationDeliveryCreateWithoutSchoolInput[] | AppNotificationDeliveryUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: AppNotificationDeliveryCreateOrConnectWithoutSchoolInput | AppNotificationDeliveryCreateOrConnectWithoutSchoolInput[]
+    upsert?: AppNotificationDeliveryUpsertWithWhereUniqueWithoutSchoolInput | AppNotificationDeliveryUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: AppNotificationDeliveryCreateManySchoolInputEnvelope
+    set?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+    disconnect?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+    delete?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+    connect?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+    update?: AppNotificationDeliveryUpdateWithWhereUniqueWithoutSchoolInput | AppNotificationDeliveryUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: AppNotificationDeliveryUpdateManyWithWhereWithoutSchoolInput | AppNotificationDeliveryUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: AppNotificationDeliveryScalarWhereInput | AppNotificationDeliveryScalarWhereInput[]
   }
 
   export type ParentNotificationUpdateManyWithoutSchoolNestedInput = {
@@ -131899,6 +133825,20 @@ export namespace Prisma {
     update?: AppNotificationUpdateWithWhereUniqueWithoutSchoolInput | AppNotificationUpdateWithWhereUniqueWithoutSchoolInput[]
     updateMany?: AppNotificationUpdateManyWithWhereWithoutSchoolInput | AppNotificationUpdateManyWithWhereWithoutSchoolInput[]
     deleteMany?: AppNotificationScalarWhereInput | AppNotificationScalarWhereInput[]
+  }
+
+  export type AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput = {
+    create?: XOR<AppNotificationDeliveryCreateWithoutSchoolInput, AppNotificationDeliveryUncheckedCreateWithoutSchoolInput> | AppNotificationDeliveryCreateWithoutSchoolInput[] | AppNotificationDeliveryUncheckedCreateWithoutSchoolInput[]
+    connectOrCreate?: AppNotificationDeliveryCreateOrConnectWithoutSchoolInput | AppNotificationDeliveryCreateOrConnectWithoutSchoolInput[]
+    upsert?: AppNotificationDeliveryUpsertWithWhereUniqueWithoutSchoolInput | AppNotificationDeliveryUpsertWithWhereUniqueWithoutSchoolInput[]
+    createMany?: AppNotificationDeliveryCreateManySchoolInputEnvelope
+    set?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+    disconnect?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+    delete?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+    connect?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+    update?: AppNotificationDeliveryUpdateWithWhereUniqueWithoutSchoolInput | AppNotificationDeliveryUpdateWithWhereUniqueWithoutSchoolInput[]
+    updateMany?: AppNotificationDeliveryUpdateManyWithWhereWithoutSchoolInput | AppNotificationDeliveryUpdateManyWithWhereWithoutSchoolInput[]
+    deleteMany?: AppNotificationDeliveryScalarWhereInput | AppNotificationDeliveryScalarWhereInput[]
   }
 
   export type ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput = {
@@ -134840,6 +136780,20 @@ export namespace Prisma {
     connect?: SchoolWhereUniqueInput
   }
 
+  export type AppNotificationDeliveryCreateNestedManyWithoutNotificationInput = {
+    create?: XOR<AppNotificationDeliveryCreateWithoutNotificationInput, AppNotificationDeliveryUncheckedCreateWithoutNotificationInput> | AppNotificationDeliveryCreateWithoutNotificationInput[] | AppNotificationDeliveryUncheckedCreateWithoutNotificationInput[]
+    connectOrCreate?: AppNotificationDeliveryCreateOrConnectWithoutNotificationInput | AppNotificationDeliveryCreateOrConnectWithoutNotificationInput[]
+    createMany?: AppNotificationDeliveryCreateManyNotificationInputEnvelope
+    connect?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+  }
+
+  export type AppNotificationDeliveryUncheckedCreateNestedManyWithoutNotificationInput = {
+    create?: XOR<AppNotificationDeliveryCreateWithoutNotificationInput, AppNotificationDeliveryUncheckedCreateWithoutNotificationInput> | AppNotificationDeliveryCreateWithoutNotificationInput[] | AppNotificationDeliveryUncheckedCreateWithoutNotificationInput[]
+    connectOrCreate?: AppNotificationDeliveryCreateOrConnectWithoutNotificationInput | AppNotificationDeliveryCreateOrConnectWithoutNotificationInput[]
+    createMany?: AppNotificationDeliveryCreateManyNotificationInputEnvelope
+    connect?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+  }
+
   export type EnumAppNotificationRecipientTypeFieldUpdateOperationsInput = {
     set?: $Enums.AppNotificationRecipientType
   }
@@ -134862,6 +136816,70 @@ export namespace Prisma {
     upsert?: SchoolUpsertWithoutAppNotificationsInput
     connect?: SchoolWhereUniqueInput
     update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutAppNotificationsInput, SchoolUpdateWithoutAppNotificationsInput>, SchoolUncheckedUpdateWithoutAppNotificationsInput>
+  }
+
+  export type AppNotificationDeliveryUpdateManyWithoutNotificationNestedInput = {
+    create?: XOR<AppNotificationDeliveryCreateWithoutNotificationInput, AppNotificationDeliveryUncheckedCreateWithoutNotificationInput> | AppNotificationDeliveryCreateWithoutNotificationInput[] | AppNotificationDeliveryUncheckedCreateWithoutNotificationInput[]
+    connectOrCreate?: AppNotificationDeliveryCreateOrConnectWithoutNotificationInput | AppNotificationDeliveryCreateOrConnectWithoutNotificationInput[]
+    upsert?: AppNotificationDeliveryUpsertWithWhereUniqueWithoutNotificationInput | AppNotificationDeliveryUpsertWithWhereUniqueWithoutNotificationInput[]
+    createMany?: AppNotificationDeliveryCreateManyNotificationInputEnvelope
+    set?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+    disconnect?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+    delete?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+    connect?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+    update?: AppNotificationDeliveryUpdateWithWhereUniqueWithoutNotificationInput | AppNotificationDeliveryUpdateWithWhereUniqueWithoutNotificationInput[]
+    updateMany?: AppNotificationDeliveryUpdateManyWithWhereWithoutNotificationInput | AppNotificationDeliveryUpdateManyWithWhereWithoutNotificationInput[]
+    deleteMany?: AppNotificationDeliveryScalarWhereInput | AppNotificationDeliveryScalarWhereInput[]
+  }
+
+  export type AppNotificationDeliveryUncheckedUpdateManyWithoutNotificationNestedInput = {
+    create?: XOR<AppNotificationDeliveryCreateWithoutNotificationInput, AppNotificationDeliveryUncheckedCreateWithoutNotificationInput> | AppNotificationDeliveryCreateWithoutNotificationInput[] | AppNotificationDeliveryUncheckedCreateWithoutNotificationInput[]
+    connectOrCreate?: AppNotificationDeliveryCreateOrConnectWithoutNotificationInput | AppNotificationDeliveryCreateOrConnectWithoutNotificationInput[]
+    upsert?: AppNotificationDeliveryUpsertWithWhereUniqueWithoutNotificationInput | AppNotificationDeliveryUpsertWithWhereUniqueWithoutNotificationInput[]
+    createMany?: AppNotificationDeliveryCreateManyNotificationInputEnvelope
+    set?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+    disconnect?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+    delete?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+    connect?: AppNotificationDeliveryWhereUniqueInput | AppNotificationDeliveryWhereUniqueInput[]
+    update?: AppNotificationDeliveryUpdateWithWhereUniqueWithoutNotificationInput | AppNotificationDeliveryUpdateWithWhereUniqueWithoutNotificationInput[]
+    updateMany?: AppNotificationDeliveryUpdateManyWithWhereWithoutNotificationInput | AppNotificationDeliveryUpdateManyWithWhereWithoutNotificationInput[]
+    deleteMany?: AppNotificationDeliveryScalarWhereInput | AppNotificationDeliveryScalarWhereInput[]
+  }
+
+  export type SchoolCreateNestedOneWithoutAppNotificationDeliveriesInput = {
+    create?: XOR<SchoolCreateWithoutAppNotificationDeliveriesInput, SchoolUncheckedCreateWithoutAppNotificationDeliveriesInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutAppNotificationDeliveriesInput
+    connect?: SchoolWhereUniqueInput
+  }
+
+  export type AppNotificationCreateNestedOneWithoutDeliveriesInput = {
+    create?: XOR<AppNotificationCreateWithoutDeliveriesInput, AppNotificationUncheckedCreateWithoutDeliveriesInput>
+    connectOrCreate?: AppNotificationCreateOrConnectWithoutDeliveriesInput
+    connect?: AppNotificationWhereUniqueInput
+  }
+
+  export type EnumAppNotificationDeliveryChannelFieldUpdateOperationsInput = {
+    set?: $Enums.AppNotificationDeliveryChannel
+  }
+
+  export type EnumAppNotificationDeliveryStatusFieldUpdateOperationsInput = {
+    set?: $Enums.AppNotificationDeliveryStatus
+  }
+
+  export type SchoolUpdateOneRequiredWithoutAppNotificationDeliveriesNestedInput = {
+    create?: XOR<SchoolCreateWithoutAppNotificationDeliveriesInput, SchoolUncheckedCreateWithoutAppNotificationDeliveriesInput>
+    connectOrCreate?: SchoolCreateOrConnectWithoutAppNotificationDeliveriesInput
+    upsert?: SchoolUpsertWithoutAppNotificationDeliveriesInput
+    connect?: SchoolWhereUniqueInput
+    update?: XOR<XOR<SchoolUpdateToOneWithWhereWithoutAppNotificationDeliveriesInput, SchoolUpdateWithoutAppNotificationDeliveriesInput>, SchoolUncheckedUpdateWithoutAppNotificationDeliveriesInput>
+  }
+
+  export type AppNotificationUpdateOneRequiredWithoutDeliveriesNestedInput = {
+    create?: XOR<AppNotificationCreateWithoutDeliveriesInput, AppNotificationUncheckedCreateWithoutDeliveriesInput>
+    connectOrCreate?: AppNotificationCreateOrConnectWithoutDeliveriesInput
+    upsert?: AppNotificationUpsertWithoutDeliveriesInput
+    connect?: AppNotificationWhereUniqueInput
+    update?: XOR<XOR<AppNotificationUpdateToOneWithWhereWithoutDeliveriesInput, AppNotificationUpdateWithoutDeliveriesInput>, AppNotificationUncheckedUpdateWithoutDeliveriesInput>
   }
 
   export type SchoolCreateNestedOneWithoutParentNotificationsInput = {
@@ -139883,6 +141901,40 @@ export namespace Prisma {
     _max?: NestedEnumAppNotificationPriorityFilter<$PrismaModel>
   }
 
+  export type NestedEnumAppNotificationDeliveryChannelFilter<$PrismaModel = never> = {
+    equals?: $Enums.AppNotificationDeliveryChannel | EnumAppNotificationDeliveryChannelFieldRefInput<$PrismaModel>
+    in?: $Enums.AppNotificationDeliveryChannel[] | ListEnumAppNotificationDeliveryChannelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AppNotificationDeliveryChannel[] | ListEnumAppNotificationDeliveryChannelFieldRefInput<$PrismaModel>
+    not?: NestedEnumAppNotificationDeliveryChannelFilter<$PrismaModel> | $Enums.AppNotificationDeliveryChannel
+  }
+
+  export type NestedEnumAppNotificationDeliveryStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.AppNotificationDeliveryStatus | EnumAppNotificationDeliveryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AppNotificationDeliveryStatus[] | ListEnumAppNotificationDeliveryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AppNotificationDeliveryStatus[] | ListEnumAppNotificationDeliveryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAppNotificationDeliveryStatusFilter<$PrismaModel> | $Enums.AppNotificationDeliveryStatus
+  }
+
+  export type NestedEnumAppNotificationDeliveryChannelWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AppNotificationDeliveryChannel | EnumAppNotificationDeliveryChannelFieldRefInput<$PrismaModel>
+    in?: $Enums.AppNotificationDeliveryChannel[] | ListEnumAppNotificationDeliveryChannelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AppNotificationDeliveryChannel[] | ListEnumAppNotificationDeliveryChannelFieldRefInput<$PrismaModel>
+    not?: NestedEnumAppNotificationDeliveryChannelWithAggregatesFilter<$PrismaModel> | $Enums.AppNotificationDeliveryChannel
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAppNotificationDeliveryChannelFilter<$PrismaModel>
+    _max?: NestedEnumAppNotificationDeliveryChannelFilter<$PrismaModel>
+  }
+
+  export type NestedEnumAppNotificationDeliveryStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AppNotificationDeliveryStatus | EnumAppNotificationDeliveryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AppNotificationDeliveryStatus[] | ListEnumAppNotificationDeliveryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AppNotificationDeliveryStatus[] | ListEnumAppNotificationDeliveryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAppNotificationDeliveryStatusWithAggregatesFilter<$PrismaModel> | $Enums.AppNotificationDeliveryStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAppNotificationDeliveryStatusFilter<$PrismaModel>
+    _max?: NestedEnumAppNotificationDeliveryStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumParentNotificationTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.ParentNotificationType | EnumParentNotificationTypeFieldRefInput<$PrismaModel>
     in?: $Enums.ParentNotificationType[] | ListEnumParentNotificationTypeFieldRefInput<$PrismaModel>
@@ -142851,6 +144903,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    deliveries?: AppNotificationDeliveryCreateNestedManyWithoutNotificationInput
   }
 
   export type AppNotificationUncheckedCreateWithoutSchoolInput = {
@@ -142871,6 +144924,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    deliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutNotificationInput
   }
 
   export type AppNotificationCreateOrConnectWithoutSchoolInput = {
@@ -142880,6 +144934,52 @@ export namespace Prisma {
 
   export type AppNotificationCreateManySchoolInputEnvelope = {
     data: AppNotificationCreateManySchoolInput | AppNotificationCreateManySchoolInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AppNotificationDeliveryCreateWithoutSchoolInput = {
+    id?: string
+    channel: $Enums.AppNotificationDeliveryChannel
+    status?: $Enums.AppNotificationDeliveryStatus
+    provider?: string | null
+    destination: string
+    attempts?: number
+    lastError?: string | null
+    providerMessageId?: string | null
+    sentAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    failedAt?: Date | string | null
+    nextAttemptAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    notification: AppNotificationCreateNestedOneWithoutDeliveriesInput
+  }
+
+  export type AppNotificationDeliveryUncheckedCreateWithoutSchoolInput = {
+    id?: string
+    channel: $Enums.AppNotificationDeliveryChannel
+    status?: $Enums.AppNotificationDeliveryStatus
+    provider?: string | null
+    destination: string
+    attempts?: number
+    lastError?: string | null
+    providerMessageId?: string | null
+    sentAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    failedAt?: Date | string | null
+    nextAttemptAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    notificationId: string
+  }
+
+  export type AppNotificationDeliveryCreateOrConnectWithoutSchoolInput = {
+    where: AppNotificationDeliveryWhereUniqueInput
+    create: XOR<AppNotificationDeliveryCreateWithoutSchoolInput, AppNotificationDeliveryUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type AppNotificationDeliveryCreateManySchoolInputEnvelope = {
+    data: AppNotificationDeliveryCreateManySchoolInput | AppNotificationDeliveryCreateManySchoolInput[]
     skipDuplicates?: boolean
   }
 
@@ -145339,6 +147439,44 @@ export namespace Prisma {
     schoolId?: StringFilter<"AppNotification"> | string
   }
 
+  export type AppNotificationDeliveryUpsertWithWhereUniqueWithoutSchoolInput = {
+    where: AppNotificationDeliveryWhereUniqueInput
+    update: XOR<AppNotificationDeliveryUpdateWithoutSchoolInput, AppNotificationDeliveryUncheckedUpdateWithoutSchoolInput>
+    create: XOR<AppNotificationDeliveryCreateWithoutSchoolInput, AppNotificationDeliveryUncheckedCreateWithoutSchoolInput>
+  }
+
+  export type AppNotificationDeliveryUpdateWithWhereUniqueWithoutSchoolInput = {
+    where: AppNotificationDeliveryWhereUniqueInput
+    data: XOR<AppNotificationDeliveryUpdateWithoutSchoolInput, AppNotificationDeliveryUncheckedUpdateWithoutSchoolInput>
+  }
+
+  export type AppNotificationDeliveryUpdateManyWithWhereWithoutSchoolInput = {
+    where: AppNotificationDeliveryScalarWhereInput
+    data: XOR<AppNotificationDeliveryUpdateManyMutationInput, AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolInput>
+  }
+
+  export type AppNotificationDeliveryScalarWhereInput = {
+    AND?: AppNotificationDeliveryScalarWhereInput | AppNotificationDeliveryScalarWhereInput[]
+    OR?: AppNotificationDeliveryScalarWhereInput[]
+    NOT?: AppNotificationDeliveryScalarWhereInput | AppNotificationDeliveryScalarWhereInput[]
+    id?: StringFilter<"AppNotificationDelivery"> | string
+    channel?: EnumAppNotificationDeliveryChannelFilter<"AppNotificationDelivery"> | $Enums.AppNotificationDeliveryChannel
+    status?: EnumAppNotificationDeliveryStatusFilter<"AppNotificationDelivery"> | $Enums.AppNotificationDeliveryStatus
+    provider?: StringNullableFilter<"AppNotificationDelivery"> | string | null
+    destination?: StringFilter<"AppNotificationDelivery"> | string
+    attempts?: IntFilter<"AppNotificationDelivery"> | number
+    lastError?: StringNullableFilter<"AppNotificationDelivery"> | string | null
+    providerMessageId?: StringNullableFilter<"AppNotificationDelivery"> | string | null
+    sentAt?: DateTimeNullableFilter<"AppNotificationDelivery"> | Date | string | null
+    deliveredAt?: DateTimeNullableFilter<"AppNotificationDelivery"> | Date | string | null
+    failedAt?: DateTimeNullableFilter<"AppNotificationDelivery"> | Date | string | null
+    nextAttemptAt?: DateTimeNullableFilter<"AppNotificationDelivery"> | Date | string | null
+    createdAt?: DateTimeFilter<"AppNotificationDelivery"> | Date | string
+    updatedAt?: DateTimeFilter<"AppNotificationDelivery"> | Date | string
+    schoolId?: StringFilter<"AppNotificationDelivery"> | string
+    notificationId?: StringFilter<"AppNotificationDelivery"> | string
+  }
+
   export type ParentNotificationUpsertWithWhereUniqueWithoutSchoolInput = {
     where: ParentNotificationWhereUniqueInput
     update: XOR<ParentNotificationUpdateWithoutSchoolInput, ParentNotificationUncheckedUpdateWithoutSchoolInput>
@@ -146047,6 +148185,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -146134,6 +148273,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -146237,6 +148377,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -146324,6 +148465,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -146411,6 +148553,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -146498,6 +148641,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -146657,6 +148801,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -146744,6 +148889,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -146847,6 +148993,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -146934,6 +149081,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -147777,6 +149925,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -147864,6 +150013,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -148337,6 +150487,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -148424,6 +150575,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -149317,6 +151469,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -149404,6 +151557,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -149795,6 +151949,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -149882,6 +152037,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -150503,6 +152659,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -150590,6 +152747,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -150879,6 +153037,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -150966,6 +153125,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -151223,6 +153383,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -151310,6 +153471,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -151545,6 +153707,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
@@ -151632,6 +153795,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
@@ -151735,6 +153899,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
@@ -151822,6 +153987,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
@@ -151909,6 +154075,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -151996,6 +154163,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -152099,6 +154267,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -152186,6 +154355,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -152273,6 +154443,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -152360,6 +154531,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -152540,6 +154712,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -152627,6 +154800,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -152796,6 +154970,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -152883,6 +155058,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -153027,6 +155203,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -153114,6 +155291,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -153217,6 +155395,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -153304,6 +155483,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -153463,6 +155643,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -153550,6 +155731,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -153653,6 +155835,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -153740,6 +155923,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -153874,6 +156058,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -153961,6 +156146,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -154086,6 +156272,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -154173,6 +156360,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -154276,6 +156464,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -154363,6 +156552,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -154450,6 +156640,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -154537,6 +156728,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -154795,6 +156987,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -154882,6 +157075,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -155084,6 +157278,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -155171,6 +157366,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -155396,6 +157592,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -155483,6 +157680,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -155704,6 +157902,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -155791,6 +157990,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -156016,6 +158216,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -156103,6 +158304,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -156324,6 +158526,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -156411,6 +158614,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -156591,6 +158795,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -156678,6 +158883,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -156848,6 +159054,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -156935,6 +159142,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -157115,6 +159323,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -157202,6 +159411,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -157372,6 +159582,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -157459,6 +159670,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -157613,6 +159825,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -157700,6 +159913,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -157843,6 +160057,7 @@ export namespace Prisma {
     parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -157930,6 +160145,7 @@ export namespace Prisma {
     parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -157951,6 +160167,52 @@ export namespace Prisma {
   export type SchoolCreateOrConnectWithoutAppNotificationsInput = {
     where: SchoolWhereUniqueInput
     create: XOR<SchoolCreateWithoutAppNotificationsInput, SchoolUncheckedCreateWithoutAppNotificationsInput>
+  }
+
+  export type AppNotificationDeliveryCreateWithoutNotificationInput = {
+    id?: string
+    channel: $Enums.AppNotificationDeliveryChannel
+    status?: $Enums.AppNotificationDeliveryStatus
+    provider?: string | null
+    destination: string
+    attempts?: number
+    lastError?: string | null
+    providerMessageId?: string | null
+    sentAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    failedAt?: Date | string | null
+    nextAttemptAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutAppNotificationDeliveriesInput
+  }
+
+  export type AppNotificationDeliveryUncheckedCreateWithoutNotificationInput = {
+    id?: string
+    channel: $Enums.AppNotificationDeliveryChannel
+    status?: $Enums.AppNotificationDeliveryStatus
+    provider?: string | null
+    destination: string
+    attempts?: number
+    lastError?: string | null
+    providerMessageId?: string | null
+    sentAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    failedAt?: Date | string | null
+    nextAttemptAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+  }
+
+  export type AppNotificationDeliveryCreateOrConnectWithoutNotificationInput = {
+    where: AppNotificationDeliveryWhereUniqueInput
+    create: XOR<AppNotificationDeliveryCreateWithoutNotificationInput, AppNotificationDeliveryUncheckedCreateWithoutNotificationInput>
+  }
+
+  export type AppNotificationDeliveryCreateManyNotificationInputEnvelope = {
+    data: AppNotificationDeliveryCreateManyNotificationInput | AppNotificationDeliveryCreateManyNotificationInput[]
+    skipDuplicates?: boolean
   }
 
   export type SchoolUpsertWithoutAppNotificationsInput = {
@@ -158033,6 +160295,7 @@ export namespace Prisma {
     parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -158120,6 +160383,7 @@ export namespace Prisma {
     parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -158136,6 +160400,490 @@ export namespace Prisma {
     parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
     parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
     parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type AppNotificationDeliveryUpsertWithWhereUniqueWithoutNotificationInput = {
+    where: AppNotificationDeliveryWhereUniqueInput
+    update: XOR<AppNotificationDeliveryUpdateWithoutNotificationInput, AppNotificationDeliveryUncheckedUpdateWithoutNotificationInput>
+    create: XOR<AppNotificationDeliveryCreateWithoutNotificationInput, AppNotificationDeliveryUncheckedCreateWithoutNotificationInput>
+  }
+
+  export type AppNotificationDeliveryUpdateWithWhereUniqueWithoutNotificationInput = {
+    where: AppNotificationDeliveryWhereUniqueInput
+    data: XOR<AppNotificationDeliveryUpdateWithoutNotificationInput, AppNotificationDeliveryUncheckedUpdateWithoutNotificationInput>
+  }
+
+  export type AppNotificationDeliveryUpdateManyWithWhereWithoutNotificationInput = {
+    where: AppNotificationDeliveryScalarWhereInput
+    data: XOR<AppNotificationDeliveryUpdateManyMutationInput, AppNotificationDeliveryUncheckedUpdateManyWithoutNotificationInput>
+  }
+
+  export type SchoolCreateWithoutAppNotificationDeliveriesInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminCreateNestedManyWithoutSchoolInput
+    students?: StudentCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherCreateNestedManyWithoutSchoolInput
+    parents?: ParentCreateNestedManyWithoutSchoolInput
+    grades?: GradeCreateNestedManyWithoutSchoolInput
+    classes?: ClassCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectCreateNestedManyWithoutSchoolInput
+    lessons?: LessonCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateCreateNestedManyWithoutSchoolInput
+    timetablePublications?: TimetablePublicationCreateNestedManyWithoutSchoolInput
+    publishedTimetableLessons?: PublishedTimetableLessonCreateNestedManyWithoutSchoolInput
+    exams?: ExamCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionCreateNestedManyWithoutSchoolInput
+    results?: ResultCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogCreateNestedManyWithoutSchoolInput
+    events?: EventCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillCreateNestedManyWithoutSchoolInput
+    payments?: PaymentCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalCreateNestedManyWithoutSchoolInput
+    paymentCorrectionRequests?: PaymentCorrectionRequestCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogCreateNestedManyWithoutSchoolInput
+    bursars?: BursarCreateNestedManyWithoutSchoolInput
+    bursarInvites?: BursarInviteCreateNestedManyWithoutSchoolInput
+    bursarInviteAuditLogs?: BursarInviteAuditLogCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventCreateNestedManyWithoutSchoolInput
+    teacherInvites?: TeacherInviteCreateNestedManyWithoutSchoolInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
+    parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
+    appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestCreateNestedManyWithoutSchoolInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolUncheckedCreateWithoutAppNotificationDeliveriesInput = {
+    id: string
+    name: string
+    slug: string
+    legalName?: string | null
+    displayName?: string | null
+    shortName?: string | null
+    emailFromName?: string | null
+    primaryColor?: string
+    contactEmail?: string | null
+    phone?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    onboardingStatus?: $Enums.SchoolOnboardingStatus
+    setupStep?: string | null
+    setupCompletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    admins?: AdminUncheckedCreateNestedManyWithoutSchoolInput
+    students?: StudentUncheckedCreateNestedManyWithoutSchoolInput
+    teachers?: TeacherUncheckedCreateNestedManyWithoutSchoolInput
+    parents?: ParentUncheckedCreateNestedManyWithoutSchoolInput
+    grades?: GradeUncheckedCreateNestedManyWithoutSchoolInput
+    classes?: ClassUncheckedCreateNestedManyWithoutSchoolInput
+    subjects?: SubjectUncheckedCreateNestedManyWithoutSchoolInput
+    lessons?: LessonUncheckedCreateNestedManyWithoutSchoolInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedCreateNestedManyWithoutSchoolInput
+    timetablePublications?: TimetablePublicationUncheckedCreateNestedManyWithoutSchoolInput
+    publishedTimetableLessons?: PublishedTimetableLessonUncheckedCreateNestedManyWithoutSchoolInput
+    exams?: ExamUncheckedCreateNestedManyWithoutSchoolInput
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutSchoolInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedCreateNestedManyWithoutSchoolInput
+    results?: ResultUncheckedCreateNestedManyWithoutSchoolInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutSchoolInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    events?: EventUncheckedCreateNestedManyWithoutSchoolInput
+    announcements?: AnnouncementUncheckedCreateNestedManyWithoutSchoolInput
+    caConfigs?: CAConfigUncheckedCreateNestedManyWithoutSchoolInput
+    caBuckets?: CABucketUncheckedCreateNestedManyWithoutSchoolInput
+    caActivities?: CAActivityUncheckedCreateNestedManyWithoutSchoolInput
+    caActivityScores?: CAActivityScoreUncheckedCreateNestedManyWithoutSchoolInput
+    caAuditLogs?: CAAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    continuousAssessments?: ContinuousAssessmentUncheckedCreateNestedManyWithoutSchoolInput
+    reportPublications?: ReportCardPublicationUncheckedCreateNestedManyWithoutSchoolInput
+    examEntryWindows?: ExamEntryWindowUncheckedCreateNestedManyWithoutSchoolInput
+    syllabi?: SyllabusUncheckedCreateNestedManyWithoutSchoolInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedCreateNestedManyWithoutSchoolInput
+    feeStructures?: FeeStructureUncheckedCreateNestedManyWithoutSchoolInput
+    studentBills?: StudentBillUncheckedCreateNestedManyWithoutSchoolInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutSchoolInput
+    paymentReversals?: PaymentReversalUncheckedCreateNestedManyWithoutSchoolInput
+    paymentCorrectionRequests?: PaymentCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    discounts?: DiscountUncheckedCreateNestedManyWithoutSchoolInput
+    financeQueries?: FinanceQueryUncheckedCreateNestedManyWithoutSchoolInput
+    receiptCounters?: ReceiptCounterUncheckedCreateNestedManyWithoutSchoolInput
+    financeAuditLogs?: FinanceAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    bursars?: BursarUncheckedCreateNestedManyWithoutSchoolInput
+    bursarInvites?: BursarInviteUncheckedCreateNestedManyWithoutSchoolInput
+    bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    invites?: SchoolInviteUncheckedCreateNestedManyWithoutSchoolInput
+    waitlistEntries?: WaitlistEntryUncheckedCreateNestedManyWithoutSchoolInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    financeJobs?: FinanceJobUncheckedCreateNestedManyWithoutSchoolInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedCreateNestedManyWithoutSchoolInput
+    teacherInvites?: TeacherInviteUncheckedCreateNestedManyWithoutSchoolInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
+    notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedCreateNestedManyWithoutSchoolInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedCreateNestedOneWithoutSchoolInput
+    teacherObligations?: TeacherObligationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherReminders?: TeacherReminderUncheckedCreateNestedManyWithoutSchoolInput
+    teacherEscalations?: TeacherEscalationUncheckedCreateNestedManyWithoutSchoolInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedCreateNestedManyWithoutSchoolInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedCreateNestedManyWithoutSchoolInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedCreateNestedManyWithoutSchoolInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedCreateNestedManyWithoutSchoolInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedCreateNestedManyWithoutSchoolInput
+  }
+
+  export type SchoolCreateOrConnectWithoutAppNotificationDeliveriesInput = {
+    where: SchoolWhereUniqueInput
+    create: XOR<SchoolCreateWithoutAppNotificationDeliveriesInput, SchoolUncheckedCreateWithoutAppNotificationDeliveriesInput>
+  }
+
+  export type AppNotificationCreateWithoutDeliveriesInput = {
+    id?: string
+    recipientType: $Enums.AppNotificationRecipientType
+    recipientId: string
+    type: $Enums.AppNotificationType
+    category: $Enums.AppNotificationCategory
+    priority?: $Enums.AppNotificationPriority
+    title: string
+    body: string
+    href?: string | null
+    payload?: NullableJsonNullValueInput | InputJsonValue
+    sourceModel?: string | null
+    sourceId?: string | null
+    idempotencyKey?: string | null
+    readAt?: Date | string | null
+    expiresAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    school: SchoolCreateNestedOneWithoutAppNotificationsInput
+  }
+
+  export type AppNotificationUncheckedCreateWithoutDeliveriesInput = {
+    id?: string
+    recipientType: $Enums.AppNotificationRecipientType
+    recipientId: string
+    type: $Enums.AppNotificationType
+    category: $Enums.AppNotificationCategory
+    priority?: $Enums.AppNotificationPriority
+    title: string
+    body: string
+    href?: string | null
+    payload?: NullableJsonNullValueInput | InputJsonValue
+    sourceModel?: string | null
+    sourceId?: string | null
+    idempotencyKey?: string | null
+    readAt?: Date | string | null
+    expiresAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+  }
+
+  export type AppNotificationCreateOrConnectWithoutDeliveriesInput = {
+    where: AppNotificationWhereUniqueInput
+    create: XOR<AppNotificationCreateWithoutDeliveriesInput, AppNotificationUncheckedCreateWithoutDeliveriesInput>
+  }
+
+  export type SchoolUpsertWithoutAppNotificationDeliveriesInput = {
+    update: XOR<SchoolUpdateWithoutAppNotificationDeliveriesInput, SchoolUncheckedUpdateWithoutAppNotificationDeliveriesInput>
+    create: XOR<SchoolCreateWithoutAppNotificationDeliveriesInput, SchoolUncheckedCreateWithoutAppNotificationDeliveriesInput>
+    where?: SchoolWhereInput
+  }
+
+  export type SchoolUpdateToOneWithWhereWithoutAppNotificationDeliveriesInput = {
+    where?: SchoolWhereInput
+    data: XOR<SchoolUpdateWithoutAppNotificationDeliveriesInput, SchoolUncheckedUpdateWithoutAppNotificationDeliveriesInput>
+  }
+
+  export type SchoolUpdateWithoutAppNotificationDeliveriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUpdateManyWithoutSchoolNestedInput
+    students?: StudentUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUpdateManyWithoutSchoolNestedInput
+    timetablePublications?: TimetablePublicationUpdateManyWithoutSchoolNestedInput
+    publishedTimetableLessons?: PublishedTimetableLessonUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUpdateManyWithoutSchoolNestedInput
+    results?: ResultUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUpdateManyWithoutSchoolNestedInput
+    events?: EventUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUpdateManyWithoutSchoolNestedInput
+    paymentCorrectionRequests?: PaymentCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUpdateManyWithoutSchoolNestedInput
+    bursars?: BursarUpdateManyWithoutSchoolNestedInput
+    bursarInvites?: BursarInviteUpdateManyWithoutSchoolNestedInput
+    bursarInviteAuditLogs?: BursarInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUpdateManyWithoutSchoolNestedInput
+    teacherInvites?: TeacherInviteUpdateManyWithoutSchoolNestedInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
+    appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type SchoolUncheckedUpdateWithoutAppNotificationDeliveriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    shortName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailFromName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: StringFieldUpdateOperationsInput | string
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingStatus?: EnumSchoolOnboardingStatusFieldUpdateOperationsInput | $Enums.SchoolOnboardingStatus
+    setupStep?: NullableStringFieldUpdateOperationsInput | string | null
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admins?: AdminUncheckedUpdateManyWithoutSchoolNestedInput
+    students?: StudentUncheckedUpdateManyWithoutSchoolNestedInput
+    teachers?: TeacherUncheckedUpdateManyWithoutSchoolNestedInput
+    parents?: ParentUncheckedUpdateManyWithoutSchoolNestedInput
+    grades?: GradeUncheckedUpdateManyWithoutSchoolNestedInput
+    classes?: ClassUncheckedUpdateManyWithoutSchoolNestedInput
+    subjects?: SubjectUncheckedUpdateManyWithoutSchoolNestedInput
+    lessons?: LessonUncheckedUpdateManyWithoutSchoolNestedInput
+    periodTemplates?: SchoolPeriodTemplateUncheckedUpdateManyWithoutSchoolNestedInput
+    timetablePublications?: TimetablePublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    publishedTimetableLessons?: PublishedTimetableLessonUncheckedUpdateManyWithoutSchoolNestedInput
+    exams?: ExamUncheckedUpdateManyWithoutSchoolNestedInput
+    assignments?: AssignmentUncheckedUpdateManyWithoutSchoolNestedInput
+    homeworkSubmissions?: HomeworkSubmissionUncheckedUpdateManyWithoutSchoolNestedInput
+    results?: ResultUncheckedUpdateManyWithoutSchoolNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutSchoolNestedInput
+    attendanceAuditLogs?: AttendanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    events?: EventUncheckedUpdateManyWithoutSchoolNestedInput
+    announcements?: AnnouncementUncheckedUpdateManyWithoutSchoolNestedInput
+    caConfigs?: CAConfigUncheckedUpdateManyWithoutSchoolNestedInput
+    caBuckets?: CABucketUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivities?: CAActivityUncheckedUpdateManyWithoutSchoolNestedInput
+    caActivityScores?: CAActivityScoreUncheckedUpdateManyWithoutSchoolNestedInput
+    caAuditLogs?: CAAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    continuousAssessments?: ContinuousAssessmentUncheckedUpdateManyWithoutSchoolNestedInput
+    reportPublications?: ReportCardPublicationUncheckedUpdateManyWithoutSchoolNestedInput
+    examEntryWindows?: ExamEntryWindowUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabi?: SyllabusUncheckedUpdateManyWithoutSchoolNestedInput
+    syllabusTopicProgress?: SyllabusTopicProgressUncheckedUpdateManyWithoutSchoolNestedInput
+    feeStructures?: FeeStructureUncheckedUpdateManyWithoutSchoolNestedInput
+    studentBills?: StudentBillUncheckedUpdateManyWithoutSchoolNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentReversals?: PaymentReversalUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentCorrectionRequests?: PaymentCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    discounts?: DiscountUncheckedUpdateManyWithoutSchoolNestedInput
+    financeQueries?: FinanceQueryUncheckedUpdateManyWithoutSchoolNestedInput
+    receiptCounters?: ReceiptCounterUncheckedUpdateManyWithoutSchoolNestedInput
+    financeAuditLogs?: FinanceAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    bursars?: BursarUncheckedUpdateManyWithoutSchoolNestedInput
+    bursarInvites?: BursarInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    bursarInviteAuditLogs?: BursarInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    invites?: SchoolInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    waitlistEntries?: WaitlistEntryUncheckedUpdateManyWithoutSchoolNestedInput
+    onboardingAuditLogs?: OnboardingAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    financeJobs?: FinanceJobUncheckedUpdateManyWithoutSchoolNestedInput
+    paymentWebhookEvents?: PaymentWebhookEventUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherInvites?: TeacherInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherInviteAuditLogs?: TeacherInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
+    parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
+    notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
+    communicationRoutes?: SchoolCommunicationRouteUncheckedUpdateManyWithoutSchoolNestedInput
+    accountabilitySettings?: TeacherAccountabilitySettingUncheckedUpdateOneWithoutSchoolNestedInput
+    teacherObligations?: TeacherObligationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherReminders?: TeacherReminderUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherEscalations?: TeacherEscalationUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherCorrections?: TeacherCorrectionRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    teacherAccountabilityAuditLogs?: TeacherAccountabilityAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentPreferences?: ParentNotificationPreferenceUncheckedUpdateManyWithoutSchoolNestedInput
+    parentDeliveryLogs?: ParentNotificationDeliveryLogUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactRequests?: ParentTeacherContactRequestUncheckedUpdateManyWithoutSchoolNestedInput
+    parentTeacherContactMessages?: ParentTeacherContactMessageUncheckedUpdateManyWithoutSchoolNestedInput
+    parentStudentRelationships?: ParentStudentRelationshipUncheckedUpdateManyWithoutSchoolNestedInput
+  }
+
+  export type AppNotificationUpsertWithoutDeliveriesInput = {
+    update: XOR<AppNotificationUpdateWithoutDeliveriesInput, AppNotificationUncheckedUpdateWithoutDeliveriesInput>
+    create: XOR<AppNotificationCreateWithoutDeliveriesInput, AppNotificationUncheckedCreateWithoutDeliveriesInput>
+    where?: AppNotificationWhereInput
+  }
+
+  export type AppNotificationUpdateToOneWithWhereWithoutDeliveriesInput = {
+    where?: AppNotificationWhereInput
+    data: XOR<AppNotificationUpdateWithoutDeliveriesInput, AppNotificationUncheckedUpdateWithoutDeliveriesInput>
+  }
+
+  export type AppNotificationUpdateWithoutDeliveriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recipientType?: EnumAppNotificationRecipientTypeFieldUpdateOperationsInput | $Enums.AppNotificationRecipientType
+    recipientId?: StringFieldUpdateOperationsInput | string
+    type?: EnumAppNotificationTypeFieldUpdateOperationsInput | $Enums.AppNotificationType
+    category?: EnumAppNotificationCategoryFieldUpdateOperationsInput | $Enums.AppNotificationCategory
+    priority?: EnumAppNotificationPriorityFieldUpdateOperationsInput | $Enums.AppNotificationPriority
+    title?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    href?: NullableStringFieldUpdateOperationsInput | string | null
+    payload?: NullableJsonNullValueInput | InputJsonValue
+    sourceModel?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceId?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutAppNotificationsNestedInput
+  }
+
+  export type AppNotificationUncheckedUpdateWithoutDeliveriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recipientType?: EnumAppNotificationRecipientTypeFieldUpdateOperationsInput | $Enums.AppNotificationRecipientType
+    recipientId?: StringFieldUpdateOperationsInput | string
+    type?: EnumAppNotificationTypeFieldUpdateOperationsInput | $Enums.AppNotificationType
+    category?: EnumAppNotificationCategoryFieldUpdateOperationsInput | $Enums.AppNotificationCategory
+    priority?: EnumAppNotificationPriorityFieldUpdateOperationsInput | $Enums.AppNotificationPriority
+    title?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    href?: NullableStringFieldUpdateOperationsInput | string | null
+    payload?: NullableJsonNullValueInput | InputJsonValue
+    sourceModel?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceId?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
   }
 
   export type SchoolCreateWithoutParentNotificationsInput = {
@@ -158208,6 +160956,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
@@ -158295,6 +161044,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
@@ -158558,6 +161308,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
@@ -158645,6 +161396,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
@@ -158880,6 +161632,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -158967,6 +161720,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -159166,6 +161920,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -159253,6 +162008,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -159448,6 +162204,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -159535,6 +162292,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -159871,6 +162629,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -159958,6 +162717,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -160276,6 +163036,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -160363,6 +163124,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -160716,6 +163478,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -160803,6 +163566,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -161164,6 +163928,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyCreateNestedOneWithoutSchoolInput
@@ -161251,6 +164016,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedCreateNestedOneWithoutSchoolInput
@@ -161551,6 +164317,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUpdateOneWithoutSchoolNestedInput
@@ -161638,6 +164405,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
     communicationPolicy?: SchoolCommunicationPolicyUncheckedUpdateOneWithoutSchoolNestedInput
@@ -161939,6 +164707,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -162026,6 +164795,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -162328,6 +165098,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -162415,6 +165186,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -162566,6 +165338,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -162653,6 +165426,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -163282,6 +166056,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -163369,6 +166144,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -163729,6 +166505,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -163816,6 +166593,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -164209,6 +166987,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -164296,6 +167075,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -164479,6 +167259,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -164566,6 +167347,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -164996,6 +167778,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -165083,6 +167866,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -165434,6 +168218,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -165521,6 +168306,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -165689,6 +168475,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -165776,6 +168563,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -165921,6 +168709,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -166008,6 +168797,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -166211,6 +169001,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -166298,6 +169089,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -166459,6 +169251,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -166546,6 +169339,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -166821,6 +169615,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -166908,6 +169703,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -167185,6 +169981,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -167272,6 +170069,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -167492,6 +170290,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -167579,6 +170378,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -167801,6 +170601,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -167888,6 +170689,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -168144,6 +170946,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -168231,6 +171034,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -168451,6 +171255,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -168538,6 +171343,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -168786,6 +171592,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -168873,6 +171680,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -169123,6 +171931,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -169210,6 +172019,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -169355,6 +172165,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -169442,6 +172253,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -169577,6 +172389,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -169664,6 +172477,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -169809,6 +172623,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -169896,6 +172711,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -170031,6 +172847,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -170118,6 +172935,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -170221,6 +173039,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -170308,6 +173127,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -170395,6 +173215,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -170482,6 +173303,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -170775,6 +173597,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -170862,6 +173685,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -171128,6 +173952,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -171215,6 +174040,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -171536,6 +174362,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -171623,6 +174450,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -171935,6 +174763,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -172022,6 +174851,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -172311,6 +175141,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -172398,6 +175229,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -172689,6 +175521,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -172776,6 +175609,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -172879,6 +175713,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -172966,6 +175801,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -173053,6 +175889,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -173140,6 +175977,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -173457,6 +176295,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -173544,6 +176383,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -173869,6 +176709,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -173956,6 +176797,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -174101,6 +176943,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -174188,6 +177031,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -174323,6 +177167,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -174410,6 +177255,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -174555,6 +177401,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -174642,6 +177489,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -174777,6 +177625,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -174864,6 +177713,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -175056,6 +177906,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -175143,6 +177994,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -175437,6 +178289,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -175524,6 +178377,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -175780,6 +178634,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -175867,6 +178722,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -176125,6 +178981,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -176212,6 +179069,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -176421,6 +179279,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -176508,6 +179367,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -176815,6 +179675,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -176902,6 +179763,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -177331,6 +180193,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -177418,6 +180281,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -177860,6 +180724,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -177947,6 +180812,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -178301,6 +181167,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -178388,6 +181255,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -178617,6 +181485,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -178704,6 +181573,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -178953,6 +181823,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -179040,6 +181911,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -179291,6 +182163,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -179378,6 +182251,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -179531,6 +182405,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -179618,6 +182493,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -179761,6 +182637,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -179848,6 +182725,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -179997,6 +182875,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -180084,6 +182963,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -180223,6 +183103,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -180310,6 +183191,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -180413,6 +183295,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -180500,6 +183383,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -180587,6 +183471,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -180674,6 +183559,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -180777,6 +183663,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -180864,6 +183751,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -180951,6 +183839,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -181038,6 +183927,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -181357,6 +184247,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -181444,6 +184335,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -181771,6 +184663,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -181858,6 +184751,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -181961,6 +184855,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -182048,6 +184943,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -182135,6 +185031,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -182222,6 +185119,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -182375,6 +185273,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -182462,6 +185361,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -182605,6 +185505,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -182692,6 +185593,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -182795,6 +185697,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -182882,6 +185785,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -182969,6 +185873,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -183056,6 +185961,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -183159,6 +186065,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -183246,6 +186153,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -183333,6 +186241,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -183420,6 +186329,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -183628,6 +186538,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -183715,6 +186626,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -183901,6 +186813,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -183988,6 +186901,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -184228,6 +187142,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -184315,6 +187230,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -184763,6 +187679,7 @@ export namespace Prisma {
     parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -184850,6 +187767,7 @@ export namespace Prisma {
     parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -185006,6 +187924,7 @@ export namespace Prisma {
     parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -185093,6 +188012,7 @@ export namespace Prisma {
     parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -185239,6 +188159,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -185326,6 +188247,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -185492,6 +188414,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -185579,6 +188502,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -185723,6 +188647,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -185810,6 +188735,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -185964,6 +188890,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -186051,6 +188978,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -186195,6 +189123,7 @@ export namespace Prisma {
     parentInvites?: ParentInviteCreateNestedManyWithoutSchoolInput
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -186282,6 +189211,7 @@ export namespace Prisma {
     parentInvites?: ParentInviteUncheckedCreateNestedManyWithoutSchoolInput
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -186601,6 +189531,7 @@ export namespace Prisma {
     parentInvites?: ParentInviteUpdateManyWithoutSchoolNestedInput
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -186688,6 +189619,7 @@ export namespace Prisma {
     parentInvites?: ParentInviteUncheckedUpdateManyWithoutSchoolNestedInput
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -187015,6 +189947,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -187102,6 +190035,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -187260,6 +190194,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -187347,6 +190282,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -187495,6 +190431,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingCreateNestedOneWithoutSchoolInput
@@ -187582,6 +190519,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedCreateNestedManyWithoutSchoolInput
     appNotifications?: AppNotificationUncheckedCreateNestedManyWithoutSchoolInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedCreateNestedManyWithoutSchoolInput
     parentNotifications?: ParentNotificationUncheckedCreateNestedManyWithoutSchoolInput
     parentActivityEvents?: ParentActivityEventUncheckedCreateNestedManyWithoutSchoolInput
     notificationSettings?: SchoolNotificationSettingUncheckedCreateNestedOneWithoutSchoolInput
@@ -187685,6 +190623,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUpdateOneWithoutSchoolNestedInput
@@ -187772,6 +190711,7 @@ export namespace Prisma {
     parentInviteAuditLogs?: ParentInviteAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     parentAccessAuditLogs?: ParentAccessAuditLogUncheckedUpdateManyWithoutSchoolNestedInput
     appNotifications?: AppNotificationUncheckedUpdateManyWithoutSchoolNestedInput
+    appNotificationDeliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolNestedInput
     parentNotifications?: ParentNotificationUncheckedUpdateManyWithoutSchoolNestedInput
     parentActivityEvents?: ParentActivityEventUncheckedUpdateManyWithoutSchoolNestedInput
     notificationSettings?: SchoolNotificationSettingUncheckedUpdateOneWithoutSchoolNestedInput
@@ -188493,6 +191433,24 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type AppNotificationDeliveryCreateManySchoolInput = {
+    id?: string
+    channel: $Enums.AppNotificationDeliveryChannel
+    status?: $Enums.AppNotificationDeliveryStatus
+    provider?: string | null
+    destination: string
+    attempts?: number
+    lastError?: string | null
+    providerMessageId?: string | null
+    sentAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    failedAt?: Date | string | null
+    nextAttemptAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    notificationId: string
   }
 
   export type ParentNotificationCreateManySchoolInput = {
@@ -190939,6 +193897,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deliveries?: AppNotificationDeliveryUpdateManyWithoutNotificationNestedInput
   }
 
   export type AppNotificationUncheckedUpdateWithoutSchoolInput = {
@@ -190959,6 +193918,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deliveries?: AppNotificationDeliveryUncheckedUpdateManyWithoutNotificationNestedInput
   }
 
   export type AppNotificationUncheckedUpdateManyWithoutSchoolInput = {
@@ -190979,6 +193939,60 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AppNotificationDeliveryUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: EnumAppNotificationDeliveryChannelFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryChannel
+    status?: EnumAppNotificationDeliveryStatusFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryStatus
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    destination?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    providerMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notification?: AppNotificationUpdateOneRequiredWithoutDeliveriesNestedInput
+  }
+
+  export type AppNotificationDeliveryUncheckedUpdateWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: EnumAppNotificationDeliveryChannelFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryChannel
+    status?: EnumAppNotificationDeliveryStatusFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryStatus
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    destination?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    providerMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notificationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type AppNotificationDeliveryUncheckedUpdateManyWithoutSchoolInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: EnumAppNotificationDeliveryChannelFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryChannel
+    status?: EnumAppNotificationDeliveryStatusFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryStatus
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    destination?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    providerMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notificationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ParentNotificationUpdateWithoutSchoolInput = {
@@ -194843,6 +197857,78 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolId?: StringFieldUpdateOperationsInput | string
     teacherId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type AppNotificationDeliveryCreateManyNotificationInput = {
+    id?: string
+    channel: $Enums.AppNotificationDeliveryChannel
+    status?: $Enums.AppNotificationDeliveryStatus
+    provider?: string | null
+    destination: string
+    attempts?: number
+    lastError?: string | null
+    providerMessageId?: string | null
+    sentAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    failedAt?: Date | string | null
+    nextAttemptAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schoolId: string
+  }
+
+  export type AppNotificationDeliveryUpdateWithoutNotificationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: EnumAppNotificationDeliveryChannelFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryChannel
+    status?: EnumAppNotificationDeliveryStatusFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryStatus
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    destination?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    providerMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    school?: SchoolUpdateOneRequiredWithoutAppNotificationDeliveriesNestedInput
+  }
+
+  export type AppNotificationDeliveryUncheckedUpdateWithoutNotificationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: EnumAppNotificationDeliveryChannelFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryChannel
+    status?: EnumAppNotificationDeliveryStatusFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryStatus
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    destination?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    providerMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type AppNotificationDeliveryUncheckedUpdateManyWithoutNotificationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: EnumAppNotificationDeliveryChannelFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryChannel
+    status?: EnumAppNotificationDeliveryStatusFieldUpdateOperationsInput | $Enums.AppNotificationDeliveryStatus
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
+    destination?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    providerMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schoolId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ParentNotificationDeliveryLogCreateManyNotificationInput = {

@@ -423,6 +423,22 @@ enum AppNotificationType {
   SYSTEM
 }
 
+enum AppNotificationDeliveryChannel {
+  IN_APP
+  EMAIL
+  SMS
+  WHATSAPP
+}
+
+enum AppNotificationDeliveryStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+  RETRYING
+  CANCELLED
+}
+
 enum ParentDeliveryChannel {
   EMAIL
   SMS
@@ -654,6 +670,7 @@ model School {
   parentInviteAuditLogs          ParentInviteAuditLog[]
   parentAccessAuditLogs          ParentAccessAuditLog[]
   appNotifications               AppNotification[]
+  appNotificationDeliveries      AppNotificationDelivery[]
   parentNotifications            ParentNotification[]
   parentActivityEvents           ParentActivityEvent[]
   notificationSettings           SchoolNotificationSetting?
@@ -1213,6 +1230,8 @@ model AppNotification {
   schoolId String
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
+  deliveries AppNotificationDelivery[]
+
   @@unique([schoolId, idempotencyKey], map: "AppNotif_school_idempotency_key")
   @@index([schoolId, recipientType, recipientId, readAt, createdAt], map: "AppNotif_recipient_read_created_idx")
   @@index([schoolId, recipientType, recipientId, createdAt], map: "AppNotif_recipient_created_idx")
@@ -1220,6 +1239,36 @@ model AppNotification {
   @@index([schoolId, type, createdAt], map: "AppNotif_type_created_idx")
   @@index([schoolId, sourceModel, sourceId], map: "AppNotif_source_idx")
   @@index([expiresAt], map: "AppNotif_expires_idx")
+}
+
+model AppNotificationDelivery {
+  id                String                        @id @default(cuid())
+  channel           AppNotificationDeliveryChannel
+  status            AppNotificationDeliveryStatus  @default(PENDING)
+  provider          String?
+  destination       String
+  attempts          Int                           @default(0)
+  lastError         String?
+  providerMessageId String?
+  sentAt            DateTime?
+  deliveredAt       DateTime?
+  failedAt          DateTime?
+  nextAttemptAt     DateTime?
+  createdAt         DateTime                      @default(now())
+  updatedAt         DateTime                      @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  notificationId String
+  notification   AppNotification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@unique([notificationId, channel, destination], map: "AppNotifDelivery_once_per_destination")
+  @@index([schoolId, status, nextAttemptAt, createdAt], map: "AppNotifDelivery_worker_idx")
+  @@index([notificationId, createdAt], map: "AppNotifDelivery_history_idx")
+  @@index([schoolId, provider, providerMessageId], map: "AppNotifDelivery_provider_msg_idx")
+  @@index([schoolId, status, failedAt], map: "AppNotifDelivery_failure_idx")
+  @@index([schoolId, channel, status, createdAt], map: "AppNotifDelivery_channel_status_idx")
 }
 
 model ParentNotification {

@@ -483,6 +483,25 @@ exports.Prisma.AppNotificationScalarFieldEnum = {
   schoolId: 'schoolId'
 };
 
+exports.Prisma.AppNotificationDeliveryScalarFieldEnum = {
+  id: 'id',
+  channel: 'channel',
+  status: 'status',
+  provider: 'provider',
+  destination: 'destination',
+  attempts: 'attempts',
+  lastError: 'lastError',
+  providerMessageId: 'providerMessageId',
+  sentAt: 'sentAt',
+  deliveredAt: 'deliveredAt',
+  failedAt: 'failedAt',
+  nextAttemptAt: 'nextAttemptAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId',
+  notificationId: 'notificationId'
+};
+
 exports.Prisma.ParentNotificationScalarFieldEnum = {
   id: 'id',
   type: 'type',
@@ -1472,6 +1491,22 @@ exports.AppNotificationPriority = exports.$Enums.AppNotificationPriority = {
   URGENT: 'URGENT'
 };
 
+exports.AppNotificationDeliveryChannel = exports.$Enums.AppNotificationDeliveryChannel = {
+  IN_APP: 'IN_APP',
+  EMAIL: 'EMAIL',
+  SMS: 'SMS',
+  WHATSAPP: 'WHATSAPP'
+};
+
+exports.AppNotificationDeliveryStatus = exports.$Enums.AppNotificationDeliveryStatus = {
+  PENDING: 'PENDING',
+  SENT: 'SENT',
+  DELIVERED: 'DELIVERED',
+  FAILED: 'FAILED',
+  RETRYING: 'RETRYING',
+  CANCELLED: 'CANCELLED'
+};
+
 exports.ParentNotificationType = exports.$Enums.ParentNotificationType = {
   DAILY_SUMMARY: 'DAILY_SUMMARY',
   ATTENDANCE: 'ATTENDANCE',
@@ -1867,6 +1902,7 @@ exports.Prisma.ModelName = {
   TeacherAccountabilityAuditLog: 'TeacherAccountabilityAuditLog',
   ParentNotificationPreference: 'ParentNotificationPreference',
   AppNotification: 'AppNotification',
+  AppNotificationDelivery: 'AppNotificationDelivery',
   ParentNotification: 'ParentNotification',
   ParentNotificationDeliveryLog: 'ParentNotificationDeliveryLog',
   ParentTeacherContactRequest: 'ParentTeacherContactRequest',
