@@ -1,0 +1,1 @@
+ALTER TABLE "AppNotification" ADD CONSTRAINT "AppNotif_idempotency_not_blank_chk" CHECK ("idempotencyKey" IS NULL OR length(btrim("idempotencyKey")) > 0);

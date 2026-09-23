@@ -63,6 +63,21 @@ export type RoleRecipient = {
 };
 
 const MAX_ATTEMPTS = 5;
+const MAX_IDEMPOTENCY_PART_LENGTH = 120;
+
+export const notificationIdempotencyKeys = {
+  weeklyFinanceSummary: (schoolId: string, weekStart: string | Date) =>
+    createNotificationIdempotencyKey("weekly-finance-summary", schoolId, dateKeyPart(weekStart)),
+  dailyFinanceReport: (schoolId: string, date: string | Date) =>
+    createNotificationIdempotencyKey("daily-finance-report", schoolId, dateKeyPart(date)),
+  parentDailySummary: (parentId: string, date: string | Date) =>
+    createNotificationIdempotencyKey("parent-daily-summary", parentId, dateKeyPart(date)),
+  paymentCorrectionApplied: (correctionId: string) =>
+    createNotificationIdempotencyKey("payment-correction-applied", correctionId),
+  teacherAttendanceEscalated: (obligationId: string) =>
+    createNotificationIdempotencyKey("teacher-attendance-escalated", obligationId),
+};
+
 
 async function withTransaction<T>(client: PrismaClientOrTx, action: (tx: Prisma.TransactionClient) => Promise<T>) {
   if ("$transaction" in client) {
@@ -70,6 +85,42 @@ async function withTransaction<T>(client: PrismaClientOrTx, action: (tx: Prisma.
   }
 
   return action(client);
+}
+
+function dateKeyPart(value: string | Date) {
+  if (value instanceof Date) return value.toISOString().slice(0, 10);
+  return cleanIdempotencyPart(value, "date");
+}
+
+function cleanIdempotencyPart(value: string, field = "idempotency part") {
+  const cleaned = cleanText(value, field)
+    .toLowerCase()
+    .replace(/[^a-z0-9._:-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  if (!cleaned) throw new Error(`${field} must contain at least one safe character.`);
+  return cleaned.slice(0, MAX_IDEMPOTENCY_PART_LENGTH);
+}
+
+export function createNotificationIdempotencyKey(prefix: string, ...parts: Array<string | Date>) {
+  const keyParts = [cleanIdempotencyPart(prefix, "idempotency prefix")];
+
+  for (const part of parts) {
+    keyParts.push(part instanceof Date ? dateKeyPart(part) : cleanIdempotencyPart(part));
+  }
+
+  return keyParts.join(":");
+}
+
+function notificationRequiresIdempotency(input: {
+  category: AppNotificationCategory;
+  priority: AppNotificationPriority;
+  type: AppNotificationType;
+}) {
+  if (input.category !== "GENERAL") return true;
+  if (input.priority === "HIGH" || input.priority === "URGENT") return true;
+  return input.type !== "ANNOUNCEMENT" && input.type !== "SYSTEM";
 }
 
 function cleanText(value: string, field: string) {
@@ -101,6 +152,15 @@ function assertQueueableDeliveryStatus(status: AppNotificationDeliveryStatus) {
 }
 
 function normalizeNotificationInput(input: CreateNotificationInput) {
+  const priority = input.priority ?? "NORMAL";
+  const idempotencyKey = cleanOptional(input.idempotencyKey) ?? sourceDedupeKey(input);
+
+  if (notificationRequiresIdempotency({ category: input.category, priority, type: input.type }) && !idempotencyKey) {
+    throw new Error(
+      `Notification type ${input.type} in ${input.category} requires an idempotencyKey or sourceModel/sourceId.`,
+    );
+  }
+
   return {
     ...input,
     schoolId: cleanText(input.schoolId, "schoolId"),
@@ -108,10 +168,10 @@ function normalizeNotificationInput(input: CreateNotificationInput) {
     title: cleanText(input.title, "title").slice(0, 160),
     body: cleanText(input.body, "body"),
     href: safeHref(input.href),
-    priority: input.priority ?? "NORMAL",
+    priority,
     sourceModel: cleanOptional(input.sourceModel),
     sourceId: cleanOptional(input.sourceId),
-    idempotencyKey: cleanOptional(input.idempotencyKey),
+    idempotencyKey,
     deliveries: input.deliveries ?? [],
   };
 }
@@ -140,14 +200,18 @@ function sourceDedupeKey(input: CreateNotificationInput) {
   const sourceModel = cleanOptional(input.sourceModel);
   const sourceId = cleanOptional(input.sourceId);
   if (!sourceModel || !sourceId) return null;
-  return `${schoolId}:${input.recipientType}:${recipientId}:${input.type}:${sourceModel}:${sourceId}`;
+  return createNotificationIdempotencyKey(
+    input.type,
+    schoolId,
+    input.recipientType,
+    recipientId,
+    sourceModel,
+    sourceId,
+  );
 }
 
 export async function dedupeNotification(input: CreateNotificationInput, client: PrismaClientOrTx = prisma) {
-  const normalized = normalizeNotificationInput({
-    ...input,
-    idempotencyKey: input.idempotencyKey ?? sourceDedupeKey(input),
-  });
+  const normalized = normalizeNotificationInput(input);
 
   if (!normalized.idempotencyKey) return null;
 
@@ -163,10 +227,7 @@ export async function dedupeNotification(input: CreateNotificationInput, client:
 }
 
 export async function createNotification(input: CreateNotificationInput, client: PrismaClientOrTx = prisma) {
-  const normalized = normalizeNotificationInput({
-    ...input,
-    idempotencyKey: input.idempotencyKey ?? sourceDedupeKey(input),
-  });
+  const normalized = normalizeNotificationInput(input);
 
   return withTransaction(client, async (tx) => {
     const existing = await dedupeNotification(normalized, tx);
