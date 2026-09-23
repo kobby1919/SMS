@@ -36,9 +36,10 @@ function studentName(student: { name: string; surname: string }) {
   return `${student.name} ${student.surname}`.trim();
 }
 
-function receiptCounter(receiptNumber: string) {
-  const match = receiptNumber.match(/(\d+)$/);
-  return match ? Number(match[1]) : null;
+function receiptSeries(receiptNumber: string) {
+  const match = receiptNumber.match(/^(.*?)(\d+)$/);
+  if (!match) return null;
+  return { prefix: match[1], counter: Number(match[2]) };
 }
 
 export async function getReceiptIntegrityReport(schoolId: string): Promise<ReceiptIntegrityReport> {
@@ -146,14 +147,23 @@ export async function getReceiptIntegrityReport(schoolId: string): Promise<Recei
   }
 
   const duplicateReferenceGroups = Array.from(referenceGroups.values()).filter((group) => group.length > 1);
-  const counters = receiptNumbers
-    .map((payment) => receiptCounter(payment.receiptNumber))
-    .filter((value): value is number => Number.isInteger(value))
-    .sort((a, b) => a - b);
+  const countersBySeries = new Map<string, number[]>();
+  for (const payment of receiptNumbers) {
+    const parsed = receiptSeries(payment.receiptNumber);
+    if (!parsed || !Number.isInteger(parsed.counter)) continue;
+    const counters = countersBySeries.get(parsed.prefix) ?? [];
+    counters.push(parsed.counter);
+    countersBySeries.set(parsed.prefix, counters);
+  }
+
   let receiptGapCount = 0;
-  for (let i = 1; i < counters.length; i += 1) {
-    const gap = counters[i] - counters[i - 1];
-    if (gap > 1) receiptGapCount += gap - 1;
+  for (const counters of countersBySeries.values()) {
+    counters.sort((a, b) => a - b);
+    const uniqueCounters = [...new Set(counters)];
+    for (let i = 1; i < uniqueCounters.length; i += 1) {
+      const gap = uniqueCounters[i] - uniqueCounters[i - 1];
+      if (gap > 1) receiptGapCount += gap - 1;
+    }
   }
 
   const issues: ReceiptIntegrityIssue[] = [

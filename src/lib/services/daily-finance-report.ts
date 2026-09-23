@@ -97,7 +97,6 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
     paymentsForTotals,
     recentPaymentRows,
     yesterdayPayments,
-    receiptsIssuedToday,
     pendingConfirmationCount,
     pendingConfirmations,
     reversalCount,
@@ -153,13 +152,6 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
         paymentDate: { gte: yesterday.start, lte: yesterday.end },
       },
       select: { amount: true, id: true },
-    }),
-    prisma.payment.count({
-      where: {
-        schoolId,
-        status: "CONFIRMED",
-        createdAt: { gte: start, lte: end },
-      },
     }),
     prisma.payment.count({ where: { schoolId, status: "PENDING" } }),
     prisma.payment.findMany({
@@ -348,7 +340,7 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
     yesterdayEnd: yesterday.end,
     totalReceived,
     paymentCount: paymentsForTotals.length,
-    receiptCount: receiptsIssuedToday,
+    receiptCount: paymentsForTotals.length,
     pendingConfirmationCount,
     reversalCount,
     correctionRequestCount,
