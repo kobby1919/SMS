@@ -523,6 +523,7 @@ export async function markSent(input: {
     },
   });
 }
+
 export async function markDelivered(input: {
   schoolId: string;
   deliveryId: string;
@@ -605,6 +606,7 @@ export async function cancelDelivery(input: {
     },
   });
 }
+
 export async function deferDelivery(input: {
   schoolId: string;
   deliveryId: string;
@@ -624,6 +626,7 @@ export async function deferDelivery(input: {
     },
   });
 }
+
 export async function retryFailed(input: {
   schoolId: string;
   deliveryId?: string;
@@ -875,6 +878,7 @@ export async function isNotificationChannelAllowed(input: {
   const decision = await getNotificationDeliveryDecision(input, client);
   return decision.allowed;
 }
+
 export async function processPendingNotificationDeliveries(input: {
   schoolId: string;
   limit?: number;
@@ -972,7 +976,7 @@ export async function processPendingNotificationDeliveries(input: {
         deliveryId: delivery.id,
         channel: delivery.channel,
         destination: delivery.destination,
-        provider: delivery.provider,
+            provider: delivery.provider,
         title: delivery.notification.title,
         body: delivery.notification.body,
         href: delivery.notification.href,
@@ -989,7 +993,7 @@ export async function processPendingNotificationDeliveries(input: {
             deliveryId: delivery.id,
             error: error instanceof Error ? error.message : "Notification provider failed unexpectedly.",
             retryAt: new Date(now.getTime() + 30 * 60 * 1000),
-        provider: delivery.provider,
+            provider: delivery.provider,
           },
           client,
         ),

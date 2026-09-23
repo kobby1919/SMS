@@ -45,6 +45,7 @@ export interface NotificationProviderAdapter {
 }
 
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
+const NOT_CONFIGURED_PROVIDER = "provider-not-configured";
 
 function appBaseUrl() {
   return (
@@ -101,6 +102,10 @@ function retryIn(minutes: number) {
   return new Date(Date.now() + minutes * 60 * 1000);
 }
 
+function providerKey(value?: string | null) {
+  return value?.trim().toLowerCase() || NOT_CONFIGURED_PROVIDER;
+}
+
 class InAppProvider implements NotificationProviderAdapter {
   readonly channel = "IN_APP" as const;
   readonly name = "edujay-in-app";
@@ -115,9 +120,9 @@ class InAppProvider implements NotificationProviderAdapter {
   }
 }
 
-class EmailProvider implements NotificationProviderAdapter {
+class ResendEmailProvider implements NotificationProviderAdapter {
   readonly channel = "EMAIL" as const;
-  readonly name = process.env.APP_NOTIFICATION_EMAIL_PROVIDER || "resend";
+  readonly name = "resend";
 
   async send(payload: NotificationProviderPayload): Promise<NotificationProviderResult> {
     const apiKey = process.env.RESEND_API_KEY;
@@ -193,7 +198,7 @@ class UnconfiguredExternalProvider implements NotificationProviderAdapter {
   readonly channel: AppNotificationDeliveryChannel;
   readonly name: string;
 
-  constructor(channel: "SMS" | "WHATSAPP", name: string) {
+  constructor(channel: AppNotificationDeliveryChannel, name: string) {
     this.channel = channel;
     this.name = name;
   }
@@ -209,17 +214,25 @@ class UnconfiguredExternalProvider implements NotificationProviderAdapter {
 }
 
 const inAppProvider = new InAppProvider();
-const emailProvider = new EmailProvider();
+const resendEmailProvider = new ResendEmailProvider();
 const smsProvider = new UnconfiguredExternalProvider("SMS", "sms-not-configured");
 const whatsappProvider = new UnconfiguredExternalProvider("WHATSAPP", "whatsapp-not-configured");
 
-export function getNotificationProvider(channel: AppNotificationDeliveryChannel): NotificationProviderAdapter {
+const emailProviders: Record<string, NotificationProviderAdapter> = {
+  resend: resendEmailProvider,
+  [NOT_CONFIGURED_PROVIDER]: resendEmailProvider,
+};
+
+export function getNotificationProvider(
+  channel: AppNotificationDeliveryChannel,
+  provider?: string | null,
+): NotificationProviderAdapter {
   if (channel === "IN_APP") return inAppProvider;
-  if (channel === "EMAIL") return emailProvider;
+  if (channel === "EMAIL") return emailProviders[providerKey(provider)] ?? new UnconfiguredExternalProvider("EMAIL", providerKey(provider));
   if (channel === "SMS") return smsProvider;
   return whatsappProvider;
 }
 
 export async function sendNotificationWithProvider(payload: NotificationProviderPayload) {
-  return getNotificationProvider(payload.channel).send(payload);
+  return getNotificationProvider(payload.channel, payload.provider).send(payload);
 }
