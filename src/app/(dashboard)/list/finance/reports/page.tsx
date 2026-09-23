@@ -149,9 +149,6 @@ const FinanceReportsPage = async ({
                 defaultValue={selectedDateValue}
                 className="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm font-bold text-gray-700 outline-none focus:border-blue-400"
               />
-              <button type="submit" className="h-9 rounded-lg bg-slate-900 px-3 text-xs font-black text-white transition hover:bg-slate-800">
-                View
-              </button>
             </form>
             <a
               href={`/api/finance/reports/daily?date=${selectedDateValue}`}

@@ -22,7 +22,7 @@ import {
   weeklyReportDateInputValue,
 } from "@/src/lib/services/weekly-finance-report";
 
-const WEEKLY_OWNER_SUMMARY_TEMPLATE_VERSION = "first-three-v1";
+const WEEKLY_OWNER_SUMMARY_TEMPLATE_VERSION = "receipt-corrections-issues-v2";
 
 const S = StyleSheet.create({
   page: {
@@ -161,7 +161,7 @@ export async function GET(req: NextRequest) {
               <View>
                 <Text style={S.headerKicker}>{branding.displayName.toUpperCase()} - FINANCE OFFICE</Text>
                 <Text style={S.headerTitle}>Weekly Owner Summary</Text>
-                <Text style={S.headerSub}>First three trusted sections: weekly money position, class collection performance, and arrears pressure.</Text>
+                <Text style={S.headerSub}>Trusted weekly finance summary: collections, class performance, arrears, receipts, corrections, and parent payment issues.</Text>
               </View>
               <View style={S.headerRight}>
                 <Text style={S.headerDate}>{label}</Text>
@@ -171,7 +171,7 @@ export async function GET(req: NextRequest) {
 
             <View style={S.note}>
               <Text style={S.noteTitle}>Report source rules</Text>
-              <Text style={S.noteText}>Weekly collections use confirmed payment records only. Class collection rates and outstanding balances use StudentBill records. Arrears pressure uses unpaid and part-paid bills with balance above zero.</Text>
+              <Text style={S.noteText}>Weekly collections use confirmed payment records only. Class collection rates and arrears use StudentBill records. Receipt trust uses payment and receipt records. Corrections use the correction workflow. Parent payment issues use FinanceQuery records.</Text>
             </View>
 
             <View style={S.statGrid}>
@@ -263,6 +263,43 @@ export async function GET(req: NextRequest) {
               </View>
             </View>
 
+
+            <View style={S.section}>
+              <Text style={S.sectionKicker}>RECEIPT TRUST</Text>
+              <Text style={S.sectionTitle}>Receipts that prove or question money records</Text>
+              <Text style={S.helper}>This protects the school from “I paid but it is missing” confusion. Issued receipts are confirmed payments this week. Voided receipts are reversals made this week. Pending, failed, duplicate reference, and numbering gap counts show records that need checking.</Text>
+              <View style={S.statGrid}>
+                <SummaryBox label="Receipts issued" value={report.receiptTrust.receiptsIssuedThisWeek.toLocaleString("en-GH")} sub="Confirmed receipts this week" color="#047857" borderColor="#bbf7d0" />
+                <SummaryBox label="Voided receipts" value={report.receiptTrust.voidedReceiptsThisWeek.toLocaleString("en-GH")} sub="Receipts reversed this week" color="#be123c" borderColor="#fecdd3" />
+                <SummaryBox label="Pending / failed" value={(report.receiptTrust.pendingReceipts + report.receiptTrust.failedReceipts).toLocaleString("en-GH")} sub={`${report.receiptTrust.pendingReceipts} pending, ${report.receiptTrust.failedReceipts} failed`} color="#b45309" borderColor="#fde68a" />
+                <SummaryBox label="Reference / gaps" value={(report.receiptTrust.duplicateReferenceWarnings + report.receiptTrust.receiptNumberingGaps).toLocaleString("en-GH")} sub={`${report.receiptTrust.duplicateReferenceWarnings} duplicate ref warnings, ${report.receiptTrust.receiptNumberingGaps} numbering gaps`} color="#1d4ed8" borderColor="#bfdbfe" />
+              </View>
+            </View>
+
+            <View style={S.twoCol}>
+              <View style={S.col}>
+                <Text style={S.sectionKicker}>CORRECTIONS AND REVERSALS</Text>
+                <Text style={S.sectionTitle}>Money mistakes handled through approval</Text>
+                <Text style={S.helper}>This shows whether finance mistakes are being handled professionally without deleting payment history.</Text>
+                <View style={S.issueLine}>
+                  <Text style={S.issueTitle}>Correction workflow this week</Text>
+                  <Text style={S.issueDetail}>{report.correctionControl.requestsRaised} request{report.correctionControl.requestsRaised === 1 ? "" : "s"} raised; {report.correctionControl.approved} approved; {report.correctionControl.rejected} rejected.</Text>
+                  <Text style={S.issueDetail}>{report.correctionControl.stillPending} still pending; {report.correctionControl.reversalsMade} reversal{report.correctionControl.reversalsMade === 1 ? "" : "s"} made.</Text>
+                  <Text style={S.issueDetail}>Total affected amount: {formatGHS(report.correctionControl.totalAffectedAmount)}.</Text>
+                </View>
+              </View>
+              <View style={S.col}>
+                <Text style={S.sectionKicker}>PARENT PAYMENT ISSUES</Text>
+                <Text style={S.sectionTitle}>Queries that can affect trust</Text>
+                <Text style={S.helper}>This shows parent finance questions and unresolved payment issues that the school should not ignore.</Text>
+                <View style={S.issueLine}>
+                  <Text style={S.issueTitle}>Parent/payment issue position</Text>
+                  <Text style={S.issueDetail}>{report.parentPaymentIssues.openQueries} open or in-review parent finance quer{report.parentPaymentIssues.openQueries === 1 ? "y" : "ies"}.</Text>
+                  <Text style={S.issueDetail}>{report.parentPaymentIssues.resolvedThisWeek} resolved this week; {report.parentPaymentIssues.repeatedPaymentDisputes} repeated dispute{report.parentPaymentIssues.repeatedPaymentDisputes === 1 ? "" : "s"} this week.</Text>
+                  <Text style={S.issueDetail}>{report.parentPaymentIssues.billsWithUnresolvedIssues} bill{report.parentPaymentIssues.billsWithUnresolvedIssues === 1 ? "" : "s"} still have unresolved payment issues.</Text>
+                </View>
+              </View>
+            </View>
             <View style={S.footer} fixed>
               <Text style={S.footerText}>{branding.shortName} - Weekly Owner Summary - {label}</Text>
               <Text style={S.footerText}>Generated from Edujay finance records</Text>

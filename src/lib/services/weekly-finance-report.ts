@@ -22,6 +22,31 @@ export type WeeklyClassPerformanceRow = {
   status: "Healthy" | "Watch" | "Weak" | "Critical";
 };
 
+export type WeeklyReceiptTrust = {
+  receiptsIssuedThisWeek: number;
+  voidedReceiptsThisWeek: number;
+  pendingReceipts: number;
+  failedReceipts: number;
+  duplicateReferenceWarnings: number;
+  receiptNumberingGaps: number;
+};
+
+export type WeeklyCorrectionControl = {
+  requestsRaised: number;
+  approved: number;
+  rejected: number;
+  stillPending: number;
+  reversalsMade: number;
+  totalAffectedAmount: number;
+};
+
+export type WeeklyParentPaymentIssues = {
+  openQueries: number;
+  resolvedThisWeek: number;
+  repeatedPaymentDisputes: number;
+  billsWithUnresolvedIssues: number;
+};
+
 export type WeeklyFinanceSummary = {
   weekStart: Date;
   weekEnd: Date;
@@ -41,6 +66,9 @@ export type WeeklyFinanceSummary = {
   weakCollectionClasses: WeeklyClassPerformanceRow[];
   highOutstandingClasses: WeeklyClassPerformanceRow[];
   arrears: BursarArrearsFollowUp;
+  receiptTrust: WeeklyReceiptTrust;
+  correctionControl: WeeklyCorrectionControl;
+  parentPaymentIssues: WeeklyParentPaymentIssues;
 };
 
 function asNumber(value: Prisma.Decimal | number | string | null | undefined) {
@@ -111,11 +139,58 @@ function sevenDayRows(weekStart: Date) {
   });
 }
 
+function receiptSeries(receiptNumber: string) {
+  const match = receiptNumber.match(/^(.*?)(\d+)$/);
+  if (!match) return null;
+  return { prefix: match[1], counter: Number(match[2]) };
+}
+
+function receiptGapCount(receiptNumbers: string[]) {
+  const countersBySeries = new Map<string, number[]>();
+  for (const receiptNumber of receiptNumbers) {
+    const parsed = receiptSeries(receiptNumber);
+    if (!parsed || !Number.isInteger(parsed.counter)) continue;
+    const current = countersBySeries.get(parsed.prefix) ?? [];
+    current.push(parsed.counter);
+    countersBySeries.set(parsed.prefix, current);
+  }
+
+  let gaps = 0;
+  for (const counters of countersBySeries.values()) {
+    counters.sort((a, b) => a - b);
+    const uniqueCounters = [...new Set(counters)];
+    for (let index = 1; index < uniqueCounters.length; index += 1) {
+      const gap = uniqueCounters[index] - uniqueCounters[index - 1];
+      if (gap > 1) gaps += gap - 1;
+    }
+  }
+
+  return gaps;
+}
+
 export async function getWeeklyFinanceSummary(schoolId: string, date = new Date()): Promise<WeeklyFinanceSummary> {
   const currentWeek = weekBounds(date);
   const previousWeek = previousWeekBounds(currentWeek.start);
 
-  const [payments, previousPayments, classReport, arrears] = await Promise.all([
+  const [
+    payments,
+    previousPayments,
+    classReport,
+    arrears,
+    weeklyReversals,
+    activeReferenceRows,
+    allReceiptNumbers,
+    pendingReceipts,
+    failedReceipts,
+    correctionsRaisedThisWeek,
+    correctionsApprovedThisWeek,
+    correctionsRejectedThisWeek,
+    pendingCorrectionCount,
+    correctionAffectedRows,
+    weeklyFinanceQueries,
+    resolvedFinanceQueries,
+    activeFinanceQueries,
+  ] = await Promise.all([
     prisma.payment.findMany({
       where: {
         schoolId,
@@ -145,6 +220,102 @@ export async function getWeeklyFinanceSummary(schoolId: string, date = new Date(
     }),
     getClassCollectionReport(schoolId),
     getBursarArrearsFollowUp(schoolId, { asOf: currentWeek.end, limit: 12 }),
+    prisma.paymentReversal.findMany({
+      where: {
+        schoolId,
+        reversedAt: { gte: currentWeek.start, lte: currentWeek.end },
+        payment: { schoolId, studentBill: { schoolId, student: { schoolId } } },
+      },
+      select: { paymentId: true, payment: { select: { amount: true } } },
+    }),
+    prisma.payment.findMany({
+      where: {
+        schoolId,
+        referenceNo: { not: null },
+        status: { notIn: ["FAILED", "REVERSED"] },
+        studentBill: { schoolId, student: { schoolId } },
+      },
+      select: { id: true, paymentMethod: true, referenceNo: true },
+    }),
+    prisma.payment.findMany({
+      where: { schoolId, studentBill: { schoolId, student: { schoolId } } },
+      select: { receiptNumber: true },
+      orderBy: { receiptNumber: "asc" },
+    }),
+    prisma.payment.count({
+      where: { schoolId, status: "PENDING", studentBill: { schoolId, student: { schoolId } } },
+    }),
+    prisma.payment.count({
+      where: { schoolId, status: "FAILED", studentBill: { schoolId, student: { schoolId } } },
+    }),
+    prisma.paymentCorrectionRequest.count({
+      where: {
+        schoolId,
+        requestedAt: { gte: currentWeek.start, lte: currentWeek.end },
+        studentBill: { schoolId, student: { schoolId } },
+      },
+    }),
+    prisma.paymentCorrectionRequest.count({
+      where: {
+        schoolId,
+        status: { in: ["APPROVED", "APPLIED"] },
+        reviewedAt: { gte: currentWeek.start, lte: currentWeek.end },
+        studentBill: { schoolId, student: { schoolId } },
+      },
+    }),
+    prisma.paymentCorrectionRequest.count({
+      where: {
+        schoolId,
+        status: "REJECTED",
+        reviewedAt: { gte: currentWeek.start, lte: currentWeek.end },
+        studentBill: { schoolId, student: { schoolId } },
+      },
+    }),
+    prisma.paymentCorrectionRequest.count({
+      where: { schoolId, status: "PENDING_REVIEW", studentBill: { schoolId, student: { schoolId } } },
+    }),
+    prisma.paymentCorrectionRequest.findMany({
+      where: {
+        schoolId,
+        OR: [
+          { requestedAt: { gte: currentWeek.start, lte: currentWeek.end } },
+          { reviewedAt: { gte: currentWeek.start, lte: currentWeek.end } },
+          { appliedAt: { gte: currentWeek.start, lte: currentWeek.end } },
+        ],
+        studentBill: { schoolId, student: { schoolId } },
+      },
+      select: { originalPaymentId: true, originalPayment: { select: { amount: true } } },
+    }),
+    prisma.financeQuery.findMany({
+      where: {
+        schoolId,
+        createdAt: { gte: currentWeek.start, lte: currentWeek.end },
+        student: { schoolId },
+        studentBill: { schoolId },
+        parent: { schoolId },
+      },
+      select: { id: true, parentId: true, studentBillId: true },
+    }),
+    prisma.financeQuery.count({
+      where: {
+        schoolId,
+        status: { in: ["RESOLVED", "CLOSED"] },
+        resolvedAt: { gte: currentWeek.start, lte: currentWeek.end },
+        student: { schoolId },
+        studentBill: { schoolId },
+        parent: { schoolId },
+      },
+    }),
+    prisma.financeQuery.findMany({
+      where: {
+        schoolId,
+        status: { in: ["OPEN", "IN_REVIEW"] },
+        student: { schoolId },
+        studentBill: { schoolId },
+        parent: { schoolId },
+      },
+      select: { id: true, studentBillId: true },
+    }),
   ]);
 
   const dailyMap = new Map(sevenDayRows(currentWeek.start).map((row) => [dayKey(row.date), row]));
@@ -206,6 +377,26 @@ export async function getWeeklyFinanceSummary(schoolId: string, date = new Date(
 
   const totalCollected = payments.reduce((sum, payment) => sum + asNumber(payment.amount), 0);
   const previousTotalCollected = previousPayments.reduce((sum, payment) => sum + asNumber(payment.amount), 0);
+  const referenceGroups = new Map<string, number>();
+  for (const payment of activeReferenceRows) {
+    const reference = payment.referenceNo?.trim();
+    if (!reference) continue;
+    const key = `${payment.paymentMethod}:${reference.toLowerCase()}`;
+    referenceGroups.set(key, (referenceGroups.get(key) ?? 0) + 1);
+  }
+  const duplicateReferenceWarnings = Array.from(referenceGroups.values()).filter((count) => count > 1).length;
+  const affectedPayments = new Map<number, number>();
+  for (const correction of correctionAffectedRows) {
+    affectedPayments.set(correction.originalPaymentId, asNumber(correction.originalPayment.amount));
+  }
+  for (const reversal of weeklyReversals) {
+    affectedPayments.set(reversal.paymentId, asNumber(reversal.payment.amount));
+  }
+  const unresolvedBillIds = new Set(activeFinanceQueries.map((query) => query.studentBillId));
+  const weeklyQueryBillCounts = new Map<number, number>();
+  for (const query of weeklyFinanceQueries) {
+    weeklyQueryBillCounts.set(query.studentBillId, (weeklyQueryBillCounts.get(query.studentBillId) ?? 0) + 1);
+  }
 
   return {
     weekStart: currentWeek.start,
@@ -226,5 +417,27 @@ export async function getWeeklyFinanceSummary(schoolId: string, date = new Date(
     weakCollectionClasses,
     highOutstandingClasses,
     arrears,
+    receiptTrust: {
+      receiptsIssuedThisWeek: payments.length,
+      voidedReceiptsThisWeek: weeklyReversals.length,
+      pendingReceipts,
+      failedReceipts,
+      duplicateReferenceWarnings,
+      receiptNumberingGaps: receiptGapCount(allReceiptNumbers.map((payment) => payment.receiptNumber)),
+    },
+    correctionControl: {
+      requestsRaised: correctionsRaisedThisWeek,
+      approved: correctionsApprovedThisWeek,
+      rejected: correctionsRejectedThisWeek,
+      stillPending: pendingCorrectionCount,
+      reversalsMade: weeklyReversals.length,
+      totalAffectedAmount: Array.from(affectedPayments.values()).reduce((sum, amount) => sum + amount, 0),
+    },
+    parentPaymentIssues: {
+      openQueries: activeFinanceQueries.length,
+      resolvedThisWeek: resolvedFinanceQueries,
+      repeatedPaymentDisputes: Array.from(weeklyQueryBillCounts.values()).filter((count) => count > 1).length,
+      billsWithUnresolvedIssues: unresolvedBillIds.size,
+    },
   };
 }
