@@ -23,6 +23,7 @@ import {
 import { getBursarArrearsFollowUp } from "@/src/lib/services/bursar-arrears";
 import { getClassCollectionReport } from "@/src/lib/services/class-collection-report";
 import { getReceiptIntegrityReport } from "@/src/lib/services/receipt-integrity-report";
+import { getCorrectionReversalReport } from "@/src/lib/services/correction-reversal-report";
 
 export const dynamic = "force-dynamic";
 
@@ -62,11 +63,12 @@ const FinanceReportsPage = async ({
   const params = await searchParams;
   const selectedDate = parseDailyReportDate(params.date);
   const selectedDateValue = dailyReportDateInputValue(selectedDate);
-  const [report, arrearsReport, classCollectionReport, receiptIntegrityReport] = await Promise.all([
+  const [report, arrearsReport, classCollectionReport, receiptIntegrityReport, correctionReversalReport] = await Promise.all([
     getDailyFinanceReport(schoolId, selectedDate),
     getBursarArrearsFollowUp(schoolId, { asOf: selectedDate, limit: 10 }),
     getClassCollectionReport(schoolId),
     getReceiptIntegrityReport(schoolId),
+    getCorrectionReversalReport(schoolId),
   ]);
 
   const cards = [
@@ -478,6 +480,101 @@ const FinanceReportsPage = async ({
         </div>
       </section>
 
+      <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-rose-600">Corrections and reversals report</p>
+            <h2 className="mt-1 text-lg font-black text-gray-900">Money mistakes handled without deleting history</h2>
+            <p className="mt-1 max-w-3xl text-sm font-semibold text-gray-500">
+              Shows pending correction reviews, approved corrections waiting to be applied, reversals, corrected receipts, and high-risk correction paths.
+            </p>
+          </div>
+          <Link href="/list/finance/corrections" className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-black text-gray-700 transition hover:bg-gray-50">
+            Open correction queue <ChevronRight size={15} />
+          </Link>
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            { label: "Pending review", value: correctionReversalReport.pendingReview, sub: formatGHS(correctionReversalReport.pendingAffectedAmount), tone: "bg-amber-50 text-amber-700" },
+            { label: "Approved not applied", value: correctionReversalReport.approvedWaitingApplication, sub: "Admin must apply safely", tone: "bg-blue-50 text-blue-700" },
+            { label: "Reversed payments", value: correctionReversalReport.reversedPayments, sub: "Voided receipt trail", tone: "bg-rose-50 text-rose-700" },
+            { label: "High-risk issues", value: correctionReversalReport.riskyIssueCount, sub: `${correctionReversalReport.oldestPendingDays} oldest pending day${correctionReversalReport.oldestPendingDays === 1 ? "" : "s"}`, tone: "bg-slate-50 text-slate-800" },
+          ].map((card) => (
+            <div key={card.label} className="rounded-2xl border border-gray-100 bg-gray-50/60 p-4">
+              <p className="text-xs font-black uppercase tracking-wide text-gray-400">{card.label}</p>
+              <p className="mt-2 truncate text-2xl font-black leading-none text-gray-900">{card.value}</p>
+              <p className={`mt-3 inline-flex rounded-full px-2.5 py-1 text-xs font-black ${card.tone}`}>{card.sub}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[0.9fr_1.2fr]">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-1">
+            <div className="rounded-2xl border border-gray-100 bg-gray-50/70 p-4">
+              <h3 className="text-sm font-black text-gray-900">Correction types</h3>
+              <div className="mt-3 space-y-2">
+                {correctionReversalReport.byType.length === 0 ? (
+                  <div className="rounded-xl bg-white p-4 text-sm font-bold text-gray-400">No correction type history yet.</div>
+                ) : correctionReversalReport.byType.map((item) => (
+                  <div key={item.label} className="flex items-center justify-between gap-3 rounded-xl bg-white p-3">
+                    <p className="text-sm font-bold text-gray-700">{item.label}</p>
+                    <p className="text-sm font-black text-gray-900">{item.count}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-gray-100 bg-gray-50/70 p-4">
+              <h3 className="text-sm font-black text-gray-900">Requested actions</h3>
+              <div className="mt-3 space-y-2">
+                {correctionReversalReport.byAction.length === 0 ? (
+                  <div className="rounded-xl bg-white p-4 text-sm font-bold text-gray-400">No requested action history yet.</div>
+                ) : correctionReversalReport.byAction.map((item) => (
+                  <div key={item.label} className="flex items-center justify-between gap-3 rounded-xl bg-white p-3">
+                    <p className="text-sm font-bold text-gray-700">{item.label}</p>
+                    <p className="text-sm font-black text-gray-900">{item.count}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-gray-100 bg-white">
+            <div className="border-b border-gray-100 p-4">
+              <h3 className="text-sm font-black text-gray-900">Correction issues to review</h3>
+              <p className="mt-1 text-xs font-semibold text-gray-500">Only items that can affect money trust, parent confidence, or receipt history are surfaced here.</p>
+            </div>
+            {correctionReversalReport.issues.length === 0 ? (
+              <div className="p-6 text-center text-sm font-bold text-emerald-700">No correction or reversal issue needs attention.</div>
+            ) : (
+              <div className="divide-y divide-gray-50">
+                {correctionReversalReport.issues.map((issue) => {
+                  const riskTone = issue.risk === "Critical" ? "bg-rose-50 text-rose-700" : issue.risk === "High" ? "bg-amber-50 text-amber-700" : issue.risk === "Watch" ? "bg-blue-50 text-blue-700" : "bg-emerald-50 text-emerald-700";
+                  return (
+                    <Link key={issue.id} href={issue.href} className="block p-4 transition hover:bg-gray-50/70">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-black text-gray-900">{issue.title}</p>
+                          <p className="mt-1 line-clamp-2 text-xs font-semibold text-gray-500">{issue.detail}</p>
+                        </div>
+                        <div className="shrink-0 text-left sm:text-right">
+                          <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-black ${riskTone}`}>{issue.risk}</span>
+                          {issue.amount !== null && <p className="mt-1 text-sm font-black text-gray-800">{formatGHS(issue.amount)}</p>}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-4 rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm font-semibold text-rose-800">
+          No correction is treated as final money movement until it is reviewed and safely applied. Original receipts remain traceable for audit.
+        </div>
+      </section>
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.4fr_0.9fr]">
         <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
