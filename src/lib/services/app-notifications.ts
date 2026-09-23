@@ -76,6 +76,12 @@ export const notificationIdempotencyKeys = {
     createNotificationIdempotencyKey("payment-correction-applied", correctionId),
   teacherAttendanceEscalated: (obligationId: string) =>
     createNotificationIdempotencyKey("teacher-attendance-escalated", obligationId),
+  forRecipient: (
+    baseKey: string,
+    schoolId: string,
+    recipientType: AppNotificationRecipientType,
+    recipientId: string,
+  ) => createNotificationIdempotencyKey(baseKey, schoolId, recipientType, recipientId),
 };
 
 
@@ -151,9 +157,21 @@ function assertQueueableDeliveryStatus(status: AppNotificationDeliveryStatus) {
   if (status === "FAILED") throw new Error("Use markFailed to mark a delivery as failed.");
 }
 
+function scopedIdempotencyKey(input: CreateNotificationInput) {
+  const explicitKey = cleanOptional(input.idempotencyKey);
+  if (!explicitKey) return sourceDedupeKey(input);
+
+  return createNotificationIdempotencyKey(
+    explicitKey,
+    input.schoolId,
+    input.recipientType,
+    input.recipientId,
+  );
+}
+
 function normalizeNotificationInput(input: CreateNotificationInput) {
   const priority = input.priority ?? "NORMAL";
-  const idempotencyKey = cleanOptional(input.idempotencyKey) ?? sourceDedupeKey(input);
+  const idempotencyKey = scopedIdempotencyKey(input);
 
   if (notificationRequiresIdempotency({ category: input.category, priority, type: input.type }) && !idempotencyKey) {
     throw new Error(
