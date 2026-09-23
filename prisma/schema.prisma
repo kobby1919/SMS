@@ -387,6 +387,42 @@ enum ParentNotificationPriority {
   HIGH
 }
 
+enum AppNotificationRecipientType {
+  ADMIN
+  TEACHER
+  PARENT
+  BURSAR
+  OWNER
+}
+
+enum AppNotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum AppNotificationCategory {
+  FINANCE
+  ACADEMIC
+  ATTENDANCE
+  ACCOUNTABILITY
+  GENERAL
+}
+
+enum AppNotificationType {
+  WEEKLY_FINANCE_SUMMARY
+  DAILY_FINANCE_REPORT
+  PARENT_DAILY_SUMMARY
+  PAYMENT_CORRECTION
+  FINANCE_QUERY
+  ATTENDANCE_ALERT
+  ACCOUNTABILITY_ALERT
+  REPORT_CARD
+  ANNOUNCEMENT
+  SYSTEM
+}
+
 enum ParentDeliveryChannel {
   EMAIL
   SMS
@@ -617,6 +653,7 @@ model School {
   parentInvites                  ParentInvite[]
   parentInviteAuditLogs          ParentInviteAuditLog[]
   parentAccessAuditLogs          ParentAccessAuditLog[]
+  appNotifications               AppNotification[]
   parentNotifications            ParentNotification[]
   parentActivityEvents           ParentActivityEvent[]
   notificationSettings           SchoolNotificationSetting?
@@ -1152,6 +1189,37 @@ model ParentNotificationPreference {
   @@index([schoolId, preferredChannel])
   @@index([schoolId, dailySummaryEnabled])
   @@index([schoolId, weeklySummaryEnabled])
+}
+
+model AppNotification {
+  id             String                       @id @default(cuid())
+  recipientType  AppNotificationRecipientType
+  recipientId    String
+  type           AppNotificationType
+  category       AppNotificationCategory
+  priority       AppNotificationPriority      @default(NORMAL)
+  title          String
+  body           String
+  href           String?
+  payload        Json?
+  sourceModel    String?
+  sourceId       String?
+  idempotencyKey String?
+  readAt         DateTime?
+  expiresAt      DateTime?
+  createdAt      DateTime                     @default(now())
+  updatedAt      DateTime                     @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, idempotencyKey], map: "AppNotif_school_idempotency_key")
+  @@index([schoolId, recipientType, recipientId, readAt, createdAt], map: "AppNotif_recipient_read_created_idx")
+  @@index([schoolId, recipientType, recipientId, createdAt], map: "AppNotif_recipient_created_idx")
+  @@index([schoolId, category, createdAt], map: "AppNotif_category_created_idx")
+  @@index([schoolId, type, createdAt], map: "AppNotif_type_created_idx")
+  @@index([schoolId, sourceModel, sourceId], map: "AppNotif_source_idx")
+  @@index([expiresAt], map: "AppNotif_expires_idx")
 }
 
 model ParentNotification {

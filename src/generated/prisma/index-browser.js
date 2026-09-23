@@ -462,6 +462,27 @@ exports.Prisma.ParentNotificationPreferenceScalarFieldEnum = {
   parentId: 'parentId'
 };
 
+exports.Prisma.AppNotificationScalarFieldEnum = {
+  id: 'id',
+  recipientType: 'recipientType',
+  recipientId: 'recipientId',
+  type: 'type',
+  category: 'category',
+  priority: 'priority',
+  title: 'title',
+  body: 'body',
+  href: 'href',
+  payload: 'payload',
+  sourceModel: 'sourceModel',
+  sourceId: 'sourceId',
+  idempotencyKey: 'idempotencyKey',
+  readAt: 'readAt',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId'
+};
+
 exports.Prisma.ParentNotificationScalarFieldEnum = {
   id: 'id',
   type: 'type',
@@ -1415,6 +1436,42 @@ exports.ParentDeliveryChannel = exports.$Enums.ParentDeliveryChannel = {
   WHATSAPP: 'WHATSAPP'
 };
 
+exports.AppNotificationRecipientType = exports.$Enums.AppNotificationRecipientType = {
+  ADMIN: 'ADMIN',
+  TEACHER: 'TEACHER',
+  PARENT: 'PARENT',
+  BURSAR: 'BURSAR',
+  OWNER: 'OWNER'
+};
+
+exports.AppNotificationType = exports.$Enums.AppNotificationType = {
+  WEEKLY_FINANCE_SUMMARY: 'WEEKLY_FINANCE_SUMMARY',
+  DAILY_FINANCE_REPORT: 'DAILY_FINANCE_REPORT',
+  PARENT_DAILY_SUMMARY: 'PARENT_DAILY_SUMMARY',
+  PAYMENT_CORRECTION: 'PAYMENT_CORRECTION',
+  FINANCE_QUERY: 'FINANCE_QUERY',
+  ATTENDANCE_ALERT: 'ATTENDANCE_ALERT',
+  ACCOUNTABILITY_ALERT: 'ACCOUNTABILITY_ALERT',
+  REPORT_CARD: 'REPORT_CARD',
+  ANNOUNCEMENT: 'ANNOUNCEMENT',
+  SYSTEM: 'SYSTEM'
+};
+
+exports.AppNotificationCategory = exports.$Enums.AppNotificationCategory = {
+  FINANCE: 'FINANCE',
+  ACADEMIC: 'ACADEMIC',
+  ATTENDANCE: 'ATTENDANCE',
+  ACCOUNTABILITY: 'ACCOUNTABILITY',
+  GENERAL: 'GENERAL'
+};
+
+exports.AppNotificationPriority = exports.$Enums.AppNotificationPriority = {
+  LOW: 'LOW',
+  NORMAL: 'NORMAL',
+  HIGH: 'HIGH',
+  URGENT: 'URGENT'
+};
+
 exports.ParentNotificationType = exports.$Enums.ParentNotificationType = {
   DAILY_SUMMARY: 'DAILY_SUMMARY',
   ATTENDANCE: 'ATTENDANCE',
@@ -1809,6 +1866,7 @@ exports.Prisma.ModelName = {
   TeacherCorrectionRequest: 'TeacherCorrectionRequest',
   TeacherAccountabilityAuditLog: 'TeacherAccountabilityAuditLog',
   ParentNotificationPreference: 'ParentNotificationPreference',
+  AppNotification: 'AppNotification',
   ParentNotification: 'ParentNotification',
   ParentNotificationDeliveryLog: 'ParentNotificationDeliveryLog',
   ParentTeacherContactRequest: 'ParentTeacherContactRequest',
