@@ -19,6 +19,36 @@ type DeliveryInput = {
   nextAttemptAt?: Date | null;
 };
 
+export type AppNotificationSettingInput = {
+  schoolId: string;
+  inAppEnabled?: boolean;
+  emailEnabled?: boolean;
+  smsEnabled?: boolean;
+  whatsappEnabled?: boolean;
+  sendWeeklyFinanceSummaryToAdmins?: boolean;
+  sendDailyFinanceReportToAdmins?: boolean;
+  sendParentSummariesByEmail?: boolean;
+  sendParentSummariesBySms?: boolean;
+  sendParentSummariesByWhatsapp?: boolean;
+  quietHoursStart?: string;
+  quietHoursEnd?: string;
+  highPriorityOverridesQuietHours?: boolean;
+  urgentPriorityOverridesChannels?: boolean;
+};
+
+export type AppNotificationPreferenceInput = {
+  schoolId: string;
+  recipientType: AppNotificationRecipientType;
+  recipientId: string;
+  inAppEnabled?: boolean;
+  emailEnabled?: boolean;
+  smsEnabled?: boolean;
+  whatsappEnabled?: boolean;
+  quietHoursStart?: string | null;
+  quietHoursEnd?: string | null;
+  highPriorityOverridesQuietHours?: boolean;
+};
+
 export type CreateNotificationInput = {
   schoolId: string;
   recipientType: AppNotificationRecipientType;
@@ -146,6 +176,21 @@ function safeHref(value?: string | null) {
   if (href.startsWith("/") && !href.startsWith("//")) return href;
   if (href.startsWith("https://") || href.startsWith("http://")) return href;
   throw new Error("Notification href must be a relative path or http(s) URL.");
+}
+
+function cleanTime(value: string | undefined, field: string) {
+  if (value === undefined) return undefined;
+  const cleaned = cleanText(value, field);
+  if (!/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(cleaned)) {
+    throw new Error(`${field} must use HH:mm format.`);
+  }
+  return cleaned;
+}
+
+function cleanNullableTime(value: string | null | undefined, field: string) {
+  if (value === undefined) return undefined;
+  if (value === null) return null;
+  return cleanTime(value, field) ?? null;
 }
 
 function assertQueueableDeliveryStatus(status: AppNotificationDeliveryStatus) {
@@ -528,6 +573,149 @@ export async function retryFailed(input: {
       lastError: null,
     },
   });
+}
+
+export async function getAppNotificationSettings(schoolIdInput: string, client: PrismaClientOrTx = prisma) {
+  const schoolId = cleanText(schoolIdInput, "schoolId");
+
+  return client.appNotificationSetting.upsert({
+    where: { schoolId },
+    create: { schoolId },
+    update: {},
+  });
+}
+
+export async function updateAppNotificationSettings(
+  input: AppNotificationSettingInput,
+  client: PrismaClientOrTx = prisma,
+) {
+  const schoolId = cleanText(input.schoolId, "schoolId");
+
+  return client.appNotificationSetting.upsert({
+    where: { schoolId },
+    create: {
+      schoolId,
+      inAppEnabled: input.inAppEnabled ?? true,
+      emailEnabled: input.emailEnabled ?? true,
+      smsEnabled: input.smsEnabled ?? false,
+      whatsappEnabled: input.whatsappEnabled ?? false,
+      sendWeeklyFinanceSummaryToAdmins: input.sendWeeklyFinanceSummaryToAdmins ?? true,
+      sendDailyFinanceReportToAdmins: input.sendDailyFinanceReportToAdmins ?? false,
+      sendParentSummariesByEmail: input.sendParentSummariesByEmail ?? true,
+      sendParentSummariesBySms: input.sendParentSummariesBySms ?? false,
+      sendParentSummariesByWhatsapp: input.sendParentSummariesByWhatsapp ?? false,
+      quietHoursStart: cleanTime(input.quietHoursStart ?? "20:00", "quietHoursStart"),
+      quietHoursEnd: cleanTime(input.quietHoursEnd ?? "06:00", "quietHoursEnd"),
+      highPriorityOverridesQuietHours: input.highPriorityOverridesQuietHours ?? true,
+      urgentPriorityOverridesChannels: input.urgentPriorityOverridesChannels ?? false,
+    },
+    update: {
+      inAppEnabled: input.inAppEnabled,
+      emailEnabled: input.emailEnabled,
+      smsEnabled: input.smsEnabled,
+      whatsappEnabled: input.whatsappEnabled,
+      sendWeeklyFinanceSummaryToAdmins: input.sendWeeklyFinanceSummaryToAdmins,
+      sendDailyFinanceReportToAdmins: input.sendDailyFinanceReportToAdmins,
+      sendParentSummariesByEmail: input.sendParentSummariesByEmail,
+      sendParentSummariesBySms: input.sendParentSummariesBySms,
+      sendParentSummariesByWhatsapp: input.sendParentSummariesByWhatsapp,
+      quietHoursStart: cleanTime(input.quietHoursStart, "quietHoursStart"),
+      quietHoursEnd: cleanTime(input.quietHoursEnd, "quietHoursEnd"),
+      highPriorityOverridesQuietHours: input.highPriorityOverridesQuietHours,
+      urgentPriorityOverridesChannels: input.urgentPriorityOverridesChannels,
+    },
+  });
+}
+
+export async function getAppNotificationPreference(
+  input: Pick<AppNotificationPreferenceInput, "schoolId" | "recipientType" | "recipientId">,
+  client: PrismaClientOrTx = prisma,
+) {
+  return client.appNotificationPreference.findUnique({
+    where: {
+      schoolId_recipientType_recipientId: {
+        schoolId: cleanText(input.schoolId, "schoolId"),
+        recipientType: input.recipientType,
+        recipientId: cleanText(input.recipientId, "recipientId"),
+      },
+    },
+  });
+}
+
+export async function upsertAppNotificationPreference(
+  input: AppNotificationPreferenceInput,
+  client: PrismaClientOrTx = prisma,
+) {
+  const schoolId = cleanText(input.schoolId, "schoolId");
+  const recipientId = cleanText(input.recipientId, "recipientId");
+
+  return client.appNotificationPreference.upsert({
+    where: {
+      schoolId_recipientType_recipientId: {
+        schoolId,
+        recipientType: input.recipientType,
+        recipientId,
+      },
+    },
+    create: {
+      schoolId,
+      recipientType: input.recipientType,
+      recipientId,
+      inAppEnabled: input.inAppEnabled ?? true,
+      emailEnabled: input.emailEnabled ?? true,
+      smsEnabled: input.smsEnabled ?? false,
+      whatsappEnabled: input.whatsappEnabled ?? false,
+      quietHoursStart: cleanNullableTime(input.quietHoursStart, "quietHoursStart"),
+      quietHoursEnd: cleanNullableTime(input.quietHoursEnd, "quietHoursEnd"),
+      highPriorityOverridesQuietHours: input.highPriorityOverridesQuietHours ?? true,
+    },
+    update: {
+      inAppEnabled: input.inAppEnabled,
+      emailEnabled: input.emailEnabled,
+      smsEnabled: input.smsEnabled,
+      whatsappEnabled: input.whatsappEnabled,
+      quietHoursStart: cleanNullableTime(input.quietHoursStart, "quietHoursStart"),
+      quietHoursEnd: cleanNullableTime(input.quietHoursEnd, "quietHoursEnd"),
+      highPriorityOverridesQuietHours: input.highPriorityOverridesQuietHours,
+    },
+  });
+}
+
+function channelEnabledBySettings(
+  channel: AppNotificationDeliveryChannel,
+  settings: Awaited<ReturnType<typeof getAppNotificationSettings>>,
+) {
+  if (channel === "IN_APP") return settings.inAppEnabled;
+  if (channel === "EMAIL") return settings.emailEnabled;
+  if (channel === "SMS") return settings.smsEnabled;
+  return settings.whatsappEnabled;
+}
+
+function channelEnabledByPreference(
+  channel: AppNotificationDeliveryChannel,
+  preference: Awaited<ReturnType<typeof getAppNotificationPreference>>,
+) {
+  if (!preference) return true;
+  if (channel === "IN_APP") return preference.inAppEnabled;
+  if (channel === "EMAIL") return preference.emailEnabled;
+  if (channel === "SMS") return preference.smsEnabled;
+  return preference.whatsappEnabled;
+}
+
+export async function isNotificationChannelAllowed(input: {
+  schoolId: string;
+  recipientType: AppNotificationRecipientType;
+  recipientId: string;
+  channel: AppNotificationDeliveryChannel;
+  priority?: AppNotificationPriority;
+}, client: PrismaClientOrTx = prisma) {
+  const [settings, preference] = await Promise.all([
+    getAppNotificationSettings(input.schoolId, client),
+    getAppNotificationPreference(input, client),
+  ]);
+
+  if (input.priority === "URGENT" && settings.urgentPriorityOverridesChannels) return true;
+  return channelEnabledBySettings(input.channel, settings) && channelEnabledByPreference(input.channel, preference);
 }
 
 async function recipientsForRole(

@@ -671,6 +671,8 @@ model School {
   parentAccessAuditLogs          ParentAccessAuditLog[]
   appNotifications               AppNotification[]
   appNotificationDeliveries      AppNotificationDelivery[]
+  appNotificationSettings        AppNotificationSetting?
+  appNotificationPreferences     AppNotificationPreference[]
   parentNotifications            ParentNotification[]
   parentActivityEvents           ParentActivityEvent[]
   notificationSettings           SchoolNotificationSetting?
@@ -899,6 +901,50 @@ model SchoolNotificationSetting {
 
   schoolId String @unique
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+}
+
+model AppNotificationSetting {
+  id                                  String   @id @default(cuid())
+  inAppEnabled                        Boolean  @default(true)
+  emailEnabled                        Boolean  @default(true)
+  smsEnabled                          Boolean  @default(false)
+  whatsappEnabled                     Boolean  @default(false)
+  sendWeeklyFinanceSummaryToAdmins    Boolean  @default(true)
+  sendDailyFinanceReportToAdmins      Boolean  @default(false)
+  sendParentSummariesByEmail          Boolean  @default(true)
+  sendParentSummariesBySms            Boolean  @default(false)
+  sendParentSummariesByWhatsapp       Boolean  @default(false)
+  quietHoursStart                     String   @default("20:00")
+  quietHoursEnd                       String   @default("06:00")
+  highPriorityOverridesQuietHours     Boolean  @default(true)
+  urgentPriorityOverridesChannels     Boolean  @default(false)
+  createdAt                           DateTime @default(now())
+  updatedAt                           DateTime @updatedAt
+
+  schoolId String @unique
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+}
+
+model AppNotificationPreference {
+  id                              String                       @id @default(cuid())
+  recipientType                   AppNotificationRecipientType
+  recipientId                     String
+  inAppEnabled                    Boolean                      @default(true)
+  emailEnabled                    Boolean                      @default(true)
+  smsEnabled                      Boolean                      @default(false)
+  whatsappEnabled                 Boolean                      @default(false)
+  quietHoursStart                 String?
+  quietHoursEnd                   String?
+  highPriorityOverridesQuietHours Boolean                      @default(true)
+  createdAt                       DateTime                     @default(now())
+  updatedAt                       DateTime                     @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, recipientType, recipientId], map: "AppNotifPref_recipient_key")
+  @@index([schoolId, recipientType, recipientId], map: "AppNotifPref_recipient_idx")
+  @@index([schoolId, recipientType, updatedAt], map: "AppNotifPref_role_updated_idx")
 }
 
 model SchoolCommunicationPolicy {

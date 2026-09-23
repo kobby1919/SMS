@@ -252,6 +252,42 @@ exports.Prisma.SchoolNotificationSettingScalarFieldEnum = {
   schoolId: 'schoolId'
 };
 
+exports.Prisma.AppNotificationSettingScalarFieldEnum = {
+  id: 'id',
+  inAppEnabled: 'inAppEnabled',
+  emailEnabled: 'emailEnabled',
+  smsEnabled: 'smsEnabled',
+  whatsappEnabled: 'whatsappEnabled',
+  sendWeeklyFinanceSummaryToAdmins: 'sendWeeklyFinanceSummaryToAdmins',
+  sendDailyFinanceReportToAdmins: 'sendDailyFinanceReportToAdmins',
+  sendParentSummariesByEmail: 'sendParentSummariesByEmail',
+  sendParentSummariesBySms: 'sendParentSummariesBySms',
+  sendParentSummariesByWhatsapp: 'sendParentSummariesByWhatsapp',
+  quietHoursStart: 'quietHoursStart',
+  quietHoursEnd: 'quietHoursEnd',
+  highPriorityOverridesQuietHours: 'highPriorityOverridesQuietHours',
+  urgentPriorityOverridesChannels: 'urgentPriorityOverridesChannels',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId'
+};
+
+exports.Prisma.AppNotificationPreferenceScalarFieldEnum = {
+  id: 'id',
+  recipientType: 'recipientType',
+  recipientId: 'recipientId',
+  inAppEnabled: 'inAppEnabled',
+  emailEnabled: 'emailEnabled',
+  smsEnabled: 'smsEnabled',
+  whatsappEnabled: 'whatsappEnabled',
+  quietHoursStart: 'quietHoursStart',
+  quietHoursEnd: 'quietHoursEnd',
+  highPriorityOverridesQuietHours: 'highPriorityOverridesQuietHours',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId'
+};
+
 exports.Prisma.SchoolCommunicationPolicyScalarFieldEnum = {
   id: 'id',
   enabled: 'enabled',
@@ -1342,6 +1378,14 @@ exports.ParentSummaryCadence = exports.$Enums.ParentSummaryCadence = {
   OFF: 'OFF'
 };
 
+exports.AppNotificationRecipientType = exports.$Enums.AppNotificationRecipientType = {
+  ADMIN: 'ADMIN',
+  TEACHER: 'TEACHER',
+  PARENT: 'PARENT',
+  BURSAR: 'BURSAR',
+  OWNER: 'OWNER'
+};
+
 exports.ParentTeacherContactCategory = exports.$Enums.ParentTeacherContactCategory = {
   ATTENDANCE: 'ATTENDANCE',
   ACADEMIC_SUPPORT: 'ACADEMIC_SUPPORT',
@@ -1453,14 +1497,6 @@ exports.ParentDeliveryChannel = exports.$Enums.ParentDeliveryChannel = {
   EMAIL: 'EMAIL',
   SMS: 'SMS',
   WHATSAPP: 'WHATSAPP'
-};
-
-exports.AppNotificationRecipientType = exports.$Enums.AppNotificationRecipientType = {
-  ADMIN: 'ADMIN',
-  TEACHER: 'TEACHER',
-  PARENT: 'PARENT',
-  BURSAR: 'BURSAR',
-  OWNER: 'OWNER'
 };
 
 exports.AppNotificationType = exports.$Enums.AppNotificationType = {
@@ -1889,6 +1925,8 @@ exports.Prisma.ModelName = {
   Parent: 'Parent',
   ParentStudentRelationship: 'ParentStudentRelationship',
   SchoolNotificationSetting: 'SchoolNotificationSetting',
+  AppNotificationSetting: 'AppNotificationSetting',
+  AppNotificationPreference: 'AppNotificationPreference',
   SchoolCommunicationPolicy: 'SchoolCommunicationPolicy',
   SchoolCommunicationRoute: 'SchoolCommunicationRoute',
   SchoolPeriodTemplate: 'SchoolPeriodTemplate',
