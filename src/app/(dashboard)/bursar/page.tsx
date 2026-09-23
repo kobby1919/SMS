@@ -195,12 +195,20 @@ const BursarPage = async ({
               Daily finance control for collections, receipts, corrections, and parent payment issues.
             </p>
           </div>
-          <a
-            href={`/api/finance/reports/daily?date=${moneyPulse.date.toISOString().split("T")[0]}`}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-black text-white transition hover:bg-slate-800"
-          >
-            <FileText size={15} /> Daily report
-          </a>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <a
+              href={`/api/finance/reports/daily?date=${moneyPulse.date.toISOString().split("T")[0]}`}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-black text-white transition hover:bg-slate-800"
+            >
+              <FileText size={15} /> Daily report
+            </a>
+            <a
+              href={`/api/finance/reports/weekly?date=${moneyPulse.date.toISOString().split("T")[0]}`}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-black text-slate-800 transition hover:bg-slate-50"
+            >
+              <FileText size={15} /> Weekly summary
+            </a>
+          </div>
         </div>
 
         {(moneyPulse.quietFinanceDay || moneyPulse.isWeekend) && (

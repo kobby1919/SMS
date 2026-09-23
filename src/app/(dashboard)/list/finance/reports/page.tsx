@@ -157,7 +157,13 @@ const FinanceReportsPage = async ({
               href={`/api/finance/reports/daily?date=${selectedDateValue}`}
               className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 text-sm font-black text-white transition hover:bg-blue-800"
             >
-              <Download size={15} /> Download PDF
+              <Download size={15} /> Daily PDF
+            </a>
+            <a
+              href={`/api/finance/reports/weekly?date=${selectedDateValue}`}
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-blue-100 bg-white px-4 text-sm font-black text-blue-700 transition hover:bg-blue-50"
+            >
+              <Download size={15} /> Weekly summary
             </a>
           </div>
         </div>
