@@ -170,26 +170,69 @@ export async function createNotification(input: CreateNotificationInput, client:
 
   return withTransaction(client, async (tx) => {
     const existing = await dedupeNotification(normalized, tx);
-    if (existing) return existing;
+    if (existing) {
+      for (const delivery of normalized.deliveries) {
+        await queueDelivery(
+          {
+            schoolId: normalized.schoolId,
+            notificationId: existing.id,
+            ...delivery,
+          },
+          tx,
+        );
+      }
 
-    const notification = await tx.appNotification.create({
-      data: {
-        schoolId: normalized.schoolId,
-        recipientType: normalized.recipientType,
-        recipientId: normalized.recipientId,
-        type: normalized.type,
-        category: normalized.category,
-        priority: normalized.priority,
-        title: normalized.title,
-        body: normalized.body,
-        href: normalized.href,
-        payload: normalized.payload ?? Prisma.JsonNull,
-        sourceModel: normalized.sourceModel,
-        sourceId: normalized.sourceId,
-        idempotencyKey: normalized.idempotencyKey,
-        expiresAt: normalized.expiresAt ?? null,
-      },
-    });
+      return tx.appNotification.findUniqueOrThrow({
+        where: { id: existing.id },
+        include: { deliveries: true },
+      });
+    }
+
+    let notification;
+
+    try {
+      notification = await tx.appNotification.create({
+        data: {
+          schoolId: normalized.schoolId,
+          recipientType: normalized.recipientType,
+          recipientId: normalized.recipientId,
+          type: normalized.type,
+          category: normalized.category,
+          priority: normalized.priority,
+          title: normalized.title,
+          body: normalized.body,
+          href: normalized.href,
+          payload: normalized.payload ?? Prisma.JsonNull,
+          sourceModel: normalized.sourceModel,
+          sourceId: normalized.sourceId,
+          idempotencyKey: normalized.idempotencyKey,
+          expiresAt: normalized.expiresAt ?? null,
+        },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+        const raced = await dedupeNotification(normalized, tx);
+        if (!raced) throw error;
+
+        for (const delivery of normalized.deliveries) {
+          await queueDelivery(
+            {
+              schoolId: normalized.schoolId,
+              notificationId: raced.id,
+              ...delivery,
+            },
+            tx,
+          );
+        }
+
+        return tx.appNotification.findUniqueOrThrow({
+          where: { id: raced.id },
+          include: { deliveries: true },
+        });
+      }
+
+      throw error;
+    }
 
     for (const delivery of normalized.deliveries) {
       await queueDelivery(
@@ -214,13 +257,14 @@ export async function notifyUser(input: NotifyUserInput, client: PrismaClientOrT
 }
 
 export async function notifyMany(input: NotifyManyInput, client: PrismaClientOrTx = prisma) {
-  if (input.recipients.length === 0) return [];
+  const { recipients, ...notificationInput } = input;
+  if (recipients.length === 0) return [];
 
   return withTransaction(client, async (tx) => {
     const notifications = [];
     const seen = new Set<string>();
 
-    for (const recipient of input.recipients) {
+    for (const recipient of recipients) {
       const key = `${recipient.recipientType}:${recipient.recipientId}`;
       if (seen.has(key)) continue;
       seen.add(key);
@@ -228,7 +272,7 @@ export async function notifyMany(input: NotifyManyInput, client: PrismaClientOrT
       notifications.push(
         await createNotification(
           {
-            ...input,
+            ...notificationInput,
             recipientType: recipient.recipientType,
             recipientId: recipient.recipientId,
             deliveries: recipient.deliveries,
