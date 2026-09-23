@@ -909,6 +909,7 @@ model AppNotificationSetting {
   emailEnabled                        Boolean  @default(true)
   smsEnabled                          Boolean  @default(false)
   whatsappEnabled                     Boolean  @default(false)
+  timezone                            String   @default("Africa/Accra")
   sendWeeklyFinanceSummaryToAdmins    Boolean  @default(true)
   sendDailyFinanceReportToAdmins      Boolean  @default(false)
   sendParentSummariesByEmail          Boolean  @default(true)

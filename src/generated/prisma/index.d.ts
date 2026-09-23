@@ -23837,6 +23837,7 @@ export namespace Prisma {
     emailEnabled: boolean | null
     smsEnabled: boolean | null
     whatsappEnabled: boolean | null
+    timezone: string | null
     sendWeeklyFinanceSummaryToAdmins: boolean | null
     sendDailyFinanceReportToAdmins: boolean | null
     sendParentSummariesByEmail: boolean | null
@@ -23857,6 +23858,7 @@ export namespace Prisma {
     emailEnabled: boolean | null
     smsEnabled: boolean | null
     whatsappEnabled: boolean | null
+    timezone: string | null
     sendWeeklyFinanceSummaryToAdmins: boolean | null
     sendDailyFinanceReportToAdmins: boolean | null
     sendParentSummariesByEmail: boolean | null
@@ -23877,6 +23879,7 @@ export namespace Prisma {
     emailEnabled: number
     smsEnabled: number
     whatsappEnabled: number
+    timezone: number
     sendWeeklyFinanceSummaryToAdmins: number
     sendDailyFinanceReportToAdmins: number
     sendParentSummariesByEmail: number
@@ -23899,6 +23902,7 @@ export namespace Prisma {
     emailEnabled?: true
     smsEnabled?: true
     whatsappEnabled?: true
+    timezone?: true
     sendWeeklyFinanceSummaryToAdmins?: true
     sendDailyFinanceReportToAdmins?: true
     sendParentSummariesByEmail?: true
@@ -23919,6 +23923,7 @@ export namespace Prisma {
     emailEnabled?: true
     smsEnabled?: true
     whatsappEnabled?: true
+    timezone?: true
     sendWeeklyFinanceSummaryToAdmins?: true
     sendDailyFinanceReportToAdmins?: true
     sendParentSummariesByEmail?: true
@@ -23939,6 +23944,7 @@ export namespace Prisma {
     emailEnabled?: true
     smsEnabled?: true
     whatsappEnabled?: true
+    timezone?: true
     sendWeeklyFinanceSummaryToAdmins?: true
     sendDailyFinanceReportToAdmins?: true
     sendParentSummariesByEmail?: true
@@ -24032,6 +24038,7 @@ export namespace Prisma {
     emailEnabled: boolean
     smsEnabled: boolean
     whatsappEnabled: boolean
+    timezone: string
     sendWeeklyFinanceSummaryToAdmins: boolean
     sendDailyFinanceReportToAdmins: boolean
     sendParentSummariesByEmail: boolean
@@ -24069,6 +24076,7 @@ export namespace Prisma {
     emailEnabled?: boolean
     smsEnabled?: boolean
     whatsappEnabled?: boolean
+    timezone?: boolean
     sendWeeklyFinanceSummaryToAdmins?: boolean
     sendDailyFinanceReportToAdmins?: boolean
     sendParentSummariesByEmail?: boolean
@@ -24090,6 +24098,7 @@ export namespace Prisma {
     emailEnabled?: boolean
     smsEnabled?: boolean
     whatsappEnabled?: boolean
+    timezone?: boolean
     sendWeeklyFinanceSummaryToAdmins?: boolean
     sendDailyFinanceReportToAdmins?: boolean
     sendParentSummariesByEmail?: boolean
@@ -24111,6 +24120,7 @@ export namespace Prisma {
     emailEnabled?: boolean
     smsEnabled?: boolean
     whatsappEnabled?: boolean
+    timezone?: boolean
     sendWeeklyFinanceSummaryToAdmins?: boolean
     sendDailyFinanceReportToAdmins?: boolean
     sendParentSummariesByEmail?: boolean
@@ -24132,6 +24142,7 @@ export namespace Prisma {
     emailEnabled?: boolean
     smsEnabled?: boolean
     whatsappEnabled?: boolean
+    timezone?: boolean
     sendWeeklyFinanceSummaryToAdmins?: boolean
     sendDailyFinanceReportToAdmins?: boolean
     sendParentSummariesByEmail?: boolean
@@ -24146,7 +24157,7 @@ export namespace Prisma {
     schoolId?: boolean
   }
 
-  export type AppNotificationSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "inAppEnabled" | "emailEnabled" | "smsEnabled" | "whatsappEnabled" | "sendWeeklyFinanceSummaryToAdmins" | "sendDailyFinanceReportToAdmins" | "sendParentSummariesByEmail" | "sendParentSummariesBySms" | "sendParentSummariesByWhatsapp" | "quietHoursStart" | "quietHoursEnd" | "highPriorityOverridesQuietHours" | "urgentPriorityOverridesChannels" | "createdAt" | "updatedAt" | "schoolId", ExtArgs["result"]["appNotificationSetting"]>
+  export type AppNotificationSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "inAppEnabled" | "emailEnabled" | "smsEnabled" | "whatsappEnabled" | "timezone" | "sendWeeklyFinanceSummaryToAdmins" | "sendDailyFinanceReportToAdmins" | "sendParentSummariesByEmail" | "sendParentSummariesBySms" | "sendParentSummariesByWhatsapp" | "quietHoursStart" | "quietHoursEnd" | "highPriorityOverridesQuietHours" | "urgentPriorityOverridesChannels" | "createdAt" | "updatedAt" | "schoolId", ExtArgs["result"]["appNotificationSetting"]>
   export type AppNotificationSettingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     school?: boolean | SchoolDefaultArgs<ExtArgs>
   }
@@ -24168,6 +24179,7 @@ export namespace Prisma {
       emailEnabled: boolean
       smsEnabled: boolean
       whatsappEnabled: boolean
+      timezone: string
       sendWeeklyFinanceSummaryToAdmins: boolean
       sendDailyFinanceReportToAdmins: boolean
       sendParentSummariesByEmail: boolean
@@ -24609,6 +24621,7 @@ export namespace Prisma {
     readonly emailEnabled: FieldRef<"AppNotificationSetting", 'Boolean'>
     readonly smsEnabled: FieldRef<"AppNotificationSetting", 'Boolean'>
     readonly whatsappEnabled: FieldRef<"AppNotificationSetting", 'Boolean'>
+    readonly timezone: FieldRef<"AppNotificationSetting", 'String'>
     readonly sendWeeklyFinanceSummaryToAdmins: FieldRef<"AppNotificationSetting", 'Boolean'>
     readonly sendDailyFinanceReportToAdmins: FieldRef<"AppNotificationSetting", 'Boolean'>
     readonly sendParentSummariesByEmail: FieldRef<"AppNotificationSetting", 'Boolean'>
@@ -108505,6 +108518,7 @@ export namespace Prisma {
     emailEnabled: 'emailEnabled',
     smsEnabled: 'smsEnabled',
     whatsappEnabled: 'whatsappEnabled',
+    timezone: 'timezone',
     sendWeeklyFinanceSummaryToAdmins: 'sendWeeklyFinanceSummaryToAdmins',
     sendDailyFinanceReportToAdmins: 'sendDailyFinanceReportToAdmins',
     sendParentSummariesByEmail: 'sendParentSummariesByEmail',
@@ -112055,6 +112069,7 @@ export namespace Prisma {
     emailEnabled?: BoolFilter<"AppNotificationSetting"> | boolean
     smsEnabled?: BoolFilter<"AppNotificationSetting"> | boolean
     whatsappEnabled?: BoolFilter<"AppNotificationSetting"> | boolean
+    timezone?: StringFilter<"AppNotificationSetting"> | string
     sendWeeklyFinanceSummaryToAdmins?: BoolFilter<"AppNotificationSetting"> | boolean
     sendDailyFinanceReportToAdmins?: BoolFilter<"AppNotificationSetting"> | boolean
     sendParentSummariesByEmail?: BoolFilter<"AppNotificationSetting"> | boolean
@@ -112076,6 +112091,7 @@ export namespace Prisma {
     emailEnabled?: SortOrder
     smsEnabled?: SortOrder
     whatsappEnabled?: SortOrder
+    timezone?: SortOrder
     sendWeeklyFinanceSummaryToAdmins?: SortOrder
     sendDailyFinanceReportToAdmins?: SortOrder
     sendParentSummariesByEmail?: SortOrder
@@ -112101,6 +112117,7 @@ export namespace Prisma {
     emailEnabled?: BoolFilter<"AppNotificationSetting"> | boolean
     smsEnabled?: BoolFilter<"AppNotificationSetting"> | boolean
     whatsappEnabled?: BoolFilter<"AppNotificationSetting"> | boolean
+    timezone?: StringFilter<"AppNotificationSetting"> | string
     sendWeeklyFinanceSummaryToAdmins?: BoolFilter<"AppNotificationSetting"> | boolean
     sendDailyFinanceReportToAdmins?: BoolFilter<"AppNotificationSetting"> | boolean
     sendParentSummariesByEmail?: BoolFilter<"AppNotificationSetting"> | boolean
@@ -112121,6 +112138,7 @@ export namespace Prisma {
     emailEnabled?: SortOrder
     smsEnabled?: SortOrder
     whatsappEnabled?: SortOrder
+    timezone?: SortOrder
     sendWeeklyFinanceSummaryToAdmins?: SortOrder
     sendDailyFinanceReportToAdmins?: SortOrder
     sendParentSummariesByEmail?: SortOrder
@@ -112147,6 +112165,7 @@ export namespace Prisma {
     emailEnabled?: BoolWithAggregatesFilter<"AppNotificationSetting"> | boolean
     smsEnabled?: BoolWithAggregatesFilter<"AppNotificationSetting"> | boolean
     whatsappEnabled?: BoolWithAggregatesFilter<"AppNotificationSetting"> | boolean
+    timezone?: StringWithAggregatesFilter<"AppNotificationSetting"> | string
     sendWeeklyFinanceSummaryToAdmins?: BoolWithAggregatesFilter<"AppNotificationSetting"> | boolean
     sendDailyFinanceReportToAdmins?: BoolWithAggregatesFilter<"AppNotificationSetting"> | boolean
     sendParentSummariesByEmail?: BoolWithAggregatesFilter<"AppNotificationSetting"> | boolean
@@ -120280,6 +120299,7 @@ export namespace Prisma {
     emailEnabled?: boolean
     smsEnabled?: boolean
     whatsappEnabled?: boolean
+    timezone?: string
     sendWeeklyFinanceSummaryToAdmins?: boolean
     sendDailyFinanceReportToAdmins?: boolean
     sendParentSummariesByEmail?: boolean
@@ -120300,6 +120320,7 @@ export namespace Prisma {
     emailEnabled?: boolean
     smsEnabled?: boolean
     whatsappEnabled?: boolean
+    timezone?: string
     sendWeeklyFinanceSummaryToAdmins?: boolean
     sendDailyFinanceReportToAdmins?: boolean
     sendParentSummariesByEmail?: boolean
@@ -120320,6 +120341,7 @@ export namespace Prisma {
     emailEnabled?: BoolFieldUpdateOperationsInput | boolean
     smsEnabled?: BoolFieldUpdateOperationsInput | boolean
     whatsappEnabled?: BoolFieldUpdateOperationsInput | boolean
+    timezone?: StringFieldUpdateOperationsInput | string
     sendWeeklyFinanceSummaryToAdmins?: BoolFieldUpdateOperationsInput | boolean
     sendDailyFinanceReportToAdmins?: BoolFieldUpdateOperationsInput | boolean
     sendParentSummariesByEmail?: BoolFieldUpdateOperationsInput | boolean
@@ -120340,6 +120362,7 @@ export namespace Prisma {
     emailEnabled?: BoolFieldUpdateOperationsInput | boolean
     smsEnabled?: BoolFieldUpdateOperationsInput | boolean
     whatsappEnabled?: BoolFieldUpdateOperationsInput | boolean
+    timezone?: StringFieldUpdateOperationsInput | string
     sendWeeklyFinanceSummaryToAdmins?: BoolFieldUpdateOperationsInput | boolean
     sendDailyFinanceReportToAdmins?: BoolFieldUpdateOperationsInput | boolean
     sendParentSummariesByEmail?: BoolFieldUpdateOperationsInput | boolean
@@ -120360,6 +120383,7 @@ export namespace Prisma {
     emailEnabled?: boolean
     smsEnabled?: boolean
     whatsappEnabled?: boolean
+    timezone?: string
     sendWeeklyFinanceSummaryToAdmins?: boolean
     sendDailyFinanceReportToAdmins?: boolean
     sendParentSummariesByEmail?: boolean
@@ -120380,6 +120404,7 @@ export namespace Prisma {
     emailEnabled?: BoolFieldUpdateOperationsInput | boolean
     smsEnabled?: BoolFieldUpdateOperationsInput | boolean
     whatsappEnabled?: BoolFieldUpdateOperationsInput | boolean
+    timezone?: StringFieldUpdateOperationsInput | string
     sendWeeklyFinanceSummaryToAdmins?: BoolFieldUpdateOperationsInput | boolean
     sendDailyFinanceReportToAdmins?: BoolFieldUpdateOperationsInput | boolean
     sendParentSummariesByEmail?: BoolFieldUpdateOperationsInput | boolean
@@ -120399,6 +120424,7 @@ export namespace Prisma {
     emailEnabled?: BoolFieldUpdateOperationsInput | boolean
     smsEnabled?: BoolFieldUpdateOperationsInput | boolean
     whatsappEnabled?: BoolFieldUpdateOperationsInput | boolean
+    timezone?: StringFieldUpdateOperationsInput | string
     sendWeeklyFinanceSummaryToAdmins?: BoolFieldUpdateOperationsInput | boolean
     sendDailyFinanceReportToAdmins?: BoolFieldUpdateOperationsInput | boolean
     sendParentSummariesByEmail?: BoolFieldUpdateOperationsInput | boolean
@@ -129032,6 +129058,7 @@ export namespace Prisma {
     emailEnabled?: SortOrder
     smsEnabled?: SortOrder
     whatsappEnabled?: SortOrder
+    timezone?: SortOrder
     sendWeeklyFinanceSummaryToAdmins?: SortOrder
     sendDailyFinanceReportToAdmins?: SortOrder
     sendParentSummariesByEmail?: SortOrder
@@ -129052,6 +129079,7 @@ export namespace Prisma {
     emailEnabled?: SortOrder
     smsEnabled?: SortOrder
     whatsappEnabled?: SortOrder
+    timezone?: SortOrder
     sendWeeklyFinanceSummaryToAdmins?: SortOrder
     sendDailyFinanceReportToAdmins?: SortOrder
     sendParentSummariesByEmail?: SortOrder
@@ -129072,6 +129100,7 @@ export namespace Prisma {
     emailEnabled?: SortOrder
     smsEnabled?: SortOrder
     whatsappEnabled?: SortOrder
+    timezone?: SortOrder
     sendWeeklyFinanceSummaryToAdmins?: SortOrder
     sendDailyFinanceReportToAdmins?: SortOrder
     sendParentSummariesByEmail?: SortOrder
@@ -148371,6 +148400,7 @@ export namespace Prisma {
     emailEnabled?: boolean
     smsEnabled?: boolean
     whatsappEnabled?: boolean
+    timezone?: string
     sendWeeklyFinanceSummaryToAdmins?: boolean
     sendDailyFinanceReportToAdmins?: boolean
     sendParentSummariesByEmail?: boolean
@@ -148390,6 +148420,7 @@ export namespace Prisma {
     emailEnabled?: boolean
     smsEnabled?: boolean
     whatsappEnabled?: boolean
+    timezone?: string
     sendWeeklyFinanceSummaryToAdmins?: boolean
     sendDailyFinanceReportToAdmins?: boolean
     sendParentSummariesByEmail?: boolean
@@ -150959,6 +150990,7 @@ export namespace Prisma {
     emailEnabled?: BoolFieldUpdateOperationsInput | boolean
     smsEnabled?: BoolFieldUpdateOperationsInput | boolean
     whatsappEnabled?: BoolFieldUpdateOperationsInput | boolean
+    timezone?: StringFieldUpdateOperationsInput | string
     sendWeeklyFinanceSummaryToAdmins?: BoolFieldUpdateOperationsInput | boolean
     sendDailyFinanceReportToAdmins?: BoolFieldUpdateOperationsInput | boolean
     sendParentSummariesByEmail?: BoolFieldUpdateOperationsInput | boolean
@@ -150978,6 +151010,7 @@ export namespace Prisma {
     emailEnabled?: BoolFieldUpdateOperationsInput | boolean
     smsEnabled?: BoolFieldUpdateOperationsInput | boolean
     whatsappEnabled?: BoolFieldUpdateOperationsInput | boolean
+    timezone?: StringFieldUpdateOperationsInput | string
     sendWeeklyFinanceSummaryToAdmins?: BoolFieldUpdateOperationsInput | boolean
     sendDailyFinanceReportToAdmins?: BoolFieldUpdateOperationsInput | boolean
     sendParentSummariesByEmail?: BoolFieldUpdateOperationsInput | boolean

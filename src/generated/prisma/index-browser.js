@@ -258,6 +258,7 @@ exports.Prisma.AppNotificationSettingScalarFieldEnum = {
   emailEnabled: 'emailEnabled',
   smsEnabled: 'smsEnabled',
   whatsappEnabled: 'whatsappEnabled',
+  timezone: 'timezone',
   sendWeeklyFinanceSummaryToAdmins: 'sendWeeklyFinanceSummaryToAdmins',
   sendDailyFinanceReportToAdmins: 'sendDailyFinanceReportToAdmins',
   sendParentSummariesByEmail: 'sendParentSummariesByEmail',

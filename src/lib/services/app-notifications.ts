@@ -25,6 +25,7 @@ export type AppNotificationSettingInput = {
   emailEnabled?: boolean;
   smsEnabled?: boolean;
   whatsappEnabled?: boolean;
+  timezone?: string;
   sendWeeklyFinanceSummaryToAdmins?: boolean;
   sendDailyFinanceReportToAdmins?: boolean;
   sendParentSummariesByEmail?: boolean;
@@ -193,6 +194,15 @@ function cleanNullableTime(value: string | null | undefined, field: string) {
   return cleanTime(value, field) ?? null;
 }
 
+function cleanTimezone(value: string | undefined, fallback = "Africa/Accra") {
+  const timezone = (value ?? fallback).trim();
+  try {
+    new Intl.DateTimeFormat("en-GB", { timeZone: timezone }).format(new Date());
+  } catch {
+    throw new Error("timezone must be a valid IANA timezone.");
+  }
+  return timezone;
+}
 function assertQueueableDeliveryStatus(status: AppNotificationDeliveryStatus) {
   if (status === "PENDING") return;
   if (status === "SENT") return;
@@ -599,6 +609,7 @@ export async function updateAppNotificationSettings(
       emailEnabled: input.emailEnabled ?? true,
       smsEnabled: input.smsEnabled ?? false,
       whatsappEnabled: input.whatsappEnabled ?? false,
+      timezone: cleanTimezone(input.timezone),
       sendWeeklyFinanceSummaryToAdmins: input.sendWeeklyFinanceSummaryToAdmins ?? true,
       sendDailyFinanceReportToAdmins: input.sendDailyFinanceReportToAdmins ?? false,
       sendParentSummariesByEmail: input.sendParentSummariesByEmail ?? true,
@@ -614,6 +625,7 @@ export async function updateAppNotificationSettings(
       emailEnabled: input.emailEnabled,
       smsEnabled: input.smsEnabled,
       whatsappEnabled: input.whatsappEnabled,
+      timezone: input.timezone === undefined ? undefined : cleanTimezone(input.timezone),
       sendWeeklyFinanceSummaryToAdmins: input.sendWeeklyFinanceSummaryToAdmins,
       sendDailyFinanceReportToAdmins: input.sendDailyFinanceReportToAdmins,
       sendParentSummariesByEmail: input.sendParentSummariesByEmail,
@@ -702,20 +714,77 @@ function channelEnabledByPreference(
   return preference.whatsappEnabled;
 }
 
+function timeToMinutes(value: string) {
+  const [hour, minute] = value.split(":").map(Number);
+  return hour * 60 + minute;
+}
+
+function localMinutes(date: Date, timezone: string) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: timezone,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(date);
+  const hour = Number(parts.find((part) => part.type === "hour")?.value ?? 0);
+  const minute = Number(parts.find((part) => part.type === "minute")?.value ?? 0);
+  return hour * 60 + minute;
+}
+
+function isWithinQuietHours(input: {
+  at: Date;
+  timezone: string;
+  quietHoursStart: string;
+  quietHoursEnd: string;
+}) {
+  const current = localMinutes(input.at, input.timezone);
+  const start = timeToMinutes(input.quietHoursStart);
+  const end = timeToMinutes(input.quietHoursEnd);
+
+  if (start === end) return false;
+  if (start < end) return current >= start && current < end;
+  return current >= start || current < end;
+}
+
+function canBypassQuietHours(input: {
+  priority: AppNotificationPriority;
+  settings: Awaited<ReturnType<typeof getAppNotificationSettings>>;
+  preference: Awaited<ReturnType<typeof getAppNotificationPreference>>;
+}) {
+  if (input.priority !== "HIGH" && input.priority !== "URGENT") return false;
+  if (!input.settings.highPriorityOverridesQuietHours) return false;
+  if (input.preference && !input.preference.highPriorityOverridesQuietHours) return false;
+  return true;
+}
+
 export async function isNotificationChannelAllowed(input: {
   schoolId: string;
   recipientType: AppNotificationRecipientType;
   recipientId: string;
   channel: AppNotificationDeliveryChannel;
   priority?: AppNotificationPriority;
+  at?: Date;
 }, client: PrismaClientOrTx = prisma) {
   const [settings, preference] = await Promise.all([
     getAppNotificationSettings(input.schoolId, client),
     getAppNotificationPreference(input, client),
   ]);
+  const priority = input.priority ?? "NORMAL";
 
-  if (input.priority === "URGENT" && settings.urgentPriorityOverridesChannels) return true;
-  return channelEnabledBySettings(input.channel, settings) && channelEnabledByPreference(input.channel, preference);
+  if (!channelEnabledBySettings(input.channel, settings)) return false;
+  if (!channelEnabledByPreference(input.channel, preference)) return false;
+
+  const quietHoursStart = preference?.quietHoursStart ?? settings.quietHoursStart;
+  const quietHoursEnd = preference?.quietHoursEnd ?? settings.quietHoursEnd;
+  const isQuiet = isWithinQuietHours({
+    at: input.at ?? new Date(),
+    timezone: settings.timezone,
+    quietHoursStart,
+    quietHoursEnd,
+  });
+
+  if (!isQuiet) return true;
+  return canBypassQuietHours({ priority, settings, preference });
 }
 
 async function recipientsForRole(
