@@ -520,6 +520,7 @@ export async function markSent(input: {
       provider: input.provider === undefined ? undefined : cleanOptional(input.provider),
       providerMessageId: cleanOptional(input.providerMessageId) ?? undefined,
       lastError: null,
+      nextAttemptAt: null,
     },
   });
 }
@@ -545,6 +546,7 @@ export async function markDelivered(input: {
       provider: input.provider === undefined ? undefined : cleanOptional(input.provider),
       providerMessageId: cleanOptional(input.providerMessageId) ?? undefined,
       lastError: null,
+      nextAttemptAt: null,
     },
   });
 }
@@ -815,6 +817,17 @@ function isWithinQuietHours(input: {
   return current >= start || current < end;
 }
 
+function nextQuietHoursRetryAt(input: {
+  at: Date;
+  timezone: string;
+  quietHoursEnd: string;
+}) {
+  const current = localMinutes(input.at, input.timezone);
+  const end = timeToMinutes(input.quietHoursEnd);
+  let minutesUntilEnd = end - current;
+  if (minutesUntilEnd <= 0) minutesUntilEnd += 24 * 60;
+  return new Date(input.at.getTime() + (minutesUntilEnd + 1) * 60 * 1000);
+}
 function canBypassQuietHours(input: {
   priority: AppNotificationPriority;
   settings: Awaited<ReturnType<typeof getAppNotificationSettings>>;
@@ -863,7 +876,7 @@ async function getNotificationDeliveryDecision(input: {
   return {
     allowed: false,
     reason: "QUIET_HOURS",
-    retryAt: new Date(at.getTime() + 30 * 60 * 1000),
+    retryAt: nextQuietHoursRetryAt({ at, timezone: settings.timezone, quietHoursEnd }),
   };
 }
 

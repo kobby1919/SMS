@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runNotificationDeliveryWorker } from "@/src/lib/services/notification-job-runner";
 
-function workerSecret() {
-  return process.env.NOTIFICATION_WORKER_SECRET ?? process.env.PARENT_SUMMARY_WORKER_SECRET;
-}
-
 function providedSecret(req: NextRequest) {
   const authorization = req.headers.get("authorization");
   if (authorization?.startsWith("Bearer ")) return authorization.slice("Bearer ".length).trim();
-  return req.headers.get("x-notification-worker-secret") ?? req.headers.get("x-parent-summary-worker-secret");
+  return req.headers.get("x-notification-worker-secret");
 }
 
 function positiveNumber(value: string | null) {
@@ -18,7 +14,7 @@ function positiveNumber(value: string | null) {
 }
 
 export async function POST(req: NextRequest) {
-  const secret = workerSecret();
+  const secret = process.env.NOTIFICATION_WORKER_SECRET;
 
   if (!secret) {
     return NextResponse.json(
