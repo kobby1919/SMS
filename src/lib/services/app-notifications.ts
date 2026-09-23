@@ -1,4 +1,5 @@
 import prisma from "@/src/lib/prisma";
+import { sendNotificationWithProvider } from "@/src/lib/services/notification-provider-adapters";
 import {
   AppNotificationCategory,
   AppNotificationDeliveryChannel,
@@ -499,9 +500,33 @@ export async function markRead(input: {
   });
 }
 
+export async function markSent(input: {
+  schoolId: string;
+  deliveryId: string;
+  provider?: string | null;
+  providerMessageId?: string | null;
+  sentAt?: Date;
+}, client: PrismaClientOrTx = prisma) {
+  const sentAt = input.sentAt ?? new Date();
+  return client.appNotificationDelivery.updateMany({
+    where: {
+      id: cleanText(input.deliveryId, "deliveryId"),
+      schoolId: cleanText(input.schoolId, "schoolId"),
+      status: { notIn: ["CANCELLED", "DELIVERED"] },
+    },
+    data: {
+      status: "SENT",
+      sentAt,
+      provider: input.provider === undefined ? undefined : cleanOptional(input.provider),
+      providerMessageId: cleanOptional(input.providerMessageId) ?? undefined,
+      lastError: null,
+    },
+  });
+}
 export async function markDelivered(input: {
   schoolId: string;
   deliveryId: string;
+  provider?: string | null;
   providerMessageId?: string | null;
   deliveredAt?: Date;
 }, client: PrismaClientOrTx = prisma) {
@@ -515,6 +540,8 @@ export async function markDelivered(input: {
     data: {
       status: "DELIVERED",
       deliveredAt,
+      sentAt: deliveredAt,
+      provider: input.provider === undefined ? undefined : cleanOptional(input.provider),
       providerMessageId: cleanOptional(input.providerMessageId) ?? undefined,
       lastError: null,
     },
@@ -527,6 +554,7 @@ export async function markFailed(input: {
   error: string;
   failedAt?: Date;
   retryAt?: Date | null;
+  provider?: string | null;
 }, client: PrismaClientOrTx = prisma) {
   const failedAt = input.failedAt ?? new Date();
   const error = cleanText(input.error, "error").slice(0, 1000);
@@ -552,12 +580,50 @@ export async function markFailed(input: {
       attempts,
       status: shouldRetry ? "RETRYING" : "FAILED",
       failedAt,
+      provider: input.provider === undefined ? undefined : cleanOptional(input.provider),
       lastError: error,
       nextAttemptAt: shouldRetry ? input.retryAt : null,
     },
   });
 }
 
+export async function cancelDelivery(input: {
+  schoolId: string;
+  deliveryId: string;
+  reason: string;
+}, client: PrismaClientOrTx = prisma) {
+  return client.appNotificationDelivery.updateMany({
+    where: {
+      id: cleanText(input.deliveryId, "deliveryId"),
+      schoolId: cleanText(input.schoolId, "schoolId"),
+      status: { notIn: ["CANCELLED", "DELIVERED"] },
+    },
+    data: {
+      status: "CANCELLED",
+      lastError: cleanText(input.reason, "reason").slice(0, 1000),
+      nextAttemptAt: null,
+    },
+  });
+}
+export async function deferDelivery(input: {
+  schoolId: string;
+  deliveryId: string;
+  reason: string;
+  retryAt: Date;
+}, client: PrismaClientOrTx = prisma) {
+  return client.appNotificationDelivery.updateMany({
+    where: {
+      id: cleanText(input.deliveryId, "deliveryId"),
+      schoolId: cleanText(input.schoolId, "schoolId"),
+      status: { notIn: ["CANCELLED", "DELIVERED"] },
+    },
+    data: {
+      status: "PENDING",
+      lastError: cleanText(input.reason, "reason").slice(0, 1000),
+      nextAttemptAt: input.retryAt,
+    },
+  });
+}
 export async function retryFailed(input: {
   schoolId: string;
   deliveryId?: string;
@@ -757,6 +823,47 @@ function canBypassQuietHours(input: {
   return true;
 }
 
+type NotificationDeliveryDecision =
+  | { allowed: true }
+  | { allowed: false; reason: "DISABLED" | "QUIET_HOURS"; retryAt?: Date | null };
+
+async function getNotificationDeliveryDecision(input: {
+  schoolId: string;
+  recipientType: AppNotificationRecipientType;
+  recipientId: string;
+  channel: AppNotificationDeliveryChannel;
+  priority?: AppNotificationPriority;
+  at?: Date;
+}, client: PrismaClientOrTx = prisma): Promise<NotificationDeliveryDecision> {
+  const [settings, preference] = await Promise.all([
+    getAppNotificationSettings(input.schoolId, client),
+    getAppNotificationPreference(input, client),
+  ]);
+  const priority = input.priority ?? "NORMAL";
+  const at = input.at ?? new Date();
+
+  if (!channelEnabledBySettings(input.channel, settings)) return { allowed: false, reason: "DISABLED" };
+  if (!channelEnabledByPreference(input.channel, preference)) return { allowed: false, reason: "DISABLED" };
+
+  const quietHoursStart = preference?.quietHoursStart ?? settings.quietHoursStart;
+  const quietHoursEnd = preference?.quietHoursEnd ?? settings.quietHoursEnd;
+  const isQuiet = isWithinQuietHours({
+    at,
+    timezone: settings.timezone,
+    quietHoursStart,
+    quietHoursEnd,
+  });
+
+  if (!isQuiet) return { allowed: true };
+  if (canBypassQuietHours({ priority, settings, preference })) return { allowed: true };
+
+  return {
+    allowed: false,
+    reason: "QUIET_HOURS",
+    retryAt: new Date(at.getTime() + 30 * 60 * 1000),
+  };
+}
+
 export async function isNotificationChannelAllowed(input: {
   schoolId: string;
   recipientType: AppNotificationRecipientType;
@@ -765,28 +872,172 @@ export async function isNotificationChannelAllowed(input: {
   priority?: AppNotificationPriority;
   at?: Date;
 }, client: PrismaClientOrTx = prisma) {
-  const [settings, preference] = await Promise.all([
-    getAppNotificationSettings(input.schoolId, client),
-    getAppNotificationPreference(input, client),
-  ]);
-  const priority = input.priority ?? "NORMAL";
+  const decision = await getNotificationDeliveryDecision(input, client);
+  return decision.allowed;
+}
+export async function processPendingNotificationDeliveries(input: {
+  schoolId: string;
+  limit?: number;
+  now?: Date;
+}, client: PrismaClientOrTx = prisma) {
+  const schoolId = cleanText(input.schoolId, "schoolId");
+  const now = input.now ?? new Date();
+  const limit = Math.min(Math.max(input.limit ?? 25, 1), 100);
+  const dueDeliveryWhere: Prisma.AppNotificationDeliveryWhereInput = {
+    schoolId,
+    status: { in: ["PENDING", "RETRYING"] },
+    OR: [{ nextAttemptAt: null }, { nextAttemptAt: { lte: now } }],
+  };
 
-  if (!channelEnabledBySettings(input.channel, settings)) return false;
-  if (!channelEnabledByPreference(input.channel, preference)) return false;
-
-  const quietHoursStart = preference?.quietHoursStart ?? settings.quietHoursStart;
-  const quietHoursEnd = preference?.quietHoursEnd ?? settings.quietHoursEnd;
-  const isQuiet = isWithinQuietHours({
-    at: input.at ?? new Date(),
-    timezone: settings.timezone,
-    quietHoursStart,
-    quietHoursEnd,
+  const deliveries = await client.appNotificationDelivery.findMany({
+    where: dueDeliveryWhere,
+    include: { notification: true },
+    orderBy: [{ createdAt: "asc" }],
+    take: limit,
   });
 
-  if (!isQuiet) return true;
-  return canBypassQuietHours({ priority, settings, preference });
-}
+  const results = [];
+  const leaseUntil = new Date(now.getTime() + 5 * 60 * 1000);
 
+  for (const delivery of deliveries) {
+    const claim = await client.appNotificationDelivery.updateMany({
+      where: {
+        id: delivery.id,
+        schoolId,
+        status: { in: ["PENDING", "RETRYING"] },
+        OR: [{ nextAttemptAt: null }, { nextAttemptAt: { lte: now } }],
+      },
+      data: {
+        nextAttemptAt: leaseUntil,
+      },
+    });
+
+    if (claim.count === 0) continue;
+
+    if (delivery.notification.expiresAt && delivery.notification.expiresAt <= now) {
+      results.push(
+        await cancelDelivery(
+          {
+            schoolId,
+            deliveryId: delivery.id,
+            reason: "Notification expired before delivery.",
+          },
+          client,
+        ),
+      );
+      continue;
+    }
+
+    const decision = await getNotificationDeliveryDecision(
+      {
+        schoolId,
+        recipientType: delivery.notification.recipientType,
+        recipientId: delivery.notification.recipientId,
+        channel: delivery.channel,
+        priority: delivery.notification.priority,
+        at: now,
+      },
+      client,
+    );
+
+    if (!decision.allowed) {
+      results.push(
+        decision.reason === "QUIET_HOURS" && decision.retryAt
+          ? await deferDelivery(
+              {
+                schoolId,
+                deliveryId: delivery.id,
+                reason: "Delivery deferred by notification quiet hours.",
+                retryAt: decision.retryAt,
+              },
+              client,
+            )
+          : await cancelDelivery(
+              {
+                schoolId,
+                deliveryId: delivery.id,
+                reason: "Delivery blocked by notification preferences.",
+              },
+              client,
+            ),
+      );
+      continue;
+    }
+
+    let providerResult;
+    try {
+      providerResult = await sendNotificationWithProvider({
+        schoolId,
+        notificationId: delivery.notificationId,
+        deliveryId: delivery.id,
+        channel: delivery.channel,
+        destination: delivery.destination,
+        provider: delivery.provider,
+        title: delivery.notification.title,
+        body: delivery.notification.body,
+        href: delivery.notification.href,
+        priority: delivery.notification.priority,
+        category: delivery.notification.category,
+        type: delivery.notification.type,
+        payload: delivery.notification.payload,
+      });
+    } catch (error) {
+      results.push(
+        await markFailed(
+          {
+            schoolId,
+            deliveryId: delivery.id,
+            error: error instanceof Error ? error.message : "Notification provider failed unexpectedly.",
+            retryAt: new Date(now.getTime() + 30 * 60 * 1000),
+        provider: delivery.provider,
+          },
+          client,
+        ),
+      );
+      continue;
+    }
+
+    if (providerResult.ok) {
+      results.push(
+        providerResult.delivered
+          ? await markDelivered(
+              {
+                schoolId,
+                deliveryId: delivery.id,
+                provider: providerResult.provider,
+                providerMessageId: providerResult.providerMessageId,
+              },
+              client,
+            )
+          : await markSent(
+              {
+                schoolId,
+                deliveryId: delivery.id,
+                provider: providerResult.provider,
+                providerMessageId: providerResult.providerMessageId,
+              },
+              client,
+            ),
+      );
+      continue;
+    }
+
+    results.push(
+      await markFailed(
+        {
+          schoolId,
+          deliveryId: delivery.id,
+          error: providerResult.error,
+          retryAt: providerResult.retryAt,
+          provider: providerResult.provider,
+        },
+        client,
+      ),
+    );
+  }
+
+  return results;
+}
 async function recipientsForRole(
   schoolIdInput: string,
   recipientType: AppNotificationRecipientType,
