@@ -224,8 +224,8 @@ export async function GET(req: NextRequest) {
       correctionReversalReport.pendingReview > 0 ? `${correctionReversalReport.pendingReview} correction request${correctionReversalReport.pendingReview === 1 ? "" : "s"} need school head decision.` : null,
       correctionReversalReport.approvedWaitingApplication > 0 ? `${correctionReversalReport.approvedWaitingApplication} approved correction${correctionReversalReport.approvedWaitingApplication === 1 ? "" : "s"} still need to be applied.` : null,
       arrearsReport.summary.byPriority.Critical > 0 ? `${arrearsReport.summary.byPriority.Critical} critical arrears bill${arrearsReport.summary.byPriority.Critical === 1 ? "" : "s"} worth ${formatGHS(arrearsReport.summary.criticalAmount)} need follow-up.` : null,
-      receiptFlagCount > 0 ? `${receiptFlagCount} receipt trust flag${receiptFlagCount === 1 ? "" : "s"} need checking.` : null,
-      topWeakClasses[0] ? `${topWeakClasses[0].className} is the weakest collection class at ${pct(topWeakClasses[0].collectionRate)}.` : null,
+      receiptFlagCount > 0 ? `${receiptFlagCount} receipt review item${receiptFlagCount === 1 ? "" : "s"} need checking.` : null,
+      topWeakClasses[0] ? `${topWeakClasses[0].className} has the lowest collection rate at ${pct(topWeakClasses[0].collectionRate)}.` : null,
     ].filter((item): item is string => Boolean(item));
 
     const pdfBuffer = await getCachedDocument({
@@ -248,7 +248,7 @@ export async function GET(req: NextRequest) {
               <View>
                 <Text style={S.headerKicker}>{branding.displayName.toUpperCase()} - FINANCE OFFICE</Text>
                 <Text style={S.headerTitle}>Daily Money Report</Text>
-                <Text style={S.headerSub}>Bursar daily closeout: collections, arrears, receipt trust, corrections, and follow-up pressure.</Text>
+                <Text style={S.headerSub}>Bursar daily closeout: collections received, fees still owing, receipts needing review, and money corrections needing action.</Text>
               </View>
               <View style={S.headerRight}>
                 <Text style={S.headerDate}>{label}</Text>
@@ -259,22 +259,22 @@ export async function GET(req: NextRequest) {
             <View style={S.band}>
               <Text style={S.bandTitle}>Management summary</Text>
               <Text style={S.bandNote}>
-                This report uses confirmed payment records for collections, StudentBill for arrears, receipt records for trust checks, and correction/reversal records for control exceptions. It is meant to answer what happened today and what needs finance follow-up next.
+                This report shows what money came in today, what fees are still outstanding, which receipts need checking, and which payment corrections need action. The figures come from Edujay finance records, not manual estimates.
               </Text>
             </View>
 
             <View style={S.statGrid}>
               <SummaryBox label="Collected today" value={formatGHS(report.totalReceived)} sub={`${report.paymentCount} confirmed payment${report.paymentCount === 1 ? "" : "s"}. ${deltaText(report.totalDelta, true)}.`} color="#047857" borderColor="#bbf7d0" />
               <SummaryBox label="Arrears pressure" value={formatGHS(arrearsReport.summary.totalOwed)} sub={`${arrearsReport.summary.overdueStudents} overdue student${arrearsReport.summary.overdueStudents === 1 ? "" : "s"}. ${arrearsReport.summary.byPriority.Critical} critical bill${arrearsReport.summary.byPriority.Critical === 1 ? "" : "s"}.`} color="#be123c" borderColor="#fecdd3" />
-              <SummaryBox label="Receipt flags" value={receiptFlagCount.toLocaleString("en-GH")} sub={`${receiptIntegrityReport.voidedReceipts} voided, ${receiptIntegrityReport.pendingReceipts} pending, ${receiptIntegrityReport.failedReceipts} failed, ${receiptIntegrityReport.receiptGapCount} gap${receiptIntegrityReport.receiptGapCount === 1 ? "" : "s"}.`} color="#b45309" borderColor="#fde68a" />
-              <SummaryBox label="Control exceptions" value={controlExceptionCount.toLocaleString("en-GH")} sub={`${correctionReversalReport.pendingReview} pending correction review, ${correctionReversalReport.approvedWaitingApplication} approved not applied.`} color="#1d4ed8" borderColor="#bfdbfe" />
+              <SummaryBox label="Receipts needing review" value={receiptFlagCount.toLocaleString("en-GH")} sub={`${receiptIntegrityReport.voidedReceipts} voided, ${receiptIntegrityReport.pendingReceipts} pending, ${receiptIntegrityReport.failedReceipts} failed, ${receiptIntegrityReport.receiptGapCount} gap${receiptIntegrityReport.receiptGapCount === 1 ? "" : "s"}.`} color="#b45309" borderColor="#fde68a" />
+              <SummaryBox label="Corrections needing action" value={controlExceptionCount.toLocaleString("en-GH")} sub={`${correctionReversalReport.pendingReview} pending correction review, ${correctionReversalReport.approvedWaitingApplication} approved not applied.`} color="#1d4ed8" borderColor="#bfdbfe" />
             </View>
 
             <View style={S.twoCol}>
               <View style={S.col}>
-                <Text style={S.sectionKicker}>OWNER ANSWERS</Text>
-                <Text style={S.sectionTitle}>What needs attention</Text>
-                {actionPoints.length === 0 ? <EmptyText text="No urgent finance exception for this date." /> : actionPoints.map((point) => (
+                <Text style={S.sectionKicker}>TODAY FINANCE ATTENTION</Text>
+                <Text style={S.sectionTitle}>What the bursar should act on</Text>
+                {actionPoints.length === 0 ? <EmptyText text="No urgent finance action point for this date." /> : actionPoints.map((point) => (
                   <View key={point} style={S.bullet}>
                     <View style={S.bulletDot} />
                     <Text style={S.bulletText}>{point}</Text>
@@ -284,6 +284,7 @@ export async function GET(req: NextRequest) {
               <View style={S.col}>
                 <Text style={S.sectionKicker}>METHOD BREAKDOWN</Text>
                 <Text style={S.sectionTitle}>How money came in</Text>
+                <Text style={[S.bandNote, { marginBottom: 6 }]}>This breaks down today confirmed collections by payment method.</Text>
                 {report.methodBreakdown.length === 0 ? <EmptyText text="No confirmed payment method for this date." /> : (
                   <View style={S.table}>
                     <View style={S.tHead}>
@@ -305,7 +306,8 @@ export async function GET(req: NextRequest) {
 
             <View style={S.section}>
               <Text style={S.sectionKicker}>CLASS COLLECTION</Text>
-              <Text style={S.sectionTitle}>Collection health by class</Text>
+              <Text style={S.sectionTitle}>Class collection position</Text>
+              <Text style={[S.bandNote, { marginBottom: 6 }]}>This shows which classes are collecting well and which classes need fee follow-up. A low rate means the class has more unpaid or part-paid bills.</Text>
               <View style={S.table}>
                 <View style={S.tHead}>
                   <Text style={[S.th, { flex: 1.7 }]}>CLASS</Text>
@@ -313,7 +315,7 @@ export async function GET(req: NextRequest) {
                   <Text style={[S.th, { flex: 1.3, textAlign: "right" }]}>COLLECTED</Text>
                   <Text style={[S.th, { flex: 1.3, textAlign: "right" }]}>OUTSTANDING</Text>
                   <Text style={[S.th, { flex: 0.8, textAlign: "right" }]}>RATE</Text>
-                  <Text style={[S.th, { flex: 1 }]}>RISK</Text>
+                  <Text style={[S.th, { flex: 1 }]}>STATUS</Text>
                 </View>
                 {classCollectionReport.rows.length === 0 ? <EmptyText text="No class finance records available yet." /> : classCollectionReport.rows.slice(0, 12).map((row, index) => (
                   <View key={row.classId} style={index % 2 === 0 ? S.tRow : S.tRowAlt}>
@@ -331,7 +333,8 @@ export async function GET(req: NextRequest) {
             <View style={S.twoCol}>
               <View style={S.col}>
                 <Text style={S.sectionKicker}>ARREARS</Text>
-                <Text style={S.sectionTitle}>Highest priority follow-up</Text>
+                <Text style={S.sectionTitle}>Students needing fee follow-up</Text>
+                <Text style={[S.bandNote, { marginBottom: 6 }]}>These are the students whose outstanding balances need the bursar or school office to follow up first.</Text>
                 {topArrears.length === 0 ? <EmptyText text="No arrears follow-up item found." /> : topArrears.map((item) => (
                   <View key={item.billId} style={S.issueLine}>
                     <Text style={S.issueTitle}>{item.studentName} - {item.className ?? "No class"}</Text>
@@ -342,14 +345,15 @@ export async function GET(req: NextRequest) {
               </View>
               <View style={S.col}>
                 <Text style={S.sectionKicker}>RECEIPTS AND CORRECTIONS</Text>
-                <Text style={S.sectionTitle}>Finance control checks</Text>
+                <Text style={S.sectionTitle}>Receipts and corrections explained</Text>
+                <Text style={[S.bandNote, { marginBottom: 6 }]}>This area protects the school from payment confusion: pending receipts, failed records, voided receipts, and corrections that still need action.</Text>
                 <View style={S.issueLine}>
-                  <Text style={S.issueTitle}>Receipt trust</Text>
+                  <Text style={S.issueTitle}>Receipts needing review</Text>
                   <Text style={S.issueDetail}>{receiptIntegrityReport.confirmedReceipts} confirmed, {receiptIntegrityReport.voidedReceipts} voided, {receiptIntegrityReport.pendingReceipts} pending, {receiptIntegrityReport.failedReceipts} failed.</Text>
                   <Text style={S.issueDetail}>{receiptIntegrityReport.duplicateReferenceCount} duplicate reference group{receiptIntegrityReport.duplicateReferenceCount === 1 ? "" : "s"}, {receiptIntegrityReport.receiptGapCount} numbering gap{receiptIntegrityReport.receiptGapCount === 1 ? "" : "s"}.</Text>
                 </View>
                 <View style={S.issueLine}>
-                  <Text style={S.issueTitle}>Corrections and reversals</Text>
+                  <Text style={S.issueTitle}>Payment corrections and reversals</Text>
                   <Text style={S.issueDetail}>{correctionReversalReport.pendingReview} pending review, {correctionReversalReport.approvedWaitingApplication} approved not applied, {correctionReversalReport.reversedPayments} reversed payment{correctionReversalReport.reversedPayments === 1 ? "" : "s"}.</Text>
                   <Text style={S.issueDetail}>Affected amount: {formatGHS(correctionReversalReport.totalAffectedAmount)}. Oldest pending: {correctionReversalReport.oldestPendingDays} day{correctionReversalReport.oldestPendingDays === 1 ? "" : "s"}.</Text>
                 </View>
@@ -365,6 +369,7 @@ export async function GET(req: NextRequest) {
             <View style={S.section} break>
               <Text style={S.sectionKicker}>PAYMENT REGISTER</Text>
               <Text style={S.sectionTitle}>Confirmed receipts for the day</Text>
+              <Text style={[S.bandNote, { marginBottom: 6 }]}>This is the receipt register for the day. It supports reconciliation and can be checked against cash, mobile money, bank, POS, and cheque records.</Text>
               {paymentRegister.length === 0 ? <EmptyText text="No confirmed receipts for this date." /> : (
                 <View style={S.table}>
                   <View style={S.tHead} fixed>
@@ -401,7 +406,7 @@ export async function GET(req: NextRequest) {
 
             <View style={S.footer} fixed>
               <Text style={S.footerText}>{branding.shortName} - Daily Money Report - {label}</Text>
-              <Text style={S.footerText}>Generated from Edujay finance source-of-truth records</Text>
+              <Text style={S.footerText}>Generated from Edujay finance records</Text>
             </View>
           </Page>
         </Document>
