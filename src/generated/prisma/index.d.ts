@@ -110712,6 +110712,7 @@ export namespace Prisma {
 
   export type AppNotificationWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    id_schoolId?: AppNotificationIdSchoolIdCompoundUniqueInput
     schoolId_idempotencyKey?: AppNotificationSchoolIdIdempotencyKeyCompoundUniqueInput
     AND?: AppNotificationWhereInput | AppNotificationWhereInput[]
     OR?: AppNotificationWhereInput[]
@@ -110735,7 +110736,7 @@ export namespace Prisma {
     schoolId?: StringFilter<"AppNotification"> | string
     school?: XOR<SchoolScalarRelationFilter, SchoolWhereInput>
     deliveries?: AppNotificationDeliveryListRelationFilter
-  }, "id" | "schoolId_idempotencyKey">
+  }, "id" | "id_schoolId" | "schoolId_idempotencyKey">
 
   export type AppNotificationOrderByWithAggregationInput = {
     id?: SortOrder
@@ -126955,6 +126956,11 @@ export namespace Prisma {
     in?: $Enums.AppNotificationPriority[] | ListEnumAppNotificationPriorityFieldRefInput<$PrismaModel>
     notIn?: $Enums.AppNotificationPriority[] | ListEnumAppNotificationPriorityFieldRefInput<$PrismaModel>
     not?: NestedEnumAppNotificationPriorityFilter<$PrismaModel> | $Enums.AppNotificationPriority
+  }
+
+  export type AppNotificationIdSchoolIdCompoundUniqueInput = {
+    id: string
+    schoolId: string
   }
 
   export type AppNotificationSchoolIdIdempotencyKeyCompoundUniqueInput = {
@@ -160202,7 +160208,6 @@ export namespace Prisma {
     nextAttemptAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    schoolId: string
   }
 
   export type AppNotificationDeliveryCreateOrConnectWithoutNotificationInput = {
@@ -197874,7 +197879,6 @@ export namespace Prisma {
     nextAttemptAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    schoolId: string
   }
 
   export type AppNotificationDeliveryUpdateWithoutNotificationInput = {
@@ -197910,7 +197914,6 @@ export namespace Prisma {
     nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    schoolId?: StringFieldUpdateOperationsInput | string
   }
 
   export type AppNotificationDeliveryUncheckedUpdateManyWithoutNotificationInput = {
@@ -197928,7 +197931,6 @@ export namespace Prisma {
     nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    schoolId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ParentNotificationDeliveryLogCreateManyNotificationInput = {

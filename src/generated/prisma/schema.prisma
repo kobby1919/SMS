@@ -1232,6 +1232,7 @@ model AppNotification {
 
   deliveries AppNotificationDelivery[]
 
+  @@unique([id, schoolId], map: "AppNotif_id_school_key")
   @@unique([schoolId, idempotencyKey], map: "AppNotif_school_idempotency_key")
   @@index([schoolId, recipientType, recipientId, readAt, createdAt], map: "AppNotif_recipient_read_created_idx")
   @@index([schoolId, recipientType, recipientId, createdAt], map: "AppNotif_recipient_created_idx")
@@ -1261,7 +1262,7 @@ model AppNotificationDelivery {
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
   notificationId String
-  notification   AppNotification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  notification   AppNotification @relation(fields: [notificationId, schoolId], references: [id, schoolId], onDelete: Cascade)
 
   @@unique([notificationId, channel, destination], map: "AppNotifDelivery_once_per_destination")
   @@index([schoolId, status, nextAttemptAt, createdAt], map: "AppNotifDelivery_worker_idx")
