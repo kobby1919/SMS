@@ -68,7 +68,15 @@ function labelFromMap(map: Record<string, string>, value: string) {
 }
 
 export async function getCorrectionReversalReport(schoolId: string): Promise<CorrectionReversalReport> {
-  const [statusCounts, typeCounts, actionCounts, corrections, reversals] = await Promise.all([
+  const [
+    statusCounts,
+    typeCounts,
+    actionCounts,
+    correctionTotals,
+    issueCorrections,
+    reversalCount,
+    reversalIssues,
+  ] = await Promise.all([
     prisma.paymentCorrectionRequest.groupBy({
       by: ["status"],
       where: { schoolId },
@@ -85,6 +93,15 @@ export async function getCorrectionReversalReport(schoolId: string): Promise<Cor
       where: { schoolId },
       _count: { _all: true },
       orderBy: { _count: { requestedAction: "desc" } },
+    }),
+    prisma.paymentCorrectionRequest.findMany({
+      where: { schoolId },
+      select: {
+        status: true,
+        requestedAt: true,
+        correctedPaymentId: true,
+        originalPayment: { select: { amount: true } },
+      },
     }),
     prisma.paymentCorrectionRequest.findMany({
       where: { schoolId },
@@ -118,6 +135,7 @@ export async function getCorrectionReversalReport(schoolId: string): Promise<Cor
       orderBy: [{ status: "asc" }, { requestedAt: "desc" }],
       take: 300,
     }),
+    prisma.paymentReversal.count({ where: { schoolId } }),
     prisma.paymentReversal.findMany({
       where: { schoolId },
       select: {
@@ -144,14 +162,15 @@ export async function getCorrectionReversalReport(schoolId: string): Promise<Cor
   ]);
 
   const countByStatus = Object.fromEntries(statusCounts.map((row) => [row.status, row._count._all])) as Record<string, number>;
-  const pendingCorrections = corrections.filter((item) => item.status === "PENDING_REVIEW");
-  const approvedCorrections = corrections.filter((item) => item.status === "APPROVED");
-  const totalAffectedAmount = corrections.reduce((sum, item) => sum + asNumber(item.originalPayment.amount), 0);
-  const pendingAffectedAmount = pendingCorrections.reduce((sum, item) => sum + asNumber(item.originalPayment.amount), 0);
-  const oldestPendingDays = pendingCorrections.reduce((max, item) => Math.max(max, daysSince(item.requestedAt)), 0);
+  const pendingTotals = correctionTotals.filter((item) => item.status === "PENDING_REVIEW");
+  const pendingIssueCorrections = issueCorrections.filter((item) => item.status === "PENDING_REVIEW");
+  const approvedIssueCorrections = issueCorrections.filter((item) => item.status === "APPROVED");
+  const totalAffectedAmount = correctionTotals.reduce((sum, item) => sum + asNumber(item.originalPayment.amount), 0);
+  const pendingAffectedAmount = pendingTotals.reduce((sum, item) => sum + asNumber(item.originalPayment.amount), 0);
+  const oldestPendingDays = pendingTotals.reduce((max, item) => Math.max(max, daysSince(item.requestedAt)), 0);
 
   const issues: CorrectionIssue[] = [
-    ...pendingCorrections.slice(0, 8).map((item) => {
+    ...pendingIssueCorrections.slice(0, 8).map((item) => {
       const age = daysSince(item.requestedAt);
       return {
         id: `pending-correction-${item.id}`,
@@ -162,7 +181,7 @@ export async function getCorrectionReversalReport(schoolId: string): Promise<Cor
         risk: age > 2 ? "High" as const : "Watch" as const,
       };
     }),
-    ...approvedCorrections.slice(0, 6).map((item) => ({
+    ...approvedIssueCorrections.slice(0, 6).map((item) => ({
       id: `approved-correction-${item.id}`,
       title: "Approved correction not applied",
       detail: `${personName(item.studentBill.student)} - ${labelFromMap(ACTION_LABELS, item.requestedAction)} must still be applied`,
@@ -170,7 +189,7 @@ export async function getCorrectionReversalReport(schoolId: string): Promise<Cor
       href: "/list/finance/corrections?status=APPROVED",
       risk: "High" as const,
     })),
-    ...corrections
+    ...issueCorrections
       .filter((item) => item.requestedAction === "MOVE_PAYMENT" || item.type === "WRONG_STUDENT" || item.type === "DUPLICATE_PAYMENT")
       .slice(0, 6)
       .map((item) => ({
@@ -181,7 +200,7 @@ export async function getCorrectionReversalReport(schoolId: string): Promise<Cor
         href: "/list/finance/corrections",
         risk: item.status === "APPLIED" ? "Watch" as const : "Critical" as const,
       })),
-    ...reversals.slice(0, 5).map((item) => ({
+    ...reversalIssues.slice(0, 5).map((item) => ({
       id: `reversal-${item.id}`,
       title: "Payment reversed",
       detail: `${item.payment.receiptNumber} - ${personName(item.payment.studentBill.student)} - ${item.reason}`,
@@ -198,8 +217,8 @@ export async function getCorrectionReversalReport(schoolId: string): Promise<Cor
     applied: countByStatus.APPLIED ?? 0,
     rejected: countByStatus.REJECTED ?? 0,
     cancelled: countByStatus.CANCELLED ?? 0,
-    reversedPayments: reversals.length,
-    correctedPayments: corrections.filter((item) => item.correctedPayment).length,
+    reversedPayments: reversalCount,
+    correctedPayments: correctionTotals.filter((item) => item.correctedPaymentId !== null).length,
     totalAffectedAmount,
     pendingAffectedAmount,
     oldestPendingDays,

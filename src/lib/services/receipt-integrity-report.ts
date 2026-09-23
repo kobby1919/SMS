@@ -42,7 +42,7 @@ function receiptCounter(receiptNumber: string) {
 }
 
 export async function getReceiptIntegrityReport(schoolId: string): Promise<ReceiptIntegrityReport> {
-  const [statusCounts, receiptNumbers, referenceRows, payments, correctionLinks] = await Promise.all([
+  const [statusCounts, receiptNumbers, referenceRows, payments, correctionLinks, correctionLinkedCount, correctedReceiptCount] = await Promise.all([
     prisma.payment.groupBy({
       by: ["status"],
       where: { schoolId },
@@ -113,6 +113,23 @@ export async function getReceiptIntegrityReport(schoolId: string): Promise<Recei
       },
       orderBy: { updatedAt: "desc" },
       take: 50,
+    }),
+    prisma.paymentCorrectionRequest.count({
+      where: {
+        schoolId,
+        status: { in: ["APPROVED", "APPLIED"] },
+        OR: [
+          { correctedPaymentId: { not: null } },
+          { requestedAction: { in: ["CANCEL_RECEIPT", "REVERSE_PAYMENT", "MARK_DUPLICATE"] } },
+        ],
+      },
+    }),
+    prisma.paymentCorrectionRequest.count({
+      where: {
+        schoolId,
+        status: { in: ["APPROVED", "APPLIED"] },
+        correctedPaymentId: { not: null },
+      },
     }),
   ]);
   const countByStatus = Object.fromEntries(statusCounts.map((row) => [row.status, row._count._all])) as Record<string, number>;
@@ -191,8 +208,8 @@ export async function getReceiptIntegrityReport(schoolId: string): Promise<Recei
     voidedReceipts: countByStatus.REVERSED ?? 0,
     pendingReceipts: countByStatus.PENDING ?? 0,
     failedReceipts: countByStatus.FAILED ?? 0,
-    correctedReceipts: correctionLinks.filter((item) => item.correctedPayment).length,
-    correctionLinkedReceipts: correctionLinks.length,
+    correctedReceipts: correctedReceiptCount,
+    correctionLinkedReceipts: correctionLinkedCount,
     duplicateReferenceCount: duplicateReferenceGroups.length,
     receiptGapCount,
     issueCount: issues.length,

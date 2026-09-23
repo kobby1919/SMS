@@ -381,7 +381,7 @@ export async function getBursarArrearsFollowUp(
     totalStudents: new Set(items.map((item) => item.studentId)).size,
     overdueStudents: new Set(items.filter((item) => item.isOverdue).map((item) => item.studentId)).size,
     partPaidStudents: new Set(items.filter((item) => item.billStatus === "PARTIAL").map((item) => item.studentId)).size,
-    noParentContact: items.filter((item) => !item.parentContact).length,
+    noParentContact: new Set(items.filter((item) => !item.parentContact).map((item) => item.studentId)).size,
     byPriority: {
       Critical: items.filter((item) => item.priority === "Critical").length,
       High: items.filter((item) => item.priority === "High").length,

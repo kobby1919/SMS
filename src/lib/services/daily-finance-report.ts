@@ -94,15 +94,28 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
   const yesterday = previousDayBounds(start);
 
   const [
-    payments,
+    paymentsForTotals,
+    recentPaymentRows,
     yesterdayPayments,
     receiptsIssuedToday,
+    pendingConfirmationCount,
     pendingConfirmations,
+    reversalCount,
     reversals,
+    correctionRequestCount,
     correctionRequests,
+    openQueryCount,
     openQueries,
     highOutstandingBills,
   ] = await Promise.all([
+    prisma.payment.findMany({
+      where: {
+        schoolId,
+        status: "CONFIRMED",
+        paymentDate: { gte: start, lte: end },
+      },
+      select: { id: true, amount: true, paymentMethod: true },
+    }),
     prisma.payment.findMany({
       where: {
         schoolId,
@@ -148,6 +161,7 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
         createdAt: { gte: start, lte: end },
       },
     }),
+    prisma.payment.count({ where: { schoolId, status: "PENDING" } }),
     prisma.payment.findMany({
       where: { schoolId, status: "PENDING" },
       select: {
@@ -165,6 +179,7 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
       orderBy: { createdAt: "asc" },
       take: 5,
     }),
+    prisma.paymentReversal.count({ where: { schoolId, reversedAt: { gte: start, lte: end } } }),
     prisma.paymentReversal.findMany({
       where: { schoolId, reversedAt: { gte: start, lte: end } },
       select: {
@@ -185,6 +200,15 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
       },
       orderBy: { reversedAt: "desc" },
       take: 5,
+    }),
+    prisma.paymentCorrectionRequest.count({
+      where: {
+        schoolId,
+        OR: [
+          { requestedAt: { gte: start, lte: end } },
+          { status: "PENDING_REVIEW" },
+        ],
+      },
     }),
     prisma.paymentCorrectionRequest.findMany({
       where: {
@@ -209,6 +233,7 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
       orderBy: [{ status: "asc" }, { requestedAt: "desc" }],
       take: 6,
     }),
+    prisma.financeQuery.count({ where: { schoolId, status: { in: ["OPEN", "IN_REVIEW"] } } }),
     prisma.financeQuery.findMany({
       where: { schoolId, status: { in: ["OPEN", "IN_REVIEW"] } },
       select: {
@@ -238,11 +263,11 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
     }),
   ]);
 
-  const totalReceived = payments.reduce((sum, payment) => sum + asNumber(payment.amount), 0);
+  const totalReceived = paymentsForTotals.reduce((sum, payment) => sum + asNumber(payment.amount), 0);
   const yesterdayTotalReceived = yesterdayPayments.reduce((sum, payment) => sum + asNumber(payment.amount), 0);
   const byMethod = new Map<string, { count: number; amount: number }>();
 
-  for (const payment of payments) {
+  for (const payment of paymentsForTotals) {
     const current = byMethod.get(payment.paymentMethod) ?? { count: 0, amount: 0 };
     current.count += 1;
     current.amount += asNumber(payment.amount);
@@ -258,7 +283,7 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
     }))
     .sort((a, b) => b.amount - a.amount || a.label.localeCompare(b.label));
 
-  const recentPayments = payments.map((payment) => ({
+  const recentPayments = recentPaymentRows.map((payment) => ({
     id: payment.id,
     receiptNumber: payment.receiptNumber,
     amount: asNumber(payment.amount),
@@ -322,16 +347,16 @@ export async function getDailyFinanceReport(schoolId: string, date = new Date())
     yesterdayStart: yesterday.start,
     yesterdayEnd: yesterday.end,
     totalReceived,
-    paymentCount: payments.length,
+    paymentCount: paymentsForTotals.length,
     receiptCount: receiptsIssuedToday,
-    pendingConfirmationCount: pendingConfirmations.length,
-    reversalCount: reversals.length,
-    correctionRequestCount: correctionRequests.length,
-    openQueryCount: openQueries.length,
+    pendingConfirmationCount,
+    reversalCount,
+    correctionRequestCount,
+    openQueryCount,
     yesterdayTotalReceived,
     yesterdayPaymentCount: yesterdayPayments.length,
     totalDelta: totalReceived - yesterdayTotalReceived,
-    paymentDelta: payments.length - yesterdayPayments.length,
+    paymentDelta: paymentsForTotals.length - yesterdayPayments.length,
     methodBreakdown,
     recentPayments,
     ownerUpdates,
