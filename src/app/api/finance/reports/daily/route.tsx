@@ -20,6 +20,8 @@ import {
 } from "@react-pdf/renderer";
 import React from "react";
 
+const DAILY_MONEY_REPORT_TEMPLATE_VERSION = "owner-readable-v2";
+
 const S = StyleSheet.create({
   page: {
     fontFamily: "Helvetica",
@@ -232,6 +234,7 @@ export async function GET(req: NextRequest) {
       keyParts: [
         ctx.schoolId,
         "daily-money-report",
+        DAILY_MONEY_REPORT_TEMPLATE_VERSION,
         dateStr,
         branding.displayName,
         branding.primaryColor,
@@ -421,6 +424,7 @@ export async function GET(req: NextRequest) {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="${filename}"`,
         "Content-Length": String(pdfBuffer.byteLength),
+        "Cache-Control": "no-store, max-age=0",
       },
     });
   } catch (err: unknown) {
