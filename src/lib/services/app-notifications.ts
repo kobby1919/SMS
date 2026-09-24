@@ -167,6 +167,22 @@ function cleanText(value: string, field: string) {
   return cleaned;
 }
 
+function auditMetadata(value?: Prisma.InputJsonValue | null): Prisma.InputJsonValue | typeof Prisma.JsonNull {
+  if (value === undefined || value === null) return Prisma.JsonNull;
+
+  return sanitizeAuditJson(value) as Prisma.InputJsonValue;
+}
+
+function sanitizeAuditJson(value: unknown): unknown {
+  if (value instanceof Date) return value.toISOString();
+  if (Array.isArray(value)) return value.map((item) => sanitizeAuditJson(item));
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, sanitizeAuditJson(item)]),
+    );
+  }
+  return value;
+}
 function auditText(value?: string | null) {
   return cleanOptional(value)?.slice(0, 1000) ?? null;
 }
@@ -184,7 +200,7 @@ async function recordNotificationAudit(input: {
       notificationId: cleanText(input.notificationId, "notificationId"),
       event: input.event,
       message: auditText(input.message),
-      metadata: input.metadata ?? Prisma.JsonNull,
+      metadata: auditMetadata(input.metadata),
     },
   });
 }
@@ -234,7 +250,7 @@ async function recordDeliveryAudit(input: {
       providerMessageId: auditText(input.providerMessageId) ?? delivery.providerMessageId,
       message: auditText(input.message),
       error: auditText(input.error),
-      metadata: input.metadata ?? Prisma.JsonNull,
+      metadata: auditMetadata(input.metadata),
     },
   });
 }
@@ -275,6 +291,7 @@ function cleanTimezone(value: string | undefined, fallback = "Africa/Accra") {
   }
   return timezone;
 }
+
 function assertQueueableDeliveryStatus(status: AppNotificationDeliveryStatus) {
   if (status === "PENDING") return;
   if (status === "SENT") return;
@@ -577,6 +594,22 @@ export async function queueDelivery(
         tx,
       );
 
+      if (created.status === "SENT") {
+        await recordDeliveryAudit(
+          {
+            schoolId,
+            deliveryId: created.id,
+            event: "DELIVERY_SENT",
+            fromStatus: null,
+            toStatus: "SENT",
+            provider: created.provider,
+            message: "Delivery was queued in sent state.",
+            metadata: { sentAt: created.sentAt },
+          },
+          tx,
+        );
+      }
+
       return created;
     });
   } catch (error) {
@@ -587,6 +620,7 @@ export async function queueDelivery(
     throw error;
   }
 }
+
 export async function markRead(input: {
   schoolId: string;
   notificationId: string;
