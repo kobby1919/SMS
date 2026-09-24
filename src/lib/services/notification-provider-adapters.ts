@@ -46,6 +46,7 @@ export interface NotificationProviderAdapter {
 
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 const NOT_CONFIGURED_PROVIDER = "provider-not-configured";
+const DEFAULT_EMAIL_PROVIDER = "resend";
 
 function appBaseUrl() {
   return (
@@ -57,6 +58,14 @@ function appBaseUrl() {
 
 function emailFromAddress() {
   return process.env.EMAIL_FROM ?? "Edujay <onboarding@edujay.app>";
+}
+
+function configuredEmailProviderError() {
+  const provider = configuredEmailProvider();
+  if (provider !== DEFAULT_EMAIL_PROVIDER) {
+    return `Unsupported EMAIL_PROVIDER "${provider}". Edujay currently supports "${DEFAULT_EMAIL_PROVIDER}" for production email.`;
+  }
+  return "Email provider is not configured.";
 }
 
 function escapeHtml(value: string) {
@@ -102,8 +111,14 @@ function retryIn(minutes: number) {
   return new Date(Date.now() + minutes * 60 * 1000);
 }
 
+function configuredEmailProvider() {
+  return process.env.EMAIL_PROVIDER?.trim().toLowerCase() || DEFAULT_EMAIL_PROVIDER;
+}
+
 function providerKey(value?: string | null) {
-  return value?.trim().toLowerCase() || NOT_CONFIGURED_PROVIDER;
+  const cleaned = value?.trim().toLowerCase();
+  if (!cleaned || cleaned === NOT_CONFIGURED_PROVIDER) return configuredEmailProvider();
+  return cleaned;
 }
 
 class InAppProvider implements NotificationProviderAdapter {
@@ -132,7 +147,7 @@ class ResendEmailProvider implements NotificationProviderAdapter {
         return {
           ok: false,
           provider: this.name,
-          error: "Email provider is not configured.",
+          error: configuredEmailProviderError(),
           retryAt: retryIn(30),
         };
       }

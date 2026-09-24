@@ -16,6 +16,7 @@ const matchers = Object.keys(routeAccessMap).map((route) => ({
 
 const isInternalSecretRoute = createRouteMatcher([
   "/api/webhooks/payments(.*)",
+  "/api/webhooks/notifications(.*)",
   "/api/internal/finance/jobs/run",
   "/api/internal/parent-summaries/run",
   "/api/internal/teacher-accountability/run",
@@ -33,6 +34,7 @@ const isPublicRoute = createRouteMatcher([
   "/onboarding/parent/accept(.*)",
   "/onboarding/bursar/accept(.*)",
   "/api/webhooks/payments(.*)",
+  "/api/webhooks/notifications(.*)",
   "/api/internal/finance/jobs/run",
   "/api/internal/parent-summaries/run",
   "/api/internal/teacher-accountability/run",

@@ -16,17 +16,37 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Onboarding Email Delivery
+## Email Provider And Notification Webhooks
 
-School onboarding invites are sent through a provider-ready email service. In local
-development, invites are logged to the server console when no provider key is set.
-For production email delivery, configure:
+Edujay sends production notification email through one provider adapter first: Resend.
+Local development safely logs email to the server console when no provider key is set.
+
+Before using a real sending address in production, verify the sending domain inside
+Resend and add the DNS records it gives you:
+
+- SPF
+- DKIM
+- DMARC
+
+Then configure:
 
 ```bash
-RESEND_API_KEY=...
-EMAIL_FROM="Edujay <onboarding@yourdomain.com>"
+EMAIL_PROVIDER="resend"
+RESEND_API_KEY="..."
+EMAIL_FROM="Edujay <updates@yourdomain.com>"
+RESEND_WEBHOOK_SECRET="whsec_..."
 NEXT_PUBLIC_APP_URL="https://your-edujay-domain.com"
 ```
+
+Use this webhook URL in Resend after deployment:
+
+```text
+https://your-edujay-domain.com/api/webhooks/notifications/resend
+```
+
+The webhook updates Edujay delivery records for provider events such as sent,
+delivered, bounced, and complained. SMS and WhatsApp providers are intentionally
+left unconfigured until the school chooses paid delivery channels.
 
 ## Production Redis
 

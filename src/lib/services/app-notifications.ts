@@ -353,6 +353,7 @@ function normalizeDeliveryInput(input: DeliveryInput) {
 
 function defaultProvider(channel: AppNotificationDeliveryChannel) {
   if (channel === "IN_APP") return "edujay-in-app";
+  if (channel === "EMAIL") return process.env.EMAIL_PROVIDER?.trim().toLowerCase() || "resend";
   return "provider-not-configured";
 }
 
@@ -767,6 +768,7 @@ export async function markFailed(input: {
   failedAt?: Date;
   retryAt?: Date | null;
   provider?: string | null;
+  incrementAttempts?: boolean;
 }, client: PrismaClientOrTx = prisma) {
   const failedAt = input.failedAt ?? new Date();
   const error = cleanText(input.error, "error").slice(0, 1000);
@@ -782,7 +784,7 @@ export async function markFailed(input: {
 
     if (!current || current.status === "CANCELLED" || current.status === "DELIVERED") return { count: 0 };
 
-    const attempts = current.attempts + 1;
+    const attempts = input.incrementAttempts === false ? current.attempts : current.attempts + 1;
     const shouldRetry = Boolean(input.retryAt) && attempts < MAX_ATTEMPTS;
     const toStatus: AppNotificationDeliveryStatus = shouldRetry ? "RETRYING" : "FAILED";
 
