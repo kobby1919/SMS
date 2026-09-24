@@ -43,7 +43,10 @@ export async function updateSchoolCommunicationPolicy(data: unknown) {
           urgentBypassesQuietHours: boolFromFormData(data, "urgentBypassesQuietHours"),
         }
       : data;
-  const parsed = parseActionInput(schoolCommunicationPolicySchema, input);
+  const parsedInput = parseActionInput(schoolCommunicationPolicySchema, input);
+  const parsed = parsedInput.allowParentTeacherMessaging
+    ? { ...parsedInput, enabled: true }
+    : parsedInput;
   const routeInput = communicationRouteCategories.map((category) => ({
     category,
     target:
@@ -114,6 +117,7 @@ export async function updateSchoolCommunicationPolicy(data: unknown) {
 
   revalidatePath("/admin/communication-policy");
   revalidatePath("/parent");
+  revalidatePath("/parent/children", "layout");
 }
 
 export type CommunicationPolicyActionState = {

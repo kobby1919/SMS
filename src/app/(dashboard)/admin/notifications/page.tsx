@@ -133,7 +133,7 @@ function RetryArea({ delivery }: { delivery: Pick<DeliveryRow, "id" | "status"> 
 const AdminNotificationsPage = async ({ searchParams }: PageProps) => {
   const { schoolId } = await requirePageSession(["admin"]);
   const params = await searchParams;
-  const { summary, deliveries, filteredCount, selectedDelivery, filters } = await getNotificationMonitorData(schoolId, params);
+  const { summary, deliveries, notificationsWithoutDelivery, filteredCount, selectedDelivery, filters } = await getNotificationMonitorData(schoolId, params);
 
   return (
     <div className="flex flex-col gap-5 p-4">
@@ -164,10 +164,11 @@ const AdminNotificationsPage = async ({ searchParams }: PageProps) => {
         <StatCard label="Retrying" value={summary.deliveryCounts.RETRYING} note="Edujay will try again according to retry rules." tone="bg-amber-50 text-amber-700" icon={<RefreshCcw size={18} />} />
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-3">
+      <div className="grid gap-3 lg:grid-cols-4">
         <StatCard label="Unread in-app" value={summary.unreadNotifications} note="Bell notifications not yet read by recipients." tone="bg-indigo-50 text-indigo-700" icon={<BellRing size={18} />} />
         <StatCard label="Needs attention" value={summary.attentionCount} note="Failed plus retrying deliveries." tone="bg-orange-50 text-orange-700" icon={<MailWarning size={18} />} />
         <StatCard label="Cancelled" value={summary.deliveryCounts.CANCELLED} note="Stopped by system rules or admin action." tone="bg-slate-100 text-slate-700" icon={<ShieldCheck size={18} />} />
+        <StatCard label="No delivery job" value={summary.notificationsWithoutDeliveryCount} note="Created for in-app/history only, or no email/phone destination was available." tone="bg-violet-50 text-violet-700" icon={<BellRing size={18} />} />
       </div>
 
       {selectedDelivery && (
@@ -235,6 +236,47 @@ const AdminNotificationsPage = async ({ searchParams }: PageProps) => {
                 <p className="rounded-xl border border-dashed border-slate-200 p-4 text-sm font-bold text-slate-500">No audit events recorded for this delivery yet.</p>
               )}
             </div>
+          </div>
+        </section>
+      )}
+
+      {notificationsWithoutDelivery.length > 0 && (
+        <section className="rounded-2xl border border-violet-100 bg-violet-50/70 p-4 shadow-sm">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h2 className="text-base font-black text-slate-950">Notifications without delivery jobs</h2>
+              <p className="mt-1 text-sm font-semibold leading-relaxed text-violet-700">
+                These notifications exist in Edujay and can appear in-app, but no external email, SMS, or WhatsApp delivery was queued.
+              </p>
+            </div>
+            <span className="w-fit rounded-full bg-white px-3 py-1 text-xs font-black text-violet-700 ring-1 ring-violet-100">
+              Latest {notificationsWithoutDelivery.length.toLocaleString()}
+            </span>
+          </div>
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+            {notificationsWithoutDelivery.map((notification) => (
+              <article key={notification.id} className="rounded-2xl bg-white p-4 ring-1 ring-violet-100">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-black text-slate-950">{notification.title}</p>
+                    <p className="mt-1 line-clamp-2 text-sm font-semibold leading-relaxed text-slate-600">{notification.body}</p>
+                  </div>
+                  <span className="w-fit shrink-0 rounded-full bg-violet-50 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-violet-700 ring-1 ring-violet-100">
+                    {readable(notification.recipientType)}
+                  </span>
+                </div>
+                <div className="mt-3 grid gap-1 text-xs font-bold text-slate-500">
+                  <p>{readable(notification.category)} - {readable(notification.type)}</p>
+                  <p>Created {formatDateTime(notification.createdAt)}</p>
+                  <p>{notification.sourceModel ?? "Source"}: {notification.sourceId ?? notification.id}</p>
+                </div>
+                {notification.href && (
+                  <a href={notification.href} className="mt-3 inline-flex text-xs font-black text-edujay-primary">
+                    Open linked page
+                  </a>
+                )}
+              </article>
+            ))}
           </div>
         </section>
       )}

@@ -71,7 +71,7 @@ export function normalizeNotificationMonitorFilters(input: NotificationMonitorFi
 }
 
 export async function getNotificationMonitorSummary(schoolId: string) {
-  const [deliveryGroups, totalNotifications, unreadNotifications] = await Promise.all([
+  const [deliveryGroups, totalNotifications, unreadNotifications, notificationsWithoutDeliveryCount] = await Promise.all([
     prisma.appNotificationDelivery.groupBy({
       by: ["status"],
       where: { schoolId },
@@ -79,6 +79,7 @@ export async function getNotificationMonitorSummary(schoolId: string) {
     }),
     prisma.appNotification.count({ where: { schoolId } }),
     prisma.appNotification.count({ where: { schoolId, readAt: null } }),
+    prisma.appNotification.count({ where: { schoolId, deliveries: { none: {} } } }),
   ]);
 
   const deliveryCounts = emptyDeliveryCounts();
@@ -89,6 +90,7 @@ export async function getNotificationMonitorSummary(schoolId: string) {
   return {
     totalNotifications,
     unreadNotifications,
+    notificationsWithoutDeliveryCount,
     deliveryCounts,
     attentionCount: deliveryCounts.FAILED + deliveryCounts.RETRYING,
     activeQueueCount: deliveryCounts.PENDING + deliveryCounts.RETRYING,
@@ -116,7 +118,7 @@ export async function getNotificationMonitorData(schoolId: string, rawFilters: N
     },
   };
 
-  const [deliveries, filteredCount, selectedDelivery] = await Promise.all([
+  const [deliveries, filteredCount, selectedDelivery, notificationsWithoutDelivery] = await Promise.all([
     prisma.appNotificationDelivery.findMany({
       where: deliveryWhere,
       select: {
@@ -207,11 +209,31 @@ export async function getNotificationMonitorData(schoolId: string, rawFilters: N
           },
         })
       : Promise.resolve(null),
+    prisma.appNotification.findMany({
+      where: { schoolId, deliveries: { none: {} } },
+      select: {
+        id: true,
+        title: true,
+        body: true,
+        href: true,
+        recipientType: true,
+        recipientId: true,
+        type: true,
+        category: true,
+        priority: true,
+        sourceModel: true,
+        sourceId: true,
+        createdAt: true,
+      },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      take: 20,
+    }),
   ]);
 
   return {
     summary,
     deliveries,
+    notificationsWithoutDelivery,
     filteredCount,
     selectedDelivery,
     filters,
