@@ -47,6 +47,11 @@ const requiredDelegates = [
   "parentInviteAuditLog",
   "parentAccessAuditLog",
   "parentInviteStudent",
+  "appNotification",
+  "appNotificationDelivery",
+  "appNotificationAuditLog",
+  "appNotificationSetting",
+  "appNotificationPreference",
 ] as const;
 
 function hasRequiredDelegates(client: ReturnType<typeof prismaClientSingleton>) {
