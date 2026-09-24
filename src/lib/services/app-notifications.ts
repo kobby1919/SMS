@@ -167,6 +167,77 @@ function cleanText(value: string, field: string) {
   return cleaned;
 }
 
+function auditText(value?: string | null) {
+  return cleanOptional(value)?.slice(0, 1000) ?? null;
+}
+
+async function recordNotificationAudit(input: {
+  schoolId: string;
+  notificationId: string;
+  event: Prisma.AppNotificationAuditLogCreateInput["event"];
+  message?: string | null;
+  metadata?: Prisma.InputJsonValue | null;
+}, client: PrismaClientOrTx = prisma) {
+  return client.appNotificationAuditLog.create({
+    data: {
+      schoolId: cleanText(input.schoolId, "schoolId"),
+      notificationId: cleanText(input.notificationId, "notificationId"),
+      event: input.event,
+      message: auditText(input.message),
+      metadata: input.metadata ?? Prisma.JsonNull,
+    },
+  });
+}
+
+async function recordDeliveryAudit(input: {
+  schoolId: string;
+  deliveryId: string;
+  event: Prisma.AppNotificationAuditLogCreateInput["event"];
+  fromStatus?: AppNotificationDeliveryStatus | null;
+  toStatus?: AppNotificationDeliveryStatus | null;
+  provider?: string | null;
+  providerMessageId?: string | null;
+  message?: string | null;
+  error?: string | null;
+  metadata?: Prisma.InputJsonValue | null;
+}, client: PrismaClientOrTx = prisma) {
+  const delivery = await client.appNotificationDelivery.findFirst({
+    where: {
+      id: cleanText(input.deliveryId, "deliveryId"),
+      schoolId: cleanText(input.schoolId, "schoolId"),
+    },
+    select: {
+      id: true,
+      schoolId: true,
+      notificationId: true,
+      channel: true,
+      status: true,
+      destination: true,
+      provider: true,
+      providerMessageId: true,
+    },
+  });
+
+  if (!delivery) return null;
+
+  return client.appNotificationAuditLog.create({
+    data: {
+      schoolId: delivery.schoolId,
+      notificationId: delivery.notificationId,
+      deliveryId: delivery.id,
+      event: input.event,
+      channel: delivery.channel,
+      fromStatus: input.fromStatus ?? null,
+      toStatus: input.toStatus ?? delivery.status,
+      provider: auditText(input.provider) ?? delivery.provider,
+      destination: delivery.destination,
+      providerMessageId: auditText(input.providerMessageId) ?? delivery.providerMessageId,
+      message: auditText(input.message),
+      error: auditText(input.error),
+      metadata: input.metadata ?? Prisma.JsonNull,
+    },
+  });
+}
 function cleanOptional(value?: string | null) {
   const cleaned = value?.trim();
   return cleaned || null;
@@ -344,6 +415,23 @@ export async function createNotification(input: CreateNotificationInput, client:
           expiresAt: normalized.expiresAt ?? null,
         },
       });
+      await recordNotificationAudit(
+        {
+          schoolId: normalized.schoolId,
+          notificationId: notification.id,
+          event: "NOTIFICATION_CREATED",
+          message: `Notification created for ${normalized.recipientType}.`,
+          metadata: {
+            recipientType: normalized.recipientType,
+            recipientId: normalized.recipientId,
+            type: normalized.type,
+            category: normalized.category,
+            priority: normalized.priority,
+            idempotencyKey: normalized.idempotencyKey,
+          },
+        },
+        tx,
+      );
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
         const raced = await dedupeNotification(normalized, tx);
@@ -461,17 +549,35 @@ export async function queueDelivery(
   if (existing) return existing;
 
   try {
-    return await client.appNotificationDelivery.create({
-      data: {
-        schoolId,
-        notificationId,
-        channel: delivery.channel,
-        destination: delivery.destination,
-        provider: delivery.provider,
-        status: delivery.status,
-        nextAttemptAt: delivery.nextAttemptAt,
-        sentAt: delivery.status === "SENT" ? new Date() : null,
-      },
+    return await withTransaction(client, async (tx) => {
+      const created = await tx.appNotificationDelivery.create({
+        data: {
+          schoolId,
+          notificationId,
+          channel: delivery.channel,
+          destination: delivery.destination,
+          provider: delivery.provider,
+          status: delivery.status,
+          nextAttemptAt: delivery.nextAttemptAt,
+          sentAt: delivery.status === "SENT" ? new Date() : null,
+        },
+      });
+
+      await recordDeliveryAudit(
+        {
+          schoolId,
+          deliveryId: created.id,
+          event: "DELIVERY_QUEUED",
+          fromStatus: null,
+          toStatus: created.status,
+          provider: created.provider,
+          message: `${created.channel} delivery queued for ${created.destination}.`,
+          metadata: { nextAttemptAt: created.nextAttemptAt },
+        },
+        tx,
+      );
+
+      return created;
     });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
@@ -488,15 +594,32 @@ export async function markRead(input: {
   recipientId: string;
 }, client: PrismaClientOrTx = prisma) {
   const now = new Date();
-  return client.appNotification.updateMany({
-    where: {
-      id: cleanText(input.notificationId, "notificationId"),
-      schoolId: cleanText(input.schoolId, "schoolId"),
-      recipientType: input.recipientType,
-      recipientId: cleanText(input.recipientId, "recipientId"),
-      readAt: null,
-    },
-    data: { readAt: now },
+  return withTransaction(client, async (tx) => {
+    const result = await tx.appNotification.updateMany({
+      where: {
+        id: cleanText(input.notificationId, "notificationId"),
+        schoolId: cleanText(input.schoolId, "schoolId"),
+        recipientType: input.recipientType,
+        recipientId: cleanText(input.recipientId, "recipientId"),
+        readAt: null,
+      },
+      data: { readAt: now },
+    });
+
+    if (result.count > 0) {
+      await recordNotificationAudit(
+        {
+          schoolId: input.schoolId,
+          notificationId: input.notificationId,
+          event: "NOTIFICATION_READ",
+          message: `Notification marked read by ${input.recipientType}.`,
+          metadata: { recipientType: input.recipientType, recipientId: input.recipientId, readAt: now },
+        },
+        tx,
+      );
+    }
+
+    return result;
   });
 }
 
@@ -508,20 +631,46 @@ export async function markSent(input: {
   sentAt?: Date;
 }, client: PrismaClientOrTx = prisma) {
   const sentAt = input.sentAt ?? new Date();
-  return client.appNotificationDelivery.updateMany({
-    where: {
-      id: cleanText(input.deliveryId, "deliveryId"),
-      schoolId: cleanText(input.schoolId, "schoolId"),
-      status: { notIn: ["CANCELLED", "DELIVERED"] },
-    },
-    data: {
-      status: "SENT",
-      sentAt,
-      provider: input.provider === undefined ? undefined : cleanOptional(input.provider),
-      providerMessageId: cleanOptional(input.providerMessageId) ?? undefined,
-      lastError: null,
-      nextAttemptAt: null,
-    },
+  return withTransaction(client, async (tx) => {
+    const current = await tx.appNotificationDelivery.findFirst({
+      where: { id: cleanText(input.deliveryId, "deliveryId"), schoolId: cleanText(input.schoolId, "schoolId") },
+      select: { status: true },
+    });
+
+    const result = await tx.appNotificationDelivery.updateMany({
+      where: {
+        id: cleanText(input.deliveryId, "deliveryId"),
+        schoolId: cleanText(input.schoolId, "schoolId"),
+        status: { notIn: ["CANCELLED", "DELIVERED"] },
+      },
+      data: {
+        status: "SENT",
+        sentAt,
+        provider: input.provider === undefined ? undefined : cleanOptional(input.provider),
+        providerMessageId: cleanOptional(input.providerMessageId) ?? undefined,
+        lastError: null,
+        nextAttemptAt: null,
+      },
+    });
+
+    if (result.count > 0) {
+      await recordDeliveryAudit(
+        {
+          schoolId: input.schoolId,
+          deliveryId: input.deliveryId,
+          event: "DELIVERY_SENT",
+          fromStatus: current?.status ?? null,
+          toStatus: "SENT",
+          provider: input.provider,
+          providerMessageId: input.providerMessageId,
+          message: "Delivery accepted by provider.",
+          metadata: { sentAt },
+        },
+        tx,
+      );
+    }
+
+    return result;
   });
 }
 
@@ -533,21 +682,47 @@ export async function markDelivered(input: {
   deliveredAt?: Date;
 }, client: PrismaClientOrTx = prisma) {
   const deliveredAt = input.deliveredAt ?? new Date();
-  return client.appNotificationDelivery.updateMany({
-    where: {
-      id: cleanText(input.deliveryId, "deliveryId"),
-      schoolId: cleanText(input.schoolId, "schoolId"),
-      status: { not: "CANCELLED" },
-    },
-    data: {
-      status: "DELIVERED",
-      deliveredAt,
-      sentAt: deliveredAt,
-      provider: input.provider === undefined ? undefined : cleanOptional(input.provider),
-      providerMessageId: cleanOptional(input.providerMessageId) ?? undefined,
-      lastError: null,
-      nextAttemptAt: null,
-    },
+  return withTransaction(client, async (tx) => {
+    const current = await tx.appNotificationDelivery.findFirst({
+      where: { id: cleanText(input.deliveryId, "deliveryId"), schoolId: cleanText(input.schoolId, "schoolId") },
+      select: { status: true },
+    });
+
+    const result = await tx.appNotificationDelivery.updateMany({
+      where: {
+        id: cleanText(input.deliveryId, "deliveryId"),
+        schoolId: cleanText(input.schoolId, "schoolId"),
+        status: { not: "CANCELLED" },
+      },
+      data: {
+        status: "DELIVERED",
+        deliveredAt,
+        sentAt: deliveredAt,
+        provider: input.provider === undefined ? undefined : cleanOptional(input.provider),
+        providerMessageId: cleanOptional(input.providerMessageId) ?? undefined,
+        lastError: null,
+        nextAttemptAt: null,
+      },
+    });
+
+    if (result.count > 0) {
+      await recordDeliveryAudit(
+        {
+          schoolId: input.schoolId,
+          deliveryId: input.deliveryId,
+          event: "DELIVERY_DELIVERED",
+          fromStatus: current?.status ?? null,
+          toStatus: "DELIVERED",
+          provider: input.provider,
+          providerMessageId: input.providerMessageId,
+          message: "Delivery confirmed as delivered.",
+          metadata: { deliveredAt },
+        },
+        tx,
+      );
+    }
+
+    return result;
   });
 }
 
@@ -561,32 +736,55 @@ export async function markFailed(input: {
 }, client: PrismaClientOrTx = prisma) {
   const failedAt = input.failedAt ?? new Date();
   const error = cleanText(input.error, "error").slice(0, 1000);
-  const current = await client.appNotificationDelivery.findFirst({
-    where: {
-      id: cleanText(input.deliveryId, "deliveryId"),
-      schoolId: cleanText(input.schoolId, "schoolId"),
-    },
-    select: { attempts: true, status: true },
-  });
 
-  if (!current || current.status === "CANCELLED" || current.status === "DELIVERED") return { count: 0 };
+  return withTransaction(client, async (tx) => {
+    const current = await tx.appNotificationDelivery.findFirst({
+      where: {
+        id: cleanText(input.deliveryId, "deliveryId"),
+        schoolId: cleanText(input.schoolId, "schoolId"),
+      },
+      select: { attempts: true, status: true },
+    });
 
-  const attempts = current.attempts + 1;
-  const shouldRetry = Boolean(input.retryAt) && attempts < MAX_ATTEMPTS;
+    if (!current || current.status === "CANCELLED" || current.status === "DELIVERED") return { count: 0 };
 
-  return client.appNotificationDelivery.updateMany({
-    where: {
-      id: cleanText(input.deliveryId, "deliveryId"),
-      schoolId: cleanText(input.schoolId, "schoolId"),
-    },
-    data: {
-      attempts,
-      status: shouldRetry ? "RETRYING" : "FAILED",
-      failedAt,
-      provider: input.provider === undefined ? undefined : cleanOptional(input.provider),
-      lastError: error,
-      nextAttemptAt: shouldRetry ? input.retryAt : null,
-    },
+    const attempts = current.attempts + 1;
+    const shouldRetry = Boolean(input.retryAt) && attempts < MAX_ATTEMPTS;
+    const toStatus: AppNotificationDeliveryStatus = shouldRetry ? "RETRYING" : "FAILED";
+
+    const result = await tx.appNotificationDelivery.updateMany({
+      where: {
+        id: cleanText(input.deliveryId, "deliveryId"),
+        schoolId: cleanText(input.schoolId, "schoolId"),
+      },
+      data: {
+        attempts,
+        status: toStatus,
+        failedAt,
+        provider: input.provider === undefined ? undefined : cleanOptional(input.provider),
+        lastError: error,
+        nextAttemptAt: shouldRetry ? input.retryAt : null,
+      },
+    });
+
+    if (result.count > 0) {
+      await recordDeliveryAudit(
+        {
+          schoolId: input.schoolId,
+          deliveryId: input.deliveryId,
+          event: shouldRetry ? "DELIVERY_RETRY_SCHEDULED" : "DELIVERY_FAILED",
+          fromStatus: current.status,
+          toStatus,
+          provider: input.provider,
+          error,
+          message: shouldRetry ? "Delivery failed and retry was scheduled." : "Delivery failed after allowed attempts or without retry.",
+          metadata: { attempts, failedAt, retryAt: shouldRetry ? input.retryAt : null },
+        },
+        tx,
+      );
+    }
+
+    return result;
   });
 }
 
@@ -595,17 +793,41 @@ export async function cancelDelivery(input: {
   deliveryId: string;
   reason: string;
 }, client: PrismaClientOrTx = prisma) {
-  return client.appNotificationDelivery.updateMany({
-    where: {
-      id: cleanText(input.deliveryId, "deliveryId"),
-      schoolId: cleanText(input.schoolId, "schoolId"),
-      status: { notIn: ["CANCELLED", "DELIVERED"] },
-    },
-    data: {
-      status: "CANCELLED",
-      lastError: cleanText(input.reason, "reason").slice(0, 1000),
-      nextAttemptAt: null,
-    },
+  return withTransaction(client, async (tx) => {
+    const current = await tx.appNotificationDelivery.findFirst({
+      where: { id: cleanText(input.deliveryId, "deliveryId"), schoolId: cleanText(input.schoolId, "schoolId") },
+      select: { status: true },
+    });
+
+    const reason = cleanText(input.reason, "reason").slice(0, 1000);
+    const result = await tx.appNotificationDelivery.updateMany({
+      where: {
+        id: cleanText(input.deliveryId, "deliveryId"),
+        schoolId: cleanText(input.schoolId, "schoolId"),
+        status: { notIn: ["CANCELLED", "DELIVERED"] },
+      },
+      data: {
+        status: "CANCELLED",
+        lastError: reason,
+        nextAttemptAt: null,
+      },
+    });
+
+    if (result.count > 0) {
+      await recordDeliveryAudit(
+        {
+          schoolId: input.schoolId,
+          deliveryId: input.deliveryId,
+          event: "DELIVERY_CANCELLED",
+          fromStatus: current?.status ?? null,
+          toStatus: "CANCELLED",
+          message: reason,
+        },
+        tx,
+      );
+    }
+
+    return result;
   });
 }
 
@@ -615,17 +837,42 @@ export async function deferDelivery(input: {
   reason: string;
   retryAt: Date;
 }, client: PrismaClientOrTx = prisma) {
-  return client.appNotificationDelivery.updateMany({
-    where: {
-      id: cleanText(input.deliveryId, "deliveryId"),
-      schoolId: cleanText(input.schoolId, "schoolId"),
-      status: { notIn: ["CANCELLED", "DELIVERED"] },
-    },
-    data: {
-      status: "PENDING",
-      lastError: cleanText(input.reason, "reason").slice(0, 1000),
-      nextAttemptAt: input.retryAt,
-    },
+  return withTransaction(client, async (tx) => {
+    const current = await tx.appNotificationDelivery.findFirst({
+      where: { id: cleanText(input.deliveryId, "deliveryId"), schoolId: cleanText(input.schoolId, "schoolId") },
+      select: { status: true },
+    });
+
+    const reason = cleanText(input.reason, "reason").slice(0, 1000);
+    const result = await tx.appNotificationDelivery.updateMany({
+      where: {
+        id: cleanText(input.deliveryId, "deliveryId"),
+        schoolId: cleanText(input.schoolId, "schoolId"),
+        status: { notIn: ["CANCELLED", "DELIVERED"] },
+      },
+      data: {
+        status: "PENDING",
+        lastError: reason,
+        nextAttemptAt: input.retryAt,
+      },
+    });
+
+    if (result.count > 0) {
+      await recordDeliveryAudit(
+        {
+          schoolId: input.schoolId,
+          deliveryId: input.deliveryId,
+          event: "DELIVERY_DEFERRED",
+          fromStatus: current?.status ?? null,
+          toStatus: "PENDING",
+          message: reason,
+          metadata: { retryAt: input.retryAt },
+        },
+        tx,
+      );
+    }
+
+    return result;
   });
 }
 
@@ -634,28 +881,50 @@ export async function retryFailed(input: {
   deliveryId?: string;
   before?: Date;
 }, client: PrismaClientOrTx = prisma) {
-  const where: Prisma.AppNotificationDeliveryWhereInput = {
-    schoolId: cleanText(input.schoolId, "schoolId"),
-    status: { in: ["FAILED", "RETRYING"] },
-    attempts: { lt: MAX_ATTEMPTS },
-    OR: [
-      { nextAttemptAt: null },
-      { nextAttemptAt: { lte: input.before ?? new Date() } },
-    ],
-  };
+  return withTransaction(client, async (tx) => {
+    const where: Prisma.AppNotificationDeliveryWhereInput = {
+      schoolId: cleanText(input.schoolId, "schoolId"),
+      status: { in: ["FAILED", "RETRYING"] },
+      attempts: { lt: MAX_ATTEMPTS },
+      OR: [
+        { nextAttemptAt: null },
+        { nextAttemptAt: { lte: input.before ?? new Date() } },
+      ],
+    };
 
-  if (input.deliveryId) where.id = cleanText(input.deliveryId, "deliveryId");
+    if (input.deliveryId) where.id = cleanText(input.deliveryId, "deliveryId");
 
-  return client.appNotificationDelivery.updateMany({
-    where,
-    data: {
-      status: "PENDING",
-      nextAttemptAt: null,
-      lastError: null,
-    },
+    const deliveries = await tx.appNotificationDelivery.findMany({
+      where,
+      select: { id: true, status: true },
+    });
+
+    const result = await tx.appNotificationDelivery.updateMany({
+      where,
+      data: {
+        status: "PENDING",
+        nextAttemptAt: null,
+        lastError: null,
+      },
+    });
+
+    for (const delivery of deliveries) {
+      await recordDeliveryAudit(
+        {
+          schoolId: input.schoolId,
+          deliveryId: delivery.id,
+          event: "DELIVERY_RETRY_REQUESTED",
+          fromStatus: delivery.status,
+          toStatus: "PENDING",
+          message: "Failed delivery was returned to the pending queue.",
+        },
+        tx,
+      );
+    }
+
+    return result;
   });
 }
-
 export async function getAppNotificationSettings(schoolIdInput: string, client: PrismaClientOrTx = prisma) {
   const schoolId = cleanText(schoolIdInput, "schoolId");
 

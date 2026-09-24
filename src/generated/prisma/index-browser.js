@@ -539,6 +539,24 @@ exports.Prisma.AppNotificationDeliveryScalarFieldEnum = {
   notificationId: 'notificationId'
 };
 
+exports.Prisma.AppNotificationAuditLogScalarFieldEnum = {
+  id: 'id',
+  event: 'event',
+  channel: 'channel',
+  fromStatus: 'fromStatus',
+  toStatus: 'toStatus',
+  provider: 'provider',
+  destination: 'destination',
+  providerMessageId: 'providerMessageId',
+  message: 'message',
+  error: 'error',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  schoolId: 'schoolId',
+  notificationId: 'notificationId',
+  deliveryId: 'deliveryId'
+};
+
 exports.Prisma.ParentNotificationScalarFieldEnum = {
   id: 'id',
   type: 'type',
@@ -1544,6 +1562,19 @@ exports.AppNotificationDeliveryStatus = exports.$Enums.AppNotificationDeliverySt
   CANCELLED: 'CANCELLED'
 };
 
+exports.AppNotificationAuditEvent = exports.$Enums.AppNotificationAuditEvent = {
+  NOTIFICATION_CREATED: 'NOTIFICATION_CREATED',
+  DELIVERY_QUEUED: 'DELIVERY_QUEUED',
+  DELIVERY_SENT: 'DELIVERY_SENT',
+  DELIVERY_DELIVERED: 'DELIVERY_DELIVERED',
+  DELIVERY_FAILED: 'DELIVERY_FAILED',
+  DELIVERY_RETRY_SCHEDULED: 'DELIVERY_RETRY_SCHEDULED',
+  DELIVERY_RETRY_REQUESTED: 'DELIVERY_RETRY_REQUESTED',
+  DELIVERY_CANCELLED: 'DELIVERY_CANCELLED',
+  DELIVERY_DEFERRED: 'DELIVERY_DEFERRED',
+  NOTIFICATION_READ: 'NOTIFICATION_READ'
+};
+
 exports.ParentNotificationType = exports.$Enums.ParentNotificationType = {
   DAILY_SUMMARY: 'DAILY_SUMMARY',
   ATTENDANCE: 'ATTENDANCE',
@@ -1942,6 +1973,7 @@ exports.Prisma.ModelName = {
   ParentNotificationPreference: 'ParentNotificationPreference',
   AppNotification: 'AppNotification',
   AppNotificationDelivery: 'AppNotificationDelivery',
+  AppNotificationAuditLog: 'AppNotificationAuditLog',
   ParentNotification: 'ParentNotification',
   ParentNotificationDeliveryLog: 'ParentNotificationDeliveryLog',
   ParentTeacherContactRequest: 'ParentTeacherContactRequest',
