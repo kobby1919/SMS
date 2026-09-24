@@ -11,12 +11,14 @@ export const DELIVERY_CHANNELS = ["IN_APP", "EMAIL", "SMS", "WHATSAPP"] as const
 export const RECIPIENT_TYPES = ["ADMIN", "TEACHER", "PARENT", "BURSAR", "OWNER"] as const;
 
 type DeliveryStatus = (typeof DELIVERY_STATUSES)[number];
+
 export type NotificationMonitorFilters = {
   status?: string;
   channel?: string;
   recipientType?: string;
   from?: string;
   to?: string;
+  deliveryId?: string;
 };
 
 function emptyDeliveryCounts() {
@@ -43,12 +45,18 @@ function parseDateEnd(value: string | undefined) {
   return Number.isNaN(parsed.getTime()) ? undefined : parsed;
 }
 
+function parseDeliveryId(value: string | undefined) {
+  if (!value) return undefined;
+  return /^[a-z0-9_-]{8,80}$/i.test(value) ? value : undefined;
+}
+
 export function normalizeNotificationMonitorFilters(input: NotificationMonitorFilters = {}) {
   const status = parseEnum(input.status, DELIVERY_STATUSES);
   const channel = parseEnum(input.channel, DELIVERY_CHANNELS);
   const recipientType = parseEnum(input.recipientType, RECIPIENT_TYPES);
   const fromDate = parseDateStart(input.from);
   const toDate = parseDateEnd(input.to);
+  const deliveryId = parseDeliveryId(input.deliveryId);
 
   return {
     status,
@@ -56,6 +64,7 @@ export function normalizeNotificationMonitorFilters(input: NotificationMonitorFi
     recipientType,
     from: fromDate ? input.from : undefined,
     to: toDate ? input.to : undefined,
+    deliveryId,
     fromDate,
     toDate,
   };
@@ -107,7 +116,7 @@ export async function getNotificationMonitorData(schoolId: string, rawFilters: N
     },
   };
 
-  const [deliveries, filteredCount] = await Promise.all([
+  const [deliveries, filteredCount, selectedDelivery] = await Promise.all([
     prisma.appNotificationDelivery.findMany({
       where: deliveryWhere,
       select: {
@@ -143,12 +152,68 @@ export async function getNotificationMonitorData(schoolId: string, rawFilters: N
       take: 50,
     }),
     prisma.appNotificationDelivery.count({ where: deliveryWhere }),
+    filters.deliveryId
+      ? prisma.appNotificationDelivery.findFirst({
+          where: { id: filters.deliveryId, schoolId },
+          select: {
+            id: true,
+            channel: true,
+            status: true,
+            provider: true,
+            destination: true,
+            attempts: true,
+            lastError: true,
+            providerMessageId: true,
+            sentAt: true,
+            deliveredAt: true,
+            failedAt: true,
+            nextAttemptAt: true,
+            createdAt: true,
+            updatedAt: true,
+            notification: {
+              select: {
+                id: true,
+                title: true,
+                body: true,
+                href: true,
+                recipientType: true,
+                recipientId: true,
+                type: true,
+                category: true,
+                priority: true,
+                sourceModel: true,
+                sourceId: true,
+                idempotencyKey: true,
+                createdAt: true,
+              },
+            },
+            auditLogs: {
+              select: {
+                id: true,
+                event: true,
+                channel: true,
+                fromStatus: true,
+                toStatus: true,
+                provider: true,
+                destination: true,
+                providerMessageId: true,
+                message: true,
+                error: true,
+                createdAt: true,
+              },
+              orderBy: { createdAt: "desc" },
+              take: 25,
+            },
+          },
+        })
+      : Promise.resolve(null),
   ]);
 
   return {
     summary,
     deliveries,
     filteredCount,
+    selectedDelivery,
     filters,
   };
 }
