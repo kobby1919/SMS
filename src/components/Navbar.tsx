@@ -1,10 +1,12 @@
 import type { AppRole } from "@/src/lib/roles";
+import type { AppNotificationPriority, AppNotificationRecipientType, ParentNotification } from "@/src/generated/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 import prisma from "@/src/lib/prisma";
 import { getSchoolBranding } from "@/src/lib/services/school-branding";
 import { listActiveParentChildren } from "@/src/lib/services/parent-student-relationships";
 import { prepareTeacherAccountabilityForView } from "@/src/lib/services/teacher-accountability-view";
 import { getTeacherSelfAccountabilityOverview } from "@/src/lib/queries/teacher-self-accountability";
+import { createNotification, markRead } from "@/src/lib/services/app-notifications";
 import NavbarClient from "./NavbarClient";
 
 type Props = {
@@ -22,12 +24,189 @@ const roleLabel: Record<AppRole, string> = {
   bursar: "Bursar",
 };
 
+const roleRecipientType: Partial<Record<AppRole, AppNotificationRecipientType>> = {
+  platform_admin: "OWNER",
+  admin: "ADMIN",
+  teacher: "TEACHER",
+  parent: "PARENT",
+  bursar: "BURSAR",
+};
+
 function obligationReviewHref(obligationId: string) {
   return `/teacher/accountability?obligationId=${encodeURIComponent(obligationId)}`;
 }
 
 function needsTeacherReview(status: string, escalationStatus: string | null) {
   return status === "ESCALATED" || Boolean(escalationStatus);
+}
+
+function parentNotificationHref(notification: Pick<ParentNotification, "href" | "occurredAt">) {
+  const date = notification.occurredAt.toISOString().slice(0, 10);
+  const href = notification.href || "/parent/updates";
+
+  if (href === "/parent/updates" || href.startsWith("/parent/updates?")) {
+    return `/parent/updates?date=${date}`;
+  }
+
+  return href;
+}
+
+function mapParentNotificationType(type: ParentNotification["type"]) {
+  if (type === "DAILY_SUMMARY") return "PARENT_DAILY_SUMMARY";
+  if (type === "ATTENDANCE") return "ATTENDANCE_ALERT";
+  if (type === "ASSESSMENT") return "REPORT_CARD";
+  if (type === "ANNOUNCEMENT") return "ANNOUNCEMENT";
+  if (type === "BILL" || type === "PAYMENT") return "FINANCE_QUERY";
+  return "SYSTEM";
+}
+
+function mapParentNotificationCategory(type: ParentNotification["type"]) {
+  if (type === "ATTENDANCE") return "ATTENDANCE";
+  if (type === "ASSESSMENT" || type === "ASSIGNMENT") return "ACADEMIC";
+  if (type === "BILL" || type === "PAYMENT") return "FINANCE";
+  return "GENERAL";
+}
+
+function mapParentNotificationPriority(priority: ParentNotification["priority"]): AppNotificationPriority {
+  if (priority === "HIGH") return "HIGH";
+  if (priority === "LOW") return "LOW";
+  return "NORMAL";
+}
+
+async function syncParentNotificationsToAppNotifications({
+  schoolId,
+  parentId,
+  notifications,
+}: {
+  schoolId: string;
+  parentId: string;
+  notifications: Array<ParentNotification & { student?: { name: string; surname: string } | null }>;
+}) {
+  for (const notification of notifications) {
+    const appNotification = await createNotification({
+      schoolId,
+      recipientType: "PARENT",
+      recipientId: parentId,
+      type: mapParentNotificationType(notification.type),
+      category: mapParentNotificationCategory(notification.type),
+      priority: mapParentNotificationPriority(notification.priority),
+      title: notification.title,
+      body: notification.body,
+      href: parentNotificationHref(notification),
+      sourceModel: "ParentNotification",
+      sourceId: notification.id,
+      idempotencyKey: `parent-notification:${notification.id}`,
+      payload: {
+        parentNotificationId: notification.id,
+        studentName: notification.student ? `${notification.student.name} ${notification.student.surname}` : null,
+      },
+      deliveries: [{ channel: "IN_APP", destination: parentId }],
+    });
+
+    if (notification.readAt && !appNotification.readAt) {
+      await markRead({
+        schoolId,
+        notificationId: appNotification.id,
+        recipientType: "PARENT",
+        recipientId: parentId,
+      });
+    }
+  }
+}
+
+async function syncTeacherAlertsToAppNotifications({
+  schoolId,
+  teacherId,
+  alerts,
+}: {
+  schoolId: string;
+  teacherId: string;
+  alerts: Array<{
+    id: string;
+    title: string;
+    description: string;
+    href: string;
+    priority: string;
+    status: string;
+    dueAt: string;
+  }>;
+}) {
+  for (const alert of alerts) {
+    await createNotification({
+      schoolId,
+      recipientType: "TEACHER",
+      recipientId: teacherId,
+      type: "ACCOUNTABILITY_ALERT",
+      category: "ACCOUNTABILITY",
+      priority: alert.priority === "LOW" ? "LOW" : alert.priority === "NORMAL" ? "NORMAL" : "HIGH",
+      title: alert.title,
+      body: alert.description,
+      href: alert.href,
+      sourceModel: "TeacherObligation",
+      sourceId: alert.id,
+      idempotencyKey: `teacher-obligation:${alert.id}`,
+      payload: {
+        status: alert.status,
+        dueAt: alert.dueAt,
+      },
+      deliveries: [{ channel: "IN_APP", destination: teacherId }],
+    });
+  }
+}
+
+async function getNavbarNotificationContext({
+  schoolId,
+  userId,
+  role,
+}: {
+  schoolId: string;
+  userId: string;
+  role: AppRole;
+}) {
+  const recipientType = roleRecipientType[role];
+  if (!recipientType) return { items: [], unreadCount: 0 };
+
+  const where = {
+    schoolId,
+    recipientType,
+    recipientId: userId,
+    OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+  };
+
+  const [notifications, unreadCount] = await Promise.all([
+    prisma.appNotification.findMany({
+      where,
+      select: {
+        id: true,
+        type: true,
+        category: true,
+        priority: true,
+        title: true,
+        body: true,
+        href: true,
+        createdAt: true,
+        readAt: true,
+      },
+      orderBy: [{ readAt: "asc" }, { priority: "desc" }, { createdAt: "desc" }],
+      take: 10,
+    }),
+    prisma.appNotification.count({ where: { ...where, readAt: null } }),
+  ]);
+
+  return {
+    unreadCount,
+    items: notifications.map((notification) => ({
+      id: notification.id,
+      type: notification.type,
+      category: notification.category,
+      priority: notification.priority,
+      title: notification.title,
+      description: notification.body,
+      href: notification.href ?? `/${role}`,
+      createdAt: notification.createdAt.toISOString(),
+      readAt: notification.readAt?.toISOString() ?? null,
+    })),
+  };
 }
 
 async function syncSignedInProfilePhoto({
@@ -105,14 +284,18 @@ const Navbar = async ({ role, userId, schoolId }: Props) => {
       }))
       .slice(0, 8);
 
-    return <NavbarClient user={userData} teacherContext={{ alerts }} />;
+    await syncTeacherAlertsToAppNotifications({ schoolId, teacherId: userId, alerts });
+    const notificationContext = await getNavbarNotificationContext({ schoolId, userId, role });
+
+    return <NavbarClient user={userData} appNotifications={notificationContext.items} appNotificationUnreadCount={notificationContext.unreadCount} />;
   }
 
   if (role !== "parent") {
-    return <NavbarClient user={userData} />;
+    const notificationContext = await getNavbarNotificationContext({ schoolId, userId, role });
+    return <NavbarClient user={userData} appNotifications={notificationContext.items} appNotificationUnreadCount={notificationContext.unreadCount} />;
   }
 
-  const [parent, children, notifications] = await Promise.all([
+  const [parent, children, parentNotifications] = await Promise.all([
     prisma.parent.findFirst({
       where: { id: userId, schoolId },
       select: {
@@ -124,20 +307,21 @@ const Navbar = async ({ role, userId, schoolId }: Props) => {
     listActiveParentChildren(userId, schoolId),
     prisma.parentNotification.findMany({
       where: { schoolId, parentId: userId },
-      select: {
-        id: true,
-        type: true,
-        title: true,
-        body: true,
-        href: true,
-        occurredAt: true,
-        readAt: true,
+      include: {
         student: { select: { name: true, surname: true } },
       },
       orderBy: [{ readAt: "asc" }, { occurredAt: "desc" }, { createdAt: "desc" }],
-      take: 8,
+      take: 10,
     }),
   ]);
+
+  await syncParentNotificationsToAppNotifications({
+    schoolId,
+    parentId: userId,
+    notifications: parentNotifications,
+  });
+
+  const notificationContext = await getNavbarNotificationContext({ schoolId, userId, role });
 
   return (
     <NavbarClient
@@ -151,19 +335,9 @@ const Navbar = async ({ role, userId, schoolId }: Props) => {
           name: `${student.name} ${student.surname}`,
           className: student.class?.name ?? "Class not set",
         })),
-        notifications: notifications.map((notification) => ({
-          id: notification.id,
-          type: notification.type,
-          title: notification.title,
-          description: notification.body,
-          href: notification.href ?? "/parent/updates",
-          occurredAt: notification.occurredAt.toISOString(),
-          readAt: notification.readAt?.toISOString() ?? null,
-          childName: notification.student
-            ? `${notification.student.name} ${notification.student.surname}`
-            : null,
-        })),
       }}
+      appNotifications={notificationContext.items}
+      appNotificationUnreadCount={notificationContext.unreadCount}
     />
   );
 };

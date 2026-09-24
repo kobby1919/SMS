@@ -24,9 +24,9 @@ import {
 } from "lucide-react";
 import UserButtonWrapper from "./UserButtonWrapper";
 import {
-  markParentNotificationRead,
-  markParentNotificationsRead,
-} from "@/src/lib/actions/parentNotificationActions";
+  markAppNotificationRead,
+  markAppNotificationsRead,
+} from "@/src/lib/actions/appNotificationActions";
 
 type NavUser = {
   fullName: string | null;
@@ -40,36 +40,25 @@ type ParentChild = {
   className: string;
 };
 
-type ParentNotification = {
+type AppBellNotification = {
   id: string;
   type: string;
-  title: string;
-  description: string;
-  href: string;
-  occurredAt: string;
-  readAt: string | null;
-  childName: string | null;
-};
-
-type TeacherAlert = {
-  id: string;
-  title: string;
-  description: string;
-  href: string;
+  category: string;
   priority: string;
-  status: string;
-  dueAt: string;
+  title: string;
+  description: string;
+  href: string;
+  createdAt: string;
+  readAt: string | null;
 };
 
 type NavbarClientProps = {
   user: NavUser;
   parentContext?: {
     children: ParentChild[];
-    notifications: ParentNotification[];
   };
-  teacherContext?: {
-    alerts: TeacherAlert[];
-  };
+  appNotifications?: AppBellNotification[];
+  appNotificationUnreadCount?: number;
 };
 
 type SearchItem = {
@@ -124,7 +113,7 @@ const formatTime = (value: string) =>
     minute: "2-digit",
   });
 
-function parentSearchItems(children: ParentChild[], notifications: ParentNotification[]): SearchItem[] {
+function parentSearchItems(children: ParentChild[], notifications: AppBellNotification[]): SearchItem[] {
   return [
     { label: "Parent home", description: "Simple ward overview", href: "/parent", keywords: "home dashboard wards children", icon: <Home size={15} /> },
     { label: "Today", description: "Daily school update", href: "/parent/updates", keywords: "today daily weekly update notification", icon: <BellRing size={15} /> },
@@ -140,50 +129,12 @@ function parentSearchItems(children: ParentChild[], notifications: ParentNotific
     })),
     ...notifications.slice(0, 5).map((notification) => ({
       label: notification.title,
-      description: notification.childName ?? "School update",
-      href: parentNotificationHref(notification),
-      keywords: `${notification.title} ${notification.description} ${notification.childName ?? ""}`,
+      description: notification.category.replaceAll("_", " ").toLowerCase(),
+      href: notification.href,
+      keywords: `${notification.title} ${notification.description} ${notification.category}`,
       icon: <BellRing size={15} />,
     })),
   ];
-}
-
-function parentNotificationHref(notification: ParentNotification) {
-  const day = new Date(notification.occurredAt);
-  const date = Number.isNaN(day.getTime()) ? null : day.toISOString().slice(0, 10);
-  const href = notification.href || "/parent/updates";
-
-  if (href === "/parent/updates" || href.startsWith("/parent/updates?")) {
-    return date ? `/parent/updates?date=${date}` : "/parent/updates";
-  }
-
-  return href;
-}
-
-const parentReadNotificationsStorageKey = "edujay:parent-read-notifications";
-
-function loadStoredReadNotificationIds() {
-  if (typeof window === "undefined") return new Set<string>();
-
-  try {
-    const stored = window.sessionStorage.getItem(parentReadNotificationsStorageKey);
-    const parsed = stored ? JSON.parse(stored) : [];
-    return new Set(Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === "string") : []);
-  } catch {
-    return new Set<string>();
-  }
-}
-
-function storeReadNotificationIds(ids: Set<string>) {
-  if (typeof window === "undefined") return;
-  window.sessionStorage.setItem(parentReadNotificationsStorageKey, JSON.stringify([...ids].slice(-100)));
-}
-
-function applyLocalReadState(notifications: ParentNotification[], readIds: Set<string>) {
-  const now = new Date().toISOString();
-  return notifications.map((notification) =>
-    readIds.has(notification.id) ? { ...notification, readAt: notification.readAt ?? now } : notification,
-  );
 }
 
 function SearchBox({
@@ -266,20 +217,27 @@ function SearchBox({
   );
 }
 
-function ParentBell({ notifications }: { notifications: ParentNotification[] }) {
+function notificationTone(priority: string) {
+  if (priority === "URGENT") return "bg-rose-600 text-white";
+  if (priority === "HIGH") return "bg-amber-500 text-white";
+  if (priority === "LOW") return "bg-gray-300 text-gray-700";
+  return "bg-blue-600 text-white";
+}
+
+function AppNotificationBell({
+  notifications,
+  unreadCount,
+}: {
+  notifications: AppBellNotification[];
+  unreadCount: number;
+}) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [localReadIds, setLocalReadIds] = useState<Set<string>>(() => loadStoredReadNotificationIds());
-  const [localNotifications, setLocalNotifications] = useState(() =>
-    applyLocalReadState(notifications, loadStoredReadNotificationIds()),
-  );
+  const [localNotifications, setLocalNotifications] = useState(notifications);
   const [isPending, startTransition] = useTransition();
   const rootRef = useRef<HTMLDivElement>(null);
-  const unreadCount = localNotifications.filter((notification) => !notification.readAt).length;
+  const [localUnreadCount, setLocalUnreadCount] = useState(unreadCount);
 
-  useEffect(() => {
-    setLocalNotifications(applyLocalReadState(notifications, localReadIds));
-  }, [notifications, localReadIds]);
 
   useEffect(() => {
     if (!open) return;
@@ -296,33 +254,31 @@ function ParentBell({ notifications }: { notifications: ParentNotification[] }) 
 
   const markLocallyRead = (notificationIds: string[]) => {
     const now = new Date().toISOString();
-    setLocalReadIds((current) => {
-      const next = new Set(current);
-      notificationIds.forEach((notificationId) => next.add(notificationId));
-      storeReadNotificationIds(next);
-      return next;
-    });
+    const unreadMarked = localNotifications.filter((notification) =>
+      notificationIds.includes(notification.id) && !notification.readAt,
+    ).length;
+
     setLocalNotifications((current) =>
       current.map((notification) =>
         notificationIds.includes(notification.id) ? { ...notification, readAt: notification.readAt ?? now } : notification,
       ),
     );
+    setLocalUnreadCount((current) => Math.max(0, current - unreadMarked));
   };
 
-  const openNotification = (notification: ParentNotification) => {
-    const href = parentNotificationHref(notification);
+  const openNotification = (notification: AppBellNotification) => {
     setOpen(false);
     if (!notification.readAt) {
       markLocallyRead([notification.id]);
       startTransition(async () => {
-        await markParentNotificationRead(notification.id);
-        router.push(href);
+        await markAppNotificationRead(notification.id);
+        router.push(notification.href);
         router.refresh();
       });
       return;
     }
 
-    router.push(href);
+    router.push(notification.href);
   };
 
   return (
@@ -331,30 +287,31 @@ function ParentBell({ notifications }: { notifications: ParentNotification[] }) 
         type="button"
         onClick={() => setOpen((value) => !value)}
         className="relative flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white text-gray-600 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
-        aria-label="Open parent notifications"
+        aria-label="Open notifications"
       >
         <BellRing size={18} />
-        {unreadCount > 0 && (
+        {localUnreadCount > 0 && (
           <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-black text-white">
-            {unreadCount}
+            {localUnreadCount > 99 ? "99+" : localUnreadCount}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 top-12 z-40 w-[min(22rem,calc(100vw-1.5rem))] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl">
+        <div className="fixed inset-x-3 top-16 z-40 max-h-[calc(100dvh-5rem)] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-12 sm:w-[min(23rem,calc(100vw-1.5rem))]">
           <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
             <div>
-              <p className="text-sm font-black text-gray-900">Parent updates</p>
-              <p className="text-xs font-semibold text-gray-400">{unreadCount} unread</p>
+              <p className="text-sm font-black text-gray-900">Notifications</p>
+              <p className="text-xs font-semibold text-gray-400">{localUnreadCount} unread</p>
             </div>
             <button
               type="button"
-              disabled={isPending || unreadCount === 0}
+              disabled={isPending || localUnreadCount === 0}
               onClick={() => {
                 markLocallyRead(localNotifications.filter((notification) => !notification.readAt).map((notification) => notification.id));
+                setLocalUnreadCount(0);
                 startTransition(async () => {
-                  await markParentNotificationsRead();
+                  await markAppNotificationsRead();
                   router.refresh();
                 });
               }}
@@ -363,7 +320,7 @@ function ParentBell({ notifications }: { notifications: ParentNotification[] }) 
               Mark all read
             </button>
           </div>
-          <div className="max-h-[24rem] overflow-y-auto">
+          <div className="max-h-[calc(100dvh-11rem)] overflow-y-auto sm:max-h-[24rem]">
             {localNotifications.length > 0 ? localNotifications.map((notification) => (
               <button
                 key={notification.id}
@@ -372,15 +329,22 @@ function ParentBell({ notifications }: { notifications: ParentNotification[] }) 
                 className="block w-full border-b border-gray-50 px-4 py-3 text-left last:border-0 hover:bg-blue-50"
               >
                 <div className="flex items-start gap-3">
-                  <span className={`mt-1 h-2 w-2 shrink-0 rounded-full ${notification.readAt ? "bg-gray-200" : "bg-blue-600"}`} />
+                  <span className={`mt-1 flex h-2.5 w-2.5 shrink-0 rounded-full ${notification.readAt ? "bg-gray-200" : notificationTone(notification.priority)}`} />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-black text-gray-900">{notification.title}</span>
+                    <span className="flex items-start justify-between gap-2">
+                      <span className="line-clamp-1 text-sm font-black text-gray-900">{notification.title}</span>
+                      {!notification.readAt && (
+                        <span className={`shrink-0 rounded-full px-2 py-0.5 text-[9px] font-black uppercase ${notificationTone(notification.priority)}`}>
+                          {notification.priority.toLowerCase()}
+                        </span>
+                      )}
+                    </span>
                     <span className="mt-1 line-clamp-2 block whitespace-pre-line text-xs font-semibold text-gray-500">
                       {notification.description}
                     </span>
                     <span className="mt-2 flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-wide text-gray-400">
-                      {notification.childName && <span>{notification.childName}</span>}
-                      <span>{formatTime(notification.occurredAt)}</span>
+                      <span>{notification.category.replaceAll("_", " ")}</span>
+                      <span>{formatTime(notification.createdAt)}</span>
                     </span>
                   </span>
                 </div>
@@ -389,17 +353,10 @@ function ParentBell({ notifications }: { notifications: ParentNotification[] }) 
               <div className="px-4 py-8 text-center">
                 <Check className="mx-auto mb-2 text-emerald-500" size={22} />
                 <p className="text-sm font-black text-gray-800">All clear</p>
-                <p className="text-xs font-semibold text-gray-400">No parent updates yet.</p>
+                <p className="text-xs font-semibold text-gray-400">No notifications right now.</p>
               </div>
             )}
           </div>
-          <Link
-            href="/parent/updates"
-            onClick={() => setOpen(false)}
-            className="block border-t border-gray-100 bg-gray-50 px-4 py-3 text-center text-xs font-black text-blue-700"
-          >
-            View all updates
-          </Link>
         </div>
       )}
     </div>
@@ -444,98 +401,13 @@ function ParentQuickActions() {
   );
 }
 
-function TeacherBell({ alerts }: { alerts: TeacherAlert[] }) {
-  const urgentCount = alerts.filter((alert) =>
-    ["HIGH", "CRITICAL"].includes(alert.priority) ||
-    ["MISSED", "ESCALATED"].includes(alert.status),
-  ).length;
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    if (alerts.length === 0) return;
-    const storageKey = "edujay-teacher-alerts-opened";
-    if (window.sessionStorage.getItem(storageKey) === "true") return;
-    window.sessionStorage.setItem(storageKey, "true");
-    const timer = window.setTimeout(() => setOpen(true), 0);
-    return () => window.clearTimeout(timer);
-  }, [alerts.length]);
-
-  return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((value) => !value)}
-        className="relative flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white text-gray-600 shadow-sm transition hover:border-edujay-ring hover:bg-edujay-soft hover:text-edujay-primary"
-        aria-label="Open teacher alerts"
-      >
-        <BellRing size={18} />
-        {alerts.length > 0 && (
-          <span className={`absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-black text-white ${urgentCount > 0 ? "bg-rose-600" : "bg-edujay-primary"}`}>
-            {alerts.length}
-          </span>
-        )}
-      </button>
-
-      {open && (
-        <div className="fixed inset-x-3 top-16 z-40 max-h-[calc(100dvh-5rem)] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-12 sm:w-[min(22rem,calc(100vw-1.5rem))]">
-          <div className="border-b border-gray-100 px-4 py-3">
-            <p className="text-sm font-black text-gray-900">Teacher alerts</p>
-            <p className="text-xs font-semibold text-gray-400">
-              {alerts.length > 0 ? `${alerts.length} active item${alerts.length === 1 ? "" : "s"} today` : "No urgent duty is waiting"}
-            </p>
-          </div>
-          <div className="max-h-[calc(100dvh-11rem)] overflow-y-auto sm:max-h-[24rem]">
-            {alerts.length > 0 ? alerts.map((alert) => (
-              <Link
-                key={alert.id}
-                href={alert.href}
-                onClick={() => setOpen(false)}
-                className="block border-b border-gray-50 px-4 py-3 last:border-0 hover:bg-edujay-soft"
-              >
-                <div className="flex items-start gap-3">
-                  <span className={`mt-1 h-2 w-2 shrink-0 rounded-full ${["HIGH", "CRITICAL"].includes(alert.priority) ? "bg-rose-600" : "bg-edujay-primary"}`} />
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-black text-gray-900">{alert.title}</span>
-                    <span className="mt-1 whitespace-pre-line text-xs font-semibold text-gray-500">
-                      {alert.description}
-                    </span>
-                    <span className="mt-2 block text-[10px] font-black uppercase tracking-wide text-gray-400">
-                      {alert.status.replaceAll("_", " ")} - {formatTime(alert.dueAt)}
-                    </span>
-                  </span>
-                </div>
-              </Link>
-            )) : (
-              <div className="px-4 py-8 text-center">
-                <Check className="mx-auto mb-2 text-emerald-500" size={22} />
-                <p className="text-sm font-black text-gray-800">All clear</p>
-                <p className="text-xs font-semibold text-gray-400">No teacher alerts right now.</p>
-              </div>
-            )}
-          </div>
-          <Link
-            href="/teacher/accountability"
-            onClick={() => setOpen(false)}
-            className="block border-t border-gray-100 bg-gray-50 px-4 py-3 text-center text-xs font-black text-edujay-primary"
-          >
-            Open accountability
-          </Link>
-        </div>
-      )}
-    </div>
-  );
-}
-
-const NavbarClient = ({ user, parentContext, teacherContext }: NavbarClientProps) => {
+const NavbarClient = ({ user, parentContext, appNotifications = [], appNotificationUnreadCount = 0 }: NavbarClientProps) => {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const pathname = usePathname();
   const isParent = user.role === "parent";
-  const isTeacher = user.role === "teacher";
   const children = parentContext?.children ?? [];
-  const notifications = parentContext?.notifications ?? [];
-  const teacherAlerts = teacherContext?.alerts ?? [];
   const searchItems = isParent
-    ? parentSearchItems(children, notifications)
+    ? parentSearchItems(children, appNotifications)
     : roleShortcuts[user.role] ?? roleShortcuts.admin;
   const contextLabel = isParent
     ? children.length === 0
@@ -577,16 +449,16 @@ const NavbarClient = ({ user, parentContext, teacherContext }: NavbarClientProps
             <Search size={18} />
           </button>
 
-          {isParent ? (
-            <>
-              <ParentQuickActions />
-              <ParentBell notifications={notifications} />
-            </>
-          ) : isTeacher ? (
-            <>
-              <TeacherBell alerts={teacherAlerts} />
-            </>
-          ) : (
+          {isParent && <ParentQuickActions />}
+          {user.role !== "student" && (
+            <AppNotificationBell
+              key={`${appNotificationUnreadCount}-${appNotifications.map((notification) => `${notification.id}:${notification.readAt ?? "unread"}`).join("|")}`}
+              notifications={appNotifications}
+              unreadCount={appNotificationUnreadCount}
+            />
+          )}
+
+          {!isParent && user.role === "student" && (
             <Link
               href={searchItems[0]?.href ?? `/${user.role}`}
               className="hidden h-10 items-center gap-2 rounded-full border border-gray-100 bg-white px-3 text-xs font-black text-gray-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 sm:flex"
